@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.search;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
@@ -113,14 +114,59 @@ public class TextSearchBuilder implements IClusterable {
         StringBuilder querySb = new StringBuilder();
         querySb.append(getIncludedPrimaryTypeFilter()).append('[');
         StringBuilder scope = getScope();
-        boolean hasCriteria = (scope != null);
         if (scope != null) {
             querySb.append(scope);
         }
-        for (StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens();) {
-            String token = st.nextToken();
-            if (token.length() < getMinimalLength()) {
-                continue;
+
+        if (!StringUtils.isBlank(value)) {
+            if (scope != null) {
+                querySb.append(" and ");
+            }
+            String whereClause = getWhereClause(value, false);
+            if (wildcardSearch) {
+                String whereClauseWildCards = getWhereClause(value, true);
+                if (whereClauseWildCards.length() > 0) {
+                    valid = true;
+                    if (whereClause.length() > 0) {
+                        querySb.append("(");
+                        querySb.append("jcr:contains(.,'").append(whereClause).append("')");
+                        querySb.append(" or ");
+                        querySb.append("jcr:contains(.,'").append(whereClauseWildCards).append("')");
+                        querySb.append(")");
+                    } else {
+                        querySb.append("jcr:contains(.,'").append(whereClauseWildCards).append("')");
+                    }
+                } else if (whereClause.length() > 0) {
+                    valid = true;
+                    querySb.append("jcr:contains(.,'").append(whereClause).append("')");
+                }
+            } else if (whereClause.length() > 0) {
+                valid = true;
+                querySb.append("jcr:contains(.,'").append(whereClause).append("')");
+            }
+        }
+
+        querySb.append(']').append("/rep:excerpt(.)");
+
+        if (!valid) {
+            log.debug("Cannot create a Xpath query for '{}'. Return null", value);
+            return null;
+        }
+        log.debug("Xpath query = {} ", querySb.toString());
+        return querySb;
+    }
+
+    private String getWhereClause(final String value, final boolean wildcardPostfix) {
+        StringBuilder whereClauseBuilder = new StringBuilder();
+        boolean isOperatorToken;
+        String peekedToken = null;
+        for (StringTokenizer st = new StringTokenizer(value, " "); st.hasMoreTokens() || peekedToken != null ;) {
+            String token;
+            if (peekedToken != null) {
+                token = peekedToken;
+                peekedToken = null;
+            } else {
+                token = st.nextToken();
             }
             StringBuilder tb = new StringBuilder();
             for (int i = 0; i < token.length(); i++) {
@@ -132,28 +178,58 @@ public class TextSearchBuilder implements IClusterable {
                     tb.append(c);
                 }
             }
-            if (tb.length() < getMinimalLength()) {
+            if (tb.length() == 0) {
                 continue;
             }
-            if (hasCriteria) {
-                querySb.append(" and ");
-            } else {
-                hasCriteria = true;
-            }
-            querySb.append("jcr:contains(., '");
-            querySb.append(tb);
-            valid = true;
-            if (wildcardSearch) {
-                querySb.append('*');
-            }
-            querySb.append("')");
-        }
-        querySb.append(']').append("/rep:excerpt(.)");
 
-        if (!valid) {
-            return null;
+
+            if (token.equals("OR") || token.equals("AND")) {
+                isOperatorToken = true;
+            } else {
+                isOperatorToken = false;
+            }
+
+            if (wildcardPostfix && tb.length() < getMinimalLength() && !isOperatorToken) {
+                // for wildcard postfixing we demand the term to be at least as long as #getMinimalLength()
+                continue;
+            }
+
+            // add a space (this defaults to AND)
+            if (isOperatorToken && !st.hasMoreTokens()) {
+                // we do not allow an operator AND or OR as last token
+                continue;
+            }
+            
+            // now we could still have that the problem that the query ends with AND AND : thus we need to peek the next token 
+            // if there are more to double check it is not a operator
+            if (isOperatorToken && st.hasMoreTokens()) {
+                peekedToken = st.nextToken();
+                if (peekedToken.equals("OR") || peekedToken.equals("AND")) {
+                    // the next token is an operator. Skip current one
+                    continue;
+                }
+            }
+
+            if (isOperatorToken && whereClauseBuilder.length() == 0) {
+                // first term is not allowed to be an operator hence skip
+                continue;
+            }
+
+            if (whereClauseBuilder.length() > 0) {
+                whereClauseBuilder.append(" ");
+            }
+
+            whereClauseBuilder.append(tb);
+
+            // we only append a wildcard IF and only IF
+            // 1: WildcardSearch is set to true
+            // 2: The term length is at least equal to minimal length: This is to avoid expensive kind of a* searches
+            // 3: The term is not an operator token like AND or OR
+            if (wildcardPostfix && tb.length() >= getMinimalLength() && !isOperatorToken) {
+                whereClauseBuilder.append('*');
+            }
         }
-        return querySb;
+        return whereClauseBuilder.toString();
     }
 
     private StringBuilder getScope() {
@@ -181,7 +257,7 @@ public class TextSearchBuilder implements IClusterable {
             try {
                 Node content = (Node) session.getItem(path);
                 if (content.isNodeType("mix:referenceable")) {
-                    String uuid = content.getUUID();
+                    String uuid = content.getIdentifier();
                     if (haveScope) {
                         sb.append(" or ");
                     } else {

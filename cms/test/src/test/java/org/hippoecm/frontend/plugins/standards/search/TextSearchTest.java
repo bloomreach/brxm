@@ -97,13 +97,15 @@ public class TextSearchTest extends PluginTest {
     }
     
     @Test
-    public void keywordsSmallerThanThreeLettersAreIgnored() throws RepositoryException {
+    public void keywordsSmallerThanThreeLettersAreNotIgnored() throws RepositoryException {
         build(session, content);
         session.save();
 
         TextSearchBuilder tsb = new TextSearchBuilder();
         tsb.setText("ab");
-        assertNull(tsb.getResultModel());
+        BrowserSearchResult result = tsb.getResultModel().getObject();
+        QueryResult qr = result.getQueryResult();
+        assertTrue(qr.getNodes().hasNext());
     }
 
     @Test
@@ -126,7 +128,7 @@ public class TextSearchTest extends PluginTest {
     }
 
     @Test
-    public void shortKeywordsAreIgnored() throws RepositoryException {
+    public void shortKeywordsAreNotIgnored() throws RepositoryException {
         build(session, content);
         build(session, alternative);
         session.save();
@@ -196,6 +198,11 @@ public class TextSearchTest extends PluginTest {
         TextSearchBuilder tsb = new TextSearchBuilder();
         tsb.setText("title");
         tsb.setScope(new String[] { "/test/alternative"} );
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//element(*, hippo:harddocument)" +
+                "[jcr:contains(.,'title')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
         BrowserSearchResult result = tsb.getResultModel().getObject();
         NodeIterator nodes = result.getQueryResult().getNodes();
         Set<String> paths = new TreeSet<String>();
@@ -212,7 +219,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setText("title");
         StringBuilder query = tsb.getQueryStringBuilder();
         String expectedQuery = "//element(*, hippo:harddocument)" +
-                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(., 'title')]/rep:excerpt(.)";
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title')]/rep:excerpt(.)";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
     }
@@ -225,7 +232,7 @@ public class TextSearchTest extends PluginTest {
         tsb.setIncludePrimaryTypes(new String[]{"frontend:document"});
         StringBuilder query = tsb.getQueryStringBuilder();
         String expectedQuery = "//node()[@jcr:primaryType='frontend:document']" +
-                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(., 'title')]/rep:excerpt(.)";
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title')]/rep:excerpt(.)";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
     }
@@ -237,7 +244,162 @@ public class TextSearchTest extends PluginTest {
         tsb.setIncludePrimaryTypes(new String[]{"frontend:document", "backend:document"});
         StringBuilder query = tsb.getQueryStringBuilder();
         String expectedQuery = "//node()[@jcr:primaryType='frontend:document' or @jcr:primaryType='backend:document']" +
-                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(., 'title')]/rep:excerpt(.)";
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+    }
+
+    @Test
+    public void querySpacesAndMultiWord() throws Exception {
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        // leading and trailing space does not matter
+        tsb.setText("   title   ");
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        tsb.setText("  title  bar  ");
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title bar')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+    }
+
+    @Test
+    public void queryMultiWordWithORandAND() throws Exception {
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setText(" title OR bar AND lux");
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title OR bar AND lux')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        // consecutive operators are skipped, hence 'title OR AND bar OR OR AND AND lux' should result in 'title OR bar OR AND lux'
+        tsb.setText(" title OR AND bar OR OR AND AND lux");
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title AND bar AND lux')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        // 'or' and 'and' (lowercase) are *not* and operator
+        tsb.setText(" title OR or bar OR or AND and lux");
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title OR or bar OR or AND and lux')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        // leading and trailing operators are skipped
+        tsb.setText(" OR title bar OR lux AND ");
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title bar OR lux')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        // multiple leading and trailing operators are skipped
+        tsb.setText(" AND OR title bar OR lux AND AND ");
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'title bar OR lux')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        // assert search with dashes and _
+        tsb.setText("AND hippo-cms great_version AND ");
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'hippo-cms great_version')]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+    }
+
+    @Test
+    public void queryWildcards() throws Exception {
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        // set wildcards to true
+        tsb.setWildcardSearch(true);
+
+        /*
+         * Because wildcards are set to true, we expect TWO jcr:contains being or-ed, where one contains wildcards and one not
+         * Thus for example  'title' should result in
+         *
+         *  (jcr:contains(.,'title') or jcr:contains(.,'title*'))
+         *
+         *  we do this in this way, because the wildcard postfixing and Lucene tokenizing and stemming do not cooperate that well. Assume the following
+         *  Dutch word 'slapen'
+         *
+         *  This gets indexed as 'slap'. Now, 'slapen*' does not return a hit. A bigger problem are words like:
+         *
+         *  'hippo-cms'
+         *
+         *  When we would do the wild card search, the search would be : 'hippo-cms*' : but there are no terms in the Lucene index
+         *  starting with 'hippo-cms' (during indexing, 'hippo-cms' was tokenized on '-') thus the wildcard search leads to no results.
+         *
+         *  Hence, we search for wildcard postfixed terms OR-ed with the original query
+         */
+
+        tsb.setText(" title");
+
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'title') or jcr:contains(.,'title*'))]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        tsb.setText(" title bar lux ");
+
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'title bar lux') or jcr:contains(.,'title* bar* lux*'))]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+
+        tsb.setText("A quick brown fox jumps at");
+        // when a term is shorter then #getMinimalLength() it should be SKIPPED for wildcard searching
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'A quick brown fox jumps at') or jcr:contains(.,'quick* brown* fox* jumps*'))]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        tsb.setText("A quick fox AND jumps OR lazy");
+        // OR and AND should never get wildcard postfix
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'A quick fox AND jumps OR lazy') or jcr:contains(.,'quick* fox* AND jumps* OR lazy*'))]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        tsb.setText("OR or A quick fox AND jumps at OR AND");
+        // OR and AND should never get wildcard postfix
+        // after the ignored first OR, the 'or' should be skipped for wildcard search because too short
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'or A quick fox AND jumps at') or jcr:contains(.,'quick* fox* AND jumps*'))]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        // dashes and _ should work well
+        tsb.setText("AND hippo-cms great_version AND ");
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'hippo-cms great_version') or jcr:contains(.,'hippo-cms* great_version*'))]/rep:excerpt(.)";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+
+        // only smaller than 3 letters text thus no wildcard postfix version
+        tsb.setText("AND is it so OR ");
+        query = tsb.getQueryStringBuilder();
+        expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'is it so')]/rep:excerpt(.)";
         assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
                 (query.toString()).equals(expectedQuery));
     }
