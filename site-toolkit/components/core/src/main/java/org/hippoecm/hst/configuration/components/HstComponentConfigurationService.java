@@ -570,6 +570,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                         // first populate it
                         HstComponentConfigurationService existingChild = this.childConfByName.get(childToMerge.name);
                         existingChild.populateComponentReferences(rootComponentConfigurations, populated);
+                        childToMerge.populateComponentReferences(rootComponentConfigurations, populated);
                         // merge the childToMerge with existingChild
                         existingChild.combine(childToMerge, rootComponentConfigurations, populated);
                     } else  {
@@ -671,11 +672,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 // check whether the child of its own has a referencecomponent: This referencecomponent then needs
                 // to be first populated before merging
                 existingChild.populateComponentReferences(rootComponentConfigurations, populated);
+                toMerge.populateComponentReferences(rootComponentConfigurations, populated);
                 this.childConfByName.get(toMerge.name).combine(toMerge, rootComponentConfigurations, populated);
             } else {
                 //  String newId = this.id + "-" + toMerge.id;
                 //  this.deepCopy(this, newId, toMerge, populated, rootComponentConfigurations);
-                
+                // deepCopy also does the populateComponentReferences for child 'toMerge'
                 this.addDeepCopy(toMerge, populated, rootComponentConfigurations);
             }
         }
