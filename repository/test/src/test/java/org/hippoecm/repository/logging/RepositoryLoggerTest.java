@@ -43,7 +43,7 @@ public class RepositoryLoggerTest extends TestCase {
     }
 
     @Test
-    public void testCreateWorkflowEventLoggerImpl() throws Exception {
+    public void testCreateRepositoryLogger() throws Exception {
         final RepositoryLogger repositoryLogger = new RepositoryLogger();
         repositoryLogger.initialize(session);
         assertTrue(session.itemExists("/hippo:log/default"));

@@ -41,7 +41,7 @@ import net.sf.json.JSONObject;
  */
 public class RepositoryLogger implements DaemonModule {
 
-    static final Logger log = LoggerFactory.getLogger(RepositoryLogger.class);
+    private static final Logger log = LoggerFactory.getLogger(RepositoryLogger.class);
 
     private static final Random random = new Random();
 
@@ -83,9 +83,6 @@ public class RepositoryLogger implements DaemonModule {
         if (!"workflow".equals(event.category())) {
             return;
         }
-
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.putAll(event.getValues());
 
         long timestamp = event.timestamp();
         String userName = event.user();
