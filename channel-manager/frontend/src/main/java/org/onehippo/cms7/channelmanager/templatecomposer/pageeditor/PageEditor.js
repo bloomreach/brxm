@@ -444,7 +444,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             id: 'componentPropertiesWindow',
             title: this.resources['properties-window-default-title'],
             x:10, y: 120,
-            width: 310,
+            width: 400,
             height: 350,
             layout: 'fit',
             closable: true,
