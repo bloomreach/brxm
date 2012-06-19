@@ -172,7 +172,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             typeAhead: true,
             mode: 'local',
             triggerAction: 'all',
-            emptyText:'Select a persona',
+            emptyText: this.resources['variants-combo-box-empty-text'],
             editable: false,
             selectOnFocus:true,
             width:135,
