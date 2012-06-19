@@ -561,8 +561,8 @@ both match, the first appearing in the schema will be used.  -->
     <!-- set STORED to false if NO highlighting is needed
          html fields are copied to 'text' hence not indexed here directly
          -->
-    <field name="hippostdContent_multiple_compound_t"  type="text_general" indexed="false"  stored="true" multiValued="true"/>
-    <field name="hippostdContent_compound_t"  type="text_general" indexed="false"  stored="true"/>
+    <field name="html_hippostdContent_multiple_compound_t"  type="text_general" indexed="false"  stored="true" multiValued="true"/>
+    <field name="html_hippostdContent_compound_t"  type="text_general" indexed="false"  stored="true"/>
 
     <!-- ****************** END EXPLICIT FIELDS NEEDED FOR HIPPO COMPOUND BEAN INDEXING **************  -->
 
@@ -674,8 +674,8 @@ unknown fields indexed and/or stored by default -->
 
   <!-- HIPPO SPECIFIC : EXPLCICIT AND DYNAMIC TEXT COMPOUND FIELDS WE BY DEFAULT ADD to 'text' FIELD -->
 
-  <copyField source="hippostdContent_multiple_compound_t" dest="text" maxChars="3000"/>
-  <copyField source="hippostdContent_compound_t" dest="text" maxChars="3000"/>
+  <copyField source="html_hippostdContent_multiple_compound_t" dest="text" maxChars="3000"/>
+  <copyField source="html_hippostdContent_compound_t" dest="text" maxChars="3000"/>
 
   <copyField source="*_multiple_compound_ms" dest="text" maxChars="500"/>
   <copyField source="*_multiple_compound_s" dest="text" maxChars="500"/>
