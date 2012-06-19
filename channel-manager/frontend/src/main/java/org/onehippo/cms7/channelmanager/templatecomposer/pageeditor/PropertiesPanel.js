@@ -389,10 +389,22 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
     _submitForm : function () {
         this.fireEvent('save');
+
+        var uncheckedValues = {};
+        var items = this.getForm().items;
+        items.each(function(item) {
+            if (item instanceof Ext.form.Checkbox) {
+                if (!item.checked) {
+                    uncheckedValues[item.name] = 'off';
+                }
+            }
+        });
+
         this.getForm().submit({
             headers : {
                 'FORCE_CLIENT_HOST' : 'true'
             },
+            params: uncheckedValues,
             url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.variant.id + '?FORCE_CLIENT_HOST=true',
             method : 'POST',
             success : function () {
@@ -570,23 +582,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         }
                     }
                     propertyField = this.add(propertyFieldConfig);
-
-                    if (xtype === 'checkbox') {
-                        // When an HTML checkbox is not checked, its value is not send to the server (this is default
-                        // HTML checkbox behavior). However, when the variant is empty, the server won't remove any
-                        // missing property values. As a result, we cannot uncheck the checkbox of the default variant
-                        // without additional trickery. The solution is to include a hidden form field for each checkbox
-                        // with the same name and the value 'false' *after* the checkbox field. The hidden field which
-                        // will always be send. So, when a checkbox is checked, the second value of the hidden field
-                        // will be ignored by the server. When a checkbox is not checked, only the hidden field will
-                        // be send, caused the server to pick up the value 'false'.
-                        var hiddenUncheckedCheckboxFieldConfig = {
-                            name: propertyFieldConfig.name,
-                            value: false,
-                            xtype: 'hidden'
-                        }
-                        this.add(hiddenUncheckedCheckboxFieldConfig);
-                    }
 
                     if (isDefaultValue) {
                         propertyField.addClass('default-value');
