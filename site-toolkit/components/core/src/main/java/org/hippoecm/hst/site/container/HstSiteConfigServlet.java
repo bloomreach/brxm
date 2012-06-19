@@ -414,14 +414,16 @@ public class HstSiteConfigServlet extends HttpServlet {
         destroyHstSiteConfigurationChangesCheckerThread();
         
         ComponentManager componentManager = HstServices.getComponentManager();
-        
-        try {
-            componentManager.stop();
-            componentManager.close();
-        } catch (Exception e) {
-            log.warn("Component Manager stopping/closing error", e);
-        } finally {
-            HstServices.setComponentManager(null);
+        // componentManager can be null if HstSiteConfigServlet didn't finish the initialization yet.
+        if (componentManager != null) {
+            try {
+                componentManager.stop();
+                componentManager.close();
+            } catch (Exception e) {
+                log.warn("Component Manager stopping/closing error", e);
+            } finally {
+                HstServices.setComponentManager(null);
+            }
         }
     }
     
