@@ -141,7 +141,6 @@ public class SolrSearch extends AbstractSearchComponent {
             if ("external".equals(params.getSearchIn())){
                 hippoQuery.setScopes("http:", "https:");
             } else if ("current".equals(params.getSearchIn())) {
-                // TODO: this should be the SCOPE :String scope = getSiteContentBaseBean(request).getCanonicalPath();
                 // for this, we first need to index the virtual locations
                 String scope = request.getRequestContext().getResolvedMount().getMount().getCanonicalContentPath();
                 hippoQuery.setScopes(scope);
