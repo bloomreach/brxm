@@ -34,16 +34,10 @@
     </sv:property>
   </sv:node>
 
-  <!-- Hippo logging folder -->
+  <!-- repository logging -->
   <sv:node sv:name="hippolog">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>hippostd-logging.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.onehippo.org/jcr/hippolog/nt/2.0</sv:value>
@@ -54,7 +48,28 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>13.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.23.02</sv:value>
+    </sv:property>
   </sv:node>
+  <sv:node sv:name="hippolog-folder">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>hippostd-logging.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13.1</sv:value>
+    </sv:property>
+  </sv:node>
+
   <!-- Hippo standard templates -->
   <sv:node sv:name="hippostd-queries">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

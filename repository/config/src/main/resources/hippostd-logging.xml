@@ -24,14 +24,4 @@
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>ec0d0368-4803-4f19-b7d1-51963b558dab</sv:value>
   </sv:property>
-  <sv:property sv:name="hippolog:appender" sv:type="String">
-    <sv:value>rolling</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippolog:enabled" sv:type="Boolean">
-    <sv:value>true</sv:value>
-  </sv:property>
-  <sv:property sv:name="hippolog:maxsize" sv:type="Long">
-    <sv:value>100</sv:value>
-  </sv:property>
 </sv:node>
-
