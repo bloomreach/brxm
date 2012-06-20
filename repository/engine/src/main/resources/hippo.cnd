@@ -130,6 +130,7 @@
 - hippo:reloadonstartup (boolean)
 - hippo:status (string) < 'pending', 'done', 'disabled'
 - hippo:contextnodename (string)
+- hippo:version (string)
 
 [hippo:initializefolder] > nt:base orderable
 - hippo:version (string) multiple // never specify this item at this time

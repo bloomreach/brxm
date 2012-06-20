@@ -522,49 +522,64 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
             try {
                 InputStream configurationStream = configurationURL.openStream();
                 initializeNodecontent(rootSession, "/hippo:configuration/hippo:temporary", configurationStream, configurationURL.getPath());
-                Node mergeInitializationNode = rootSession.getRootNode().
+                final Node tempInitFolderNode = rootSession.getRootNode().
                     getNode("hippo:configuration/hippo:temporary/hippo:initialize");
                 final String moduleVersion = getModuleVersion(configurationURL);
-                for(NodeIterator mergeIter = mergeInitializationNode.getNodes(); mergeIter.hasNext(); ) {
-                    Node n = mergeIter.nextNode();
+                for(NodeIterator tempIter = tempInitFolderNode.getNodes(); tempIter.hasNext(); ) {
+                    final Node tempInitItemNode = tempIter.nextNode();
+                    String itemVersion = null;
+                    if (tempInitItemNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
+                        itemVersion = tempInitItemNode.getProperty(HippoNodeType.HIPPO_VERSION).getString();
+                    }
 
-                    final String existingModuleVersion = getExistingModuleVersion(initializationFolder, n.getName());
-
-                    if (!initializationFolder.hasNode(n.getName()) || shouldReload(n, initializationFolder.getNode(n.getName()), moduleVersion, existingModuleVersion)) {
-
-                        if(initializationFolder.hasNode(n.getName())) {
-                            // this occurs when reload is on
-                            log.info("Item " + n.getName() + " needs to be reloaded");
-                            initializationFolder.getNode(n.getName()).remove();
+                    Node initItemNode = null;
+                    String existingModuleVersion = null;
+                    String existingItemVersion = null;
+                    if (initializationFolder.hasNode(tempInitItemNode.getName())) {
+                        initItemNode = initializationFolder.getNode(tempInitItemNode.getName());
+                        if (initItemNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
+                            existingItemVersion = initItemNode.getProperty(HippoNodeType.HIPPO_VERSION).getString();
                         }
-                        Node moved = initializationFolder.addNode(n.getName(), HippoNodeType.NT_INITIALIZEITEM);
-                        if("hippoecm-extension.xml".equals(configurationURL.getFile().contains("/")
-                                       ? configurationURL.getFile().substring(configurationURL.getFile().lastIndexOf("/")+1)
-                                       : configurationURL.getFile())) {
-                            moved.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
+                        if (initItemNode.hasProperty(HippoNodeType.HIPPO_EXTENSIONVERSION)) {
+                            existingModuleVersion = initItemNode.getProperty(HippoNodeType.HIPPO_EXTENSIONVERSION).getString();
+                        }
+                        if (initItemNode.hasProperty(HippoNodeType.HIPPO_EXTENSIONBUILD)) {
+                            existingModuleVersion = Long.valueOf(initItemNode.getProperty(HippoNodeType.HIPPO_EXTENSIONBUILD).getLong()).toString();
+                        }
+                    }
+
+                    if (initItemNode == null || shouldReload(tempInitItemNode, initItemNode, moduleVersion, existingModuleVersion, itemVersion, existingItemVersion)) {
+
+                        if(initItemNode != null) {
+                            log.info("Item " + tempInitItemNode.getName() + " needs to be reloaded");
+                            initItemNode.remove();
+                        }
+                        initItemNode = initializationFolder.addNode(tempInitItemNode.getName(), HippoNodeType.NT_INITIALIZEITEM);
+                        if(isExtension(configurationURL)) {
+                            initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
                             if (moduleVersion != null) {
-                                moved.setProperty(HippoNodeType.HIPPO_EXTENSIONVERSION, moduleVersion);
+                                initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONVERSION, moduleVersion);
                             }
                         }
-                        for (String propertyName : new String[] { HippoNodeType.HIPPO_SEQUENCE, HippoNodeType.HIPPO_NAMESPACE, HippoNodeType.HIPPO_NODETYPESRESOURCE, HippoNodeType.HIPPO_NODETYPES, HippoNodeType.HIPPO_CONTENTRESOURCE, HippoNodeType.HIPPO_CONTENT, HippoNodeType.HIPPO_CONTENTROOT, HippoNodeType.HIPPO_CONTENTDELETE, HippoNodeType.HIPPO_CONTENTPROPSET, HippoNodeType.HIPPO_CONTENTPROPADD, HippoNodeType.HIPPO_RELOADONSTARTUP }) {
-                            if(n.hasProperty(propertyName)) {
-                                final Property property = n.getProperty(propertyName);
+                        for (String propertyName : new String[] { HippoNodeType.HIPPO_SEQUENCE, HippoNodeType.HIPPO_NAMESPACE, HippoNodeType.HIPPO_NODETYPESRESOURCE, HippoNodeType.HIPPO_NODETYPES, HippoNodeType.HIPPO_CONTENTRESOURCE, HippoNodeType.HIPPO_CONTENT, HippoNodeType.HIPPO_CONTENTROOT, HippoNodeType.HIPPO_CONTENTDELETE, HippoNodeType.HIPPO_CONTENTPROPSET, HippoNodeType.HIPPO_CONTENTPROPADD, HippoNodeType.HIPPO_RELOADONSTARTUP, HippoNodeType.HIPPO_VERSION }) {
+                            if(tempInitItemNode.hasProperty(propertyName)) {
+                                final Property property = tempInitItemNode.getProperty(propertyName);
                                 if(property.getDefinition().isMultiple()) {
-                                    moved.setProperty(propertyName, property.getValues(), property.getType());
+                                    initItemNode.setProperty(propertyName, property.getValues(), property.getType());
                                 } else {
-                                    moved.setProperty(propertyName, property.getValue());
+                                    initItemNode.setProperty(propertyName, property.getValue());
                                 }
                             }
                         }
                         String contextNodeName = null;
-                        if (moved.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && moved.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean() && moved.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
-                            contextNodeName = readContextNodeName(moved);
+                        if (initItemNode.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) && initItemNode.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean() && initItemNode.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
+                            contextNodeName = readContextNodeName(initItemNode);
                         }
                         if (contextNodeName != null) {
-                            moved.setProperty(HippoNodeType.HIPPO_CONTEXTNODENAME, contextNodeName);
+                            initItemNode.setProperty(HippoNodeType.HIPPO_CONTEXTNODENAME, contextNodeName);
                             String root = "/";
-                            if (moved.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
-                                root = moved.getProperty(HippoNodeType.HIPPO_CONTENTROOT).getString();
+                            if (initItemNode.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
+                                root = initItemNode.getProperty(HippoNodeType.HIPPO_CONTENTROOT).getString();
                             }
                             String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
                             final NodeIterator downstreamItems = getDownstreamItems(rootSession, contextNodePath);
@@ -574,25 +589,25 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                                 node.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
                             }
                         }
-                        moved.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
+                        initItemNode.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
                     } else {
-                        log.info("Node " + n.getName() + " already exists in initialize folder (source: " + configurationURL.toString() + ")");
+                        log.info("Node " + tempInitItemNode.getName() + " already exists in initialize folder (source: " + configurationURL.toString() + ")");
                     }
                 }
-                if(mergeInitializationNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
+                if(tempInitFolderNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
                     Set<String> tags = new TreeSet<String>();
                     if (initializationFolder.hasProperty(HippoNodeType.HIPPO_VERSION)) {
                         for (Value value : initializationFolder.getProperty(HippoNodeType.HIPPO_VERSION).getValues()) {
                             tags.add(value.getString());
                         }
                     }
-                    Value[] added = mergeInitializationNode.getProperty(HippoNodeType.HIPPO_VERSION).getValues();
+                    Value[] added = tempInitFolderNode.getProperty(HippoNodeType.HIPPO_VERSION).getValues();
                     for (Value value : added) {
                         tags.add(value.getString());
                     }
                     initializationFolder.setProperty(HippoNodeType.HIPPO_VERSION, tags.toArray(new String[tags.size()]));
                 }
-                mergeInitializationNode.remove();
+                tempInitFolderNode.remove();
                 rootSession.save();
             } catch (PathNotFoundException ex) {
                 log.error("Rejected old style configuration content", ex);
@@ -618,11 +633,20 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         }
     }
 
-    private static boolean shouldReload(final Node temp, final Node existing, final String moduleVersion, final String existingModuleVersion) throws RepositoryException {
+    private static boolean isExtension(final URL configurationURL) {
+        return "hippoecm-extension.xml".equals(configurationURL.getFile().contains("/")
+                ? configurationURL.getFile().substring(configurationURL.getFile().lastIndexOf("/")+1)
+                : configurationURL.getFile());
+    }
+
+    private static boolean shouldReload(final Node temp, final Node existing, final String moduleVersion, final String existingModuleVersion, final String itemVersion, final String existingItemVersion) throws RepositoryException {
         if (!temp.hasProperty(HippoNodeType.HIPPO_RELOADONSTARTUP) || !temp.getProperty(HippoNodeType.HIPPO_RELOADONSTARTUP).getBoolean()) {
             return false;
         }
-        if (!isNewerVersion(moduleVersion, existingModuleVersion)) {
+        if (itemVersion != null && !isNewerVersion(itemVersion, existingItemVersion)) {
+            return false;
+        }
+        if (itemVersion == null && !isNewerVersion(moduleVersion, existingModuleVersion)) {
             return false;
         }
         if (existing.hasProperty(HippoNodeType.HIPPO_STATUS) && existing.getProperty(HippoNodeType.HIPPO_STATUS).getString().equals("disabled")) {
@@ -631,18 +655,18 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
         return true;
     }
 
-    private static boolean isNewerVersion(final String moduleVersion, final String existingModuleVersion) {
-        if (moduleVersion == null) {
+    private static boolean isNewerVersion(final String version, final String existingVersion) {
+        if (version == null) {
             return false;
         }
-        if (existingModuleVersion == null) {
+        if (existingVersion == null) {
             return true;
         }
         try {
-            return new MavenComparableVersion(moduleVersion).compareTo(new MavenComparableVersion(existingModuleVersion)) > 0;
+            return new MavenComparableVersion(version).compareTo(new MavenComparableVersion(existingVersion)) > 0;
         } catch (RuntimeException e) {
             // version could not be parsed
-            log.error("Invalid module version: " + moduleVersion + " or existing: " + existingModuleVersion);
+            log.error("Invalid version: " + version + " or existing: " + existingVersion);
         }
         return false;
     }
@@ -656,19 +680,6 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                 return manifest.getMainAttributes().getValue(new Attributes.Name("Implementation-Build"));
             } catch (IOException ex) {
                 // deliberate ignore, manifest file not available so no build number can be obtained
-            }
-        }
-        return null;
-    }
-
-    private static String getExistingModuleVersion(final Node initializationFolder, final String initializeItemName) throws RepositoryException {
-        if (initializationFolder.hasNode(initializeItemName)) {
-            final Node initializeItemNode = initializationFolder.getNode(initializeItemName);
-            if (initializeItemNode.hasProperty(HippoNodeType.HIPPO_EXTENSIONVERSION)) {
-                return initializeItemNode.getProperty(HippoNodeType.HIPPO_EXTENSIONVERSION).getString();
-            }
-            if (initializeItemNode.hasProperty(HippoNodeType.HIPPO_EXTENSIONBUILD)) {
-                return Long.valueOf(initializeItemNode.getProperty(HippoNodeType.HIPPO_EXTENSIONBUILD).getLong()).toString();
             }
         }
         return null;
