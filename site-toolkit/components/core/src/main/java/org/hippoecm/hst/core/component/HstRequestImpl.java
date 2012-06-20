@@ -35,8 +35,6 @@ import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.LazyInitSingletonObjectFactory;
-import org.hippoecm.hst.util.ObjectFactory;
 
 /**
  * HstRequestImpl
@@ -57,24 +55,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
      */
     public static final String CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".rolePrincipalClassName";
     
-    private static String [] CONTAINER_ATTR_NAME_PREFIXES = null;
-
-    private static ObjectFactory<String[], HstRequestContext> CONTAINER_ATTR_NAME_PREFIXES_FACTORY = new LazyInitSingletonObjectFactory<String[], HstRequestContext>() {
-        @Override
-        protected String[] createInstance(HstRequestContext... args) {
-            HstRequestContext hrc = args[0];
-            ArrayList<String> containerAttrNamePrefixes = new ArrayList<String>(Arrays.asList("javax.servlet.",
-                    "javax.portlet.", "org.hippoecm.hst.container."));
-            ContainerConfiguration containerConfiguration = hrc.getContainerConfiguration();
-
-            if (containerConfiguration != null) {
-                containerAttrNamePrefixes.addAll(hrc.getContainerConfiguration().getList(
-                        CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY));
-            }
-
-            return containerAttrNamePrefixes.toArray(new String[containerAttrNamePrefixes.size()]);
-        }
-    };
+    private static volatile String [] CONTAINER_ATTR_NAME_PREFIXES = null;
 
     protected String lifecyclePhase;
     protected HstRequestContext requestContext;
@@ -376,7 +357,18 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         boolean containerAttrName = false;
         
         if (CONTAINER_ATTR_NAME_PREFIXES == null) {
-            CONTAINER_ATTR_NAME_PREFIXES = CONTAINER_ATTR_NAME_PREFIXES_FACTORY.getInstance(requestContext);
+            synchronized (HstRequestImpl.class) {
+                if (CONTAINER_ATTR_NAME_PREFIXES == null) {
+                    ArrayList<String> containerAttrNamePrefixes = new ArrayList<String>(Arrays.asList("javax.servlet.", "javax.portlet.", "org.hippoecm.hst.container."));
+                    ContainerConfiguration containerConfiguration = this.requestContext.getContainerConfiguration();
+                    
+                    if (containerConfiguration != null) {
+                        containerAttrNamePrefixes.addAll(this.requestContext.getContainerConfiguration().getList(CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY));
+                    }
+                    
+                    CONTAINER_ATTR_NAME_PREFIXES = containerAttrNamePrefixes.toArray(new String[containerAttrNamePrefixes.size()]);
+                }
+            }
         }
         
         for (String prefix : CONTAINER_ATTR_NAME_PREFIXES) {

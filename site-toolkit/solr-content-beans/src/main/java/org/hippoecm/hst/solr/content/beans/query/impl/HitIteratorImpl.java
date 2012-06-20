@@ -22,6 +22,8 @@ import java.util.NoSuchElementException;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
 import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.Hit;
@@ -29,12 +31,10 @@ import org.hippoecm.hst.solr.content.beans.query.HitIterator;
 
 public class HitIteratorImpl implements HitIterator {
 
-    private static final long serialVersionUID = 1L;
-
     private long position = 0;
     private final QueryResponse queryResponse;
     private DocumentObjectBinder binder;
-    private List<ContentBeanBinder> contentBeanBinders;
+    private volatile List<ContentBeanBinder> contentBeanBinders;
 
     /**
      *

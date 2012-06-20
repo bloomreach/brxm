@@ -250,9 +250,6 @@ api/src/main/java/org/hippoecm/hst/service/package-info.java svneol=native#text/
 api/src/main/java/org/hippoecm/hst/statistics/Counter.java -text
 api/src/main/java/org/hippoecm/hst/util/ClasspathResourceScanner.java -text
 api/src/main/java/org/hippoecm/hst/util/KeyValue.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/util/ObjectFactory.java -text
-api/src/main/java/org/hippoecm/hst/util/ObjectFactoryException.java -text
-api/src/main/java/org/hippoecm/hst/util/ResettableObjectFactory.java -text
 api/src/main/java/org/hippoecm/hst/util/package-info.java svneol=native#text/plain
 api/src/site/site.xml -text
 client-modules/cms-rest/pom.xml -text
@@ -400,7 +397,6 @@ commons/src/main/java/org/hippoecm/hst/util/HeadElementUtils.java svneol=native#
 commons/src/main/java/org/hippoecm/hst/util/HstRequestUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstResponseUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstSiteMapUtils.java -text
-commons/src/main/java/org/hippoecm/hst/util/LazyInitSingletonObjectFactory.java -text
 commons/src/main/java/org/hippoecm/hst/util/NOOPLogger.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/NodeUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/PageErrorUtils.java svneol=native#text/plain
@@ -421,7 +417,6 @@ commons/src/test/java/org/hippoecm/hst/core/jcr/TestRewindableEventIterator.java
 commons/src/test/java/org/hippoecm/hst/util/TestHeadElementUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstRequestUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstResponseUtils.java svneol=native#text/plain
-commons/src/test/java/org/hippoecm/hst/util/TestLazyInitSingletonObjectFactory.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestPropertyDefinitionUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestServletConfigUtils.java svneol=native#text/plain
 components/caching/pom.xml svneol=native#text/plain

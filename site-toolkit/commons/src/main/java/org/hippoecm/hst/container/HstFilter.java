@@ -67,8 +67,6 @@ import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.util.LazyInitSingletonObjectFactory;
-import org.hippoecm.hst.util.ObjectFactory;
 import org.hippoecm.hst.util.ServletConfigUtils;
 
 public class HstFilter implements Filter {
@@ -106,14 +104,7 @@ public class HstFilter implements Filter {
     protected volatile boolean initialized;
     protected ComponentManager clientComponentManager;
     protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
-    protected HstContainerConfig requestContainerConfig;
-
-    private ObjectFactory<HstContainerConfig, FilterConfig> requestContainerConfigFactory = new LazyInitSingletonObjectFactory<HstContainerConfig, FilterConfig>() {
-        @Override
-        protected HstContainerConfig createInstance(FilterConfig ... args) {
-            return new HstContainerConfigImpl(args[0].getServletContext(), Thread.currentThread().getContextClassLoader());
-        }
-    };
+    protected volatile HstContainerConfig requestContainerConfig;
 
     private String defaultLoginResourcePath;
     
@@ -255,10 +246,14 @@ public class HstFilter implements Filter {
                 logger.error("The HST virtualHostsManager or siteMapItemHandlerFactory is not available");
                 return;
             }
-
-            if (requestContainerConfig == null) {
-                requestContainerConfig = requestContainerConfigFactory.getInstance(filterConfig);
-            }
+    	    
+    		if (requestContainerConfig == null) {
+        		synchronized (this) {
+        			if (requestContainerConfig == null) {
+        				requestContainerConfig = new HstContainerConfigImpl(filterConfig.getServletContext(), Thread.currentThread().getContextClassLoader());
+        			}
+        		}
+    		}
 
     		if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
 
