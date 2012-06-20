@@ -1,3 +1,6 @@
 /.classpath
+/.idea
 /.project
 /.settings
+/hippo-cms7-commons.iml
+/target

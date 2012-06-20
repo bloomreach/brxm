@@ -113,13 +113,13 @@ public class HippoEvent<E extends HippoEvent<E>> {
     }
 
     public E set(String key, Object value) {
-        if (isSealed()) {
-            throw new IllegalStateException("Event cannot be modified after it has been sealed.");
-        }
         return put(key, value);
     }
     
     protected E put(String key, Object value) {
+        if (isSealed()) {
+            throw new IllegalStateException("Event cannot be modified after it has been sealed.");
+        }
         if (key == null) {
             return (E) this;
         } else if (value == null) {
