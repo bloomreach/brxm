@@ -37,6 +37,9 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,25 +78,17 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
                     try {
                         session.refresh(true);
                         session.save();
-                        if (session.getRootNode().hasNode("hippo:log")) {
-                            try {
-                                Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow(
-                                        "internal", session.getRootNode().getNode("hippo:log"));
-                                if (workflow instanceof EventLoggerWorkflow) {
-                                    ((EventLoggerWorkflow) workflow).logEvent(session.getUserID(), "Repository",
-                                                                              "logout");
-                                }
-                            } catch (AccessDeniedException e) {
-                                log.debug("Access denied when logging logout", e);
-                            }
-                        }
                     } catch (RepositoryException e) {
                         log.error("Error when logging out", e);
-                    } catch (RemoteException e) {
-                        log.error("Remote error when logging out", e);
                     }
                 }
                 session.logout();
+                final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+                if (eventBus != null) {
+                    final HippoEvent event = new HippoEvent("cms").user(session.getUserID()).action("logout");
+                    event.sealEvent();
+                    eventBus.post(event);
+                }
             }
             super.detach();
         }
@@ -180,15 +175,11 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     }
 
     private void logLogin(Session session) throws RepositoryException, RemoteException {
-        if (session != null && session.getRootNode().hasNode(HippoNodeType.LOG_PATH) && session.getRootNode().getNode(
-                HippoNodeType.LOG_PATH).getProperty("hippolog:enabled").getBoolean()) {
-            Workflow workflow = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager().getWorkflow("internal",
-                                                                                                           session.getRootNode().getNode(
-                                                                                                                   HippoNodeType.LOG_PATH));
-            if (workflow instanceof EventLoggerWorkflow) {
-                ((EventLoggerWorkflow) workflow).logEvent(session.getUserID(), "Repository", "login");
-            }
-            session.getRootNode().getNode(HippoNodeType.LOG_PATH).refresh(true);
+        final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+        if (eventBus != null) {
+            final HippoEvent event = new HippoEvent("cms").user(session.getUserID()).action("login").set("remoteAddress", getRemoteAddr());
+            event.sealEvent();
+            eventBus.post(event);
         }
     }
 
