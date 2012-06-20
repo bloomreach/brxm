@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,17 +23,40 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
+/**
+ * This interface is available as work-flow interface on documents which implement a default flow how to edit the documents.
+ * In the model, some documents cannot be edited directly, as they may be used directly on a site, multiple people may not
+ * simultaneously edit a document, or for another reason this may a work-flow is desirable.  This is a default interface to
+ * be used in those cases.  To edit a document, the #obtainEditableInstance() should be used, providing the proper document
+ * variant suitable for editing.  That document variant should always allow a document to be committed, or changes to be disposed,
+ * using the EditableWorkflow interface returned by #WorflowManager.getWorkflow in the "edit" category.
+ */
 public interface EditableWorkflow extends Workflow {
+    /**
+     * @exclude
+     */
     static final String SVN_ID = "$Id$";
 
     /**
      * Request this editable copy of the document.
+     * @return A reference to the document that may actually be modified, and should either be committed or disposed.
+     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
+     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
      */
     public Document obtainEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
-     * Persists editable copy of the document.
+     * Persists editable copy of the document, the editable variant of the document is no longer available after this call.
+     * @return the document which has been persisted back.  This may be a different document variant than the one used to do this
+     * call and may be different from the original used to obtain a editable copy.  To further continue working on the document,
+     * the returned document should be used, which is no longer an editable copy.
+     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
+     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
      */
     public Document commitEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;
@@ -41,6 +64,11 @@ public interface EditableWorkflow extends Workflow {
     /**
      * Do away with the editable copy of the document which was previously
      * obtained.
+     * @return the document variant that is suitable to be used for further work-flow calls
+     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
+     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
      */
     public Document disposeEditableInstance()
             throws WorkflowException, MappingException, RepositoryException, RemoteException;

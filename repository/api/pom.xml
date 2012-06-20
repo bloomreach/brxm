@@ -84,6 +84,29 @@
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
+        <plugin>
+          <inherited>false</inherited>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <configuration>
+            <aggregate>true</aggregate>
+            <author>false</author>
+            <show>protected</show>
+            <source>1.6</source>
+            <javadocVersion>1.6</javadocVersion>
+            <docfilessubdirs>true</docfilessubdirs>
+            <links>
+              <link>http://download.oracle.com/javase/6/docs/api/</link>
+              <link>http://www.day.com/maven/jsr170/javadocs/jcr-2.0/</link>
+            </links>
+            <doclet>org.hippoecm.tools.documentation.ExcludeDoclet</doclet>
+            <docletArtifact>
+              <groupId>org.onehippo.cms7</groupId>
+              <artifactId>hippo-repository-tools-documentation</artifactId>
+              <version>${project.version}</version>
+            </docletArtifact>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
     <plugins>

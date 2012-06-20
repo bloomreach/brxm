@@ -20,22 +20,22 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
- * The workflow manager is a service associated with a JCR session which provides access to a workflow associated with a document stored
- * in the repository.  A workflow is an implementation that can perform some transformation on the document.
- * This implementation is represented as a Java interface, while the possible workflow steps are methods of this interface.
- * Because multiple workflows may be active, a category is used to uniquely identify a specific workflow.
- * Although a workflow manager is associated with a session, the actual transformation is commonly used by a new session, to obtain
- * higher credentials.  The internal implementation of the repository provides these credentials which are only assible by the repository itself,
+ * The work-flow manager is a service associated with a JCR session which provides access to a work-flow associated with a document stored
+ * in the repository.  A work-flow is an implementation that can perform some transformation on the document.
+ * This implementation is represented as a Java interface, while the possible work-flow steps are methods of this interface.
+ * Because multiple work-flows may be active, a category is used to uniquely identify a specific work-flow.
+ * Although a work-flow manager is associated with a session, the actual transformation is commonly used by a new session, to obtain
+ * higher credentials.  The internal implementation of the repository provides these credentials which are only accessible by the repository itself,
  * and have the same permissions as the system user (effectively permissions to do everything).
  *
  * </p>
- * The workflow manager is obtained by casting a {@link javax.jcr.Workspace} to a {@link HippoWorkspace}, where the {@link HippoWorkspace#getWorkflowManager()} method
- * returns the workflow manager for the session.  The {@link javax.jcr.Workspace} itself is obtained though the {@link javax.jcr.Session#getWorkspace()}.
+ * The work-flow manager is obtained by casting a {@link javax.jcr.Workspace} to a {@link HippoWorkspace}, where the {@link HippoWorkspace#getWorkflowManager()} method
+ * returns the work-flow manager for the session.  The {@link javax.jcr.Workspace} itself is obtained though the {@link javax.jcr.Session#getWorkspace()}.
  *
- * From the workflow manager, you might directly obtain access to a workflow, or obtain a reference (a WorkflowDescriptor) to the
- * workflow, which is a cheaper operation.  This WorkflowDescriptor allows some quering to introspect the workflow available.
- * The workflow descriptor may be used to obtain the actual workflow again from the workflow manager.
- * The methods to obtain either the workflow directy or a descriptor allow you to access a workflow based on a Document object or on
+ * From the work-flow manager, you might directly obtain access to a work-flow, or obtain a reference (a WorkflowDescriptor) to the
+ * work-flow, which is a cheaper operation.  This WorkflowDescriptor allows some querying to introspect the work-flow available.
+ * The work-flow descriptor may be used to obtain the actual work-flow again from the work-flow manager.
+ * The methods to obtain either the work-flow directly or a descriptor allow you to access a work-flow based on a Document object or on
  * a {@link javax.jcr.Node}.  In the latter case, the indicated node should be of a hippo:document (or derived) node type or of a hippo:request
  * (or derived) node type.  There are some internal-only exceptions, such as the root node, but in all cases the node must be
  * referenceable and contain no pending changes in the current session.
@@ -100,7 +100,18 @@ public interface WorkflowManager {
      * @throws javax.jcr.RepositoryException
      */
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws MappingException, RepositoryException;
-    
+
+    /**
+     * Obtains an alternative workflow context, which has special behaviour depending on the specification parameter passed.
+     * Any workflow obtained though an alternative workflow manager (see {@link #getWorkflow}) will be subject to the alternate rules
+     * as indicated by the specification.  For example, the specification may indicate that any workflow step invocation must
+     * not be performed immediately, but on a specific date.
+     * @param specification implementation dependent specification, alternate workflow context implementations are passed
+     * this object in order to pass parameters.  The type of the object also determins which alternative implementation is used.
+     * @return a workflow context with alternate behaviour
+     * @throws org.hippoecm.repository.api.MappingException when no implementation is available for the specificaiton passed
+     * @throws javax.jcr.RepositoryException when a generic error happens
+     */
     public WorkflowManager getContextWorkflowManager(Object specification) throws MappingException, RepositoryException;
 }
 

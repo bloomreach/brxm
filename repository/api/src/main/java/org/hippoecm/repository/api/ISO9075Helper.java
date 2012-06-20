@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.api;
 
-
 /**
  * <h2>Helper class for encoding and decoding (the localname of) Qualified names</h2>
  * @deprecated use StringCodec instead

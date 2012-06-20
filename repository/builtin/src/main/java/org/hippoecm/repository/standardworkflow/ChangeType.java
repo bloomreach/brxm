@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,4 +15,20 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-public enum ChangeType { ADDITION, DROPPED, RENAMED };
+/**
+ * Enumerate class indicating the type of change during a document update.
+ */
+public enum ChangeType {
+    /**
+     * Notification a field (child node or property) was added to the document type.
+     */
+    ADDITION,
+    /**
+     * Notification a field (child node or property) was removed from the document type.
+     */
+    DROPPED,
+    /**
+     * Notification field (child node or property) changes JCR name in the document type.
+     */
+    RENAMED
+};

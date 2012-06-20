@@ -15,7 +15,8 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-/* A map from node type name to a list of changes to be performed on that node type
+/**
+ * A map from node type name to a list of changes to be performed on that node type
  */
 public class Change {
     @SuppressWarnings("unused")
@@ -49,6 +50,10 @@ public class Change {
      * Constructs a change object given the indicated change type on the item
      * indicated by the relPath.  The meaning of the last parameter is
      * dependent on the change type.
+     * @param type indicates a field was added, removed or renamed
+     * @param relPath the original JCR name used in the document type, or the new name in case of a field being added.
+     * @param parameter in case of a rename action the new JCR name, an absolute JCR path to the default value in case of an
+     *   addition of a field or null in case it is not relevant.
      */
     public Change(ChangeType type, String relPath, String parameter) {
         this.type = type;
@@ -66,7 +71,7 @@ public class Change {
     }
 
     /**
-     * @InheritDoc
+     * {@inheritDoc}
      */
     @Override
     public String toString() {

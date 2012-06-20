@@ -50,7 +50,7 @@ public class StringCodecFactory {
     }
 
     /**
-     * Requests which encoder to use for the diven symbolic name.
+     * Requests which encoder to use for the givn symbolic name.
      * @param encoding the symbolic name of the encoder that is requested
      * @return the stringcodec to use, which might be a fall-back encoder or null if non was defined.
      */
@@ -641,10 +641,16 @@ public class StringCodecFactory {
             return decodeLocalName(encoded);
         }
 
+        /**
+         * @see encode(String)
+         */
         public static String encodeLocalName(String name) {
             return encodeColon(encodeImpl(name));
         }
 
+        /**
+         * @see decode(String)
+         */
         public static String decodeLocalName(String name) {
             return decodeImpl(name);
         }

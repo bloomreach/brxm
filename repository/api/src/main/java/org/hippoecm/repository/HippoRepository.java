@@ -48,9 +48,7 @@ public interface HippoRepository {
      * Creates a new Session for the current user, which might involve opening an anonymous session.
      * If a user identity and credentials are available through the application container,
      * then use JAAS to obtain the credentials and use login(SimpleCredentials).
-     * @return 
-     * @throws javax.jcr.LoginException  indicates an authenticaion failure
-     * @throws javax.jcr.RepositoryException indicates some other failure while authenticating (such as connection error)
+     * @see Repository.login()
      */
     public Session login() throws LoginException, RepositoryException;
 
@@ -58,18 +56,13 @@ public interface HippoRepository {
      * Creates a new Session for the user identifier with the indicated username and password.
      * @param username the username to use as part of the credentials
      * @param password the password to use as part of the credentials
-     * @return a authenticated session based on the given credentials
-     * @throws javax.jcr.LoginException indicates an authenticaion failure
-     * @throws javax.jcr.RepositoryException indicates some other failure while authenticating (such as connection error)
+     * @see Repository.login(Credentials)
      */
     public Session login(String username, char[] password) throws LoginException, RepositoryException;
 
     /**
      * Creates a new Session for the user identifier with the indicated credentials.
-     * @param credentials
-     * @return a authenticated session based on the given credentials
-     * @throws javax.jcr.LoginException indicates an authenticaion failure
-     * @throws javax.jcr.RepositoryException indicates some other failure while authenticating (such as connection error)
+     * @see Repository.login(Credentials)
      */
     public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException;
 
@@ -99,7 +92,7 @@ public interface HippoRepository {
 
     /**
      * Get the location where the repository stores information.
-     * @return the url of direct file path which is used to store information by the repository.
+     * @return the URL of direct file path which is used to store information by the repository.
      */
     public String getLocation();
 
@@ -131,6 +124,7 @@ public interface HippoRepository {
     public ValueMap getValueMap(Node node) throws RepositoryException;
 
     /**
+     * @exclude
      * DO NOT USE THIS CALL IS NOT YET PART OF THE API AS IT IS CURRENTLY UNDER EVALUATION
      * returns true whenever the session has grown to such an extend that it is advisable to persist or flush changes.
      * @param session the session for which to compute the resource consumption

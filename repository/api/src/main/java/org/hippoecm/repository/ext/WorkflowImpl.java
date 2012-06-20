@@ -29,7 +29,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowContext;
 
 /**
- * 
+ * Implementors of a work-flow in the repository must extend from the WorkflowImpl base type.
  */
 public abstract class WorkflowImpl implements Remote, Workflow
 {
@@ -37,19 +37,22 @@ public abstract class WorkflowImpl implements Remote, Workflow
     private static final String SVN_ID = "$Id$";
 
     /**
-     * 
+     * Work-flow context in use, which ought to be not public accessible.  Use getWorkflowContext instead.
+     * @exclude
      */
     protected WorkflowContext context;
+
     /**
-     * 
-     * @throws java.rmi.RemoteException
+     * All implementations of a work-flow must provide a single, no-argument constructor.
+     * @throws RemoteException mandatory exception that must be thrown by all Remote objects
      */
     public WorkflowImpl() throws RemoteException {
     }
 
     /**
-     * This method should never be invoked by extensions or applications
-     * @param context 
+     * This method should never be invoked by extensions or applications.
+     * @param context the new context that should be used
+     * @exclude
      */
     final public void setWorkflowContext(WorkflowContext context) {
         this.context = context;
@@ -63,13 +66,21 @@ public abstract class WorkflowImpl implements Remote, Workflow
         return context;
     }
 
+    /**
+     * This is a shorthand for getWorkflowContext().getWorkflowContext(specification)
+     * @param specification implementation dependent specification, alternate work-flow context implementations are passed
+     * this object in order to pass parameters.  The type of the object also determines which alternative implementation is used.
+     * @return a work-flow context with alternate behavior
+     * @throws org.hippoecm.repository.api.MappingException when no implementation is available for the specification passed
+     * @throws javax.jcr.RepositoryException when a generic error happens
+     * @see WorkflowContext
+     */
     final protected WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException {
         return context.getWorkflowContext(specification);
     }
 
     /**
-     * 
-     * @return
+     * {@inheritDoc}
      */
     public Map<String,Serializable> hints() {
         return hints(this);

@@ -25,7 +25,10 @@ import javax.jcr.Workspace;
 import javax.jcr.nodetype.NodeType;
 
 /**
- * 
+ * This Context is passed to the implementors of an {@link UpdaterModule} during initialization.
+ * The UpdaterModule implementation must then use this context to populate the necessary information
+ * for registration.  See the description of the methods in the UpdateContext on which methods must
+ * and may be called.
  */
 public interface UpdaterContext {
     /**
@@ -79,7 +82,7 @@ public interface UpdaterContext {
     public void registerVisitor(ItemVisitor visitor);
 
     /**
-     * During an update, this is the save method to get the nodetypes for
+     * During an update, this is the save method to get the node-types for
      * a certain primary type, as a replacement for Node.getPrimaryNodeType()
      * and Node.getMixinNodeTypes()
      * @param session
@@ -90,7 +93,7 @@ public interface UpdaterContext {
     public NodeType getNewType(Session session, String type) throws RepositoryException;
 
     /**
-     * During an update, the setName call may be used to rename an item savely.
+     * During an update, the setName call may be used to rename an item safely.
      * @param item the item to be renamed
      * @param name the new name of the item
      * @throws javax.jcr.RepositoryException  in case of a generic error in the interaction with the repository
@@ -99,8 +102,8 @@ public interface UpdaterContext {
 
     /**
      * During an update, the setPrimaryNodeType call may be used to apply a
-     * different primary node type.  Both old and new nodetype definitions
-     * are valid until just before changes are commited.
+     * different primary node type.  Both old and new node-type definitions
+     * are valid until just before changes are committed.
      * @param node the node for which to change the primary node type
      * @param name the new primary node type name
      * @throws javax.jcr.RepositoryException  in case of a generic error in the interaction with the repository
@@ -118,18 +121,19 @@ public interface UpdaterContext {
     public NodeType[] getNodeTypes(Node node) throws RepositoryException;
 
     /**
-     * Conveniance call to retrieve whether the current set value of a property
+     * Convenience call to retrieve whether the current set value of a property
      * is a multi value.
      * @param property the property to inspect
      * @return true if the set value is a multi-value
+     * @throws RepositoryException  in case of a generic error in the interaction with the repository
      */
     public boolean isMultiple(Property property) throws RepositoryException;
 
     /**
      * Returns the workspace that may be used during the registration of the module, but should normally not be used during the
-     * evaluation by visitors.  The returned workspace is not accociated with a session and can only be used to query
-     * the namespace registry.
-     * @return a workspace that may only be used to access the namespace manager
+     * evaluation by visitors.  The returned workspace is not associated with a session and can only be used to query
+     * the name-space registry.
+     * @return a workspace that may only be used to access the name-space manager
      * @throws RepositoryException in case of a generic error in the interaction with the repository
      */
     public Workspace getWorkspace() throws RepositoryException;

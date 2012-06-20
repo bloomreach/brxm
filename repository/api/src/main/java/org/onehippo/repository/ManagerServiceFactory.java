@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2012 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.onehippo.repository;
 
 import java.lang.reflect.InvocationTargetException;
@@ -8,10 +23,25 @@ import org.hippoecm.repository.api.HippoSession;
 
 /**
  * DO NOT USE, THIS INTERFACE IS NOT YET PART OF THE PUBLIC API.
+ * Factory class to obtain a {@link ManagerService} based on a JCR session.  The factory
+ * will provide the right implementation for the ManagerService depending on whether the
+ * JCR session is a {@link HippoSession}, a plain Jackrabbit JCR session or a Jackrabbit
+ * RMI based JCR session.
  * @exclude
  */
 public class ManagerServiceFactory {
+    /**
+     * @exclude
+     */
     static WeakHashMap<Session, ManagerService> services = new WeakHashMap<Session, ManagerService>();
+
+    /**
+     * Creates or re-retrieves a managerService factory based on the JCR session passed as argument.
+     * Only one ManagerService will be instantiated per session.
+     * @param jcrSession the session for which to create a ManagerService
+     * @return a ManagerService factory for the JCR session
+     * @throws RepositoryException in case a suitable ManagerService factory could not be instantiated
+     */
     public static ManagerService getManagerService(Session jcrSession) throws RepositoryException {
         ManagerService service = services.get(jcrSession);
         if(service == null) {

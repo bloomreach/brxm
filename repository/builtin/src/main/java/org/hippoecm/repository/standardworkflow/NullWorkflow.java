@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,18 @@
  */
 package org.hippoecm.repository.standardworkflow;
 
-import java.rmi.RemoteException;
-
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowException;
 
+/**
+ * This work-flow interface can be used to indicate that there are never any active work-flow steps that can be
+ * performed on a document.  This is typically used when there is a work-flow based on a super type of a document
+ * type, but on a derived sub-type this work-flow should not be available.  In such a case the configuration can
+ * indicate to have a more specific work-flow to be applicable to the document type, but that it implements this
+ * interface only.
+ */
 public interface NullWorkflow extends Workflow {
+    /**
+     * @exclude
+     */
     static final String SVN_ID = "$Id$";
 }
