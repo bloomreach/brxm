@@ -234,9 +234,8 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
 
                         var styleElement = frmDocument.createElement("STYLE");
                         styleElement.setAttribute("type", "text/css");
-                        var textNode = frmDocument.createTextNode(cssContent);
+                        var textNode = frmDocument.createTextNode('/* '+src+' */\n'+cssContent);
                         styleElement.appendChild(textNode);
-                        styleElement.setAttribute("title", src);
                         head.appendChild(styleElement);
                     }
                 }
