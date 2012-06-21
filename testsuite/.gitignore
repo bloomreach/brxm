@@ -1,6 +1,9 @@
 /.classpath
 /.project
 /.settings
+api/.project
+api/.settings
+api/target
 cms/.classpath
 cms/.project
 cms/.settings
@@ -12,6 +15,12 @@ content/.settings
 content/hst-demosuite-content.iml
 content/target
 /derby.log
+linear-algebra/.project
+linear-algebra/.settings
+linear-algebra/target
+random-numbers/.project
+random-numbers/.settings
+random-numbers/target
 site/.classpath
 site/.project
 site/.settings
@@ -19,6 +28,9 @@ site/bin
 site/build.properties
 site/hst-demosuite-site.iml
 site/target
+solr/.project
+solr/.settings
+solr/target
 /storage
 /target
 /velocity.log
