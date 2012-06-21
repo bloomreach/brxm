@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.standards.picker;
 
+import java.util.Iterator;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
@@ -34,10 +39,6 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import java.util.Iterator;
 
 public abstract class NodePickerController implements IDetachable {
     private static final long serialVersionUID = 1L;
@@ -73,13 +74,14 @@ public abstract class NodePickerController implements IDetachable {
            lastModelVisited = getLastVisitedFromPreferences();
         }
         if(settings.hasBaseUUID()) {
-            javax.jcr.Session session = ((UserSession)Session.get()).getJcrSession();
+            String baseUUID = settings.getBaseUUID();
             try {
-                baseModel = new JcrNodeModel(session.getNodeByUUID(settings.getBaseUUID()));
+                Node baseNode = UserSession.get().getJcrSession().getNodeByIdentifier(baseUUID);
+                baseModel = new JcrNodeModel(baseNode);
             } catch (RepositoryException e) {
-                log.error("Could not create base model from UUID[" + settings.getBaseUUID() + "]", e);
+                log.error("Could not create base model from UUID[" + baseUUID + "]", e);
             }
-        }
+        }   
     }
 
     public Component create(final String id) {
@@ -119,7 +121,7 @@ public abstract class NodePickerController implements IDetachable {
                 }
 
                 public void onEvent(Iterator events) {
-                    setSelectedModel(folderModelReference.getModel());
+                    onFolderSelected(folderModelReference.getModel());
                 }
             }, IObserver.class.getName());
         }
@@ -129,6 +131,11 @@ public abstract class NodePickerController implements IDetachable {
         renderer = context.getService(clusterConfig.getString("wicket.id"), IRenderService.class);
         renderer.bind(null, id);
         return renderer.getComponent();
+    }
+
+    protected void onFolderSelected(final IModel<Node> model) {
+        selectionModelReference.setModel(model);
+        setSelectedModel(model);
     }
 
     /**
@@ -170,12 +177,9 @@ public abstract class NodePickerController implements IDetachable {
     }
 
     private void setSelectedModel(IModel<Node> model) {
-        if (isValidSelection(model)) {
-            selectedModel = model;
-            onSelect(true);
-        } else {
-            onSelect(false);
-        }
+        selectedModel = model;
+
+        onSelect(isValidSelection(model));
 
         if (settings.isLastVisitedEnabled() && model != null) {
             lastModelVisited = model;
@@ -334,7 +338,7 @@ public abstract class NodePickerController implements IDetachable {
 
     /**
      * Save the last visited location in the preferences store. By default, only nodes of type hippostd:folder are
-     * allowed, other nodetypes can be specified by configuring a multi-value String property named "last.visited.nodetypes.allowed If the last visited node
+     * allowed, other nodetypes can be specified by configuring a multi-value String property named "last.visited.nodetypes".
      *
      * By default, all nodes except hippo document are allowed 
      */

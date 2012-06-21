@@ -58,11 +58,13 @@ public abstract class AbstractBrowserDialog<T extends DocumentLink> extends Abst
 
             @Override
             protected void onSelect(boolean isValid) {
-                if(isValid) {
-                    IModel<Node> selectedModel = getSelectedModel();
+                IModel<Node> selectedModel = getSelectedModel();
+                if(isValid && selectedModel != null) {
                     getModelObject().setLinkTarget(selectedModel);
                     onModelSelected(selectedModel);
                     checkState();
+                } else {
+                    setOkEnabled(false);
                 }
             }
         };

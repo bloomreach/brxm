@@ -83,13 +83,7 @@ public abstract class AbstractXinhaDialog<T extends IPersisted> extends Abstract
 
         AjaxRequestTarget target = AjaxRequestTarget.get();
         if (target != null) {
-            String script;
-            if (cancelled) {
-                script = getCancelScript();
-            } else {
-                script = getCloseScript();
-            }
-            target.getHeaderResponse().renderOnDomReadyJavascript(script);
+            target.getHeaderResponse().renderOnDomReadyJavascript(cancelled ? getCancelScript() : getCloseScript());
         }
         onCloseDialog();
     }

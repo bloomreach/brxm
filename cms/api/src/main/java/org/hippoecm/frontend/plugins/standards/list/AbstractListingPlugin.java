@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.standards.list;
 
+import java.util.Iterator;
+
+import javax.jcr.Node;
+
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortState;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
@@ -33,9 +37,6 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListPagingDefiniti
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import java.util.Iterator;
 
 /**
  * Base class for displaying a list of nodes.   This class will take care of observing the
@@ -107,6 +108,11 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
                 }
 
             }, IObserver.class.getName());
+            
+            IModel<Node> documentmodel = documentReference.getModel();
+            if(documentmodel != null) {
+                updateSelection(documentmodel);
+            }
         }
     }
 

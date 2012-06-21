@@ -26,21 +26,21 @@ public class NodePickerControllerSettings implements IClusterable {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
+    //IPluginconfig keys
+    private static final String SELECTION_SERVICE_KEY   = "wicket.model";
+    private static final String FOLDER_SERVICE_KEY      = "model.folder";
+
+    public static final String BASE_UUID                = "base.uuid";
+    public static final String SELECTABLE_NODETYPES     = "nodetypes";
+
+    public static final String LAST_VISITED_KEY         = "last.visited.key";
+    public static final String LAST_VISITED_ENABLED     = "last.visited.enabled";
+    public static final String LAST_VISITED_NODETYPES   = "last.visited.nodetypes";
+
     //Default values
     private static final String DEFAULT_CLUSTER = "cms-pickers/documents";
     private static final String DEFAULT_LAST_VISITED_KEY = "node-picker-controller";
     private static final boolean DEFAULT_LAST_VISITED_ENABLED = true;
-
-    //IPluginconfig keys
-    private static final String SELECTION_SERVICE_KEY = "wicket.model";
-    private static final String FOLDER_SERVICE_KEY = "model.folder";
-
-    public static final String BASE_UUID = "base.uuid";
-    public static final String SELECTABLE_NODETYPES = "nodetypes";
-
-    public static final String LAST_VISITED_KEY = "last.visited.key";
-    public static final String LAST_VISITED_ENABLED = "last.visited.enabled";
-    public static final String LAST_VISITED_NODETYPES = "last.visited.nodetypes";
 
     private String clusterName;
     private IPluginConfig clusterOptions;
