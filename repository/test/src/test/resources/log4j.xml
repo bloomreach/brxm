@@ -23,14 +23,9 @@
 
   <!-- console -->
   <appender name="console" class="org.apache.log4j.ConsoleAppender">
+    <param name="threshold" value="ERROR"/>
     <layout class="org.apache.log4j.PatternLayout">
       <param name="ConversionPattern" value="%d{dd.MM.yyyy HH:mm:ss} %-5p [%C.%M():%L] %m%n"/>
-    </layout>
-  </appender>
-
-  <appender name="debugging" class="org.apache.log4j.ConsoleAppender">
-    <param name="Target" value="System.err"/>
-    <layout class="org.apache.log4j.SimpleLayout">
     </layout>
   </appender>
 
