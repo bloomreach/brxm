@@ -183,4 +183,6 @@ public interface HippoStdNodeType {
      * should not be available for web-sites.
      */
     String DRAFT = "draft";
+    
+    String NEW = "new";
 }
