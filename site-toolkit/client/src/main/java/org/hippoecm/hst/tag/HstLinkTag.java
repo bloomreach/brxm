@@ -310,6 +310,7 @@ public class HstLinkTag extends ParamContainerTag {
                 urlString += queryString;
             }
         } catch (UnsupportedEncodingException e) {
+            cleanup();
             throw new JspException("UnsupportedEncodingException on the base url", e);
         }
         
