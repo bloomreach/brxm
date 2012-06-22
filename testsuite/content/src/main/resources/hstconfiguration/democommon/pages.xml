@@ -95,31 +95,61 @@
             </sv:property>
         </sv:node>
     </sv:node>
-	<sv:node sv:name="detailpage">
-		<sv:property sv:name="jcr:primaryType" sv:type="Name">
-			<sv:value>hst:component</sv:value>
-		</sv:property>
-        <sv:property sv:name="hst:referencecomponent" sv:type="String">
-            <sv:value>hst:pages/standard</sv:value>
+  <sv:node sv:name="detailpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/standard</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:page_errorhandlerclassname" sv:type="String">
+      <sv:value>org.hippoecm.hst.demo.util.SimplePageErrorHandler</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parameternames" sv:type="String">
+      <sv:value>org.hippoecm.hst.demo.util.SimplePageErrorHandler.errorPage</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:parametervalues" sv:type="String">
+      <sv:value>/error</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/bodydetailpage</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+
+  <sv:node sv:name="detailimagevariantpage">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/detailpage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/general_threecolumnlayout</sv:value>
+      </sv:property>
+      <sv:node sv:name="content">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:component</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:page_errorhandlerclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.util.SimplePageErrorHandler</sv:value>
+        <sv:property sv:name="hst:componentclassname" sv:type="String">
+          <sv:value>org.hippoecm.hst.demo.components.Detail</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:parameternames" sv:type="String">
-            <sv:value>org.hippoecm.hst.demo.util.SimplePageErrorHandler.errorPage</sv:value>
+        <sv:property sv:name="hst:template" sv:type="String">
+          <sv:value>detailimagevariantpage</sv:value>
         </sv:property>
-        <sv:property sv:name="hst:parametervalues" sv:type="String">
-            <sv:value>/error</sv:value>
-        </sv:property>
-		<sv:node sv:name="body">
-			<sv:property sv:name="jcr:primaryType" sv:type="Name">
-				<sv:value>hst:component</sv:value>
-			</sv:property>
-			<sv:property sv:name="hst:referencecomponent" sv:type="String">
-				<sv:value>hst:components/bodydetailpage</sv:value>
-			</sv:property>
-		</sv:node>
-	</sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+
   <sv:node sv:name="searchpage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>
