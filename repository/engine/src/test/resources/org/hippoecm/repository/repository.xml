@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007 Hippo
+  Copyright 2007-2012 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -14,105 +14,31 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<!DOCTYPE Repository PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 1.5//EN"
-    "http://jackrabbit.apache.org/dtd/repository-1.5.dtd">
+<!DOCTYPE Repository
+          PUBLIC "-//The Apache Software Foundation//DTD Jackrabbit 2.0//EN"
+          "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
 <Repository>
-  <!--
-  virtual file system where the repository stores global state
-  (e.g. registered namespaces, custom node types, etc.)
-  -->
-  <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
-    <param name="path" value="${rep.home}/repository"/>
-  </FileSystem>
 
-  <!--
-      security configuration
-  -->
+  <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem"/>
+
   <Security appName="Jackrabbit">
     <SecurityManager class="org.hippoecm.repository.security.SecurityManager"/>
     <AccessManager class="org.hippoecm.repository.security.HippoAccessManager"/>
     <LoginModule class="org.hippoecm.repository.security.HippoLoginModule"/>
   </Security>
 
-
-  <!--
-  location of workspaces root directory and name of default workspace
-  -->
   <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/>
 
-  <!--
-  workspace configuration template:
-  used to create the initial workspace if there's no workspace yet
-  -->
   <Workspace name="${wsp.name}">
 
-    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
-      <param name="path" value="${wsp.home}"/>
-    </FileSystem>
+    <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem"/>
 
-    <PersistenceManager class="org.hippoecm.repository.jackrabbit.persistence.ForkedDerbyPersistenceManager">
-      <param name="url" value="jdbc:derby:${wsp.home}/db;create=true"/>
-      <param name="schemaObjectPrefix" value="${wsp.name}_"/>
-      <param name="minBlobSize" value="4194304"/>
+    <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemBundlePersistenceManager">
+      <param name="persistent" value="false"/>
     </PersistenceManager>
 
     <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineThirdImpl">
-      <!--
-        Search index and the file system it uses.
-        class: FQN of class implementing the QueryHandler interface
-
-        If required by the QueryHandler implementation, one may configure
-        a FileSystem that the handler may use.
-
-        Supported parameters for lucene search index:
-        - path: location of the index. This parameter is mandatory!
-        - useCompoundFile: advises lucene to use compound files for the index files
-        - minMergeDocs: minimum number of nodes in an index until segments are merged
-        - volatileIdleTime: idle time in seconds until the volatile index is
-        moved to persistent index even though minMergeDocs is not reached.
-        - maxMergeDocs: maximum number of nodes in segments that will be merged
-        - mergeFactor: determines how often segment indices are merged
-        - maxFieldLength: the number of words that are fulltext indexed at most per property.
-        - bufferSize: maximum number of documents that are held in a pending
-        queue until added to the index
-        - cacheSize: size of the document number cache. This cache maps
-        uuids to lucene document numbers
-        - forceConsistencyCheck: runs a consistency check on every startup. If
-        false, a consistency check is only performed when the search index
-        detects a prior forced shutdown. This parameter only has an effect
-        if 'enableConsistencyCheck' is set to 'true'.
-        - enableConsistencyCheck: if set to 'true' a consistency check is
-        performed depending on the parameter 'forceConsistencyCheck'. If
-        set to 'false' no consistency check is performed on startup, even
-        if a redo log had been applied.
-        - autoRepair: errors detected by a consistency check are automatically
-        repaired. If false, errors are only written to the log.
-        - analyzer: class name of a lucene analyzer to use for fulltext indexing of text.
-        - queryClass: class name that implements the javax.jcr.query.Query interface.
-        this class must extend the class: org.apache.jackrabbit.core.query.AbstractQueryImpl
-        - respectDocumentOrder: If true and the query does not contain an 'order by' clause,
-        result nodes will be in document order. For better performance when queries return
-        a lot of nodes set to 'false'.
-        - resultFetchSize: The number of results the query handler should
-        initially fetch when a query is executed.
-        Default value: Integer.MAX_VALUE (-> all)
-        - extractorPoolSize: defines the maximum number of background threads that are
-        used to extract text from binary properties. If set to zero (default) no
-        background threads are allocated and text extractors run in the current thread.
-        - extractorTimeout: a text extractor is executed using a background thread if it
-        doesn't finish within this timeout defined in milliseconds. This parameter has
-        no effect if extractorPoolSize is zero.
-        - extractorBackLogSize: the size of the extractor pool back log. If all threads in
-        the pool are busy, incomming work is put into a wait queue. If the wait queue
-        reaches the back log size incomming extractor work will not be queued anymore
-        but will be executed with the current thread.
-        - synonymProviderClass: the name of a class that implements
-        org.apache.jackrabbit.core.query.lucene.SynonymProvider. The
-        default value is null (-> not set).
-
-        Note: all parameters (except path) in this SearchIndex config are default
-        values and can be omitted.
-      -->
+      <param name="directoryManagerClass" value="org.apache.jackrabbit.core.query.lucene.directory.RAMDirectoryManager"/>
       <param name="indexingConfiguration" value="indexing_configuration.xml"/>
       <param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/>
       <param name="path" value="${wsp.home}/index"/>
@@ -143,19 +69,15 @@
     </SearchIndex>
 
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
-
   </Workspace>
 
   <Versioning rootPath="${rep.home}/version">
-    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
-      <param name="path" value="${rep.home}/version"/>
-    </FileSystem>
+    <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem"/>
 
-    <PersistenceManager class="org.hippoecm.repository.jackrabbit.persistence.ForkedDerbyPersistenceManager">
-      <param name="url" value="jdbc:derby:${rep.home}/version/db;create=true"/>
-      <param name="schemaObjectPrefix" value="version_"/>
-      <param name="minBlobSize" value="4194304"/>
+    <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemBundlePersistenceManager">
+      <param name="persistent" value="false"/>
     </PersistenceManager>
+
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>
   </Versioning>
 
