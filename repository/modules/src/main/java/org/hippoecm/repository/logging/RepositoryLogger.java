@@ -24,6 +24,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.ext.DaemonModule;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.slf4j.Logger;
@@ -72,6 +73,8 @@ public class RepositoryLogger implements DaemonModule {
             logFolder = rootLogFolder.addNode(clusterId, "hippolog:folder");
             session.save();
         }
+
+        HippoServiceRegistry.getService(HippoEventBus.class).register(this);
     }
 
     @Subscribe
