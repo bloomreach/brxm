@@ -47,7 +47,7 @@ public interface HippoQueryResult extends Serializable {
     /**
      * <p>
      *  binds the IdentifiableContentBean's in the {@link Hit}s to their {@link org.hippoecm.hst.solr.content.beans.ContentBeanBinder
-     *  if there is a binder for the hit. The default availabe {@link org.hippoecm.hst.solr.HippoSolrManager#getContentBeanBinders()}
+     *  if there is a binder for the hit. The default available {@link org.hippoecm.hst.solr.HippoSolrManager#getContentBeanBinders()}
      *  are used as binders.
      * </p>
      * <p>
