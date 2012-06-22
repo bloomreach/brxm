@@ -57,6 +57,13 @@ public class RepositoryLogger implements DaemonModule {
     public void initialize(final Session session) throws RepositoryException {
         this.session = session;
 
+        final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+        if (eventBus == null) {
+            // event bus is not available: nothing to do here
+            return;
+        }
+        eventBus.register(this);
+
         Node rootLogFolder;
         if (session.nodeExists("/hippo:log")) {
             rootLogFolder = session.getNode("/hippo:log");
@@ -74,7 +81,6 @@ public class RepositoryLogger implements DaemonModule {
             session.save();
         }
 
-        HippoServiceRegistry.getService(HippoEventBus.class).register(this);
     }
 
     @Subscribe
