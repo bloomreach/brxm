@@ -467,7 +467,10 @@
   </tag>
 
   <tag>
-    <description/>
+    <description>This tag can be used to render a 'HippoHtml' bean as html : It will translate internal document links and images in the
+      HippoHtml (hippostd:content) to correct URLs. If you want to use different image variants than the ones stored in the hippostd:content,
+      you can add a 'imagevariant' child tag to this tag. See 'imagevariant' tag.
+    </description>
     <name>html</name>
     <tag-class>org.hippoecm.hst.tag.HstHtmlTag</tag-class>
     <tei-class>org.hippoecm.hst.tag.HstHtmlTag$TEI</tei-class>
@@ -510,7 +513,49 @@
   </tag>
 
   <tag>
-    <description>This tag can be used only inside a element tag to set an attribute for the DOM element created by the
+    <description>This tag can be used only inside a 'html' tag to indicate that you do not want to use the image variant
+      stored in the HippoHtml (hippostd:content), but that you want to use a different variant. For example, suppose you have imageset variants
+      myproject:websitevariant and myproject:mobilesitevariant. In the HippoHtml, there might have been selected the 'myproject:websitevariant'
+      image variant, but in your mobile channel, you want to use the 'myproject:mobilesitevariant'. You can do this by injecting this 'imagevariant'
+      tag inside the 'html' tag. Also see the example below.
+    </description>
+    <name>imagevariant</name>
+    <tag-class>org.hippoecm.hst.tag.HstImageVariantTag</tag-class>
+    <body-content>JSP</body-content>
+    <attribute>
+      <description>The name of the variant to use, for example 'myhippoproject:thumbnail'</description>
+      <name>name</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Only replaces the variant names that equal the name of the value of this attribute. If this attribute is missing, then
+      *all* variants are replaced by the value from variant attr. Thus, this attribute is used to specifically specify which variants
+      should be replaced</description>
+      <name>replace</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <description>Default value when not speficified is *false*. When this attribute is 'true', and the image variant from the 'variant' attribute
+        does not exist, the fallback will use the original variant
+      </description>
+      <name>fallback</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
+    <example><![CDATA[
+      <hst:html hippobean="${document.intro}">
+         <hst:imagevariant name="myproject:mobileversion"  replace="myproject:websiteversion" fallback="true"/>
+      </hst:html>
+      ]]></example>
+  </tag>
+
+  <tag>
+    <description>This tag can be used only inside a 'element' tag to set an attribute for the DOM element created by the
       containing element tag. The attribute value can be set by the value attribute, but it can be set by the text
       content of this tag also. If the value attribute of this tag is not set, this tag will look for the body text
       content to set the value of this attribute. If the value attribute is not set at all, then it will remove the

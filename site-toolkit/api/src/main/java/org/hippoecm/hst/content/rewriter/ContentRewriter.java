@@ -66,4 +66,16 @@ public interface ContentRewriter<T> {
      * @return <code>true</code> when fully qualified links (URLs) should be created
      */
     boolean isFullyQualifiedLinks();
+
+    /**
+     * Sets whether this {@link ContentRewriter} should use an imageVariant. 
+     * @param imageVariant
+     */
+    void setImageVariant(ImageVariant imageVariant);
+
+    /**
+     * @return an ImageVariant when there was set one through {@link #setImageVariant(ImageVariant)} or <code>null</code> when
+     * no image variant was set
+     */
+    ImageVariant getImageVariant();
 }

@@ -25,6 +25,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.content.rewriter.ImageVariant;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.utils.SimpleHtmlExtractor;
@@ -51,6 +52,8 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     protected static final Pattern HTML_TAG_PATTERN = Pattern.compile("<html[\\s\\/>]", Pattern.CASE_INSENSITIVE);
     protected static final Pattern BODY_TAG_PATTERN = Pattern.compile("<body[\\s\\/>]", Pattern.CASE_INSENSITIVE);
 
+    private boolean rewritingBinaryLink = false;
+    
     public SimpleContentRewriter() {
         
     }
@@ -208,7 +211,16 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
     
     
     protected HstLink getBinaryLink(String path, Node node, HstRequestContext requestContext, Mount targetMount) {
-        return getLink(path, node, requestContext, targetMount);
+        // Instead of adding an extr boolean argument to the getLink(...) method to indicate whether a binaryLink
+        // is rewritten or not, we use a 'rewritingBinaryLink' flag to indicate this. This is for historical 
+        // backwards compatible reasons, as developers might have overridden 
+        // protected HstLink getLink(String path, Node node, HstRequestContext reqContext, Mount targetMount) {
+        // already, and by calling a new method with extra boolean we might break their implementation. Hence
+        // we use the rewritingBinaryLink flag (which might seem strange if you do not know the historical reasons)
+        rewritingBinaryLink = true;
+        HstLink link =  getLink(path, node, requestContext, targetMount);
+        rewritingBinaryLink = false;
+        return link;
     }
     
     protected HstLink getLink(String path, Node node, HstRequestContext reqContext, Mount targetMount) {
@@ -238,7 +250,45 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                  * The hierarchy resolver knows how to solve: [some-encoding-wildcard]
                  * 
                  */
-                Node mirrorNode = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, path);
+                String variantPath = null;
+                boolean fallback = false;
+                if (rewritingBinaryLink && getImageVariant() != null) {
+                    String[] segments = path.split("/");
+                    if (segments.length == 3) {
+                        ImageVariant imageVariant = getImageVariant();
+                        fallback = imageVariant.isFallback();
+                        if (imageVariant.getReplace().isEmpty()) {
+                            // replace segments[2] regardless the variant
+                            variantPath = segments[0] + "/" + segments[1] + "/" + imageVariant.getName();
+                        } else {
+                            // only replace segments[2] if it is included in imageVariant.getReplace()
+                            if (imageVariant.getReplace().contains(segments[2])) {
+                                variantPath = segments[0] + "/" + segments[1] + "/" + imageVariant.getName();
+                            }
+                        }
+                    } else {
+                        log.debug("Only know how to get a different variant for links that have 3 segments in its path. Skip variant for path '{}'", path);
+                    }
+                }
+                
+                Node mirrorNode = null;
+                String triedPath = path;
+                if (variantPath != null) {
+                    mirrorNode = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, variantPath);
+                    triedPath = variantPath;
+                    if (mirrorNode == null) {
+                        if (fallback) {
+                            log.debug("Could not find the image variant '{}', try the original path '{}'", variantPath, path);
+                            triedPath = path;
+                            mirrorNode = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, path);
+                        } else {
+                            // warning about this will be logged later because mirrorNode == null
+                            log.debug("Could not find the image variant '{}' and fallback is false", variantPath);
+                        }
+                    } 
+                } else {
+                    mirrorNode = ((HippoWorkspace) node.getSession().getWorkspace()).getHierarchyResolver().getNode(node, path);
+                }
                 if (mirrorNode != null) {
                     if (targetMount == null) {
                         return reqContext.getHstLinkCreator().create(mirrorNode, reqContext);
@@ -246,7 +296,7 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                         return reqContext.getHstLinkCreator().create(mirrorNode, targetMount);
                     }
                 } else {
-                    log.warn("Cannot find node '{}' for internal link for document '{}'. Cannot create link", path, node.getPath());
+                    log.warn("Cannot find node '{}' for internal link for document '{}'. Cannot create link", triedPath, node.getPath());
                 }
             } catch (InvalidItemStateException e) {
                 log.warn("Unable to rewrite '{}' to proper url : '{}'. Return null", path, e.getMessage());

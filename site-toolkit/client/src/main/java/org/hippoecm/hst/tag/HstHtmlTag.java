@@ -16,6 +16,8 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,8 +29,10 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
+import org.hippoecm.hst.content.rewriter.ImageVariant;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -50,8 +54,6 @@ public class HstHtmlTag extends TagSupport {
     protected String scope;
 
     protected Boolean escapeXml = true;
-    
-    protected boolean skipTag;
         
     protected ContentRewriter<String> contentRewriter;
 
@@ -60,6 +62,12 @@ public class HstHtmlTag extends TagSupport {
      * Default false
      */
     protected boolean fullyQualifiedLinks;
+
+    /**
+     * Holds the {@link ImageVariant} when there is configured an {@link ImageVariant} and is <code>null</code>
+     * when no image variant has been specified
+     */
+    protected ImageVariant imageVariant;
     
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -80,10 +88,7 @@ public class HstHtmlTag extends TagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-        if(skipTag) {
-           return EVAL_PAGE;
-        }
-        
+
         HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
         HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
         HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
@@ -91,6 +96,7 @@ public class HstHtmlTag extends TagSupport {
         
         if(hstRequest == null || hstResponse == null) {
             log.error("Cannot continue HstHtmlTag because response/request not an instance of hst response/request");
+            cleanup();
             return EVAL_PAGE;
         }
         
@@ -102,6 +108,7 @@ public class HstHtmlTag extends TagSupport {
         
         if(hippoHtml == null || hippoHtml.getContent() == null ) {
             log.warn("Node or content is null. Return");
+            cleanup();
             return EVAL_PAGE;
         }
             
@@ -112,6 +119,7 @@ public class HstHtmlTag extends TagSupport {
                 contentRewriter = new SimpleContentRewriter();
             }
             contentRewriter.setFullyQualifiedLinks(fullyQualifiedLinks);
+            contentRewriter.setImageVariant(imageVariant);
             html = contentRewriter.rewrite(html, hippoHtml.getNode(), hstRequest.getRequestContext());
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
@@ -125,6 +133,7 @@ public class HstHtmlTag extends TagSupport {
                 JspWriter writer = pageContext.getOut();
                 writer.print(html);
             } catch (IOException ioe) {
+                cleanup();
                 throw new JspException(
                     " Exception: cannot write to the output writer.");
             }
@@ -144,15 +153,8 @@ public class HstHtmlTag extends TagSupport {
             
             pageContext.setAttribute(var, html, varScope);
         }
-        
-        /*cleanup*/
-        var = null;
-        scope = null;
-        skipTag = false;
-        fullyQualifiedLinks = Boolean.FALSE;
-        hippoHtml = null;
-        contentRewriter = null;
-        
+
+        cleanup();
         return EVAL_PAGE;
     }
     
@@ -164,17 +166,20 @@ public class HstHtmlTag extends TagSupport {
     @Override
     public void release(){
         super.release();
-        
-        /*cleanup*/
+        cleanup();
+
+    }
+
+    private void cleanup() {
         var = null;
         scope = null;
-        skipTag = false;
         fullyQualifiedLinks = Boolean.FALSE;
         hippoHtml = null;
         contentRewriter = null;
+        imageVariant = null;
     }
-    
-    
+
+
     /**
      * Returns the var property.
      * @return String
@@ -223,7 +228,20 @@ public class HstHtmlTag extends TagSupport {
     public void setContentRewriter(ContentRewriter<String> contentRewriter) {
         this.contentRewriter = contentRewriter;
     }
-    
+
+    public void setImageVariant(final String name, final String replace, final boolean fallback) {
+        if (StringUtils.isBlank(name)) {
+            log.warn("For imageVariant tag the name attribute is not allowed to be null or empty. Skip image variant");
+            return;
+        }
+        List<String> replaceVariants = null;
+        if (StringUtils.isNotBlank(replace)) {
+            replaceVariants = new ArrayList<String>();
+            replaceVariants.add(replace);
+        }
+        this.imageVariant = new ImageVariant(name, replaceVariants, fallback);
+    }
+
     /* -------------------------------------------------------------------*/
         
     /**
@@ -245,6 +263,6 @@ public class HstHtmlTag extends TagSupport {
 
     }
     
-    
+
     
 }

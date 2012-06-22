@@ -19,6 +19,7 @@ import javax.jcr.Node;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
+import org.hippoecm.hst.content.rewriter.ImageVariant;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -33,6 +34,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
     
     private boolean fullyQualifiedLinks;
+    private ImageVariant imageVariant;
     
     public AbstractContentRewriter() {
         
@@ -62,5 +64,14 @@ public abstract class AbstractContentRewriter<T> implements ContentRewriter<T> {
     public void setFullyQualifiedLinks(boolean fullyQualifiedLinks) {
        this.fullyQualifiedLinks = fullyQualifiedLinks;
     }
-    
+
+    @Override
+    public void setImageVariant(final ImageVariant imageVariant) {
+        this.imageVariant = imageVariant;
+    }
+
+    @Override
+    public ImageVariant getImageVariant() {
+        return imageVariant;
+    }
 }
