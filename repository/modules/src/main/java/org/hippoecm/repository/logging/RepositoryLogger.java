@@ -30,8 +30,6 @@ import org.onehippo.cms7.services.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.json.JSONObject;
-
 /**
  * {@link HippoEventBus} listener that logs events in a random hierarchy of folders.
  * Each cluster has its own dedicated folder to avoid collisions (would be very rare) and to allow listeners
@@ -75,11 +73,9 @@ public class RepositoryLogger implements DaemonModule {
         }
 
         final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-        if (eventBus == null) {
-            // event bus is not available: nothing to do here
-            return;
+        if (eventBus != null) {
+            eventBus.register(this);
         }
-        eventBus.register(this);
 
     }
 
@@ -145,7 +141,6 @@ public class RepositoryLogger implements DaemonModule {
             return logFolder.addNode(itemRelPath, "hippolog:folder");
         }
         return logFolder.getNode(itemRelPath);
-
     }
 
 
@@ -176,5 +171,9 @@ public class RepositoryLogger implements DaemonModule {
 
     @Override
     public void shutdown() {
+        final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+        if (eventBus != null) {
+            eventBus.unregister(this);
+        }
     }
 }
