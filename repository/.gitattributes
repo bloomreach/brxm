@@ -150,6 +150,7 @@ engine/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLogge
 engine/src/main/java/org/hippoecm/repository/updater/UpdaterPath.java svneol=native#text/plain
 engine/src/main/resources/hippo.cnd -text
 engine/src/main/resources/hippofacnav.cnd -text
+engine/src/main/resources/hipposched.cnd -text
 engine/src/main/resources/hipposys.cnd -text
 engine/src/main/resources/hipposysedit.cnd -text
 engine/src/main/resources/jdo.properties svneol=native#text/plain
