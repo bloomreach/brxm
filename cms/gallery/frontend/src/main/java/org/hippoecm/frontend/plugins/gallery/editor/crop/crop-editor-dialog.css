@@ -34,8 +34,9 @@
   padding: 5px;
   padding-left:12px;
   margin: 5px 0;
-  min-height: 454px;
-  _height: 454px;
+  min-height: 454px;  
+  height: 454px;
+  overflow:auto;  
 }
 
 .right-crop-area .preview-container {

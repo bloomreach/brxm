@@ -25,6 +25,10 @@ public class ImageCropSettings extends WidgetSettings {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
+    private static final String FIXED_BOTH = "both";
+    private static final String FIXED_WIDTH = "width";
+    private static final String FIXED_HEIGHT = "height";
+
     private String regionInputId;
     private String imagePreviewContainerId;
     
@@ -42,8 +46,11 @@ public class ImageCropSettings extends WidgetSettings {
     private boolean previewVisible;
     private boolean status;
 
+    private String fixedDimension = FIXED_BOTH;
+    private String thumbnailSizeLabelId = "";
+
     public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
-                             Dimension thumbnailDimension, boolean upscalingEnabled) {
+                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled) {
         this.regionInputId = regionInputId;
         this.imagePreviewContainerId = imagePreviewContainerId;
         
@@ -54,14 +61,31 @@ public class ImageCropSettings extends WidgetSettings {
         
         this.upscalingEnabled = upscalingEnabled;
         previewVisible = thumbnailWidth <= 200;
+
+        if(configuredDimension.getHeight() == 0) {
+            fixedDimension = FIXED_WIDTH;
+        } else if (configuredDimension.getWidth() == 0) {
+            fixedDimension = FIXED_HEIGHT;
+        }
     }
 
     public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
-                             Dimension thumbnailDimension, Dimension minimumDimension, boolean upscalingEnabled) {
-        this(regionInputId, imagePreviewContainerId, originalImageDimension, thumbnailDimension, upscalingEnabled);
+                             Dimension configuredDimension, Dimension thumbnailDimension, Dimension minimumDimension, 
+                             boolean upscalingEnabled) {
+        this(regionInputId, imagePreviewContainerId, originalImageDimension, 
+                configuredDimension, thumbnailDimension, upscalingEnabled);
         
         minimumWidth = (int) minimumDimension.getWidth();
         minimumHeight = (int) minimumDimension.getHeight();
+    }
+    
+    public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
+                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled, 
+                             String thumbnailSizeLabelId) {
+    	this(regionInputId, imagePreviewContainerId, originalImageDimension, configuredDimension, thumbnailDimension, 
+                upscalingEnabled);
+    	
+        this.thumbnailSizeLabelId = thumbnailSizeLabelId;
     }
 
     public String getRegionInputId() {
@@ -166,5 +190,21 @@ public class ImageCropSettings extends WidgetSettings {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getFixedDimension() {
+    	return fixedDimension;
+    }
+
+    public void setFixedDimension(String fixedDimension) {
+    	this.fixedDimension = fixedDimension;
+    }
+
+    public String getThumbnailSizeLabelId() {
+    	return thumbnailSizeLabelId;
+    }
+
+    public void setThumbnailSizeLabelId(String thumbnailSizeLabelId){
+    	this.thumbnailSizeLabelId = thumbnailSizeLabelId;
     }
 }

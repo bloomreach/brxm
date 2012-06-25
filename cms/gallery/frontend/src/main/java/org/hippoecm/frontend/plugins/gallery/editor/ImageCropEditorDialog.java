@@ -29,7 +29,6 @@ import javax.imageio.stream.MemoryCacheImageInputStream;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -68,6 +67,7 @@ public class ImageCropEditorDialog extends AbstractDialog {
     private String region;
     private GalleryProcessor galleryProcessor;
     private Dimension originalImageDimension;
+    private Dimension configuredDimension;
     private Dimension thumbnailDimension;
 
     private ImageCropEditorDialog() {
@@ -77,35 +77,13 @@ public class ImageCropEditorDialog extends AbstractDialog {
         super(jcrImageNodeModel);
 
         this.galleryProcessor = galleryProcessor;
-        Node thumbnailImageNode = (Node) jcrImageNodeModel.getObject();
+        Node thumbnailImageNode = jcrImageNodeModel.getObject();
 
         HiddenField regionField = new HiddenField("region", new PropertyModel(this, "region"));
         regionField.setOutputMarkupId(true);
         add(regionField);
 
-        Image imgPreview;
-        Image originalImage;
-
-        WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
-        imagePreviewContainer.setOutputMarkupId(true);
-
-        boolean isPreviewVisible = false;
-        String thumbnailDimensionsLabel = StringUtils.EMPTY;
-
-        try {
-            thumbnailDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
-            isPreviewVisible = thumbnailDimension.getWidth() <= 200;
-            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:" + thumbnailDimension.getHeight() + "px"), ";"));
-            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:" + thumbnailDimension.getWidth() + "px"), ";"));
-            thumbnailDimensionsLabel = String.valueOf((int) thumbnailDimension.getWidth()) + " x " + ((int) thumbnailDimension.getHeight());
-        } catch (RepositoryException e) {
-            log.error("Cannot retrieve thumbnail dimensions", e);
-            error(e);
-        } catch (GalleryException e) {
-            log.error("Cannot retrieve thumbnail dimensions", e);
-            error(e);
-        }
-
+        Image originalImage, imgPreview;
         try {
             Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
             originalImageDimension = new Dimension(
@@ -124,6 +102,23 @@ public class ImageCropEditorDialog extends AbstractDialog {
             imgPreview = new Image("imagepreview");
         }
 
+        WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
+        imagePreviewContainer.setOutputMarkupId(true);
+        try {
+        	configuredDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
+            thumbnailDimension = handleZeroValueInDimension(originalImageDimension, configuredDimension);
+
+            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("height:" + thumbnailDimension.getHeight() + "px"), ";"));
+            imagePreviewContainer.add(new AttributeAppender("style", new Model<String>("width:" + thumbnailDimension.getWidth() + "px"), ";"));
+
+        } catch (RepositoryException e) {
+            log.error("Cannot retrieve thumbnail dimensions", e);
+            error(e);
+        } catch (GalleryException e) {
+            log.error("Cannot retrieve thumbnail dimensions", e);
+            error(e);
+        }
+
         boolean isUpscalingEnabled = true;
         try {
             isUpscalingEnabled = galleryProcessor.isUpscalingEnabled(thumbnailImageNode);
@@ -134,28 +129,31 @@ public class ImageCropEditorDialog extends AbstractDialog {
             log.error("Cannot retrieve Upscaling configuration option", e);
             error(e);
         }
-
+        
+        Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null));
+        thumbnailSize.setOutputMarkupId(true);
+        add(thumbnailSize);
+               
         ImageCropSettings cropSettings = new ImageCropSettings(regionField.getMarkupId(),
                 imagePreviewContainer.getMarkupId(),
                 originalImageDimension,
+                configuredDimension,
                 thumbnailDimension,
-                isUpscalingEnabled);
+                isUpscalingEnabled,
+                thumbnailSize.getMarkupId(true));
         originalImage.add(new ImageCropBehavior(cropSettings));
         originalImage.setOutputMarkupId(true);
 
         add(originalImage);
         imgPreview.add(new AttributeAppender("style", new Model<String>("position:absolute"), ";"));
         imagePreviewContainer.add(imgPreview);
-        imagePreviewContainer.setVisible(isPreviewVisible);
+        imagePreviewContainer.setVisible(cropSettings.isPreviewVisible());
         add(imagePreviewContainer);
 
-        Label previewDescription = new Label("preview-description", isPreviewVisible ?
+        add(new Label("preview-description", cropSettings.isPreviewVisible() ?
                 new StringResourceModel("preview-description-enabled", this, null) :
-                new StringResourceModel("preview-description-disabled", this, null));
-        add(previewDescription);
-
-        Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this, null, new Object[]{thumbnailDimensionsLabel}));
-        add(thumbnailSize);
+                new StringResourceModel("preview-description-disabled", this, null))
+        );
     }
 
     @Override
@@ -190,7 +188,8 @@ public class ImageCropEditorDialog extends AbstractDialog {
             MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(originalImageNode.getProperty(JcrConstants.JCR_DATA).getStream());
             reader.setInput(imageInputStream);
             BufferedImage original = reader.read(0);
-            Dimension dimension = galleryProcessor.getDesiredResourceDimension((Node) getModelObject());
+            Dimension thumbnailDimension = galleryProcessor.getDesiredResourceDimension((Node) getModelObject());
+            Dimension dimension = handleZeroValueInDimension(new Dimension(width, height), thumbnailDimension);
             Object hints;
             boolean highQuality;
             if (Math.min(width / reader.getWidth(0), height / reader.getHeight(0)) < 1.0) {
@@ -225,5 +224,28 @@ public class ImageCropEditorDialog extends AbstractDialog {
     protected boolean isFullscreenEnabled() {
         return true;
 
+    }
+
+    /**
+     * If height or width in the thumbnailDimension is equal to 0 it is a special case. 
+     * The value 0 represents a value that according to the dimension of the original image.
+     *  
+     * With this function a new dimension is created according to the original dimension
+     * 
+     * @param originalDimension dimension of the original image
+     * @param thumbnailDimension dimension of the thumbnail image
+     * @return scaled dimension based on width or height value
+     */
+    private Dimension handleZeroValueInDimension(Dimension originalDimension, Dimension thumbnailDimension) {
+        Dimension normalized = new Dimension(thumbnailDimension);
+        if(thumbnailDimension.height == 0) {            	
+        	int height = (int) ((thumbnailDimension.getWidth() / originalDimension.getWidth()) * originalDimension.getHeight());             	
+        	normalized.setSize(thumbnailDimension.width, height);
+        }            
+        if(thumbnailDimension.width == 0) {
+        	int width = (int) ((thumbnailDimension.getHeight() / originalDimension.getHeight()) * originalDimension.getWidth());
+            normalized.setSize(width, thumbnailDimension.height);
+        }
+        return normalized;    	
     }
 }
