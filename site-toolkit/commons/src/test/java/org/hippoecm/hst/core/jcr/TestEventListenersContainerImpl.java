@@ -161,7 +161,7 @@ public class TestEventListenersContainerImpl {
         
         Thread.sleep(300L);
         
-        assertEquals(eventListenerItems.size() + 20, observationManager.size());
+        assertEquals(eventListenerItems.size(), observationManager.size());
         
         listenersContainer.stop();
         assertEquals(0, observationManager.size());
