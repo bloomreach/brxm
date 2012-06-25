@@ -237,8 +237,6 @@ modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetSu
 modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetsAvailableNavigationProvider.java svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/logging/EventLogCleanupModule.java -text
 modules/src/main/java/org/hippoecm/repository/logging/RepositoryLogger.java -text
-modules/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
-modules/src/main/resources/hipposched.cnd -text
 modules/src/site/apt/index.apt -text
 modules/src/site/site.xml svneol=native#text/plain
 modules/src/test/java/org/hippoecm/repository/jackrabbit/FacetSearchEntryCompareTest.java -text svneol=unset#text/plain
