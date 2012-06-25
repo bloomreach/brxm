@@ -56,7 +56,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
     protected long sessionLiveCheckInterval = 60000L;
     protected Workspace workspace;
     protected ObservationManager observationManager;
-    protected List<EventListenerItem> eventListenerItems;
+    protected List<EventListenerItem> eventListenerItems = Collections.synchronizedList(new LinkedList<EventListenerItem>());
 
     protected boolean firstInitializationDone;
     protected EventListenersContainerSessionChecker eventListenersContainerSessionChecker;
@@ -93,11 +93,11 @@ public class EventListenersContainerImpl implements EventListenersContainer {
         return copiedEventListenerItems;
     }
 
-    public void setEventListenerItems(List<EventListenerItem> eventListenerItems) {
-        this.eventListenerItems = Collections.synchronizedList(new LinkedList<EventListenerItem>(eventListenerItems));
+    public synchronized void setEventListenerItems(List<EventListenerItem> eventListenerItems) {
+        this.eventListenerItems = eventListenerItems;
     }
     
-    public void addEventListenerItem(EventListenerItem eventListenerItem) {
+    public synchronized void addEventListenerItem(EventListenerItem eventListenerItem) {
         if (eventListenerItems == null) {
             eventListenerItems = Collections.synchronizedList(new LinkedList<EventListenerItem>());
         }
