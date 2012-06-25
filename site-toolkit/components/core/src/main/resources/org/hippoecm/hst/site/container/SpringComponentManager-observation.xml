@@ -24,19 +24,52 @@
   http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
   >
-  
-  <bean id="baseEventListener" abstract="true">
-    <property name="skipPaths">
-      <list>
-        <value>/jcr:system</value>
-        <value>/hippo:log</value>
-      </list>
-    </property>
+
+  <!-- Start EventListenersContainer on context started event -->
+  <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">
+    <constructor-arg>
+      <map>
+        <entry>
+          <key>
+            <value>org.springframework.context.event.ContextStartedEvent</value>
+          </key>
+          <list>
+            <bean class="org.springframework.util.MethodInvoker">
+              <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
+              <property name="targetMethod" value="start"/>
+            </bean>
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
   </bean>
-  
+
+  <!-- Start EventListenersContainer on context stopped event -->
+  <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">
+    <constructor-arg>
+      <map>
+        <entry>
+          <key>
+            <value>org.springframework.context.event.ContextStoppedEvent</value>
+          </key>
+          <list>
+            <bean class="org.springframework.util.MethodInvoker">
+              <property name="targetObject" ref="org.hippoecm.hst.core.jcr.EventListenersContainer"/>
+              <property name="targetMethod" value="stop"/>
+            </bean>
+          </list>
+        </entry>
+      </map>
+    </constructor-arg>
+  </bean>
+
+  <!--
+    EventListenersContainer's start and stop method will be invoked by ApplicationEventMethodsInvokers defined above.
+    Because child modules can add more event listener items into 'jcrObservationEventListenerItems',
+    EventListenersContainer should start after modules add all the event listener items.
+  -->
   <bean id="org.hippoecm.hst.core.jcr.EventListenersContainer"
-    class="org.hippoecm.hst.core.jcr.EventListenersContainerImpl" init-method="start"
-    destroy-method="stop">
+    class="org.hippoecm.hst.core.jcr.EventListenersContainerImpl">
     <property name="repository" ref="javax.jcr.Repository"/>
     <property name="sessionLiveCheck" value="true"/>
     <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader"/>
@@ -45,16 +78,31 @@
     <property name="eventListenerItems" ref="jcrObservationEventListenerItems" />
   </bean>
 
-  <bean id="jcrObservationEventListenerItems" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
-    <property name="targetMethod" value="union" />
-    <property name="arguments">
+  <bean id="baseEventListener" abstract="true">
+    <property name="skipPaths">
       <list>
-        <ref bean="defaultJcrObservationEventListenerItems" />
-        <ref bean="customJcrObservationEventListenerItems" />
+        <value>/jcr:system</value>
+        <value>/hippo:log</value>
       </list>
     </property>
   </bean>
+
+  <bean id="jcrObservationEventListenerItems" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="java.util.Collections" />
+    <property name="targetMethod" value="synchronizedList" />
+    <property name="arguments">
+      <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="targetClass" value="org.apache.commons.collections.ListUtils" />
+        <property name="targetMethod" value="union" />
+        <property name="arguments">
+          <list>
+            <ref bean="defaultJcrObservationEventListenerItems" />
+            <ref bean="customJcrObservationEventListenerItems" />
+          </list>
+        </property>
+      </bean>
+    </property>
+  </bean> 
 
   <!-- Default jcr observation event listener items. -->
   <bean id="defaultJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.ListFactoryBean"> 
@@ -181,12 +229,19 @@
     </property> 
   </bean>
 
-  <!-- Default empty list of custom jcr observation event listener items to be overriden. -->
-  <bean id="customJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.ListFactoryBean"> 
-    <property name="sourceList"> 
+  <!-- Default empty list of custom jcr observation event listener items to be overriden by projects. (e.g., classpath:META-INF/hst-assembly/overrides/*.xml) -->
+  <bean id="customJcrObservationEventListenerItems" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="targetClass" value="java.util.Collections" />
+    <property name="targetMethod" value="synchronizedList" />
+    <property name="arguments">
       <list>
+        <bean class="org.springframework.beans.factory.config.ListFactoryBean"> 
+          <property name="sourceList"> 
+            <list></list>
+          </property> 
+        </bean>
       </list>
-    </property> 
+    </property>
   </bean>
 
 </beans>
