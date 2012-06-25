@@ -15,17 +15,23 @@
  */
 package org.hippoecm.hst.tag;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
-import org.w3c.dom.Element;
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.content.rewriter.ImageVariant;
+import org.hippoecm.hst.content.rewriter.impl.DefaultImageVariant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Creating DOM Element Attribute Supporting Tag
- */
 public class HstImageVariantTag extends BodyTagSupport {
-    
+
     private static final long serialVersionUID = 1L;
+
+    private final static Logger log = LoggerFactory.getLogger(HstImageVariantTag.class);
 
     /**
      * the name of the image variant to use
@@ -33,9 +39,9 @@ public class HstImageVariantTag extends BodyTagSupport {
     protected String name = null;
 
     /**
-     * the name of variants to replace. If <code>null</code> all variants will be replaced
+     * the name of variants to replaces. If <code>null</code> all variants will be replaced
      */
-    protected String replace = null;
+    protected String replaces = null;
 
     /**
      * whether to fallback to original variant when the <code>name</code> variant does not exist. Default false
@@ -62,9 +68,30 @@ public class HstImageVariantTag extends BodyTagSupport {
     @Override
     public int doEndTag() throws JspException{
 
-        htmlTag.setImageVariant(name, replace, fallback);
+        if (StringUtils.isBlank(name)) {
+            log.warn("For imageVariant tag the name attribute is not allowed to be null or empty. Skip image variant");
+        } else {
+
+            List<String> replaceVariants = null;
+            if (StringUtils.isNotBlank(replaces)) {
+                replaceVariants = new ArrayList<String>();
+                if (replaces.indexOf(",") > -1) {
+                    String[] elems = replaces.split(",");
+                    for (String elem : elems) {
+                        if (StringUtils.isNotBlank(elem)) {
+                            replaceVariants.add(elem);
+                        }
+                    }
+                } else {
+                    replaceVariants.add(replaces);
+                }
+            }
+            ImageVariant imageVariant = new DefaultImageVariant(name, replaceVariants, fallback);
+            htmlTag.setImageVariant(imageVariant);
+        }
+        
         name = null;
-        replace = null;
+        replaces = null;
         htmlTag = null;
         fallback = false;
         return EVAL_PAGE;
@@ -74,8 +101,8 @@ public class HstImageVariantTag extends BodyTagSupport {
         this.name = name;
     }
 
-    public void setReplace(final String replace) {
-        this.replace = replace;
+    public void setReplaces(final String replaces) {
+        this.replaces = replaces;
     }
 
     public void setFallback(final boolean fallback) {

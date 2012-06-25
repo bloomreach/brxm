@@ -16,8 +16,6 @@
 package org.hippoecm.hst.tag;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +27,6 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
 import org.hippoecm.hst.content.rewriter.ImageVariant;
@@ -64,7 +61,7 @@ public class HstHtmlTag extends TagSupport {
     protected boolean fullyQualifiedLinks;
 
     /**
-     * Holds the {@link ImageVariant} when there is configured an {@link ImageVariant} and is <code>null</code>
+     * Holds the {@link org.hippoecm.hst.content.rewriter.ImageVariant} when there is configured an {@link org.hippoecm.hst.content.rewriter.ImageVariant} and is <code>null</code>
      * when no image variant has been specified
      */
     protected ImageVariant imageVariant;
@@ -229,18 +226,10 @@ public class HstHtmlTag extends TagSupport {
         this.contentRewriter = contentRewriter;
     }
 
-    public void setImageVariant(final String name, final String replace, final boolean fallback) {
-        if (StringUtils.isBlank(name)) {
-            log.warn("For imageVariant tag the name attribute is not allowed to be null or empty. Skip image variant");
-            return;
-        }
-        List<String> replaceVariants = null;
-        if (StringUtils.isNotBlank(replace)) {
-            replaceVariants = new ArrayList<String>();
-            replaceVariants.add(replace);
-        }
-        this.imageVariant = new ImageVariant(name, replaceVariants, fallback);
+    public void setImageVariant(final ImageVariant imageVariant) {
+        this.imageVariant = imageVariant;
     }
+
 
     /* -------------------------------------------------------------------*/
         

@@ -13,63 +13,59 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.rewriter;
+package org.hippoecm.hst.content.rewriter.impl;
 
 import java.util.Collections;
 import java.util.List;
 
+import org.hippoecm.hst.content.rewriter.ImageVariant;
+
 /**
  * <p>
- *  An image variant can hold information for a {@link ContentRewriter} which image variant to use instead of the image variant
- *  in the html content that the {@link ContentRewriter} will rewrite.
+ *  An image variant can hold information for a {@link org.hippoecm.hst.content.rewriter.ContentRewriter} which image variant to use instead of the image variant
+ *  in the html content that the {@link org.hippoecm.hst.content.rewriter.ContentRewriter} will rewrite.
  * </p>
  * <p>
  *     
  * </p>
  */
-public class ImageVariant {
+public class DefaultImageVariant implements ImageVariant {
     /**
      * holds the name of the image variant to use. This value is not allowed to be <code>null</code> or blank
      */
     private String name;
     /**
-     * replace holds the List of variant names that should be replace by <code>name</code>. When this List is <code>empty</code>,
+     * replaces holds the List of variant names that should be replaces by <code>name</code>. When this List is <code>empty</code>,
      * it means that <b>all</b> variants will be replaced by <code>name</code>.
      */
-    private List<String> replace;
+    private List<String> replaces;
     /**
      * when fallback is <code>true</code>, the original variant will be used when the variant for <code>name</code> does not exist
      */
     private boolean fallback;
     
-    public ImageVariant(String name, List<String> replace, boolean fallback) {
+    public DefaultImageVariant(String name, List<String> replaces, boolean fallback) {
         this.name = name;
-        this.replace = replace;
+        this.replaces = replaces;
         this.fallback = fallback;
     }
 
-    /**
-     * @return the variant name to use. This value is never <code>null</code> or blank (empty)
-     */
+    @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * Returns the List of variants that should be replaced with {@link #getName()} and an EMPTY List if no explicit items for replace are configured.
-     * When <b>all</b> variants need to be replaced by default, this List can return EMPTY list
-     * @return the List of variants that should be replaced with {@link #getName()} and an EMPTY List if no explicit items for replace are configured
-     */
-    public List<String> getReplace() {
-        if (replace == null) {
+
+    @Override
+    public List<String> getReplaces() {
+        if (replaces == null) {
             return Collections.emptyList();
         }
-        return replace;
+        return replaces;
     }
 
-    /**
-     * @return <code>true</code> when the original variant should be shown when the variant for <code>name</code> does not exist
-     */
+
+    @Override
     public boolean isFallback() {
         return fallback;
     }

@@ -257,12 +257,12 @@ public class SimpleContentRewriter extends AbstractContentRewriter<String> {
                     if (segments.length == 3) {
                         ImageVariant imageVariant = getImageVariant();
                         fallback = imageVariant.isFallback();
-                        if (imageVariant.getReplace().isEmpty()) {
+                        if (imageVariant.getReplaces().isEmpty()) {
                             // replace segments[2] regardless the variant
                             variantPath = segments[0] + "/" + segments[1] + "/" + imageVariant.getName();
                         } else {
-                            // only replace segments[2] if it is included in imageVariant.getReplace()
-                            if (imageVariant.getReplace().contains(segments[2])) {
+                            // only replace segments[2] if it is included in imageVariant.getReplaces()
+                            if (imageVariant.getReplaces().contains(segments[2])) {
                                 variantPath = segments[0] + "/" + segments[1] + "/" + imageVariant.getName();
                             }
                         }

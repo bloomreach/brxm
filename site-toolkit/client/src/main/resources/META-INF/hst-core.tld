@@ -530,10 +530,10 @@
       <type>java.lang.String</type>
     </attribute>
     <attribute>
-      <description>Only replaces the variant names that equal the name of the value of this attribute. If this attribute is missing, then
+      <description>Only replaces the variant names that equal one of the names of the value of this comma separated attribute. If this attribute is missing, then
       *all* variants are replaced by the value from variant attr. Thus, this attribute is used to specifically specify which variants
-      should be replaced</description>
-      <name>replace</name>
+      should be replaced. Multiple variants can be configured comma separated</description>
+      <name>replaces</name>
       <required>false</required>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.String</type>
@@ -549,7 +549,7 @@
     </attribute>
     <example><![CDATA[
       <hst:html hippobean="${document.intro}">
-         <hst:imagevariant name="myproject:mobileversion"  replace="myproject:websiteversion" fallback="true"/>
+         <hst:imagevariant name="myproject:mobileversion"  replaces="myproject:websiteversion" fallback="true"/>
       </hst:html>
       ]]></example>
   </tag>

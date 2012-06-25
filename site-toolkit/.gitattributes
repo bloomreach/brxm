@@ -106,7 +106,6 @@ api/src/main/java/org/hippoecm/hst/content/beans/standard/IdentifiableContentBea
 api/src/main/java/org/hippoecm/hst/content/beans/standard/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/rewriter/ContentRewriter.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/content/rewriter/ImageVariant.java -text
 api/src/main/java/org/hippoecm/hst/content/rewriter/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/ResourceLifecycleManagement.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/ResourceVisitor.java svneol=native#text/plain
@@ -367,6 +366,7 @@ commons/src/main/java/org/hippoecm/hst/container/HstContainerRequestImpl.java -t
 commons/src/main/java/org/hippoecm/hst/container/HstFilter.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/container/RequestContextProvider.java -text
 commons/src/main/java/org/hippoecm/hst/container/XSSUrlFilter.java -text
+commons/src/main/java/org/hippoecm/hst/content/rewriter/impl/DefaultImageVariant.java -text
 commons/src/main/java/org/hippoecm/hst/core/component/AbstractHstResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HeadElementImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoProxyFactoryImpl.java -text svneol=unset#text/plain
