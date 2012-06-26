@@ -16,41 +16,20 @@
  */
 package org.hippoecm.repository.jackrabbit.persistence;
 
-import org.apache.jackrabbit.core.persistence.PMContext;
+import org.apache.jackrabbit.core.persistence.pool.MySqlPersistenceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Extends the {@link BundleDbPersistenceManager} by mysql specific code.
- * <p/>
- * Configuration:<br>
- * <ul>
- * <li>&lt;param name="{@link #setBundleCacheSize(String) bundleCacheSize}" value="8"/>
- * <li>&lt;param name="{@link #setConsistencyCheck(String) consistencyCheck}" value="false"/>
- * <li>&lt;param name="{@link #setMinBlobSize(String) minBlobSize}" value="16384"/>
- * <li>&lt;param name="{@link #setDriver(String) driver}" value="org.gjt.mm.mysql.Driver"/>
- * <li>&lt;param name="{@link #setUrl(String) url}" value=""/>
- * <li>&lt;param name="{@link #setUser(String) user}" value=""/>
- * <li>&lt;param name="{@link #setPassword(String) password}" value=""/>
- * <li>&lt;param name="{@link #setSchema(String) schema}" value="mysql"/>
- * <li>&lt;param name="{@link #setSchemaObjectPrefix(String) schemaObjectPrefix}" value=""/>
- * <li>&lt;param name="{@link #setErrorHandling(String) errorHandling}" value=""/>
- * </ul>
+ * @deprecated Use {@link org.apache.jackrabbit.core.persistence.pool.MySqlPersistenceManager} instead.
  */
-public class ForkedMySqlPersistenceManager extends PatchedBundleDbPersistenceManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
+@Deprecated
+public class ForkedMySqlPersistenceManager extends MySqlPersistenceManager {
 
-    /**
-     * {@inheritDoc}
-     */
-    public void init(PMContext context) throws Exception {
-        // init default values
-        if (getDriver() == null) {
-            setDriver("org.gjt.mm.mysql.Driver");
-        }
-        if (getDatabaseType() == null) {
-            setDatabaseType("mysql");
-        }
-        super.init(context);
+    private static final Logger log = LoggerFactory.getLogger(ForkedMySqlPersistenceManager.class);
+
+    public ForkedMySqlPersistenceManager() {
+        log.warn("You are using a deprecated persistence manager. Please use org.apache.jackrabbit.core.persistence.pool.MySqlPersistenceManager instead.");
     }
 
 }

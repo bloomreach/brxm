@@ -16,38 +16,19 @@
  */
 package org.hippoecm.repository.jackrabbit.persistence;
 
-import javax.sql.DataSource;
-
-import org.apache.jackrabbit.core.util.db.ConnectionHelper;
-import org.apache.jackrabbit.core.util.db.Oracle10R1ConnectionHelper;
+import org.apache.jackrabbit.core.persistence.pool.Oracle9PersistenceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * <code>OracleLegacyPersistenceManager</code> provides support for Oracle jdbc drivers prior to version 10
- * which require special handling of BLOB data. <p/> Configuration:<br>
- * <ul>
- * <li>&lt;param name="{@link #setBundleCacheSize(String) bundleCacheSize}" value="8"/>
- * <li>&lt;param name="{@link #setConsistencyCheck(String) consistencyCheck}" value="false"/>
- * <li>&lt;param name="{@link #setMinBlobSize(String) minBlobSize}" value="16384"/>
- * <li>&lt;param name="{@link #setDriver(String) driver}" value="oracle.jdbc.OracleDriverr"/>
- * <li>&lt;param name="{@link #setUrl(String) url}" value="jdbc:oracle:thin:@127.0.0.1:1521:xe"/>
- * <li>&lt;param name="{@link #setUser(String) user}" value=""/>
- * <li>&lt;param name="{@link #setPassword(String) password}" value=""/>
- * <li>&lt;param name="{@link #setSchema(String) schema}" value="oracle"/>
- * <li>&lt;param name="{@link #setSchemaObjectPrefix(String) schemaObjectPrefix}" value="${wsp.name}_"/>
- * <li>&lt;param name="{@link #setErrorHandling(String) errorHandling}" value=""/>
- * </ul>
+ * @deprecated Use {@link org.apache.jackrabbit.core.persistence.pool.Oracle9PersistenceManager} instead.
  */
-public class ForkedOracle9PersistenceManager extends ForkedOraclePersistenceManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
+@Deprecated
+public class ForkedOracle9PersistenceManager extends Oracle9PersistenceManager {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected ConnectionHelper createConnectionHelper(DataSource dataSrc) throws Exception {
-        Oracle10R1ConnectionHelper helper = new Oracle10R1ConnectionHelper(dataSrc, blockOnConnectionLoss);
-        helper.init();
-        return helper;
+    private static final Logger log = LoggerFactory.getLogger(ForkedOracle9PersistenceManager.class);
+
+    public ForkedOracle9PersistenceManager() {
+        log.warn("You are using a deprecated persistence manager. Please use org.apache.jackrabbit.core.persistence.pool.Oracle9PersistenceManager instead.");
     }
 }

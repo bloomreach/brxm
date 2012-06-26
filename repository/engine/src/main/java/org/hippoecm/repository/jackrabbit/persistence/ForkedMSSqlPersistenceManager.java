@@ -16,65 +16,20 @@
  */
 package org.hippoecm.repository.jackrabbit.persistence;
 
-import org.apache.jackrabbit.core.util.db.CheckSchemaOperation;
+import org.apache.jackrabbit.core.persistence.pool.MSSqlPersistenceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Extends the {@link BundleDbPersistenceManager} by MS-SQL specific code. <p/> Configuration:<br>
- * <ul>
- * <li>&lt;param name="{@link #setBundleCacheSize(String) bundleCacheSize}" value="8"/>
- * <li>&lt;param name="{@link #setConsistencyCheck(String) consistencyCheck}" value="false"/>
- * <li>&lt;param name="{@link #setMinBlobSize(String) minBlobSize}" value="16384"/>
- * <li>&lt;param name="{@link #setDriver(String) driver}" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
- * <li>&lt;param name="{@link #setUrl(String) url}" value=""/>
- * <li>&lt;param name="{@link #setUser(String) user}" value=""/>
- * <li>&lt;param name="{@link #setPassword(String) password}" value=""/>
- * <li>&lt;param name="{@link #setSchema(String) schema}" value="mssql"/>
- * <li>&lt;param name="{@link #setSchemaObjectPrefix(String) schemaObjectPrefix}" value=""/>
- * <li>&lt;param name="{@link #setErrorHandling(String) errorHandling}" value=""/>
- * <li>&lt;param name="{@link #setTableSpace(String) tableSpace}" value=""/>
- * </ul>
+ * @deprecated Use {@link org.apache.jackrabbit.core.persistence.pool.MSSqlPersistenceManager} instead.
  */
-public class ForkedMSSqlPersistenceManager extends PatchedBundleDbPersistenceManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
+@Deprecated
+public class ForkedMSSqlPersistenceManager extends MSSqlPersistenceManager {
 
-    /** the MS SQL table space to use */
-    protected String tableSpace = "";
+    private static Logger log = LoggerFactory.getLogger(ForkedMSSqlPersistenceManager.class);
 
     public ForkedMSSqlPersistenceManager() {
-        setDriver("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-        setDatabaseType("mssql");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected CheckSchemaOperation createCheckSchemaOperation() {
-        return super.createCheckSchemaOperation().addVariableReplacement(
-            CheckSchemaOperation.TABLE_SPACE_VARIABLE, tableSpace);
-    }
-
-    /**
-     * Returns the configured MS SQL table space.
-     * 
-     * @return the configured MS SQL table space.
-     */
-    public String getTableSpace() {
-        return tableSpace;
-    }
-
-    /**
-     * Sets the MS SQL table space.
-     * 
-     * @param tableSpace the MS SQL table space.
-     */
-    public void setTableSpace(String tableSpace) {
-        if (tableSpace != null && tableSpace.trim().length() > 0) {
-            this.tableSpace = "on " + tableSpace.trim();
-        } else {
-            this.tableSpace = "";
-        }
+        log.warn("You are using a deprecated persistence manager. Please use org.apache.jackrabbit.core.persistence.pool.MSSqlPersistenceManager instead.");
     }
 
 }
