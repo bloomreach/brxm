@@ -23,6 +23,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.ext.DaemonModule;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
@@ -59,7 +60,8 @@ public class RepositoryLogger implements DaemonModule {
         if (session.nodeExists("/hippo:log")) {
             rootLogFolder = session.getNode("/hippo:log");
         } else {
-            throw new RepositoryException("No log to write to");
+            log.warn("Events will not be logged in the repository: no log folder exists");
+            return;
         }
         if (!rootLogFolder.isNodeType("hippolog:folder")) {
             throw new RepositoryException("Root log folder is not of the expected type");
@@ -82,6 +84,9 @@ public class RepositoryLogger implements DaemonModule {
     @Subscribe
     public void logHippoEvent(HippoEvent event) {
         if (session == null) {
+            return;
+        }
+        if (logFolder == null) {
             return;
         }
 
