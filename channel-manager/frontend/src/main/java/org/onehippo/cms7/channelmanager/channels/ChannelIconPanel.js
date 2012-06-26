@@ -17,47 +17,114 @@
 
 Ext.namespace('Hippo.ChannelManager');
 
+Hippo.ChannelManager.ChannelIconDataView = Ext.extend(Ext.DataView, {
+
+    tpl : new Ext.XTemplate(
+        '<tpl for=".">',
+            '<span class="channel-group-handle expanded {[xindex % 2 === 0 ? "even" : "odd"]}">{name}</span>',
+            '<ul class="channel-group {[xindex % 2 === 0 ? "even" : "odd"]}">',
+            '<tpl for="channels">',
+                '<li class="channel" channelId="{id}">',
+                    '<img src="{channelTypeImg}" />',
+                    '<br /><img src="{channelRegionImg}" class="regionIcon" /><span class="channel-name">{name}</span>',
+                '</li>',
+            '</tpl>',
+            '</ul>',
+        '</tpl>'
+    ),
+
+    constructor : function(config) {
+        this.resources = config.resources;
+        this.groupByProperty = config.groupByProperty;
+        Hippo.ChannelManager.ChannelIconDataView.superclass.constructor.apply(this, arguments);
+    },
+
+    initComponent : function() {
+
+        this.on('refreshDataView', function() {
+            var channelGroupHandles = Ext.query('.channel-group-handle');
+                var channelGroups = Ext.query('.channel-group');
+
+                for (var i=0, len=channelGroupHandles.length; i < len; i++) {
+                    var channelGroupHandle = Ext.get(channelGroupHandles[i]);
+
+                    channelGroupHandle.removeAllListeners();
+
+                    var channelGroup = Ext.get(channelGroups[i]);
+                    channelGroup.setVisibilityMode(Ext.Element.DISPLAY);
+
+                    (function(channelGroupHandle, channelGroup) {
+                        channelGroupHandle.on('click', function() {
+                            if (channelGroup.isVisible()) {
+                                channelGroup.hide();
+                                channelGroupHandle.replaceClass('expanded', 'collapsed');
+                            } else {
+                                channelGroup.show();
+                                channelGroupHandle.replaceClass('collapsed', 'expanded');
+                            }
+                        });
+                    })(channelGroupHandle, channelGroup);
+                }
+            }, this);
+
+        Hippo.ChannelManager.ChannelIconDataView.superclass.initComponent.apply(this, arguments);
+    },
+
+    collectData : function(records, startIndex) {
+        var groups = [];
+
+        for (var i= 0, len=records.length; i < len; i++) {
+            var data = this.prepareData(records[i].json, startIndex + i, records[i]);
+
+            var groupId = records[i].json[this.groupByProperty];
+            if (!groupId) {
+                groupId = 'Unknown';
+            }
+
+            if (!groups[groupId]) {
+                groups[groupId] = {
+                    id: groupId,
+                    name: (this.resources[groupId]) ? this.resources[groupId] : groupId,
+                    channels : []
+                };
+            }
+            groups[groupId].channels.push(data);
+        }
+
+        // create non associative array
+        var dataObject = [];
+        for (var key in groups) {
+            if (typeof groups[key] === 'function') {
+                continue;
+            }
+
+            groups[key].channels.sort(function(channel1, channel2) {
+                return channel1.name > channel2.name;
+            });
+
+            dataObject.push(groups[key]);
+        }
+
+        dataObject.sort(function(group1, group2) {
+            return group1.name > group2.name;
+        });
+
+        return dataObject;
+    },
+
+    refresh : function() {
+        Hippo.ChannelManager.ChannelIconDataView.superclass.refresh.apply(this, arguments);
+        this.fireEvent('refreshDataView');
+    }
+
+});
+
+
 Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
 
     constructor: function(config) {
         this.resources = config.resources;
         this.store = config.store;
-
-        this.types = [];
-        this.regions = [];
-
-        this.store.on('load', function() {
-            this.store.each(function(record) {
-                var type = record.json['channelType'];
-                if (type) {
-                    if (this.resources[type]) {
-                        this.types[this.resources[type]] = type;
-                    } else {
-                        this.types[type] = type;
-                    }
-                }
-                var region = record.json['channelRegion'];
-                if (region) {
-                    if (this.resources[region]) {
-                        this.regions[this.resources[region]] = region;
-                    } else {
-                        this.regions[region] = region;
-                    }
-                }
-            }, this);
-
-            // the associative arrays are storing 'label' => 'key'
-            this.regions = this.sortObject(this.regions);
-            this.types = this.sortObject(this.types);
-
-            var typeOverviewPanel = Ext.getCmp('typeOverviewPanel');
-            typeOverviewPanel.add(this.createDataViews('channelType', this.types));
-            typeOverviewPanel.doLayout();
-
-            var regionOverviewPanel = Ext.getCmp('regionOverviewPanel');
-            regionOverviewPanel.add(this.createDataViews('channelRegion', this.regions));
-            regionOverviewPanel.doLayout();
-        }, this, { single: true } );
 
         var self = this;
         var toolbar = new Ext.Toolbar({
@@ -82,6 +149,9 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
             ]
         });
 
+        var channelTypeDataView = this.createDataView('channelType');
+        var channelRegionDataView = this.createDataView('channelRegion');
+
         Ext.apply(config, {
             id: 'channelIconPanel',
             border: false,
@@ -93,66 +163,32 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                 id: 'typeOverviewPanel',
                 border: false,
                 xtype: 'panel',
-                autoScroll: true
+                autoScroll: true,
+                items : [
+                    channelTypeDataView
+                ]
             }, {
                 id: 'regionOverviewPanel',
                 border: false,
                 xtype: 'panel',
-                autoScroll: true
+                autoScroll: true,
+                items: [
+                    channelRegionDataView
+                ]
             }]
         });
 
         Hippo.ChannelManager.ChannelIconPanel.superclass.constructor.call(this, config);
     },
 
-    sortObject : function (object){
-        var sortedKeys = [];
-        var sortedObj = {};
-
-        for (var i in object) {
-            sortedKeys.push(i);
-        }
-        sortedKeys.sort();
-
-        for (var i=0; i<sortedKeys.length; i++) {
-            sortedObj[sortedKeys[i]] = object[sortedKeys[i]];
-        }
-        return sortedObj;
-    },
-
-
-    filterDataByType : function(property, value) {
-        return function(records, startIndex) {
-            var r = [], i = 0, len = records.length;
-            for(; i < len; i++){
-                if (records[i].json[property] != value) {
-                    continue;
-                }
-                r[r.length] = this.prepareData(records[i].json, startIndex + i, records[i]);
-            }
-            return r;
-        };
-    },
-
-    createDataView : function(property, value, even) {
-        var self = this;
-        var dataView = new Ext.DataView({
+    createDataView : function(groupByProperty) {
+        var dataView = new Hippo.ChannelManager.ChannelIconDataView({
+            groupByProperty : groupByProperty,
             store: this.store,
-            tpl : new Ext.XTemplate(
-                    '<ul class="channel-group">',
-                    '<tpl for=".">',
-                    '<li class="channel" channelId="{id}">',
-                    '<img src="{channelTypeImg}" />',
-                    '<br /><img src="{channelRegionImg}" class="regionIcon" /><span class="channel-name">{name}</span>',
-                    '</li>',
-                    '</tpl>',
-                    '</ul>'
-            ),
-            cls : 'channel-data-view ' + (even ? 'even' : 'odd'),
-            collectData : this.filterDataByType(property, value),
             itemSelector: 'li.channel',
             overClass   : 'channel-hover',
-            autoScroll  : true
+            autoScroll  : true,
+            resources : this.resources
         });
         dataView.on('click', function(dataView, index, element, eventObject) {
             this.selectedChannelId = element.getAttribute('channelId');
@@ -160,46 +196,6 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
             this.fireEvent('channel-selected', this.selectedChannelId, record);
         }, this);
         return dataView;
-    },
-
-    createDataViews : function(property, values) {
-        var views = [];
-        var self = this;
-        var index = 0;
-        for (var value in values) {
-            if (typeof values[value] == 'function') {
-                continue;
-            }
-            var even = (++index % 2) == 0;
-            var dataView = this.createDataView(property, values[value], even);
-            (function(views, dataView) {
-                var panel = new Ext.Panel({
-                    html: '<span class="collapse-group expanded">'+value+'</span>',
-                    cls: 'collapse-panel ' + (even ? 'even' : 'odd'),
-                    listeners: {
-                        afterrender : function(panel) {
-                            var spanElement = Ext.get(Ext.select('.collapse-group', true, panel.el.dom));
-                            spanElement.on('click', function() {
-                                if (!dataView.hidden) {
-                                    dataView.hide();
-                                    spanElement.replaceClass('expanded', 'collapsed');
-                                    self.doLayout();
-                                } else {
-                                    dataView.show();
-                                    spanElement.replaceClass('collapsed', 'expanded');
-                                    self.doLayout();
-                                }
-                            });
-                        }
-                    },
-                    border: false,
-                    height: 18
-                });
-                views[views.length] = panel;
-            })(views, dataView);
-            views[views.length] = dataView;
-        }
-        return views;
     }
 
 });

@@ -223,42 +223,32 @@
     filter: alpha(opacity=90);
 }
 
-.channel-manager .collapse-panel .x-panel-body {
-    background-color: none;
-}
-
-.channel-manager .collapse-panel.odd .x-panel-body {
-    background-color: #fff;
-}
-
-.channel-manager .collapse-panel.even .x-panel-body {
-    background: #f6f6f6;
-}
-
-.channel-manager .channel-data-view {
-    text-shadow: #fff 0 1px 0;
-}
-
-.channel-manager .channel-data-view.even {
+.channel-manager .channel-group.even,
+.channel-manager .channel-group-handle.collapsed.even,
+.channel-manager .channel-group-handle.expanded.even {
     background-color: #f6f6f6
 }
 
-.channel-manager .channel-data-view.odd {
+.channel-manager .channel-group.odd,
+.channel-manager .channel-group-handle.collapsed.odd,
+.channel-manager .channel-group-handle.expanded.odd {
     background-color: #fff;
 }
 
-.channel-manager .channel-data-view ul {
+.channel-manager ul.channel-group {
     position: relative;
     display: block;
     height: auto;
     font-size: 85%;
+    float: left;
+    width: 100%;
 }
 
-.channel-manager .channel-data-view ul li img {
+.channel-manager ul.channel-group li img {
     margin-bottom: 1px;
 }
 
-.channel-manager .channel-data-view ul li {
+.channel-manager ul.channel-group li {
     float: left;
     padding: 8px 17px;
     margin: 5px;
@@ -274,20 +264,20 @@
     cursor: pointer;
 }
 
-.channel-manager .channel-data-view ul li.x-view-selected {
+.channel-manager ul.channel-group li.x-view-selected {
     background-color: rgba(100, 100, 100, .15);
     -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
     border-top: 1px solid rgba(0, 0, 0, .15);
 }
 
-.channel-manager .channel-data-view .channel span {
+.channel-manager .channel span {
     color: #000;
     /* display: block; */
     padding-left: 4px;
 }
 
-.channel-manager .channel-data-view .channel img {
+.channel-manager .channel img {
     margin-bottom: 5px;
 }
 
@@ -295,20 +285,21 @@
     background-image: url(images/slider-thumb.png);
 }
 
-.channel-manager .collapse-group {
+.channel-manager .channel-group-handle {
     cursor: pointer;
     padding-left: 20px;
     height: 17px;
+    clear: both;
 }
 
-.channel-manager .collapse-group.expanded {
+.channel-manager .channel-group-handle.expanded {
     background: url(channels/triangle-expanded.png) no-repeat;
     padding-top: 3px;
     height: 17px;
     display:block;
 }
 
-.channel-manager .collapse-group.collapsed {
+.channel-manager .channel-group-handle.collapsed {
     background: url(channels/triangle-collapsed.png) no-repeat;
     padding-top: 3px;
     height: 17px;
