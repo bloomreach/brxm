@@ -26,6 +26,11 @@
   <artifactId>hippo-repository-engine</artifactId>
   <packaging>jar</packaging>
 
+  <properties>
+    <h2.version>1.3.167</h2.version>
+    <xpp3.version>1.1.4c</xpp3.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>javax.jcr</groupId>
@@ -35,6 +40,12 @@
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-core</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.derby</groupId>
+          <artifactId>derby</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.jackrabbit</groupId>
@@ -97,7 +108,7 @@
     <dependency>
       <groupId>xpp3</groupId>
       <artifactId>xpp3</artifactId>
-      <version>1.1.4c</version>
+      <version>${xpp3.version}</version>
     </dependency>
 
     <dependency>
@@ -113,6 +124,12 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- test -->
@@ -142,11 +159,6 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-    </dependency>
-
     <!-- Testing needs a JTA implementation -->
     <dependency>
       <groupId>com.atomikos</groupId>
@@ -194,7 +206,7 @@
             </manifest>
             <manifestEntries>
               <Implementation-Build>${buildNumber}</Implementation-Build>
-              <Hippo-Modules>org.hippoecm.repository.LoadInitializationModule org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.SchedulerWorkflowModule</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.SchedulerWorkflowModule</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
