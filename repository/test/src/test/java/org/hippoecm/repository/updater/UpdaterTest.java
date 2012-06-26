@@ -64,17 +64,6 @@ public class UpdaterTest extends TestCase {
         session.save();
     }
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        TestCase.tearDownClass(true);
-    }
-
     @Test
     public void testReorder() throws RepositoryException {
         Node testNode = session.getNode("/test");

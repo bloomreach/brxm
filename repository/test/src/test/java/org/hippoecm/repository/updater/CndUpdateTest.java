@@ -89,17 +89,6 @@ public class CndUpdateTest extends TestCase {
         session.getRootNode().addNode("test");
         session.save();
     }
-    
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown(true);
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        TestCase.tearDownClass(true);
-    }
 
     private RepositoryWorkflow getWorkflow() throws RepositoryException {
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();

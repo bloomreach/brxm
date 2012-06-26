@@ -92,14 +92,6 @@ public class ReferringDocumentsTest extends TestCase
         }
     }
 
-    @Override
-    public void tearDown() throws Exception {
-        Node test = session.getRootNode().getNode("test");
-        test.remove();
-        session.save();
-        super.tearDown(true);
-    }
-
     @Test
     public void dummy() {
     }

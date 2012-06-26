@@ -68,12 +68,6 @@ public class HREPTWO2655IssueTest extends TestCase {
         session.save();
     }
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown(true);
-    }
-
     volatile boolean stop = false;
 
     @Ignore("timeout issue test not supported")
