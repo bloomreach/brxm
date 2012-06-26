@@ -190,10 +190,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CONTENTROOT = "hippo:contentroot";
 
-    /**
-     * @deprecated Use delta XML files instead, see documentation site
-     */
-    @Deprecated
     public static final String HIPPO_CONTENTDELETE = "hippo:contentdelete";
 
     public static final String HIPPO_COUNT = "hippo:count";

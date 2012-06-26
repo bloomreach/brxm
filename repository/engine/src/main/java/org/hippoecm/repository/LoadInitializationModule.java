@@ -275,7 +275,6 @@ public class LoadInitializationModule implements DaemonModule, EventListener {
                     // Delete content
                     if (node.hasProperty(HippoNodeType.HIPPO_CONTENTDELETE)) {
                         String path = node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE).getString();
-                        log.warn("Delete content in initialization has been deprecrated: " + node.getName() + " " + path);
                         boolean immediateSave;
                         if(node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) || node.hasProperty(HippoNodeType.HIPPO_CONTENT))
                             immediateSave = false;
