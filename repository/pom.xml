@@ -55,8 +55,6 @@
     <module>ldap</module>
     <module>tools</module>
     <module>config</module>
-    <module>checker</module>
-    <module>checker-app</module>
     <module>resources</module>
     <module>dependencies</module>
     <module>jca</module>

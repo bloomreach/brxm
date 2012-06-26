@@ -39,11 +39,6 @@ builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLogg
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventsWorkflow.java -text
 builtin/src/site/apt/index.apt -text
 builtin/src/site/site.xml svneol=native#text/plain
-checker-app/pom.xml svneol=native#text/plain
-checker-app/src/main/resources/log4j.xml svneol=native#text/plain
-checker-app/src/main/resources/org/hippoecm/checker/repository-sample.xml svneol=native#text/plain
-checker-app/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
-checker/pom.xml svneol=native#text/plain
 config/pom.xml svneol=native#text/plain
 config/src/main/resources/domain-defaultread-security.xml -text
 config/src/main/resources/domain-defaultread.xml -text svneol=unset#text/plain
