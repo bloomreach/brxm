@@ -38,9 +38,6 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
 
     private static final Logger log = LoggerFactory.getLogger(CmsRestCredentialsToJcrSessionPropagatorValve.class);
 
-    private static final String WARNING_MESSAGE_SECURITY_CONTEXT_NOT_FOUND = "Security context not found!";
-    private static final String ERROR_MESSAGE_JCR_SESSION_PROPAGATION_ERROR = "Error while propagating JCR Session! - %s : %s : %s";
-
     private Repository repository;
 
     public void setRepository(Repository repository) {
@@ -54,7 +51,7 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
         HstRequestContext requestContext = context.getRequestContext();
 
         if(!requestContext.isCmsRequest()) {
-            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, ERROR_MESSAGE_BAD_CMS_REST_CALL);
+            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, "Bad CMS REST call");
             return;
         }
 
@@ -62,7 +59,7 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
         Credentials credentials = (Credentials) session.getAttribute(CREDENTIALS_ATTRIBUTE_NAME);
 
         if (credentials == null) {
-            logWarning(log, WARNING_MESSAGE_SECURITY_CONTEXT_NOT_FOUND);
+            log.warn("Security context not found");
              // setResponseError(HttpServletResponse.SC_UNAUTHORIZED, servletResponse);
              // return;
         }
@@ -70,7 +67,7 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
         try {
             propagateJcrSession(credentials);
         } catch (ContainerException ce) {
-            logError(log, String.format(ERROR_MESSAGE_JCR_SESSION_PROPAGATION_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
+            log.warn("Error while propagating JCR Session! - {} : {} : {}", new String[]{ce.getClass().getName(), ce.getMessage(), ce.toString()});
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             dePropagateJcrSession();
             return;
@@ -79,7 +76,7 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
         try {
             context.invokeNext();
         } catch (ContainerException ce) {
-            logError(log, String.format(ERROR_MESSAGE_REQUEST_PROCESSING_CHAIN_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
+            log.warn("Error while propagating JCR Session! - {} : {} : {}", new String[]{ce.getClass().getName(), ce.getMessage(), ce.toString()});
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
         } finally {
             dePropagateJcrSession();

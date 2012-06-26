@@ -16,8 +16,6 @@
 
 package org.hippoecm.hst.core.container;
 
-import static org.hippoecm.hst.core.container.CmsRestValvesConsts.CREDENTIALS_ATTRIBUTE_NAME;
-
 import java.io.IOException;
 
 import javax.jcr.Credentials;
@@ -28,6 +26,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.core.container.CmsRestValvesConsts.CREDENTIALS_ATTRIBUTE_NAME;
+
 /**
  * Base class for CMS REST {@link Valve}(s)
  */
@@ -36,10 +36,6 @@ public abstract class BaseCmsRestValve extends AbstractValve {
     private final static Logger log = LoggerFactory.getLogger(BaseCmsRestValve.class);
 
     protected static final String HEADER_CMS_REST_CREDENTIALS = "X-CMSREST-CREDENTIALS";
-
-    protected static final String ERROR_MESSAGE_BAD_CMS_REST_CALL = "Bad CMS REST call!";
-    protected static final String ERROR_MESSAGE_EXCEPTION_WHILE_SENDING_ERROR = "Exception while sending error response";
-    protected static final String ERROR_MESSAGE_REQUEST_PROCESSING_CHAIN_ERROR = "Error while processing CMS REST call - %s : %s : %s";
 
     @Override
     public abstract void invoke(ValveContext context);
@@ -60,27 +56,7 @@ public abstract class BaseCmsRestValve extends AbstractValve {
                 response.sendError(scError, message);
             }
         } catch (IOException ioe) {
-            if (log.isErrorEnabled()) {
-                log.error(ERROR_MESSAGE_EXCEPTION_WHILE_SENDING_ERROR, ioe);
-            }
-        }
-    }
-
-    protected void logError(Logger logger, String message) {
-        if (logger.isErrorEnabled()) {
-            logger.error(message);
-        }
-    }
-
-    protected void logWarning(Logger logger, String message) {
-        if (logger.isWarnEnabled()) {
-            logger.warn(message);
-        }
-    }
-
-    protected void logDebug(Logger logger, String message) {
-        if (logger.isDebugEnabled()) {
-            logger.debug(message);
+            log.warn("Exception while sending error response", ioe);
         }
     }
 

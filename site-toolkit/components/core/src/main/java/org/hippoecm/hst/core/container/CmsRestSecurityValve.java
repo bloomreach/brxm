@@ -37,9 +37,6 @@ public class CmsRestSecurityValve extends BaseCmsRestValve {
 
     private final static Logger log = LoggerFactory.getLogger(CmsRestSecurityValve.class);
 
-    private static final String WARNING_MESSAGE_NO_CMS_REST_CREDENTIALS_FOUND = "No CMS REST credentials found!";
-    private static final String ERROR_MESSAGE_CREDENTIALS_PROCESSING_ERROR = "Error while processing CMS REST credentails - %s : %s : %s";
-    // COMMENT - MNour: This is really bad workaround but it is used only for the time being
     private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
 
     @Override
@@ -49,18 +46,17 @@ public class CmsRestSecurityValve extends BaseCmsRestValve {
         HstRequestContext requestContext = context.getRequestContext();
 
         if(!requestContext.isCmsRequest()) {
-            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, ERROR_MESSAGE_BAD_CMS_REST_CALL);
+            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, "Bad CMS REST call");
             return;
         }
 
-        logDebug(log, String.format("Request '%s' is invoked from CMS context. Check for credentials and apply security rules or raise proper error!", servletRequest.getRequestURL()));
+        log.debug("Request '{}' is invoked from CMS context. Check for credentials and apply security rules or raise proper error!", servletRequest.getRequestURL());
         HttpSession session = servletRequest.getSession(true);
         // Retrieve encrypted CMS REST username and password and use them as credentials to create a JCR session
         String cmsRestCredentials = servletRequest.getHeader(HEADER_CMS_REST_CREDENTIALS);
 
         if (StringUtils.isBlank(cmsRestCredentials)) {
-            logWarning(log, WARNING_MESSAGE_NO_CMS_REST_CREDENTIALS_FOUND);
-            // COMMENT - MNour: That is wrong!
+            log.warn("No CMS REST credentials found");
             // setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, ERROR_MESSAGE_NO_CMS_REST_CREDENTIALS_FOUND);
             // return;
         }
@@ -74,11 +70,11 @@ public class CmsRestSecurityValve extends BaseCmsRestValve {
             context.invokeNext();
         } catch (SignatureException se) {
             ContainerException ce = new ContainerException(se);
-            logError(log, String.format(ERROR_MESSAGE_CREDENTIALS_PROCESSING_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
+            log.warn("Error while processing CMS REST credentails -  {} : {} : {}", new String[]{ce.getClass().getName(), ce.getMessage(), ce.toString()});
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             return;
         } catch (ContainerException ce) {
-            logError(log, String.format(ERROR_MESSAGE_REQUEST_PROCESSING_CHAIN_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
+            log.warn("Error while processing CMS REST call -  {} : {} : {}", new String[]{ce.getClass().getName(), ce.getMessage(), ce.toString()});
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             return;
         }

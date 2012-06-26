@@ -21,6 +21,6 @@ package org.hippoecm.hst.core.container;
  */
 public final class CmsRestValvesConsts {
 
-    public static final String CREDENTIALS_ATTRIBUTE_NAME = String.format("%s.%s", CmsRestCredentialsToJcrSessionPropagatorValve.class.getName(), "CMS_REST_CREDENTIALS");
+    public static final String CREDENTIALS_ATTRIBUTE_NAME = CmsRestCredentialsToJcrSessionPropagatorValve.class.getName() + "_CMS_REST_CREDENTIALS";
 
 }
