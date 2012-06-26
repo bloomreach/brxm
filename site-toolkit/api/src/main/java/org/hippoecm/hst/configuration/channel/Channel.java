@@ -36,6 +36,7 @@ public class Channel implements Serializable {
     private String url; //Probably not needed for all channels ?
 
     private String hstMountPoint;
+    private String hstPreviewMountPoint;
     private String hstConfigPath;
     private String contentRoot;
     private boolean composerModeEnabled;
@@ -76,6 +77,7 @@ public class Channel implements Serializable {
         this.url = orig.url;
         this.type = orig.type;
         this.hstMountPoint = orig.hstMountPoint;
+        this.hstPreviewMountPoint = orig.hstPreviewMountPoint;
         this.hstConfigPath = orig.hstConfigPath;
         this.contentRoot = orig.contentRoot;
         this.composerModeEnabled = orig.composerModeEnabled;
@@ -117,6 +119,14 @@ public class Channel implements Serializable {
 
     public void setHstMountPoint(final String hstMountPoint) {
         this.hstMountPoint = hstMountPoint;
+    }
+
+    public void setHstPreviewMountPoint(final String hstPreviewMountPoint) {
+        this.hstPreviewMountPoint = hstPreviewMountPoint;
+    }
+
+    public String getHstPreviewMountPoint() {
+        return this.hstPreviewMountPoint;
     }
 
     public String getHstConfigPath() {

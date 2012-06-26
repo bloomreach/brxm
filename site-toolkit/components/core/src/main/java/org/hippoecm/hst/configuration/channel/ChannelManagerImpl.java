@@ -193,6 +193,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         String mountPoint = mount.getMountPoint();
         if (mountPoint != null) {
             channel.setHstMountPoint(mountPoint);
+            channel.setHstPreviewMountPoint(mountPoint+"-preview");
             String configurationPath = mount.getHstSite().getConfigurationPath();
             if (configurationPath != null) {
                 channel.setHstConfigPath(configurationPath);
@@ -625,6 +626,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
         final String mountPointPath = liveSiteNode.getPath();
         channel.setHstMountPoint(mountPointPath);
+
+        final String previewMountPointPath = previewSiteNode.getPath();
+        channel.setHstPreviewMountPoint(previewMountPointPath);
 
         // Create mount
         Node mount = createMountNode(virtualHost, blueprintNode, channelUri.getPath());
