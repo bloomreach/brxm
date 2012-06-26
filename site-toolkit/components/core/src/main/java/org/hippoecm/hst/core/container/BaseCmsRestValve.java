@@ -19,14 +19,13 @@ package org.hippoecm.hst.core.container;
 import java.io.IOException;
 
 import javax.jcr.Credentials;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.core.container.CmsRestValvesConsts.CREDENTIALS_ATTRIBUTE_NAME;
 
 /**
  * Base class for CMS REST {@link Valve}(s)
@@ -35,13 +34,17 @@ public abstract class BaseCmsRestValve extends AbstractValve {
 
     private final static Logger log = LoggerFactory.getLogger(BaseCmsRestValve.class);
 
-    protected static final String HEADER_CMS_REST_CREDENTIALS = "X-CMSREST-CREDENTIALS";
+    private static final String CREDENTIALS_ATTRIBUTE_NAME = BaseCmsRestValve.class.getName() + "_CMS_REST_CREDENTIALS";
 
     @Override
     public abstract void invoke(ValveContext context);
 
-    protected void propagateCrendentials(HttpSession httpSession, Credentials credentials) {
-        httpSession.setAttribute(CREDENTIALS_ATTRIBUTE_NAME, credentials);
+    protected void propagateCrendentials(HttpServletRequest request, Credentials credentials) {
+        request.setAttribute(CREDENTIALS_ATTRIBUTE_NAME, credentials);
+    }
+
+    protected Credentials getPropagatedCredentials(HttpServletRequest request) {
+        return (Credentials)request.getAttribute(CREDENTIALS_ATTRIBUTE_NAME);
     }
 
     protected void setResponseError(int scError, HttpServletResponse response) {

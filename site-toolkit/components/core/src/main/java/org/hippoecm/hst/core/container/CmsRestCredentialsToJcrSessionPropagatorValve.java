@@ -16,8 +16,6 @@
 
 package org.hippoecm.hst.core.container;
 
-import static org.hippoecm.hst.core.container.CmsRestValvesConsts.CREDENTIALS_ATTRIBUTE_NAME;
-
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
@@ -55,8 +53,7 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
             return;
         }
 
-        HttpSession session = servletRequest.getSession();
-        Credentials credentials = (Credentials) session.getAttribute(CREDENTIALS_ATTRIBUTE_NAME);
+        Credentials credentials =  getPropagatedCredentials(servletRequest);
 
         if (credentials == null) {
             log.warn("Security context not found");

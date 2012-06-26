@@ -39,6 +39,8 @@ public class CmsRestSecurityValve extends BaseCmsRestValve {
 
     private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
 
+    private static final String HEADER_CMS_REST_CREDENTIALS = "X-CMSREST-CREDENTIALS";
+
     @Override
     public void invoke(ValveContext context) {
         HttpServletRequest servletRequest = context.getServletRequest();
@@ -51,7 +53,6 @@ public class CmsRestSecurityValve extends BaseCmsRestValve {
         }
 
         log.debug("Request '{}' is invoked from CMS context. Check for credentials and apply security rules or raise proper error!", servletRequest.getRequestURL());
-        HttpSession session = servletRequest.getSession(true);
         // Retrieve encrypted CMS REST username and password and use them as credentials to create a JCR session
         String cmsRestCredentials = servletRequest.getHeader(HEADER_CMS_REST_CREDENTIALS);
 
@@ -65,7 +66,7 @@ public class CmsRestSecurityValve extends BaseCmsRestValve {
             if (StringUtils.isNotBlank(cmsRestCredentials)) {
                 CredentialCipher credentialCipher = CredentialCipher.getInstance();
                 Credentials cred = credentialCipher.decryptFromString(CREDENTIAL_CIPHER_KEY, cmsRestCredentials);
-                propagateCrendentials(session, cred);
+                propagateCrendentials(servletRequest, cred);
             }
             context.invokeNext();
         } catch (SignatureException se) {
