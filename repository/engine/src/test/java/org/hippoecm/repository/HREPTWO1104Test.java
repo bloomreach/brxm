@@ -70,7 +70,7 @@ public class HREPTWO1104Test extends TestCase {
         int i;
         Runtime runtime = Runtime.getRuntime();
         long snapshot, after, before = runtime.freeMemory();
-        super.tearDown(true);
+        super.tearDown();
         for(i=0; i<numiters; i++) {
             if(i % stepsize == 0) {
                 runtime.gc();
@@ -92,7 +92,7 @@ public class HREPTWO1104Test extends TestCase {
         int i;
         Runtime runtime = Runtime.getRuntime();
         long snapshot, after, before = runtime.freeMemory();
-        super.tearDown(true);
+        super.tearDown();
         for(i=0; i<numiters; i++) {
             if(i % stepsize == 0) {
                 runtime.gc();
