@@ -327,7 +327,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                                 fn : function() {
                                     this.fireEvent('edit-hst-config',
                                         this.channelId,
-                                        this.hstMountPoint
+                                        (this.initializeHstConfigEditorWithPreviewContext ? this.hstPreviewMountPoint : this.hstMountPoint)
                                     );
                                 },
                                 scope: this
@@ -513,6 +513,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             var record = config.store.getById(this.channelId);
             this.title = record.get('name');
             this.hstMountPoint = record.get('hstMountPoint');
+            this.hstPreviewMountPoint = record.get('hstPreviewMountPoint');
             this.pageContainer.contextPath = record.get('contextPath') || data.contextPath || this.contextPath;
             this.pageContainer.cmsPreviewPrefix = record.get('cmsPreviewPrefix') || data.cmsPreviewPrefix || this.cmsPreviewPrefix;
             this.pageContainer.renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');

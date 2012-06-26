@@ -101,7 +101,7 @@ public class PageEditor extends ExtPanel {
     private String cmsUser;
 
     @ExtProperty
-    private Boolean previewMode = true;
+    private Boolean previewMode = Boolean.TRUE;
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -114,6 +114,9 @@ public class PageEditor extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private String variantsUuid;
+
+    @ExtProperty
+    private Boolean initializeHstConfigEditorWithPreviewContext = Boolean.TRUE;
     
     private IPluginContext context;
     private ExtStoreFuture<Object> channelStoreFuture;
@@ -138,6 +141,9 @@ public class PageEditor extends ExtPanel {
                 this.previewMode = config.getBoolean("previewMode");
             }
             variantsPath = config.getString("variantsPath");
+            if (config.containsKey("initializeHstConfigEditorWithPreviewContext")) {
+                this.initializeHstConfigEditorWithPreviewContext = config.getBoolean("initializeHstConfigEditorWithPreviewContext");
+            }
         }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
