@@ -14,57 +14,62 @@
     * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-    <wicket:head>
-        <title>Hippo CMS 7</title>
-        <link rel="shortcut icon" href="skin/images/hippo-cms.ico" type="image/x-icon" />
-    </wicket:head>
-    <body>
-        <wicket:panel>
-            <div class="hippo-body-back-hack">
-            <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>            
-            <div class="hippo-login-panel">
-                <form class="hippo-login-panel-form" wicket:id="signInForm" name="signInForm">
-                    <h2><div class="hippo-global-hideme"><wicket:message key="header"/><span><wicket:message  key="subheader"/></span></div></h2>
-                    <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
-                    <div class="hippo-login-form-container">
-                    <table>
-                        <tr>
-                            <td width="50%"><label><wicket:message key="username-label" />&nbsp;</label></td>
-                            <td><input class="hippo-form-text" wicket:id="username" type="text" value="foo@goo.moo" /><span wicket:id="infouserlogin"></span></td>
-                        </tr>
-                        <tr>
-                            <td><label><wicket:message key="password-label" />&nbsp;</label></td>
-                            <td><input class="hippo-form-password" wicket:id="password" type="password" value="password" /></td>
-                        </tr>
-                        <tr>
-                            <td><label><wicket:message key="locale-label" />&nbsp;</label></td>
-                            <td><select name="locale" wicket:id="locale"></select></td>
-                        </tr>
-                        <tr>
-                            <td><label><wicket:message key="rememberme-label" /></label></td>
-                            <td><input class="hippo-form-checkbox" wicket:id="rememberme" type="checkbox" /></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><img wicket:id="captchaImage" width="100%" /></td>
-                        </tr>
-                        <tr>
-                            <td width="50%"><label wicket:id="captchaLabel"></label></td>
-                            <td><input class="hippo-form-text" wicket:id="captcha" type="text" value="" /></td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td class="hippo-global-alignright">
-                                <input class="hippo-form-submit" type="submit" name="submit" wicket:id="submit" value="label" />
-                            </td>
-                        </tr>
-                    </table>
-                    </div>
-                </form>
-                <div class="hippo-login-panel-copyright">
-                    <label><wicket:message key="edition.label" /></label>
-                </div>
-            </div>         
-            </div>   
-        </wicket:panel>
-    </body>
+<wicket:head>
+  <title>Hippo CMS 7</title>
+  <link rel="shortcut icon" href="skin/images/hippo-cms.ico" type="image/x-icon" />
+</wicket:head>
+<body>
+  <wicket:panel>
+    <div class="hippo-body-back-hack">
+      <div wicket:id="pinger" class="hippo-global-hideme">[Prevents session timeouts]</div>
+      <div class="hippo-login-panel">
+        <form class="hippo-login-panel-form" wicket:id="signInForm" name="signInForm">
+          <h2>
+            <div class="hippo-global-hideme">
+              <wicket:message key="header" />
+              <span><wicket:message key="subheader" /></span>
+            </div>
+          </h2>
+          <div class="hippo-login-feedback" wicket:id="feedback">Feedback panel</div>
+          <div class="hippo-login-form-container">
+            <table>
+              <tr>
+                <td width="50%"><label><wicket:message key="username-label" />&nbsp;</label></td>
+                <td><input class="hippo-form-text" wicket:id="username" type="text" value="foo@goo.moo" /><span
+                  wicket:id="infouserlogin"></span></td>
+              </tr>
+              <tr>
+                <td><label><wicket:message key="password-label" />&nbsp;</label></td>
+                <td><input class="hippo-form-password" wicket:id="password" type="password" value="password" /></td>
+              </tr>
+              <tr>
+                <td><label><wicket:message key="locale-label" />&nbsp;</label></td>
+                <td><select name="locale" wicket:id="locale"></select></td>
+              </tr>
+              <tr>
+                <td><label><wicket:message key="rememberme-label" /></label></td>
+                <td><input class="hippo-form-checkbox" wicket:id="rememberme" type="checkbox" /></td>
+              </tr>
+              <tr>
+                <td colspan="2"><img wicket:id="captchaImage" width="100%" /></td>
+              </tr>
+              <tr>
+                <td width="50%"><label wicket:id="captchaLabel"></label></td>
+                <td><input class="hippo-form-text" wicket:id="captcha" type="text" value="" /></td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="hippo-global-alignright"><input class="hippo-form-submit" type="submit" name="submit"
+                  wicket:id="submit" value="label" /></td>
+              </tr>
+            </table>
+          </div>
+        </form>
+        <div class="hippo-login-panel-copyright">
+          <label><wicket:message key="edition.label" /></label>
+        </div>
+      </div>
+    </div>
+  </wicket:panel>
+</body>
 </html>

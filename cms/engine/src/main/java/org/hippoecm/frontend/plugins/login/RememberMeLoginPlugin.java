@@ -38,12 +38,14 @@ import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.captcha.CaptchaImageResource;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
@@ -67,11 +69,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RememberMeLoginPlugin extends LoginPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
 
     private final static String DEFAULT_KEY = "invalid.login";
-    private final static Map<String, String> causeKeys;    
+    private final static Map<String, String> causeKeys;
+
     static {
         causeKeys = new HashMap<String, String>(3);
         causeKeys.put(org.hippoecm.frontend.session.LoginException.CAUSE.INCORRECT_CREDENTIALS.name(), "invalid.login");
@@ -79,10 +80,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         causeKeys.put(org.hippoecm.frontend.session.LoginException.CAUSE.ACCESS_DENIED.name(), "access.denied");
         causeKeys.put(org.hippoecm.frontend.session.LoginException.CAUSE.REPOSITORY_ERROR.name(), "repository.error");
     }
-    
+
     private static final int COOKIE_DEFAULT_MAX_AGE = 1209600;
-    private final String REMEMBERME_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.REMEMBERME_COOKIE_BASE_NAME);
-    private final String HIPPO_AUTO_LOGIN_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME);
     private static final String HAL_REQUEST_ATTRIBUTE_NAME = "in_try_hippo_autologin";
     private static final long serialVersionUID = 1L;
 
@@ -92,7 +91,11 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         Intentionally a relative weak algorithm, as this whole procedure isn't
         too safe to begin with.
     */
-    static final String ALGORITHM = "MD5";
+    private static final String ALGORITHM = "MD5";
+
+    private final String REMEMBERME_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.REMEMBERME_COOKIE_BASE_NAME);
+    private final String HIPPO_AUTO_LOGIN_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME);
+    private final String EDITION;
 
     public RememberMeLoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -101,6 +104,19 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         if (supported != null) {
             add(new BrowserCheckBehavior(supported));
         }
+
+        EDITION = config.getString("edition", "community").toLowerCase();
+        // Regardless which edition we use add the login_ce.css
+        add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(RememberMeLoginPlugin.class, "login_ce.css")));
+        if (!EDITION.equalsIgnoreCase("community")) {
+            // In case of using a different edition than the community one add extra CSS rules to show the required styling
+            add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(RememberMeLoginPlugin.class, "login_ee.css")));
+        }
+    }
+
+    @Override    
+    public String getVariation() {
+        return EDITION.equalsIgnoreCase("community") ? "" : "ee";
     }
 
     // Determine whether to try to auto-login or not
@@ -120,6 +136,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 }
             }
         }
+
         super.onInitialize();
     }
 
@@ -158,8 +175,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             }
         }
 
-        LoginPlugin.SignInForm form = new SignInForm(id, rememberme);
-        
+        LoginPlugin.SignInForm form = new SignInForm(id, rememberme);        
         return form;
     }
 

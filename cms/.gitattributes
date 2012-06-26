@@ -1391,6 +1391,11 @@ engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_d
 engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_fr.properties -text
 engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_it.properties -text
 engine/src/main/java/org/hippoecm/frontend/plugins/login/RememberMeLoginPlugin_nl.properties -text
+engine/src/main/java/org/hippoecm/frontend/plugins/login/images/icons/dialog-information-32.png -text svneol=unset#image/png
+engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginback.png -text svneol=unset#image/png
+engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginbottom.png -text svneol=unset#image/png
+engine/src/main/java/org/hippoecm/frontend/plugins/login/images/loginhead_ce.png -text svneol=unset#image/png
+engine/src/main/java/org/hippoecm/frontend/plugins/login/images/wadden.png -text svneol=unset#image/png
 engine/src/main/java/org/hippoecm/frontend/service/preferences/Preference.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStore.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/frontend/service/preferences/PreferencesStorePlugin.java -text svneol=unset#text/plain
@@ -2304,9 +2309,6 @@ skin/src/main/webapp/images/icons/workflow-requestunpublish-16.png -text
 skin/src/main/webapp/images/icons/workflow-requestunpublish-32.png -text
 skin/src/main/webapp/images/icons/workflow-requestunpublish-48.png -text
 skin/src/main/webapp/images/list-add-16.png -text
-skin/src/main/webapp/images/loginback.png -text
-skin/src/main/webapp/images/loginbottom.png -text
-skin/src/main/webapp/images/loginhead.png -text
 skin/src/main/webapp/images/picker-back.png -text
 skin/src/main/webapp/images/searchBack.png -text
 skin/src/main/webapp/images/silver4.png -text
@@ -2320,7 +2322,6 @@ skin/src/main/webapp/images/tabs-vertical-top-back.png -text
 skin/src/main/webapp/images/transparent2.png -text
 skin/src/main/webapp/images/tree-console-icons.png -text
 skin/src/main/webapp/images/tree-icons.png -text
-skin/src/main/webapp/images/wadden.jpg -text
 skin/src/main/webapp/screen-console.css svneol=native#text/css
 skin/src/main/webapp/screen.css svneol=native#text/css
 skin/src/main/webapp/screen_ie.css -text svneol=unset#text/plain

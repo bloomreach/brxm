@@ -1,0 +1,115 @@
+/* Login Community Edition */
+
+.hippo-login-panel select {
+  padding: 0;
+  width: 186px;
+}
+
+.hippo-login-panel input.hippo-form-submit {
+  padding: 6px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-top: 5px;
+}
+
+.hippo-login-panel-copyright {
+  color: #999999;
+  padding-bottom: 20px;
+  text-align: center;
+  margin-top: 23px;
+  background: url("images/loginbottom.png") no-repeat bottom center
+}
+
+.hippo-body-back-hack {
+  background: white;
+  background: url(images/wadden.png) top left;
+
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+}
+
+.hippo-login-panel {
+  background: transparent url(images/loginback.png) repeat-y scroll center top;
+  margin: 100px auto;
+  position: relative;
+  text-align: left;
+  width: 448px;
+
+  -moz-box-shadow: 6px 6px 10px #333;
+  -webkit-box-shadow: 6px 6px 10px #333;
+  box-shadow: 6px 6px 10px #333;
+
+}
+
+.hippo-login-panel h2 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: normal;
+  color: white;
+  height: 122px;
+  padding-top: 0px;
+  background: transparent url(images/loginhead_ce.png) no-repeat scroll center top;
+}
+
+.hippo-login-panel-form table {
+  width: 100%;
+}
+
+.hippo-login-panel-form label {
+  color: #333333;
+  display: block;
+}
+
+.hippo-login-panel-form h2 span {
+  font-size: 12px;
+  display: block
+}
+
+.hippo-login-panel-form table tr td {
+  padding: 2px;
+  vertical-align: middle
+}
+
+.hippo-login-panel-form select, .hippo-login-panel-form input.hippo-form-text, .hippo-login-panel-form input.hippo-form-password {
+  color: #333333;
+  width: 178px;
+  padding: 2px;
+}
+
+.hippo-login-panel-form input.hippo-form-checkbox {
+  color: #333333;
+  padding: 2px;
+}
+
+.hippo-login-form-container {
+  padding-left: 75px;
+  padding-right: 75px;
+}
+
+/* Login feedback */
+
+.hippo-login-feedback ul {
+  text-align: left;
+  margin-left: 60px;
+  margin-right: 60px;
+  border: 1px solid #69849f;
+  color: #69849f;
+  background-color: #fff8d5;
+  margin-bottom: 15px;
+  font-weight: bold;
+  background-image: url("images/icons/dialog-information-32.png");
+  background-repeat: no-repeat;
+  background-position: 10px 5px;
+  padding-left: 70px;
+  min-height: 35px;
+  padding-top: 8px;
+  height: auto;
+}
+
+.hippo-login-feedback ul li {
+  list-style-type: disc;
+  margin-bottom: 5px;
+}
