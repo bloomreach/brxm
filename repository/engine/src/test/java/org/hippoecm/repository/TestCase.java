@@ -68,12 +68,6 @@ public abstract class TestCase
      */
     private static final String KEEPSERVER_PROP = "org.onehippo.repository.test.keepserver";
 
-    /**
-     * System property indicating whether to perform a consistency check during test case teardown.
-     * This property only has effect when the KEEPSERVER_PROP system property is set to false.
-     */
-    private static final String CONSISTENCYCHECK_PROP = "org.onehippo.repository.test.check";
-
 
     protected static final String SYSTEMUSER_ID = "admin";
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
@@ -244,13 +238,6 @@ public abstract class TestCase
         if (external == null && server != null) {
             if (!Boolean.getBoolean(KEEPSERVER_PROP)) {
                 server.close();
-                if (server instanceof LocalHippoRepository) {
-                    if (Boolean.getBoolean(CONSISTENCYCHECK_PROP) && !((LocalHippoRepository)server).check(false)) {
-                        server = null;
-                        clear();
-                        throw new Exception("Repository inconsistent");
-                    }
-                }
             }
             server = null;
         }

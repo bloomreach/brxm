@@ -43,7 +43,6 @@ import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
-import org.hippoecm.checker.Checker;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
@@ -216,26 +215,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         } catch (FileNotFoundException e) {
             throw new RepositoryException("Repository config not found: file:/" + configName);
         }
-    }
-    
-    public static boolean check(String location, boolean fix) throws RepositoryException {
-        LocalHippoRepository repository= (location != null ? new LocalHippoRepository(location) : new LocalHippoRepository());
-        RepositoryConfig repConfig = RepositoryConfig.create(repository.getRepositoryConfigAsStream(), repository.getRepositoryPath());
-        Checker checker = new Checker(repConfig);
-        return checker.check(fix);
-    }
-
-    public boolean check(boolean fix) throws RepositoryException {
-        RepositoryConfig repConfig = RepositoryConfig.create(getRepositoryConfigAsStream(), getRepositoryPath());
-        Checker checker = new Checker(repConfig);
-        return checker.check(fix);
-    }
-
-    public static void check(String location, String[] arguments) throws RepositoryException {
-        LocalHippoRepository repository= (location != null ? new LocalHippoRepository(location) : new LocalHippoRepository());
-        RepositoryConfig repConfig = RepositoryConfig.create(repository.getRepositoryConfigAsStream(), repository.getRepositoryPath());
-        Checker checker = new Checker(repConfig);
-        checker.checkRepository(arguments);
     }
 
     private class LocalRepositoryImpl extends RepositoryImpl {
