@@ -206,7 +206,7 @@
             </manifest>
             <manifestEntries>
               <Implementation-Build>${buildNumber}</Implementation-Build>
-              <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.SchedulerWorkflowModule</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.LoadInitializationModule org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.SchedulerWorkflowModule</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
