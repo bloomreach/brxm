@@ -202,7 +202,12 @@ public class HstRequestUtils {
             
             return hosts;
         } else {
-            return new String [] { request.getHeader("Host") };
+            if (request.getHeader("Host") != null && !"".equals(request.getHeader("Host"))) {
+                return new String [] { request.getHeader("Host") };
+            } else {
+                // fallback to request server name for HTTP/1.0
+                return new String[] {request.getServerName()};
+            }
         }
     }
 
