@@ -22,13 +22,10 @@ public class ChannelManagerResourceBehaviour extends AbstractBehavior {
 
     public static final String BREADCRUMB_TOOLBAR = "BreadcrumbToolbar.js";
 
-    public static final String FUTURE = "future.js";
-
     public static final String ALL = "channel-manager-all.js";
 
     public void bind(Component component) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
-            component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, FUTURE));
             component.add(JavascriptPackageResource.getHeaderContribution(ExtStoreFuture.class, ExtStoreFuture.EXT_STORE_FUTURE));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, BREADCRUMB_TOOLBAR));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, ROOT_PANEL));

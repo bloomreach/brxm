@@ -195,7 +195,6 @@
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/future.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/ExtStoreFuture.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/BreadcrumbToolbar.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/RootPanel.js</include>
