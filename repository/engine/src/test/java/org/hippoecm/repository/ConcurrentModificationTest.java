@@ -41,7 +41,7 @@ public class ConcurrentModificationTest extends TestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
         Node testNode = session.getRootNode().addNode("test");
         testNode.addNode("A").addNode("B");
         testNode.addNode("B");

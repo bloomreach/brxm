@@ -36,7 +36,7 @@ public class HREPTWO1104Test extends TestCase {
     final private static int numiters = 3000;
 
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
         session.logout();
         session = null;
     }
