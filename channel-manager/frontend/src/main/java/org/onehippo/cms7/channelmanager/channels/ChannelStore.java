@@ -92,7 +92,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             names.add(field.name());
         }
         ALL_FIELD_NAMES = Collections.unmodifiableList(names);
-        INTERNAL_FIELDS = Collections.unmodifiableList(Arrays.asList(ChannelField.cmsPreviewPrefix.name()));
+        INTERNAL_FIELDS = Collections.unmodifiableList(
+                                    Arrays.asList(ChannelField.cmsPreviewPrefix.name(),
+                                                  ChannelField.hstPreviewMountPoint.name()));
     }
 
     public static enum SortOrder {ascending, descending}
