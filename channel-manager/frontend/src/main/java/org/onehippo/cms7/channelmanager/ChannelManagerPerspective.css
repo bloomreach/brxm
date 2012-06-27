@@ -390,11 +390,6 @@
     overflow: auto;
 }
 
-.error-status-message {
-  color: #FF0000;
-  font-size: 40px;
-}
-
 .customExtLinkPickerRenderValue {
     height: 18px;
     width: 94px;

@@ -15,7 +15,9 @@
  */
 package org.onehippo.cms7.channelmanager;
 
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.model.ResourceModel;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +32,8 @@ public class DimmedRootPanel extends ExtPanel {
     public DimmedRootPanel(String id) {
         super(id);
 
-        add(new Label("siteStatusLabel", new ResourceModel("site-is-down-message", "Site might be down. Please check with your systems administrator.")));
+        add(new Label("siteStatusLabel", new ResourceModel("site.is.down.message", "Site might be down. Please check with your systems administrator.")));
+        add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(DimmedRootPanel.class, "DimmedRootPanel.css")));
     }
 
     @Override
