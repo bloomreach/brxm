@@ -49,6 +49,8 @@ public class RepositoryLoginTest extends TestCase {
     private static final String TESTUSER_HASH_SHA1 = "$SHA-1$LDiazWf2qBc=$VjcsDMKtiRKYushsjTNDuk5a//4=";
     private static final String TESTUSER_HASH_SHA256 = "$SHA-256$LDiazWf2qBc=$/bzV6rjHX+fgx4dVz6oaPcW3kX1ynSJ+vGv1mbbm+v4=";
 
+    private static final int NUM_CONCURRENT_LOGINS = 25;
+    
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -248,7 +250,7 @@ public class RepositoryLoginTest extends TestCase {
 
     @Test
     public void testLogins() throws RepositoryException {
-        for (int count = 1; count <= 1024; count = count << 1) {
+        for (int count = 1; count <= NUM_CONCURRENT_LOGINS; count = count << 1) {
             //long t1 = System.currentTimeMillis();
             Session[] sessions = new Session[count];
             for (int i = 0; i < count; i++) {
@@ -262,7 +264,7 @@ public class RepositoryLoginTest extends TestCase {
 
     @Test
     public void testConcurrentLogins() throws RepositoryException {
-        for (int count = 1; count <= 1024; count = count << 1) {
+        for (int count = 1; count <= NUM_CONCURRENT_LOGINS; count = count << 1) {
             //long t1 = System.currentTimeMillis();
             Session[] sessions = new Session[count];
             for (int i = 0; i < count; i++) {
