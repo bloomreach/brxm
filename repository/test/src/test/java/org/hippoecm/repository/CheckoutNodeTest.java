@@ -63,7 +63,7 @@ public class CheckoutNodeTest extends TestCase {
         Node navigation = root.addNode("navigation", "hippo:testdocument");
         navigation.addMixin("hippo:harddocument");
         node = navigation.addNode("search",HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[0]);
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[0]);
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[0]);

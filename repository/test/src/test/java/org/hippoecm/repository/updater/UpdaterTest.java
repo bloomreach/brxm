@@ -134,7 +134,7 @@ public class UpdaterTest extends TestCase {
         Node refA = container.addNode("refA", "test:referrer");
         refA.setProperty("referenceA", A);
         Node facetA = refA.addNode("linkA", "hippo:facetselect");
-        facetA.setProperty("hippo:docbase", A.getUUID());
+        facetA.setProperty("hippo:docbase", A.getIdentifier());
         facetA.setProperty("hippo:facets", new String[0]);
         facetA.setProperty("hippo:values", new String[0]);
         facetA.setProperty("hippo:modes", new String[0]);
@@ -147,7 +147,7 @@ public class UpdaterTest extends TestCase {
 
         refB.setProperty("referenceB", B);
         Node facetB = refB.addNode("linkB", "hippo:facetselect");
-        facetB.setProperty("hippo:docbase", B.getUUID());
+        facetB.setProperty("hippo:docbase", B.getIdentifier());
         facetB.setProperty("hippo:facets", new String[0]);
         facetB.setProperty("hippo:values", new String[0]);
         facetB.setProperty("hippo:modes", new String[0]);
@@ -179,7 +179,7 @@ public class UpdaterTest extends TestCase {
         assertEquals("test:target", A.getPrimaryNodeType().getName());
 
         String uuid = refA.getNode("linkA").getProperty("hippo:docbase").getString();
-        assertEquals(A.getUUID(), uuid);
+        assertEquals(A.getIdentifier(), uuid);
 
         // verify forward references
 
@@ -188,6 +188,6 @@ public class UpdaterTest extends TestCase {
         assertEquals("test:target", B.getPrimaryNodeType().getName());
 
         uuid = refB.getNode("linkB").getProperty("hippo:docbase").getString();
-        assertEquals(B.getUUID(), uuid);
+        assertEquals(B.getIdentifier(), uuid);
     }
 }

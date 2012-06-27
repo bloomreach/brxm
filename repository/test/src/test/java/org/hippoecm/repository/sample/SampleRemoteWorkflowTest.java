@@ -155,7 +155,7 @@ public class SampleRemoteWorkflowTest {
                 if (workflow instanceof SampleWorkflow) {
                     SampleWorkflow myworkflow = (SampleWorkflow) workflow;
                     Document document = myworkflow.getArticle();
-                    assertTrue(node.getUUID().equals(document.getIdentity()));
+                    assertTrue(node.getIdentifier().equals(document.getIdentity()));
                 } else {
                     fail("workflow not of proper type " + workflow.getClass().getName());
                 }

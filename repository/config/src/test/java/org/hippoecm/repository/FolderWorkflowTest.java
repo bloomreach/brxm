@@ -136,8 +136,8 @@ public class FolderWorkflowTest extends TestCase {
         QueryManager manager = session.getWorkspace().getQueryManager();
         HippoQuery query = (HippoQuery) manager.getQuery(session.getRootNode().getNode("hippo:configuration/hippo:documents/embedded"));
         Map<String,String> arguments = new TreeMap<String,String>();
-        arguments.put("id", document.getUUID());
-        query.bindValue("id", session.getValueFactory().createValue(document.getUUID()));
+        arguments.put("id", document.getIdentifier());
+        query.bindValue("id", session.getValueFactory().createValue(document.getIdentifier()));
         QueryResult resultset = query.execute();
         NodeIterator iter = resultset.getNodes();
         assertTrue(iter.getSize() > 0);
@@ -326,7 +326,7 @@ public class FolderWorkflowTest extends TestCase {
         Node originalDocument = createDocument();
 
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
-        Document copy = workflow.copy(new Document(originalDocument.getUUID()), new Document(node.getUUID()), "dc");
+        Document copy = workflow.copy(new Document(originalDocument.getIdentifier()), new Document(node.getIdentifier()), "dc");
         Node copyNode = session.getNodeByUUID(copy.getIdentity());
         assertEquals("/test/f/dc/dc", copyNode.getPath());
         assertTrue(copyNode.isNodeType("hippostd:document"));
@@ -339,7 +339,7 @@ public class FolderWorkflowTest extends TestCase {
 
         Node target = session.getNode("/test/aap");
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
-        Document copy = workflow.copy(new Document(originalDocument.getUUID()), new Document(target.getUUID()), "dc");
+        Document copy = workflow.copy(new Document(originalDocument.getIdentifier()), new Document(target.getIdentifier()), "dc");
         Node copyNode = session.getNodeByUUID(copy.getIdentity());
         assertEquals("/test/aap/dc/dc", copyNode.getPath());
         assertTrue(copyNode.isNodeType("hippostd:document"));

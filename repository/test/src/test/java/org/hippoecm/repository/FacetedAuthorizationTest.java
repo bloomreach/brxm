@@ -243,13 +243,13 @@ public class FacetedAuthorizationTest extends TestCase {
         // search without namespace
         Node node = testNav.addNode("search", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "search");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, testData.getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, testData.getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "authtest" });
 
         // select without namespace
         node = testNav.addNode("select", HippoNodeType.NT_FACETSELECT);
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "stick" });
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, testData.getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, testData.getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "authtest" });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { "canread" });
 

@@ -140,7 +140,7 @@ public class ReferringDocumentsTest extends TestCase
         } else {
             for(int i=0; i<FANOUT; i++) {
                 Node document = addDocument(base, "document"+i);
-                documents.add(document.getUUID());
+                documents.add(document.getIdentifier());
                 if(++saveCounter >= SAVECNT) {
                     session.save();
                     saveCounter = 0;
@@ -207,7 +207,7 @@ public class ReferringDocumentsTest extends TestCase
         Set<Node> referrers = new TreeSet<Node>(new Comparator<Node>() {
             public int compare(Node node1, Node node2) {
                 try {
-                    return node1.getUUID().compareTo(node2.getUUID());
+                    return node1.getIdentifier().compareTo(node2.getIdentifier());
                 } catch(UnsupportedRepositoryOperationException ex) {
                     // cannot happen
                     return 0;
@@ -224,7 +224,7 @@ public class ReferringDocumentsTest extends TestCase
         if(!handle.isNodeType(HippoNodeType.NT_HANDLE) || !handle.isNodeType(HippoNodeType.NT_HARDHANDLE)) {
             return null;
         }
-        String uuid = handle.getUUID();
+        String uuid = handle.getIdentifier();
         QueryManager queryManager = document.getSession().getWorkspace().getQueryManager();
         String statement = "//*[@hippo:docbase='"+uuid+"']";
         Query query = queryManager.createQuery(statement, Query.XPATH);

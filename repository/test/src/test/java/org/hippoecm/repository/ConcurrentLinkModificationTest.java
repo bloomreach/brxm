@@ -158,7 +158,7 @@ public class ConcurrentLinkModificationTest extends TestCase {
         Node testNode = session.getRootNode().getNode("test");
         testNode.addMixin("mix:referenceable");
         session.save();
-        final String uuid = testNode.getUUID();
+        final String uuid = testNode.getIdentifier();
         LinkModifierThread[] threads = new LinkModifierThread[2];
         for (int i = 0; i < 2; i++) {
             final Session threadSession;

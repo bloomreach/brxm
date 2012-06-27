@@ -60,7 +60,7 @@ public class CopyNodeTest extends TestCase {
         session.save();
         node = root.addNode("navigation");
         node = node.addNode("search",HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[0]);
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[0]);
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[0]);

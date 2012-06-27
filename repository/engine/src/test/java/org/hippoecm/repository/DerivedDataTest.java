@@ -101,9 +101,9 @@ public class DerivedDataTest extends TestCase {
         assertTrue(p.getDefinition().isMultiple());
         Value[] values = p.getValues();
         assertEquals(3, values.length);
-        values[0].getString().equals(session.getRootNode().getUUID());
-        values[1].getString().equals(folder2.getUUID());
-        values[2].getString().equals(folder2.getNode("document").getUUID());
+        values[0].getString().equals(session.getRootNode().getIdentifier());
+        values[1].getString().equals(folder2.getIdentifier());
+        values[2].getString().equals(folder2.getNode("document").getIdentifier());
 
         session.move(document.getPath(), folder1.getPath()+"/"+document.getName());
         session.save();
@@ -111,9 +111,9 @@ public class DerivedDataTest extends TestCase {
         assertTrue(p.getDefinition().isMultiple());
         values = p.getValues();
         assertEquals(3, values.length);
-        values[0].getString().equals(session.getRootNode().getUUID());
-        values[1].getString().equals(folder1.getUUID());
-        values[2].getString().equals(folder1.getNode("document").getUUID());
+        values[0].getString().equals(session.getRootNode().getIdentifier());
+        values[1].getString().equals(folder1.getIdentifier());
+        values[2].getString().equals(folder1.getNode("document").getIdentifier());
     }
 
     @Ignore

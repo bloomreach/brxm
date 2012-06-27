@@ -52,7 +52,7 @@ public class HREPTWO451Test extends TestCase {
         node = root.addNode("navigation");
         node = node.addNode("search",HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "search");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "hippo:testfacet" });
         session.save();
         assertTrue(root.getNode("navigation").getNode("search").hasNode("aap"));

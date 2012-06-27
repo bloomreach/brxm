@@ -283,7 +283,7 @@ public abstract class TestCase
                         }
                         if (values.length > 0) {
                             if (propDef.getRequiredType() == PropertyType.REFERENCE) {
-                                String uuid = session.getRootNode().getNode(contents[i+1]).getUUID();
+                                String uuid = session.getRootNode().getNode(contents[i+1]).getIdentifier();
                                 values[values.length-1] = session.getValueFactory().createValue(uuid, PropertyType.REFERENCE);
                             } else {
                                 values[values.length-1] = session.getValueFactory().createValue(contents[i+1]);
@@ -293,14 +293,14 @@ public abstract class TestCase
                     } else {
                         if (propDef != null && propDef.getRequiredType() == PropertyType.REFERENCE) {
                             node.setProperty(contents[i], session.getValueFactory().createValue(session.getRootNode().
-                                                         getNode(contents[i+1].substring(1)).getUUID(), PropertyType.REFERENCE));
+                                                         getNode(contents[i+1].substring(1)).getIdentifier(), PropertyType.REFERENCE));
                         } else if ("hippo:docbase".equals(contents[i])) {
                             String docbase;
                             if (contents[i + 1].startsWith("/")) {
                                 if (contents[i + 1].substring(1).equals("")) {
-                                    docbase = session.getRootNode().getUUID();
+                                    docbase = session.getRootNode().getIdentifier();
                                 } else {
-                                    docbase = session.getRootNode().getNode(contents[i + 1].substring(1)).getUUID();
+                                    docbase = session.getRootNode().getNode(contents[i + 1].substring(1)).getIdentifier();
                                 }
                             } else {
                                 docbase = contents[i + 1];

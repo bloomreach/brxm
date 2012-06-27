@@ -369,7 +369,7 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         car.addMixin("hippo:harddocument");
 
         // add a facetselect to car 1
-        String docbase = cars.getNode("car1").getUUID();
+        String docbase = cars.getNode("car1").getIdentifier();
         Node facetselect = car.addNode("car1", HippoNodeType.NT_FACETSELECT);
         facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
         facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] {});
@@ -389,7 +389,7 @@ public class FacetedNavigationConcurrencyTest extends TestCase {
         node = node.addNode("facetnavigation");
         node.addMixin("mix:referenceable");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getIdentifier());
         node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:brand", "hippo:color",
                 "hippo:product" });
 

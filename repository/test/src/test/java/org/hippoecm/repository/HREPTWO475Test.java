@@ -90,7 +90,7 @@ public class HREPTWO475Test extends TestCase {
         child.setProperty("lang","en");
 
         node = root.addNode("nav","hippo:facetselect");
-        node.setProperty("hippo:docbase",session.getRootNode().getNode("test/docs").getUUID());
+        node.setProperty("hippo:docbase",session.getRootNode().getNode("test/docs").getIdentifier());
         node.setProperty("hippo:facets",new String[] { "lang" });
         node.setProperty("hippo:values",new String[] { "nl" });
         node.setProperty("hippo:modes",new String[] { "select" });

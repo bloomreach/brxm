@@ -43,7 +43,7 @@ public class FacetSelectPerformanceTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         build(session, content);
-        String docbase = session.getRootNode().getNode("test").getNode("docs").getUUID();
+        String docbase = session.getRootNode().getNode("test").getNode("docs").getIdentifier();
         Node test = session.getRootNode().getNode("test");
         for (int i = 0; i < 5000; i++) {
             Node facet = test.addNode("facet" + i, "hippo:facetselect");

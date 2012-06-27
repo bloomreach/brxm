@@ -52,7 +52,7 @@ public class HREPTWO1493Test extends TestCase {
         session.save();
 
         node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
-        node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
+        node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getIdentifier());
         node.setProperty("hippo:modes", new Value[0]);
         node.setProperty("hippo:facets", new Value[0]);
         node.setProperty("hippo:values", new Value[0]);
@@ -72,7 +72,7 @@ public class HREPTWO1493Test extends TestCase {
         session.save();
 
         node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
-        node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
+        node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getIdentifier());
         node.setProperty("hippo:modes", new Value[0]);
         node.setProperty("hippo:facets", new Value[0]);
         node.setProperty("hippo:values", new Value[0]);
@@ -103,7 +103,7 @@ public class HREPTWO1493Test extends TestCase {
         session.refresh(false);
 
         node = session.getRootNode().getNode("test").addNode("virtual", "hippo:facetselect");
-        node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
+        node.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getIdentifier());
         node.setProperty("hippo:modes", new Value[0]);
         node.setProperty("hippo:facets", new Value[0]);
         node.setProperty("hippo:values", new Value[0]);

@@ -200,7 +200,7 @@ public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
         Node dutchNodeCanonical = n.getCanonicalNode();
         Node mirror = dutchNodeCanonical.addNode("mirror","hippo:facetselect");
         Node docBaseNode = (Node)session.getItem("/test/documents/articles/nineteeneightyfour");
-        mirror.setProperty(HippoNodeType.HIPPO_DOCBASE, docBaseNode.getUUID());
+        mirror.setProperty(HippoNodeType.HIPPO_DOCBASE, docBaseNode.getIdentifier());
         mirror.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{});
         mirror.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{});
         mirror.setProperty(HippoNodeType.HIPPO_MODES, new String[]{});

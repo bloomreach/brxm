@@ -63,7 +63,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
 
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
-        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getIdentifier());
         String[] ranges = new String[] {"hippo:date$[{name:'today', resolution:'day', begin:0, end:1}, {name:'yesterday', resolution:'day', begin:-1, end:0}]"};
         
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS,ranges);
@@ -101,7 +101,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS,
                 new String[] { "hippo:date$[{name:'before today', resolution:'day', end:0}]" });
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { "range" });
@@ -127,7 +127,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         
         String[] facetRanges = {"hippo:price$[" +
                 "{name:'less 10.000', resolution:'double', end:10000}," +
@@ -183,7 +183,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
 
         String[] facetRanges = { "hippo:price$[" 
                 + "{name:'first', resolution:'double', end:10000},"
@@ -239,7 +239,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         facetNavigation
                 .setProperty(
                         FacNavNodeType.HIPPOFACNAV_FACETS,
@@ -284,7 +284,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         StringBuilder ranges = new StringBuilder();
         char current = 'a';
         char next = 'b';
@@ -349,7 +349,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] {"hippo:date$[{name:'today', resolution:'day', begin:0, end:1},{name:'yesterday', resolution:'day', begin:-1, end:0}]" });
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"range" });
 
@@ -374,7 +374,7 @@ public class FacetedNavigationRangesTest extends AbstractRangesFacetNavigationTe
 
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
-        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getIdentifier());
         String[] ranges = new String[] {"hippo:date$month" ,"hippo:date$[{name:'today', resolution:'day', begin:0, end:1}, {name:'this week', resolution:'week', begin:0, end:1}, {name:'this month', resolution:'month', begin:0, end:1}]"};
         
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS,ranges);

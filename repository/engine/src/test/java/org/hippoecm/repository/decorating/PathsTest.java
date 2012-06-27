@@ -15,23 +15,24 @@
  */
 package org.hippoecm.repository.decorating;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeType;
 
-import org.hippoecm.repository.api.HippoNodeType;
-
 import org.hippoecm.repository.TestCase;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class PathsTest extends TestCase {
     @SuppressWarnings("unused")
@@ -69,10 +70,10 @@ public class PathsTest extends TestCase {
             valuesSet.add(values[i].getString());
         }
         assertTrue(values.length == 4);
-        assertTrue(valuesSet.contains(session.getRootNode().getUUID()));
-        assertTrue(valuesSet.contains(session.getRootNode().getNode("test").getUUID()));
-        assertTrue(valuesSet.contains(session.getRootNode().getNode("test/sub").getUUID()));
-        assertTrue(valuesSet.contains(session.getRootNode().getNode("test/sub/node").getUUID()));
+        assertTrue(valuesSet.contains(session.getRootNode().getIdentifier()));
+        assertTrue(valuesSet.contains(session.getRootNode().getNode("test").getIdentifier()));
+        assertTrue(valuesSet.contains(session.getRootNode().getNode("test/sub").getIdentifier()));
+        assertTrue(valuesSet.contains(session.getRootNode().getNode("test/sub/node").getIdentifier()));
     }
 
     @Test
@@ -132,7 +133,7 @@ public class PathsTest extends TestCase {
 
         session.save();
         session.refresh(false);
-        assertEquals(session.getRootNode().getNode("test/f").getUUID(),
+        assertEquals(session.getRootNode().getNode("test/f").getIdentifier(),
                      session.getRootNode().getNode("test/f/x").getProperty("hippo:paths").getValues()[1].getString());
     }
 }

@@ -46,7 +46,7 @@ public class InternalCanonicalPathTest extends TestCase {
     private Node commonFacetSelectSetup() throws RepositoryException {
         createContent();
         Node selectnode = session.getRootNode().getNode("test").addNode("selectnode", HippoNodeType.NT_FACETSELECT);
-        selectnode.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/content").getUUID());
+        selectnode.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/content").getIdentifier());
         selectnode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { });
         selectnode.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { });
         selectnode.setProperty(HippoNodeType.HIPPO_MODES, new String[] { });
@@ -58,7 +58,7 @@ public class InternalCanonicalPathTest extends TestCase {
     private Node commonFacetSearchSetup() throws RepositoryException {
         createContent();
         Node searchnode = session.getRootNode().getNode("test").addNode("searchnode", HippoNodeType.NT_FACETSEARCH);
-        searchnode.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/content").getUUID());
+        searchnode.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/content").getIdentifier());
         searchnode.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
         searchnode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x"});
         session.save();

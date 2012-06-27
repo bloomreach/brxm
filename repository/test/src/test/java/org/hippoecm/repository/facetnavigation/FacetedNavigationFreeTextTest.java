@@ -46,7 +46,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         Node facetNavigation = testNode.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
       
@@ -86,7 +86,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         Node facetNavigation = testNode.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
       
@@ -172,8 +172,8 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
 
         Node facetNavigation = testNode.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
-        String multiScopeDocBases = session.getRootNode().getNode("test/documents/cardocs/cardoc1").getUUID() + "," +
-                                    session.getRootNode().getNode("test/documents/cardocs/cardoc6").getUUID();;
+        String multiScopeDocBases = session.getRootNode().getNode("test/documents/cardocs/cardoc1").getIdentifier() + "," +
+                                    session.getRootNode().getNode("test/documents/cardocs/cardoc6").getIdentifier();;
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, multiScopeDocBases);
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
@@ -210,8 +210,8 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
 
         Node facetNavigation = testNode.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
-        String multiScopeDocBases = session.getRootNode().getNode("test/documents/cardocs/cardoc1").getUUID() + "," +
-                                    session.getRootNode().getNode("test/documents/cardocs/cardoc6").getUUID();;
+        String multiScopeDocBases = session.getRootNode().getNode("test/documents/cardocs/cardoc1").getIdentifier() + "," +
+                                    session.getRootNode().getNode("test/documents/cardocs/cardoc6").getIdentifier();;
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, multiScopeDocBases);
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
@@ -249,8 +249,8 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
 
         Node facetNavigation = testNode.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
-        String multiScopeDocBases = session.getRootNode().getNode("test/documents/cardocs/cardoc1").getUUID() + "," +
-                                    session.getRootNode().getNode("test/documents/cardocs/cardoc6").getUUID();;
+        String multiScopeDocBases = session.getRootNode().getNode("test/documents/cardocs/cardoc1").getIdentifier() + "," +
+                                    session.getRootNode().getNode("test/documents/cardocs/cardoc6").getIdentifier();;
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, multiScopeDocBases);
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
@@ -293,7 +293,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         facetNavigation.addMixin("mix:referenceable");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
       
@@ -304,7 +304,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
          */
 
         testNode = session.getRootNode().getNode("test");
-        String docbase = testNode.getNode("facetnavigation").getUUID();
+        String docbase = testNode.getNode("facetnavigation").getIdentifier();
         Node facetselect = testNode.addNode("filtered", HippoNodeType.NT_FACETSELECT);
         facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
         facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "select" });
@@ -374,7 +374,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         Node facetNavigation = testNode2.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
       
@@ -385,7 +385,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
          */
 
         testNode = session.getRootNode().getNode("test");
-        String docbase = testNode.getNode("test2").getUUID();
+        String docbase = testNode.getNode("test2").getIdentifier();
         Node facetselect = testNode.addNode("filtered", HippoNodeType.NT_FACETSELECT);
         facetselect.setProperty(HippoNodeType.HIPPO_DOCBASE, docbase);
         facetselect.setProperty(HippoNodeType.HIPPO_MODES, new String[] { "select" });
@@ -440,7 +440,7 @@ public class FacetedNavigationFreeTextTest extends AbstractDateFacetNavigationTe
         Node facetNavigation = testNode.addNode("facetnavigation");
         facetNavigation = facetNavigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] {"year","month"});
       

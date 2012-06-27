@@ -58,7 +58,7 @@ public class HREPTWO650Test extends FacetedNavigationAbstractTest {
     private void addFacetDateSearch(Node rootNode) throws RepositoryException {
         Node facetdatesearch = rootNode.addNode("facetdatesearch", HippoNodeType.NT_FACETSEARCH);
         facetdatesearch.setProperty(HippoNodeType.HIPPO_QUERYNAME, "fds");
-        facetdatesearch.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        facetdatesearch.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getIdentifier());
         facetdatesearch.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "date" });
     }
 

@@ -96,13 +96,13 @@ public class PhysicalExportSystemViewTest extends FacetedNavigationAbstractTest 
     private void addFacetSearch() throws RepositoryException {
         Node facetsearchNode = session.getRootNode().getNode("test").addNode("facetsearch", HippoNodeType.NT_FACETSEARCH);
         facetsearchNode.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
-        facetsearchNode.setProperty(HippoNodeType.HIPPO_DOCBASE, getDocsNode().getUUID());
+        facetsearchNode.setProperty(HippoNodeType.HIPPO_DOCBASE, getDocsNode().getIdentifier());
         facetsearchNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
     }
 
     private void addFacetSelect() throws RepositoryException {
         Node facetselectNode = session.getRootNode().getNode("test").addNode("facetselect", HippoNodeType.NT_FACETSELECT);
-        facetselectNode.setProperty("hippo:docbase", getDocsNode().getUUID());
+        facetselectNode.setProperty("hippo:docbase", getDocsNode().getIdentifier());
         facetselectNode.setProperty("hippo:facets", new String[] {});
         facetselectNode.setProperty("hippo:values", new String[] {});
         facetselectNode.setProperty("hippo:modes", new String[] {});

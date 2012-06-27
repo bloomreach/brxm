@@ -88,10 +88,10 @@ public class DereferencedExportImportTest extends TestCase {
         testExport.addNode("doc5",  "hippo:document").addMixin("hippo:harddocument");
 
         // references between doc1 and doc2
-        Value uuidDoc1 = session.getValueFactory().createValue(testExport.getNode("doc1").getUUID(), PropertyType.REFERENCE);
-        Value uuidDoc2 = session.getValueFactory().createValue(testExport.getNode("doc2").getUUID(), PropertyType.REFERENCE);
-        Value uuidDoc3 = session.getValueFactory().createValue(testExport.getNode("doc3").getUUID(), PropertyType.REFERENCE);
-        Value uuidRef1 = session.getValueFactory().createValue(testData.getNode("ref1").getUUID(), PropertyType.REFERENCE);
+        Value uuidDoc1 = session.getValueFactory().createValue(testExport.getNode("doc1").getIdentifier(), PropertyType.REFERENCE);
+        Value uuidDoc2 = session.getValueFactory().createValue(testExport.getNode("doc2").getIdentifier(), PropertyType.REFERENCE);
+        Value uuidDoc3 = session.getValueFactory().createValue(testExport.getNode("doc3").getIdentifier(), PropertyType.REFERENCE);
+        Value uuidRef1 = session.getValueFactory().createValue(testData.getNode("ref1").getIdentifier(), PropertyType.REFERENCE);
 
         // one single
         testExport.getNode("doc1").setProperty("ref-to-2", uuidDoc2);
@@ -262,7 +262,7 @@ public class DereferencedExportImportTest extends TestCase {
 
         Node node = testImport.getNode(TEST_EXPORT_NODE);
         assertNotNull(node);
-        assertEquals(session.getRootNode().getUUID(), node.getNode("doc4").getProperty("ref-to-extern").getString());
+        assertEquals(session.getRootNode().getIdentifier(), node.getNode("doc4").getProperty("ref-to-extern").getString());
     }
 
 

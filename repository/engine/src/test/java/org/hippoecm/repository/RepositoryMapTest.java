@@ -66,7 +66,7 @@ public class RepositoryMapTest extends TestCase {
         Map map = server.getRepositoryMap(session.getRootNode().getNode("hippo:configuration/hippo:documents"));
         map = (Map) map.get("embedded");
         assertNotNull(map);
-        map = (Map) map.get(root.getNode("articles/myarticle1/myarticle1").getUUID());
+        map = (Map) map.get(root.getNode("articles/myarticle1/myarticle1").getIdentifier());
     }
 
     @Test

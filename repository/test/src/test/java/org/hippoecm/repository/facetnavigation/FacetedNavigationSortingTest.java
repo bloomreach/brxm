@@ -46,7 +46,7 @@ public class FacetedNavigationSortingTest extends AbstractDateFacetNavigationTes
        Node navigation = testNode.addNode("facetnavigation");
        Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
        facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-               .getUUID());
+               .getIdentifier());
        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year",  "hippo:date$month"});
        facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { 
                "year${sortby:'facetvalue', sortorder:'ascending', limit:2}",
@@ -75,7 +75,7 @@ public class FacetedNavigationSortingTest extends AbstractDateFacetNavigationTes
        navigation = testNode.getNode("facetnavigation");
        Node facetNavigation2 = navigation.addNode("hippo:navigation2", FacNavNodeType.NT_FACETNAVIGATION);
        facetNavigation2.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-               .getUUID());
+               .getIdentifier());
        facetNavigation2.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year"});
        facetNavigation2.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { 
                "year${sortby:'facetvalue', sortorder:'descending'}"
@@ -101,7 +101,7 @@ public class FacetedNavigationSortingTest extends AbstractDateFacetNavigationTes
        navigation = testNode.getNode("facetnavigation");
        Node facetNavigation3 = navigation.addNode("hippo:navigation3", FacNavNodeType.NT_FACETNAVIGATION);
        facetNavigation3.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-               .getUUID());
+               .getIdentifier());
        facetNavigation3.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:date$year"});
        facetNavigation3.setProperty(FacNavNodeType.HIPPOFACNAV_FACETNODENAMES, new String[] { 
                "year${sortby:'count', sortorder:'ascending', limit:1}"

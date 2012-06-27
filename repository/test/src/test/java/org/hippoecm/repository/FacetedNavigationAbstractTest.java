@@ -142,7 +142,7 @@ public abstract class FacetedNavigationAbstractTest extends TestCase {
         node = node.addNode("navigation");
         node = node.addNode("xyz", HippoNodeType.NT_FACETSEARCH);
         node.setProperty(HippoNodeType.HIPPO_QUERYNAME, "xyz");
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x", "y", "z" });
     }
     

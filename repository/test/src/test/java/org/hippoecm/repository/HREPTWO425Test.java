@@ -34,7 +34,7 @@ public class HREPTWO425Test extends TestCase {
         node.addMixin("hippo:harddocument");
         session.save();
         node = node.addNode("n", HippoNodeType.NT_FACETSELECT);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getUUID());
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { });
         node.setProperty(HippoNodeType.HIPPO_VALUES, new String[] { });
         node.setProperty(HippoNodeType.HIPPO_MODES, new String[] { });

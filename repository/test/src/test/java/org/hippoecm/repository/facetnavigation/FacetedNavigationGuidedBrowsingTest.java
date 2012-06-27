@@ -47,7 +47,7 @@ public class FacetedNavigationGuidedBrowsingTest extends AbstractDateFacetNaviga
         Node navigation = testNode.addNode("facetnavigation");
         Node facetNavigation = navigation.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
         facetNavigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents")
-                .getUUID());
+                .getIdentifier());
         facetNavigation.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { 
                 "hippo:date$year",  
                 "hippo:date$month",
