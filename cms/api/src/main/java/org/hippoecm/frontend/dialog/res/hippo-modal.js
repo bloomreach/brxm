@@ -18,14 +18,14 @@
 
     var oldWindowInitialize = Wicket.Window.prototype.initialize;
     Wicket.Window.prototype.initialize = function() {
-        console.log('wicket.window initialize');
+//        console.log('wicket.window initialize');
         oldWindowInitialize.apply(this, arguments);
         this.settings.isFullscreen = false;
     };
 
     Wicket.Window.prototype.onWindowResize = function(e) {
         if(this.isFullscreen) {
-            console.log('onWindowResize');
+//            console.log('onWindowResize');
             var w = this.window;
             var f = this.content;
 
