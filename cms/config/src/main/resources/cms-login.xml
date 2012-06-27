@@ -54,6 +54,18 @@
       <sv:property sv:name="edition" sv:type="String">
         <sv:value>community</sv:value>
       </sv:property>
+      <sv:property sv:name="console.privileges" sv:type="String">
+        <sv:value>hippo:admin</sv:value>
+      </sv:property>
+      <sv:property sv:name="console.privileges.path" sv:type="String">
+        <sv:value>/content/documents</sv:value>
+      </sv:property>
+      <sv:property sv:name="cms.privileges" sv:type="String">
+        <sv:value>hippo:author</sv:value>
+      </sv:property>
+      <sv:property sv:name="cms.privileges.path" sv:type="String">
+        <sv:value>/content/documents</sv:value>
+      </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.root</sv:value>
       </sv:property>

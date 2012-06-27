@@ -83,6 +83,10 @@ public class WebApplicationHelper {
 
         return result;
     }
+    
+    public static String getApplicationName(final String defaultName) {
+        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, defaultName);
+    }
 
     protected static void validateNotBlank(String value) {
         if (value == null || "".equals(value)) {
