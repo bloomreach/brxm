@@ -45,7 +45,7 @@
     <div>
         <hst:html hippohtml="${document.html}">
           <!-- Note that replace="hippogallery:original" is optional and can be left out -->
-          <hst:imagevariant name="hippogallery:thumbnail" replace="hippogallery:original" fallback="false"/>
+           <hst:imagevariant name="hippogallery:thumbnail" replaces="hippogallery:original" fallback="false"/>
         </hst:html>
     </div>
   </div>
