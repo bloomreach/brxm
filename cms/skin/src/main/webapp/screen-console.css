@@ -9,6 +9,11 @@
 
 .hippo-root em, .hippo-root strong {font-weight: bold;}
 
+.hippo-root .pending-changes p {
+  overflow: auto;
+  height: 298px;
+}
+
 .hippo-console-menu-advanced{position: absolute; top: 0; right: 150px;}
 .hippo-console-save{position: absolute; top: 37px; right: 5px;}
 .hippo-console-breadcrumbs{font-weight: normal; background: #32629b; padding-top: 10px; padding-bottom: 10px; padding-left: 563px; margin-top: 10px; height: 21px;}
