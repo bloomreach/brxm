@@ -95,10 +95,6 @@ dependencies/server-dependencies/.project
 dependencies/server-dependencies/.settings
 dependencies/server-dependencies/hst-server-dependencies.iml
 dependencies/server-dependencies/target
-dependencies/shared-dependencies/.project
-dependencies/shared-dependencies/.settings
-dependencies/shared-dependencies/hst-shared-dependencies.iml
-dependencies/shared-dependencies/target
 dependencies/spring-dependencies/.project
 dependencies/spring-dependencies/.settings
 dependencies/spring-dependencies/hst-spring-dependencies.iml

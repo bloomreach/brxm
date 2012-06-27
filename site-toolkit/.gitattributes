@@ -867,8 +867,6 @@ dependencies/client-dependencies/src/site/site.xml -text
 dependencies/pom.xml svneol=native#text/plain
 dependencies/server-dependencies/pom.xml svneol=native#text/plain
 dependencies/server-dependencies/src/site/site.xml -text
-dependencies/shared-dependencies/pom.xml svneol=native#text/plain
-dependencies/shared-dependencies/src/site/site.xml -text
 dependencies/spring-dependencies/pom.xml svneol=native#text/plain
 dependencies/spring-dependencies/src/site/site.xml -text
 dependencies/src/site/site.xml -text

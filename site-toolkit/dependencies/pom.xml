@@ -29,7 +29,6 @@
 
   <modules>
     <module>spring-dependencies</module>
-    <module>shared-dependencies</module>
     <module>server-dependencies</module>
     <module>client-dependencies</module>
   </modules>
