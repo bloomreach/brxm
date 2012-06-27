@@ -15,19 +15,15 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.*;
-
-import java.security.AccessControlException;
-
-import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.jfree.util.Log;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * An example class to show how to write unit tests for the repository.
@@ -36,7 +32,8 @@ public class HREPTWO3402IssueTest extends TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
-    
+    private static final Logger log = LoggerFactory.getLogger(HREPTWO3402IssueTest.class);
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -81,7 +78,7 @@ public class HREPTWO3402IssueTest extends TestCase {
                 // running embedded or over rmi
             } catch (RepositoryException e) {
                 // running over spi
-                System.err.println("ERROR: This session is the only one removing the node, but it ran into an error: " + e.getMessage());
+                log.error("This session is the only one removing the node, but it ran into an error: " + e.getMessage());
             }
         }
         first.save();

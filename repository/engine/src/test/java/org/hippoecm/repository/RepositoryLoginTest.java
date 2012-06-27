@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.util.StringTokenizer;
 
 import javax.jcr.LoginException;
@@ -28,11 +31,14 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RepositoryLoginTest extends TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
+
+    private static final Logger log = LoggerFactory.getLogger(RepositoryLoginTest.class);
 
     private Node users;
 
@@ -50,7 +56,7 @@ public class RepositoryLoginTest extends TestCase {
     private static final String TESTUSER_HASH_SHA256 = "$SHA-256$LDiazWf2qBc=$/bzV6rjHX+fgx4dVz6oaPcW3kX1ynSJ+vGv1mbbm+v4=";
 
     private static final int NUM_CONCURRENT_LOGINS = 25;
-    
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -239,7 +245,6 @@ public class RepositoryLoginTest extends TestCase {
 
     @Test
     public void testImpersonateAsWorkflowUser() throws RepositoryException {
-        SimpleCredentials creds = new SimpleCredentials("nono", "blabla".toCharArray());
         Session anonymousSession = server.login();
         assertEquals("anonymous", anonymousSession.getUserID());
         Session workflowSession = session.impersonate(new SimpleCredentials("workflowuser", "anything".toCharArray()));
@@ -251,21 +256,21 @@ public class RepositoryLoginTest extends TestCase {
     @Test
     public void testLogins() throws RepositoryException {
         for (int count = 1; count <= NUM_CONCURRENT_LOGINS; count = count << 1) {
-            //long t1 = System.currentTimeMillis();
+            long t1 = System.currentTimeMillis();
             Session[] sessions = new Session[count];
             for (int i = 0; i < count; i++) {
                 sessions[i] = session.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
                 sessions[i].logout();
             }
-            //long t2 = System.currentTimeMillis();
-            //System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
+            long t2 = System.currentTimeMillis();
+            log.info(count + "\t" + (t2 - t1) + "\t" + ((t2 - t1) / count));
         }
     }
 
     @Test
     public void testConcurrentLogins() throws RepositoryException {
         for (int count = 1; count <= NUM_CONCURRENT_LOGINS; count = count << 1) {
-            //long t1 = System.currentTimeMillis();
+            long t1 = System.currentTimeMillis();
             Session[] sessions = new Session[count];
             for (int i = 0; i < count; i++) {
                 sessions[i] = session.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
@@ -273,8 +278,8 @@ public class RepositoryLoginTest extends TestCase {
             for (int i = 0; i < count; i++) {
                 sessions[i].logout();
             }
-            //long t2 = System.currentTimeMillis();
-            //System.err.println(count+"\t"+(t2-t1)+"\t"+((t2-t1)/count));
+            long t2 = System.currentTimeMillis();
+            log.info(count + "\t" + (t2 - t1) + "\t" + ((t2 - t1) / count));
         }
     }
 }

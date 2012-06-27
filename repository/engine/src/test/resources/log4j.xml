@@ -40,49 +40,22 @@
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
-  <category additivity="false" name="org.apache.jackrabbit.core">
+  <category name="org.apache.jackrabbit">
     <level value="warn"/>
-    <appender-ref ref="root"/>
   </category>
-  <category additivity="false" name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
+<!--
+  <category name="org.apache.jackrabbit.core.state.MLRUItemStateCache">
     <level value="error"/>
-    <appender-ref ref="root"/>
   </category>
-  <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateMap">
+  <category name="org.apache.jackrabbit.core.state.ItemStateMap">
     <level value="error"/>
-    <appender-ref ref="root"/>
   </category>
-  <category additivity="false" name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
+  <category name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
     <level value="error"/>
-    <appender-ref ref="root"/>
   </category>
-  <category additivity="false" name="org.hippoecm.repository">
+-->
+  <category name="org.hippoecm.repository">
     <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
-  <category additivity="false" name="org.hippoecm.repository.export">
-    <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
-  <category additivity="false" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider">
-    <level value="error"/>
-    <appender-ref ref="console"/>
-  </category>
-  <category additivity="false" name="org.hippoecm.repository.security.HippoAccessManager">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
-  </category>
-  <category additivity="false" name="org.hippoecm.repository.security.HippoLoginModule">
-    <level value="warn"/>
-    <appender-ref ref="root"/>
-  </category>
-  <category additivity="false" name="org.hippoecm.repository.updater">
-    <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
-  <category additivity="false" name="org.hippoecm.checker">
-    <level value="warn"/>
-    <appender-ref ref="console"/>
   </category>
 
   <root>

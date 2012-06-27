@@ -15,29 +15,33 @@
  */
 package org.hippoecm.repository;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 
 import org.hippoecm.repository.ext.DerivedDataFunction;
-
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DerivedDataTest extends TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
+
+    private static final Logger log = LoggerFactory.getLogger(DerivedDataTest.class);
 
     protected Node root;
 
@@ -132,11 +136,11 @@ public class DerivedDataTest extends TestCase {
             node = session.getRootNode().getNode("test").getNode("doc");
             for(PropertyIterator iter = node.getProperties(); iter.hasNext(); ) {
                 Property p = iter.nextProperty();
-                System.err.println("property \""+p.getName()+"\"");
+                log.info("property \""+p.getName()+"\"");
             }
         } catch(ConstraintViolationException ex) {
-            System.err.println(ex.getMessage());
-            ex.printStackTrace(System.err);
+            fail("ConstraintViolationException: " + ex.getMessage());
+            log.warn("ConstraintViolationException: " + ex.getMessage(), ex);
         }
     }
 

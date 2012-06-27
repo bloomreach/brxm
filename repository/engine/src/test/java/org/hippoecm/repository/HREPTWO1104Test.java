@@ -15,25 +15,27 @@
  */
 package org.hippoecm.repository;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
-import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.RepositoryImpl;
-
-import org.hippoecm.repository.TestCase;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.apache.jackrabbit.core.config.RepositoryConfig;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HREPTWO1104Test extends TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
+    private static final Logger log = LoggerFactory.getLogger(HREPTWO1104Test.class);
+
     final private static int stepsize = 10;
     final private static int numiters = 3000;
+
 
     public void setUp() throws Exception {
         super.setUp();
@@ -49,20 +51,21 @@ public class HREPTWO1104Test extends TestCase {
         int i;
         Runtime runtime = Runtime.getRuntime();
         long snapshot, after, before = runtime.freeMemory();
-        for(i=0; i<numiters; i++) {
-            if(i % stepsize == 0) {
+        for (i = 0; i < numiters; i++) {
+            if (i % stepsize == 0) {
                 runtime.gc();
                 snapshot = runtime.freeMemory();
-                System.err.println("hippo\t"+(i/stepsize)+"\t"+snapshot);
+                log.info("hippo\t" + (i / stepsize) + "\t" + snapshot);
             }
-            HippoRepository repository = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
+            HippoRepository repository = HippoRepositoryFactory
+                    .getHippoRepository("rmi://localhost:1099/hipporepository");
             Session session = repository.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
             session.logout();
             repository.close();
         }
         runtime.gc();
         after = runtime.freeMemory();
-        System.err.println("remote\t"+(i/stepsize)+"\t"+after);
+        log.info("remote\t" + (i / stepsize) + "\t" + after);
     }
 
     @Ignore
@@ -71,11 +74,11 @@ public class HREPTWO1104Test extends TestCase {
         Runtime runtime = Runtime.getRuntime();
         long snapshot, after, before = runtime.freeMemory();
         super.tearDown();
-        for(i=0; i<numiters; i++) {
-            if(i % stepsize == 0) {
+        for (i = 0; i < numiters; i++) {
+            if (i % stepsize == 0) {
                 runtime.gc();
                 snapshot = runtime.freeMemory();
-                System.err.println("hippo\t"+(i/stepsize)+"\t"+snapshot);
+                log.info("hippo\t" + (i / stepsize) + "\t" + snapshot);
             }
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository(".");
             Session session = repository.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
@@ -84,7 +87,7 @@ public class HREPTWO1104Test extends TestCase {
         }
         runtime.gc();
         after = runtime.freeMemory();
-        System.err.println("local1\t"+(i/stepsize)+"\t"+after);
+        log.info("local1\t" + (i / stepsize) + "\t" + after);
     }
 
     @Ignore
@@ -93,11 +96,11 @@ public class HREPTWO1104Test extends TestCase {
         Runtime runtime = Runtime.getRuntime();
         long snapshot, after, before = runtime.freeMemory();
         super.tearDown();
-        for(i=0; i<numiters; i++) {
-            if(i % stepsize == 0) {
+        for (i = 0; i < numiters; i++) {
+            if (i % stepsize == 0) {
                 runtime.gc();
                 snapshot = runtime.freeMemory();
-                System.err.println("hippo\t"+(i/stepsize)+"\t"+snapshot);
+                log.info("hippo\t" + (i / stepsize) + "\t" + snapshot);
             }
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             Session session = repository.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
@@ -106,7 +109,7 @@ public class HREPTWO1104Test extends TestCase {
         }
         runtime.gc();
         after = runtime.freeMemory();
-        System.err.println("local2\t"+(i/stepsize)+"\t"+after);
+        log.info("local2\t" + (i / stepsize) + "\t" + after);
     }
 
     @Ignore
@@ -115,15 +118,15 @@ public class HREPTWO1104Test extends TestCase {
         Runtime runtime = Runtime.getRuntime();
         long snapshot, after, before = runtime.freeMemory();
         //super.tearDown(true);
-        for(i=0; i<numiters; i++) {
-            if(i % stepsize == 0) {
+        for (i = 0; i < numiters; i++) {
+            if (i % stepsize == 0) {
                 runtime.gc();
                 snapshot = runtime.freeMemory();
-                System.err.println("jr\t"+(i/stepsize)+"\t"+snapshot);
+                log.info("jr\t" + (i / stepsize) + "\t" + snapshot);
             }
             JackrabbitRepository repository;
-            repository = RepositoryImpl.create(RepositoryConfig.create(getClass().getResourceAsStream("jackrabbit.xml"),
-                                                                       "target"));
+            repository = RepositoryImpl.create(RepositoryConfig.create(
+                    getClass().getResourceAsStream("jackrabbit.xml"), "target"));
             Session session = repository.login(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
             session.logout();
             repository.shutdown();
@@ -131,7 +134,7 @@ public class HREPTWO1104Test extends TestCase {
         }
         runtime.gc();
         after = runtime.freeMemory();
-        System.err.println("jr\t"+(i/stepsize)+"\t"+after);
+        log.info("jr\t" + (i / stepsize) + "\t" + after);
     }
 
     @Test

@@ -36,6 +36,8 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for writing tests against repository.
@@ -55,10 +57,11 @@ import org.junit.BeforeClass;
         }
         </code>
  */
-public abstract class TestCase
-{
+public abstract class TestCase {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
+
+    private static final Logger log = LoggerFactory.getLogger(TestCase.class);
 
     /**
      * System property indicating whether to use the same repository server across all
@@ -67,7 +70,6 @@ public abstract class TestCase
      * then your test performance will benefit greatly by setting this property.
      */
     private static final String KEEPSERVER_PROP = "org.onehippo.repository.test.keepserver";
-
 
     protected static final String SYSTEMUSER_ID = "admin";
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
@@ -81,10 +83,10 @@ public abstract class TestCase
     }
 
     static private void delete(File path) {
-        if(path.exists()) {
-            if(path.isDirectory()) {
+        if (path.exists()) {
+            if (path.isDirectory()) {
                 File[] files = path.listFiles();
-                for(int i=0; i<files.length; i++)
+                for (int i = 0; i < files.length; i++)
                     delete(files[i]);
             }
             path.delete();
@@ -102,7 +104,7 @@ public abstract class TestCase
             // a shutdown command always raises a SQLException
         }
         String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
-        for(int i=0; i<files.length; i++) {
+        for (int i = 0; i < files.length; i++) {
             File file = new File(files[i]);
             delete(file);
         }
@@ -140,7 +142,7 @@ public abstract class TestCase
                 istream.close();
                 fixtureStream.close();
             } catch (IOException ex) {
-                System.err.println(ex.getClass().getName() + ": " + ex.getMessage());
+                log.error("Error while loading fixture: " + ex.getClass().getName() + ": " + ex.getMessage());
                 try {
                     if (fixtureStream != null) {
                         fixtureStream.close();
@@ -161,7 +163,7 @@ public abstract class TestCase
     }
 
     protected static void setUpClass(boolean clearRepository) throws Exception {
-        if(clearRepository)
+        if (clearRepository)
             clear();
     }
 
@@ -171,7 +173,7 @@ public abstract class TestCase
     }
 
     public static void tearDownClass(boolean clearRepository) throws Exception {
-        if(clearRepository)
+        if (clearRepository)
             clear();
     }
 
@@ -187,23 +189,24 @@ public abstract class TestCase
             }
             server = external;
         } else {
-            if(clearRepository) {
+            if (clearRepository) {
                 clear();
-                if (Boolean.getBoolean("org.onehippo.repository.test.usefixture") ||
-                    Boolean.getBoolean("org.onehippo.repository.test.forcefixture") ||
-                    Boolean.getBoolean("org.onehippo.repository.test.installfixture")) {
+                if (Boolean.getBoolean("org.onehippo.repository.test.usefixture")
+                        || Boolean.getBoolean("org.onehippo.repository.test.forcefixture")
+                        || Boolean.getBoolean("org.onehippo.repository.test.installfixture")) {
                     fixture();
                 }
             } else {
                 if (Boolean.getBoolean("org.onehippo.repository.test.forcefixture")) {
                     clear();
                     fixture();
-                } else if (Boolean.getBoolean("org.onehippo.repository.test.installfixture") && !(new File("repository").exists())) {
+                } else if (Boolean.getBoolean("org.onehippo.repository.test.installfixture")
+                        && !(new File("repository").exists())) {
                     fixture();
                 }
             }
-            if(Boolean.getBoolean(KEEPSERVER_PROP)) {
-                if(background != null) {
+            if (Boolean.getBoolean(KEEPSERVER_PROP)) {
+                if (background != null) {
                     server = background;
                 } else {
                     server = background = HippoRepositoryFactory.getHippoRepository();
@@ -219,7 +222,7 @@ public abstract class TestCase
             session.refresh(false);
         }
     }
-    
+
     @After
     public void tearDown() throws Exception {
         tearDown(false);
@@ -248,66 +251,73 @@ public abstract class TestCase
 
     protected void build(Session session, String[] contents) throws RepositoryException {
         Node node = null;
-        for (int i=0; i<contents.length; i+=2) {
+        for (int i = 0; i < contents.length; i += 2) {
             if (contents[i].startsWith("/")) {
                 String path = contents[i].substring(1);
                 node = session.getRootNode();
                 if (path.contains("/")) {
-                    node = node.getNode(path.substring(0,path.lastIndexOf("/")));
-                    path = path.substring(path.lastIndexOf("/")+1);
+                    node = node.getNode(path.substring(0, path.lastIndexOf("/")));
+                    path = path.substring(path.lastIndexOf("/") + 1);
                 }
-                node = node.addNode(path, contents[i+1]);
+                node = node.addNode(path, contents[i + 1]);
             } else {
                 PropertyDefinition propDef = null;
                 PropertyDefinition[] propDefs = node.getPrimaryNodeType().getPropertyDefinitions();
-                for (int propidx=0; propidx<propDefs.length; propidx++)
+                for (int propidx = 0; propidx < propDefs.length; propidx++)
                     if (propDefs[propidx].getName().equals(contents[i])) {
                         propDef = propDefs[propidx];
                         break;
                     }
                 if ("jcr:mixinTypes".equals(contents[i])) {
-                    node.addMixin(contents[i+1]);
+                    node.addMixin(contents[i + 1]);
                 } else {
                     if (propDef != null && propDef.isMultiple()) {
                         Value[] values;
                         if (node.hasProperty(contents[i])) {
                             values = node.getProperty(contents[i]).getValues();
-                            Value[] newValues = new Value[values.length+1];
-                            System.arraycopy(values,0,newValues,0,values.length);
+                            Value[] newValues = new Value[values.length + 1];
+                            System.arraycopy(values, 0, newValues, 0, values.length);
                             values = newValues;
                         } else {
-                            if (contents[i+1] != null)
+                            if (contents[i + 1] != null)
                                 values = new Value[1];
                             else
                                 values = new Value[0];
                         }
                         if (values.length > 0) {
                             if (propDef.getRequiredType() == PropertyType.REFERENCE) {
-                                String uuid = session.getRootNode().getNode(contents[i+1]).getIdentifier();
-                                values[values.length-1] = session.getValueFactory().createValue(uuid, PropertyType.REFERENCE);
+                                String uuid = session.getRootNode().getNode(contents[i + 1]).getIdentifier();
+                                values[values.length - 1] = session.getValueFactory().createValue(uuid,
+                                        PropertyType.REFERENCE);
                             } else {
-                                values[values.length-1] = session.getValueFactory().createValue(contents[i+1]);
+                                values[values.length - 1] = session.getValueFactory().createValue(contents[i + 1]);
                             }
                         }
                         node.setProperty(contents[i], values);
                     } else {
                         if (propDef != null && propDef.getRequiredType() == PropertyType.REFERENCE) {
-                            node.setProperty(contents[i], session.getValueFactory().createValue(session.getRootNode().
-                                                         getNode(contents[i+1].substring(1)).getIdentifier(), PropertyType.REFERENCE));
+                            node.setProperty(
+                                    contents[i],
+                                    session.getValueFactory()
+                                            .createValue(
+                                                    session.getRootNode().getNode(contents[i + 1].substring(1))
+                                                            .getIdentifier(), PropertyType.REFERENCE));
                         } else if ("hippo:docbase".equals(contents[i])) {
                             String docbase;
                             if (contents[i + 1].startsWith("/")) {
                                 if (contents[i + 1].substring(1).equals("")) {
                                     docbase = session.getRootNode().getIdentifier();
                                 } else {
-                                    docbase = session.getRootNode().getNode(contents[i + 1].substring(1)).getIdentifier();
+                                    docbase = session.getRootNode().getNode(contents[i + 1].substring(1))
+                                            .getIdentifier();
                                 }
                             } else {
                                 docbase = contents[i + 1];
                             }
-                            node.setProperty(contents[i], session.getValueFactory().createValue(docbase), PropertyType.STRING);
+                            node.setProperty(contents[i], session.getValueFactory().createValue(docbase),
+                                    PropertyType.STRING);
                         } else {
-                            node.setProperty(contents[i], contents[i+1]);
+                            node.setProperty(contents[i], contents[i + 1]);
                         }
                     }
                 }
@@ -318,6 +328,6 @@ public abstract class TestCase
     protected Node traverse(Session session, String path) throws RepositoryException {
         if (path.startsWith("/"))
             path = path.substring(1);
-        return ((HippoWorkspace)session.getWorkspace()).getHierarchyResolver().getNode(session.getRootNode(), path);
+        return ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getNode(session.getRootNode(), path);
     }
 }
