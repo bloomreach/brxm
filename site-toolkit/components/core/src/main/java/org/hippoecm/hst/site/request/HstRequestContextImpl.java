@@ -160,7 +160,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         } else if (!this.session.isLive()) {
             throw new HstComponentException("Invalid session.");
         }
-        
+
+
+        System.out.println(session.getUserID());
         return this.session;
     }
     

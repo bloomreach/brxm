@@ -30,22 +30,20 @@ public class HstQueryResultImpl implements HstQueryResult {
     
     private javax.jcr.query.QueryResult queryResult;
     private ObjectConverter objectConverter;
-    private HstVirtualizer virtualizer;
-    
+
     // jackrabbit can return a size of -1 if unknown, and higher otherwise. That is why we start with -2 if not set yet
     private int totalSize = -2;
     private int size = -2;
     
 
-    public HstQueryResultImpl(ObjectConverter objectConverter, javax.jcr.query.QueryResult queryResult, HstVirtualizer virtualizer) {
+    public HstQueryResultImpl(ObjectConverter objectConverter, javax.jcr.query.QueryResult queryResult) {
         this.objectConverter = objectConverter;
         this.queryResult = queryResult;
-        this.virtualizer = virtualizer;
     }
 
     public HippoBeanIterator getHippoBeans() {
         try {
-            return new HippoBeanIteratorImpl(this.objectConverter, this.queryResult.getNodes(), virtualizer);
+            return new HippoBeanIteratorImpl(this.objectConverter, this.queryResult.getNodes());
         } catch (RepositoryException e) {
             log.error("RepositoryException. Return null. {}", e);
             return null;

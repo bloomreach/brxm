@@ -244,8 +244,10 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * the 'real' contextual version, where the {@link #getParentBean()} also returns the contextualized version of the physical parent
      * 
      * <b>note: this is quite an expensive check </b>
-     * @return the contextual bean for this bean, or <code>null</code> if it fails to contextualize this bean 
+     * @return the contextual bean for this bean, or <code>null</code> if it fails to contextualize this bean
+     * @deprecated  since 2.25.02 : method now returns just this instance
      */
+    @Deprecated
     HippoBean getContextualBean();
     
     /**
@@ -258,7 +260,9 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * 
      * <b>note: this is quite an expensive check </b>
      * @return the 'unmirrored' parent bean in wrt this bean, but still in context, or if this bean backing jcr node is null or if the object converter cannot create a bean for the parent, return <code>null</code>
+     * @deprecated  since 2.25.02 : Use #getParentBean instead. Returns the same as #getParentBean
      */
+    @Deprecated
     HippoBean getContextualParentBean();
     
     /**

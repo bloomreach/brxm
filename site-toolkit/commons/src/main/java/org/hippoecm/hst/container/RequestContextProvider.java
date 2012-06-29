@@ -31,8 +31,7 @@ public final class RequestContextProvider {
 
     /**
      * Returns the {@link HstRequestContext} for the current threads active request.
-     * 
-     * @param requestContext
+     *
      */
     public static HstRequestContext get() {
         return tlRequestContextHolder.get();
@@ -49,8 +48,7 @@ public final class RequestContextProvider {
 
     /**
      * Clears the {@link HstRequestContext} for the current threads active request.
-     * 
-     * @param requestContext
+     *
      */
     static void clear() {
         tlRequestContextHolder.remove();

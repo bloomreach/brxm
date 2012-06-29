@@ -32,14 +32,12 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 public class HstQueryManagerImpl implements HstQueryManager {
 
     private ObjectConverter objectConverter;
-    private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
     private Session session;
  
 
-    public HstQueryManagerImpl(Session session, ObjectConverter objectConverter, HstCtxWhereClauseComputer hstCtxWhereClauseComputer) {
+    public HstQueryManagerImpl(Session session, ObjectConverter objectConverter) {
         this.session = session;
         this.objectConverter = objectConverter;
-        this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
     }
     
    
@@ -64,7 +62,7 @@ public class HstQueryManagerImpl implements HstQueryManager {
         } else {
             isNodeTypeFilter = new IsNodeTypeFilter(primaryNodeTypeNameForBean);
         }
-        return new HstQueryImpl(session, this.hstCtxWhereClauseComputer, this.objectConverter, scope, isNodeTypeFilter);
+        return new HstQueryImpl(session, this.objectConverter, scope, isNodeTypeFilter);
     }
     
    
@@ -130,7 +128,7 @@ public class HstQueryManagerImpl implements HstQueryManager {
         }
         
         IsNodeTypeFilter isNodeTypeFilter = new IsNodeTypeFilter(nodeType);
-        return new HstQueryImpl(session, this.hstCtxWhereClauseComputer, this.objectConverter, scope, isNodeTypeFilter);
+        return new HstQueryImpl(session, this.objectConverter, scope, isNodeTypeFilter);
     }
     
     public HstQuery createQuery(HippoBean scope, String... primaryNodeTypes) throws QueryException {
@@ -152,7 +150,7 @@ public class HstQueryManagerImpl implements HstQueryManager {
     }
     
     private HstQuery createQuery(Node scope, NodeTypeFilter filter) throws QueryException {
-        return new HstQueryImpl(session, this.hstCtxWhereClauseComputer, this.objectConverter, scope, filter);
+        return new HstQueryImpl(session, this.objectConverter, scope, filter);
     }
     
 }

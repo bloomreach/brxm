@@ -488,7 +488,8 @@ public class MountService implements ContextualizableMount, MutableMount {
             } else {
                 // the mountpoint does point to a hst:site. Since we do not need the HstSiteMap because isMapped = false, we only use the content mapping
                 canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
-                contentPath = hstSiteNodeForMount.getContentPath();
+                //contentPath = hstSiteNodeForMount.getContentPath();
+                contentPath = hstSiteNodeForMount.getCanonicalContentPath();
             }
         } else {
              
@@ -501,7 +502,9 @@ public class MountService implements ContextualizableMount, MutableMount {
             
             hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
             canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
-            contentPath = hstSiteNodeForMount.getContentPath();
+            //contentPath = hstSiteNodeForMount.getContentPath();
+            contentPath = hstSiteNodeForMount.getCanonicalContentPath();
+
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
             
             // now also try to get hold of the previewHstSite. If we cannot load it, we log an info: 
@@ -516,8 +519,9 @@ public class MountService implements ContextualizableMount, MutableMount {
             } else {
                 try {
                     previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager);
-                    previewCanonicalContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();;
-                    previewContentPath = previewHstSiteNodeForMount.getContentPath();;
+                    previewCanonicalContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
+                    //previewContentPath = previewHstSiteNodeForMount.getContentPath();
+                    previewContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
                 } catch (ServiceException e) {
                    if(log.isDebugEnabled()) {
                        log.warn("Cannot create a preview version for mount '"+mount.getValueProvider().getPath()+"'", e);

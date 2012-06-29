@@ -21,8 +21,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.query.HstContextualizeException;
-import org.hippoecm.hst.content.beans.query.HstVirtualizer;
 import org.slf4j.LoggerFactory;
 
 public class HippoBeanIteratorImpl implements HippoBeanIterator {
@@ -32,15 +30,10 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator {
     
     private ObjectConverter objectConverter;
     private NodeIterator nodeIterator;
-    private HstVirtualizer virtualizer;
     
-    public HippoBeanIteratorImpl(ObjectConverter objectConverter, NodeIterator nodeIterator, HstVirtualizer virtualizer){
+    public HippoBeanIteratorImpl(ObjectConverter objectConverter, NodeIterator nodeIterator){
         this.objectConverter = objectConverter;
         this.nodeIterator = nodeIterator;
-        this.virtualizer = virtualizer;
-        if(this.virtualizer == null) {
-            log.debug("HippoBeanIteratorImpl will not return virtualized beans, as the virtualizer is null.");
-        }
     }
     
     public long getPosition() {
@@ -56,13 +49,6 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator {
         try {
             n = nodeIterator.nextNode();
             if(n != null) {
-                if(virtualizer != null) {
-                    n = virtualizer.virtualize(n);
-                    if(n == null) {
-                        log.debug("Unable to virtualize.");
-                        return null;
-                    }
-                }
                 return (HippoBean)objectConverter.getObject(n);
             } else {
                 log.warn("Node in node iterator is null. Cannot return a HippoStdNode");
@@ -70,14 +56,7 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator {
         } catch (ObjectBeanManagerException  e) {
             String path = getPath(n);
             log.warn("ObjectContentManagerException. Return null for '"+path+"'" , e);
-        } catch (HstContextualizeException e) {
-            String path = getPath(n);
-            if(log.isDebugEnabled()) {
-                log.warn("HstContextualizeException. Return null for '"+path+"'" , e);
-            } else {
-                log.warn("HstContextualizeException. Return null for '{}' : {}", path , e.getMessage());
-            }
-        } 
+        }
         return null;
     }
 

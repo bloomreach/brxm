@@ -67,12 +67,9 @@ api/src/main/java/org/hippoecm/hst/content/beans/manager/workflow/WorkflowCallba
 api/src/main/java/org/hippoecm/hst/content/beans/manager/workflow/WorkflowPersistenceManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/manager/workflow/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/package-info.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/content/beans/query/HstContextualizeException.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/content/beans/query/HstCtxWhereClauseComputer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/HstQuery.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/HstQueryManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/HstQueryResult.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/content/beans/query/HstVirtualizer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/exceptions/FilterException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/exceptions/QueryException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/query/exceptions/ScopeException.java svneol=native#text/plain
@@ -794,13 +791,10 @@ content-beans/pom.xml svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/manager/ObjectBeanManagerImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/manager/ObjectConverterImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/manager/workflow/WorkflowPersistenceManagerImpl.java svneol=native#text/plain
-content-beans/src/main/java/org/hippoecm/hst/content/beans/query/HstCtxWhereClauseComputerImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/HstQueryImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/HstQueryManagerImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/HstQueryResultImpl.java svneol=native#text/plain
-content-beans/src/main/java/org/hippoecm/hst/content/beans/query/HstVirtualizerImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/filter/FilterImpl.java svneol=native#text/plain
-content-beans/src/main/java/org/hippoecm/hst/content/beans/query/filter/HstCtxWhereFilter.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/filter/IsNodeTypeFilter.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/filter/MixinNodeTypeFilterImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/filter/PrimaryNodeTypeFilterImpl.java svneol=native#text/plain
@@ -846,7 +840,6 @@ content-beans/src/test/java/org/hippoecm/hst/content/beans/PersistableTextPage.j
 content-beans/src/test/java/org/hippoecm/hst/content/beans/PersistableTextPageCopy.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/TestSimpleBean.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/manager/TestWorkflowPersistenceManager.java svneol=native#text/plain
-content-beans/src/test/java/org/hippoecm/hst/content/beans/query/HstCtxWhereClauseComputerImplTest.java -text
 content-beans/src/test/java/org/hippoecm/hst/content/beans/query/TestHstFilters.java -text svneol=unset#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/query/TestHstQuery.java -text svneol=unset#text/plain
 content-beans/src/test/java/org/hippoecm/hst/content/beans/standard/HippoItemTest.java svneol=native#text/plain

@@ -122,7 +122,9 @@ public interface HstQuery {
      * a QueryException. Default HstQuery implementation throw a QueryException when an invalid scope is encountered. If skipInvalid is set
      * to <code>true</code>, then still, when all scopes happen to be invalid, a QueryException is thrown
      * @param skipInvalidScopes is <code>true</code>, invalid scopes are ignored
+     * @deprecated  since 2.25.02 : skipInvalidScopes is not used any more
      */
+    @Deprecated
     void setSkipInvalidScopes(boolean skipInvalidScopes);
     
     /**

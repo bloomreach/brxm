@@ -31,10 +31,6 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.index.IgnoreForCompoundBean;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.query.HstContextualizeException;
-import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer;
-import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputerImpl;
-import org.hippoecm.hst.content.beans.query.HstVirtualizer;
 import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
@@ -497,51 +493,13 @@ public class HippoItem implements HippoBean {
     
 
     public HippoBean getContextualBean() {
-        if(this.getNode() == null) {
-            log.warn("Cannot get contextual bean for detached bean");
-        }
-        HstCtxWhereClauseComputer ctxWCC = new HstCtxWhereClauseComputerImpl();
-        try {
-            HstVirtualizer virtualizer = ctxWCC.getVirtualizer(this.getNode());
-            Node canonical = ((HippoNode)this.getNode()).getCanonicalNode();
-            if(canonical == null) {
-                log.debug("Cannot get canonical for a node that is virtual only: '{}'. It's contextual bean is just the current bean", this.getPath());
-                return this;
-            }
-            Node contextualBean = virtualizer.virtualize(canonical) ;
-            if(contextualBean == null) {
-                log.debug("Unable to virtualize canonical node'{}'. The current bean is just the contextual bean", this.getPath());
-                return this;
-            }
-            Object o = this.objectConverter.getObject(contextualBean);
-            if (o instanceof HippoBean) {
-                if(this.equals(o)) {
-                    // the contextual bean is just the same as the current bean
-                    return this;
-                }
-                log.debug("Contextualisation succeeded: translated from '{}' --> '{}'", this.getPath(), ((HippoBean) o).getPath());
-                return (HippoBean) o;
-            } else {
-                log.warn("Bean is not an instance of HippoBean. Return null : ", o);
-            }
-        } catch (HstContextualizeException e) {
-            log.debug("Could not virtualize '{}'. This happens for example for binaries. Just return the current bean", this.getPath());
-            return this;
-        } catch (ObjectBeanManagerException e) {
-            log.warn("HstContextualizeException while trying to fetch contextual bean. Return null : ", e.getMessage());
-        } catch (RepositoryException e) {
-            log.warn("HstContextualizeException while trying to fetch contextual bean. Return null : ", e);
-        } 
-        return null;
+        log.warn("Use this instead of getContextualBean because the latter is deprecated");
+        return this;
     }
     
     public HippoBean getContextualParentBean() {
-        HippoBean contextualBean = getContextualBean(); 
-        if(contextualBean == null) {
-            log.warn("Cannot return contextual parent bean. Return null");
-            return null;
-        }
-        return contextualBean.getParentBean();
+        log.warn("Use getParentBean instead of getContextualParentBean because the latter is deprecated");
+        return getParentBean();
     }
 
     public boolean isAncestor(HippoBean compare) {

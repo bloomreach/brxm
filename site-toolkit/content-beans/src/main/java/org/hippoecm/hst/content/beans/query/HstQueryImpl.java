@@ -27,16 +27,16 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.query.filter.BaseFilter;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
-import org.hippoecm.hst.content.beans.query.filter.HstCtxWhereFilter;
 import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.LoggerFactory;
@@ -46,14 +46,12 @@ public class HstQueryImpl implements HstQuery {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstQueryImpl.class);
 
     private ObjectConverter objectConverter;
-    private HstCtxWhereClauseComputer hstCtxWhereClauseComputer;
     
     private int limit = DEFAULT_LIMIT;
     private int offset = -1;
     private BaseFilter filter;
     private List<Node> scopes = new ArrayList<Node>();
     private List<Node> excludeScopes = new ArrayList<Node>();
-    private boolean skipInvalidScopes = false;
     private List<String> orderByList = new ArrayList<String>();
     private NodeTypeFilter nodeTypeFilter;
     private IsNodeTypeFilter isNodeTypeFilter;
@@ -62,15 +60,13 @@ public class HstQueryImpl implements HstQuery {
     /**
      * 
      * @param session the jcr session. This session can be <code>null</code> as long as HSTTWO-1600 is not done
-     * @param hstCtxWhereClauseComputer
      * @param objectConverter
      * @param scope the scope to search below. Scope can be <code>null</code>
      * @param nodeTypeFilter
      * 
      */
-    public HstQueryImpl(Session session, HstCtxWhereClauseComputer hstCtxWhereClauseComputer, ObjectConverter objectConverter, Node scope, NodeTypeFilter nodeTypeFilter) {
+    public HstQueryImpl(Session session, ObjectConverter objectConverter, Node scope, NodeTypeFilter nodeTypeFilter) {
         this.session = session;
-        this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
         this.objectConverter = objectConverter;
         if(scope != null) {
             scopes.add(scope);
@@ -80,14 +76,12 @@ public class HstQueryImpl implements HstQuery {
     
     /**
      * @param session the jcr session. This session can be <code>null</code> as long as HSTTWO-1600 is not done
-     * @param hstCtxWhereClauseComputer
      * @param objectConverter
      * @param scope the scope to search below. Scope can be <code>null</code>
      * @param isNodeTypeFilter
      */
-    public HstQueryImpl(Session session, HstCtxWhereClauseComputer hstCtxWhereClauseComputer, ObjectConverter objectConverter, Node scope, IsNodeTypeFilter isNodeTypeFilter) {
+    public HstQueryImpl(Session session, ObjectConverter objectConverter, Node scope, IsNodeTypeFilter isNodeTypeFilter) {
         this.session = session;
-        this.hstCtxWhereClauseComputer = hstCtxWhereClauseComputer;
         this.objectConverter = objectConverter;
         if(scope != null) {
             scopes.add(scope);
@@ -136,16 +130,39 @@ public class HstQueryImpl implements HstQuery {
         if(this.scopes == null || this.scopes.size() == 0) {
             throw new QueryException("There must be a scope for a search");
         }
-        BaseFilter ctxWhereFilter = new HstCtxWhereFilter(this.hstCtxWhereClauseComputer, this.scopes, this.skipInvalidScopes);
         
+        // get the list of scope id's to search below:
+        StringBuilder scopesWhereClause = new StringBuilder();
+        for (Node scope : scopes) {
+            try {
+                String identifier = scope.getIdentifier();
+                if (scopesWhereClause.length() > 0) {
+                    scopesWhereClause.append(" or ");
+                }
+                scopesWhereClause.append("@").append(HippoNodeType.HIPPO_PATHS).append("='").append(identifier).append("'");
+            } catch (RepositoryException e) {
+               log.warn("RepositoryException while trying to include scope: ", e);
+            }
+        }
+
         StringBuilder query = new StringBuilder(256);
         
-        if(ctxWhereFilter.getJcrExpression() == null || "".equals(ctxWhereFilter.getJcrExpression())) {
-            // no ctxWhereFilter will be applied
+        if(scopesWhereClause.length() > 0) {
+            query.append("(").append(scopesWhereClause.toString()).append(")");
         } else {
-            query.append("(").append(ctxWhereFilter.getJcrExpression()).append(")");
+            throw new QueryException("No valid scope for search");
         }
-        
+
+        // IF we have a request context, check whether we are preview OR live and include
+        // this in the filter
+        if ( RequestContextProvider.get() != null ) {
+            if (RequestContextProvider.get().isPreview() ) {
+                query.append(" and (@").append(HippoNodeType.HIPPO_AVAILABILITY).append("='preview'").append(")");
+            } else {
+                query.append(" and (@").append(HippoNodeType.HIPPO_AVAILABILITY).append("='live'").append(")");
+            }
+        }
+
         if(this.excludeScopes != null && !this.excludeScopes.isEmpty()) {
             StringBuilder excludeExpr = new StringBuilder(80);
             for(Node excludeScope : this.excludeScopes) {
@@ -154,16 +171,7 @@ public class HstQueryImpl implements HstQuery {
                     if(excludeScope.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                         scopeUUID = excludeScope.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                     } else {
-                        Node canonicalExcludeScope = ((HippoNode)excludeScope).getCanonicalNode();
-                        if(canonicalExcludeScope != null && canonicalExcludeScope.isNodeType("mix:referenceable")) {
-                            scopeUUID = canonicalExcludeScope.getIdentifier();
-                        } else {
-                            if(canonicalExcludeScope == null) {
-                               log.warn("Cannot use a virtual only node in exclude scopes. Exclude Scope '{}' is ignored",excludeScope.getPath()); 
-                            } else {
-                                log.warn("ignoring exclude scope: only facetselects or referenceable nodes can be used to exclude a scope. Exclude Scope '{}' is ignored", excludeScope.getPath());
-                            }
-                        }
+                        scopeUUID = excludeScope.getIdentifier();
                     }
                 } catch (RepositoryException e) {
                     log.error("RepositoryException while excluding scope: ", e);
@@ -250,29 +258,23 @@ public class HstQueryImpl implements HstQuery {
         String query = getQuery();
         try {
             QueryManager jcrQueryManager = getQueryManager();
-            
+
             Query jcrQuery = jcrQueryManager.createQuery(query, "xpath");
-            if(jcrQuery instanceof HippoQuery)  {
-                if(offset > -1){
-                    ((HippoQuery)jcrQuery).setOffset(offset);
-                }
-                if(limit > -1){
-                    ((HippoQuery)jcrQuery).setLimit(limit);
-                }
-            } else {
-                log.warn("Query not instanceof of HippoQuery: cannot set limit and offset");
+            if(offset > -1){
+                jcrQuery.setOffset(offset);
+            }
+            if(limit > -1){
+                jcrQuery.setLimit(limit);
             }
             long start = System.currentTimeMillis();
             QueryResult queryResult = jcrQuery.execute();
             log.debug("Executing query took --({})-- ms to complete for '{}'", (System.currentTimeMillis() - start), query);
-            return new HstQueryResultImpl(this.objectConverter, queryResult, this.hstCtxWhereClauseComputer.getVirtualizer(scopes, this.skipInvalidScopes));
+            return new HstQueryResultImpl(this.objectConverter, queryResult);
         } catch (InvalidQueryException e) {
             throw new QueryException(e.getMessage(), e);
         } catch (LoginException e) {
             log.warn("LoginException. Return null : {}", e);
         } catch (RepositoryException e) {
-            throw new QueryException(e.getMessage(), e);
-        } catch (HstContextualizeException e) {
             throw new QueryException(e.getMessage(), e);
         }
         return null;
@@ -311,7 +313,7 @@ public class HstQueryImpl implements HstQuery {
     }
 
     public void setSkipInvalidScopes(boolean skipInvalidScopes) {
-        this.skipInvalidScopes = skipInvalidScopes;
+       log.info("skipInvalidScopes is deprecated since 2.25.02. No need to set it any more");
     }
     
     public void excludeScopes(List<HippoBean> scopes) {

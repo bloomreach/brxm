@@ -18,7 +18,6 @@ package org.hippoecm.hst.core.search;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 
 public interface HstQueryManagerFactory {
@@ -29,7 +28,5 @@ public interface HstQueryManagerFactory {
      * @return a {@link HstQueryManager}
      */
     HstQueryManager createQueryManager(Session session, ObjectConverter objectConverter);
-    
-    HstCtxWhereClauseComputer getHstCtxWhereClauseComputer();
 
 }

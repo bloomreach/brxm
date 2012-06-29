@@ -51,16 +51,11 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
                     String docbaseUuid = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                     
                     try {
-                            // test whether docbaseUuid is valid uuid. If UUID.fromString fails, an IllegalArgumentException is thrown
-                            
-                            UUID.fromString(docbaseUuid);
-                            Item item =  contentNode.getSession().getNodeByIdentifier(docbaseUuid); 
-                            if(item instanceof Node) {
-                                // set the canonical content path
-                                this.canonicalContentPath = ((Node)item).getPath();
-                            } else {
-                                log.warn("Docbase from '{}' does contain a uuid that points to a property instead of a 'root content node'. Content mirror is broken", contentNode.getPath());
-                            }
+                        // test whether docbaseUuid is valid uuid. If UUID.fromString fails, an IllegalArgumentException is thrown
+                        UUID.fromString(docbaseUuid);
+                        Node node =  contentNode.getSession().getNodeByIdentifier(docbaseUuid);
+                        this.canonicalContentPath = node.getPath();
+
                     } catch (IllegalArgumentException e) {
                         log.warn("Docbase from '{}' does not contain a valid uuid. Content mirror is broken", contentNode.getPath());
                     } catch (ItemNotFoundException e) {

@@ -23,15 +23,10 @@
                            http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-3.0.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-    
-    
-      <bean id="org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer" 
-            class="org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputerImpl">
-    </bean>
-    
+
+
     <bean id="org.hippoecm.hst.core.search.HstQueryManagerFactory" 
           class="org.hippoecm.hst.core.search.HstQueryManagerFactoryImpl">
-          <property name="hstCtxWhereClauseComputer" ref="org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputer" />
     </bean>
     
 </beans>

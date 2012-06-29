@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.content.beans;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,7 +24,6 @@ import org.hippoecm.hst.AbstractBeanTestCase;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
-import org.hippoecm.hst.content.beans.query.HstCtxWhereClauseComputerImpl;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
@@ -41,6 +36,10 @@ import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestSimpleBean extends AbstractBeanTestCase {
 
@@ -94,7 +93,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
         
-        HstQueryManager queryManager = new HstQueryManagerImpl(session, objectConverter, new HstCtxWhereClauseComputerImpl());
+        HstQueryManager queryManager = new HstQueryManagerImpl(session, objectConverter);
         
         HstQuery hstQuery = queryManager.createQuery(folder);
 
