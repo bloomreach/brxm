@@ -57,7 +57,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
             protected void initialize() {
                 IModel<String> title = getTitle();
                 Label titleLabel = new Label("text", title);
-                titleLabel.add(new AttributeModifier("title", true, title));
+                titleLabel.add(new AttributeModifier("title", true, getTooltip()));
                 add(titleLabel);
             }
         });
@@ -109,6 +109,10 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
 
     protected IModel getTitle() {
         return new StringResourceModel(getName(), this, null, getName());
+    }
+
+    protected IModel getTooltip() {
+        return getTitle();
     }
 
     protected ResourceReference getIcon() {
