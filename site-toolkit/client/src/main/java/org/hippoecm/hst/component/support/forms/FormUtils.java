@@ -74,9 +74,10 @@ public class FormUtils {
         }
         if(request.getParameter(DEFAULT_UUID_NAME) != null) {
             String uuid = request.getParameter(DEFAULT_UUID_NAME);
+            Session session = null;
             try {
                 validateId(uuid);
-                Session session = request.getRequestContext().getSession();
+                session = getWritableSession();
                 Node persistedFormData = session.getNodeByIdentifier(uuid);
                 // check if form is sealed
                 if(persistedFormData.hasProperty(HST_SEALED) && persistedFormData.getProperty(HST_SEALED).getBoolean()){
@@ -95,7 +96,7 @@ public class FormUtils {
                         Node fieldNode = fieldIterator.nextNode();
                         // sanity check (property is mandatory)
                         if(fieldNode.hasProperty(HST_FORM_FIELD_NAME)){
-                            // create field (even if we do not have values)
+                            // create field (even if we do not have values)hstt
                             String fieldName = fieldNode.getProperty(HST_FORM_FIELD_NAME).getString();
                             FormField field = new FormField(fieldName);
                             formMap.addFormField(field);
@@ -123,6 +124,10 @@ public class FormUtils {
                 log.warn("ItemNotFoundException '{}' while trying to retrieve persisted formdata. Return" , e.getMessage());
             } catch (RepositoryException e) {
                 log.warn("RepositoryException '{}'. Return" , e.getMessage());
+            } finally {
+                if(session != null) {
+                    session.logout();
+                }
             }
         } else {
             log.debug("No uuid in request parameter. No form to populate");
