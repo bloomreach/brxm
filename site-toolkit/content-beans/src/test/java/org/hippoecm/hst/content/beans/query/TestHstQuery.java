@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class TestHstQuery  extends AbstractBeanTestCase {
 
-    public final static String COMMON_QUERY_SCOPE_PART = "(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe' and not(@jcr:primaryType='nt:frozenNode'))";
+    public final static String COMMON_QUERY_SCOPE_PART = "(@hippo:paths='cafebabe-cafe-babe-cafe-babecafebabe') and not(@jcr:primaryType='nt:frozenNode')";
     public final static String COMMON_QUERY_ORDERBY_PART = " order by @jcr:score descending";
     
     private HstQuery query;

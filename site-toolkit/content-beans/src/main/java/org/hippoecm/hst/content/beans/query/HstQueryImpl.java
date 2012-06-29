@@ -163,6 +163,9 @@ public class HstQueryImpl implements HstQuery {
             }
         }
 
+        // exclude frozen nodes if the version history would be indexed
+        query.append(" and not(@jcr:primaryType='nt:frozenNode')");
+
         if(this.excludeScopes != null && !this.excludeScopes.isEmpty()) {
             StringBuilder excludeExpr = new StringBuilder(80);
             for(Node excludeScope : this.excludeScopes) {
