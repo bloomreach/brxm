@@ -33,36 +33,38 @@ abstract class MenuLink extends Link {
     public MenuLink(final String id) {
         super(id);
 
-        add(new AjaxEventBehavior("onclick") {
-            private static final long serialVersionUID = 1L;
+        if(isEnabled()) {
+            add(new AjaxEventBehavior("onclick") {
+                private static final long serialVersionUID = 1L;
 
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                IContextMenu parent = findParent(IContextMenu.class);
-                if (parent != null) {
-                    parent.collapse(target);
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    IContextMenu parent = findParent(IContextMenu.class);
+                    if (parent != null) {
+                        parent.collapse(target);
+                    }
+                    onClick();
                 }
-                onClick();
-            }
 
-            @Override
-            protected IAjaxCallDecorator getAjaxCallDecorator() {
-                return new CancelEventIfNoAjaxDecorator(MenuLink.this.getAjaxCallDecorator());
-            }
-
-            @Override
-            protected CharSequence getPreconditionScript() {
-                return "return true;";
-            }
-
-            @Override
-            protected void onComponentTag(ComponentTag tag) {
-                // add the onclick handler only if link is enabled
-                if (isLinkEnabled()) {
-                    super.onComponentTag(tag);
+                @Override
+                protected IAjaxCallDecorator getAjaxCallDecorator() {
+                    return new CancelEventIfNoAjaxDecorator(MenuLink.this.getAjaxCallDecorator());
                 }
-            }
-        });
+
+                @Override
+                protected CharSequence getPreconditionScript() {
+                    return "return true;";
+                }
+
+                @Override
+                protected void onComponentTag(ComponentTag tag) {
+                    // add the onclick handler only if link is enabled
+                    if (isLinkEnabled()) {
+                        super.onComponentTag(tag);
+                    }
+                }
+            });
+        }
     }
 
     @Override
