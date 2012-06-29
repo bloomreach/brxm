@@ -522,13 +522,13 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
             ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(liveRequest), liveRequest.getContextPath(), HstRequestUtils.getRequestPath(liveRequest));
              
             assertFalse("Port 80 should match to a live mount" ,mount.getMount().isPreview());
-            assertEquals("Wrong content path for the live mount", "/hst:hst/hst:sites/unittestproject/hst:content", mount.getMount().getContentPath());
+            assertEquals("Wrong content path for the live mount", "/unittestcontent/documents/unittestproject", mount.getMount().getContentPath());
             
             // since the requestURI is empty, we expect a fallback to the configured homepage:
             ResolvedMount prevMount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(previewRequest), previewRequest.getContextPath(), HstRequestUtils.getRequestPath(previewRequest));
              
-            assertTrue("Port 8081 should match to a live mount" ,prevMount.getMount().isPreview());  
-            assertEquals("Wrong content path for the preview mount", "/hst:hst/hst:sites/unittestproject-preview/hst:content", prevMount.getMount().getContentPath());
+            assertTrue("Port 8081 should match to a preview mount" ,prevMount.getMount().isPreview());
+            assertEquals("Wrong content path for the preview mount", "/unittestcontent/documents/unittestproject", prevMount.getMount().getContentPath());
             
         }
         
