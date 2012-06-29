@@ -521,7 +521,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
             expect(hstMgr.getVirtualHosts()).andAnswer(new IAnswer<VirtualHosts>() {
                 @Override
                 public VirtualHosts answer() throws Throwable {
-                    manager.load(vhosts, isA(Session.class));
+                    manager.load(vhosts, getSession());
                     return vhosts;
                 }
             }).anyTimes();
