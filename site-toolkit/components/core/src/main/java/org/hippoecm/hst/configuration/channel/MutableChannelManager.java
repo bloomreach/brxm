@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 
@@ -29,7 +32,7 @@ public interface MutableChannelManager extends ChannelManager {
      * @param hosts
      * @throws RepositoryNotAvailableException
      */
-    void load(VirtualHosts hosts) throws RepositoryNotAvailableException;
+    void load(VirtualHosts hosts, Session session) throws RepositoryException;
 
     /**
      * discard cached channel information; there have been external changes to the backend storage.

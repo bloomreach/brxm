@@ -236,7 +236,6 @@ public class HstManagerImpl implements HstManager {
                     if(virtualHosts == null) {
                         throw new IllegalStateException("The HST configuration model could not be loaded. Cannot process request");
                     }
-                    this.channelManager.load(virtualHosts);
                 }
                 currentHosts = virtualHosts;
             }
@@ -255,9 +254,9 @@ public class HstManagerImpl implements HstManager {
             configurationRootNodes.clear();
             siteRootNodes.clear();
         }
-        
+
         Session session = null;
-           
+
         try {
             if (this.credentials == null) {
                 session = this.repository.login();
@@ -555,12 +554,36 @@ public class HstManagerImpl implements HstManager {
                         }
                     }
                 }
-            } 
+            }
+
+            try {
+                // unregister all existing siteMapItemHandlers first
+                siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
+                enhancedConfigurationRootNodes = enhanceHstConfigurationNodes(configurationRootNodes);
+                this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
+
+                for(HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters ) {
+                    configurationAugmenter.augment(this);
+                }
+                log.info("Finished build in memory hst configuration model in " + (System.currentTimeMillis() - start) + " ms.");
+            } catch (ServiceException e) {
+                throw new RepositoryNotAvailableException(e);
+            }
+
+            this.channelManager.load(virtualHosts, session);
+
         } catch (PathNotFoundException e) {
             throw new IllegalStateException("Exception during loading configuration nodes. The HST model cannot be loaded. ",e);
         } catch (RepositoryException e) {
             throw new RepositoryNotAvailableException("Exception during loading configuration nodes. ",e);
         } finally {
+            // clear the StringPool as it is not needed any more
+            StringPool.clear();
+            enhancedConfigurationRootNodes.clear();
+            configChangeEventMap = null;
+            hstLinkCreator.clear();
+            clearAll = false;
+
             if (session != null) {
                 try { 
                     session.logout(); 
@@ -569,27 +592,7 @@ public class HstManagerImpl implements HstManager {
                 }
             }
         }
-            
-        try {
-            // unregister all existing siteMapItemHandlers first
-            siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
-            enhancedConfigurationRootNodes = enhanceHstConfigurationNodes(configurationRootNodes);
-            this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
-            
-            for(HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters ) {
-                configurationAugmenter.augment(this);
-            }
-            log.info("Finished build in memory hst configuration model in " + (System.currentTimeMillis() - start) + " ms.");
-        } catch (ServiceException e) {
-            throw new RepositoryNotAvailableException(e);
-        } finally {
-            // clear the StringPool as it is not needed any more
-            StringPool.clear();
-            enhancedConfigurationRootNodes.clear();
-            configChangeEventMap = null;
-            hstLinkCreator.clear();
-            clearAll = false;
-        }
+
     } 
        
     private Map<String, HstNode> enhanceHstConfigurationNodes(Map<String, HstNode> nodes) {

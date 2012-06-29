@@ -15,19 +15,6 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static junit.framework.Assert.fail;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.createNiceMock;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.reset;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertNull;
-
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.util.Arrays;
@@ -65,6 +52,20 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.reset;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertNull;
 
 public class ChannelManagerImplTest extends AbstractHstTestCase {
 
@@ -520,7 +521,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
             expect(hstMgr.getVirtualHosts()).andAnswer(new IAnswer<VirtualHosts>() {
                 @Override
                 public VirtualHosts answer() throws Throwable {
-                    manager.load(vhosts);
+                    manager.load(vhosts, isA(Session.class));
                     return vhosts;
                 }
             }).anyTimes();
