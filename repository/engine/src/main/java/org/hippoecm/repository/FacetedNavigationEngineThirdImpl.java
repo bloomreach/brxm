@@ -221,13 +221,18 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
     }
 
     class ContextImpl extends FacetedNavigationEngine.Context {
-        AuthorizationQuery authorizationQuery;
         SessionImpl session;
+        private AuthorizationQuery authorizationQuery;
 
         ContextImpl(SessionImpl session, String userId, Subject subject, NodeTypeManager ntMgr) throws RepositoryException {
-            this.authorizationQuery = new AuthorizationQuery(subject, getNamespaceMappings(),
-                    (ServicingIndexingConfiguration) getIndexingConfig(), ntMgr, session);
             this.session = session;
+
+            this.authorizationQuery = new AuthorizationQuery(subject, getNamespaceMappings(),
+                                                        (ServicingIndexingConfiguration) getIndexingConfig(), ntMgr, session);
+        }
+
+        BooleanQuery getAuthorizationQuery() {
+            return authorizationQuery.getQuery();
         }
     }
     
@@ -378,13 +383,8 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
             if (initialQuery != null && initialQuery.facetFilters != null) {
                 facetFiltersQuery = new FacetFiltersQuery(initialQuery.facetFilters, nsMappings, this.getTextAnalyzer(), this.getSynonymProvider()); 
             }
-            
-            
-            // TODO perhaps create cached user specific filter for authorisation to gain speed
-            if (contextImpl.authorizationQuery.getQuery().clauses().size() > 0) {
-                // TODO enable again after HREPTWO-3959 is fixed
-                // TODO create a CACHED BITSET FILTER FOR IT
-            }
+
+            addQueryAsBitSetToFilter(contextImpl.getAuthorizationQuery(), bitSetFilterList, cache, indexReader);
 
             if (resultset != null) {
                // If there are more than one facet in the 'resultset' we return an empty result as this is not allowed

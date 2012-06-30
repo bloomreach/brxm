@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -87,6 +88,7 @@ public class AuthorizationQuery {
         }
         log.debug("----START CREATION AUTHORIZATION QUERY---------");
         this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class));
+        System.out.println("Query: " + query);
         log.debug("----END CREATION AUTHORIZATION QUERY-----------");
     }
 
@@ -103,27 +105,15 @@ public class AuthorizationQuery {
                 DomainRule domainRule = domainRulesIt.next();
                 Iterator<FacetRule> facetRuleIt = domainRule.getFacetRules().iterator();
                 BooleanQuery facetQuery = new BooleanQuery(true);
-                boolean hasMatchAllDocsQuery = false;
                 while (facetRuleIt.hasNext()) {
                     FacetRule facetRule = facetRuleIt.next();
                     Query q = getFacetRuleQuery(facetRule, facetAuthPrincipal.getRoles());
                     if (q == null) {
                         continue;
                     }
-                    if (q instanceof MatchAllDocsQuery) {
-                        hasMatchAllDocsQuery = true;
-                    }
                     log.debug("Adding to FacetQuery: FacetRuleQuery = {}", q);
                     log.debug("FacetRuleQuery has {} clauses.", (q instanceof BooleanQuery) ? ((BooleanQuery) q).getClauses().length : 1);
                     facetQuery.add(q, Occur.MUST);
-                }
-                if (domainRule.getFacetRules().size() == 1 && hasMatchAllDocsQuery) {
-                    /*
-                     * we have a domain rule, with only one facetrule, a MatchAllDocsQuery: this means
-                     * visibility for every node. Return instantly with an empty boolean query
-                     */
-                    log.debug("found domain rule with only one facetrule which is a " + "MatchAllDocsQuery: return empty booleanQuery because user is allowed to see all");
-                    return new BooleanQuery(true);
                 }
                 log.debug("Adding to Authorization query: FacetQuery = {}", facetQuery);
                 log.debug("FacetQuery has {} clauses.", facetQuery.getClauses().length);
@@ -190,15 +180,23 @@ public class AuthorizationQuery {
                             }
                         } else {
                             Query tq = new TermQuery(new Term(internalFieldName, facetRule.getValue()));
-                            if (facetRule.isEqual()) {
-                                return tq;
-                            } else {
-                                BooleanQuery b = new BooleanQuery(false);
+                            if (!facetRule.isFilter()) {
                                 Query propExists = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,
-                                        internalNameTerm));
-                                b.add(propExists, Occur.MUST);
-                                b.add(tq, Occur.MUST_NOT);
-                                return b;
+                                                                          internalNameTerm));
+                                BooleanQuery bq = new BooleanQuery(true);
+                                bq.add(propExists, Occur.MUST);
+                                if (facetRule.isEqual()) {
+                                    bq.add(tq, Occur.MUST);
+                                } else {
+                                    bq.add(tq, Occur.MUST_NOT);
+                                }
+                                return bq;
+                            } else {
+                                if (facetRule.isEqual()) {
+                                    return tq;
+                                } else {
+                                    return QueryHelper.negateQuery(tq);
+                                }
                             }
                         }
                     } else {
@@ -224,9 +222,7 @@ public class AuthorizationQuery {
                         return QueryHelper.negateQuery(q);
                     }
                 } else if ("nodename".equalsIgnoreCase(nodeNameString)) {
-                    // FIXME: implement
-                    log.debug("Nodename match not implemented yet.");
-                    return QueryHelper.getNoHitsQuery();
+                    return getNodeNameQuery(nodeNameString, facetRule);
                 } else if ("jcr:primaryType".equals(nodeNameString)) {
                     return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule);
                 } else if ("jcr:mixinTypes".equals(nodeNameString)) {
@@ -299,6 +295,32 @@ public class AuthorizationQuery {
             return nodetypeQuery;
         } else {
             return QueryHelper.negateQuery(nodetypeQuery);
+        }
+    }
+
+    private Query getNodeNameQuery(String nodeName, FacetRule facetRule) {
+        Query nodeNameQuery = null;
+        try {
+            Name n = session.getQName(nodeName);
+            String ntName = nsMappings.translateName(n);
+            nodeNameQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, ntName));
+        } catch (NamespaceException ne) {
+            log.error("invalid namespace " + ne.getMessage());
+        } catch (IllegalNameException e) {
+            log.error("invalid name " + e.getMessage());
+        }
+        if (nodeNameQuery == null) {
+            if (facetRule.isEqual()) {
+                return QueryHelper.getNoHitsQuery();
+            } else {
+                return new MatchAllDocsQuery();
+            }
+        } else {
+            if (facetRule.isEqual()) {
+                return nodeNameQuery;
+            } else {
+                return QueryHelper.negateQuery(nodeNameQuery);
+            }
         }
     }
 
