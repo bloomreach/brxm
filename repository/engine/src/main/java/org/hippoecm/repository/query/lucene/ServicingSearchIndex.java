@@ -109,7 +109,6 @@ public class ServicingSearchIndex extends SearchIndex {
 
         QueryImpl query = new QueryImpl(sessionContext, this,
                 getContext().getPropertyTypeRegistry(), statement, language, getQueryNodeFactory()) {
-            long totalSize;
             @Override
             public QueryResult execute(long offset, long limit) throws RepositoryException {
                 if (log.isDebugEnabled()) {
@@ -121,7 +120,7 @@ public class ServicingSearchIndex extends SearchIndex {
                         index.getContext().getItemStateManager(),
                         index.getNamespaceMappings(), index.getTextAnalyzer(),
                         propReg, index.getSynonymProvider(),
-                        index.getIndexFormatVersion(), null);
+                        index.getIndexFormatVersion(), cache);
 
                 OrderQueryNode orderNode = root.getOrderNode();
 
