@@ -99,6 +99,7 @@ public class RepositoryLogger implements DaemonModule {
         String methodName = (String) event.get("methodName");
         String className = (String) event.get("className");
         String documentPath = (String) event.get("documentPath");
+        String handleUuid = (String) event.get("handleUuid");
         String returnType = (String) event.get("returnType");
         List<String> arguments = (List<String>) event.get("arguments");
 
@@ -114,6 +115,9 @@ public class RepositoryLogger implements DaemonModule {
             // conditional properties
             if (documentPath != null) {
                 logNode.setProperty("hippolog:eventDocument", documentPath);
+            }
+            if (handleUuid != null) {
+                logNode.setProperty("hippolog:handleUuid", handleUuid);
             }
             if (returnType != null) {
                 logNode.setProperty("hippolog:eventReturnType", returnType);

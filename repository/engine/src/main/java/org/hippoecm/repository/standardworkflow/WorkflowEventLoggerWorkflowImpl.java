@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.onehippo.cms7.event.HippoEvent;
@@ -73,15 +74,33 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
         String returnType = getReturnType(returnObject);
         String returnValue = getReturnValue(returnObject);
         String[] arguments = replaceObjectsWithStrings(args);
-        postEvent(userName, className, methodName, documentPath, returnType, returnValue, arguments);
+        String handleUuid = getHandleUuid(documentPath);
+        postEvent(userName, className, methodName, documentPath, handleUuid, returnType, returnValue, arguments);
     }
 
-    private void postEvent(String who, String className, String methodName, String documentPath, String returnType, String returnValue, String[] arguments) {
+    private String getHandleUuid(final String documentPath) {
+        if (documentPath == null) {
+            return null;
+        }
+        final int idx = documentPath.lastIndexOf("/");
+        final String handlePath = documentPath.substring(0, idx);
+        try {
+            final Node node = session.getNode(handlePath);
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                return node.getIdentifier();
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to determine uuid of document handle while logging workflow event", e);
+        }
+        return null;
+    }
+
+    private void postEvent(String who, String className, String methodName, String documentPath, String handleUuid, String returnType, String returnValue, String[] arguments) {
         HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
         if (eventBus != null) {
             HippoEvent event = new HippoEvent("repository");
             event.user(who).category("workflow").action(className + "." + methodName).result(returnValue);
-            event.set("className", className).set("methodName", methodName);
+            event.set("className", className).set("methodName", methodName).set("handleUuid", handleUuid);
             event.set("returnType", returnType).set("returnValue", returnValue).set("documentPath", documentPath);
             if (arguments != null) {
                 event.set("arguments", Arrays.asList(arguments));
