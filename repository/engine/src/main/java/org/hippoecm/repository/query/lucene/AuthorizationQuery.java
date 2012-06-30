@@ -88,7 +88,7 @@ public class AuthorizationQuery {
         }
         log.debug("----START CREATION AUTHORIZATION QUERY---------");
         this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class));
-        System.out.println("Query: " + query);
+        log.info("AUTHORIZATION Query: " + query);
         log.debug("----END CREATION AUTHORIZATION QUERY-----------");
     }
 
