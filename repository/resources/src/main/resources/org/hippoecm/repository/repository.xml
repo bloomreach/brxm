@@ -38,7 +38,7 @@
 
     <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.H2PersistenceManager">
       <param name="url" value="jdbc:h2:file:${wsp.home}/db"/>
-      <param name="schemaObjectPrefix" value="version_"/>
+      <param name="schemaObjectPrefix" value="${wsp.name}_"/>
       <param name="minBlobSize" value="4194304"/>
     </PersistenceManager>
 
