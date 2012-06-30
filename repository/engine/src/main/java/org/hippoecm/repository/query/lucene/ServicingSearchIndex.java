@@ -106,59 +106,47 @@ public class ServicingSearchIndex extends SearchIndex {
     public ExecutableQuery createExecutableQuery(
             SessionContext sessionContext, String statement, String language)
             throws InvalidQueryException {
-       
-        if(statement.contains(HippoNodeType.HIPPO_PATHS)) {
-           // Do not search in versioning
-           return new QueryImpl(sessionContext, this,
-                    getContext().getPropertyTypeRegistry(), statement, language, getQueryNodeFactory()) {
-               // we override the needsSystemTree() to return false: We do not want to search in versioning.
-               @Override
-               public boolean needsSystemTree() {
-                   return false;
-               }
-           };
-        } else {
-            QueryImpl query = new QueryImpl(sessionContext, this,
-                    getContext().getPropertyTypeRegistry(), statement, language, getQueryNodeFactory()) {
-                long totalSize;
-                @Override
-                public QueryResult execute(long offset, long limit) throws RepositoryException {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Executing query: \n" + root.dump());
-                    }
 
-                    // build lucene query
-                    Query query = LuceneQueryBuilder.createQuery(root, sessionContext.getSessionImpl(),
-                            index.getContext().getItemStateManager(),
-                            index.getNamespaceMappings(), index.getTextAnalyzer(),
-                            propReg, index.getSynonymProvider(),
-                            index.getIndexFormatVersion(), null);
-
-                    OrderQueryNode orderNode = root.getOrderNode();
-
-                    OrderQueryNode.OrderSpec[] orderSpecs;
-                    if (orderNode != null) {
-                        orderSpecs = orderNode.getOrderSpecs();
-                    } else {
-                        orderSpecs = new OrderQueryNode.OrderSpec[0];
-                    }
-                    Path[] orderProperties = new Path[orderSpecs.length];
-                    boolean[] ascSpecs = new boolean[orderSpecs.length];
-                    for (int i = 0; i < orderSpecs.length; i++) {
-                        orderProperties[i] = orderSpecs[i].getPropertyPath();
-                        ascSpecs[i] = orderSpecs[i].isAscending();
-                    }
-
-                    return new HippoQueryResult(index, sessionContext,
-                            this, query,
-                            getColumns(), orderProperties, ascSpecs,
-                            orderProperties.length == 0 && getRespectDocumentOrder(),
-                            offset, limit);
+        QueryImpl query = new QueryImpl(sessionContext, this,
+                getContext().getPropertyTypeRegistry(), statement, language, getQueryNodeFactory()) {
+            long totalSize;
+            @Override
+            public QueryResult execute(long offset, long limit) throws RepositoryException {
+                if (log.isDebugEnabled()) {
+                    log.debug("Executing query: \n" + root.dump());
                 }
-            };
-            query.setRespectDocumentOrder(getRespectDocumentOrder());
-            return query;
-        }
+
+                // build lucene query
+                Query query = LuceneQueryBuilder.createQuery(root, sessionContext.getSessionImpl(),
+                        index.getContext().getItemStateManager(),
+                        index.getNamespaceMappings(), index.getTextAnalyzer(),
+                        propReg, index.getSynonymProvider(),
+                        index.getIndexFormatVersion(), null);
+
+                OrderQueryNode orderNode = root.getOrderNode();
+
+                OrderQueryNode.OrderSpec[] orderSpecs;
+                if (orderNode != null) {
+                    orderSpecs = orderNode.getOrderSpecs();
+                } else {
+                    orderSpecs = new OrderQueryNode.OrderSpec[0];
+                }
+                Path[] orderProperties = new Path[orderSpecs.length];
+                boolean[] ascSpecs = new boolean[orderSpecs.length];
+                for (int i = 0; i < orderSpecs.length; i++) {
+                    orderProperties[i] = orderSpecs[i].getPropertyPath();
+                    ascSpecs[i] = orderSpecs[i].isAscending();
+                }
+
+                return new HippoQueryResult(index, sessionContext,
+                        this, query,
+                        getColumns(), orderProperties, ascSpecs,
+                        orderProperties.length == 0 && getRespectDocumentOrder(),
+                        offset, limit);
+            }
+        };
+        query.setRespectDocumentOrder(getRespectDocumentOrder());
+        return query;
     }
     
     
