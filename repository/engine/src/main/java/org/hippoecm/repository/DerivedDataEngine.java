@@ -76,7 +76,7 @@ public class DerivedDataEngine {
 
     public void save(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
         long start = 0;
-        if (!session.getRootNode().hasNode("hippo:configuration/hippo:derivatives")) {
+        if (!session.nodeExists("/hippo:configuration/hippo:derivatives")) {
             return;
         }
         if(logger.isDebugEnabled()) {
