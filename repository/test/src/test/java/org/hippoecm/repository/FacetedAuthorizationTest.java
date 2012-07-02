@@ -30,7 +30,6 @@ import javax.jcr.security.Privilege;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -519,8 +518,6 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testFacetSearch() throws RepositoryException {
-        Utilities.dump(session.getRootNode().getNode(TEST_DATA_NODE));
-
         Node navNode = testNav.getNode("search");
         Node resultSetNode = navNode.getNode("hippo:resultset");
         assertTrue(resultSetNode.hasNode("readdoc0"));
