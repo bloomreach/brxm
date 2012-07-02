@@ -917,11 +917,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete/DeleteDialog_de.properties -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete/DeleteDialog_fr.properties -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/delete/DeleteDialog_it.properties -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportPlugin.html -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/AutoExportPlugin.java -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/autoexport_off.png -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/autoexport_on.png -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/export/empty.gif -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/move/MoveDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/move/MoveDialog.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/namespace/NamespaceDialog.html svneol=native#text/plain
