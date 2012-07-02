@@ -34,7 +34,7 @@ public class NamespacePlugin extends RenderPlugin<Node> {
         IDialogFactory factory = new IDialogFactory() {
             private static final long serialVersionUID = 1L;
             public Dialog createDialog() {
-                return new NamespaceDialog(NamespacePlugin.this);
+                return new NamespaceDialog();
             }
         };
         add(new DialogLink("link", new Model<String>("Add Namespace"), factory, getDialogService()));
