@@ -22,13 +22,10 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -47,17 +44,9 @@ import org.slf4j.LoggerFactory;
 
 public class CndExportDialog extends AbstractDialog<Void> {
 
-    static final Logger log = LoggerFactory.getLogger(CndExportDialog.class);
-
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final Logger log = LoggerFactory.getLogger(CndExportDialog.class);
 
     private static final long serialVersionUID = 1L;
-
-    static LinkedHashSet<NodeType> sortedTypes;
-    static HashSet<NodeType> visited;
-    static LinkedHashSet<NodeType> result;
-    static LinkedHashSet<NodeType> set;
 
     private String selectedNs;
 
@@ -141,14 +130,14 @@ public class CndExportDialog extends AbstractDialog<Void> {
         add(link);
         setOkVisible(false);
     }
-    
+
     public String getSelectedNs() {
         return selectedNs;
     }
-    
+
     public void setSelectedNs(String ns) {
         selectedNs = ns;
-    } 
+    }
 
     private Session getJcrSession() {
         Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
