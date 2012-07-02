@@ -29,6 +29,7 @@ api/src/main/java/org/hippoecm/frontend/dialog/ExceptionDialog.html svneol=nativ
 api/src/main/java/org/hippoecm/frontend/dialog/ExceptionDialog.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/dialog/IDialogFactory.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/dialog/IDialogService.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/dialog/MultiStepDialog.java -text
 api/src/main/java/org/hippoecm/frontend/dialog/ajax-loader.gif -text
 api/src/main/java/org/hippoecm/frontend/dialog/modal-window.patch -text
 api/src/main/java/org/hippoecm/frontend/dialog/res/frame-blue-1-alpha.png -text svneol=unset#image/png
