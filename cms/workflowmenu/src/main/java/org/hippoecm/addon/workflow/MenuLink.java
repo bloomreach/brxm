@@ -79,6 +79,10 @@ abstract class MenuLink extends Link {
             }
         } else {
             disableLink(tag);
+            if(!isEnabled()) {
+                // to prevent the menu to disappear when a disabled menuitem is clicked
+                tag.put("onclick", "event.cancelBubble=true;");
+            }
         }
     }
 
