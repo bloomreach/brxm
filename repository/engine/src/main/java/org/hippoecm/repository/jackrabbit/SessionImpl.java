@@ -74,8 +74,7 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
                 return context.getItemStateManager();
             }
         };
-        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
-        ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, this, subject);
+        helper.init();
     }
 
     @Override

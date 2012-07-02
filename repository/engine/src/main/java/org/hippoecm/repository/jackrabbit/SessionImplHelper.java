@@ -294,15 +294,24 @@ abstract class SessionImplHelper {
         jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_RETENTION_MANAGEMENT));
         jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_VERSION_MANAGEMENT));
         jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_WRITE));
+    }
 
+    /**
+     * Initialize the helper after the session can delegate back.
+     *
+     * @throws RepositoryException
+     */
+    void init() throws RepositoryException {
         final RepositoryImpl repository = (RepositoryImpl) context.getRepository();
         HippoQueryHandler queryHandler = repository.getHippoQueryHandler(sessionImpl.getWorkspace().getName());
-        this.authorizationQuery = new AuthorizationQuery(sessionContext.getSessionImpl().getSubject(),
+        this.authorizationQuery = new AuthorizationQuery(context.getSessionImpl().getSubject(),
                                                          queryHandler.getNamespaceMappings(),
                                                          queryHandler.getIndexingConfig(),
-                                                         sessionContext.getNodeTypeManager(),
-                                                         sessionContext.getSessionImpl());
+                                                         context.getNodeTypeManager(),
+                                                         context.getSessionImpl());
 
+        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
+        ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, context.getSessionImpl(), subject);
     }
 
     /**

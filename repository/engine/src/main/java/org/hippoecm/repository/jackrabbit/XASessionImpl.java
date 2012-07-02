@@ -74,8 +74,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
                 return context.getItemStateManager();
             }
         };
-        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
-        ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, this, subject);
+        helper.init();
     }
 
     protected XASessionImpl(RepositoryContext repositoryContext, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
@@ -87,8 +86,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
                 return context.getItemStateManager();
             }
         };
-        HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
-        ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, this, subject);
+        helper.init();
     }
 
     @Override
