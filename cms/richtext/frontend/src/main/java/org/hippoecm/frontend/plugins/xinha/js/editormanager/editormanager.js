@@ -111,31 +111,19 @@ if (!YAHOO.hippo.EditorManager) {
                     return;
                 }
 
-                if (!this.contexts.containsKey(form)) {
-                    this.contexts.put(form, []);
-                    YAHOO.hippo.HippoAjax.registerDestroyFunction(form, function() {
-                        this.contexts.remove(form);
-                    }, this);
-                }
                 var context = null;
-                for (var candidate in this.contexts.get(form)) {
-                    if (candidate.deltaProvider === deltaProvider) {
-                        context = candidate;
-                        break;
-                    }
-                }
-                if (context == null) {
+                if (!this.contexts.containsKey(form.id)) {
                     context = new YAHOO.hippo.EditorContext(form, deltaProvider);
-                    this.contexts.get(form).push(context);
+                    this.contexts.put(form.id, context);
+                } else {
+                    context = this.contexts.get(form.id);
                 }
                 context.register(cfg);
             },
 
             forEachContext: function(cb, obj) {
                 this.contexts.forEach(this, function(k, v) {
-                    for (var i = 0; i < v.length; i++) {
-                        cb.call(obj || this, v[i]);
-                    }
+                    cb.apply(obj || this, [k, v]);
                 });
             },
 
@@ -149,13 +137,23 @@ if (!YAHOO.hippo.EditorManager) {
                     Lang.later(100, this, this.render);
                     return;
                 }
-                this.forEachContext(function(context) {
-                    context.render();
+                var cleanupContexts = [];
+                this.forEachContext(function(key, context) {
+                    if (document.getElementById(key)) {
+                        context.render();
+                    } else {
+                        cleanupContexts.push(key);
+                    }
                 });
+
+                for (var i=0,len=cleanupContexts.length; i<len; i++) {
+                    var removedContext = this.contexts.remove(cleanupContexts[i]);
+                    removedContext.destroy();
+                }
             },
 
             saveEditors : function() {
-                this.forEachContext(function(context) {
+                this.forEachContext(function(key, context) {
                     context.saveEditors();
                 });
             },
@@ -212,14 +210,6 @@ if (!YAHOO.hippo.EditorManager) {
                     self.sizeState = {w: sizes.width, h: sizes.height};
                 }
             }, true);
-            YAHOO.hippo.HippoAjax.registerDestroyFunction(this.form, function() {
-                YAHOO.hippo.LayoutManager.unregisterResizeListener(self.form, self);
-                //a new form is loaded so clear editors map
-                self.editors.forEach(self, function(k, v) {
-                    v.destroy();
-                });
-                self.editors.clear();
-            }, this);
         };
 
         YAHOO.hippo.EditorContext.prototype = {
@@ -230,7 +220,10 @@ if (!YAHOO.hippo.EditorManager) {
              */
             register: function(cfg) {
                 var editor = null;
-                if (this.editors.containsKey(cfg.name)) {
+                if (this.newEditors.containsKey((cfg.name))) {
+                    editor = this.newEditors.remove(cfg.name);
+                    editor.reset(cfg);
+                } else if (this.editors.containsKey(cfg.name)) {
                     editor = this.editors.remove(cfg.name);
                     editor.reset(cfg);
                 } else {
@@ -240,45 +233,32 @@ if (!YAHOO.hippo.EditorManager) {
             },
 
             render: function() {
+                var cleanupEditors = [];
                 this.newEditors.forEach(this, function(name, editor) {
-                    this.editors.put(editor.name, editor);
-                    editor.render();
+                    if (document.getElementById(editor.name)) {
+                        this.editors.put(editor.name, editor);
+                        editor.render();
+                    }
                 });
                 this.newEditors.clear();
             },
 
             resize : function(deltaW, deltaH) {
-                this.activeEditors.forEach(this, function(k, v) {
-                    v.resize(deltaW, deltaH);
+                this.forEachActiveEditor(function(name, editor) {
+                    editor.resize(deltaW, deltaH);
                 });
-            },
-
-            cleanup : function(name) {
-                this.sizeState = null;
-                this.deltaProvider = null;
-                var editor = this.activeEditors.remove(name);
-                // TODO: works now??
-                //Xinha.collectGarbageForIE();
-                info('Cleanup executed');
             },
 
             editorLoaded : function(name) {
                 var editor = this.editors.get(name);
-                this.registerCleanup(editor.getContainer(), name);
                 this.activeEditors.put(name, editor);
 
                 info('Editor successfully loaded');
             },
 
-            registerCleanup : function(element, name) {
-                //TODO: test
-                //Dom.setStyle(element.parentNode, 'display', 'block');
-                HippoAjax.registerDestroyFunction(element, this.cleanup, this, name);
-            },
-
             saveEditors : function() {
-                this.activeEditors.forEach(this, function(k, v) {
-                    v.save(false);
+                this.forEachActiveEditor(function(name, editor) {
+                    editor.save(false);
                 });
             },
 
@@ -290,6 +270,15 @@ if (!YAHOO.hippo.EditorManager) {
                         return editor;
                     }
                 }
+            },
+
+            forEachActiveEditor : function(callback) {
+                var cleanupEditors = [];
+                this.activeEditors.forEach(this, function(name, editor) {
+                    if (document.getElementById(name)) {
+                        callback(name, editor);
+                    }
+                });
             }
 
         };
