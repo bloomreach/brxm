@@ -196,7 +196,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
      * @return Session the rootSession
      * @throws RepositoryException
      */
-    protected Session getRootSession(String workspaceName) throws RepositoryException {
+    public Session getRootSession(String workspaceName) throws RepositoryException {
         if (workspaceName == null) {
             workspaceName = super.repConfig.getDefaultWorkspaceName();
         }

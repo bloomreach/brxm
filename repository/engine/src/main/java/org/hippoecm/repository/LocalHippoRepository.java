@@ -223,7 +223,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             super(repConfig);
         }
         @Override
-        protected Session getRootSession(String workspaceName) throws RepositoryException {
+        public Session getRootSession(String workspaceName) throws RepositoryException {
             return super.getRootSession(workspaceName);
         }
         void enableVirtualLayer(boolean enabled) throws RepositoryException {
