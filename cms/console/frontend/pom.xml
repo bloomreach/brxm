@@ -43,6 +43,19 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-utilities</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-engine</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>jcrdiff-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>jcrdiff-core</artifactId>
+    </dependency>
 
     <!-- test -->
     <dependency>
@@ -58,9 +71,9 @@
     </dependency>
 
     <dependency>
-        <groupId>commons-codec</groupId>
-        <artifactId>commons-codec</artifactId>
-        <scope>test</scope>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
@@ -78,6 +91,7 @@
           <include>**/*.png</include>
           <include>**/*.gif</include>
           <include>**/*.properties</include>
+          <include>**/*.xml</include>
         </includes>
       </resource>
     </resources>

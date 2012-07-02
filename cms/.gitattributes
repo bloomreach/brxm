@@ -926,6 +926,15 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/namesp
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/namespace/NamespacePlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/node/NodeDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/node/NodeDialog.java svneol=native#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/ApplyPatchDialog.html -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/ApplyPatchDialog.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/ApplyPatchPlugin.html -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/ApplyPatchPlugin.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/CreatePatchDialog.html -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/CreatePatchDialog.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/CreatePatchPlugin.html -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/CreatePatchPlugin.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/workspace.xml -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/permissions/PermissionsPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/permissions/PermissionsPlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/property/PropertyDialog.html svneol=native#text/plain

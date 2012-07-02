@@ -355,6 +355,34 @@
         <sv:value>service.check</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="createpatch">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.patch.CreatePatchPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="applypatch">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.id" sv:type="String">
+        <sv:value>service.menu.item</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.console.menu.patch.ApplyPatchPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="wicket.model" sv:type="String">
+        <sv:value>service.model</sv:value>
+      </sv:property>
+    </sv:node>
     <sv:node sv:name="logout">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
