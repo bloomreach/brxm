@@ -273,9 +273,8 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * authorization queries logs in.  The engine can take appropriate measures
      * to reload information.
      *
-     * @param principal The user identification, in some non-interpretable form other
+     * @param subject The user identification, in some non-interpretable form other
      *                  than for equality and order.
-     * @param authorizationQuery The authorization part used by the principal
      * @param initialQueries A list of initial queries later used in the #view methods
      * @throws RepositoryException
      * @see #unprepare(C)
@@ -287,9 +286,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
     /**
      * This method is called when a user logouts from the system.
      *
-     * @param principal The user identification, in some non-interpretable form other
-     *                  than for equality and order.
-     * @see #prepare(String,Map,List)
+     * @see #prepare
      */
     public void unprepare(C context);
 
@@ -385,7 +382,7 @@ public interface FacetedNavigationEngine<Q extends FacetedNavigationEngine.Query
      * identification and presentation purposes.
      * @param initialQuery The initial query as described in the description
      * of this interface.  This initial query may never be empty.
-     * @param authorizationQuery A map from facet-key to facet-value pairs
+     * @param authorization A map from facet-key to facet-value pairs
      * representing the equality terms which should be OR'ed to compose the
      * authorization query as in the description of this interface.
      * @param facetsQuery A List from facet-key, facet-value pairs

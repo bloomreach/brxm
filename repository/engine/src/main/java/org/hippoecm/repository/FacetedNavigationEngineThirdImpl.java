@@ -70,6 +70,7 @@ import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.FacetFiltersQuery;
 import org.hippoecm.repository.query.lucene.FacetPropExistsQuery;
@@ -78,7 +79,6 @@ import org.hippoecm.repository.query.lucene.FacetsQuery;
 import org.hippoecm.repository.query.lucene.InheritedFilterQuery;
 import org.hippoecm.repository.query.lucene.RangeFields;
 import org.hippoecm.repository.query.lucene.ServicingFieldNames;
-import org.hippoecm.repository.query.lucene.ServicingIndexingConfiguration;
 import org.hippoecm.repository.query.lucene.ServicingNameFormat;
 import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.query.lucene.caching.FacetedEngineCache;
@@ -226,9 +226,7 @@ public class FacetedNavigationEngineThirdImpl extends ServicingSearchIndex
 
         ContextImpl(SessionImpl session, String userId, Subject subject, NodeTypeManager ntMgr) throws RepositoryException {
             this.session = session;
-
-            this.authorizationQuery = new AuthorizationQuery(subject, getNamespaceMappings(),
-                                                        (ServicingIndexingConfiguration) getIndexingConfig(), ntMgr, session);
+            this.authorizationQuery = ((InternalHippoSession) session).getAuthorizationQuery();
         }
 
         BooleanQuery getAuthorizationQuery() {

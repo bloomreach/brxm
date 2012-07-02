@@ -63,8 +63,7 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.decorating.NodeIteratorDecorator;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
-import org.hippoecm.repository.jackrabbit.SessionImpl;
-import org.hippoecm.repository.jackrabbit.XASessionImpl;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
 import org.hippoecm.repository.jackrabbit.xml.HippoDocumentViewExporter;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
@@ -123,16 +122,12 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     }
 
     Node getCanonicalNode(Node node) throws RepositoryException {
-        if (session instanceof XASession) {
-            return ((XASessionImpl)session).getCanonicalNode(node);
-        } else {
-            return ((SessionImpl)session).getCanonicalNode(node);
-        }
+        return getInternalHippoSession().getCanonicalNode(node);
     }
 
     String[] getQPath(String absPath) throws NamespaceException, RepositoryException {
         NamespaceRegistry nsreg = session.getWorkspace().getNamespaceRegistry();
-        Path.Element[] elements = (session instanceof XASession ? (XASessionImpl)session : (SessionImpl)session) .
+        Path.Element[] elements = getInternalHippoSession().
             getQPath(absPath.startsWith("/") ? absPath.substring(1) : absPath).getElements();
         String[] rtelements = new String[elements.length];
         for (int i = 0; i < elements.length; i++) {
@@ -186,11 +181,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     public ContentHandler getDereferencedImportContentHandler(String parentAbsPath, int uuidBehavior,
             int referenceBehavior, int mergeBehavior) throws PathNotFoundException, ConstraintViolationException,
             VersionException, LockException, RepositoryException {
-        if (session instanceof XASession) {
-            return ((XASessionImpl) session).getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
-        } else {
-            return ((SessionImpl) session).getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
-        }
+        return getInternalHippoSession().getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
     }
 
     public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
@@ -200,11 +191,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
         try {
             postMountEnabled(false);
-            if (session instanceof XASession) {
-                ((XASessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
-            } else {
-                ((SessionImpl) session).importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
-            }
+            getInternalHippoSession().importDereferencedXML(parentAbsPath, in, uuidBehavior, referenceBehavior, mergeBehavior);
             // run derived data engine
             derivedEngine.save();
             //session.save();
@@ -424,40 +411,30 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
                                                                             NoSuchNodeTypeException, RepositoryException {
-        NodeIterator changesIter;
-        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(node, nodeType, prune)
-                                                       : ((SessionImpl)session).pendingChanges(node, nodeType, prune);
+        NodeIterator changesIter = getInternalHippoSession().pendingChanges(node, nodeType, prune);
         return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
     public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
                                                                           RepositoryException {
-        NodeIterator changesIter;
-        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(node, nodeType, false)
-                                                       : ((SessionImpl)session).pendingChanges(node, nodeType, false);
+        NodeIterator changesIter = getInternalHippoSession().pendingChanges(node, nodeType, false);
         return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
     public NodeIterator pendingChanges(String nodeType, boolean prune) throws NamespaceException,
                                                                             NoSuchNodeTypeException, RepositoryException {
-        NodeIterator changesIter;
-        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, nodeType, prune)
-                                                       : ((SessionImpl)session).pendingChanges(null, nodeType, prune);
+        NodeIterator changesIter = getInternalHippoSession().pendingChanges(null, nodeType, prune);
         return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
     public NodeIterator pendingChanges(String nodeType) throws NamespaceException, NoSuchNodeTypeException,
                                                                           RepositoryException {
-        NodeIterator changesIter;
-        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, nodeType, false)
-                                                       : ((SessionImpl)session).pendingChanges(null, nodeType, false);
+        NodeIterator changesIter = getInternalHippoSession().pendingChanges(null, nodeType, false);
         return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
     public NodeIterator pendingChanges() throws RepositoryException {
-        NodeIterator changesIter;
-        changesIter = session instanceof XASessionImpl ? ((XASessionImpl)session).pendingChanges(null, null, false)
-                                                       : ((SessionImpl)session).pendingChanges(null, null, false);
+        NodeIterator changesIter = getInternalHippoSession().pendingChanges(null, null, false);
         return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
@@ -481,10 +458,10 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     }
 
     public void registerSessionCloseCallback(CloseCallback callback) {
-        if (session instanceof XASession) {
-            ((XASessionImpl)session).registerSessionCloseCallback(callback);
-        } else {
-            ((SessionImpl)session).registerSessionCloseCallback(callback);
-        }
+        getInternalHippoSession().registerSessionCloseCallback(callback);
+    }
+
+    private InternalHippoSession getInternalHippoSession() {
+        return ((InternalHippoSession) session);
     }
 }

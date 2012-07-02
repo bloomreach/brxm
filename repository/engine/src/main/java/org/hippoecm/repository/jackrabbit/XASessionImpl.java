@@ -50,12 +50,13 @@ import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
+import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.HippoAMContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
-public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImpl {
+public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImpl implements InternalHippoSession {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -203,12 +204,17 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
         new DefaultContentHandler(handler).parse(in);
     }
 
-    public SessionItemStateManager getItemStateManager() {
-        return context.getItemStateManager();
+    public HippoSessionItemStateManager getItemStateManager() {
+        return (HippoSessionItemStateManager) context.getItemStateManager();
     }
 
     public Node getCanonicalNode(Node node) throws RepositoryException {
         return helper.getCanonicalNode((NodeImpl)node);
+    }
+
+    @Override
+    public AuthorizationQuery getAuthorizationQuery() {
+        return helper.getAuthorizationQuery();
     }
 
     public void registerSessionCloseCallback(HippoSession.CloseCallback callback) {

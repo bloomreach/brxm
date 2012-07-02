@@ -15,11 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.security.AccessControlException;
 
 import javax.jcr.AccessDeniedException;
@@ -33,12 +28,18 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.security.Privilege;
 
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
-
+import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class FacetedAuthorizationTest extends TestCase {
     @SuppressWarnings("unused")
@@ -518,13 +519,19 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testFacetSearch() throws RepositoryException {
+        Utilities.dump(session.getRootNode().getNode(TEST_DATA_NODE));
+
         Node navNode = testNav.getNode("search");
-        assertTrue(navNode.hasNode("hippo:resultset/readdoc0"));
-        assertTrue(navNode.hasNode("hippo:resultset/writedoc0"));
-        NodeIterator iter = navNode.getNode("hippo:resultset").getNodes();
+        Node resultSetNode = navNode.getNode("hippo:resultset");
+        assertTrue(resultSetNode.hasNode("readdoc0"));
+        assertTrue(resultSetNode.hasNode("writedoc0"));
+        NodeIterator iter = resultSetNode.getNodes();
         int count = 0;
         while(iter.hasNext()) {
             Node n = iter.nextNode();
+            if (n == null) {
+                fail("null node in resultset child node iterator");
+            }
             try {
                 Node c = ((HippoNode)n).getCanonicalNode();
                 if(c == null) {
@@ -537,7 +544,10 @@ public class FacetedAuthorizationTest extends TestCase {
         }
         assertEquals(10, count);
         assertEquals(10L, iter.getSize());
-        // FIXME HREPTWO-3554 assertEquals(10L, navNode.getNode("hippo:resultset").getProperty(HippoNodeType.HIPPO_COUNT).getLong());
+
+        // Nodes 'nothing0/subread' and 'nothing0/subwrite' are counted but not instantiated.
+        // The hierarchical constraint (can read parent) is not taken into account.
+        assertEquals(12L, resultSetNode.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
     }
 
     @Test
@@ -567,6 +577,10 @@ public class FacetedAuthorizationTest extends TestCase {
         Query query = queryManager.createQuery("//element(*,hippo:ntunstructured) order by @jcr:score", Query.XPATH);
         NodeIterator iter = query.execute().getNodes();
         assertEquals(10L, iter.getSize());
+
+        // Nodes 'nothing0/subread' and 'nothing0/subwrite' are counted but not instantiated.
+        // The hierarchical constraint (can read parent) is not taken into account.
+        assertEquals(12L, ((HippoNodeIterator) iter).getTotalSize());
     }
 
     @Test
@@ -575,6 +589,10 @@ public class FacetedAuthorizationTest extends TestCase {
         Query query = queryManager.createQuery("SELECT * FROM hippo:ntunstructured ORDER BY jcr:score", Query.SQL);
         NodeIterator iter = query.execute().getNodes();
         assertEquals(10L, iter.getSize());
+
+        // Nodes 'nothing0/subread' and 'nothing0/subwrite' are counted but not instantiated.
+        // The hierarchical constraint (can read parent) is not taken into account.
+        assertEquals(12L, ((HippoNodeIterator) iter).getTotalSize());
     }
 
     @Test

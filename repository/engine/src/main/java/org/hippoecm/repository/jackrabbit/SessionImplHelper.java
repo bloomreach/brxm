@@ -69,6 +69,8 @@ import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.decorating.NodeDecorator;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedImportHandler;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
+import org.hippoecm.repository.query.lucene.AuthorizationQuery;
+import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +101,7 @@ abstract class SessionImplHelper {
      * <a href="https://issues.apache.org/jira/browse/JCR-1793">JCR-1793</a>).
      */
     private final ConcurrentMap<String, String> namespaces = new ConcurrentHashMap<String, String>();
+    private AuthorizationQuery authorizationQuery;
 
     /**
      * Clears the local namespace mappings. Subclasses that for example
@@ -291,6 +294,15 @@ abstract class SessionImplHelper {
         jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_RETENTION_MANAGEMENT));
         jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_VERSION_MANAGEMENT));
         jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_WRITE));
+
+        final RepositoryImpl repository = (RepositoryImpl) context.getRepository();
+        HippoQueryHandler queryHandler = repository.getHippoQueryHandler(sessionImpl.getWorkspace().getName());
+        this.authorizationQuery = new AuthorizationQuery(sessionContext.getSessionImpl().getSubject(),
+                                                         queryHandler.getNamespaceMappings(),
+                                                         queryHandler.getIndexingConfig(),
+                                                         sessionContext.getNodeTypeManager(),
+                                                         sessionContext.getSessionImpl());
+
     }
 
     /**
@@ -561,4 +573,9 @@ abstract class SessionImplHelper {
             return node;
         }
     }
+
+    public AuthorizationQuery getAuthorizationQuery() {
+        return this.authorizationQuery;
+    }
+
 }

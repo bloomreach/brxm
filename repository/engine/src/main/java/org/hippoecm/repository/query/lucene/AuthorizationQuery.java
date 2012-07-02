@@ -34,14 +34,15 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.BooleanClause.Occur;
 import org.hippoecm.repository.security.FacetAuthConstants;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
@@ -59,6 +60,8 @@ public class AuthorizationQuery {
      */
     private static final Logger log = LoggerFactory.getLogger(AuthorizationQuery.class);
 
+    private static final String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
+
     /**
      * The lucene query
      */
@@ -69,7 +72,6 @@ public class AuthorizationQuery {
     private final ServicingIndexingConfiguration indexingConfig;
     private final Set<String> memberships = new HashSet<String>();
     private final SessionImpl session;
-    private static final String MESSAGE_ZEROMATCH_QUERY = "returning a match zero nodes query";
 
     public AuthorizationQuery(Subject subject, NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig,
                               NodeTypeManager ntMgr, Session session) throws RepositoryException {
@@ -83,13 +85,18 @@ public class AuthorizationQuery {
         }
         this.session = (SessionImpl) session;
 
-        for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
-            memberships.add(groupPrincipal.getName());
+        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
+            this.query = new BooleanQuery(true);
+            this.query.add(new MatchAllDocsQuery(), Occur.MUST);
+        } else {
+            for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
+                memberships.add(groupPrincipal.getName());
+            }
+            log.debug("----START CREATION AUTHORIZATION QUERY---------");
+            this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class));
+            log.info("AUTHORIZATION Query: " + query);
+            log.debug("----END CREATION AUTHORIZATION QUERY-----------");
         }
-        log.debug("----START CREATION AUTHORIZATION QUERY---------");
-        this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class));
-        log.info("AUTHORIZATION Query: " + query);
-        log.debug("----END CREATION AUTHORIZATION QUERY-----------");
     }
 
     private BooleanQuery initQuery(Set<FacetAuthPrincipal> facetAuths) {

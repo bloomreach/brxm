@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import javax.jcr.PathNotFoundException;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.QueryResult;
@@ -34,46 +33,40 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.jackrabbit.core.ItemManager;
-import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.query.ExecutableQuery;
-import org.apache.jackrabbit.core.query.PropertyTypeRegistry.TypeMapping;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
-import org.apache.jackrabbit.core.query.lucene.MultiColumnQueryHits;
 import org.apache.jackrabbit.core.query.lucene.MultiIndex;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.QueryImpl;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
-import org.apache.jackrabbit.core.query.lucene.SingleColumnQueryResult;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateManager;
-import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
-import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
-import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.SortField;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-public class ServicingSearchIndex extends SearchIndex {
+public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandler {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -103,6 +96,11 @@ public class ServicingSearchIndex extends SearchIndex {
     }
 
     @Override
+    public ServicingIndexingConfiguration getIndexingConfig() {
+        return (ServicingIndexingConfiguration) super.getIndexingConfig();
+    }
+
+    @Override
     public ExecutableQuery createExecutableQuery(
             SessionContext sessionContext, String statement, String language)
             throws InvalidQueryException {
@@ -116,11 +114,22 @@ public class ServicingSearchIndex extends SearchIndex {
                 }
 
                 // build lucene query
-                Query query = LuceneQueryBuilder.createQuery(root, sessionContext.getSessionImpl(),
+                Query userQuery = LuceneQueryBuilder.createQuery(root, sessionContext.getSessionImpl(),
                         index.getContext().getItemStateManager(),
                         index.getNamespaceMappings(), index.getTextAnalyzer(),
                         propReg, index.getSynonymProvider(),
                         index.getIndexFormatVersion(), cache);
+
+                Query query;
+                if (sessionContext.getSessionImpl() instanceof InternalHippoSession) {
+                    AuthorizationQuery authorizationQuery = ((InternalHippoSession)sessionContext.getSessionImpl()).getAuthorizationQuery();
+                    BooleanQuery bq = new BooleanQuery();
+                    bq.add(userQuery, BooleanClause.Occur.MUST);
+                    bq.add(authorizationQuery.getQuery(), BooleanClause.Occur.MUST);
+                    query = bq;
+                } else {
+                    query = userQuery;
+                }
 
                 OrderQueryNode orderNode = root.getOrderNode();
 
@@ -313,7 +322,7 @@ public class ServicingSearchIndex extends SearchIndex {
     /**
      * 
      * @param state
-     * @param checkedStates
+     * @param checkedIds
      * @return the <code>NodeState</code> of the Document variant which is an ancestor of the state or <code>null</code> if this state was not a child of a document variant
      */
 

@@ -95,6 +95,7 @@ dependencies/pom.xml svneol=native#text/plain
 engine/pom.xml svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/impl/query/EnclosingDocument.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/HippoPropertyId.java -text
+engine/src/main/java/org/hippoecm/repository/jackrabbit/InternalHippoSession.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/BufferedStringValue.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedImportHandler.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/DereferencedSessionImporter.java svneol=native#text/plain
@@ -112,6 +113,7 @@ engine/src/main/java/org/hippoecm/repository/query/lucene/AuthorizedOnlyIndexRea
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetFiltersQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetRangeQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/HippoDateTools.java svneol=native#text/plain
+engine/src/main/java/org/hippoecm/repository/query/lucene/HippoQueryHandler.java -text
 engine/src/main/java/org/hippoecm/repository/query/lucene/InheritedFilterQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/QueryHelper.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/RangeFields.java svneol=native#text/plain

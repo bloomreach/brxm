@@ -46,6 +46,7 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.RegistryNamespaceResolver;
 import org.hippoecm.repository.FacetedNavigationEngine;
+import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.replication.ReplicationJournal;
 import org.hippoecm.repository.replication.ReplicationJournalProducer;
 import org.hippoecm.repository.replication.ReplicatorContext;
@@ -123,6 +124,10 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     public void setFacetedNavigationEngine(FacetedNavigationEngine engine) {
         facetedEngine = engine;
+    }
+
+    public HippoQueryHandler getHippoQueryHandler(String workspaceName) throws RepositoryException {
+        return (HippoQueryHandler) ((HippoWorkspaceInfo)getWorkspaceInfo(workspaceName)).getSearchManager().getQueryHandler();
     }
 
     void initializeLocalItemStateManager(HippoLocalItemStateManager stateMgr,

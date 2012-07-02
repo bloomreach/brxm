@@ -47,6 +47,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.updater.UpdaterEngine;
@@ -100,7 +101,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         session = org.hippoecm.repository.decorating.SessionDecorator.unwrap(session);
         session = org.hippoecm.repository.impl.SessionDecorator.unwrap(session);
         if(session instanceof org.apache.jackrabbit.core.SessionImpl) {
-            HippoSessionItemStateManager sessionISM = (HippoSessionItemStateManager) (session instanceof org.hippoecm.repository.jackrabbit.XASessionImpl ? ((org.hippoecm.repository.jackrabbit.XASessionImpl)session).getItemStateManager() : ((org.hippoecm.repository.jackrabbit.SessionImpl)session).getItemStateManager());
+            HippoSessionItemStateManager sessionISM = ((InternalHippoSession) session).getItemStateManager();
             return sessionISM.stateThresholdExceeded(interests);
         }
         return false;
