@@ -51,7 +51,9 @@ content/src/main/resources/security/configuser-read-everywhere.xml -text
 content/src/main/resources/security/group-liveusers.xml -text
 content/src/main/resources/security/group-previewusers.xml -text
 content/src/main/resources/security/group-sitewriters.xml -text
+content/src/main/resources/security/user-author.xml -text
 content/src/main/resources/security/user-configuser.xml -text
+content/src/main/resources/security/user-editor.xml -text
 content/src/main/resources/security/user-liveuser.xml -text
 content/src/main/resources/security/user-previewuser.xml -text
 content/src/main/resources/security/user-writablesiteuser.xml -text
