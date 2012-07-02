@@ -224,6 +224,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         private IModel<String> label;
         private boolean visible;
         private boolean enabled;
+        private KeyType keyType;
+        private boolean hasChanges = false;
 
         public ButtonWrapper(Button button) {
             this.button = button;
@@ -344,7 +346,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             if (button != null) {
                 button.setModel(label);
             }
-            //TODO: test if this works or if it needs to add itself to the render target
+            hasChanges = true;
+        }
+
+        public void setKeyType(KeyType keyType) {
+            this.keyType = keyType;
         }
 
         protected void onSubmit() {
@@ -366,11 +372,12 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             if (enabled != button.isEnabled()) {
                 return true;
             }
-            return false;
+
+            return hasChanges;
         }
 
         protected KeyType getKeyType() {
-            return null;
+            return keyType;
         }
 
     }
@@ -429,12 +436,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 handleSubmit();
             }
 
-            @Override
-            protected KeyType getKeyType() {
-                return KeyType.Enter;
-            }
-
         };
+        ok.setKeyType(KeyType.Enter);
         buttons.add(ok);
 
         cancel = new ButtonWrapper(new ResourceModel("cancel")) {
@@ -453,12 +456,8 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                 return super.decorate(b);
             }
 
-            @Override
-            protected KeyType getKeyType() {
-                return KeyType.Escape;
-            }
-
         };
+        cancel.setKeyType(KeyType.Escape);
         buttons.add(cancel);
 
         if (isFullscreenEnabled()) {
@@ -608,6 +607,14 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     protected void setFocusOnCancel() {
         setFocus(cancel.getButton());
+    }
+
+    protected void setOkKeyType(KeyType keyType) {
+        ok.setKeyType(keyType);
+    }
+
+    protected void setCancelKeyType(KeyType keyType) {
+        cancel.setKeyType(keyType);
     }
 
     /**
