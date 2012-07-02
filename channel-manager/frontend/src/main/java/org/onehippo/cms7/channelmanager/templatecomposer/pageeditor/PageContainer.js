@@ -68,20 +68,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         }, this);
     },
 
-    //Keeps the session alive every minute
-    _keepAlive : function() {
-        Ext.Ajax.request({
-            headers: {
-                    'FORCE_CLIENT_HOST': 'true'
-            },
-            url: this.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./keepalive?FORCE_CLIENT_HOST=true',
-            success: function () {
-                // Do nothing
-            }
-            
-        });
-    },
-
     _populateIFrameResourceCache : function() {
         var iframeResources = {
             cache: {},
@@ -192,12 +178,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             }
             iFrame.setSrc(iFrameUrl);
 
-            // keep session active
-            Ext.TaskMgr.start({
-                run: this._keepAlive,
-                interval: 60000,
-                scope: this
-            });
         }.createDelegate(this));
     },
 
