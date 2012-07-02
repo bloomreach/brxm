@@ -47,11 +47,14 @@ content/src/main/resources/hstconfiguration/demosite_test_many/pages.xml -text s
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemap.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemenus.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/templates.xml -text svneol=unset#text/plain
-content/src/main/resources/security/group-sitegroup.xml -text svneol=unset#text/plain
-content/src/main/resources/security/sitegroup-read-everywhere.xml -text svneol=unset#text/plain
-content/src/main/resources/security/user-author.xml -text svneol=unset#text/plain
-content/src/main/resources/security/user-editor.xml -text svneol=unset#text/plain
-content/src/main/resources/security/user-siteuser.xml -text svneol=unset#text/plain
+content/src/main/resources/security/configuser-read-everywhere.xml -text
+content/src/main/resources/security/group-liveusers.xml -text
+content/src/main/resources/security/group-previewusers.xml -text
+content/src/main/resources/security/group-sitewriters.xml -text
+content/src/main/resources/security/user-configuser.xml -text
+content/src/main/resources/security/user-liveuser.xml -text
+content/src/main/resources/security/user-previewuser.xml -text
+content/src/main/resources/security/user-writablesiteuser.xml -text
 linear-algebra/pom.xml -text
 linear-algebra/src/main/java/org/hippoecm/hst/demo/addonmodules/linearalgebra/MatrixOperatorImpl.java -text
 linear-algebra/src/main/resources/META-INF/hst-assembly/addon/module.xml -text

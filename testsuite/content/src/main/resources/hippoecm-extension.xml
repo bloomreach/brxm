@@ -558,10 +558,10 @@
       <sv:value>/hst:hst</sv:value>
     </sv:property>
   </sv:node>
-  
-  
+
+
   <!-- Formdata node and a security domain for it -->
-  <sv:node sv:name="formdata-container">
+  <sv:node sv:name="testsuite-formdata-container">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -572,10 +572,10 @@
       <sv:value>/</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>12000.0</sv:value>
+      <sv:value>13000.0</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="formdata-domain">
+  <sv:node sv:name="testsuite-formdata-domain">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -586,12 +586,12 @@
       <sv:value>/hippo:configuration/hippo:domains</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>12000.1</sv:value>
+      <sv:value>13000.1</sv:value>
     </sv:property>
   </sv:node>
-  
-  <!-- Security and users -->
-  <sv:node sv:name="user-editor">
+
+  <!-- Security and default available users -->
+  <sv:node sv:name="testsuite-user-editor">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -605,7 +605,7 @@
       <sv:value>13000.0</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="user-author">
+  <sv:node sv:name="testsuite-user-author">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -616,24 +616,67 @@
       <sv:value>/hippo:configuration/hippo:users</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>13000.1</sv:value>
+      <sv:value>13100.1</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="user-siteuser">
+
+  <sv:node sv:name="testsuite-user-liveuser">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>security/user-siteuser.xml</sv:value>
+      <sv:value>security/user-liveuser.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:users</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>13000.2</sv:value>
+      <sv:value>13100.2</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="groups-author-add">
+  <sv:node sv:name="testsuite-user-previewuser">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>security/user-previewuser.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:users</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13100.2</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="testsuite-user-configuser">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>security/user-configuser.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:users</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13100.2</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="testsuite-user-writablesiteuser">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>security/user-writablesiteuser.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:users</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13100.2</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="testsuite-groups-author-add">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -644,10 +687,10 @@
       <sv:value>/hippo:configuration/hippo:groups/author/hipposys:members</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>13000.3</sv:value>
+      <sv:value>13100.3</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="groups-editor-add">
+  <sv:node sv:name="testsuite-groups-editor-add">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -658,35 +701,107 @@
       <sv:value>/hippo:configuration/hippo:groups/editor/hipposys:members</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>13000.4</sv:value>
+      <sv:value>13100.4</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="group-sitegroup">
+  <sv:node sv:name="testsuite-groups-webmaster-add">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:groups/webmaster/hipposys:members</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13100.5</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropadd" sv:multiple="true" sv:type="String">
+      <sv:value>editor</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="testsuite-group-sitewriters">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>security/group-sitegroup.xml</sv:value>
+      <sv:value>security/group-sitewriters.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:groups</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>13000.5</sv:value>
+      <sv:value>13100.6</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="sitegroup-read-everywhere">
+  <sv:node sv:name="testsuite-group-liveusers">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>security/sitegroup-read-everywhere.xml</sv:value>
+      <sv:value>security/group-liveusers.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:groups</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13100.6</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="testsuite-group-previewusers">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>security/group-previewusers.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:groups</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13100.6</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="testsuite-previewusers-documents">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
+      <sv:value>previewusers</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:domains/preview-documents/readonly/hipposys:groups</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13100.7</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="testsuite-liveusers-documents">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
+      <sv:value>liveusers</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:domains/live-documents/readonly/hipposys:groups</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>13100.7</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="testsuite-configuser-read-everywhere">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>security/configuser-read-everywhere.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:configuration/hippo:domains/everywhere</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>13000.6</sv:value>
+      <sv:value>13100.7</sv:value>
     </sv:property>
   </sv:node>
   
