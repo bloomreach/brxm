@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -94,7 +93,7 @@ public class AuthorizationQuery {
             }
             log.debug("----START CREATION AUTHORIZATION QUERY---------");
             this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class));
-            log.info("AUTHORIZATION Query: " + query);
+            log.error("AUTHORIZATION Query: " + query);
             log.debug("----END CREATION AUTHORIZATION QUERY-----------");
         }
     }
@@ -229,7 +228,7 @@ public class AuthorizationQuery {
                         return QueryHelper.negateQuery(q);
                     }
                 } else if ("nodename".equalsIgnoreCase(nodeNameString)) {
-                    return getNodeNameQuery(nodeNameString, facetRule);
+                    return getNodeNameQuery(facetRule);
                 } else if ("jcr:primaryType".equals(nodeNameString)) {
                     return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule);
                 } else if ("jcr:mixinTypes".equals(nodeNameString)) {
@@ -305,29 +304,13 @@ public class AuthorizationQuery {
         }
     }
 
-    private Query getNodeNameQuery(String nodeName, FacetRule facetRule) {
+    private Query getNodeNameQuery(FacetRule facetRule) {
         Query nodeNameQuery = null;
-        try {
-            Name n = session.getQName(nodeName);
-            String ntName = nsMappings.translateName(n);
-            nodeNameQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, ntName));
-        } catch (NamespaceException ne) {
-            log.error("invalid namespace " + ne.getMessage());
-        } catch (IllegalNameException e) {
-            log.error("invalid name " + e.getMessage());
-        }
-        if (nodeNameQuery == null) {
-            if (facetRule.isEqual()) {
-                return QueryHelper.getNoHitsQuery();
-            } else {
-                return new MatchAllDocsQuery();
-            }
+        nodeNameQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, facetRule.getValue()));
+        if (facetRule.isEqual()) {
+            return nodeNameQuery;
         } else {
-            if (facetRule.isEqual()) {
-                return nodeNameQuery;
-            } else {
-                return QueryHelper.negateQuery(nodeNameQuery);
-            }
+            return QueryHelper.negateQuery(nodeNameQuery);
         }
     }
 
