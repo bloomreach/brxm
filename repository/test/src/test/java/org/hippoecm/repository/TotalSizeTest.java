@@ -81,6 +81,6 @@ public class TotalSizeTest extends TestCase {
         }
         assertEquals(0L, authorIterator.getSize());
         assertEquals(0L, authorCount);
-        assertEquals(adminTotal, authorTotal);
+        assertEquals(0L, authorTotal);
     }
 }
