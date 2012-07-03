@@ -51,8 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AuthorizationQuery {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The logger instance for this class
@@ -135,8 +133,6 @@ public class AuthorizationQuery {
 
         log.debug("Authorization query is : " + authQuery);
         log.debug("Authorization query has {} clauses", authQuery.getClauses().length);
-        System.out.println(" ---------------");
-        System.out.println(" authQuery" + authQuery);
         return authQuery;
     }
 
