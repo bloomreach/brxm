@@ -243,7 +243,9 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
     @Override
     public void dispose() {
-        facetedEngine.unprepare(facetedContext);
+        if (facetedEngine != null) {
+            facetedEngine.unprepare(facetedContext);
+        }
         super.dispose();
     }
 

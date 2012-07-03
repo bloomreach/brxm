@@ -120,15 +120,15 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                         propReg, index.getSynonymProvider(),
                         index.getIndexFormatVersion(), cache);
 
-                Query query;
+                Query query = userQuery;
                 if (sessionContext.getSessionImpl() instanceof InternalHippoSession) {
                     AuthorizationQuery authorizationQuery = ((InternalHippoSession)sessionContext.getSessionImpl()).getAuthorizationQuery();
-                    BooleanQuery bq = new BooleanQuery();
-                    bq.add(userQuery, BooleanClause.Occur.MUST);
-                    bq.add(authorizationQuery.getQuery(), BooleanClause.Occur.MUST);
-                    query = bq;
-                } else {
-                    query = userQuery;
+                    if (authorizationQuery != null) {
+                        BooleanQuery bq = new BooleanQuery();
+                        bq.add(userQuery, BooleanClause.Occur.MUST);
+                        bq.add(authorizationQuery.getQuery(), BooleanClause.Occur.MUST);
+                        query = bq;
+                    }
                 }
 
                 OrderQueryNode orderNode = root.getOrderNode();

@@ -304,11 +304,14 @@ abstract class SessionImplHelper {
     void init() throws RepositoryException {
         final RepositoryImpl repository = (RepositoryImpl) context.getRepository();
         HippoQueryHandler queryHandler = repository.getHippoQueryHandler(sessionImpl.getWorkspace().getName());
+        if (queryHandler != null) {
+
         this.authorizationQuery = new AuthorizationQuery(context.getSessionImpl().getSubject(),
                                                          queryHandler.getNamespaceMappings(),
                                                          queryHandler.getIndexingConfig(),
                                                          context.getNodeTypeManager(),
                                                          context.getSessionImpl());
+        }
 
         HippoLocalItemStateManager localISM = (HippoLocalItemStateManager)(context.getWorkspace().getItemStateManager());
         ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, context.getSessionImpl(), subject);
