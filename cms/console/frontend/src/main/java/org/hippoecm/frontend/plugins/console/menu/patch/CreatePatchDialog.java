@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -57,7 +58,7 @@ import org.onehippo.cms7.jcrdiff.match.MatcherItemInfo;
 import org.onehippo.cms7.jcrdiff.match.PatchFactory;
 import org.xml.sax.InputSource;
 
-public class CreatePatchDialog extends MultiStepDialog {
+public class CreatePatchDialog extends MultiStepDialog<Node> {
 
     private static final String[] ILLEGAL_PATHS = new String[] {
             "/content",
@@ -68,7 +69,7 @@ public class CreatePatchDialog extends MultiStepDialog {
 
     private final Label diff;
     private String path;
-    private Step[] steps;
+    private List<Step> steps;
 
     public CreatePatchDialog(IModel<Node> model) {
         super(model);
@@ -92,9 +93,11 @@ public class CreatePatchDialog extends MultiStepDialog {
     }
 
     @Override
-    protected Step[] getSteps() {
+    protected List<Step> getSteps() {
         if (steps == null) {
-            steps = new Step[] { new CreatePatchStep(), new DoneStep() };
+            steps = new ArrayList<Step>(2);
+            steps.add(new CreatePatchStep());
+            steps.add(new DoneStep());
         }
         return steps;
     }

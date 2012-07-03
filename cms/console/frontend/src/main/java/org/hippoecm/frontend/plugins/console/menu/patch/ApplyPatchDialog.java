@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugins.console.menu.patch;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -39,12 +41,11 @@ import org.onehippo.cms7.jcrdiff.delta.Patch;
 import org.onehippo.cms7.jcrdiff.patch.PatchLog;
 import org.onehippo.cms7.jcrdiff.patch.Patcher;
 
-public class ApplyPatchDialog extends MultiStepDialog {
+public class ApplyPatchDialog extends MultiStepDialog<Node> {
 
     private final Label log;
     private final FileUploadField fileUploadField;
-
-    private Step[] steps = null;
+    private List<Step> steps;
 
     public ApplyPatchDialog(IModel<Node> model) {
         super(model);
@@ -94,9 +95,11 @@ public class ApplyPatchDialog extends MultiStepDialog {
     }
 
     @Override
-    protected Step[] getSteps() {
+    protected List<Step> getSteps() {
         if (steps == null) {
-            steps = new Step[] { new ApplyPatchStep(), new DoneStep() };
+            steps = new ArrayList<Step>(2);
+            steps.add(new ApplyPatchStep());
+            steps.add(new DoneStep());
         }
         return steps;
     }

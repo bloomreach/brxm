@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import javax.jcr.Node;
+import java.util.List;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -23,7 +23,7 @@ import org.apache.wicket.model.Model;
 /**
  * Simple {@link AbstractDialog} extension that adds wizard-like capability.
  */
-public abstract class MultiStepDialog extends AbstractDialog<Node> {
+public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
 
     private int currentStep = 0;
 
@@ -31,24 +31,29 @@ public abstract class MultiStepDialog extends AbstractDialog<Node> {
         this(null);
     }
 
-    public MultiStepDialog(IModel<Node> model) {
+    public MultiStepDialog(IModel<T> model) {
         super(model);
         updateLabels();
     }
 
     private void updateLabels() {
-        setOkLabel(getSteps()[currentStep].getOkLabel());
-        setCancelLabel(getSteps()[currentStep].getCancelLabel());
-        final String info = getSteps()[currentStep].getInfo();
-        if (info != null) {
-            info(info);
+        final List<Step> steps = getSteps();
+        if (steps.size() > currentStep) {
+            final Step step = steps.get(currentStep);
+            setOkLabel(step.getOkLabel());
+            setCancelLabel(step.getCancelLabel());
+            final String info = step.getInfo();
+            if (info != null) {
+                info(info);
+            }
         }
     }
 
     @Override
     protected void handleSubmit() {
-        if (getSteps().length > currentStep) {
-            int result = getSteps()[currentStep].execute();
+        final List<Step> steps = getSteps();
+        if (steps.size() > currentStep) {
+            int result = steps.get(currentStep).execute();
             currentStep += result;
             if (result != 0) {
                 updateLabels();
@@ -58,10 +63,7 @@ public abstract class MultiStepDialog extends AbstractDialog<Node> {
         }
     }
 
-    /**
-     * @return  the array of steps this dialog implements
-     */
-    protected abstract Step[] getSteps();
+    protected abstract List<Step> getSteps();
 
     protected abstract class Step {
 
