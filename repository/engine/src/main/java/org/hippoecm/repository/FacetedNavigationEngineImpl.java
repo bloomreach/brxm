@@ -102,7 +102,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
     }
 
-    class QueryImpl extends Query {
+    class QueryImpl extends FacetedNavigationEngine.Query {
         String statement;
         String language;
         String[] scopes;
@@ -193,7 +193,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
     }
 
-    class ResultImpl extends Result {
+    class ResultImpl extends FacetedNavigationEngine.Result {
         int length;
         Iterator<NodeId> iter = null;
 
@@ -217,7 +217,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
     }
 
-    class ContextImpl extends Context {
+    class ContextImpl extends FacetedNavigationEngine.Context {
         SessionImpl session;
         private AuthorizationQuery authorizationQuery;
 
