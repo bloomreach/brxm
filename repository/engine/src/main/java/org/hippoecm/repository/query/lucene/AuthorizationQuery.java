@@ -123,13 +123,19 @@ public class AuthorizationQuery {
                 }
                 log.debug("Adding to Authorization query: FacetQuery = {}", facetQuery);
                 log.debug("FacetQuery has {} clauses.", facetQuery.getClauses().length);
+                if (facetQuery.getClauses().length == 1 && facetQuery.getClauses()[0].getQuery() instanceof MatchAllDocsQuery) {
+                    log.info("found a MatchAllDocsQuery that will be OR-ed with other constraints for user '{}'. This means, the user can read " +
+                            "everywhere. Short circuit the auth query and return MatchAllDocsQuery", session.getUserID());
+                    return facetQuery;
+                }
                 authQuery.add(facetQuery, Occur.SHOULD);
             }
         }
 
         log.debug("Authorization query is : " + authQuery);
         log.debug("Authorization query has {} clauses", authQuery.getClauses().length);
-
+        System.out.println(" ---------------");
+        System.out.println(" authQuery" + authQuery);
         return authQuery;
     }
 
