@@ -154,8 +154,7 @@ public class SimpleNonWorkflowWikiImporterComponent extends BaseHstComponent {
             try {
 
                 Session writableSession = this.getPersistableSession(request);
-                Node canonicalSiteRootNode = NodeUtils.getDeref(getSiteContentBaseBean(request).getNode());
-                Node baseNode = writableSession.getNode(canonicalSiteRootNode.getPath());
+                Node baseNode = writableSession.getNode("/"+getSiteContentBasePath(request));
 
                 Node wikiFolder;
 
