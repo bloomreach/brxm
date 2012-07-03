@@ -33,7 +33,7 @@
       <sv:value>hipposys:authrole</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:groups" sv:type="String" sv:multiple="true">
-      <sv:value>sitegroup</sv:value>
+      <sv:value>sitewriters</sv:value>
     </sv:property>
     <sv:property sv:name="hipposys:role" sv:type="String">
       <sv:value>readwrite</sv:value>
