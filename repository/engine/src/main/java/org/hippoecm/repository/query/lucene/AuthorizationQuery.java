@@ -31,7 +31,6 @@ import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.security.auth.Subject;
 
-import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.spi.Name;
@@ -42,6 +41,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.security.FacetAuthConstants;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
@@ -64,39 +64,39 @@ public class AuthorizationQuery {
      */
     private final BooleanQuery query;
 
-    private final NodeTypeManager ntMgr;
-    private final NamespaceMappings nsMappings;
-    private final ServicingIndexingConfiguration indexingConfig;
-    private final Set<String> memberships = new HashSet<String>();
-    private final SessionImpl session;
 
-    public AuthorizationQuery(Subject subject, NamespaceMappings nsMappings, ServicingIndexingConfiguration indexingConfig,
-                              NodeTypeManager ntMgr, Session session) throws RepositoryException {
+    public AuthorizationQuery(final Subject subject,
+                              final NamespaceMappings nsMappings,
+                              final ServicingIndexingConfiguration indexingConfig,
+                              final NodeTypeManager ntMgr,
+                              final Session session) throws RepositoryException {
         // set the max clauses for booleans higher than the default 1024.
         BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
-        this.nsMappings = nsMappings;
-        this.indexingConfig = indexingConfig;
-        this.ntMgr = ntMgr;
-        if (!(session instanceof SessionImpl)) {
+        if (!(session instanceof InternalHippoSession)) {
             throw new RepositoryException("Session is not an instance of o.a.j.core.SessionImpl");
         }
-        this.session = (SessionImpl) session;
-
+      
         if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
             this.query = new BooleanQuery(true);
             this.query.add(new MatchAllDocsQuery(), Occur.MUST);
         } else {
+            final Set<String> memberships = new HashSet<String>();
             for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
                 memberships.add(groupPrincipal.getName());
             }
             log.debug("----START CREATION AUTHORIZATION QUERY---------");
-            this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class));
+            this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class), memberships,(InternalHippoSession)session, indexingConfig, nsMappings, ntMgr);
             log.info("AUTHORIZATION Query: " + query);
             log.debug("----END CREATION AUTHORIZATION QUERY-----------");
         }
     }
 
-    private BooleanQuery initQuery(Set<FacetAuthPrincipal> facetAuths) {
+    private BooleanQuery initQuery(final Set<FacetAuthPrincipal> facetAuths, 
+                                   final Set<String> memberships,
+                                   final InternalHippoSession session,
+                                   final ServicingIndexingConfiguration indexingConfig,
+                                   final NamespaceMappings nsMappings,
+                                   final NodeTypeManager ntMgr) {
         BooleanQuery authQuery = new BooleanQuery(true);
         Iterator<FacetAuthPrincipal> facetAuthsIt = facetAuths.iterator();
         while (facetAuthsIt.hasNext()) {
@@ -111,7 +111,7 @@ public class AuthorizationQuery {
                 BooleanQuery facetQuery = new BooleanQuery(true);
                 while (facetRuleIt.hasNext()) {
                     FacetRule facetRule = facetRuleIt.next();
-                    Query q = getFacetRuleQuery(facetRule, facetAuthPrincipal.getRoles());
+                    Query q = getFacetRuleQuery(facetRule, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (q == null) {
                         continue;
                     }
@@ -136,7 +136,13 @@ public class AuthorizationQuery {
         return authQuery;
     }
 
-    private Query getFacetRuleQuery(FacetRule facetRule, Set<String> roles) {
+    private Query getFacetRuleQuery(final FacetRule facetRule,
+                                    final Set<String> memberships,
+                                    final Set<String> roles,
+                                    final ServicingIndexingConfiguration indexingConfig,
+                                    final NamespaceMappings nsMappings,
+                                    final InternalHippoSession session,
+                                    final NodeTypeManager ntMgr) {
         switch (facetRule.getType()) {
             case PropertyType.STRING:
                 Name nodeName = facetRule.getFacetName();
@@ -224,7 +230,7 @@ public class AuthorizationQuery {
                         return QueryHelper.getNoHitsQuery();
                     }
                 } else if ("nodetype".equalsIgnoreCase(nodeNameString)) {
-                    Query q = getNodeTypeDescendantQuery(facetRule);
+                    Query q = getNodeTypeDescendantQuery(facetRule, ntMgr, session, nsMappings);
                     if (facetRule.isEqual()) {
                         return q;
                     } else {
@@ -245,7 +251,10 @@ public class AuthorizationQuery {
         return QueryHelper.getNoHitsQuery();
     }
 
-    private Query getNodeTypeDescendantQuery(FacetRule facetRule) {
+    private Query getNodeTypeDescendantQuery(final FacetRule facetRule,
+                                             final NodeTypeManager ntMgr,
+                                             final InternalHippoSession session,
+                                             final NamespaceMappings nsMappings) {
         List<Term> terms = new ArrayList<Term>();
         try {
             NodeType base = ntMgr.getNodeType(facetRule.getValue());
