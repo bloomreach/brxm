@@ -232,6 +232,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
 
         this.variantsComboBox = this.getVariantsComboBox(pageContext);
+        var variantsComboBoxLabel = new Ext.Toolbar.TextItem({
+            text : this.resources['variants-combo-box-label'],
+            hidden : (this.allVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
+        });
+
         if (!this.pageContainer.previewMode) {
             if (this.propertiesWindow) {
                 this.propertiesWindow.destroy();
@@ -256,6 +261,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     }
                 }
             },
+            variantsComboBoxLabel,
             this.variantsComboBox,
             '->',
             {
@@ -365,6 +371,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         }
                     }
                 },
+                variantsComboBoxLabel,
                 this.variantsComboBox);
             }
 
