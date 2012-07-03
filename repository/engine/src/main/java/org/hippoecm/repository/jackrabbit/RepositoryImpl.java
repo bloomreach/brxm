@@ -38,6 +38,7 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.journal.JournalException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
+import org.apache.jackrabbit.core.query.QueryHandler;
 import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ISMLocking;
@@ -127,7 +128,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     }
 
     public HippoQueryHandler getHippoQueryHandler(String workspaceName) throws RepositoryException {
-        return (HippoQueryHandler) ((HippoWorkspaceInfo)getWorkspaceInfo(workspaceName)).getSearchManager().getQueryHandler();
+        final QueryHandler queryHandler = ((HippoWorkspaceInfo) getWorkspaceInfo(workspaceName)).getSearchManager().getQueryHandler();
+        if (queryHandler instanceof  HippoQueryHandler) {
+            return (HippoQueryHandler) queryHandler;
+        }
+        return null;
     }
 
     void initializeLocalItemStateManager(HippoLocalItemStateManager stateMgr,
