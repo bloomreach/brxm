@@ -195,22 +195,31 @@ public class AuthorizationQuery {
                             }
                         } else {
                             Query tq = new TermQuery(new Term(internalFieldName, facetRule.getValue()));
-                            if (!facetRule.isFilter()) {
-                                Query propExists = new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET,
-                                                                          internalNameTerm));
-                                BooleanQuery bq = new BooleanQuery(true);
-                                bq.add(propExists, Occur.MUST);
-                                if (facetRule.isEqual()) {
-                                    bq.add(tq, Occur.MUST);
-                                } else {
-                                    bq.add(tq, Occur.MUST_NOT);
-                                }
-                                return bq;
-                            } else {
+                            if (facetRule.isFilter()) {
+                                // facetRule.isFilter() == true means:
+                                // 1) Property MUST exist
+                                // 2) Property MUST be equal
                                 if (facetRule.isEqual()) {
                                     return tq;
                                 } else {
                                     return QueryHelper.negateQuery(tq);
+                                }
+                            } else {
+                                // facetRule.exists() == false means:
+                                // If the property exists, it must be equal. Else, it is also ok
+                                BooleanQuery bq = new BooleanQuery(false);
+                                
+                                // all the docs that do *not* have the property:
+                                Query docsThatMissPropertyQuery = QueryHelper.negateQuery(new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
+                                bq.add(docsThatMissPropertyQuery, Occur.SHOULD);
+                                // and OR that one with the equals
+                                if (facetRule.isEqual()) {
+                                    bq.add(tq, Occur.SHOULD);
+                                    return bq;
+                                } else {
+                                    Query not =  QueryHelper.negateQuery(tq);
+                                    bq.add(not, Occur.SHOULD);
+                                    return bq;
                                 }
                             }
                         }
