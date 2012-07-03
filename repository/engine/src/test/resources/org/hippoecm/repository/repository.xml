@@ -37,7 +37,7 @@
       <param name="persistent" value="false"/>
     </PersistenceManager>
 
-    <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineThirdImpl">
+    <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineImpl">
       <param name="directoryManagerClass" value="org.apache.jackrabbit.core.query.lucene.directory.RAMDirectoryManager"/>
       <param name="indexingConfiguration" value="indexing_configuration.xml"/>
       <param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/>
