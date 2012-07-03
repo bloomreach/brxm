@@ -261,8 +261,15 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <workingDirectory>${project.build.directory}</workingDirectory>
+          <systemProperties>
+            <property>
+              <name>org.onehippo.repository.test.keepserver</name>
+              <value>true</value>
+            </property>
+          </systemProperties>
         </configuration>
       </plugin>
+
     </plugins>
     <resources>
       <resource>
