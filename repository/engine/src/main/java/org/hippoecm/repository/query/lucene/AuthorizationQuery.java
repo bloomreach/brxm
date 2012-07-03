@@ -126,6 +126,7 @@ public class AuthorizationQuery {
                 if (facetQuery.getClauses().length == 1 && facetQuery.getClauses()[0].getQuery() instanceof MatchAllDocsQuery) {
                     log.info("found a MatchAllDocsQuery that will be OR-ed with other constraints for user '{}'. This means, the user can read " +
                             "everywhere. Short circuit the auth query and return MatchAllDocsQuery", session.getUserID());
+                    // directly return the BooleanQuery that only contains the MatchAllDocsQuery : This is more efficient
                     return facetQuery;
                 }
                 authQuery.add(facetQuery, Occur.SHOULD);
