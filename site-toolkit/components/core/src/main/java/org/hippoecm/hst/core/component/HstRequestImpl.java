@@ -54,8 +54,10 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
      * @deprecated never used.
      */
     public static final String CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".rolePrincipalClassName";
-    
-    private static volatile String [] CONTAINER_ATTR_NAME_PREFIXES = null;
+
+    // do not make CONTAINER_ATTR_NAME_PREFIXES volatile, even if some code checking tool claims it should : it is
+    // by far not worth the performance penalty, and worst case, it is initialized more than once
+    private static String [] CONTAINER_ATTR_NAME_PREFIXES = null;
 
     protected String lifecyclePhase;
     protected HstRequestContext requestContext;
@@ -355,22 +357,22 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
 
     protected boolean isContainerAttributeName(String attrName) {
         boolean containerAttrName = false;
-        
+
         if (CONTAINER_ATTR_NAME_PREFIXES == null) {
             synchronized (HstRequestImpl.class) {
                 if (CONTAINER_ATTR_NAME_PREFIXES == null) {
                     ArrayList<String> containerAttrNamePrefixes = new ArrayList<String>(Arrays.asList("javax.servlet.", "javax.portlet.", "org.hippoecm.hst.container."));
                     ContainerConfiguration containerConfiguration = this.requestContext.getContainerConfiguration();
-                    
+
                     if (containerConfiguration != null) {
                         containerAttrNamePrefixes.addAll(this.requestContext.getContainerConfiguration().getList(CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY));
                     }
-                    
+
                     CONTAINER_ATTR_NAME_PREFIXES = containerAttrNamePrefixes.toArray(new String[containerAttrNamePrefixes.size()]);
                 }
             }
         }
-        
+
         for (String prefix : CONTAINER_ATTR_NAME_PREFIXES) {
             if (attrName.startsWith(prefix)) {
                 containerAttrName = true;

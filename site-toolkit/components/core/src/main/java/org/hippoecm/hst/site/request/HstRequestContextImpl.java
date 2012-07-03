@@ -84,7 +84,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HstSiteMapMatcher siteMapMatcher;
     protected HstSiteMenus siteMenus;
     protected HstQueryManagerFactory hstQueryManagerFactory;
-    protected volatile Map<String, Object> attributes;
+    protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
     protected String embeddingContextPath;
     protected ResolvedMount resolvedEmbeddingMount;  
@@ -302,7 +302,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         if (this.attributes == null) {
             synchronized (this) {
                 if (this.attributes == null) {
-                    this.attributes = Collections.synchronizedMap(new HashMap<String, Object>());
+                    this.attributes = new HashMap<String, Object>();
                 }
             }
         }
