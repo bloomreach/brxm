@@ -381,7 +381,7 @@ public class LoadInitializationModule {
         initializeNodecontent(session, root, contentStream, contentName + ":" + node.getPath());
     }
 
-    private static void processContentFromFile(final Node node, final Session session, final boolean dryRun) throws RepositoryException, IOException {
+    public static void processContentFromFile(final Node node, final Session session, final boolean dryRun) throws RepositoryException, IOException {
         if (log.isDebugEnabled()) {
             log.debug("Found content resource configuration");
         }
@@ -561,12 +561,8 @@ public class LoadInitializationModule {
 
             initItemNode.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
         } else if (isExtension(configurationURL)) {
-            // the item might have been set to 'pending' manually or by the console upgrade tool
-            // we need an up to date location to load content from
-            final String itemStatus = JcrUtils.getStringProperty(initItemNode, "status", null);
-            if ("pending".equals(itemStatus)) {
-                initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
-            }
+            // we need an up to date location in order to reload items
+            initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
         }
 
     }
