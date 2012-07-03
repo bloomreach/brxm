@@ -29,6 +29,13 @@
 </div>
 </c:if>
 
+<script type="text/javascript" language="javascript">
+	function toggle(IdToHide, IdToShow){
+		document.getElementById(IdToHide).style.display = 'none';
+		document.getElementById(IdToShow).style.display = '';
+	}
+</script>
+
 <div class="yui-u">
   <p>
   <hst:componentRenderingURL var="componentRenderingURL"/>
@@ -45,7 +52,7 @@
     <div>
         <hst:html hippohtml="${document.html}">
           <!-- Note that replace="hippogallery:original" is optional and can be left out -->
-           <hst:imagevariant name="hippogallery:thumbnail" replaces="hippogallery:original" fallback="false"/>
+          <hst:imagevariant name="hippogallery:thumbnail" replaces="hippogallery:original" fallback="false"/>
         </hst:html>
     </div>
   </div>
@@ -59,7 +66,9 @@
   </c:if>
   
   <c:if test="${not empty document.image}">
-    <img src="<hst:link hippobean="${document.image.original}"/>"/>
+      <font color="#ff0000">Click this image to enlarge it!</font><br/>
+      <div id="image-thumb"><a href="#" onclick="toggle('image-thumb', 'image-original'); return false;"><img src="<hst:link hippobean="${document.image.thumbnail}"/>"/></a></div>
+      <div id="image-original" style="display:none;"><a href="#" onclick="toggle('image-original', 'image-thumb'); return false;"><img src="<hst:link hippobean="${document.image.original}"/>"/></a></div>
   </c:if>
     
   <div>
