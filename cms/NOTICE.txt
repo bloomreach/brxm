@@ -41,3 +41,8 @@ This product contains a Java port of a ColorQuantizer implemented by
 ImageMagick licensed under the ImageMagick License (the "License"). You may not
 use this file except in compliance with the License. A copy of the License is
 available at http://www.imagemagick.org/script/license.php.
+
+This software contains unmodified binary redistributions for H2 database engine (http://www.h2database.com/),
+which is dual licensed and available under a modified version of the MPL 1.1 (Mozilla Public License)
+or under the (unmodified) EPL 1.0 (Eclipse Public License).
+An original copy of the license agreement can be found at: http://www.h2database.com/html/license.html
