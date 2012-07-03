@@ -158,6 +158,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
             versionInPreviewHeader = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         }
         defaultHostName  = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
+        if (defaultHostName != null) {
+            defaultHostName = defaultHostName.toLowerCase();
+        }
         if(scheme == null || "".equals(scheme)) {
             scheme = DEFAULT_SCHEME;
         }
@@ -179,6 +182,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
             if(cmsLocation == null) {
                 log.warn("VirtualHostGroup '{}' does not have a property hst:cmslocation configured.", hostGroupNode.getValueProvider().getName());
             } else {
+                cmsLocation = cmsLocation.toLowerCase();
                 try {
                     URI testLocation = new URI(cmsLocation);
                     log.info("Cms host location for hostGroup '{}' is '{}'", hostGroupNode.getValueProvider().getName(), testLocation.getHost());
@@ -334,7 +338,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if(!virtualHostsConfigured) {
             throw new MatchException("No correct virtual hosts configured. Cannot continue request");
         }
-         
+        if (hostName == null) {
+            throw new MatchException("HostName not allowed to be null");
+        }
+
+        //  hostname matching is always done lower-cased
+        hostName =  hostName.toLowerCase();
+
         // NOTE : the resolvedMapCache does not need synchronization. Theoretically it would need it as it is used concurrent. 
         // In practice it won't happen ever. Trust me
         ResolvedVirtualHost rvHost = resolvedMapCache.get(hostName);

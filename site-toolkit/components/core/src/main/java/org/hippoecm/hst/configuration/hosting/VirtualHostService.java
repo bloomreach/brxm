@@ -224,7 +224,7 @@ public class VirtualHostService implements MutableVirtualHost {
                 depth--;
             }
         } else {
-            this.name = virtualHostNode.getValueProvider().getName();
+            this.name = virtualHostNode.getValueProvider().getName().toLowerCase();
         }
         
         hostName = StringPool.get(buildHostName());
