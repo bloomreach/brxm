@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.console;
 
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.js.GlobalJsResourceBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -44,6 +45,8 @@ public class RootPlugin extends RenderPlugin {
     
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        add(new GlobalJsResourceBehavior());
 
         if (config.containsKey("pinger.interval")) {
             add(new Pinger("pinger", config.getAsDuration("pinger.interval")));

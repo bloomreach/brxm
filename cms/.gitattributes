@@ -66,8 +66,10 @@ api/src/main/java/org/hippoecm/frontend/i18n/model/NodeTranslator.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/SortedTypeChoiceRenderer.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeChoiceRenderer.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeTranslator.java -text
+api/src/main/java/org/hippoecm/frontend/js/GlobalJsResourceBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/js/HippoFutureResourceBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/js/future.js -text
+api/src/main/java/org/hippoecm/frontend/js/global.js -text
 api/src/main/java/org/hippoecm/frontend/model/AbstractProvider.java -text
 api/src/main/java/org/hippoecm/frontend/model/ChildNodeProvider.java -text
 api/src/main/java/org/hippoecm/frontend/model/DetachMonitor.java svneol=native#text/plain

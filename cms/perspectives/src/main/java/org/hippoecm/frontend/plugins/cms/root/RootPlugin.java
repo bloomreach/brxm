@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
+import org.hippoecm.frontend.js.GlobalJsResourceBehavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.Browser;
@@ -53,6 +54,8 @@ public class RootPlugin extends TabsPlugin {
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        add(new GlobalJsResourceBehavior());
 
         if (config.containsKey("pinger.interval")) {
             add(new Pinger("pinger", config.getAsDuration("pinger.interval")));
