@@ -145,7 +145,7 @@
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/templatecomposerglobal.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js</include>
@@ -160,7 +160,7 @@
             <aggregation>
               <insertNewLine>true</insertNewLine>
               <includes>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/globals.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/templatecomposerglobal.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconGridView.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitGridPanel.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconToolbarWindow.js</include>

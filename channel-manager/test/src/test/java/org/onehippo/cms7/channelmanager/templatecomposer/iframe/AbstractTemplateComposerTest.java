@@ -28,7 +28,7 @@ import net.sourceforge.htmlunit.corejs.javascript.Scriptable;
 import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 
 import org.onehippo.cms7.channelmanager.AbstractJavascriptTest;
-import org.onehippo.cms7.channelmanager.templatecomposer.GlobalBundle;
+import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerGlobalBundle;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
 import org.onehippo.cms7.jquery.JQueryBundle;
 
@@ -77,7 +77,7 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN);
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_UI);
 
-        injectJavascript(GlobalBundle.class, GlobalBundle.GLOBALS);
+        injectJavascript(TemplateComposerGlobalBundle.class, TemplateComposerGlobalBundle.GLOBALS);
         injectJavascript(IFrameBundle.class, IFrameBundle.MAIN);
         injectJavascript(IFrameBundle.class, IFrameBundle.UTIL);
         injectJavascript(IFrameBundle.class, IFrameBundle.FACTORY);

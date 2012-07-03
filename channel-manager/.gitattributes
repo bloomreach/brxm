@@ -112,13 +112,13 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/C
 frontend/src/main/java/org/onehippo/cms7/channelmanager/plugins/channelactions/channel-icon-16.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/service/ChannelDocumentUrlService.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/service/IChannelManagerService.java -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/GlobalBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_de.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_fr.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_it.properties -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/PageEditor_nl.properties -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerGlobalBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/TemplateComposerResourceBehavior.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-edit.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/button-publish.png -text
@@ -129,7 +129,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/compone
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/components.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/gear.png -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/globals.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/error.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js -text
@@ -167,6 +166,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/templatecomposerglobal.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/ExtLinkPicker.java -text

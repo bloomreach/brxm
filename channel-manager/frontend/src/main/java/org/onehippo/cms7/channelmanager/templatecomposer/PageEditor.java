@@ -34,6 +34,7 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.js.GlobalJsResourceBehavior;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
@@ -305,7 +306,8 @@ public class PageEditor extends ExtPanel {
                             new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN)).toString(),
                     rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
 
-                    rc.urlFor(new ResourceReference(PageEditor.class, "globals.js")).toString(),
+                    rc.urlFor(new ResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL)).toString(),
+                    rc.urlFor(new ResourceReference(TemplateComposerGlobalBundle.class, "templatecomposerglobal.js")).toString(),
                     rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MAIN)).toString(),
                     rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(),
                     rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(),
