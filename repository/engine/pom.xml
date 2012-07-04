@@ -204,6 +204,9 @@
               <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.SchedulerWorkflowModule</Hippo-Modules>
             </manifestEntries>
           </archive>
+          <excludes>
+            <exclude>hippoecm-extension.xml</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>
