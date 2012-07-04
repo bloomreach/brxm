@@ -31,6 +31,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.api.InitializationProcessor;
+import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,5 +174,15 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
 
     public ValueMap getValueMap(Node node) throws RepositoryException {
         return new RepositoryValueMap(node);
+    }
+
+    @Override
+    public InitializationProcessor getInitializationProcessor() {
+        return null;
+    }
+
+    @Override
+    public ReferenceWorkspace getOrCreateReferenceWorkspace() throws RepositoryException {
+        return null;
     }
 }

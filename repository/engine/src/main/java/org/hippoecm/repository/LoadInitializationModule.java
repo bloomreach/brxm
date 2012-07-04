@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,7 +46,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
@@ -122,18 +122,23 @@ public class LoadInitializationModule {
         }
     }
 
-    static void query(Session session) {
+    static void dryRun(Session session) {
         try {
             Node initializeFolder = session.getRootNode().addNode("initialize");
             session.save();
-            LoadInitializationModule.initializeExtensions(session, initializeFolder);
+            LoadInitializationModule.loadExtensions(session, initializeFolder);
             session.save();
-            Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(
+            final List<Node> initializeItems = new ArrayList<Node>();
+            final Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(
                     "SELECT * FROM hipposys:initializeitem " +
                     "WHERE jcr:path = '/initialize/%' AND " +
                     HippoNodeType.HIPPO_STATUS + " = 'pending'" +
                     "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC", Query.SQL);
-            refresh(session, getInitializeItems, true, false);
+            final NodeIterator nodes = getInitializeItems.execute().getNodes();
+            while (nodes.hasNext()) {
+                initializeItems.add(nodes.nextNode());
+            }
+            processInitializeItems(session, initializeItems, true);
             session.refresh(false);
             initializeFolder.remove();
             session.save();
@@ -144,14 +149,15 @@ public class LoadInitializationModule {
         }
     }
 
-    public static void refresh(Session session) {
-        refresh(session, false);
-    }
-
-    public static void refresh(Session session, boolean contentOnly) {
+    public static void processInitializeItems(Session session) {
         try {
-            Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
-            refresh(session, getInitializeItems, false, contentOnly);
+            final List<Node> initializeItems = new ArrayList<Node>();
+            final Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(GET_INITIALIZE_ITEMS, Query.SQL);
+            final NodeIterator nodes = getInitializeItems.execute().getNodes();
+            while(nodes.hasNext()) {
+                initializeItems.add(nodes.nextNode());
+            }
+            processInitializeItems(session, initializeItems, false);
         } catch (InvalidQueryException ex) {
             log.error(ex.getMessage(), ex);
         } catch (RepositoryException ex) {
@@ -159,7 +165,12 @@ public class LoadInitializationModule {
         }
     }
 
-    static void refresh(Session session, Query getInitializeItems, boolean dryRun, boolean contentOnly) {
+    public static void processInitializeItems(Session session, List<Node> initializeItems) {
+        processInitializeItems(session, initializeItems, false);
+    }
+
+    private static void processInitializeItems(Session session, List<Node> initializeItems, boolean dryRun) {
+
         try {
             if (session == null || !session.isLive()) {
                 log.warn("Unable to refresh initialize nodes, no session available");
@@ -167,96 +178,92 @@ public class LoadInitializationModule {
             }
 
             session.refresh(false);
-            NodeIterator initializeItems = getInitializeItems.execute().getNodes();
 
-            while (initializeItems.hasNext()) {
-                final Node node = initializeItems.nextNode();
-                log.info("Initializing configuration from " + node.getName());
+            for (Node initializeItem : initializeItems) {
+                log.info("Initializing configuration from " + initializeItem.getName());
                 try {
-                    if (!contentOnly) {
 
-                        if (node.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
-                            processNamespaceItem(node, session, dryRun);
-                        }
-
-                        if (node.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
-                            processNodeTypesFromFile(node, session, dryRun);
-                        }
-
-                        if (node.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
-                            processNodeTypesFromNode(node, session, dryRun);
-                        }
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_NAMESPACE)) {
+                        processNamespaceItem(initializeItem, session, dryRun);
                     }
 
-                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENTDELETE)) {
-                        processContentDelete(node, session, dryRun);
-                        String path = node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE).getString();
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE)) {
+                        processNodeTypesFromFile(initializeItem, session, dryRun);
+                    }
+
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_NODETYPES)) {
+                        processNodeTypesFromNode(initializeItem, session, dryRun);
+                    }
+
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTDELETE)) {
+                        processContentDelete(initializeItem, session, dryRun);
+                        String path = initializeItem.getProperty(HippoNodeType.HIPPO_CONTENTDELETE).getString();
                         boolean immediateSave;
-                        if(node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) || node.hasProperty(HippoNodeType.HIPPO_CONTENT))
+                        if(initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) || initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENT))
                             immediateSave = false;
                         else
                             immediateSave = true;
-                        log.info("Delete content in initialization: " + node.getName() + " " + path);
+                        log.info("Delete content in initialization: " + initializeItem.getName() + " " + path);
                         removeNodecontent(session, path, immediateSave && !dryRun);
                     }
 
                     // Content from file
-                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
-                        processContentFromFile(node, session, dryRun);
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
+                        processContentFromFile(initializeItem, session, dryRun);
                     }
 
                     // CONTENT FROM NODE
-                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
-                        processContentFromNode(node, session, dryRun);
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
+                        processContentFromNode(initializeItem, session, dryRun);
                     }
 
                     // SET OR ADD PROPERTY CONTENT
-                    if (node.hasProperty(HippoNodeType.HIPPO_CONTENTPROPSET) || node.hasProperty(HippoNodeType.HIPPO_CONTENTPROPADD)) {
-                        processSetOrAddProperty(node, session, dryRun);
+                    if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTPROPSET) || initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTPROPADD)) {
+                        processSetOrAddProperty(initializeItem, session, dryRun);
                     }
 
                     if (dryRun) {
                         if (log.isDebugEnabled()) {
-                            log.debug("configuration as specified by " + node.getName());
+                            log.debug("configuration as specified by " + initializeItem.getName());
                             for (NodeIterator iter = ((HippoSession)session).pendingChanges(); iter.hasNext();) {
                                 Node pendingNode = iter.nextNode();
                                 if (pendingNode != null) {
-                                    log.debug("configuration as specified by " + node.getName() + " modified node " + pendingNode.getPath());
+                                    log.debug("configuration as specified by " + initializeItem.getName() + " modified node " + pendingNode.getPath());
                                 }
                             }
                         }
                         session.refresh(false);
                     } else {
-                        node.setProperty(HippoNodeType.HIPPO_STATUS, "done");
+                        initializeItem.setProperty(HippoNodeType.HIPPO_STATUS, "done");
                         session.save();
                     }
 
                 } catch (MalformedURLException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (IOException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (ParseException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (AccessDeniedException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (ConstraintViolationException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (InvalidItemStateException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (ItemExistsException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (LockException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (NoSuchNodeTypeException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (UnsupportedRepositoryOperationException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (ValueFormatException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (VersionException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } catch (PathNotFoundException ex) {
-                    log.error("configuration as specified by " + node.getPath() + " failed", ex);
+                    log.error("configuration as specified by " + initializeItem.getPath() + " failed", ex);
                 } finally {
                     session.refresh(false);
                 }
@@ -470,19 +477,17 @@ public class LoadInitializationModule {
         }
     }
 
-    public static void locateExtensionResources(Session session, Node initializationFolder) throws IOException, RepositoryException {
-        initializeExtensions(session, initializationFolder);
-    }
-
-    public static void initializeExtensions(Session session, Node initializationFolder) throws IOException, RepositoryException {
+    public static List<Node> loadExtensions(Session session, Node initializationFolder) throws IOException, RepositoryException {
         final List<URL> extensions = scanForExtensions();
-        session.save();
+        final List<Node> initializeItems = new ArrayList<Node>();
         for(final URL configurationURL : extensions) {
-            initializeExtension(configurationURL, session, initializationFolder);
+            initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder));
         }
+        return initializeItems;
     }
 
-    private static void initializeExtension(final URL configurationURL, final Session session, final Node initializationFolder) throws RepositoryException, IOException {
+    public static List<Node> loadExtension(final URL configurationURL, final Session session, final Node initializationFolder) throws RepositoryException, IOException {
+        List<Node> initializeItems = new ArrayList<Node>();
         log.info("Initializing extension "+configurationURL);
         try {
             initializeNodecontent(session, "/hippo:configuration/hippo:temporary", configurationURL.openStream(), configurationURL.getPath());
@@ -490,7 +495,8 @@ public class LoadInitializationModule {
             final String moduleVersion = getModuleVersion(configurationURL);
             final NodeIterator tempIter = tempInitFolderNode.getNodes();
             while (tempIter.hasNext()) {
-                initializeInitializeItem(session, tempIter.nextNode(), initializationFolder, moduleVersion, configurationURL);
+                initializeItems.addAll(initializeInitializeItem(session, tempIter.nextNode(), initializationFolder, moduleVersion, configurationURL));
+
             }
             if(tempInitFolderNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
                 Set<String> tags = new TreeSet<String>();
@@ -516,11 +522,12 @@ public class LoadInitializationModule {
         } catch (RepositoryException ex) {
             throw new RepositoryException("Initializing extension " + configurationURL.getPath() + " failed", ex);
         }
-
+        return initializeItems;
     }
 
-    static void initializeInitializeItem(final Session session, final Node tempInitItemNode, final Node initializationFolder, final String moduleVersion, final URL configurationURL) throws RepositoryException {
+    private static List<Node> initializeInitializeItem(final Session session, final Node tempInitItemNode, final Node initializationFolder, final String moduleVersion, final URL configurationURL) throws RepositoryException {
 
+        final List<Node> initializeItems = new ArrayList<Node>();
         Node initItemNode = JcrUtils.getNodeIfExists(initializationFolder, tempInitItemNode.getName());
         final String existingModuleVersion = initItemNode != null ? JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_EXTENSIONVERSION, null) : null;
         final String deprecatedExistingItemVersion = initItemNode != null ? JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_EXTENSIONBUILD, null) : null;
@@ -556,15 +563,18 @@ public class LoadInitializationModule {
                     final Node downStreamItem = downstreamItems.nextNode();
                     log.info("Marking downstream item " + downStreamItem.getName() + " for reload");
                     downStreamItem.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
+                    initializeItems.add(downStreamItem);
                 }
             }
 
             initItemNode.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
+            initializeItems.add(initItemNode);
         } else if (isExtension(configurationURL)) {
             // we need an up to date location in order to reload items
             initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
         }
 
+        return initializeItems;
     }
 
     private static boolean isExtension(final URL configurationURL) {

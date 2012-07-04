@@ -44,8 +44,12 @@ import javax.jcr.version.VersionException;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.InitializationProcessor;
+import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
+import org.hippoecm.repository.impl.InitializationProcessorImpl;
+import org.hippoecm.repository.impl.ReferenceWorkspaceImpl;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
@@ -324,7 +328,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         try {
             // get the current root/system session for the default workspace for namespace and nodetypes init
-            Session jcrRootSession =  ((LocalRepositoryImpl)jackrabbitRepository).getRootSession(null);
+            Session jcrRootSession =  jackrabbitRepository.getRootSession(null);
 
             if(!jcrRootSession.getRootNode().isNodeType("mix:referenceable")) {
                 jcrRootSession.getRootNode().addMixin("mix:referenceable");
@@ -385,7 +389,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 }
             }
 
-            ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(true);
+            jackrabbitRepository.enableVirtualLayer(true);
 
             // After initializing namespaces and nodetypes switch to the decorated session.
             rootSession = DecoratorFactoryImpl.getSessionDecorator(syncSession.impersonate(new SimpleCredentials("system", new char[]{})));
@@ -405,13 +409,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             // load all extension resources
             try {
-                LoadInitializationModule.locateExtensionResources(rootSession, rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize"));
+                LoadInitializationModule.loadExtensions(rootSession, rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize"));
             } catch (IOException ex) {
                 throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
             }
-            LoadInitializationModule.refresh(rootSession);
+            LoadInitializationModule.processInitializeItems(rootSession);
             if (log.isDebugEnabled()) {
-                LoadInitializationModule.query(rootSession);
+                LoadInitializationModule.dryRun(rootSession);
             }
 
             if (!hasHippoNamespace) {
@@ -489,4 +493,15 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         super.close();
     }
+
+    @Override
+    public InitializationProcessor getInitializationProcessor() {
+        return new InitializationProcessorImpl();
+    }
+
+    @Override
+    public ReferenceWorkspace getOrCreateReferenceWorkspace() throws RepositoryException {
+        return new ReferenceWorkspaceImpl(jackrabbitRepository);
+    }
+
 }

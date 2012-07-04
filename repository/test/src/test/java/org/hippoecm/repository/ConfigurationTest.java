@@ -77,7 +77,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:content", "<sv:node xmlns:sv=\"http://www.jcp.org/jcr/sv/1.0\" xmlns:nt=\"http://www.jcp.org/jcr/nt/1.0\" xmlns:jcr=\"http://www.jcp.org/jcr/1.0\" sv:name=\"testnode\"><sv:property sv:name=\"jcr:primaryType\" sv:type=\"Name\"><sv:value>nt:unstructured</sv:value></sv:property></sv:node>");
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         assertTrue(session.getRootNode().getNode("test").hasNode("testnode"));
         assertEquals("done", node.getProperty("hippo:status").getString());
     }
@@ -89,7 +89,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {"a"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         assertEquals("pending", node.getProperty("hippo:status").getString());
     }
 
@@ -101,7 +101,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {"b"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check("b");
     }
 
@@ -113,7 +113,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {"c", "d"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         assertEquals("pending", node.getProperty("hippo:status").getString());
     }
 
@@ -125,7 +125,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         assertFalse(session.getRootNode().getNode("test/propnode").hasProperty("hippo:single"));
         assertFalse(session.getRootNode().getNode("test/propnode").hasProperty("hippo:multi"));
     }
@@ -138,7 +138,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"e"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         assertEquals("pending", node.getProperty("hippo:status").getString());
     }
 
@@ -150,7 +150,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"f", "g"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         assertEquals("pending", node.getProperty("hippo:status").getString());
     }
 
@@ -163,7 +163,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"j", "k"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         assertEquals("pending", node.getProperty("hippo:status").getString());
     }
 
@@ -176,7 +176,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {"l"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {"l"});
     }
 
@@ -188,7 +188,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {"m", "n"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {"m", "n"});
     }
 
@@ -200,7 +200,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {});
     }
 
@@ -212,7 +212,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"o"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {"o"});
     }
 
@@ -224,7 +224,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"p", "q"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {"p", "q"});
     }
 
@@ -237,7 +237,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"t", "u"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {"r", "s", "t", "u"});
     }
 
@@ -250,7 +250,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {"B"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check("B");
     }
 
@@ -262,7 +262,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {"C", "D"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check("z");
     }
 
@@ -274,7 +274,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         assertFalse(session.getRootNode().getNode("test/propnode").hasProperty("hippo:single"));
         assertFalse(session.getRootNode().getNode("test/propnode").hasProperty("hippo:multi"));
     }
@@ -287,7 +287,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"E"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check("z");
     }
 
@@ -299,7 +299,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"F", "G"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check("z");
     }
 
@@ -312,7 +312,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"J", "K"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check("z");
     }
 
@@ -325,7 +325,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {"L"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {"L"});
     }
 
@@ -337,7 +337,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {"M", "N"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {"M", "N"});
     }
 
@@ -349,7 +349,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropset", new String[] {});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {});
     }
 
@@ -361,7 +361,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"O"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {"x", "y", "O"});
     }
 
@@ -373,7 +373,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"P", "Q"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[] {"x", "y", "P", "Q"});
     }
 
@@ -386,7 +386,7 @@ public class ConfigurationTest extends TestCase {
         node.setProperty("hippo:contentpropadd", new String[] {"T", "U"});
         node.setProperty("hippo:status", "pending");
         session.save();
-        LoadInitializationModule.refresh(session);
+        LoadInitializationModule.processInitializeItems(session);
         check(new String[]{"R", "S", "T", "U"});
     }
 }

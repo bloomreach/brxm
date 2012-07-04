@@ -28,6 +28,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.api.InitializationProcessor;
+import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.ValueMap;
 
@@ -133,4 +135,19 @@ public interface HippoRepository {
      * session.save() or session.refresh(false)
      */
     public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests);
+
+    /**
+     * @return An {@link InitializationProcessor} for this repository for doing initialization tasks
+     */
+    public InitializationProcessor getInitializationProcessor();
+
+
+    /**
+     * Get or create a new reference workspace for comparing what changed since system bootstrap.
+     * This is a lightweight operation only creating the workspace itself but not loading the configuration.
+     *
+     * @return a {@link ReferenceWorkspace}
+     * @throws RepositoryException
+     */
+    public ReferenceWorkspace getOrCreateReferenceWorkspace() throws RepositoryException;
 }

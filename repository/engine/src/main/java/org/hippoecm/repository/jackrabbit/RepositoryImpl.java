@@ -128,9 +128,12 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     }
 
     public HippoQueryHandler getHippoQueryHandler(String workspaceName) throws RepositoryException {
-        final QueryHandler queryHandler = ((HippoWorkspaceInfo) getWorkspaceInfo(workspaceName)).getSearchManager().getQueryHandler();
-        if (queryHandler instanceof  HippoQueryHandler) {
-            return (HippoQueryHandler) queryHandler;
+        final SearchManager searchManager = ((HippoWorkspaceInfo) getWorkspaceInfo(workspaceName)).getSearchManager();
+        if (searchManager != null) {
+            final QueryHandler queryHandler = searchManager.getQueryHandler();
+            if (queryHandler instanceof  HippoQueryHandler) {
+                return (HippoQueryHandler) queryHandler;
+            }
         }
         return null;
     }
