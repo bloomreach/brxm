@@ -80,14 +80,22 @@
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.hippoecm.org/editor/test/nt/0.1</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>test.cnd</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>11005.0</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="test-types">
+  <sv:node sv:name="editor-test-cnd">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
+      <sv:value>test.cnd</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>11006.0</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="editor-test-types">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
