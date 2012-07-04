@@ -195,8 +195,7 @@ public class AuthorizationQuery {
                             }
                         } else {
                             Query tq = new TermQuery(new Term(internalFieldName, facetRule.getValue()));
-                            if (facetRule.isFilter()) {
-                                // facetRule.isFilter() == true means:
+                            if (facetRule.isFacetOptional()) {
                                 // If the property exists, it must be equal. Else, it is also ok
                                 BooleanQuery bq = new BooleanQuery(false);
 
@@ -213,9 +212,8 @@ public class AuthorizationQuery {
                                     return bq;
                                 }
                             } else {
-                                // facetRule.isFilter() == false means:
-                                // 1) Property MUST exist
-                                // 2) Property MUST be equal
+                                // Property MUST exist and it MUST (or MUST NOT) equal the value,
+                                // depending on FacetRule#isEqual.
                                 if (facetRule.isEqual()) {
                                     return tq;
                                 } else {

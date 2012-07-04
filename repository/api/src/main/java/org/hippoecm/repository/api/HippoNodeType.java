@@ -337,6 +337,8 @@ public interface HippoNodeType {
 
     public static final String HIPPOSYS_TYPE = "hipposys:type";
 
+    public static final String HIPPOSYS_FILTER = "hipposys:filter";
+
     public static final String HIPPOSYSEDIT_TYPE = "hipposysedit:type";
 
     public static final String HIPPO_TYPES = "hipposys:types";

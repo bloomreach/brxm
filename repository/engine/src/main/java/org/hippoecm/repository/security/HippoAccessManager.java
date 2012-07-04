@@ -822,7 +822,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
             log.trace("Node: {} doesn't have property {}", nodeState.getId(), rule.getFacetName());
 
             // if this is a filter facet rule the property doesn't have to be set
-            if (rule.isFilter()) {
+            if (rule.isFacetOptional()) {
                 return true;
             }
 

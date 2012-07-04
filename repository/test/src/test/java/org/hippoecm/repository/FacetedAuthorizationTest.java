@@ -30,7 +30,6 @@ import javax.jcr.security.Privilege;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -609,6 +608,7 @@ public class FacetedAuthorizationTest extends TestCase {
         testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         assertTrue(testData.hasNode("readdoc0/readable"));
         assertTrue(testData.hasNode("readdoc0/writable"));
+        assertFalse(testData.hasNode("readdoc0/invisible"));
 
         QueryManager queryManager = userSession.getWorkspace().getQueryManager();
         // XPath doesn't like the query from the root
@@ -619,6 +619,50 @@ public class FacetedAuthorizationTest extends TestCase {
         // Nodes 'nothing0/subread' and 'nothing0/subwrite' are counted but not instantiated.
         // The hierarchical constraint (can read parent) is not taken into account.
         assertEquals(14L, ((HippoNodeIterator) iter).getTotalSize());
+    }
+
+    @Test
+    public void testOptionalFacet() throws RepositoryException {
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+
+        testData.getNode("readdoc0").getNode("subread").setProperty("optionalfacet", "optionalvalue");
+
+        final Node otherDoc = testData.getNode("readdoc0").addNode("subhidden", "hippo:ntunstructured");
+        otherDoc.setProperty("optionalfacet", "incorrectvalue");
+        otherDoc.setProperty("authtest", "canread");
+        otherDoc.addMixin("hippo:harddocument");
+
+        Node dr = readDomain.getNode("hippo:domainrule");
+        Node fr = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        fr.setProperty(HippoNodeType.HIPPO_FACET, "optionalfacet");
+        fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "optionalvalue");
+        fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
+        fr.setProperty(HippoNodeType.HIPPOSYS_FILTER, true);
+
+        session.save();
+
+        Session userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        assertTrue(testData.hasNode("readdoc0/subread"));
+        assertFalse(testData.hasNode("readdoc0/subhidden"));
+
+        QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+        // XPath doesn't like the query from the root
+        Query query = queryManager.createQuery("//element(*,hippo:ntunstructured) order by @jcr:score", Query.XPATH);
+        NodeIterator iter = query.execute().getNodes();
+        assertEquals(10L, iter.getSize());
+
+        boolean found = false;
+        while (iter.hasNext()) {
+            if ((testData.getPath() + "/readdoc0/subread").equals(iter.nextNode().getPath())) {
+                found = true;
+            }
+        }
+        assertTrue("readable node with optional facet was not found in result set", found);
+
+        // Nodes 'nothing0/subread' and 'nothing0/subwrite' are counted but not instantiated.
+        // The hierarchical constraint (can read parent) is not taken into account.
+        assertEquals(12L, ((HippoNodeIterator) iter).getTotalSize());
     }
 
     @Test

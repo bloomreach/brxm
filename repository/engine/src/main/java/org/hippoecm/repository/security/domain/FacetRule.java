@@ -226,10 +226,14 @@ public class FacetRule implements Serializable {
     }
 
     /**
-     * Check for equality or inequality
-     * @return true if to rule has to check for equality
+     * When the facet is optional, it does not need to be present on a node for the rule to match.
+     * If it <strong>is</strong> present on the node, it's value must conform to the #isEqual and #getValue.
+     * <p>
+     * When the facet is not optional, the rule only matches when the facet is available on the node.
+     *
+     * @return true if the facet is optional
      */
-    public boolean isFilter() {
+    public boolean isFacetOptional() {
         return filter;
     }
 
