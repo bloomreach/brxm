@@ -102,7 +102,7 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
         try {
 
             final ReferenceWorkspace referenceWorkspace = UserSession.get().getHippoRepository().getOrCreateReferenceWorkspace();
-            session = referenceWorkspace.getSession();
+            session = referenceWorkspace.login();
 
             if (!session.nodeExists("/hippo:configuration")) {
                 referenceWorkspace.bootstrap();
