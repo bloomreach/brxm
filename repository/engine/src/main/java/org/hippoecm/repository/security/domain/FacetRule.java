@@ -83,9 +83,9 @@ public class FacetRule implements Serializable {
     private final boolean equals;
 
     /**
-     * If the match is equals or not equals
+     * If the facet is optional or not
      */
-    private final boolean filter;
+    private final boolean optional;
 
     /**
      * The hash code
@@ -106,7 +106,7 @@ public class FacetRule implements Serializable {
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
         equals = node.getProperty(HippoNodeType.HIPPO_EQUALS).getBoolean();
-        filter = node.getProperty("hipposys:filter").getBoolean();
+        optional = node.getProperty(HippoNodeType.HIPPOSYS_FILTER).getBoolean();
 
         int tmpType = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString());
         String tmpValue = node.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
@@ -234,7 +234,7 @@ public class FacetRule implements Serializable {
      * @return true if the facet is optional
      */
     public boolean isFacetOptional() {
-        return filter;
+        return optional;
     }
 
     /**
