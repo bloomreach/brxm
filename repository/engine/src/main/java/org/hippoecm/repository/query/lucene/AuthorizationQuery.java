@@ -197,18 +197,9 @@ public class AuthorizationQuery {
                             Query tq = new TermQuery(new Term(internalFieldName, facetRule.getValue()));
                             if (facetRule.isFilter()) {
                                 // facetRule.isFilter() == true means:
-                                // 1) Property MUST exist
-                                // 2) Property MUST be equal
-                                if (facetRule.isEqual()) {
-                                    return tq;
-                                } else {
-                                    return QueryHelper.negateQuery(tq);
-                                }
-                            } else {
-                                // facetRule.exists() == false means:
                                 // If the property exists, it must be equal. Else, it is also ok
                                 BooleanQuery bq = new BooleanQuery(false);
-                                
+
                                 // all the docs that do *not* have the property:
                                 Query docsThatMissPropertyQuery = QueryHelper.negateQuery(new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
                                 bq.add(docsThatMissPropertyQuery, Occur.SHOULD);
@@ -220,6 +211,15 @@ public class AuthorizationQuery {
                                     Query not =  QueryHelper.negateQuery(tq);
                                     bq.add(not, Occur.SHOULD);
                                     return bq;
+                                }
+                            } else {
+                                // facetRule.isFilter() == false means:
+                                // 1) Property MUST exist
+                                // 2) Property MUST be equal
+                                if (facetRule.isEqual()) {
+                                    return tq;
+                                } else {
+                                    return QueryHelper.negateQuery(tq);
                                 }
                             }
                         }
