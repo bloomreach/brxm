@@ -35,8 +35,6 @@ import org.hippoecm.hst.core.parameters.JcrPath;
  */
 public final class InformationObjectsBuilder {
 
-    private static final String ERROR_MESSAGE_FIELDGROUP_NULL_ARGUMENT = "Got a 'null' field group argument!";
-    
     public static ChannelInfoClassInfo buildChannelInfoClassInfo(Class<? extends ChannelInfo> channelInfoClass) {
         ChannelInfoClassInfo channelInfoClassInfo = new ChannelInfoClassInfo();
 
@@ -62,7 +60,7 @@ public final class InformationObjectsBuilder {
 
     public static FieldGroupInfo buildFieldGroupInfo(FieldGroup fieldGroup) {
         if (fieldGroup == null) {
-            throw new IllegalArgumentException(ERROR_MESSAGE_FIELDGROUP_NULL_ARGUMENT);
+            throw new IllegalArgumentException("Got a 'null' field group argument!");
         }
 
         FieldGroupInfo fieldGroupInfo = new FieldGroupInfo();

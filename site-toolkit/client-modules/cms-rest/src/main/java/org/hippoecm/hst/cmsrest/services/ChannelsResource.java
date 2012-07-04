@@ -16,18 +16,6 @@
 
 package org.hippoecm.hst.cmsrest.services;
 
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNELS_RETRIEVAL_ERROR;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNEL_PERSISTING_ERROR;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHANNEL_SAVING_ERROR;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_RESOURCE_VALUES;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS;
-import static org.hippoecm.hst.cmsrest.services.ChannelsResourceConsts.WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_RESOURCE_VALUES;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,23 +46,23 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 	public List<Channel> getChannels() {
 		try {
 			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-			// COMMENT - MNour: We should use a proper validation framework!
+			// We should use a proper validation framework!
 			validate();
 	        return Collections.unmodifiableList(new ArrayList<Channel>(channelManager.getChannels().values()));
 		} catch (ResourceRequestValidationException rrve) {
 			if (log.isWarnEnabled()) {
-				log.warn(MESSAGE_CHEANNELS_RESOURCE_REQUEST_PROCESSING_ERROR);
+				log.warn("Error while processing channels resource request");
 			}
-			// COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			//                  For now return empty list
+			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
+			// For now return empty list
 			// throw rrve;
 			return Collections.emptyList();
 		} catch (ChannelException ce) {
 			if (log.isErrorEnabled()) {
-				log.error(String.format(MESSAGE_CHANNELS_RETRIEVAL_ERROR, ce.getClass().getName(), ce.getMessage(), ce));
+				log.error("Error while retrieving channels - " + ce.getClass().getName() + " : " + ce.getMessage() + " : " + ce);
 			}
-			// COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			//                  For now return empty list
+			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
+			// For now return empty list
 			// throw ce;
 			return Collections.emptyList();
 		}
@@ -87,22 +75,22 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     public void save(Channel channel) {
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-            // COMMENT - MNour: We should use a proper validation framework!
+            // We should use a proper validation framework!
             validate();
-            // COMMENT - MNour: This is only test data
+            // This is only test data
             channelManager.save(channel);
         } catch (ResourceRequestValidationException rrve) {
             if (log.isWarnEnabled()) {  
-                log.warn(PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR, channel.getId());
+                log.warn("Error while processing channels resource request for channel '{}'", channel.getId());
             }
-            // COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-            //                  For now return empty list
+            // This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
+            // For now return empty list
             // throw rrve;
-            // COMMENT - MNour: I know returning 'null' is not clean at all but thats *only* for now!
+            // I know returning 'null' is not clean at all but thats *only* for now!
         } catch (ChannelException ce) {
             if (log.isErrorEnabled()) {
                 if (log.isErrorEnabled()) {
-                    log.error(String.format(MESSAGE_CHANNEL_SAVING_ERROR, channel, ce.getClass().getName(), ce.getMessage(), ce));
+                    log.error("Error while saving a channel - Channel: " + channel + " - " + ce.getClass().getName() + " : " + ce.getMessage() + " : " + ce);
                 }
             }
         }
@@ -112,28 +100,28 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     public String persist(String blueprintId, Channel channel) {
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-            // COMMENT - MNour: We should use a proper validation framework!
+            // We should use a proper validation framework!
             validate();
-            // COMMENT - MNour: This is only test data
+            // This is only test data
             return channelManager.persist(blueprintId, channel);
         } catch (ResourceRequestValidationException rrve) {
             if (log.isWarnEnabled()) {  
-                log.warn(PARAM_MESSAGE_CHANNELS_RESOURCE_REQUEST_PROCESSING_ERROR, channel.getId());
+                log.warn("Error while processing channels resource request for channel '{}'", channel.getId());
             }
-            // COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-            //                  For now return empty list
+            // This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
+            // For now return empty list
             // throw rrve;
-            // COMMENT - MNour: I know returning 'null' is not clean at all but thats *only* for now!
+            // I know returning 'null' is not clean at all but thats *only* for now!
         } catch (ChannelException ce) {
             if (log.isErrorEnabled()) {
                 if (log.isErrorEnabled()) {
-                    log.error(String.format(MESSAGE_CHANNEL_PERSISTING_ERROR, channel, ce.getClass().getName(), ce.getMessage(), ce));
+                    log.error("Error while persisting a new channel - Channel: " + channel + " - " + ce.getClass().getName() + " : " + ce.getMessage() + " : " + ce);
                 }
             }
         }
 
-        // COMMENT - MNour: Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
-        //                  HST, CMS and services!
+        // Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
+        // HST, CMS and services!
         return null;
     }
 
@@ -154,14 +142,14 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             return channelManager.getChannelById(id);
         } catch (ChannelException ce) {
             if (log.isDebugEnabled()) {
-                log.warn(String.format(WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL, id), ce);
+                log.warn("Failed to retrieve a channel with id '" + id + "'", ce);
             } else {
-                log.warn(PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL, id, ce);
+                log.warn("Failed to retrieve a channel with id '{}' - {}", id, ce);
             }
         }
 
-        // COMMENT - MNour: Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
-        //                  HST, CMS and services!
+        // Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
+        // HST, CMS and services!
         return null;
     }
 
@@ -190,14 +178,14 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             return channelInfoClassInfo;
         } catch (ChannelException ce) {
             if (log.isDebugEnabled()) {
-                log.warn(String.format(WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS, id), ce);
+                log.warn("Failed to retrieve channel info class for channel with id '" + id + "'", ce);
             } else {
-                log.warn(PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_INFO_CLASS, id, ce);
+                log.warn("Failed to retrieve channel info class for channel with id '{}' - {}", id, ce);
             }
         }
 
-        // COMMENT - MNour: Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
-        //                  HST, CMS and services!        
+        // Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
+        // HST, CMS and services!        
         return null;
     }
 
@@ -208,14 +196,14 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             return InformationObjectsBuilder.buildResourceBundleProperties(channelManager.getResourceBundle(channel, new Locale(language)));
         } catch (ChannelException ce) {
             if (log.isDebugEnabled()) {
-                log.warn(String.format(WARNING_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_RESOURCE_VALUES, id), ce);
+                log.warn("Failed to retrieve channel resource values channel with id '" + id + "'", ce);
             } else {
-                log.warn(PARAM_MESSAGE_FAILED_TO_RETRIEVE_CHANNEL_RESOURCE_VALUES, id, ce);
+                log.warn("Failed to retrieve channel resource values for channel with id '{}' - {}", id, ce);
             }
         }
 
-        // COMMENT - MNour: Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
-        //                  HST, CMS and services!        
+        // Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
+        // HST, CMS and services!        
         return null;
     }
 

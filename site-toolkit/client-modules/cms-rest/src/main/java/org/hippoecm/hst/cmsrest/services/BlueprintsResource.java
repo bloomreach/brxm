@@ -44,23 +44,23 @@ public class BlueprintsResource extends BaseResource implements BlueprintService
 	public List<Blueprint> getBlueprints() {
 		try {
 			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-			// COMMENT - MNour: We should use a proper validation framework!
+			// We should use a proper validation framework!
 			validate();
 	        return Collections.unmodifiableList(new ArrayList<Blueprint>(channelManager.getBlueprints()));
 		} catch (ResourceRequestValidationException rrve) {
 			if (log.isWarnEnabled()) {
 				log.warn(MESSAGE_BLUEPRINTS_RESOURCE_REQUEST_PROCESSING_ERROR);
 			}
-			// COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			//                  For now return empty list
+			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
+			// For now return empty list
 			// throw rrve;
 			return Collections.emptyList();
 		} catch (ChannelException ce) {
 			if (log.isErrorEnabled()) {
 				log.error(MESSAGE_BLUEPRINTS_RETRIEVAL_ERROR);
 			}
-			// COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			//                  For now return empty list
+			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
+			// For now return empty list
 			// throw ce;
 			return Collections.emptyList();
 		}
@@ -73,24 +73,24 @@ public class BlueprintsResource extends BaseResource implements BlueprintService
 	public Blueprint getBlueprint(String id) {
 		try {
 			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-			// COMMENT - MNour: We should use a proper validation framework!
+			// We should use a proper validation framework!
 			validate();
 			return channelManager.getBlueprint(id);
 		} catch (ResourceRequestValidationException rrve) {
 		    if (log.isWarnEnabled()) {
 		        log.warn(PARAM_MESSAGE_BLUEPRINTS_RESOURCE_REQUEST_PROCESSING_ERROR, id);
 		    }
-			// COMMENT - MNour: This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			//                  For now return empty list
+			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
+			// For now return empty list
 			// throw rrve;
-			// COMMENT - MNour: I know returning 'null' is not clean at all but thats *only* for now!
+			// I know returning 'null' is not clean at all but thats *only* for now!
 			return null;
 		} catch (ChannelException ce) {
 		    if (log.isErrorEnabled()) {
-		        log.error(String.format("Exception while retrieving blueprint of id '%s' : %s : %s : %s", id, ce.getClass().getName(), ce.getMessage(), ce));
+		        log.error("Exception while retrieving blueprint of id '" + id + "' : " + ce.getClass().getName() + " : " + ce.getMessage() + " : " + ce);
 		    }
-		    // COMMENT - MNour: - I know returning 'null' is not clean at all but thats *only* for now!
-		    //                  - Also see the above comment
+		    // - I know returning 'null' is not clean at all but thats *only* for now!
+		    // - Also see the above comment
 		    // throw ce
 		    return null;
         }

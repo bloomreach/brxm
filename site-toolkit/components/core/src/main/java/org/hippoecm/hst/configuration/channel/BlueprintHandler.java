@@ -63,7 +63,7 @@ public class BlueprintHandler {
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNEL)) {
             blueprint.setPrototypeChannel(ChannelPropertyMapper.readChannel(blueprintNode.getNode(HstNodeTypes.NODENAME_HST_CHANNEL), null));
         } else {
-            // TODO - MNour: What is that ? See if you can fix it!
+            // TODO - What is that ? See if you can fix it!
             blueprint.setPrototypeChannel(new Channel((String) null));
         }
 
@@ -79,7 +79,7 @@ public class BlueprintHandler {
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
                 blueprint.getPrototypeChannel().setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
             } else if (!blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {  // validate that blueprint is correct
-                throw new ItemNotFoundException(String.format("Blueprint %s has neither a hst:configuration node prototype or a fixed hst:configurationpath", blueprint.getId()));
+                throw new ItemNotFoundException("Blueprint " + blueprint.getId() + " has neither a hst:configuration node prototype or a fixed hst:configurationpath");
             }
 
             if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && !blueprint.getHasContentPrototype()) {

@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import static org.hippoecm.hst.configuration.channel.ChannelConsts.ERROR_MESSAGE_CHANNEL_ID_HAS_BEEN_ALREADY_SET;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -99,7 +97,7 @@ public class Channel implements Serializable {
      */
     public void setId(String id) throws IllegalStateException {
     	if ( (this.id != null) && (this.id != "") ) {
-    		throw new IllegalStateException(ERROR_MESSAGE_CHANNEL_ID_HAS_BEEN_ALREADY_SET);
+    		throw new IllegalStateException("Channel id has been already set. It can not be changed.");
     	}
 
         this.id = id;

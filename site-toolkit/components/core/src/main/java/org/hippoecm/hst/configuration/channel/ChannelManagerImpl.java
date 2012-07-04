@@ -71,10 +71,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     static final Logger log = LoggerFactory.getLogger(ChannelManagerImpl.class.getName());
 
-    private static final String ERROR_MESSAGE_BAD_CHANNEL_ID = "Expected a channel id, but got '%s' instead";
-    private static final String ERROR_MESSAGE_BAD_CHANNEL_JCR_PATH = "Expected a valid channel JCR path which should start with '%s', but got '%s' instead";
-    private static final String WARNING_MESSAGE_COULD_NOT_RETRIEVE_CHANNEL = "Could not retieve channel of id '%s'";
-
     private String rootPath = DEFAULT_HST_ROOT_PATH;
     private String hostGroup = null;
     private String sites = DEFAULT_HST_SITES;
@@ -329,19 +325,19 @@ public class ChannelManagerImpl implements MutableChannelManager {
     public synchronized Channel getChannelByJcrPath(String jcrPath) throws ChannelException {
         load();
         if (StringUtils.isBlank(jcrPath) || !jcrPath.startsWith(channelsRoot)) {
-            throw new ChannelException(String.format(ERROR_MESSAGE_BAD_CHANNEL_JCR_PATH, channelsRoot, jcrPath));
+            throw new ChannelException("Expected a valid channel JCR path which should start with '" + channelsRoot + "', but got '" + jcrPath + "' instead");
         }
 
         final String channelId = jcrPath.substring(channelsRoot.length());
         return channels.get(channelId);
     }
 
-
     public synchronized Channel getChannelById(String id) throws ChannelException {
         load();
         if (StringUtils.isBlank(id)) {
-            throw new ChannelException(String.format(ERROR_MESSAGE_BAD_CHANNEL_ID, id));
+            throw new ChannelException("Expected a channel id, but got '" + id + "' instead");
         }
+
         return channels.get(id);
     }
 
@@ -362,7 +358,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     public synchronized String persist(final String blueprintId, Channel channel) throws ChannelException {
 
         if (!blueprints.containsKey(blueprintId)) {
-            throw new ChannelException(String.format("Blueprint id %s is not valid", blueprintId));
+            throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
         }
 
         Blueprint blueprint = blueprints.get(blueprintId);
@@ -550,7 +546,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         try {
             return getPropertyDefinitions(getChannelById(channelId));
         } catch (ChannelException ex) {
-            log.warn(String.format(WARNING_MESSAGE_COULD_NOT_RETRIEVE_CHANNEL, channelId), ex);
+            log.warn("Could not retieve channel of id '" + channelId + "'", ex);
         }
 
         return Collections.emptyList();

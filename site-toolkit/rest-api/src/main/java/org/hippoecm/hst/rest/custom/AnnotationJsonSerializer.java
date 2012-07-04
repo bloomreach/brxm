@@ -176,8 +176,8 @@ public class AnnotationJsonSerializer extends SerializerBase<Annotation> {
         } else if (method.getReturnType() == String[].class) {
             serializeStringArray(method, value, jgen);
         } else {
-            throw new IllegalArgumentException(String.format("Unrecognized attribute value type %s for annotation %s",
-                    method.getReturnType().getName(), value.annotationType().getName()));
+            throw new IllegalArgumentException("Unrecognized attribute value type " + method.getReturnType().getName()
+                    + " for annotation " + value.annotationType().getName());
         }
 
     }
