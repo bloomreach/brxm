@@ -127,7 +127,7 @@
             <sv:value>it</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Nouvo user</sv:value>
+            <sv:value>Nuovo utente</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -141,7 +141,7 @@
             <sv:value>it</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Nouvo gruppo</sv:value>
+            <sv:value>Nuovo gruppo</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -155,7 +155,7 @@
             <sv:value>it</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Nouvo dominio</sv:value>
+            <sv:value>Nuovo dominio</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>
@@ -169,7 +169,7 @@
             <sv:value>it</sv:value>
           </sv:property>
           <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>Nouvo ruolo</sv:value>
+            <sv:value>Nuovo ruolo</sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

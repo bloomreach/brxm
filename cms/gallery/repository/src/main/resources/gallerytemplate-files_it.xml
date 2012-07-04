@@ -26,7 +26,7 @@
       <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nouvo cartella</sv:value>
+      <sv:value>Nouva cartella</sv:value>
     </sv:property>
   </sv:node>
 

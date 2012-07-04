@@ -27,7 +27,7 @@
         <sv:value>it</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:message" sv:type="String">
-        <sv:value>Nouvo cartella tradotto</sv:value>
+        <sv:value>Nuova cartella tradotta</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:class" sv:type="String">
         <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
