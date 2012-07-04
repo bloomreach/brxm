@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.session;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
@@ -22,6 +23,7 @@ import javax.jcr.query.QueryManager;
 import org.apache.wicket.Request;
 import org.apache.wicket.protocol.http.WebSession;
 import org.hippoecm.frontend.observation.IFacetRootsObserver;
+import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.WorkflowManager;
 
@@ -63,4 +65,7 @@ public abstract class UserSession extends WebSession {
     public abstract void releaseJcrSession();
 
     public abstract String getApplicationName();
+
+    public abstract HippoRepository getHippoRepository() throws RepositoryException;
+
 }

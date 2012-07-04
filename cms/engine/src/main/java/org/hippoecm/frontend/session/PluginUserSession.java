@@ -48,6 +48,7 @@ import org.hippoecm.frontend.observation.FacetRootsObserver;
 import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -450,6 +451,12 @@ public class PluginUserSession extends UserSession {
         }
 
         return applicationName;
+    }
+
+    @Override
+    public HippoRepository getHippoRepository() throws RepositoryException {
+        Main main = (Main) Application.get();
+        return main.getRepository();
     }
 
 }

@@ -18,45 +18,28 @@ package org.hippoecm.frontend.plugins.console.menu.patch;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedList;
 import java.util.List;
 
-import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.SimpleCredentials;
-import javax.xml.bind.DatatypeConverter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.apache.jackrabbit.api.JackrabbitWorkspace;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.MultiStepDialog;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.LoadInitializationModule;
-import org.hippoecm.repository.LocalHippoRepository;
-import org.hippoecm.repository.decorating.WorkspaceDecorator;
-import org.hippoecm.repository.impl.DecoratorFactoryImpl;
-import org.hippoecm.repository.impl.RepositoryDecorator;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.onehippo.cms7.jcrdiff.JcrDiffException;
 import org.onehippo.cms7.jcrdiff.content.jcr.JcrTreeNode;
 import org.onehippo.cms7.jcrdiff.delta.Patch;
 import org.onehippo.cms7.jcrdiff.match.Matcher;
 import org.onehippo.cms7.jcrdiff.match.MatcherItemInfo;
 import org.onehippo.cms7.jcrdiff.match.PatchFactory;
-import org.xml.sax.InputSource;
 
 public class CreatePatchDialog extends MultiStepDialog<Node> {
 
@@ -115,27 +98,31 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
     }
 
     private String createDiff() {
-        javax.jcr.Session referenceSession = null;
+        javax.jcr.Session session = null;
         try {
-            String workspaceName = getWorkspaceHash();
-            // create reference nodes
-            referenceSession = getSessionForReferenceWorkspace(workspaceName);
-            if (!referenceSession.nodeExists("/hippo:configuration")) {
-                bootstrapReferenceWorkspace(referenceSession);
+
+            final ReferenceWorkspace referenceWorkspace = UserSession.get().getHippoRepository().getOrCreateReferenceWorkspace();
+            session = referenceWorkspace.getSession();
+
+            if (!session.nodeExists("/hippo:configuration")) {
+                referenceWorkspace.bootstrap();
             }
 
             // check if reference node exists
-            if (!referenceSession.nodeExists(path)) {
+            if (!session.nodeExists(path)) {
                 error("No node at " + path + " in reference repository");
                 return "";
             }
-            final Patch patch = createPatch(getModelObject(), referenceSession.getNode(path));
+
+            final Patch patch = createPatch(getModelObject(), session.getNode(path));
+
             final JAXBContext context = JAXBContext.newInstance(Patch.class);
             final Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             final StringWriter writer = new StringWriter();
             marshaller.marshal(patch, writer);
             return writer.getBuffer().toString();
+
         } catch (RepositoryException e) {
             error("An unexpected error occurred: " + e.getMessage());
         } catch (IOException e) {
@@ -144,28 +131,14 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
             error("An unexpected error occurred: " + e.getMessage());
         } catch (JAXBException e) {
             error("An unexpected error occurred: " + e.getMessage());
-        } catch (NoSuchAlgorithmException e) {
-            error("An unexpected error occurred: " + e.getMessage());
         } finally {
-            if (referenceSession != null) {
-                referenceSession.logout();
+            if (session != null) {
+                session.logout();
             }
         }
 
         return null;
     }
-
-    private void bootstrapReferenceWorkspace(javax.jcr.Session session) throws RepositoryException, IOException {
-
-        // import the core configuration
-        LoadInitializationModule.initializeNodecontent(session, "/", LocalHippoRepository.class.getResourceAsStream("configuration.xml"), "configuration.xml");
-        session.save();
-
-        // load all extension resources
-        LoadInitializationModule.initializeExtensions(session, session.getNode("/hippo:configuration/hippo:initialize"));
-        LoadInitializationModule.refresh(session, true);
-    }
-
 
     private Patch createPatch(final Node currentNode, final Node referenceNode) throws JcrDiffException, JAXBException, IOException {
 
@@ -178,64 +151,6 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
 
         final PatchFactory factory = new PatchFactory();
         return factory.createPatch(cleanInfo, currentInfo);
-    }
-
-    private javax.jcr.Session getSessionForReferenceWorkspace(final String workspaceName) throws RepositoryException {
-        final javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-        final RepositoryImpl repository = (RepositoryImpl) RepositoryDecorator.unwrap(session.getRepository());
-        javax.jcr.Session rootSession;
-        try {
-            rootSession = repository.getRootSession(workspaceName);
-        } catch (NoSuchWorkspaceException e) {
-            final InputSource is = new InputSource(getClass().getResourceAsStream("workspace.xml"));
-            ((JackrabbitWorkspace) WorkspaceDecorator.unwrap(session.getWorkspace())).createWorkspace(workspaceName, is);
-            rootSession = repository.getRootSession(workspaceName);
-        }
-        return DecoratorFactoryImpl.getSessionDecorator(rootSession.impersonate(new SimpleCredentials("system", new char[]{})));
-    }
-
-    private String getWorkspaceHash() throws IOException, NoSuchAlgorithmException {
-        final MessageDigest md5 = MessageDigest.getInstance("MD5");
-        for (String jarName : getConfigJarNames()) {
-            md5.update(jarName.getBytes());
-        }
-        final String s = DatatypeConverter.printBase64Binary(md5.digest());
-        StringBuilder sb = new StringBuilder(s.length());
-        for (char c : s.toCharArray()) {
-            if (c == '+' || c == '/' || c == '=') {
-                continue;
-            }
-            sb.append(c);
-        }
-        return sb.toString();
-    }
-
-    private List<String> getConfigJarNames() throws IOException {
-        final List<String> extensions = new LinkedList<String>();
-        Enumeration<URL> iter = Thread.currentThread().getContextClassLoader().getResources("org/hippoecm/repository/extension.xml");
-        while (iter.hasMoreElements()) {
-            final String fileName = getJarFileName(iter.nextElement().getFile());
-            extensions.add(fileName);
-        }
-        iter = Thread.currentThread().getContextClassLoader().getResources("hippoecm-extension.xml");
-        while (iter.hasMoreElements()) {
-            final String fileName = getJarFileName(iter.nextElement().getFile());
-            extensions.add(fileName);
-        }
-        Collections.sort(extensions);
-        return extensions;
-    }
-
-    private String getJarFileName(final String file) {
-        int offset = file.indexOf("!");
-        if (offset != -1) {
-            String jarFile = file.substring(0, offset);
-            offset = jarFile.lastIndexOf('/');
-            if (offset != -1) {
-                return jarFile.substring(offset+1);
-            }
-        }
-        return file;
     }
 
     private class CreatePatchStep extends Step {
