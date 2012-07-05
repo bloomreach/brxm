@@ -277,6 +277,12 @@ if (!YAHOO.hippo.EditorManager) {
                         callback(name, editor);
                     }
                 });
+            },
+
+            destroy : function() {
+                this.editors.forEach(this, function(name, editor) {
+                    editor.destroy();
+                });
             }
 
         };
