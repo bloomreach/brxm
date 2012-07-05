@@ -570,8 +570,10 @@ public class LoadInitializationModule {
             initItemNode.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
             initializeItems.add(initItemNode);
         } else if (isExtension(configurationURL)) {
-            // we need an up to date location in order to reload items
-            initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
+            if (initItemNode.isNodeType(HippoNodeType.NT_INITIALIZEITEM)) {
+                // we need an up to date location in order to reload items
+                initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
+            }
         }
 
         return initializeItems;
