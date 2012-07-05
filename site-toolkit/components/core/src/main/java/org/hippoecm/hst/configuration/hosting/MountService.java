@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.hosting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -228,6 +229,8 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String[] defaultSiteMapItemHandlerIds;
     
     private String cmsLocation;
+    private String lockedBy;
+    private Calendar lockedOn;
 
     public MountService(HstNode mount, Mount parent, VirtualHost virtualHost, HstManagerImpl hstManager, int port) throws ServiceException {
         this.virtualHost = virtualHost;
@@ -729,6 +732,26 @@ public class MountService implements ContextualizableMount, MutableMount {
     
    public String getCmsLocation() {
         return cmsLocation;
+    }
+
+    @Override
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    @Override
+    public void setLockedBy(final String userId) {
+        lockedBy = userId;
+    }
+
+    @Override
+    public Calendar getLockedOn() {
+        return lockedOn;
+    }
+
+    @Override
+    public void setLockedOn(final Calendar lockedOn) {
+        this.lockedOn = lockedOn;
     }
 
     public String getNamedPipeline(){

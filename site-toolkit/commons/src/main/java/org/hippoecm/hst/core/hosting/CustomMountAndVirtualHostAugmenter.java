@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.hosting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -619,6 +620,26 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public void setChannelInfo(ChannelInfo info) {
             // nothing
+        }
+
+        @Override
+        public String getLockedBy() {
+            return null;
+        }
+
+        @Override
+        public void setLockedBy(final String userId) {
+            throw new UnsupportedOperationException("CustomMount does not support locking");
+        }
+
+        @Override
+        public Calendar getLockedOn() {
+            return null;
+        }
+
+        @Override
+        public void setLockedOn(final Calendar lockedOn) {
+            throw new UnsupportedOperationException("CustomMount does not support locking");
         }
 
         @Override

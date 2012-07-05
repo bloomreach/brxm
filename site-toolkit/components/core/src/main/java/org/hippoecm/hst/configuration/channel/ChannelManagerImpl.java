@@ -18,14 +18,18 @@ package org.hippoecm.hst.configuration.channel;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.TimeZone;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -80,6 +84,13 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private Repository repository;
     private String channelsRoot = DEFAULT_HST_ROOT_PATH + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     private String contentRoot = DEFAULT_CONTENT_ROOT;
+
+    private final static DateFormat ISO8601_DATE_FORMAT;
+
+    static {
+        ISO8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+        ISO8601_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     /**
      * The codec which is used for the channel ID
@@ -193,12 +204,17 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (mountPoint != null) {
             channel.setHstMountPoint(mountPoint);
             channel.setHstPreviewMountPoint(mountPoint + "-preview");
+            channel.setContentRoot(mount.getCanonicalContentPath());
             String configurationPath = mount.getHstSite().getConfigurationPath();
             if (configurationPath != null) {
                 channel.setHstConfigPath(configurationPath);
             }
+        }
 
-            channel.setContentRoot(mount.getCanonicalContentPath());
+        channel.setLockedBy(mount.getLockedBy());
+        final Calendar lockedOn = mount.getLockedOn();
+        if (lockedOn != null) {
+            channel.setLockedOn(ISO8601_DATE_FORMAT.format(lockedOn.getTime()));
         }
 
         String mountPath = mount.getMountPath();

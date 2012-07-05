@@ -42,6 +42,8 @@ public class Channel implements Serializable {
     private String channelInfoClassName;
     private String mountId;
     private String locale;
+    private String lockedBy;
+    private String lockedOn;
 
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
@@ -83,6 +85,8 @@ public class Channel implements Serializable {
         this.channelInfoClassName = orig.channelInfoClassName;
         this.mountId = orig.mountId;
         this.locale = orig.locale;
+        this.lockedBy = orig.lockedBy;
+        this.lockedOn = orig.lockedOn;
     }
 
     /**
@@ -241,6 +245,38 @@ public class Channel implements Serializable {
         this.contextPath = contextPath;
     }
 
+    /**
+     * Returns null if the channel is not locked.
+     * @return
+     */
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    /**
+     * Set to null if the channel is not locked.
+     * @param lockedBy
+     */
+    public void setLockedBy(final String lockedBy) {
+        this.lockedBy = lockedBy;
+    }
+
+    /**
+     * Can return anything if the channel is not locked.
+     * @return
+     */
+    public String getLockedOn() {
+        return lockedOn;
+    }
+
+    /**
+     * Set to null if the channel is not locked.
+     * @param lockedOn
+     */
+    public void setLockedOn(final String lockedOn) {
+        this.lockedOn = lockedOn;
+    }
+
     public int hashCode() {
         return id.hashCode() ^ 317;
     }
@@ -271,6 +307,8 @@ public class Channel implements Serializable {
         b.append(",contextPath=").append(contextPath);
         b.append(",cmsPreviewPrefix=").append(cmsPreviewPrefix);
         b.append(",mountPath=").append(mountPath);
+        b.append(",lockedBy=").append(lockedBy);
+        b.append(",lockedOn=").append(lockedOn);
         b.append('}');
 
         return b.toString();

@@ -16,6 +16,7 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -340,6 +341,26 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public String getCmsLocation() {
             return delegatee.getCmsLocation();
+        }
+
+        @Override
+        public String getLockedBy() {
+            return delegatee.getLockedBy();
+        }
+
+        @Override
+        public void setLockedBy(final String userId) {
+            delegatee.setLockedBy(userId);
+        }
+
+        @Override
+        public Calendar getLockedOn() {
+            return delegatee.getLockedOn();
+        }
+
+        @Override
+        public void setLockedOn(final Calendar date) {
+            delegatee.setLockedOn(date);
         }
 
         @Override

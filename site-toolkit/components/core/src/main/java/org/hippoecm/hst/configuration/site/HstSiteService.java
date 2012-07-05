@@ -39,7 +39,6 @@ import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfigurationService;
 import org.hippoecm.hst.core.linking.LocationMapTree;
 import org.hippoecm.hst.core.linking.LocationMapTreeImpl;
 import org.hippoecm.hst.service.ServiceException;
-import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,10 @@ public class HstSiteService implements HstSite {
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         configurationPath = findConfigurationPath(site, hstManager, mount);
         HstNode configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(configurationPath);
-        
+
+        mount.setLockedBy(configurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY));
+        mount.setLockedOn(configurationNode.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON));
+
         if(configurationNode == null) {
             throw new ServiceException("Cannot find configuration at '"+configurationPath+"' for site '"+getName()+"'" );
         }

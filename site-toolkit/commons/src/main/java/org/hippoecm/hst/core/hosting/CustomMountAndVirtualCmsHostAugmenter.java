@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -753,6 +754,26 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
                 log.warn("Can only get cms location of a MutableVirtualHost. '{}' is not a MutableVirtualHost", virtualHost);
             }
             return null;
+        }
+
+        @Override
+        public String getLockedBy() {
+            return null;
+        }
+
+        @Override
+        public void setLockedBy(final String userId) {
+            throw new UnsupportedOperationException("CustomMount does not support locking");
+        }
+
+        @Override
+        public Calendar getLockedOn() {
+            return null;
+        }
+
+        @Override
+        public void setLockedOn(final Calendar lockedOn) {
+            throw new UnsupportedOperationException("CustomMount does not support locking");
         }
     }
 

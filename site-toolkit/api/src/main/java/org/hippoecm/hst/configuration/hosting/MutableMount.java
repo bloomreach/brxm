@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
+import java.util.Calendar;
+
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.service.ServiceException;
 
@@ -44,5 +46,31 @@ public interface MutableMount extends Mount {
      * @return the cms location (fully qualified URL) or <code>null</code> if not configured
      */
     String getCmsLocation();
-    
+
+    /**
+     * Return null when the mount is not locked.
+     *
+     * @return userId of the lock owner or null if not locked
+     */
+    String getLockedBy();
+
+    /**
+     * Set the mount's lock owner userId.
+     */
+    void setLockedBy(String userId);
+
+    /**
+     * Get the date on which the mount was locked. If the mount is not locked, this date can by any date and null.
+     *
+     * @return the date on which the mount was locked
+     */
+    Calendar getLockedOn();
+
+    /**
+     * Set the date on which the mount was locked.
+     *
+     * @param lockedOn
+     */
+    void setLockedOn(Calendar lockedOn);
+
 }
