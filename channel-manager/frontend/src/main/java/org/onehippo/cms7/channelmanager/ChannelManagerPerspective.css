@@ -94,6 +94,14 @@
   background-image: url("templatecomposer/button-save.png");
 }
 
+.channel-manager .x-btn-small .discard-channel {
+  background-image: url("templatecomposer/button-discard.png");
+}
+
+.channel-manager .x-btn-small .remove-lock {
+    background-image: url("templatecomposer/button-remove-lock.png");
+}
+
 .channel-manager .x-btn-small .channel-gear {
   background-image: url("templatecomposer/gear.png");
 }

@@ -80,7 +80,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         mountPath,
         cmsPreviewPrefix,
         contextPath,
-        url
+        url,
+        lockedBy,
+        lockedOn
     }
 
     public static final List<String> ALL_FIELD_NAMES;
@@ -397,6 +399,22 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) {
         ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
         return channelService.getChannelInfoClassInfo(channel.getId());
+    }
+
+    public void update() {
+        int previous = getChannelsHash();
+        loadChannels();
+        if (getChannelsHash() != previous) {
+            reload();
+        }
+    }
+
+    private int getChannelsHash() {
+        int hashCode = 0;
+        for (Channel channel : channels.values()) {
+            hashCode += channel.toString().hashCode();
+        }
+        return hashCode;
     }
 
     protected void loadChannels() {

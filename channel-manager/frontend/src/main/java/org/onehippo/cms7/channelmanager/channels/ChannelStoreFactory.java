@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
@@ -58,7 +59,7 @@ public final class ChannelStoreFactory {
                     String.format("Cannot find locale provider service with ID '%s'", localeProviderServiceId));
         }
 
-        ChannelStore channelStore = new ChannelStore("channel-store", fieldList,
+        final ChannelStore channelStore = new ChannelStore("channel-store", fieldList,
                                                      parseSortColumn(config, storeFieldNames), parseSortOrder(config),
                                                      new LocaleResolver(localeProvider), restProxyService);
 
@@ -68,6 +69,14 @@ public final class ChannelStoreFactory {
         if (config.containsKey("channelTypeIconPath")) {
             channelStore.setChannelTypeIconPath(config.getString("channelTypeIconPath"));
         }
+
+        context.registerService(new IRefreshable() {
+            @Override
+            public void refresh() {
+                channelStore.update();
+
+            }
+        }, IRefreshable.class.getName());
 
         return channelStore;
     }

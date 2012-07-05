@@ -110,8 +110,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }.createDelegate(this));
         }
 
-
-
         this.initUI(config);
 
         Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.constructor.call(this, config);
@@ -231,6 +229,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             return;
         }
 
+        this.toolbarButtons = this.getToolbarButtons();
+
         this.variantsComboBox = this.getVariantsComboBox(pageContext);
         var variantsComboBoxLabel = new Ext.Toolbar.TextItem({
             text : this.resources['variants-combo-box-label'],
@@ -261,7 +261,18 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     }
                 }
             },
-            variantsComboBoxLabel,
+            {
+                text: this.initialConfig.resources['discard-button'],
+                iconCls: 'discard-channel',
+                allowDepress: false,
+                width: 120,
+                listeners: {
+                    click: {
+                        fn : this.pageContainer.discardChanges,
+                        scope: this.pageContainer
+                    }
+                }
+            },
             this.variantsComboBox,
             '->',
             {
@@ -346,35 +357,15 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             Ext.getCmp('previousLiveNotification').hide();
         } else {
             if (this.pageContainer.canEdit) {
-                toolbar.add({
-                    text: this.initialConfig.resources['edit-button'],
-                    iconCls: 'edit-channel',
-                    allowDepress: false,
-                    width: 120,
-                    listeners: {
-                        click: {
-                            fn : this.pageContainer.toggleMode,
-                            scope: this.pageContainer
-                        }
-                    }
-                },
-                {
-                    text: this.initialConfig.resources['publish-button'],
-                    iconCls: 'publish-channel',
-                    allowDepress: false,
-                    width: 120,
-                    hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
-                    listeners: {
-                        click: {
-                            fn : this.pageContainer.publishHstConfiguration,
-                            scope: this.pageContainer
-                        }
-                    }
-                },
-                variantsComboBoxLabel,
-                this.variantsComboBox);
+                toolbar.add(
+                    this.toolbarButtons['edit'],
+                    this.toolbarButtons['publish'],
+                    this.toolbarButtons['discard'],
+                    this.toolbarButtons['unlock'],
+                    this.toolbarButtons['label'],
+                    variantsComboBoxLabel,
+                    this.variantsComboBox);
             }
-
             if (this.propertiesWindow) {
                 this.propertiesWindow.hide();
             }
@@ -385,7 +376,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
             Ext.getCmp('icon-toolbar-window').hide();
         }
-
         toolbar.doLayout();
     },
 
@@ -532,6 +522,83 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     selectVariant: function(id, variant) {
         this.pageContainer.pageContext.selectVariant(id, variant);
+    },
+
+    getToolbarButtons : function() {
+        var editButton = new Ext.Toolbar.Button({
+            text: this.initialConfig.resources['edit-button'],
+            iconCls: 'edit-channel',
+            allowDepress: false,
+            width: 120,
+            listeners: {
+                click: {
+                    fn : this.pageContainer.toggleMode,
+                    scope: this.pageContainer
+                }
+            }
+        });
+        var publishButton = new Ext.Toolbar.Button({
+            text: this.initialConfig.resources['publish-button'],
+            iconCls: 'publish-channel',
+            allowDepress: false,
+            width: 120,
+            hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
+            listeners: {
+                click: {
+                    fn : this.pageContainer.publishHstConfiguration,
+                    scope: this.pageContainer
+                }
+            }
+        });
+        var discardButton = new Ext.Toolbar.Button({
+            text: this.initialConfig.resources['discard-button'],
+            iconCls: 'discard-channel',
+            allowDespress: false,
+            width: 120,
+            hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
+            listeners: {
+                click: {
+                    fn : this.pageContainer.discardChanges,
+                    scope: this.pageContainer
+                }
+            }
+        });
+        var unlockButton = new Ext.Toolbar.Button({
+            text: this.initialConfig.resources['unlock-button'],
+            iconCls: 'remove-lock',
+            allowDepress: false,
+            width: 120,
+            hidden: true,
+            listeners: {
+                click: {
+                    fn : this.pageContainer.unlockMount,
+                    scope: this.pageContainer
+                }
+            }
+        });
+        var self = this;
+        var lockLabel = new Ext.Toolbar.TextItem({});
+        var mountId = this.pageContainer.pageContext.ids.mountId;
+        Ext.Ajax.request({
+            headers: {
+                'FORCE_CLIENT_HOST': 'true'
+            },
+            url: this.composerRestMountUrl+'/'+mountId+'./lock?FORCE_CLIENT_HOST=true',
+            success: function (response) {
+                var reply = Ext.decode(response.responseText).data;
+                if (reply.locked == 'true') {
+                    editButton.setDisabled(true);
+                    publishButton.setDisabled(true);
+                    discardButton.setDisabled(true);
+                    var lockedOn = new Date(reply.lockedOn).format(self.initialConfig.resources['mount-locked-format']);
+                    lockLabel.setText(self.initialConfig.resources['mount-locked-toolbar'].format(reply.lockedBy, lockedOn));
+                    if (reply.unlockable == 'true') {
+                        unlockButton.setVisible(true);
+                    }
+                }
+            }
+        });
+        return {'edit': editButton, 'publish': publishButton, 'discard': discardButton, 'unlock': unlockButton, 'label': lockLabel};
     }
 
 });

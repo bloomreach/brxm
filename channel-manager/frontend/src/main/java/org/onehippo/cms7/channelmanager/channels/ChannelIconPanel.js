@@ -23,12 +23,13 @@ Hippo.ChannelManager.ChannelIconDataView = Ext.extend(Ext.DataView, {
         '<tpl for=".">',
             '<span class="channel-group-handle expanded {[xindex % 2 === 0 ? "even" : "odd"]}">{name}</span>',
             '<ul class="channel-group {[xindex % 2 === 0 ? "even" : "odd"]}">',
-            '<tpl for="channels">',
-                '<li class="channel" channelId="{id}">',
-                    '<img src="{channelTypeImg}" />',
-                    '<br /><img src="{channelRegionImg}" class="regionIcon" /><span class="channel-name">{name}</span>',
-                '</li>',
-            '</tpl>',
+                '<tpl for="channels">',
+                    '<li class="channel" channelId="{id}">',
+                        '<img src="{channelTypeImg}" />',
+                        '<br /><img src="{channelRegionImg}" class="regionIcon" /><span class="channel-name">{name}</span>',
+                        '<tpl if="lockedBy.length &gt; 0"><br /><span class="lockedBy">{lockedLabel}</span></tpl>',
+                    '</li>',
+                '</tpl>',
             '</ul>',
         '</tpl>'
     ),
@@ -75,6 +76,11 @@ Hippo.ChannelManager.ChannelIconDataView = Ext.extend(Ext.DataView, {
 
         for (var i= 0, len=records.length; i < len; i++) {
             var data = this.prepareData(records[i].json, startIndex + i, records[i]);
+
+            if (data.lockedBy.length > 0) {
+                var lockedDate = new Date(data.lockedOn).format(this.resources['locked-date-format']);
+                data.lockedLabel = this.resources['locked'].format(data.lockedBy, lockedDate);
+            }
 
             var groupId = records[i].json[this.groupByProperty];
             if (!groupId) {
