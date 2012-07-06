@@ -106,7 +106,7 @@
       <sv:value>/hippo:namespaces</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>11006.0</sv:value>
+      <sv:value>11007.0</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
