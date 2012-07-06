@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
@@ -52,6 +53,7 @@ import org.hippoecm.frontend.service.IFocusListener;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,6 +116,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     public static final String FEEDBACK = "wicket.feedback";
     public static final String BEHAVIOR = "wicket.behavior";
     public static final String VISIBLE = "wicket.visible";
+    public static final String DEFAULT_LOCALE = "en";
 
     private boolean redraw;
     private String wicketServiceId;
@@ -470,13 +473,32 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
     public String getString(Map<String, String> criteria) {
         String[] translators = config.getStringArray(ITranslateService.TRANSLATOR_ID);
         if (translators != null) {
+            String translation = null;
             for (String translatorId : translators) {
                 ITranslateService translator = (ITranslateService) context.getService(translatorId,
                         ITranslateService.class);
                 if (translator != null) {
-                    String translation = translator.translate(criteria);
+                    translation = translator.translate(criteria);
                     if (translation != null) {
                         return translation;
+                    }
+                }
+            }
+
+            // if translation is not found by the criteria, then let's try to find the default locale translation instead.
+            if (translation == null && !DEFAULT_LOCALE.equals(criteria.get(HippoNodeType.HIPPO_LANGUAGE))) {
+                Map<String, String> defaultLocaleCriteria = new TreeMap<String, String>();
+                defaultLocaleCriteria.put(HippoNodeType.HIPPO_LANGUAGE, DEFAULT_LOCALE);
+                defaultLocaleCriteria.put(HippoNodeType.HIPPO_KEY, criteria.get(HippoNodeType.HIPPO_KEY));
+
+                for (String translatorId : translators) {
+                    ITranslateService translator = (ITranslateService) context.getService(translatorId,
+                            ITranslateService.class);
+                    if (translator != null) {
+                        translation = translator.translate(defaultLocaleCriteria);
+                        if (translation != null) {
+                            return translation;
+                        }
                     }
                 }
             }
