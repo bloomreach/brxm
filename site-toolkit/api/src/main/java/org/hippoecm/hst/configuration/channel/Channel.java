@@ -246,24 +246,25 @@ public class Channel implements Serializable {
     }
 
     /**
-     * Returns null if the channel is not locked.
-     * @return
+     * Retrieve this channel lock owner's userid. Returns null if the channel is not locked.
+     * @return this channel lock owner's userid
      */
     public String getLockedBy() {
         return lockedBy;
     }
 
     /**
-     * Set to null if the channel is not locked.
-     * @param lockedBy
+     * Set owner of this channel's lock. Set to null if the channel is not locked.
+     * @param lockedBy this channel lock owner's userid
      */
     public void setLockedBy(final String lockedBy) {
         this.lockedBy = lockedBy;
     }
 
     /**
-     * Can return anything if the channel is not locked.
-     * @return
+     * Retrieve the timestamp when the lock was set. This field is in the ISO8601 timestamp format, so it is usable in
+     * JavaScript. Be warned that this method returns gives invalid results if the channel is not locked.
+     * @return ISO8601 timestamp of when channel lock was acquired
      */
     public String getLockedOn() {
         return lockedOn;
@@ -271,7 +272,7 @@ public class Channel implements Serializable {
 
     /**
      * Set to null if the channel is not locked.
-     * @param lockedOn
+     * @param lockedOn ISO8601 timestamp of when channel lock was acquired
      */
     public void setLockedOn(final String lockedOn) {
         this.lockedOn = lockedOn;
