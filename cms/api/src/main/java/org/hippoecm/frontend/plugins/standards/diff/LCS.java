@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standards.diff;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,7 +65,13 @@ public class LCS {
         ADDED, REMOVED, INVARIANT
     }
 
-    static public class Change<T> {
+    /**
+     * Elemental change in an array of values.
+     * Serializable if T is serializable.
+     *
+     * @param <T>
+     */
+    static public class Change<T> implements Serializable {
 
         private ChangeType type;
         private T value;
