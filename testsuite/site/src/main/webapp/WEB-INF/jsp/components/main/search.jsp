@@ -49,13 +49,19 @@
           varStatus="indexer">
           <hst:link var="link" hippobean="${bean}" />
           <ul class="list-overview">
-            <li class="title"><a href="${link}">${bean.title}</a>
-            <div><c:if test="${hst:isReadable(bean, 'date')}">
-              <p><fmt:formatDate value="${bean.date.time}" type="Date"
-                pattern="MMMM d, yyyy h:mm a" /></p>
-            </c:if> <c:if test="${hst:isReadable(bean, 'summary')}">
-              <p>${bean.summary}</p>
-            </c:if></div>
+            <li class="title">
+              <c:if test="${hst:isNodeType(bean.node, 'demosite:newsdocument')}">
+                <img src="<hst:link path='/images/news.png'/>"/>
+              </c:if>
+              <a href="${link}">${bean.title}</a>
+              <div>
+                <c:if test="${hst:isReadable(bean, 'date')}">
+                  <p><fmt:formatDate value="${bean.date.time}" type="Date" pattern="MMMM d, yyyy h:mm a" /></p>
+                </c:if>
+                <c:if test="${hst:isReadable(bean, 'summary')}">
+                  <p>${bean.summary}</p>
+                </c:if>
+              </div>
             </li>
           </ul>
         </c:forEach>

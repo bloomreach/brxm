@@ -232,6 +232,7 @@ site/src/main/webapp/images/icons/flag-16_nl.png -text
 site/src/main/webapp/images/icons/html_editor.gif -text
 site/src/main/webapp/images/icons/publish-schedule-16.png -text svneol=unset#image/png
 site/src/main/webapp/images/icons/workflow-requestpublish-16.png -text svneol=unset#image/png
+site/src/main/webapp/images/news.png -text
 site/src/main/webapp/images/onehippo.gif -text
 site/src/main/webapp/images/rss.gif -text
 site/src/main/webapp/images/volgende.gif -text
