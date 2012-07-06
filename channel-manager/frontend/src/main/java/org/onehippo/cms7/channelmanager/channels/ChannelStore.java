@@ -411,8 +411,10 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private int getChannelsHash() {
         int hashCode = 0;
-        for (Channel channel : channels.values()) {
-            hashCode += channel.toString().hashCode();
+        if (channels != null) {
+            for (Channel channel : channels.values()) {
+                hashCode += channel.toString().hashCode();
+            }
         }
         return hashCode;
     }
