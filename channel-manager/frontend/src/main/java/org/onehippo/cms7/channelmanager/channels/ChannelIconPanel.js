@@ -78,7 +78,7 @@ Hippo.ChannelManager.ChannelIconDataView = Ext.extend(Ext.DataView, {
             var data = this.prepareData(records[i].json, startIndex + i, records[i]);
 
             if (data.lockedBy.length > 0) {
-                var lockedDate = new Date(data.lockedOn).format(this.resources['locked-date-format']);
+                var lockedDate = new Date(parseInt(data.lockedOn)).format(this.resources['locked-date-format']);
                 data.lockedLabel = this.resources['locked'].format(data.lockedBy, lockedDate);
             }
 

@@ -590,7 +590,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     editButton.setDisabled(true);
                     publishButton.setDisabled(true);
                     discardButton.setDisabled(true);
-                    var lockedOn = new Date(reply.lockedOn).format(self.initialConfig.resources['mount-locked-format']);
+                    var lockedOn = new Date(parseInt(reply.lockedOn)).format(self.initialConfig.resources['mount-locked-format']);
                     lockLabel.setText(self.initialConfig.resources['mount-locked-toolbar'].format(reply.lockedBy, lockedOn));
                     if (reply.unlockable == 'true') {
                         unlockButton.setVisible(true);
