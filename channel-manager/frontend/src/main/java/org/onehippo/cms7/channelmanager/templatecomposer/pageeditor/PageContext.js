@@ -53,6 +53,9 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         this.templateComposerContextPath = config.templateComposerContextPath;
         this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
         this.renderPath = config.renderPath;
+        this.locked = false;
+        this.lockedBy = "";
+        this.lockedOn = 0;
 
         this.iframeResourceCache = cache;
 
@@ -171,6 +174,19 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                     self.hasPreviewHstConfig = self._getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig'));
                     if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;
+                    }
+
+                    var lockedBy = responseObject.getResponseHeader('HST-Mount-LockedBy');
+                    if (lockedBy !== undefined) {
+                        self.locked = self.pageContainer.cmsUser != lockedBy;
+                        self.lockedBy = lockedBy;
+                        self.lockedOn = parseInt(responseObject.getResponseHeader('HST-Mount-LockedOn'));
+                        self.unlockable = responseObject.getResponseHeader('HST-Mount-Unlockable') == 'true' ? true : false;
+                    } else {
+                        self.locked = false;
+                        self.lockedBy = "";
+                        self.lockedOn = 0;
+                        self.unlockable = false;
                     }
 
                     console.log('hstMetaDataResponse: url:'+url+', pageId:'+pageId+', mountId:'+mountId);

@@ -81,6 +81,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
         this.locale = config.locale;
 
+        this.canUnlockChannels = config.canUnlockChannels;
+
         this.allVariantsStore = null;
         this.allVariantsStoreFuture = null;
         if (typeof(this.variantsUuid) !== 'undefined' && this.variantsUuid !== null) {
@@ -529,6 +531,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             text: this.initialConfig.resources['edit-button'],
             iconCls: 'edit-channel',
             allowDepress: false,
+            disabled: this.pageContainer.pageContext.locked,
             width: 120,
             listeners: {
                 click: {
@@ -541,6 +544,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             text: this.initialConfig.resources['publish-button'],
             iconCls: 'publish-channel',
             allowDepress: false,
+            disabled: this.pageContainer.pageContext.locked,
             width: 120,
             hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
             listeners: {
@@ -554,6 +558,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             text: this.initialConfig.resources['discard-button'],
             iconCls: 'discard-channel',
             allowDespress: false,
+            disabled: this.pageContainer.pageContext.locked,
             width: 120,
             hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
             listeners: {
@@ -567,8 +572,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             text: this.initialConfig.resources['unlock-button'],
             iconCls: 'remove-lock',
             allowDepress: false,
+            hidden: !this.pageContainer.pageContext.hasPreviewHstConfig || !this.canUnlockChannels,
             width: 120,
-            hidden: true,
             listeners: {
                 click: {
                     fn : this.pageContainer.unlockMount,
@@ -576,28 +581,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 }
             }
         });
-        var self = this;
         var lockLabel = new Ext.Toolbar.TextItem({});
-        var mountId = this.pageContainer.pageContext.ids.mountId;
-        Ext.Ajax.request({
-            headers: {
-                'FORCE_CLIENT_HOST': 'true'
-            },
-            url: this.composerRestMountUrl+'/'+mountId+'./lock?FORCE_CLIENT_HOST=true',
-            success: function (response) {
-                var reply = Ext.decode(response.responseText).data;
-                if (reply.locked == 'true') {
-                    editButton.setDisabled(true);
-                    publishButton.setDisabled(true);
-                    discardButton.setDisabled(true);
-                    var lockedOn = new Date(parseInt(reply.lockedOn)).format(self.initialConfig.resources['mount-locked-format']);
-                    lockLabel.setText(self.initialConfig.resources['mount-locked-toolbar'].format(reply.lockedBy, lockedOn));
-                    if (reply.unlockable == 'true') {
-                        unlockButton.setVisible(true);
-                    }
-                }
-            }
-        });
         return {'edit': editButton, 'publish': publishButton, 'discard': discardButton, 'unlock': unlockButton, 'label': lockLabel};
     }
 

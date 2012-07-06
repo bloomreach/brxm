@@ -23,6 +23,7 @@ import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
@@ -74,6 +75,8 @@ public class PageEditor extends ExtPanel {
     // default initial connection timeout in milliseconds
     private static final long DEFAULT_INITIAL_CONNECTION_TIMEOUT = 60000L;
 
+    private static final String SELECT_ADMIN_GROUPS_QUERY = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND fn:name() = 'admin' AND hipposys:members='{}'";
+
     @ExtProperty
     private Boolean debug = false;
 
@@ -100,6 +103,10 @@ public class PageEditor extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private String cmsUser;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private Boolean canUnlockChannels = Boolean.FALSE;
 
     @ExtProperty
     private Boolean previewMode = Boolean.TRUE;
@@ -149,6 +156,7 @@ public class PageEditor extends ExtPanel {
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
+        this.canUnlockChannels = isUserAdministrator(UserSession.get().getJcrSession());
         if (variantsPath != null) {
             try {
                 if (UserSession.get().getJcrSession().nodeExists(variantsPath)) {
@@ -396,5 +404,17 @@ public class PageEditor extends ExtPanel {
         for (Observer<JcrNodeModel> observer : observers) {
             observer.getObservable().detach();
         }
+    }
+
+    private boolean isUserAdministrator(final javax.jcr.Session session) {
+        try {
+            String selectGroupsStatement = SELECT_ADMIN_GROUPS_QUERY.replace("{}", session.getUserID());
+            @SuppressWarnings("deprecation")
+            Query selectGroupsQuery = session.getWorkspace().getQueryManager().createQuery(selectGroupsStatement, Query.SQL);
+            return selectGroupsQuery.execute().getNodes().hasNext();
+        } catch (RepositoryException e) {
+            log.error("Unable to determine group membership", e);
+        }
+        return false;
     }
 }
