@@ -43,7 +43,7 @@ public class Channel implements Serializable {
     private String mountId;
     private String locale;
     private String lockedBy;
-    private String lockedOn;
+    private Long lockedOn;
 
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
@@ -246,8 +246,8 @@ public class Channel implements Serializable {
     }
 
     /**
-     * Retrieve this channel lock owner's userid. Returns null if the channel is not locked.
-     * @return this channel lock owner's userid
+     * Retrieve this channel lock owner's userId. Returns null if the channel is not locked.
+     * @return this channel lock owner's userId
      */
     public String getLockedBy() {
         return lockedBy;
@@ -255,26 +255,26 @@ public class Channel implements Serializable {
 
     /**
      * Set owner of this channel's lock. Set to null if the channel is not locked.
-     * @param lockedBy this channel lock owner's userid
+     * @param lockedBy this channel lock owner's userId
      */
     public void setLockedBy(final String lockedBy) {
         this.lockedBy = lockedBy;
     }
 
     /**
-     * Retrieve the timestamp when the lock was set. This field is in the ISO8601 timestamp format, so it is usable in
-     * JavaScript. Be warned that this method returns gives invalid results if the channel is not locked.
-     * @return ISO8601 timestamp of when channel lock was acquired
+     * Retrieve the timestamp when the lock was set. Be warned that this method returns gives invalid results if the
+     * channel is not locked.
+     * @return timestamp in milliseconds of when channel lock was acquired
      */
-    public String getLockedOn() {
+    public Long getLockedOn() {
         return lockedOn;
     }
 
     /**
      * Set to null if the channel is not locked.
-     * @param lockedOn ISO8601 timestamp of when channel lock was acquired
+     * @param lockedOn timestamp in milliseconds of when channel lock was acquired
      */
-    public void setLockedOn(final String lockedOn) {
+    public void setLockedOn(final Long lockedOn) {
         this.lockedOn = lockedOn;
     }
 

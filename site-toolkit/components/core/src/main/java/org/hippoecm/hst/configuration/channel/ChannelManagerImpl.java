@@ -85,13 +85,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private String channelsRoot = DEFAULT_HST_ROOT_PATH + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     private String contentRoot = DEFAULT_CONTENT_ROOT;
 
-    private final static DateFormat ISO8601_DATE_FORMAT;
-
-    static {
-        ISO8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-        ISO8601_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-
     /**
      * The codec which is used for the channel ID
      */
@@ -214,7 +207,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         channel.setLockedBy(mount.getLockedBy());
         final Calendar lockedOn = mount.getLockedOn();
         if (lockedOn != null) {
-            channel.setLockedOn(ISO8601_DATE_FORMAT.format(lockedOn.getTime()));
+            channel.setLockedOn(lockedOn.getTimeInMillis());
         }
 
         String mountPath = mount.getMountPath();

@@ -70,13 +70,6 @@ public class MountResource extends AbstractConfigResource {
 
     private final static String SELECT_ADMIN_GROUPS_QUERY = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND fn:name() = 'admin' AND hipposys:members='{}'";
 
-    private final static DateFormat ISO8601_DATE_FORMAT;
-
-    static {
-        ISO8601_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
-        ISO8601_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-
     @GET
     @Path("/pagemodel/{pageId}/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -144,7 +137,7 @@ public class MountResource extends AbstractConfigResource {
                 lockState.put("locked", Boolean.toString(isLocked(jcrSession, configPath)));
                 lockState.put("lockedBy", getLockedBy(jcrSession, configPath));
                 final Calendar lockedOn = getLockedOn(jcrSession, configPath);
-                lockState.put("lockedOn", ISO8601_DATE_FORMAT.format(lockedOn.getTime()));
+                lockState.put("lockedOn", String.valueOf(lockedOn.getTimeInMillis()));
                 lockState.put("unlockable", Boolean.toString(isUserAdminstrator(jcrSession)));
                 return ok("The lock state for this mount.", lockState);
             } catch (LoginException e) {
