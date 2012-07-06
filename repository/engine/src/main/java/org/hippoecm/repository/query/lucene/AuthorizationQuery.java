@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -86,6 +87,10 @@ public class AuthorizationQuery {
             }
             log.debug("----START CREATION AUTHORIZATION QUERY---------");
             this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class), memberships,(InternalHippoSession)session, indexingConfig, nsMappings, ntMgr);
+/*
+            this.query = new BooleanQuery(true);
+            query.add(new MatchAllDocsQuery(), Occur.MUST);
+*/
             log.info("AUTHORIZATION Query: " + query);
             log.debug("----END CREATION AUTHORIZATION QUERY-----------");
         }
@@ -197,7 +202,7 @@ public class AuthorizationQuery {
                             Query tq = new TermQuery(new Term(internalFieldName, facetRule.getValue()));
                             if (facetRule.isFacetOptional()) {
                                 // If the property exists, it must be equal. Else, it is also ok
-                                BooleanQuery bq = new BooleanQuery(false);
+                                BooleanQuery bq = new BooleanQuery(true);
 
                                 // all the docs that do *not* have the property:
                                 Query docsThatMissPropertyQuery = QueryHelper.negateQuery(new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
@@ -222,7 +227,8 @@ public class AuthorizationQuery {
                             }
                         }
                     } else {
-                        log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName() + " not allowed for facetted search. " + "Add the property to the indexing configuration to be defined as FACET");
+                        log.warn("Property " + nodeName.getNamespaceURI() + ":" + nodeName.getLocalName() + " not allowed for facetted search. " +
+                                         "Add the property to the indexing configuration to be defined as FACET");
                     }
                 } catch (IllegalNameException e) {
                     log.error(e.toString());
@@ -245,12 +251,21 @@ public class AuthorizationQuery {
                     }
                 } else if ("nodename".equalsIgnoreCase(nodeNameString)) {
                     return getNodeNameQuery(facetRule);
-                } else if ("jcr:primaryType".equals(nodeNameString)) {
-                    return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule);
-                } else if ("jcr:mixinTypes".equals(nodeNameString)) {
-                    return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule);
                 } else {
-                    log.error("Ignoring facetrule with facet '" + nodeNameString + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' " + "or 'jcr:mixinTypes' when hipposys:type = Name.");
+                    try {
+                        if ("jcr:primaryType".equals(nodeNameString)) {
+                            return getNodeTypeQuery(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule, session, nsMappings);
+                        } else if ("jcr:mixinTypes".equals(nodeNameString)) {
+                            return getNodeTypeQuery(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule, session, nsMappings);
+                        } else {
+                            log.error("Ignoring facetrule with facet '" + nodeNameString + "'. hippo:facet must be either 'nodetype', 'jcr:primaryType' " +
+                                              "or 'jcr:mixinTypes' when hipposys:type = Name.");
+                        }
+                    } catch (IllegalNameException ine) {
+                        log.warn("Illegal name in facet rule", ine);
+                    } catch(NamespaceException ne) {
+                        log.warn("Namespace exception in facet rule", ne);
+                    }
                 }
                 break;
         }
@@ -264,16 +279,9 @@ public class AuthorizationQuery {
                                              final NamespaceMappings nsMappings) {
         List<Term> terms = new ArrayList<Term>();
         try {
+
             NodeType base = ntMgr.getNodeType(facetRule.getValue());
-            if (base.isMixin()) {
-                // search for nodes where jcr:mixinTypes is set to this mixin
-                Term t = new Term(ServicingFieldNames.HIPPO_MIXINTYPE, facetRule.getValue());
-                terms.add(t);
-            } else {
-                // search for nodes where jcr:primaryType is set to this type
-                Term t = new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE, facetRule.getValue());
-                terms.add(t);
-            }
+            terms.add(getTerm(base, session, nsMappings));
 
             // now search for all node types that are derived from base
             NodeTypeIterator allTypes = ntMgr.getAllNodeTypes();
@@ -281,17 +289,7 @@ public class AuthorizationQuery {
                 NodeType nt = allTypes.nextNodeType();
                 NodeType[] superTypes = nt.getSupertypes();
                 if (Arrays.asList(superTypes).contains(base)) {
-                    Name n = session.getQName(nt.getName());
-                    String ntName = nsMappings.translateName(n);
-                    Term t;
-                    if (nt.isMixin()) {
-                        // search on jcr:mixinTypes
-                        t = new Term(ServicingFieldNames.HIPPO_MIXINTYPE, ntName);
-                    } else {
-                        // search on jcr:primaryType
-                        t = new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE, ntName);
-                    }
-                    terms.add(t);
+                    terms.add(getTerm(nt, session, nsMappings));
                 }
             }
         } catch (NoSuchNodeTypeException e) {
@@ -305,7 +303,7 @@ public class AuthorizationQuery {
         } else if (terms.size() == 1) {
             return new TermQuery(terms.get(0));
         } else {
-            BooleanQuery b = new BooleanQuery();
+            BooleanQuery b = new BooleanQuery(true);
             for (Iterator<Term> it = terms.iterator(); it.hasNext();) {
                 b.add(new TermQuery(it.next()), Occur.SHOULD);
             }
@@ -313,14 +311,29 @@ public class AuthorizationQuery {
         }
     }
 
-    private Query getNodeTypeQuery(String luceneFieldName, FacetRule facetRule) {
+    private Term getTerm(NodeType nt, InternalHippoSession session, NamespaceMappings nsMappings) throws IllegalNameException, NamespaceException {
+        String ntName = getNtName(nt.getName(), session, nsMappings);
+        if (nt.isMixin()) {
+            return new Term(ServicingFieldNames.HIPPO_MIXINTYPE, ntName);
+        } else {
+            return new Term(ServicingFieldNames.HIPPO_PRIMARYTYPE, ntName);
+        }
+    }
+
+    private Query getNodeTypeQuery(String luceneFieldName, FacetRule facetRule, InternalHippoSession session, NamespaceMappings nsMappings) throws IllegalNameException, NamespaceException {
         String termValue = facetRule.getValue();
-        Query nodetypeQuery = new TermQuery(new Term(luceneFieldName, termValue));
+        String name = getNtName(termValue, session, nsMappings);
+        Query nodetypeQuery = new TermQuery(new Term(luceneFieldName, name));
         if (facetRule.isEqual()) {
             return nodetypeQuery;
         } else {
             return QueryHelper.negateQuery(nodetypeQuery);
         }
+    }
+
+    private String getNtName(String value, InternalHippoSession session, NamespaceMappings nsMappings) throws IllegalNameException, NamespaceException {
+        Name n = session.getQName(value);
+        return nsMappings.translateName(n);
     }
 
     private Query getNodeNameQuery(FacetRule facetRule) {
