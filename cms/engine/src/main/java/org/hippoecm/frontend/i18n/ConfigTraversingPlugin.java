@@ -24,7 +24,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.login.LoginPlugin;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -38,8 +37,6 @@ public class ConfigTraversingPlugin extends AbstractTranslateService implements 
 
     final static Logger log = LoggerFactory.getLogger(ConfigTraversingPlugin.class);
 
-    private static final String DEFAULT_LOCALE = LoginPlugin.DEFAULT_LOCALE;
-
     private IPluginConfig translations;
 
     public ConfigTraversingPlugin(IPluginContext context, IPluginConfig config) {
@@ -51,20 +48,12 @@ public class ConfigTraversingPlugin extends AbstractTranslateService implements 
         if (translations != null) {
             IPluginConfig keyConfig = translations.getPluginConfig((String) criteria.get(HippoNodeType.HIPPO_KEY));
             if (keyConfig != null) {
-                IPluginConfig defaultTranslationConfig = null;
                 Set<IPluginConfig> candidates = keyConfig.getPluginConfigSet();
                 Set<ConfigWrapper> list = new HashSet<ConfigWrapper>((int) candidates.size());
                 for (IPluginConfig candidate : candidates) {
-                    String language = candidate.getString(HippoNodeType.HIPPO_LANGUAGE, "");
-                    if (language.equals(criteria.get(HippoNodeType.HIPPO_LANGUAGE))) {
+                    if (candidate.getString(HippoNodeType.HIPPO_LANGUAGE, "").equals(criteria.get(HippoNodeType.HIPPO_LANGUAGE))) {
                         list.add(new ConfigWrapper(candidate, criteria));
                     }
-                    if (DEFAULT_LOCALE.equals(language)) {
-                        defaultTranslationConfig = candidate;
-                    }
-                }
-                if (list.isEmpty() && defaultTranslationConfig != null) {
-                    list.add(new ConfigWrapper(defaultTranslationConfig, criteria));
                 }
                 return new TranslationSelectionStrategy<IModel>(criteria.keySet()).select(list).getModel();
             }
