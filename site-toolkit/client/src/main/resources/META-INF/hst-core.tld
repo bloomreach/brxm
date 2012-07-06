@@ -749,4 +749,17 @@
     </example>
   </function>
 
+  <function>
+    <description>
+      Tests if the node is of the specified primary node type or mixin type, or a subtype thereof,
+      respecting the effective node type of the node.
+    </description>
+    <name>isNodeType</name>
+    <function-class>org.hippoecm.hst.util.NodeUtils</function-class>
+    <function-signature>boolean isNodeType(javax.jcr.Node, java.lang.String)</function-signature>
+    <example>
+      &lt;c:if test="${hst:isNodeType(bean.node, 'demosite:news')}"&gt;
+    </example>
+  </function>
+
 </taglib>

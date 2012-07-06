@@ -417,6 +417,7 @@ commons/src/test/java/org/hippoecm/hst/core/jcr/TestRewindableEventIterator.java
 commons/src/test/java/org/hippoecm/hst/util/TestHeadElementUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstRequestUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstResponseUtils.java svneol=native#text/plain
+commons/src/test/java/org/hippoecm/hst/util/TestNodeUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestPropertyDefinitionUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestServletConfigUtils.java svneol=native#text/plain
 components/caching/pom.xml svneol=native#text/plain

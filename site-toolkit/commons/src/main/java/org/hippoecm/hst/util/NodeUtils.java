@@ -146,7 +146,29 @@ public class NodeUtils {
         
         return null;
     }
-    
+
+    /**
+     * Checks if the <code>node</code> is type of the <code>nodeTypeName</code>.
+     * Returns <code>true</code> if this node is of the specified primary node
+     * type or mixin type, or a subtype thereof of the <code>nodeTypeName</code>. Returns <code>false</code>
+     * otherwise. Also see {@link Node#isNodeType(String)}
+     * </P>
+     * @param node
+     * @param nodeTypeName
+     * @return <code>true</code> when <code>node</code> is of the specified primary node type or mixin type, 
+     * or a subtype thereof of any of the <code>nodeTypeName</code>
+     * @throws RepositoryException
+     */
+    public static boolean isNodeType(Node node, String nodeTypeName) throws RepositoryException {
+        if (nodeTypeName != null) {
+            if (node.isNodeType(nodeTypeName)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
     /**
      * Checks if the <code>node</code> is type of any of the <code>nodeTypeNames</code>.
      * Returns <code>true</code> if this node is of the specified primary node
