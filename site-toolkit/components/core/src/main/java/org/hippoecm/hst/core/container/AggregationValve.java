@@ -32,8 +32,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -53,7 +55,9 @@ import org.w3c.dom.Element;
  * @version $Id$
  */
 public class AggregationValve extends AbstractValve {
-    
+
+    private final static String SELECT_ADMIN_GROUPS_QUERY = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND fn:name() = 'admin' AND hipposys:members='{}'";
+
     @Override
     public void invoke(ValveContext context) throws ContainerException {
 
@@ -351,6 +355,14 @@ public class AggregationValve extends AbstractValve {
                         rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
                         rootWindow.getResponseState().addHeader("HST-Page-Id", compConfig.getCanonicalIdentifier());
+                        if (mount instanceof MutableMount) {
+                            MutableMount mutableMount = (MutableMount)mount;
+                            final String lockedBy = mutableMount.getLockedBy();
+                            if (StringUtils.isNotBlank(lockedBy)) {
+                                rootWindow.getResponseState().addHeader("HST-Mount-LockedBy", lockedBy);
+                                rootWindow.getResponseState().addHeader("HST-Mount-LockedOn", String.valueOf(mutableMount.getLockedOn().getTimeInMillis()));
+                            }
+                        }
                         Object variant = session.getAttribute("RENDER_VARIANT");
                         if (variant == null) {
                             variant = "default";
@@ -529,6 +541,6 @@ public class AggregationValve extends AbstractValve {
         @Override public void setContentType(String type) {}
         @Override public void setLocale(Locale loc) {}
     }
-    
-    
+
+
 }

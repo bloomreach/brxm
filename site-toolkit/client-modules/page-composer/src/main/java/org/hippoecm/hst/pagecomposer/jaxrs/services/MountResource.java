@@ -68,8 +68,6 @@ import org.slf4j.LoggerFactory;
 public class MountResource extends AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(MountResource.class);
 
-    private final static String SELECT_ADMIN_GROUPS_QUERY = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND fn:name() = 'admin' AND hipposys:members='{}'";
-
     @GET
     @Path("/pagemodel/{pageId}/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -111,42 +109,6 @@ public class MountResource extends AbstractConfigResource {
 
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
-    }
-
-    /**
-     * Retrieve information about the lock state of a mount.
-     * @param servletRequest
-     * @return ok {@link Response} when the information was retrieved and error {@link Response} otherwise
-     */
-    @GET
-    @Path("/lock/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getLock(@Context HttpServletRequest servletRequest) {
-        final HstRequestContext requestContext = getRequestContext(servletRequest);
-
-        ContextualizableMount ctxEditingMount = getPreviewMount(requestContext);
-        if (ctxEditingMount == null) {
-            return error("This mount is not suitable for the template composer.");
-        }
-        String configPath = ctxEditingMount.getPreviewHstSite().getConfigurationPath();
-
-        if(configPath != null) {
-            try {
-                final Session jcrSession = requestContext.getSession();
-                Map<String, String> lockState = new HashMap<String, String>();
-                lockState.put("locked", Boolean.toString(isLocked(jcrSession, configPath)));
-                lockState.put("lockedBy", getLockedBy(jcrSession, configPath));
-                final Calendar lockedOn = getLockedOn(jcrSession, configPath);
-                lockState.put("lockedOn", String.valueOf(lockedOn.getTimeInMillis()));
-                lockState.put("unlockable", Boolean.toString(isUserAdminstrator(jcrSession)));
-                return ok("The lock state for this mount.", lockState);
-            } catch (LoginException e) {
-                return error("Could not get a jcr session : " + e + ".");
-            } catch (RepositoryException e) {
-                return error("Could not check lock : " + e);
-            }
-        }
-        return error("Could not find the mount configuration.");
     }
 
     /**
@@ -483,12 +445,5 @@ public class MountResource extends AbstractConfigResource {
         } else {
             return error("Cannot discard non preview site");
         }
-    }
-
-    private boolean isUserAdminstrator(final Session session) throws RepositoryException {
-        String selectGroupsStatement = SELECT_ADMIN_GROUPS_QUERY.replace("{}", session.getUserID());
-        @SuppressWarnings("deprecation")
-        Query selectGroupsQuery = session.getWorkspace().getQueryManager().createQuery(selectGroupsStatement, Query.SQL);
-        return selectGroupsQuery.execute().getNodes().hasNext();
     }
 }
