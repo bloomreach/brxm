@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Specification-Title: Repository Modules
+Specification-Vendor: Hippo
+Implementation-Title: Repository Modules
+Implementation-Vendor-Id: org.onehippo.cms7
+Implementation-Vendor: Hippo
+Hippo-Modules: org.hippoecm.repository.jackrabbit.ViewVirtualProvider 
+ org.hippoecm.repository.jackrabbit.FacetSelectProvider org.hippoecm.r
+ epository.jackrabbit.FacetResultSetProvider org.hippoecm.repository.j
+ ackrabbit.FacetSubSearchProvider org.hippoecm.repository.jackrabbit.F
+ acetSearchProvider org.hippoecm.repository.jackrabbit.facetnavigation
+ .FacetNavigationProvider org.hippoecm.repository.jackrabbit.facetnavi
+ gation.FacetsAvailableNavigationProvider org.hippoecm.repository.jack
+ rabbit.facetnavigation.FacetSubNavigationProvider org.hippoecm.reposi
+ tory.jackrabbit.SubtypedDataProvider org.hippoecm.repository.logging.
+ RepositoryLogger org.hippoecm.repository.logging.EventLogCleanupModule
+
