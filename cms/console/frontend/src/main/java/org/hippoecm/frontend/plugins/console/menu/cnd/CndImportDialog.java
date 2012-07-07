@@ -15,14 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.cnd;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
@@ -31,36 +30,32 @@ import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.InitializationProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CndImportDialog extends AbstractDialog<Void> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(CndImportDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(CndImportDialog.class);
 
-    private FileUploadField fileUploadField;
-
-    Component message;
-    Model msgText;
+    private final FileUploadField fileUploadField;
+    private final Model<String> msgText;
 
     public CndImportDialog(CndImportPlugin menuPlugin) {
         setMultiPart(true);
         setNonAjaxSubmit();
         add(fileUploadField = new FileUploadField("fileInput"));
 
-        msgText = new Model("Import a CND file.");
-        message = new Label("message", msgText);
-        add(message);
+        msgText = new Model<String>("Import a CND file.");
+        add(new Label("message", msgText));
 
         setOkLabel("import");
     }
 
     public IModel getTitle() {
-        return new Model("Import node type definition file");
+        return new Model<String>("Import node type definition file");
     }
 
     @Override
@@ -69,27 +64,36 @@ public class CndImportDialog extends AbstractDialog<Void> {
         if (upload != null) {
             msgText.setObject("File uploaded.");
 
-            // create initialize node
             try {
-                Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
-                Node initNode = rootNode.getNode(HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
+                final Session session = UserSession.get().getJcrSession();
+                final InitializationProcessor initializationProcessor = UserSession.get().getHippoRepository().getInitializationProcessor();
 
-                if (initNode.hasNode("import-cnd")) {
-                    initNode.getNode("import-cnd").remove();
+                if (initializationProcessor == null) {
+                    error("This functionality is not available in your environment");
+                    return;
                 }
-                Node node = initNode.addNode("import-cnd", HippoNodeType.NT_INITIALIZEITEM);
+
+                Node initializeFolder = session.getNode("/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH);
+
+                if (initializeFolder.hasNode("console-import-cnd")) {
+                    initializeFolder.getNode("console-import-cnd").remove();
+                }
+                Node initializeItem = initializeFolder.addNode("console-import-cnd", HippoNodeType.NT_INITIALIZEITEM);
 
                 try {
-                    node.setProperty(HippoNodeType.HIPPO_NODETYPES, new BufferedInputStream(upload.getInputStream()));
-                    rootNode.getSession().save();
-                    msgText.setObject("initialize node saved.");
-                } catch (IOException e) {
-                    msgText.setObject("initialize node saved.");
+                    initializeItem.setProperty(HippoNodeType.HIPPO_NODETYPES, session.getValueFactory().createBinary(upload.getInputStream()));
+                    initializeItem.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
+                    session.save();
 
+                    initializationProcessor.processInitializeItems(session, Arrays.asList(initializeItem));
+                    session.save();
+                } catch (IOException e) {
+                    log.error("Failed to read upload file for importing cnd", e);
+                    error("Failed to read upload file");
                 }
             } catch (RepositoryException e) {
-                log.error("Error while creating nodetypes initialization node: ", e);
-                error("Error while creating nodetypes initialization node.");
+                log.error("Failed to import cnd", e);
+                error("Failed to import cnd");
             }
         }
     }
