@@ -48,10 +48,7 @@ public class FacetedAuthorizationTest extends TestCase {
     Node readDomain;
     Node writeDomain;
     Node testUser;
-
-    Node testData;
-    Node testNav;
-
+    
     Session userSession;
 
     // nodes that have to be cleaned up
@@ -178,7 +175,7 @@ public class FacetedAuthorizationTest extends TestCase {
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
 
         // create test data
-        testData = session.getRootNode().addNode(TEST_DATA_NODE);
+        Node testData = session.getRootNode().addNode(TEST_DATA_NODE);
         testData.addMixin("mix:referenceable");
 
         testData.addNode("readdoc0",  "hippo:ntunstructured").setProperty("authtest", "canread");
@@ -235,7 +232,7 @@ public class FacetedAuthorizationTest extends TestCase {
         session.refresh(false);
         
         // create test navigation
-        testNav = session.getRootNode().addNode(TEST_NAVIGATION_NODE);
+        Node testNav = session.getRootNode().addNode(TEST_NAVIGATION_NODE);
 
         // search without namespace
         Node node = testNav.addNode("search", HippoNodeType.NT_FACETSEARCH);
@@ -256,8 +253,6 @@ public class FacetedAuthorizationTest extends TestCase {
 
         // setup user session
         userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
-        testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
     }
 
     @Override
@@ -269,6 +264,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testReadsAllowed() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         assertTrue(testData.hasNode("readdoc0"));
         assertTrue(testData.hasNode("writedoc0"));
         assertTrue(testData.hasNode("expanders"));
@@ -285,6 +281,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testReadsNotAllowed() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         assertFalse(testData.hasNode("nothing0"));
         assertFalse(testData.hasNode("expanders/useradmin"));
         assertFalse(testData.hasNode("expanders/groupadmin"));
@@ -305,6 +302,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         session.save();
 
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         Node userDoc = testData.getNode("doc/doc");
         assertEquals(testData.getPath() + "/doc/doc", userDoc.getPath());
 
@@ -325,6 +323,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         session.save();
 
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         Node userHandle = testData.getNode("doc");
 
         doc = testRoot.addNode("doc", "hippo:authtestdocument");
@@ -355,6 +354,9 @@ public class FacetedAuthorizationTest extends TestCase {
         // setup user session
         userSession.logout();
         userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
         testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
         assertTrue(testData.hasNode("expanders/" + TEST_USER_ID));
@@ -368,6 +370,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testSubReadsAllowed() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         assertTrue(testData.hasNode("readdoc0/subread"));
         assertTrue(testData.hasNode("readdoc0/subwrite"));
         assertTrue(testData.hasNode("writedoc0/subread"));
@@ -376,6 +379,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testSubReadsNotAllowed() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         assertFalse(testData.hasNode("readdoc0/subnothing"));
         assertFalse(testData.hasNode("writedoc0/subnothing"));
         assertFalse(testData.hasNode("nothing0/subread"));
@@ -385,7 +389,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @Test
     public void testWritesAllowed() throws RepositoryException {
         Node node;
-
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         userSession.checkPermission(testData.getPath() + "/" + "writedoc0" , SET_PROPERTY_ACTION);
         node = testData.getNode("writedoc0");
         node.setProperty("test", "allowed");
@@ -400,7 +404,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @Test
     public void testSubWritesAllowed() throws RepositoryException {
         Node node;
-
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         node = testData.getNode("readdoc0/subwrite");
         node.setProperty("test", "allowed");
         userSession.save();
@@ -413,6 +417,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @Test
     public void testWritesNotAllowed() throws RepositoryException {
         Node node;
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         try {
             node = testData.getNode("readdoc0");
             node.setProperty("hippo:name", "nope");
@@ -436,7 +441,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @Test
     public void testSubWritesNotAllowed() throws RepositoryException {
         Node node;
-
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         try {
             node = testData.getNode("writedoc0/subread");
             node.setProperty("hippo:name", "nope");
@@ -460,6 +465,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @Ignore
     public void testDeletesAllowed() throws Exception {
         Node node;
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         try {
             node = testData.getNode("writedoc0");
             node.setProperty("allowedprop", "test");
@@ -487,6 +493,7 @@ public class FacetedAuthorizationTest extends TestCase {
     @Test
     public void testDeletesNotAllowed() throws RepositoryException {
         Node node;
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         try {
             node = testData.getNode("readdoc0");
             node.getProperty("authtest").remove();
@@ -509,6 +516,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testSubDeletesNotAllowed() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         try {
             testData.getNode("readdoc0/subread").remove();
             userSession.save();
@@ -531,6 +539,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Ignore
     public void testSelfExclusionNotAllowed() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         Node node;
         try {
             node = testData.getNode("writedoc0");
@@ -590,6 +599,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testFacetSearch() throws RepositoryException {
+        Node testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
         Node navNode = testNav.getNode("search");
         Node resultSetNode = navNode.getNode("hippo:resultset");
         assertTrue(resultSetNode.hasNode("readdoc0"));
@@ -621,6 +631,8 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testFacetSelect() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
         Node navNode = testNav.getNode("select");
         assertTrue(navNode.hasNode("readdoc0"));
         assertTrue(navNode.hasNode("readdoc0/subread"));
@@ -751,6 +763,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testCheckPermissionPrivilegeJcrRead() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         userSession.checkPermission(testData.getPath() + "/readdoc0", "jcr:read");
         userSession.checkPermission(testData.getPath() + "/readdoc0/subread", "jcr:read");
         userSession.checkPermission(testData.getPath() + "/writedoc0/subread", "jcr:read");
@@ -758,6 +771,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testCheckPermissionPrivilegeJcrWrite() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         userSession.checkPermission(testData.getPath() + "/writedoc0", "jcr:write");
         userSession.checkPermission(testData.getPath() + "/writedoc0/subwrite", "jcr:write");
         userSession.checkPermission(testData.getPath() + "/readdoc0/subwrite", "jcr:write");
@@ -766,6 +780,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testCheckPermissionNotPrivilegeJcrRead() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         try {
             userSession.checkPermission(testData.getPath() + "/readdoc0/subnothing", "jcr:read");
             fail("User shouldn't be allowed action 'jcrread' on : " + testData.getPath() + "/readdoc0/subnothing");
@@ -806,6 +821,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testCheckPermissionNotPrivilegeJcrWrite() throws RepositoryException {
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         try {
             userSession.checkPermission(testData.getPath() + "/readdoc0", "jcr:write");
             fail("User shouldn't be allowed action 'jcrall' on : " + testData.getPath() + "/readdoc0");
