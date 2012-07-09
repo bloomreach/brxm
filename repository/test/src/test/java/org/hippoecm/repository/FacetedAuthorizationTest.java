@@ -299,13 +299,15 @@ public class FacetedAuthorizationTest extends TestCase {
         doc = handle.addNode("doc", "hippo:authtestdocument");
         doc.addMixin("hippo:harddocument");
         doc.setProperty("authtest", "canread");
-
+        String identifierSecondDoc = doc.getIdentifier();
         session.save();
 
         Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         Node userDoc = testData.getNode("doc/doc");
         assertEquals(testData.getPath() + "/doc/doc", userDoc.getPath());
-
+        // even though it is as-if we fetch the first doc, it is actually the second doc below the handle. It is just the
+        // first doc that the userSession is allowed to read. Hence, the identifier should be equal to identifierSecondDoc
+        assertEquals("Identifiers expected to be equal", testData.getNode("doc/doc").getIdentifier(), identifierSecondDoc);
         assertFalse(userSession.hasPendingChanges());
     }
 
