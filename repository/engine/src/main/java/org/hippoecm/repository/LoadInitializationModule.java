@@ -197,14 +197,6 @@ public class LoadInitializationModule {
 
                     if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTDELETE)) {
                         processContentDelete(initializeItem, session, dryRun);
-                        String path = initializeItem.getProperty(HippoNodeType.HIPPO_CONTENTDELETE).getString();
-                        boolean immediateSave;
-                        if(initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) || initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENT))
-                            immediateSave = false;
-                        else
-                            immediateSave = true;
-                        log.info("Delete content in initialization: " + initializeItem.getName() + " " + path);
-                        removeNodecontent(session, path, immediateSave && !dryRun);
                     }
 
                     // Content from file
@@ -336,9 +328,9 @@ public class LoadInitializationModule {
                     }
                 }
             }
-            if (newValues.size() == 1 && contentAddProperty == null && (isSingle || (!isSingle && !isMultiple))) {
+            if (newValues.size() == 1 && contentAddProperty == null && (isSingle || !isMultiple)) {
                 last.node.setProperty(last.relPath, newValues.get(0));
-            } else if (newValues.isEmpty() && (isSingle || (!isSingle && !isMultiple))) {
+            } else if (newValues.isEmpty() && (isSingle || !isMultiple)) {
                 // no-op, the property does not exist
             } else {
                 last.node.setProperty(last.relPath, newValues.toArray(new String[newValues.size()]));
@@ -384,7 +376,6 @@ public class LoadInitializationModule {
             log.error("Bootstrapping content to " + INIT_PATH + " is no supported");
             return;
         }
-        log.info("Initializing content from: " + contentName + " to " + root);
         initializeNodecontent(session, root, contentStream, contentName + ":" + node.getPath());
     }
 
@@ -409,14 +400,17 @@ public class LoadInitializationModule {
         }
 
         if (isReload(node)) {
+            boolean success = false;
             String contextNodeName = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTEXTNODENAME, null);
             if (contextNodeName != null) {
                 String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
-                removeNodecontent(session, contextNodePath, false);
-                log.info("Initializing content from: " + contentResource + " to " + root);
-                initializeNodecontent(session, root, contentStream, contentResource);
-            } else {
-                log.warn("Cannot remove node for reloading content");
+                success = removeNodecontent(session, contextNodePath, false);
+                if (success) {
+                    initializeNodecontent(session, root, contentStream, contentResource);
+                }
+            }
+            if (!success) {
+                log.error("Cannot remove node for reloading content: content for item " + node.getName() + " not reloaded");
             }
         } else {
             log.info("Initializing content from: " + contentResource + " to " + root);
@@ -426,11 +420,13 @@ public class LoadInitializationModule {
     }
 
     private static void processContentDelete(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
-        String path = node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE).getString();
-        log.warn("Delete content in initialization has been deprecrated: " + node.getName() + " " + path);
-        boolean immediateSave = !node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) && !node.hasProperty(HippoNodeType.HIPPO_CONTENT);
+        final String path = node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE).getString();
+        final boolean immediateSave = !node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) && !node.hasProperty(HippoNodeType.HIPPO_CONTENT);
         log.info("Delete content in initialization: " + node.getName() + " " + path);
-        removeNodecontent(session, path, immediateSave && !dryRun);
+        final boolean success = removeNodecontent(session, path, immediateSave && !dryRun);
+        if (!success) {
+            log.error("Content delete in item " + node.getName() + " failed");
+        }
     }
 
     private static void processNodeTypesFromNode(final Node node, final Session session, final boolean dryRun) throws RepositoryException, ParseException {
@@ -442,7 +438,7 @@ public class LoadInitializationModule {
         if (cndStream == null) {
             log.error("Cannot get stream for nodetypes definition property.");
         } else {
-            log.info("Initializing nodetypes from nodetypes property.");
+            log.info("Initializing node types from nodetypes property.");
             if (!dryRun) {
                 initializeNodetypes(session.getWorkspace(), cndStream, cndName);
             }
@@ -770,13 +766,14 @@ public class LoadInitializationModule {
 
             try {
                 ntreg.registerNodeType(ntd);
+                log.info("Registered node type: " + ntd.getName().getLocalName());
             } catch (NamespaceException ex) {
                 log.error(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName(), ex);
             } catch (InvalidNodeTypeDefException ex) {
                 if (ex.getMessage().endsWith("already exists")) {
                     try {
                         ntreg.reregisterNodeType(ntd);
-                        log.info("Replaced NodeType: " + ntd.getName().getLocalName());
+                        log.info("Replaced node type: " + ntd.getName().getLocalName());
                     } catch (NamespaceException e) {
                         log.error(e.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), e);
                     } catch (InvalidNodeTypeDefException e) {
@@ -797,21 +794,26 @@ public class LoadInitializationModule {
         }
     }
 
-    public static void removeNodecontent(Session session, String absPath, boolean save) {
+    public static boolean removeNodecontent(Session session, String absPath, boolean save) {
         if ("".equals(absPath) || "/".equals(absPath)) {
             log.warn("Not allowed to delete rootNode from initialization.");
-            return;
+            return false;
         }
 
         String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
         try {
             if (relpath.length() > 0) {
                 if (session.getRootNode().hasNode(relpath)) {
+                    if (session.getRootNode().getNodes(relpath).getSize() > 1) {
+                        log.warn("Removing same name sibling is not supported: not removing " + absPath);
+                        return false;
+                    }
                     session.getRootNode().getNode(relpath).remove();
                     if (save) {
                         session.save();
                     }
                 }
+                return true;
             }
         } catch (RepositoryException ex) {
             if (log.isDebugEnabled()) {
@@ -820,72 +822,73 @@ public class LoadInitializationModule {
                 log.error("Error while removing content from '" + absPath + "' : " + ex.getMessage());
             }
         }
-
+        return false;
     }
 
-    public static void initializeNodecontent(Session session, String absPath, InputStream istream, String location) {
+    public static void initializeNodecontent(Session session, String parentAbsPath, InputStream istream, String location) {
+        log.info("Initializing content from: " + location + " to " + parentAbsPath);
         try {
-            String relpath = (absPath.startsWith("/") ? absPath.substring(1) : absPath);
+            String relpath = (parentAbsPath.startsWith("/") ? parentAbsPath.substring(1) : parentAbsPath);
             if (relpath.length() > 0 && !session.getRootNode().hasNode(relpath)) {
                 session.getRootNode().addNode(relpath);
             }
             if (session instanceof HippoSession) {
-                ((HippoSession) session).importDereferencedXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
+                ((HippoSession) session).importDereferencedXML(parentAbsPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW,
                         ImportReferenceBehavior.IMPORT_REFERENCE_NOT_FOUND_REMOVE, ImportMergeBehavior.IMPORT_MERGE_ADD_OR_SKIP);
             } else {
-                session.importXML(absPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
+                session.importXML(parentAbsPath, istream, ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW);
             }
         } catch (IOException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (PathNotFoundException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (ItemExistsException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
                 if(!ex.getMessage().startsWith("Node with the same UUID exists:") || log.isDebugEnabled()) {
-                    log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                    log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
                 }
             }
         } catch (ConstraintViolationException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (VersionException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (InvalidSerializedDataException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
                 if(!ex.getMessage().startsWith("Node with the same UUID exists:") || log.isDebugEnabled()) {
-                    log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                    log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
                 }
             }
         } catch (LockException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         } catch (RepositoryException ex) {
             if (log.isDebugEnabled()) {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } else {
-                log.error("Error initializing content for "+location+" in '" + absPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
+                log.error("Error initializing content for "+location+" in '" + parentAbsPath + "' : " + ex.getClass().getName() + ": " + ex.getMessage());
             }
         }
     }
