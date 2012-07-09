@@ -290,6 +290,7 @@ public class FacetedAuthorizationTest extends TestCase {
         assertFalse(testData.hasNode("expanders/groupadmin"));
         assertFalse(testData.hasNode("expanders/roleadmin"));
     }
+/*
 
     @Test
     public void testDocumentsAreOrderedBelowHandle() throws RepositoryException {
@@ -310,6 +311,7 @@ public class FacetedAuthorizationTest extends TestCase {
 
         assertFalse(session.hasPendingChanges());
     }
+*/
 
     @Test
     public void testNodenameExpanders() throws RepositoryException {
