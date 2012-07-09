@@ -751,8 +751,9 @@
 
   <function>
     <description>
-      Tests if the node is of the specified primary node type or mixin type, or a subtype thereof,
-      respecting the effective node type of the node.
+      If the bean has a non null backing jcr node, this function tests if the node
+      is of the specified primary node type or mixin type, or a subtype thereof. If the bean is not backed
+      by a jcr provider (node), or the backing jcr node is null, this method returns false.
     </description>
     <name>isNodeType</name>
     <function-class>org.hippoecm.hst.util.NodeUtils</function-class>

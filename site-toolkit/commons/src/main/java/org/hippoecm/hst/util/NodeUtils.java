@@ -175,13 +175,17 @@ public class NodeUtils {
      * type or mixin type, or a subtype thereof of any of the <code>nodeTypeNames</code>. Returns <code>false</code>
      * otherwise. Also see {@link Node#isNodeType(String)}
      * </P>
-     * @param node
-     * @param nodeTypeNames
+     * @param node the jcr node
+     * @param nodeTypeNames the list of  <code>nodeTypeNames</code> to check.
      * @return <code>true</code> when <code>node</code> is of the specified primary node type or mixin type, 
-     * or a subtype thereof of any of the <code>nodeTypeNames</code>
+     * or a subtype thereof of any of the <code>nodeTypeNames</code>. If the <code>node</code> is <code>null</code> then
+     * <code>false</code> is returned
      * @throws RepositoryException
      */
     public static boolean isNodeType(Node node, String ... nodeTypeNames) throws RepositoryException {
+        if (node == null) {
+            return false;
+        }
         if (nodeTypeNames != null) {
             for (String nodeTypeName : nodeTypeNames) {
                 if (node.isNodeType(nodeTypeName)) {
