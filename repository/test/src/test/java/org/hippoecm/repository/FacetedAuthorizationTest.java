@@ -309,7 +309,7 @@ public class FacetedAuthorizationTest extends TestCase {
         assertFalse(userSession.hasPendingChanges());
     }
 
-    @Test
+    @Ignore
     public void testDocumentsAreOrderedAfterModification() throws RepositoryException {
         Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testRoot.addNode("doc", "hippo:handle");
@@ -323,16 +323,20 @@ public class FacetedAuthorizationTest extends TestCase {
 
         session.save();
 
-        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        Node userHandle = testData.getNode("doc");
+        Node userSessionTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node userSessionHandle = userSessionTestData.getNode("doc");
 
-        doc = testRoot.addNode("doc", "hippo:authtestdocument");
+        // doc node is still coupled to the SYSTEMUSER_ID based jcr session
+        doc = handle.addNode("doc", "hippo:authtestdocument");
         doc.addMixin("hippo:harddocument");
         session.save();
+        System.out.println(session.getRootNode().getNode(TEST_DATA_NODE).getNode("doc").getNodes().getSize());
+        assertEquals("Number of child nodes below doc handle was not 3 ",3, session.getRootNode().getNode(TEST_DATA_NODE).getNode("doc").getNodes().getSize());
+        userSessionHandle = userSessionTestData.getNode("doc");
 
-        assertTrue(userHandle.hasNode("doc"));
-        Node userDoc = userHandle.getNode("doc");
-        assertEquals(testData.getPath() + "/doc/doc", userDoc.getPath());
+        assertTrue(userSessionHandle.hasNode("doc"));
+        Node userDoc = userSessionHandle.getNode("doc");
+        assertEquals(userSessionTestData.getPath() + "/doc/doc", userDoc.getPath());
 
         assertFalse(userSession.hasPendingChanges());
     }
