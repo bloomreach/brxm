@@ -223,11 +223,10 @@ public class ServicingNodeIndexer extends NodeIndexer {
                  * index the nodename to search on. We index this as hippo:_localname, a pseudo property which does not really exist but
                  * only meant to search on
                  */
-                if(this.servicingIndexingConfig.isNodeNameIndexingEnabled()) {
-                    indexNodeName(doc, child.getName().getLocalName());
-                }
-                
+                indexNodeName(doc, child.getName().getLocalName());
+
                 // TODO ARD: imo this code does not belong in the node indexer: if aggregation is needed, it should be in the servicing search index arranged 
+
                 for (Iterator childNodeIter = node.getChildNodeEntries().iterator(); childNodeIter.hasNext();) {
                     ChildNodeEntry childNode = (ChildNodeEntry) childNodeIter.next();
                     NodeState childState = (NodeState) stateProvider.getItemState(childNode.getId());
@@ -292,15 +291,21 @@ public class ServicingNodeIndexer extends NodeIndexer {
             return;
         }
         String fieldName = hippo_ns_prefix + ":" + FieldNames.FULLTEXT_PREFIX + "_localname";
-        Field localNameField = new Field(fieldName, localName, Field.Store.NO, Field.Index.TOKENIZED,
-                Field.TermVector.NO);
+        Field localNameField;
+        if (supportHighlighting) {
+            localNameField = new Field(fieldName, localName, Field.Store.YES, Field.Index.TOKENIZED,
+                    Field.TermVector.WITH_OFFSETS);
+        } else {
+            localNameField = new Field(fieldName, localName, Field.Store.NO, Field.Index.TOKENIZED,
+                    Field.TermVector.NO);
+        }
         localNameField.setBoost(5);
         doc.add(localNameField);
 
         // also create fulltext index of this value
         Field localNameFullTextField;
         if (supportHighlighting) {
-            localNameFullTextField = new Field(FieldNames.FULLTEXT, localName, Field.Store.NO, Field.Index.TOKENIZED,
+            localNameFullTextField = new Field(FieldNames.FULLTEXT, localName, Field.Store.YES, Field.Index.TOKENIZED,
                     Field.TermVector.WITH_OFFSETS);
         } else {
             localNameFullTextField = new Field(FieldNames.FULLTEXT, localName, Field.Store.NO, Field.Index.TOKENIZED,

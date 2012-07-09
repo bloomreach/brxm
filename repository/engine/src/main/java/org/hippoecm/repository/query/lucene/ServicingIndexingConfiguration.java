@@ -100,12 +100,4 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      */
     String getHippoNamespaceURI();
 
-    /**
-     * Returns <code>true</code> if the node names should be indexed
-     * according to this configuration.
-     *
-     * @return <code>true</code> if the node names should be indexed; <code>false</code>
-     *         otherwise.
-     */
-    public boolean isNodeNameIndexingEnabled();
 }
