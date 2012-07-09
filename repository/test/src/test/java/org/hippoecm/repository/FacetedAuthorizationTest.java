@@ -330,7 +330,6 @@ public class FacetedAuthorizationTest extends TestCase {
         doc = handle.addNode("doc", "hippo:authtestdocument");
         doc.addMixin("hippo:harddocument");
         session.save();
-        System.out.println(session.getRootNode().getNode(TEST_DATA_NODE).getNode("doc").getNodes().getSize());
         assertEquals("Number of child nodes below doc handle was not 3 ",3, session.getRootNode().getNode(TEST_DATA_NODE).getNode("doc").getNodes().getSize());
         userSessionHandle = userSessionTestData.getNode("doc");
 
