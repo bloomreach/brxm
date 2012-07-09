@@ -28,154 +28,159 @@ import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 public class MockHippoBean implements HippoBean {
 
     public boolean equalCompare(Object compare) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T> T getBean(String relPath) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T extends HippoBean> T getBean(String relPath, Class<T> beanMappingClass) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public String getCanonicalUUID() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T extends HippoBean> List<T> getChildBeans(Class<T> beanMappingClass) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T> List<T> getChildBeans(String jcrPrimaryNodeType) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T> List<T> getChildBeansByName(String childNodeName) throws ClassCastException {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T extends HippoBean> List<T> getChildBeansByName(String childNodeName, Class<T> beanMappingClass) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
+    @Override
+    public <T extends HippoBean> T getCanonicalBean() {
+        throw new UnsupportedOperationException("Not supported yet");
+    }
+    
     public HippoBean getContextualBean() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public HippoBean getContextualParentBean() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public Map<Object, Object> getEqualComparator() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T extends HippoBean> T getLinkedBean(String relPath, Class<T> beanMappingClass) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T extends HippoBean> List<T> getLinkedBeans(String relPath, Class<T> beanMappingClass) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public String getLocalizedName() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public String getName() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public Node getNode() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public HippoBean getParentBean() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     @Override
     public String getIdentifier() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     @Override
     public void setIdentifier(final String identifier) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public String getPath() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public Map<String, Object> getProperties() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public <T> T getProperty(String name) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
     
     public <T> T getProperty(String name, T defaultValue) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public Map<String, Object> getProperty() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public JCRValueProvider getValueProvider() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public boolean isAncestor(HippoBean compare) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public boolean isDescendant(HippoBean compare) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public boolean isHippoDocumentBean() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public boolean isHippoFolderBean() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public boolean isLeaf() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public boolean isSelf(HippoBean compare) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public void setNode(Node node) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public ObjectConverter getObjectConverter() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public void setObjectConverter(ObjectConverter objectConverter) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     public int compareTo(HippoBean o) {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
     @Override
     public String getCanonicalPath() {
-        throw new UnsupportedOperationException("Not supproted yet");
+        throw new UnsupportedOperationException("Not supported yet");
     }
 
 }

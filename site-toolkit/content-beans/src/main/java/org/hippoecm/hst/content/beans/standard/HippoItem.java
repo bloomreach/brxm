@@ -490,16 +490,75 @@ public class HippoItem implements HippoBean {
         }
         return null;
     }
-    
+
+    @Override
+    public <T extends HippoBean> T getCanonicalBean() {
+        if(this.getNode() == null) {
+            log.warn("Cannot get canonical bean for detached bean. Return just the current bean instance");
+            return (T) this;
+        }
+        try {
+            Node canonical = ((HippoNode)this.getNode()).getCanonicalNode();
+            if(canonical == null) {
+                log.debug("Cannot get canonical for a node that is virtual only: '{}'. Return null", this.getPath());
+                return null;
+            }
+            if (canonical.isSame(getNode())) {
+                log.debug("Canonical node is same one as for current bean. Just return same bean");
+                return (T)this;
+            }
+            Object o = this.objectConverter.getObject(canonical);
+            if (o instanceof HippoBean) {
+                log.debug("Getting canonical bean succeeded: translated from '{}' --> '{}'", this.getPath(), ((HippoBean) o).getPath());
+                return (T) o;
+            } else {
+                log.warn("Bean is not an instance of HippoBean. Return null : ", o);
+            }
+        } catch (ObjectBeanManagerException e) {
+            log.warn("Exception while trying to fetch canonical bean. Return null : {}", e.toString());
+        } catch (RepositoryException e) {
+            log.warn("Exception while trying to fetch canonical bean. Return null : {}", e.toString());
+        }
+        return null;
+    }
 
     public HippoBean getContextualBean() {
-        log.warn("Use this instead of getContextualBean because the latter is deprecated");
-        return this;
+        if(this.getNode() == null) {
+            log.warn("Cannot get contextual bean for detached bean. Return just the current bean instance");
+            return this;
+        }
+        try {
+            Node canonical = ((HippoNode)this.getNode()).getCanonicalNode();
+            if(canonical == null) {
+                log.debug("Cannot get canonical for a node that is virtual only: '{}'. It's contextual bean is just the current bean", this.getPath());
+                return this;
+            }
+            Object o = this.objectConverter.getObject(canonical);
+            if (o instanceof HippoBean) {
+                if(this.equals(o)) {
+                    // the contextual bean is just the same as the current bean
+                    return this;
+                }
+                log.debug("Contextualisation succeeded: translated from '{}' --> '{}'", this.getPath(), ((HippoBean) o).getPath());
+                return (HippoBean) o;
+            } else {
+                log.warn("Bean is not an instance of HippoBean. Return null : ", o);
+            }
+        } catch (ObjectBeanManagerException e) {
+            log.warn("HstContextualizeException while trying to fetch contextual bean. Return null : {}", e.toString());
+        } catch (RepositoryException e) {
+            log.warn("HstContextualizeException while trying to fetch contextual bean. Return null :  {}", e.toString());;
+        }
+        return null;
     }
-    
+
     public HippoBean getContextualParentBean() {
-        log.warn("Use getParentBean instead of getContextualParentBean because the latter is deprecated");
-        return getParentBean();
+        HippoBean contextualBean = getContextualBean();
+        if(contextualBean == null) {
+            log.warn("Cannot return contextual parent bean. Return null");
+            return null;
+        }
+        return contextualBean.getParentBean();
     }
 
     public boolean isAncestor(HippoBean compare) {

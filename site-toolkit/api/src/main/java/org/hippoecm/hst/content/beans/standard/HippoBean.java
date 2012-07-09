@@ -236,16 +236,31 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @return the parent bean wrt this bean, or if this bean backing jcr node is null or object converter cannot create a bean for the parent, return <code>null</code>
      */
     HippoBean getParentBean();
-    
+
+    /**
+     * Returns the canonical version of the current {@link HippoBean} or <code>null</code> in case that the backing {@link Node} is pure virtual, which
+     * is the case for example for some faceted navigation nodes. When an exception happens <code>null</code> can be returned
+     * @param <T> 
+     * @return the canonical version of the current {@link HippoBean} or <code>null</code> in case that the backing {@link Node} is pure virtual or when
+     * some exception happened
+     */
+    <T extends HippoBean> T getCanonicalBean();
     
     /**
+     * <p>
      * Expert: Returns the 'real' contextual (preview / live context) bean version of this bean. Most of the time, this is just the current bean. However, 
      * when the current bean is below some parent bean because it was mirrored by this parent, then, this method returns
      * the 'real' contextual version, where the {@link #getParentBean()} also returns the contextualized version of the physical parent
-     * 
+     * </p>
+     * <p>
+     * If the bean for which this this method is invoked is purely virtual (as in, the backing jcr node provider does not have a canonical equivalent, for 
+     * example in case of a faceted navigation node), just the current instance is returned
+     * </p>
      * <b>note: this is quite an expensive check </b>
      * @return the contextual bean for this bean, or <code>null</code> if it fails to contextualize this bean
-     * @deprecated  since 2.25.02 : method now returns just this instance
+     * @deprecated  since 2.25.02 : use {@link #getCanonicalBean()} instead. The only different is, that {@link #getContextualBean()} returns
+     * the current {@link HippoBean} instance when there exists no canonical version of the backing jcr Node, whereas  {@link #getCanonicalBean()} in that
+     * case returns <code>null</code>
      */
     @Deprecated
     HippoBean getContextualBean();
