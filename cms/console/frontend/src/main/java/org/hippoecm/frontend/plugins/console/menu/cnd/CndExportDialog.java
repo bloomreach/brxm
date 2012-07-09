@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -38,7 +39,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
-import org.hippoecm.tools.projectexport.DownloadLink;
+import org.hippoecm.frontend.widgets.download.DownloadLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +105,7 @@ public class CndExportDialog extends AbstractDialog<Void> {
         });
 
         // Add download link
-        DownloadLink link = new DownloadLink("download-link") {
+        DownloadLink link = new DownloadLink<Node>("download-link") {
             private static final long serialVersionUID = 1L;
 
             protected String getFilename() {
@@ -140,8 +141,7 @@ public class CndExportDialog extends AbstractDialog<Void> {
     }
 
     private Session getJcrSession() {
-        Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-        return session;
+        return UserSession.get().getJcrSession();
     }
 
     public IModel<String> getTitle() {

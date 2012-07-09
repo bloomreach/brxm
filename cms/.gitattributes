@@ -520,6 +520,7 @@ api/src/main/java/org/hippoecm/frontend/widgets/TextAreaWidget.java svneol=nativ
 api/src/main/java/org/hippoecm/frontend/widgets/TextFieldWidget.html svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/TextFieldWidget.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/widgets/ThrottledTextFieldWidget.java -text
+api/src/main/java/org/hippoecm/frontend/widgets/download/DownloadLink.java -text
 api/src/main/java/org/hippoecm/frontend/widgets/icons/folder-closed-virtual.gif -text
 api/src/main/java/org/hippoecm/frontend/widgets/icons/folder-open-virtual.gif -text
 api/src/main/java/org/hippoecm/frontend/widgets/icons/item-virtual.gif -text
@@ -972,7 +973,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutLink.h
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutLink.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutPlugin.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/logout/LogoutPlugin.java svneol=native#text/plain
-console/frontend/src/main/java/org/hippoecm/tools/projectexport/DownloadLink.java -text
 console/frontend/src/site/apt/index.apt -text
 console/frontend/src/site/site.xml svneol=native#text/plain
 console/frontend/src/test/java/org/hippoecm/frontend/plugins/login/BrowserTest.java -text svneol=unset#text/plain

@@ -75,7 +75,7 @@ public class ContentExportDialog extends AbstractDialog<Node> {
         skipBinaries.add(new Label("skip-binaries-text", new Model<String>("Do not include binary properties in export")));
         add(skipBinaries);
 
-        DownloadExportLink link = new DownloadExportLink("download-link", modelReference, skipBinaryModel);
+        DownloadExportLink link = new DownloadExportLink("download-link", modelReference.getModel(), skipBinaryModel);
         link.add(new Label("download-link-text", "Download (or right click and choose \"Save as...\")"));
         add(link);
         setFocus(link);

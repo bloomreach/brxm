@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.tools.projectexport;
+package org.hippoecm.frontend.widgets.download;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.wicket.Application;
@@ -26,17 +27,17 @@ import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 
-public abstract class DownloadLink extends Link {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: DownloadLink.java 24575 2010-10-22 10:23:51Z bvanhalderen $";
+public abstract class DownloadLink<T> extends Link<T> {
 
     private static final long serialVersionUID = 1L;
+
+    private InputStream content;
 
     public DownloadLink(String id) {
         super(id);
     }
 
-    public DownloadLink(String id, IModel model) {
+    public DownloadLink(String id, IModel<T> model) {
         super(id, model);
     }
 
@@ -46,18 +47,16 @@ public abstract class DownloadLink extends Link {
         RequestCycle.get().setRequestTarget(requestTarget);
     }
     
-    DownloadRequestTarget createDownloadRequestTarget() {
+    protected DownloadRequestTarget createDownloadRequestTarget() {
         return new DownloadRequestTarget();
     }
 
     protected abstract String getFilename();
     protected abstract InputStream getContent();
 
-    public class DownloadRequestTarget implements IRequestTarget {
-        private static final long serialVersionUID = 1L;
+    protected void onDownloadTargetDetach() {}
 
-        DownloadRequestTarget() {
-        }
+    protected class DownloadRequestTarget implements IRequestTarget {
 
         /**
          * @see org.apache.wicket.IRequestTarget#respond(org.apache.wicket.RequestCycle)
@@ -80,12 +79,22 @@ public abstract class DownloadLink extends Link {
             response.setLastModifiedTime(Time.now());
 
             // set filename
-            response.setAttachmentHeader(getFilename());
-
-            response.write(getContent());
+            final String filename = getFilename();
+            if (filename != null) {
+                response.setAttachmentHeader(filename);
+                content = getContent();
+                if (content != null) {
+                    response.write(content);
+                }
+            }
         }
 
         public void detach(RequestCycle requestCycle) {
+            if (content != null) {
+                try { content.close(); } catch (IOException ignore) {}
+            }
+            onDownloadTargetDetach();
         }
+
     }
 }
