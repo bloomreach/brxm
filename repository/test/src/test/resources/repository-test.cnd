@@ -29,6 +29,9 @@
 - * (String)
 - * (String) multiple
 
+[hippo:authtestdocument] > hippo:document
+- *
+
 [hippo:realdocument] > hippo:document
 + hippo:mirror (hippo:facetselect) version
 

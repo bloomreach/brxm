@@ -290,7 +290,6 @@ public class FacetedAuthorizationTest extends TestCase {
         assertFalse(testData.hasNode("expanders/groupadmin"));
         assertFalse(testData.hasNode("expanders/roleadmin"));
     }
-/*
 
     @Test
     public void testDocumentsAreOrderedBelowHandle() throws RepositoryException {
@@ -309,9 +308,35 @@ public class FacetedAuthorizationTest extends TestCase {
         Node userDoc = testData.getNode("doc/doc");
         assertEquals(testData.getPath() + "/doc/doc", userDoc.getPath());
 
-        assertFalse(session.hasPendingChanges());
+        assertFalse(userSession.hasPendingChanges());
     }
-*/
+
+    @Test
+    public void testDocumentsAreOrderedAfterModification() throws RepositoryException {
+        Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testRoot.addNode("doc", "hippo:handle");
+        handle.addMixin("hippo:hardhandle");
+
+        Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.addMixin("hippo:harddocument");
+        doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.addMixin("hippo:harddocument");
+        doc.setProperty("authtest", "canread");
+
+        session.save();
+
+        Node userHandle = testData.getNode("doc");
+
+        doc = testRoot.addNode("doc", "hippo:authtestdocument");
+        doc.addMixin("hippo:harddocument");
+        session.save();
+
+        assertTrue(userHandle.hasNode("doc"));
+        Node userDoc = userHandle.getNode("doc");
+        assertEquals(testData.getPath() + "/doc/doc", userDoc.getPath());
+
+        assertFalse(userSession.hasPendingChanges());
+    }
 
     @Test
     public void testNodenameExpanders() throws RepositoryException {
