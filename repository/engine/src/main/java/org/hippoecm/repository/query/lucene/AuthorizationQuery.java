@@ -89,10 +89,7 @@ public class AuthorizationQuery {
             }
             log.debug("----START CREATION AUTHORIZATION QUERY---------");
             this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class), memberships,(InternalHippoSession)session, indexingConfig, nsMappings, ntMgr);
-/*
-            this.query = new BooleanQuery(true);
-            query.add(new MatchAllDocsQuery(), Occur.MUST);
-*/
+
             log.info("AUTHORIZATION Query: " + query);
             log.debug("----END CREATION AUTHORIZATION QUERY-----------");
         }

@@ -366,33 +366,72 @@ public class FacetedAuthorizationTest extends TestCase {
 
     @Test
     public void testNodenameExpanders() throws RepositoryException {
+
+        // count the number of docs in resultset before new doc is added:
+
+        final long count = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE).getNode("search").getNode("hippo:resultset").getProperty("hippo:count").getLong();
+        // now refresh userSession to clean up virtual nodes
+        userSession.refresh(false);
+
+        // create a node which has as name the id of the userSession id
+        {
+            Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+            testData.getNode("expanders").addNode(TEST_USER_ID, "hippo:ntunstructured").addMixin("hippo:harddocument");
+            session.save();
+        }
+        // since the userSession is only allowed to read nodes that have the property [authtest = canread] the userSession
+        // should not see this node
+        assertFalse(userSession.getRootNode().getNode(TEST_DATA_NODE).hasNode("expanders/" + TEST_USER_ID));
+        {
+            Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+            Node testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
+            // the node is *not* readable currently for userSession
+            // THUS
+            // 1 hasNode returns false
+            assertFalse(testData.hasNode("expanders/" + TEST_USER_ID));
+            // 2 no search hit
+            QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+            Query query = queryManager.createQuery("//element("+TEST_USER_ID+",hippo:ntunstructured) order by @jcr:score", Query.XPATH);
+            HippoNodeIterator iter = (HippoNodeIterator) query.execute().getNodes();
+            assertEquals(0L, iter.getSize());
+            assertEquals(0L, iter.getTotalSize());
+            //3 not in the faceted navigation result
+            // count should be still the same
+            assertEquals("Unexpected count for resultset", count, testNav.getNode("search").getNode("hippo:resultset").getProperty("hippo:count").getLong());
+            assertFalse(testNav.getNode("search").getNode("hippo:resultset").hasNode(TEST_USER_ID));
+        }
+        
+        // Add a domain rule with facetrule such that the userSession can now read the node it cannot read above by
+        // setting a facetrule that nodes of name __user__ can be read. user is expanded by the userId of the userSession
         Node dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
         Node fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, "nodename");
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "__user__");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
-
-        {
-            Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
-            testData.getNode("expanders").addNode(TEST_USER_ID, "hippo:ntunstructured").addMixin("hippo:harddocument");
-        }
         session.save();
 
-        // setup user session
+        // setup CLEAN user session
         userSession.logout();
         userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
 
-        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        Node testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
-        testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
-        assertTrue(testData.hasNode("expanders/" + TEST_USER_ID));
-
-        QueryManager queryManager = userSession.getWorkspace().getQueryManager();
-        Query query = queryManager.createQuery("//element("+TEST_USER_ID+",hippo:ntunstructured) order by @jcr:score", Query.XPATH);
-        HippoNodeIterator iter = (HippoNodeIterator) query.execute().getNodes();
-        assertEquals(1L, iter.getSize());
-        assertEquals(1L, iter.getTotalSize());
+        {
+            Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+            Node testNav  = userSession.getRootNode().getNode(TEST_NAVIGATION_NODE);
+            // the node is *not* readable currently for userSession
+            // THUS
+            // 1 hasNode returns true
+            assertTrue(testData.hasNode("expanders/" + TEST_USER_ID));
+            // 2 there is a search hit
+            QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+            Query query = queryManager.createQuery("//element("+TEST_USER_ID+",hippo:ntunstructured) order by @jcr:score", Query.XPATH);
+            HippoNodeIterator iter = (HippoNodeIterator) query.execute().getNodes();
+            assertEquals(1L, iter.getSize());
+            assertEquals(1L, iter.getTotalSize());
+            //3 It is in the faceted navigation result
+            // we should now have count + 1
+            assertEquals("Unexpected count for resultset", count + 1, testNav.getNode("search").getNode("hippo:resultset").getProperty("hippo:count").getLong());
+            assertTrue(testNav.getNode("search").getNode("hippo:resultset").hasNode(TEST_USER_ID));
+        }
     }
 
     @Test
