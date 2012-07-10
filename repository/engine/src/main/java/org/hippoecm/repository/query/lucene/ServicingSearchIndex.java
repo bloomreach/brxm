@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -34,6 +35,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.query.ExecutableQuery;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
@@ -48,6 +50,9 @@ import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateManager;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.core.value.InternalValue;
+import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
@@ -283,11 +288,12 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         try {
             if (aggregateDescendants) {
-                aggregateDescendants(node, doc, indexFormatVersion);
+                aggregateDescendants(node, doc, indexFormatVersion, indexer);
             } else if (isDocumentVariant(node)) {
                 // we have a Hippo Document state, let's aggregate child text
-                // for free text searching.
-                aggregateDescendants(node, doc, indexFormatVersion);
+                // for free text searching. We use aggregateChildTypes = true only for child 
+                // nodes directly below a hippo document. 
+                aggregateDescendants(node, doc, indexFormatVersion, indexer, true);
             }
         } catch (ItemStateException e) {
             log.debug("Unable to get state '{}'", e.getMessage());
@@ -353,9 +359,24 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      * Adds the fulltext index field of the child states to Document doc
      * @param state
      * @param doc
+     * @param indexer
      * @param indexFormatVersion
      */
-    private void aggregateDescendants(NodeState state, Document doc, IndexFormatVersion indexFormatVersion) {
+    private void aggregateDescendants(NodeState state, Document doc, IndexFormatVersion indexFormatVersion,  ServicingNodeIndexer indexer) {
+        // use aggregateChildTypes = false since we are not indexing direct child nodes of a hippo:document any more but are already
+        // at a deeper level
+        aggregateDescendants(state, doc, indexFormatVersion, indexer, false);
+    }
+
+    /**
+     * Adds the fulltext index field of the child states to Document doc
+     * @param state
+     * @param doc
+     * @param indexer
+     * @param aggregateChildTypes When <code>true</code>, properties of child nodes will also be indexed as explicit fields on <code>doc</code> if configured as aggregate/childType in indexing_configuration.xml
+     * @param indexFormatVersion
+     */
+    private void aggregateDescendants(NodeState state, Document doc, IndexFormatVersion indexFormatVersion, ServicingNodeIndexer indexer,  boolean aggregateChildTypes) {
         List childNodeEntries = state.getChildNodeEntries();
         List<NodeState> nodeStates = new ArrayList<NodeState>();
         for (Iterator it = childNodeEntries.iterator(); it.hasNext();) {
@@ -368,12 +389,31 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 }
                 Document aDoc;
                 try {
-                    NodeState nodeState = (NodeState) getContext().getItemStateManager().getItemState(
+                    NodeState childState = (NodeState) getContext().getItemStateManager().getItemState(
                             childNodeEntry.getId());
-                    doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, nodeState.getNodeId().toString(),
+                    if (aggregateChildTypes) {
+                        if (getIndexingConfig().isChildAggregate(childState.getNodeTypeName())) {
+                            Set props = childState.getPropertyNames();
+                            for (Iterator propsIt = props.iterator(); propsIt.hasNext();) {
+                                Name propName = (Name) propsIt.next();
+                                PropertyId id = new PropertyId(childNodeEntry.getId(), propName);
+                                PropertyState propState = (PropertyState) getContext().getItemStateManager().getItemState(id);
+                                InternalValue[] values = propState.getValues();
+                                if (!indexer.isHippoPath(propName) && indexer.isFacet(propName)) {
+                                    for (int i = 0; i < values.length; i++) {
+                                        String s = indexer.getResolver().getJCRName(propState.getName()) + "/"
+                                                + indexer.getResolver().getJCRName(childNodeEntry.getName());
+                                        indexer.addFacetValue(doc, values[i], s, propState.getName());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, childState.getNodeId().toString(),
                             Field.Store.NO, Field.Index.NO_NORMS));
 
-                    aDoc = createDocument(nodeState, getNamespaceMappings(), indexFormatVersion, true);
+                    aDoc = createDocument(childState, getNamespaceMappings(), indexFormatVersion, true);
 
                     // transfer fields to doc if there are any
                     Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);

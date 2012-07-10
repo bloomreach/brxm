@@ -22,15 +22,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.Parser;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
@@ -45,9 +43,12 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.Parser;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -225,34 +226,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
                  */
                 indexNodeName(doc, child.getName().getLocalName());
 
-                // TODO ARD: imo this code does not belong in the node indexer: if aggregation is needed, it should be in the servicing search index arranged 
-
-                for (Iterator childNodeIter = node.getChildNodeEntries().iterator(); childNodeIter.hasNext();) {
-                    ChildNodeEntry childNode = (ChildNodeEntry) childNodeIter.next();
-                    NodeState childState = (NodeState) stateProvider.getItemState(childNode.getId());
-                    if (servicingIndexingConfig.isChildAggregate(childState.getNodeTypeName())) {
-                        Set props = childState.getPropertyNames();
-                        for (Iterator it = props.iterator(); it.hasNext();) {
-                            Name propName = (Name) it.next();
-                            PropertyId id = new PropertyId(childNode.getId(), propName);
-                            try {
-                                PropertyState propState = (PropertyState) stateProvider.getItemState(id);
-                                InternalValue[] values = propState.getValues();
-                                if (!isHippoPath(propName) && isFacet(propName)) {
-                                    for (int i = 0; i < values.length; i++) {
-                                        String s = resolver.getJCRName(propState.getName()) + "/"
-                                                + resolver.getJCRName(childNode.getName());
-                                        addFacetValue(doc, values[i], s, propState.getName());
-                                    }
-                                }
-                            } catch (NoSuchItemStateException e) {
-                                throwRepositoryException(e);
-                            } catch (ItemStateException e) {
-                                throwRepositoryException(e);
-                            }
-                        }
-                    }
-                }
             }
         } catch (ItemStateException e) {
             throwRepositoryException(e);
@@ -315,7 +288,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     // below: When the QName is configured to be a facet, also index like one
-    private void addFacetValue(Document doc, InternalValue value, String fieldName, Name name) throws RepositoryException {
+    protected void addFacetValue(Document doc, InternalValue value, String fieldName, Name name) throws RepositoryException {
 
         switch (value.getType()) {
         case PropertyType.BINARY:
@@ -568,5 +541,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
         } else {
             return servicingIndexingConfig.isHippoPath(propertyName);
         }
+    }
+
+    protected NamePathResolver getResolver() {
+        return resolver;
     }
 }
