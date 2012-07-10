@@ -572,7 +572,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             text: this.initialConfig.resources['unlock-button'],
             iconCls: 'remove-lock',
             allowDepress: false,
-            hidden: !this.pageContainer.pageContext.hasPreviewHstConfig || !this.canUnlockChannels,
+            hidden: !this.pageContainer.pageContext.locked || !this.canUnlockChannels,
             width: 120,
             listeners: {
                 click: {
@@ -582,6 +582,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         });
         var lockLabel = new Ext.Toolbar.TextItem({});
+        if (this.pageContainer.pageContext.locked) {
+            var lockedOn = new Date(this.pageContainer.pageContext.lockedOn).format(this.initialConfig.resources['mount-locked-format']);
+            lockLabel.setText(this.initialConfig.resources['mount-locked-toolbar'].format(this.pageContainer.pageContext.lockedBy, lockedOn));
+        }
         return {'edit': editButton, 'publish': publishButton, 'discard': discardButton, 'unlock': unlockButton, 'label': lockLabel};
     }
 

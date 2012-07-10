@@ -358,13 +358,22 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                     },
                     failure: function(result) {
                         var jsonData = Ext.util.JSON.decode(result.responseText);
-                        console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
-                        Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
-                            self.previewMode = true;
-                            var iFrame = Ext.getCmp('Iframe');
-                            iFrame.getFrame().sendMessage({}, 'hideoverlay');
-                            self._complete();
-                        });
+                        if (jsonData.data == 'locked') {
+                            Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
+                                self.previewMode = true;
+                                var iFrame = Ext.getCmp('Iframe');
+                                iFrame.getFrame().sendMessage({}, 'hideoverlay');
+                                self._complete();
+                            });
+                        } else {
+                            console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
+                            Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
+                                self.previewMode = true;
+                                var iFrame = Ext.getCmp('Iframe');
+                                iFrame.getFrame().sendMessage({}, 'hideoverlay');
+                                self._complete();
+                            });
+                        }
                     }
                 });
             }
