@@ -15,15 +15,9 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
 
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -31,7 +25,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpServletRequest;
@@ -179,7 +172,7 @@ public class MountResource extends AbstractConfigResource {
 
                 // check if the configuration is not locked by another user
                 if (isLocked(jcrSession, configPath)) {
-                    return error("This channel is locked.");
+                    return error("This channel is locked.", "locked");
                 }
 
                 if(!configPath.endsWith("-" + Mount.PREVIEW_NAME)) {
@@ -394,15 +387,6 @@ public class MountResource extends AbstractConfigResource {
         }
         final Property holderProperty = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
         return holderProperty.getString();
-    }
-
-    private Calendar getLockedOn(final Session session, final String path) throws RepositoryException {
-        final Node node = session.getNode(path);
-        if (!node.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-            node.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, new GregorianCalendar());
-        }
-        final Property holderProperty = node.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON);
-        return holderProperty.getDate();
     }
 
     private void lock(Session session, String path) throws RepositoryException {

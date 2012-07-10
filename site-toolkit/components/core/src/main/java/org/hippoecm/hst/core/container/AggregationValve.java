@@ -56,8 +56,6 @@ import org.w3c.dom.Element;
  */
 public class AggregationValve extends AbstractValve {
 
-    private final static String SELECT_ADMIN_GROUPS_QUERY = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND fn:name() = 'admin' AND hipposys:members='{}'";
-
     @Override
     public void invoke(ValveContext context) throws ContainerException {
 
