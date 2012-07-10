@@ -288,7 +288,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         try {
             if (aggregateDescendants) {
-                aggregateDescendants(node, doc, indexFormatVersion, indexer);
+                aggregateDescendants(node, doc, indexFormatVersion, indexer, false);
             } else if (isDocumentVariant(node)) {
                 // we have a Hippo Document state, let's aggregate child text
                 // for free text searching. We use aggregateChildTypes = true only for child 
@@ -360,25 +360,11 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      * @param state
      * @param doc
      * @param indexer
-     * @param indexFormatVersion
-     */
-    private void aggregateDescendants(NodeState state, Document doc, IndexFormatVersion indexFormatVersion,  ServicingNodeIndexer indexer) {
-        // use aggregateChildTypes = false since we are not indexing direct child nodes of a hippo:document any more but are already
-        // at a deeper level
-        aggregateDescendants(state, doc, indexFormatVersion, indexer, false);
-    }
-
-    /**
-     * Adds the fulltext index field of the child states to Document doc
-     * @param state
-     * @param doc
-     * @param indexer
      * @param aggregateChildTypes When <code>true</code>, properties of child nodes will also be indexed as explicit fields on <code>doc</code> if configured as aggregate/childType in indexing_configuration.xml
      * @param indexFormatVersion
      */
     private void aggregateDescendants(NodeState state, Document doc, IndexFormatVersion indexFormatVersion, ServicingNodeIndexer indexer,  boolean aggregateChildTypes) {
         List childNodeEntries = state.getChildNodeEntries();
-        List<NodeState> nodeStates = new ArrayList<NodeState>();
         for (Iterator it = childNodeEntries.iterator(); it.hasNext();) {
             Object o = it.next();
             if (o instanceof ChildNodeEntry) {

@@ -211,9 +211,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
                     throw new RepositoryException("Missing child node entry " + "for node with id: " + node.getNodeId());
                 }
                 String nodename = child.getName().getLocalName();
-                String prefix = null;
                 if (child.getName().getNamespaceURI() != null && !"".equals(child.getName().getNamespaceURI())) {
-                    prefix = queryHandlerContext.getNamespaceRegistry().getPrefix(child.getName().getNamespaceURI());
+                    String prefix = queryHandlerContext.getNamespaceRegistry().getPrefix(child.getName().getNamespaceURI());
                     nodename = prefix + ":" + nodename;
                 }
                 // index the nodename to sort on
