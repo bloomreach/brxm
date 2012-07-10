@@ -311,10 +311,10 @@ public class FacetedAuthorizationTest extends TestCase {
         assertFalse(userSession.hasPendingChanges());
     }
 
-    @Ignore
+    @Test
     public void testDocumentsAreOrderedAfterModification() throws RepositoryException {
-        Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
-        final Node handle = testRoot.addNode("doc", "hippo:handle");
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
         handle.addMixin("hippo:hardhandle");
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -325,21 +325,43 @@ public class FacetedAuthorizationTest extends TestCase {
 
         session.save();
 
-        Node userSessionTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        Node userSessionHandle = userSessionTestData.getNode("doc");
+        Node userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node userHandle = userTestData.getNode("doc");
 
         // doc node is still coupled to the SYSTEMUSER_ID based jcr session
         doc = handle.addNode("doc", "hippo:authtestdocument");
         doc.addMixin("hippo:harddocument");
         session.save();
-        assertEquals("Number of child nodes below doc handle was not 3 ",3, session.getRootNode().getNode(TEST_DATA_NODE).getNode("doc").getNodes().getSize());
-        userSessionHandle = userSessionTestData.getNode("doc");
+        assertEquals("Number of child nodes below doc handle was not 3 ", 3, session.getRootNode().getNode(TEST_DATA_NODE).getNode("doc").getNodes().getSize());
 
-        assertTrue(userSessionHandle.hasNode("doc"));
-        Node userDoc = userSessionHandle.getNode("doc");
-        assertEquals(userSessionTestData.getPath() + "/doc/doc", userDoc.getPath());
+        assertTrue(userHandle.hasNode("doc"));
+        Node userDoc = userHandle.getNode("doc");
+        assertEquals(userTestData.getPath() + "/doc/doc", userDoc.getPath());
 
         assertFalse(userSession.hasPendingChanges());
+    }
+
+    @Test
+    @Ignore
+    public void testDocumentPropertiesAreChangedAfterModification() throws RepositoryException {
+        Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testRoot.addNode("doc", "hippo:handle");
+        handle.addMixin("hippo:hardhandle");
+
+        Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.addMixin("hippo:harddocument");
+        doc.setProperty("authtest", "canread");
+        session.save();
+
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node userDoc = testData.getNode("doc/doc");
+        assertEquals(testData.getPath() + "/doc/doc", userDoc.getPath());
+
+        doc.getProperty("authtest").remove();
+        session.save();
+
+        testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        assertFalse("User can still read node while authorization was revoked", testData.hasNode("doc/doc"));
     }
 
     @Test

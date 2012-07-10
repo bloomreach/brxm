@@ -109,8 +109,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     private Set<Name> virtualPropertyNames;
     private Set<ItemState> virtualStates = new HashSet<ItemState>();
     private Set<ItemId> modifiedExternals = new HashSet<ItemId>();
-    private Set<NodeId> modifiedHandles = new HashSet<NodeId>();
-    private Map<NodeId, NodeState> handles = new HashMap<NodeId, NodeState>();
     private Map<NodeId, ItemState> virtualNodes = new HashMap<NodeId, ItemState>();
     private Map<ItemId, Object> deletedExternals = new WeakHashMap<ItemId, Object>();
     private NodeId rootNodeId;
@@ -284,13 +282,11 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
         virtualStates.clear();
         virtualNodes.clear();
-        handles.clear();
         filteredChangeLog.invalidate();
         if (!noUpdateChangeLog) {
             super.update(filteredChangeLog);
         }
         modifiedExternals.clear();
-        modifiedHandles.clear();
         deletedExternals.putAll(filteredChangeLog.deletedExternals);
     }
 
@@ -491,35 +487,26 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     }
 
     private void reorderHandleChildNodeEntries(final NodeState state) {
-        if (!handles.containsKey(state.getId())) {
-            // returns a copy of the list
-            List<ChildNodeEntry> cnes = state.getChildNodeEntries();
-            ChildNodeEntry previous = null;
-            for (ChildNodeEntry cne : cnes) {
-                if (cne.getIndex() > 1) {
-                    boolean editPreviousMode = editFakeMode;
-                    editFakeMode = true;
-                    try {
-                        // this is SNS number 2, so check previous one, no need to check last one, because it's already last
-                        if (!accessManager.isGranted(previous.getId(), AccessManager.READ)) {
-                            edit();
-                            state.removeChildNodeEntry(previous.getId());
-                            state.addChildNodeEntry(previous.getName(), previous.getId());
-                            handles.put((NodeId) state.getId(), state);
-                            forceStore(state);
-                        }
-                    } catch (ItemNotFoundException t) {
-                        log.error("Unable to order documents below handle " + state.getId(), t);
-                    } catch (RepositoryException t) {
-                        log.error("Unable to determine access rights for " + previous.getId());
-                    } finally {
-                        editFakeMode = editPreviousMode;
+        // returns a copy of the list
+        List<ChildNodeEntry> cnes = state.getChildNodeEntries();
+        ChildNodeEntry previous = null;
+        for (ChildNodeEntry cne : cnes) {
+            if (cne.getIndex() > 1) {
+                try {
+                    // this is SNS number 2, so check previous one, no need to check last one, because it's already last
+                    if (!accessManager.isGranted(previous.getId(), AccessManager.READ)) {
+                        state.removeChildNodeEntry(previous.getId());
+                        state.addChildNodeEntry(previous.getName(), previous.getId());
                     }
+                } catch (ItemNotFoundException t) {
+                    log.error("Unable to order documents below handle " + state.getId(), t);
+                } catch (RepositoryException t) {
+                    log.error("Unable to determine access rights for " + previous.getId());
                 }
-                previous = cne;
             }
+            previous = cne;
         }
-    }
+     }
 
     @Override
     public PropertyState getPropertyState(PropertyId id) throws NoSuchItemStateException, ItemStateException {
@@ -863,9 +850,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                             if ((isVirtual(current) & ITEM_TYPE_EXTERNAL) != 0) {
                                 return !modifiedExternals.contains(current.getId());
                             }
-                            if (isHandle(current)) {
-                                return handles.containsKey(current.getId()) && !modifiedHandles.contains(current.getId());
-                            }
                         }
                         return false;
                     }
@@ -958,10 +942,11 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     public void stateModified(final ItemState modified) {
         super.stateModified(modified);
 
-        if (isHandle(modified) && handles.containsKey(modified.getId()) && !modifiedHandles.contains(modified.getId())) {
-            NodeState state = handles.get(modified.getId());
-            state.copy(modified, true);
-            reorderHandleChildNodeEntries(handles.get(modified.getId()));
+        if (modified.getContainer() != this) {
+            ItemState state = cache.retrieve(modified.getId());
+            if (state != null && isHandle(state)) {
+                reorderHandleChildNodeEntries((NodeState) state);
+            }
         }
     }
 
@@ -983,8 +968,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     public void store(ItemState state) {
         if ((isVirtual(state) & ITEM_TYPE_EXTERNAL) != 0) {
             modifiedExternals.add(state.getId());
-        } else if (isHandle(state)) {
-            modifiedHandles.add((NodeId) state.getId());
         }
         super.store(state);
     }
