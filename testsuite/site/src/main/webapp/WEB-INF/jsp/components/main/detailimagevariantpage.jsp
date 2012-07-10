@@ -29,13 +29,6 @@
 </div>
 </c:if>
 
-<script type="text/javascript" language="javascript">
-	function toggle(IdToHide, IdToShow){
-		document.getElementById(IdToHide).style.display = 'none';
-		document.getElementById(IdToShow).style.display = '';
-	}
-</script>
-
 <div class="yui-u">
   <p>
   <hst:componentRenderingURL var="componentRenderingURL"/>
@@ -56,7 +49,7 @@
         </hst:html>
     </div>
   </div>
-  
+
   
   <c:if test="${not empty document.resource}">
       <h2>resource link:</h2>
@@ -64,11 +57,32 @@
       <a href="${resource}">${document.resource.name}</a>
       <br/><br/>
   </c:if>
-  
+
+
+ <hst:link var="thumbnail" hippobean="${document.image.thumbnail}"/>
+ <hst:link var="original" hippobean="${document.image.original}"/>
+ <hst:headContribution category="jsInline">
+    <script type="text/javascript" language="javascript">
+      var thumbnailSrc = '${thumbnail}';
+      var originalSrc = '${original}';
+      var current = thumbnailSrc;
+      function <hst:namespace/>_toggle(){
+         if (current == thumbnailSrc) {
+           document.getElementById("<hst:namespace/>toggleImg").src = originalSrc;
+           current = originalSrc;
+         } else {
+           document.getElementById("<hst:namespace/>toggleImg").src = thumbnailSrc;
+           current = thumbnailSrc;
+         }
+      }
+
+  </script>
+</hst:headContribution>
+
   <c:if test="${not empty document.image}">
-      <font color="#ff0000">Click this image to enlarge it!</font><br/>
-      <div id="image-thumb"><a href="#" onclick="toggle('image-thumb', 'image-original'); return false;"><img src="<hst:link hippobean="${document.image.thumbnail}"/>"/></a></div>
-      <div id="image-original" style="display:none;"><a href="#" onclick="toggle('image-original', 'image-thumb'); return false;"><img src="<hst:link hippobean="${document.image.original}"/>"/></a></div>
+      <span color="#ff0000">Click the image to change it size!</span><br/>
+
+      <a href="#" onclick="<hst:namespace/>_toggle(); return false;"><img src="${thumbnail}" id="<hst:namespace/>toggleImg"/></a>
   </c:if>
     
   <div>
