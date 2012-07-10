@@ -396,6 +396,32 @@ public class FacetedAuthorizationTest extends TestCase {
     }
 
     @Test
+    public void testNonDocumentTypeNodesAreAuthorized() throws RepositoryException {
+        Node dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
+        Node fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+        fr.setProperty(HippoNodeType.HIPPO_FACET, "jcr:primaryType");
+        fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "hippo:ntunstructured");
+        fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
+        {
+            Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+            testData.addNode("readable", "hippo:ntunstructured");
+        }
+        session.save();
+
+        // setup user session
+        userSession.logout();
+        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.getRootNode().getNode(TEST_DATA_NODE).hasNode("readable"));
+
+        QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+        Query query = queryManager.createQuery("//element(readable,hippo:ntunstructured) order by @jcr:score", Query.XPATH);
+        HippoNodeIterator iter = (HippoNodeIterator) query.execute().getNodes();
+        assertEquals(1L, iter.getSize());
+        assertEquals(1L, iter.getTotalSize());
+    }
+
+    @Test
     public void testSubReadsAllowed() throws RepositoryException {
         Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         assertTrue(testData.hasNode("readdoc0/subread"));
