@@ -136,9 +136,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
     private void addTypeViolations(Set<Violation> violations, IModel childModel, Set<Violation> typeViolations)
             throws ValidationException {
+    	JcrNodeModel childNodeModel = (JcrNodeModel) childModel;
         String name = field.getPath();
-        if ("*".equals(name)) {
-            JcrNodeModel childNodeModel = (JcrNodeModel) childModel;
+        if ("*".equals(name)) {                      
             try {
                 name = childNodeModel.getNode().getName();
             } catch (RepositoryException e) {
@@ -146,10 +146,12 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             }
         }
         int index = 0;
-        if (name.indexOf('[') >= 0) {
-            index = Integer.valueOf(name.substring(name.indexOf('[') + 1, name.lastIndexOf(']'))) - 1;
-            name = name.substring(name.indexOf('['));
+        try {
+        	index = childNodeModel.getNode().getIndex() - 1;
+        } catch (RepositoryException e) {
+            throw new ValidationException("Could not resolve path for invalid value", e);
         }
+
         for (Violation violation : typeViolations) {
             Set<ModelPath> childPaths = violation.getDependentPaths();
             Set<ModelPath> paths = new HashSet<ModelPath>();
