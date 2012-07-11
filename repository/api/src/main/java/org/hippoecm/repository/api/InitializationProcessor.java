@@ -23,6 +23,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+
 /**
  * Using an InitializationProcessor you can load hippoecm-extension.xml files into the repository, and execute
  * initialize items in order to bootstrap configuration.
@@ -43,6 +45,7 @@ public interface InitializationProcessor {
 
     /**
      * Load a specific hippoecm-extension.xml file into the repository.
+     *
      * @param session the {@link Session} to use.
      * @param extension the hippoecm-extension.xml to load
      * @return  the {@link List} of initialize item {@link Node}s that are pending after loading
@@ -60,8 +63,16 @@ public interface InitializationProcessor {
 
     /**
      * Process (execute) a specific list of initialize items.
+     *
      * @param session the {@link Session} to use.
      * @param initializeItems the items to process
      */
     void processInitializeItems(Session session, List<Node> initializeItems);
+
+    /**
+     * Set alternative logger to write messages to.
+     *
+     * @param logger  the logger to use
+     */
+    void setLogger(Logger logger);
 }

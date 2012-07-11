@@ -364,11 +364,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
 
             // TODO HREPTWO-3571: hippofacnav.cnd must be removed when faceted navigation is moved to its own subproject, and should be added through extension.xml, see
-            
+
+            final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl(log);
+
             for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd", "hippofacnav.cnd", "hipposched.cnd" }) {
                 try {
                     log.info("Initializing nodetypes from: " + cndName);
-                    LoadInitializationModule.initializeNodetypes(syncSession.getWorkspace(), getClass().getClassLoader().getResourceAsStream(cndName), cndName);
+                    initializationProcessor.initializeNodetypes(syncSession.getWorkspace(), getClass().getClassLoader().getResourceAsStream(cndName), cndName);
                     syncSession.save();
                 } catch (ConstraintViolationException ex) {
                     throw new RepositoryException("Could not initialize repository with hippo node types", ex);
@@ -398,7 +400,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 log.info("Initializing configuration content");
                 InputStream configuration = getClass().getResourceAsStream("configuration.xml");
                 if (configuration != null) {
-                    LoadInitializationModule.initializeNodecontent(rootSession, "/", configuration, getClass().getPackage().getName() + ".configuration.xml");
+                    initializationProcessor.initializeNodecontent(rootSession, "/", configuration, getClass().getPackage().getName() + ".configuration.xml");
                 } else {
                     log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
                 }
@@ -409,13 +411,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             // load all extension resources
             try {
-                LoadInitializationModule.loadExtensions(rootSession, rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize"));
+                initializationProcessor.loadExtensions(rootSession, rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize"));
             } catch (IOException ex) {
                 throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
             }
-            LoadInitializationModule.processInitializeItems(rootSession);
+            initializationProcessor.processInitializeItems(rootSession);
             if (log.isDebugEnabled()) {
-                LoadInitializationModule.dryRun(rootSession);
+                initializationProcessor.dryRun(rootSession);
             }
 
             if (!hasHippoNamespace) {
@@ -496,7 +498,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     @Override
     public InitializationProcessor getInitializationProcessor() {
-        return new InitializationProcessorImpl();
+        return new InitializationProcessorImpl(null);
     }
 
     @Override

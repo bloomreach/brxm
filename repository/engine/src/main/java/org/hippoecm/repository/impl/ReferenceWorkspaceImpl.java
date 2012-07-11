@@ -35,10 +35,8 @@ import javax.jcr.SimpleCredentials;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.jackrabbit.api.JackrabbitWorkspace;
-import org.hippoecm.repository.LoadInitializationModule;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.xml.sax.InputSource;
@@ -70,13 +68,14 @@ public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
     public void bootstrap() throws RepositoryException, IOException {
         final Session session = login();
         try {
+            final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl(null);
+
             if (!session.nodeExists("/hippo:configuration")) {
-                LoadInitializationModule.initializeNodecontent(session, "/", LocalHippoRepository.class.getResourceAsStream("configuration.xml"), "configuration.xml");
+                initializationProcessor.initializeNodecontent(session, "/", LocalHippoRepository.class.getResourceAsStream("configuration.xml"), "configuration.xml");
             }
 
             session.save();
 
-            final InitializationProcessor initializationProcessor = new InitializationProcessorImpl();
             final List<Node> initializeItems = initializationProcessor.loadExtensions(session);
             final List<Node> contentItems = new ArrayList<Node>();
 
