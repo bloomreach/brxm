@@ -15,6 +15,18 @@
  */
 package org.hippoecm.frontend.editor.plugins.resource;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Calendar;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.ValueFactory;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.tika.config.TikaConfig;
@@ -23,14 +35,6 @@ import org.apache.tika.utils.ParseUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
-import java.util.Calendar;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.ValueFactory;
 
 /**
  * Resource helper for creating and validating nodes of type <code>hippo:resource</code>
@@ -62,7 +66,7 @@ public class ResourceHelper {
                 if (imageInfo.check()) {
                     String imageInfoMimeType = imageInfo.getMimeType();
                     if (imageInfoMimeType == null) {
-                        throw new ResourceException("impermissable image type content");
+                        throw new ResourceException("impermissible image type content");
                     } else {
                         if (imageInfoMimeType.equals(MIME_IMAGE_PJPEG)) {
                             imageInfoMimeType = MIME_IMAGE_JPEG;
@@ -72,29 +76,29 @@ public class ResourceHelper {
                         }
                     }
                 } else {
-                    throw new ResourceException("impermissable image type content");
+                    throw new ResourceException("impermissible image type content");
                 }
             } else if (mimeType.equals(MIME_TYPE_PDF)) {
                 String line;
                 line = new BufferedReader(new InputStreamReader(resource.getProperty(JcrConstants.JCR_DATA).getStream()))
                         .readLine().toUpperCase();
                 if (!line.startsWith("%PDF-")) {
-                    throw new ResourceException("impermissable pdf type content");
+                    throw new ResourceException("impermissible pdf type content");
                 }
             } else if (mimeType.equals("application/postscript")) {
                 String line;
                 line = new BufferedReader(new InputStreamReader(resource.getProperty(JcrConstants.JCR_DATA).getStream()))
                         .readLine().toUpperCase();
                 if (!line.startsWith("%!")) {
-                    throw new ResourceException("impermissable postscript type content");
+                    throw new ResourceException("impermissible postscript type content");
                 }
             } else {
                 // This method can be overridden to allow more such checks on content type.  if such an override
                 // wants to be really strict and not allow unknown content, the following thrown exception is to be included
-                // throw new ValueFormatException("impermissable unrecognized type content");
+                // throw new ValueFormatException("impermissible unrecognized type content");
             }
         } catch (IOException ex) {
-            throw new ResourceException("impermissable unknown type content");
+            throw new ResourceException("impermissible unknown type content");
         }
     }
 
