@@ -111,7 +111,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             Set<NodeId> handles = new HashSet<NodeId>();
             addHandleIds(changeLog.modifiedStates(), changeLog, handles);
             for (NodeId handleId : handles) {
-                for (HandleListener listener : handleListeners) {
+                for (HandleListener listener : new ArrayList<HandleListener>(handleListeners)) {
                     listener.handleModified(handleId);
                 }
             }
@@ -289,7 +289,11 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             if (upstream != null) {
                 upstream.updateCommitted(update, path);
             }
-            notifyDocumentListeners(update.getChanges());
+            try {
+                notifyDocumentListeners(update.getChanges());
+            } catch (Throwable t) {
+                log.error("Exception thrown when notifyingn handle listeners");
+            }
         }
 
         @Override
