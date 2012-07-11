@@ -341,7 +341,7 @@ public class AggregationValve extends AbstractValve {
             
             HttpSession session = request.getSession(false);
             
-            if(session != null ) {
+            if(session != null && request.getRequestContext().isCmsRequest()) {
                 Boolean composerMode = (Boolean) session.getAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME);
                 if (composerMode != null) {
                     Mount mount = request.getRequestContext().getResolvedMount().getMount();
