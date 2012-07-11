@@ -78,7 +78,7 @@ public class RootResource extends AbstractConfigResource {
     @Path("/setvariant/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setVariant(@Context HttpServletRequest servletRequest, @FormParam("variant") String variant) {
-        servletRequest.getSession().setAttribute("RENDER_VARIANT", variant);
+        servletRequest.getSession().setAttribute(ContainerConstants.RENDER_VARIANT, variant);
         return ok("Variant set");
     }
 
@@ -86,7 +86,7 @@ public class RootResource extends AbstractConfigResource {
     @Path("/clearvariant/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response clearVariant(@Context HttpServletRequest servletRequest, String variant) {
-        servletRequest.getSession().removeAttribute("RENDER_VARIANT");
+        servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
         return ok("Variant cleared");
     }
 

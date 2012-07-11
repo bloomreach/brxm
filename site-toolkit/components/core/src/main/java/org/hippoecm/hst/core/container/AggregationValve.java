@@ -361,7 +361,7 @@ public class AggregationValve extends AbstractValve {
                                 rootWindow.getResponseState().addHeader("HST-Mount-LockedOn", String.valueOf(mutableMount.getLockedOn().getTimeInMillis()));
                             }
                         }
-                        Object variant = session.getAttribute("RENDER_VARIANT");
+                        Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
                         if (variant == null) {
                             variant = "default";
                         }

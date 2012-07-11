@@ -147,8 +147,14 @@ public interface ContainerConstants {
      * use the credentials from the cms (jcr session) user, for example a REST call that needs to modify the HST config
      */ 
     String CMS_HOST_CONTEXT = "org.hippoecm.hst.container.sso_cms_context";
-    
 
+
+    /**
+     * The attribute used on the request or http session to indicate that the page should be rendered as some specific
+     * variant
+     */
+    String RENDER_VARIANT = "org.hippoecm.hst.container.render_variant";
+    
     /**
      * The attribute used on the request to indicate that the request is from a cms context : This can be a REST call, or 
      * a request for the preview website in a cms environment (host)

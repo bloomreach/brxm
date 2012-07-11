@@ -15,12 +15,14 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.awt.Container;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.parameters.EmptyPropertyEditor;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -159,8 +161,8 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
          */
         protected String getPrefixedParameterName(final String parameterName, final ComponentConfiguration config, final HstRequest req) {
             final HttpSession session = req.getSession(false);
-            if (session != null && session.getAttribute("RENDER_VARIANT") != null) {
-                final String prefix = session.getAttribute("RENDER_VARIANT").toString();
+            if (session != null && session.getAttribute(ContainerConstants.RENDER_VARIANT) != null) {
+                final String prefix = session.getAttribute(ContainerConstants.RENDER_VARIANT).toString();
                 if ("default".equals(prefix)) {
                     return parameterName;
                 }

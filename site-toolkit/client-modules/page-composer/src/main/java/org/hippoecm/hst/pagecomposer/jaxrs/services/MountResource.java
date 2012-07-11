@@ -46,6 +46,7 @@ import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
@@ -156,7 +157,7 @@ public class MountResource extends AbstractConfigResource {
                                              @Context HttpServletResponse servletResponse) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
 
-        servletRequest.getSession().removeAttribute("RENDER_VARIANT");
+        servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
 
         ContextualizableMount ctxEditingMount = getPreviewMount(requestContext);
         if (ctxEditingMount == null) {
