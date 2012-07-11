@@ -48,8 +48,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
     private static final Logger log = LoggerFactory.getLogger(IRestProxyService.class);
 
-    private static final String ERROR_MESSAGE_NULL_SUBJECT_IS_PASSED = "null subject has been passed which is not acceptable as an argument!";
-    private static final String ERROR_MESSAGE_SUBJECT_HAS_NO_CREDENTIALS = "Subject has no credentials attached with it!";
     private static final String CMSREST_CREDENTIALS_HEADER = "X-CMSREST-CREDENTIALS";
     // This is really bad workaround but it is used only for the time being
     private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
@@ -158,13 +156,13 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
     protected String getEncryptedCredentials(Subject subject) throws IllegalArgumentException {
         if (subject == null) {
-            throw new IllegalArgumentException(ERROR_MESSAGE_NULL_SUBJECT_IS_PASSED);
+            throw new IllegalArgumentException("Null subject has been passed which is not acceptable as an argument!");
         }
 
         Set<Object> credentials = subject.getPrivateCredentials();
 
         if ( (credentials == null) || (credentials.isEmpty()) ) {
-            throw new IllegalArgumentException(ERROR_MESSAGE_SUBJECT_HAS_NO_CREDENTIALS);
+            throw new IllegalArgumentException("Subject has no credentials attached with it!");
         }
 
         Iterator<Object> credentialsIterator = credentials.iterator();
@@ -194,23 +192,29 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         } catch (HttpException httpex) {
             if (log.isDebugEnabled()) {
                 log.warn("Error while pinging site using URI " + normalizedPingServiceUri, httpex);
+            } else {
+                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, httpex.toString());
             }
 
             siteIsAlive = false;
         } catch (UnsupportedEncodingException usence) {
             if (log.isDebugEnabled()) {
                 log.warn("Error while pinging site using URI " + normalizedPingServiceUri, usence);
+            } else {
+                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, usence.toString());
             }
 
             siteIsAlive = false;
         } catch (IOException ioe) {
             if (log.isDebugEnabled()) {
                 log.warn("Error while pinging site using URI " + normalizedPingServiceUri, ioe);
+            } else {
+                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, ioe.toString());
             }
 
             siteIsAlive = false;
         }
-        
+
         return siteIsAlive;
     }
 
