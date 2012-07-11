@@ -59,9 +59,7 @@ public class ActionValve extends AbstractValve {
             HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider();
             
             if (window == null) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Cannot find the action window: {}", actionWindowReferenceNamespace);
-                }
+                log.warn("Cannot find the action window: {}", actionWindowReferenceNamespace);
             } else {
                 // Check if it is invoked from portlet.
                 responseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
@@ -108,9 +106,7 @@ public class ActionValve extends AbstractValve {
                         String errorMessage = responseState.getErrorMessage();
                         String componentClassName = window.getComponentName();
 
-                        if (log.isDebugEnabled()) {
-                            log.debug("The action window has error status code: {} - {}", errorCode, componentClassName);
-                        }
+                        log.debug("The action window has error status code: {} - {}", errorCode, componentClassName);
                         
                         if (errorMessage != null) {
                             servletResponse.sendError(errorCode, errorMessage);

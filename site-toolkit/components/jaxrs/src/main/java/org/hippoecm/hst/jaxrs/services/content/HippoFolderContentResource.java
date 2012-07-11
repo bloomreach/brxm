@@ -161,9 +161,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
             HippoFolderBean childFolderBean = hippoFolderBean.getBean(folderName, HippoFolderBean.class);
             
             if (childFolderBean == null) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Cannot find a folder named '{}'", folderName);
-                }
+                log.warn("Cannot find a folder named '{}'", folderName);
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
         
@@ -298,9 +296,7 @@ public class HippoFolderContentResource extends AbstractContentResource {
             HippoDocumentBean childDocumentBean = hippoFolderBean.getBean(documentName, HippoDocumentBean.class);
             
             if (childDocumentBean == null) {
-                if (log.isWarnEnabled()) {
-                    log.warn("Cannot find a folder named '{}'", documentName);
-                }
+                log.warn("Cannot find a folder named '{}'", documentName);
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
         

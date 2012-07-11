@@ -16,8 +16,6 @@
 
 package org.hippoecm.hst.cmsrest.services;
 
-import static org.hippoecm.hst.cmsrest.services.BaseResourceConsts.MESSAGE_CHANNEL_MANAGER_IS_NULL;
-
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +45,8 @@ public abstract class BaseResource {
 	 */
 	protected void validate() throws  ResourceRequestValidationException {
         if (channelManager == null) {
-        	log.warn(MESSAGE_CHANNEL_MANAGER_IS_NULL);
-            throw new ResourceRequestValidationException(MESSAGE_CHANNEL_MANAGER_IS_NULL);
+        	log.warn("Cannot look up channels because the channel manager is null");
+            throw new ResourceRequestValidationException("Cannot look up channels because the channel manager is null");
         }
 	}
 

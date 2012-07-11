@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.jaxrs.JAXRSService;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -123,9 +122,8 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     	if (requestContext.getPathSuffix() != null) {
     		jaxrsEndpointRequestPath.append(requestContext.getPathSuffix());
     	}
-    	if (log.isDebugEnabled()) {
-    		log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", new Object[]{request.getMethod(), jaxrsEndpointRequestPath.toString(), uuid});
-    	}
+
+    	log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", new Object[]{request.getMethod(), jaxrsEndpointRequestPath.toString(), uuid});
     	return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath.toString());
 	}
 	

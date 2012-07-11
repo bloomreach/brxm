@@ -50,17 +50,17 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 			validate();
 	        return Collections.unmodifiableList(new ArrayList<Channel>(channelManager.getChannels().values()));
 		} catch (ResourceRequestValidationException rrve) {
-			if (log.isWarnEnabled()) {
-				log.warn("Error while processing channels resource request");
-			}
+		    if (log.isDebugEnabled()) {
+		        log.warn("Error while processing channels resource request", rrve);
+		    } else {
+		        log.warn("Error while processing channels resource request - {}", rrve.toString());
+		    }
 			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
 			// For now return empty list
 			// throw rrve;
 			return Collections.emptyList();
 		} catch (ChannelException ce) {
-			if (log.isErrorEnabled()) {
-				log.error("Error while retrieving channels - " + ce.getClass().getName() + " : " + ce.getMessage() + " : " + ce);
-			}
+		    log.warn("Error while retrieving channels - {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
 			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
 			// For now return empty list
 			// throw ce;
@@ -80,19 +80,17 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             // This is only test data
             channelManager.save(channel);
         } catch (ResourceRequestValidationException rrve) {
-            if (log.isWarnEnabled()) {  
-                log.warn("Error while processing channels resource request for channel '{}'", channel.getId());
+            if (log.isDebugEnabled()) {
+                log.warn("Error while processing channels resource request for channel '" + channel.getId() + "'", rrve);
+            } else {
+                log.warn("Error while processing channels resource request for channel '{}' - {}", channel.getId(), rrve.toString());
             }
             // This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
             // For now return empty list
             // throw rrve;
             // I know returning 'null' is not clean at all but thats *only* for now!
         } catch (ChannelException ce) {
-            if (log.isErrorEnabled()) {
-                if (log.isErrorEnabled()) {
-                    log.error("Error while saving a channel - Channel: " + channel + " - " + ce.getClass().getName() + " : " + ce.getMessage() + " : " + ce);
-                }
-            }
+            log.warn("Error while saving a channel - Channel: {} - {} : {}", new Object[] {channel, ce.getClass().getName(), ce.toString()});
         }
     }
 
@@ -105,19 +103,17 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             // This is only test data
             return channelManager.persist(blueprintId, channel);
         } catch (ResourceRequestValidationException rrve) {
-            if (log.isWarnEnabled()) {  
-                log.warn("Error while processing channels resource request for channel '{}'", channel.getId());
+            if (log.isDebugEnabled()) {
+                log.warn("Error while processing channels resource request for channel '" + channel.getId() + "'", rrve);
+            } else {
+                log.warn("Error while processing channels resource request for channel '{}' - {}", channel.getId(), rrve.toString());
             }
             // This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
             // For now return empty list
             // throw rrve;
             // I know returning 'null' is not clean at all but thats *only* for now!
         } catch (ChannelException ce) {
-            if (log.isErrorEnabled()) {
-                if (log.isErrorEnabled()) {
-                    log.error("Error while persisting a new channel - Channel: " + channel + " - " + ce.getClass().getName() + " : " + ce.getMessage() + " : " + ce);
-                }
-            }
+            log.warn("Error while persisting a new channel - Channel: {} - {} : {}", new Object[] {channel, ce.getClass().getName(), ce.toString()});
         }
 
         // Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
@@ -144,7 +140,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve a channel with id '" + id + "'", ce);
             } else {
-                log.warn("Failed to retrieve a channel with id '{}' - {}", id, ce);
+                log.warn("Failed to retrieve a channel with id '{}' - {}", id, ce.toString());
             }
         }
 
@@ -180,7 +176,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve channel info class for channel with id '" + id + "'", ce);
             } else {
-                log.warn("Failed to retrieve channel info class for channel with id '{}' - {}", id, ce);
+                log.warn("Failed to retrieve channel info class for channel with id '{}' - {}", id, ce.toString());
             }
         }
 
@@ -198,7 +194,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve channel resource values channel with id '" + id + "'", ce);
             } else {
-                log.warn("Failed to retrieve channel resource values for channel with id '{}' - {}", id, ce);
+                log.warn("Failed to retrieve channel resource values for channel with id '{}' - {}", id, ce.toString());
             }
         }
 

@@ -68,9 +68,7 @@ public class SecuredJAXRSInvoker extends JAXRSInvoker {
         DenyAll denyAllAnnoOnMethod = method.getAnnotation(DenyAll.class);
         
         if (denyAllAnnoOnMethod != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("The operation is denied to all.");
-            }
+            log.debug("The operation is denied to all.");
             return true;
         }
         
@@ -82,26 +80,20 @@ public class SecuredJAXRSInvoker extends JAXRSInvoker {
             if (roles != null) {
                 for (String role : roles) {
                     if (securityContext.isUserInRole(role)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("The user is in role: " + role);
-                        }
+                        log.debug("The user is in role: " + role);
                         return false;
                     }
                 }
             }
-            
-            if (log.isDebugEnabled()) {
-                log.debug("The user is not in any role: " + StringUtils.join(roles, ", "));
-            }
+
+            log.debug("The user is not in any role: " + StringUtils.join(roles, ", "));
             return true;
         }
         
         PermitAll permitAllAnnoOnMethod = method.getAnnotation(PermitAll.class);
         
         if (permitAllAnnoOnMethod != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("The operation is permitted to all.");
-            }
+            log.debug("The operation is permitted to all.");
             return false;
         }
         
@@ -113,26 +105,20 @@ public class SecuredJAXRSInvoker extends JAXRSInvoker {
             if (roles != null) {
                 for (String role : roles) {
                     if (securityContext.isUserInRole(role)) {
-                        if (log.isDebugEnabled()) {
-                            log.debug("The user is in role: " + role);
-                        }
+                        log.debug("The user is in role: " + role);
                         return false;
                     }
                 }
             }
             
-            if (log.isDebugEnabled()) {
-                log.debug("The user is not in any role defined in the type: " + StringUtils.join(roles, ", "));
-            }
+            log.debug("The user is not in any role defined in the type: " + StringUtils.join(roles, ", "));
             return true;
         }
         
         PermitAll permitAllAnnoOnType = method.getDeclaringClass().getAnnotation(PermitAll.class);
         
         if (permitAllAnnoOnType != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("The type is permitted to all.");
-            }
+            log.debug("The type is permitted to all.");
             return false;
         }
         

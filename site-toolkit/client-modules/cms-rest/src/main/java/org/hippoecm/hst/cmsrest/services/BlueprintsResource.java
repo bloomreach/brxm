@@ -16,10 +16,6 @@
 
 package org.hippoecm.hst.cmsrest.services;
 
-import static org.hippoecm.hst.cmsrest.services.BlueprintsResourceConsts.MESSAGE_BLUEPRINTS_RESOURCE_REQUEST_PROCESSING_ERROR;
-import static org.hippoecm.hst.cmsrest.services.BlueprintsResourceConsts.MESSAGE_BLUEPRINTS_RETRIEVAL_ERROR;
-import static org.hippoecm.hst.cmsrest.services.BlueprintsResourceConsts.PARAM_MESSAGE_BLUEPRINTS_RESOURCE_REQUEST_PROCESSING_ERROR;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,17 +44,17 @@ public class BlueprintsResource extends BaseResource implements BlueprintService
 			validate();
 	        return Collections.unmodifiableList(new ArrayList<Blueprint>(channelManager.getBlueprints()));
 		} catch (ResourceRequestValidationException rrve) {
-			if (log.isWarnEnabled()) {
-				log.warn(MESSAGE_BLUEPRINTS_RESOURCE_REQUEST_PROCESSING_ERROR);
-			}
+		    if (log.isDebugEnabled()) {
+		        log.warn("Error while processing blueprints resource request", rrve);
+		    } else {
+		        log.warn("Error while processing blueprints resource request - {}", rrve.toString());
+		    }
 			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
 			// For now return empty list
 			// throw rrve;
 			return Collections.emptyList();
 		} catch (ChannelException ce) {
-			if (log.isErrorEnabled()) {
-				log.error(MESSAGE_BLUEPRINTS_RETRIEVAL_ERROR);
-			}
+		    log.warn("Error while retrieving blueprints");
 			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
 			// For now return empty list
 			// throw ce;
@@ -77,8 +73,10 @@ public class BlueprintsResource extends BaseResource implements BlueprintService
 			validate();
 			return channelManager.getBlueprint(id);
 		} catch (ResourceRequestValidationException rrve) {
-		    if (log.isWarnEnabled()) {
-		        log.warn(PARAM_MESSAGE_BLUEPRINTS_RESOURCE_REQUEST_PROCESSING_ERROR, id);
+		    if (log.isDebugEnabled()) {
+		        log.warn("Error while processing blueprints resource request for blueprint '" + id + "'", rrve);
+		    } else {
+		        log.warn("Error while processing blueprints resource request for blueprint '{}' - {}", id, rrve.toString());
 		    }
 			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
 			// For now return empty list
@@ -86,9 +84,7 @@ public class BlueprintsResource extends BaseResource implements BlueprintService
 			// I know returning 'null' is not clean at all but thats *only* for now!
 			return null;
 		} catch (ChannelException ce) {
-		    if (log.isErrorEnabled()) {
-		        log.error("Exception while retrieving blueprint of id '" + id + "' : " + ce.getClass().getName() + " : " + ce.getMessage() + " : " + ce);
-		    }
+		    log.error("Exception while retrieving blueprint of id '{}' : {} : {}", new String[] {id, ce.getClass().getName(), ce.toString()});
 		    // - I know returning 'null' is not clean at all but thats *only* for now!
 		    // - Also see the above comment
 		    // throw ce

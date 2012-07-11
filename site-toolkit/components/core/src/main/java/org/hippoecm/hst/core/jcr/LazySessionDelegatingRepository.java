@@ -225,10 +225,8 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
             
             if (HttpSessionBindingListener.class.isAssignableFrom(declaringClass)) {
                 if ("valueUnbound".equals(methodName)) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("LazySession session value is being unbound.");
-                    }
-                    
+                    log.debug("LazySession session value is being unbound.");
+
                     clearSession();
                 }
                 
@@ -268,10 +266,8 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                 if (session.isLive()) {
                     session.logout();
                 }
-                
-                if (log.isDebugEnabled()) {
-                    log.debug("LazySession's session is logged out.");
-                }
+
+                log.debug("LazySession's session is logged out.");
             } catch (Throwable th) {
                 if (log.isDebugEnabled()) {
                     log.warn("Failed to logout stateful session.", th);
@@ -284,10 +280,8 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         @Override
         protected void finalize() {
             //System.out.println("LazySession object is being finalized.");
-            if (log.isDebugEnabled()) {
-                log.debug("LazySession object is being finalized.");
-            }
-            
+            log.debug("LazySession object is being finalized.");
+
             clearSession();
         }
     }

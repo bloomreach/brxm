@@ -18,8 +18,6 @@ package org.hippoecm.hst.configuration.channel;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -29,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.TimeZone;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -174,22 +171,24 @@ public class ChannelManagerImpl implements MutableChannelManager {
             return;
         }
         if (!channelPath.startsWith(channelsRoot)) {
-            log.warn("Channel path '" + channelPath + "' is not part of the HST configuration under " + rootPath +
-                             ", ignoring channel info for mount " + mount.getName() +
-                             ".  Use the full repository path for identification.");
+            log.warn(
+                    "Channel path '{}' is not part of the HST configuration under {}, ignoring channel info for mount {}.  Use the full repository path for identification.",
+                    new Object[] { channelPath, rootPath, mount.getName() });
+
             return;
         }
         Channel channel = channels.get(channelPath.substring(channelsRoot.length()));
         if (channel == null) {
-            log.warn("Unknown channel " + channelPath + ", ignoring mount " + mount.getName());
+            log.warn("Unknown channel {}, ignoring mount {}", channelPath, mount.getName());
             return;
         }
         if (channel.getUrl() != null) {
             // We already encountered this channel while walking over all the mounts. This mount
             // therefore points to the same channel as another mount, which is not allowed (each channel has only
             // one mount)
-            log.warn(
-                    "Channel " + channelPath + " contains multiple mounts - analysing mount " + mount.getName() + ", found url " + channel.getUrl() + " in channel");
+            log.warn("Channel {} contains multiple mounts - analysing mount {}, found url {} in channel", new Object[] {
+                    channelPath, mount.getName(), channel.getUrl() });
+
             return;
         }
 
@@ -252,6 +251,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     void load() throws ChannelException {
         if (channels == null) {
             HstManager manager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+
             try {
                 manager.getVirtualHosts();
             } catch (RepositoryNotAvailableException e) {
@@ -278,12 +278,12 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (hostGroup == null) {
             log.warn("Cannot load the Channel Manager because no host group configured on hst:hosts node");
         } else if (!virtualHosts.getHostGroupNames().contains(hostGroup)) {
-            log.warn("Configured channel manager host group name " + hostGroup + " does not exist");
+            log.warn("Configured channel manager host group name {} does not exist", hostGroup);
         } else {
             // in channel manager only the mounts for at most ONE single hostGroup are shown
             mounts = virtualHosts.getMountsByHostGroup(hostGroup);
             if (mounts.size() == 0) {
-                log.warn("No mounts found in host group " + hostGroup + ".");
+                log.warn("No mounts found in host group {}.", hostGroup);
             }
         }
 
@@ -304,7 +304,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                         String channelPath = mount.getChannelPath();
                         if (StringUtils.isEmpty(channelPath)) {
                             log.debug(
-                                    "Mount '{}' does not have a channelpath configured. Skipping setting channelInfo. ",
+                                    "Mount '{}' does not have a channelpath configured. Skipping setting channelInfo.",
                                     mount);
                             continue;
                         }
@@ -312,7 +312,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                         Channel channel = this.channels.get(channelNodeName);
                         if (channel == null) {
                             log.debug(
-                                    "Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo. ",
+                                    "Mount '{}' has channelpath configured that does not point to a channel info. Skipping setting channelInfo.",
                                     mount);
                             continue;
                         }
@@ -761,10 +761,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
     private Node copySiteNode(final Node blueprintNode, final Node sitesNode, final String siteNodeName, final Node contentRoot, final String hippoAvailability) throws RepositoryException {
         Node blueprintSiteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
 
-        if (log.isDebugEnabled()) {
-            log.debug("Copying site node '{}' to '{}'", blueprintSiteNode.getPath(),
-                      sitesNode.getPath() + "/" + siteNodeName);
-        }
+        log.debug("Copying site node '{}' to '{}/{}'", new Object[] {blueprintSiteNode.getPath(), sitesNode.getPath(), siteNodeName});
+
         Node siteNode = copyNodes(blueprintSiteNode, sitesNode, siteNodeName);
 
         Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
@@ -775,10 +773,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     private Node createSiteNode(final Node sitesNode, final String siteNodeName, final Node contentRoot, final String hippoAvailability) throws RepositoryException {
-        if (log.isDebugEnabled()) {
-            log.debug("Creating site node '{}'; content root='{}',hippo:availability='{}'",
-                      new Object[]{sitesNode.getPath() + "/" + siteNodeName, contentRoot.getPath(), hippoAvailability});
-        }
+        log.debug("Creating site node '{}/{}'; content root='{}',hippo:availability='{}'", new Object[] {sitesNode.getPath(), siteNodeName, contentRoot.getPath(), hippoAvailability});
+
         final Node siteNode = sitesNode.addNode(siteNodeName, HstNodeTypes.NODETYPE_HST_SITE);
 
         final Node contentNode = siteNode.addNode(HstNodeTypes.NODENAME_HST_CONTENTNODE, HippoNodeType.NT_FACETSELECT);
@@ -873,7 +869,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         } catch (RepositoryException e) {
             throw e;
         } catch (Exception e) {
-            // other exception which are not handled properly in the repository (we cannot do better here then just log them)
+            // Other exception which are not handled properly in the repository (we cannot do better here then just log them)
             if (log.isDebugEnabled()) {
                 log.warn("Exception in workflow", e);
             } else {

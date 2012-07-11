@@ -64,7 +64,7 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
         try {
             propagateJcrSession(credentials);
         } catch (ContainerException ce) {
-            log.warn("Error while propagating JCR Session! - {} : {} : {}", new String[]{ce.getClass().getName(), ce.getMessage(), ce.toString()});
+            log.warn("Error while propagating JCR Session! - {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             dePropagateJcrSession();
             return;
@@ -73,12 +73,11 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
         try {
             context.invokeNext();
         } catch (ContainerException ce) {
-            log.warn("Error while propagating JCR Session! - {} : {} : {}", new String[]{ce.getClass().getName(), ce.getMessage(), ce.toString()});
+            log.warn("Error while propagating JCR Session! - {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
         } finally {
             dePropagateJcrSession();
         }
-
     }
 
     protected void propagateJcrSession(Credentials credentials) throws ContainerException {

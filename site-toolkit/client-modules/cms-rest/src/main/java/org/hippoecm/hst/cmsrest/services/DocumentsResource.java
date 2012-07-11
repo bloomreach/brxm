@@ -83,6 +83,7 @@ public class DocumentsResource implements DocumentService {
                 if (channel == null) {
                     log.warn("Skipping link for mount '{}' since its channel path '{}' does not point to a channel",
                             linkMount.getName(), channelPath);
+
                     continue;
                 }
 
@@ -146,6 +147,7 @@ public class DocumentsResource implements DocumentService {
         if (canonicalLinks.isEmpty()) {
             log.info("Cannot generate URL of type '{}' for document with UUID '{}' because no mount in the host group '{}' matches",
                     new Object[]{type, uuid, hostGroupNameForChannelMngr});
+
             return "";
         }
 

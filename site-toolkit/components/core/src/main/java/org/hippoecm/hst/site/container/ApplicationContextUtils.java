@@ -52,9 +52,7 @@ public class ApplicationContextUtils {
                     applicationContext.getResources(locationPattern);
                     existingLocationPatterns.add(locationPattern);
                 } catch (IOException e) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Ignoring resources on {}. It does not exist.", locationPattern);
-                    }
+                    log.debug("Ignoring resources on {}. It does not exist.", locationPattern);
                 }
             }
         }

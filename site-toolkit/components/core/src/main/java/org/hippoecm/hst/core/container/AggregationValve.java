@@ -155,9 +155,7 @@ public class AggregationValve extends AbstractValve {
                         String errorMessage = errorCodeSendingWindow.getResponseState().getErrorMessage();
                         String componentClassName = errorCodeSendingWindow.getComponentName();
                         
-                        if (log.isDebugEnabled()) {
-                            log.debug("The component window has error status code, {} from {}.", errorCode, componentClassName);
-                        }
+                        log.debug("The component window has error status code, {} from {}.", errorCode, componentClassName);
                         
                         if (errorMessage != null) {
                             servletResponse.sendError(errorCode, errorMessage);

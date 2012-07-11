@@ -78,9 +78,7 @@ class FilteringByExpressionListableBeanFactory extends DefaultListableBeanFactor
         if (registrable) {
             super.registerBeanDefinition(beanName, bd);
         } else {
-            if (log.isDebugEnabled()) {
-                log.debug("Skipping the bean definition: " + bd);
-            }
+            log.debug("Skipping the bean definition: " + bd);
         }
     }
 }

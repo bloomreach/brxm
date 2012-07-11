@@ -60,9 +60,7 @@ public class AnnotatedContentBeanClassesScanner {
                         try {
                             annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(scanner, StringUtils.split(annoClassesResourcePath, ", \t\r\n"));
                         } catch (Exception e) {
-                            if (log.isWarnEnabled()) {
-                                log.warn("Failed to collect annotated classes", e);
-                            }
+                            log.warn("Failed to collect annotated classes", e);
                         }
                     }
                 }
@@ -72,11 +70,10 @@ public class AnnotatedContentBeanClassesScanner {
                     if (xmlConfURL == null) {
                         throw new IllegalStateException(BEANS_ANNOTATED_CLASSES_CONF_PARAM_ERROR_MSG);
                     }
+
                     annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(xmlConfURL);
                 } catch (Exception e) {
-                    if (log.isWarnEnabled()) {
-                        log.warn("Failed to collect annotated classes", e);
-                    }
+                    log.warn("Failed to collect annotated classes", e);
                 }
             }
         }

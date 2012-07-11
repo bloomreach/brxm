@@ -91,7 +91,7 @@ public class ContextResolvingValve extends AbstractValve
             context.setRootComponentWindow(rootComponentWindow);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
-                log.warn("Failed to create component windows: {}", e.toString(), e);
+                log.warn("Failed to create component windows", e);
             } else if (log.isWarnEnabled()) {
                 log.warn("Failed to create component windows: {}", e.toString());
             }

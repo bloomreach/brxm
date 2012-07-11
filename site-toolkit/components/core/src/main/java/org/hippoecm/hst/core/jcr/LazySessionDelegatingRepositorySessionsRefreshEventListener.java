@@ -53,7 +53,7 @@ public class LazySessionDelegatingRepositorySessionsRefreshEventListener extends
         }
         
         if (refreshSessions) {
-            if (log.isDebugEnabled()) log.debug("Event received. Refreshing sessions.");
+            log.debug("Event received. Refreshing sessions.");
             doRefreshing();
         }
     }

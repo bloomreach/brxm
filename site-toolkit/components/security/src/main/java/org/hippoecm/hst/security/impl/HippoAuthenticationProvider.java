@@ -98,13 +98,11 @@ public class HippoAuthenticationProvider extends JcrAuthenticationProvider {
             } else {
                 session = getSystemRepository().login();
             }
-            
+
             String statement = MessageFormat.format(getGroupsOfUserQuery(), username);
-            
-            if (log.isDebugEnabled()) {
-                log.debug("Searching groups of user with query: " + statement);
-            }
-            
+
+            log.debug("Searching groups of user with query: " + statement);
+
             Query q = session.getWorkspace().getQueryManager().createQuery(statement, getQueryLanguage());
             QueryResult result = q.execute();
             NodeIterator nodeIt = result.getNodes();

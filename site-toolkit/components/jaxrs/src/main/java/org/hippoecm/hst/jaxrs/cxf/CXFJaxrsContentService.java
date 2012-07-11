@@ -71,9 +71,8 @@ public class CXFJaxrsContentService extends CXFJaxrsService {
     	if (requestContext.getPathSuffix() != null) {
     		jaxrsEndpointRequestPath.append(requestContext.getPathSuffix());
     	}
-    	if (log.isDebugEnabled()) {
-    		log.debug("Invoking JAX-RS endpoint {}: {} for contentPath {}", new Object[]{request.getMethod(), jaxrsEndpointRequestPath.toString(), bean.getPath()});
-    	}
+
+    	log.debug("Invoking JAX-RS endpoint {}: {} for contentPath {}", new Object[]{request.getMethod(), jaxrsEndpointRequestPath.toString(), bean.getPath()});
     	return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath.toString());
 	}
 }

@@ -522,29 +522,21 @@ public class HstSiteConfigServlet extends HttpServlet {
             if (hstConfigurationFile != null && hstConfigurationFile.isFile()) {
                 builder.setFile(hstConfigurationFile);
                 configuration = builder.getConfiguration();
-                
-                if (log.isInfoEnabled()) {
-                    log.info("Using HST Configuration File: {}", hstConfigurationFile.getCanonicalPath());
-                }
+
+                log.info("Using HST Configuration File: {}", hstConfigurationFile.getCanonicalPath());
             } else {
-                // no xml config found, try the properties file alternative
-                if (log.isDebugEnabled()) {
-                    log.debug("The file does not exist: {}", hstConfigurationFilePath);
-                }
-                
+                // No xml config found, try the properties file alternative
+                log.debug("The file does not exist: {}", hstConfigurationFilePath);
+
                 String hstConfigPropFilePath = getConfigOrContextInitParameter(HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
                 File hstConfigPropFile = getResourceFile(hstConfigPropFilePath);
                 
                 if (hstConfigPropFile != null && hstConfigPropFile.isFile()) {
                     configuration = new PropertiesConfiguration(hstConfigPropFile);
 
-                    if (log.isInfoEnabled()) {
-                        log.info("Using HST Configuration Properties File: {}", hstConfigPropFile.getCanonicalPath());
-                    }
+                    log.info("Using HST Configuration Properties File: {}", hstConfigPropFile.getCanonicalPath());
                 } else {
-                    if (log.isWarnEnabled()) {
-                        log.warn("The file does not exist: {}", hstConfigPropFilePath);
-                    }
+                    log.warn("The file does not exist: {}", hstConfigPropFilePath);
                 }
             }
         } catch (ConfigurationException e) {

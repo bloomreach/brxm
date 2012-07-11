@@ -93,9 +93,7 @@ public class JcrHippoRepository implements Repository {
         }
         
         try {
-            if (log.isInfoEnabled()) {
-                log.info("Trying to get hippo repository from {}.", repositoryURI);
-            }
+            log.info("Trying to get hippo repository from {}.", repositoryURI);
 
             if (StringUtils.isEmpty(repositoryURI)) {
                 hippoRepository = HippoRepositoryFactory.getHippoRepository();
@@ -113,10 +111,8 @@ public class JcrHippoRepository implements Repository {
             } else {
                 hippoRepository = HippoRepositoryFactory.getHippoRepository(repositoryURI);
             }
-            
-            if (log.isInfoEnabled()) {
-                log.info("Has retrieved hippo repository from {}.", repositoryURI);
-            }
+
+            log.info("Has retrieved hippo repository from {}.", repositoryURI);
         } catch (Exception e) {
             throw new RepositoryException(e);
         } finally {

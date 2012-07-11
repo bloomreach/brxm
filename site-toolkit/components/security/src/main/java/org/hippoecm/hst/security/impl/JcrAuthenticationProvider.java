@@ -175,13 +175,11 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
             } else {
                 session = getSystemRepository().login();
             }
-            
+
             String statement = MessageFormat.format(getRolesOfUserQuery(), username);
-            
-            if (log.isDebugEnabled()) {
-                log.debug("Searching roles of user with query: " + statement);
-            }
-            
+
+            log.debug("Searching roles of user with query: " + statement);
+
             Query q = session.getWorkspace().getQueryManager().createQuery(statement, getQueryLanguage());
             QueryResult result = q.execute();
             NodeIterator nodeIt = result.getNodes();

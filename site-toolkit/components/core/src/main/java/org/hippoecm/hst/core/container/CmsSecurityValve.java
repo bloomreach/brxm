@@ -21,7 +21,6 @@ import java.security.SignatureException;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
-import javax.servlet.ServletRequestWrapper;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -136,9 +135,9 @@ public class CmsSecurityValve extends AbstractValve {
                     String cmsAuthUrl = cmsUrl + "auth?destinationUrl=" + destinationURL.toString() + "&key=" + key;
                     servletResponse.sendRedirect(cmsAuthUrl);
                 } catch (UnsupportedEncodingException e) {
-                    log.error("Unable to encode the destination url with utf8 encoding" + e.getMessage(), e);
+                    log.error("Unable to encode the destination url with utf8 encoding " + e.getMessage(), e);
                 } catch (IOException e) {
-                    log.error("Something gone wrong so stopping valve invocation fall through:" + e.getMessage(), e);
+                    log.error("Something gone wrong so stopping valve invocation fall through: " + e.getMessage(), e);
                 }
 
                 return;

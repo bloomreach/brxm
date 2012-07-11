@@ -50,8 +50,7 @@ public class HippoFacetsAvailableNavigationContentResource extends HippoFacetNav
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve content bean.", e);
-            } 
-            else {
+            } else {
                 log.warn("Failed to retrieve content bean. {}", e.toString());
             }
             

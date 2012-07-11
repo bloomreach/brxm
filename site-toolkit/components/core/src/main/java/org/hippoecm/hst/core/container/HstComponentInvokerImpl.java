@@ -72,10 +72,8 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
             ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
 
             try {
-                if(log.isDebugEnabled()) {
-                    log.debug("invoking action of component: {}", component.getClass().getName());
-                }
-                
+                log.debug("invoking action of component: {}", component.getClass().getName());
+
                 component.doAction(hstRequest, hstResponse);
             } catch (HstComponentException e) {
                 if (this.exceptionThrowable) {
@@ -335,10 +333,8 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         RequestDispatcher disp = null;
         
         if (!StringUtils.isBlank(dispatchUrl)) {
-            if (log.isDebugEnabled()) {
-                log.debug("Invoking dispatcher of url: {}", dispatchUrl);
-            }
-            
+            log.debug("Invoking dispatcher of url: {}", dispatchUrl);
+
             if (namedDispatching) {
                 disp = requestContainerConfig.getServletContext().getNamedDispatcher(dispatchUrl);
             } else {
@@ -351,11 +347,9 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                     
                     if (!dispatchUrl.startsWith("/")) {
                         String resolvedDispatchUrl = "/" + window.getComponent().getClass().getPackage().getName().replace(".", "/") + "/" + dispatchUrl;
-                        
-                        if (log.isDebugEnabled()) {
-                            log.debug("Relative classpath dispatch URL '{}' has been resolved to '{}'", dispatchUrl, resolvedDispatchUrl);
-                        }
-                        
+
+                        log.debug("Relative classpath dispatch URL '{}' has been resolved to '{}'", dispatchUrl, resolvedDispatchUrl);
+
                         dispatchUrl = resolvedDispatchUrl;
                     }
                 } else {
@@ -369,10 +363,8 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
         }
         
         if (disp == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("The request dispatcher for dispatch url '{}' is null. Component name: '{}' . Component class: '"+window.getComponentName()+"'. Component id: '"+window.getComponentInfo().getId()+"'. If the component is inherited, the id might be a concatenation of some id's.", dispatchUrl, window.getName());
-            }
-            
+            log.warn("The request dispatcher for dispatch url '{}' is null. Component name: '{}' . Component class: '"+window.getComponentName()+"'. Component id: '"+window.getComponentInfo().getId()+"'. If the component is inherited, the id might be a concatenation of some id's.", dispatchUrl, window.getName());
+
             window.addComponentExcpetion(new HstComponentException("The dispatch url is null."));
         } else {
             ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
@@ -401,10 +393,8 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
                 }
             }
         } catch (Exception e) {
-            if (log.isWarnEnabled()) {
-                log.warn("Failed to dispatch to error page: " + e);
-            }
-            
+            log.warn("Failed to dispatch to error page: " + e);
+
             try {
                 servletResponse.reset();
             } catch (Exception ignore) {

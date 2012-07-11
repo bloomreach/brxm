@@ -23,9 +23,6 @@ import javax.jcr.Session;
  */
 public final class CmsJcrSessionThreadLocal {
 
-    private static final String ERROR_MESSAGE_SESSION_ARGUMENT_IS_NULL = "JCR session argument is 'null'!";
-    private static final String ERROR_MESSAGE_SESSION_ALREDY_INITIALIZED = "JCR session already initialized!";
-
     private static final ThreadLocal<Session> jcrSession;
 
     static {
@@ -34,11 +31,11 @@ public final class CmsJcrSessionThreadLocal {
 
     public static void setJcrSession(Session session) throws IllegalArgumentException, IllegalStateException {
         if (session == null) {
-            throw new IllegalArgumentException(ERROR_MESSAGE_SESSION_ARGUMENT_IS_NULL);
+            throw new IllegalArgumentException("JCR session argument is 'null'!");
         }
 
         if (jcrSession.get() != null) {
-            throw new IllegalStateException(ERROR_MESSAGE_SESSION_ALREDY_INITIALIZED);
+            throw new IllegalStateException("JCR session already initialized!");
         }
 
         jcrSession.set(session);

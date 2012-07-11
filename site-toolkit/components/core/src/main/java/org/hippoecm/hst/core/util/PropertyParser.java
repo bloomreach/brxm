@@ -86,9 +86,8 @@ public class PropertyParser {
             try {
                 s = propertyPlaceHolderHelper.replacePlaceholders((String) o, properties);
             } catch (IllegalArgumentException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Unable to replace property expression for property '" + name + "'. Return null.", e);
-                }
+                log.debug("Unable to replace property expression for property '" + name + "'. Return null.", e);
+
                 return null;
             }
             
@@ -96,22 +95,21 @@ public class PropertyParser {
 
         } else if (o instanceof String[]) {
 
-            // replace possible expressions in every String
+            // Replace possible expressions in every String
             String[] unparsed = (String[]) o;
             String[] parsed = new String[unparsed.length];
             
             for (int i = 0 ; i < unparsed.length ; i++) {
                 String s = unparsed[i];
-                
+
                 try {
                     s = propertyPlaceHolderHelper.replacePlaceholders(unparsed[i], properties);
                 } catch (IllegalArgumentException e ) {
-                    if (log.isDebugEnabled()) {
-                        log.debug("Unable to replace property expression for property '" + name + "'. Return null.", e);
-                    }
+                    log.debug("Unable to replace property expression for property '" + name + "'. Return null.", e);
+
                     s = null;
                 }
-                
+
                 parsed[i] = s;
             }
             

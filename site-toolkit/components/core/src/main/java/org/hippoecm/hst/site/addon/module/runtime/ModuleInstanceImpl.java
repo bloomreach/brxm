@@ -99,9 +99,7 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         String [] checkedConfigurationResources = ApplicationContextUtils.getCheckedLocationPatterns(applicationContext, moduleDefinition.getConfigLocations());
 
         if (ArrayUtils.isEmpty(checkedConfigurationResources)) {
-            if (log.isWarnEnabled()) {
-                log.warn("There's no valid component configuration for addon module, '{}'.", name);
-            }
+            log.warn("There's no valid component configuration for addon module, '{}'.", name);
         } else {
             applicationContext.setConfigLocations(checkedConfigurationResources);
             applicationContext.refresh();

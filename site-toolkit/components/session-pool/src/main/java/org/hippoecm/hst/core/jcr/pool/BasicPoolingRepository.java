@@ -366,10 +366,7 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     
     public void returnSession(Session session) {
         if (sessionPool == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("The session pool of the pooling repository has not been initialized yet.");
-            }
-            
+            log.debug("The session pool of the pooling repository has not been initialized yet.");
             return;
         }
         

@@ -33,7 +33,6 @@ import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.hst.util.PathUtils;
@@ -729,12 +728,10 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                     resolvedLocation = resolver.resolve(path);
                 }
                 if (resolvedLocation != null && resolvedLocation.getPath() != null) {
-                    if (log.isDebugEnabled()){
-                        log.debug("Creating a link for node '{}' succeeded", path);
-                    }
-                    if (log.isInfoEnabled()){
-                        log.info("Succesfull linkcreation for path '{}' to new pathInfo '{}'", path, resolvedLocation.getPath());
-                    }
+                    log.debug("Creating a link for node '{}' succeeded", path);
+
+                    log.info("Succesfull linkcreation for path '{}' to new pathInfo '{}'", path, resolvedLocation.getPath());
+
                     return resolvedLocation.getPath();
                 }
                 log.debug("Could not create a link for '"+path+"' for mount '{}' (host = {}). Other mounts will be tried if available.", tryMount.getMountPath(), tryMount.getVirtualHost().getHostName());

@@ -101,9 +101,7 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
             Item item = session.getItem(path);
             
             if (!item.isNode()) {
-                if (log.isWarnEnabled()) {
-                    log.warn("The object is not a node: {}", path);
-                }
+                log.warn("The object is not a node: {}", path);
             } else {
                 node = (Node) item;
                 
@@ -151,9 +149,7 @@ public class HstObjectConverterImpl extends ObjectConverterImpl implements Simpl
             Item item = session.getItem(path);
 
             if (!item.isNode()) {
-                if (log.isWarnEnabled()) {
-                    log.warn("The object is not a node: {}", path);
-                }
+                log.warn("The object is not a node: {}", path);
             } else {
                 node = (Node) item;
 

@@ -21,7 +21,6 @@ import java.io.IOException;
 import javax.jcr.Credentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -59,7 +58,7 @@ public abstract class BaseCmsRestValve extends AbstractValve {
                 response.sendError(scError, message);
             }
         } catch (IOException ioe) {
-            log.warn("Exception while sending error response", ioe);
+            log.warn("Exception while sending HTTP error response", ioe);
         }
     }
 

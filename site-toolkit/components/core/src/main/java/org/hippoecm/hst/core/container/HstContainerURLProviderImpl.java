@@ -404,10 +404,8 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 if (HstURL.ACTION_TYPE.equals(requestType)) {
                     String actionWindowReferenceNamespace = requestInfos[1];
                     url.setActionWindowReferenceNamespace(actionWindowReferenceNamespace);
-                    
-                    if (log.isDebugEnabled()) {
-                        log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
-                    }
+
+                    log.debug("action window chosen for {}: {}", url.getPathInfo(), actionWindowReferenceNamespace);
                 } else if (HstURL.RESOURCE_TYPE.equals(requestType)) {
                     String resourceWindowReferenceNamespace = requestInfos[1];
                     String resourceId = requestInfos.length > 2 ? requestInfos[2] : null;
@@ -417,20 +415,16 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                         // which can make a problem in Tomcat 6.
                         resourceId = URLDecoder.decode(resourceId, url.getCharacterEncoding());
                     }
-                    
+
                     url.setResourceId(resourceId);
                     url.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
-                    
-                    if (log.isDebugEnabled()) {
-                        log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
-                    }
+
+                    log.debug("resource window chosen for {}: {}", url.getPathInfo(), resourceWindowReferenceNamespace + ", " + resourceId);
                 } else if (HstURL.COMPONENT_RENDERING_TYPE.equals(requestType)) {
                     String componentRenderingReferenceNamespace = requestInfos[1];
                     url.setComponentRenderingWindowReferenceNamespace(componentRenderingReferenceNamespace);
 
-                    if (log.isDebugEnabled()) {
-                        log.debug("partial render window chosen for {}: {}", url.getPathInfo(), componentRenderingReferenceNamespace);
-                    }
+                    log.debug("partial render window chosen for {}: {}", url.getPathInfo(), componentRenderingReferenceNamespace);
                 }
             }
         } catch (Exception e) {
@@ -453,9 +447,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     		pathInfo = URLDecoder.decode(requestPath, characterEncoding);
     	}
     	catch (UnsupportedEncodingException e) {
-    		if (log.isDebugEnabled()) {
-                log.warn("Invalid request path: {}", requestPath, e);
-    		}
+    	    log.warn("Invalid request path: {}", requestPath, e);
     	}
         if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
             return new String [] { null, pathInfo };

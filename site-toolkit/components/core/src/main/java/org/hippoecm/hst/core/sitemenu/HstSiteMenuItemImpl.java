@@ -79,14 +79,12 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
             if (siteMapItemByRefId != null) {
                 hstSiteMapItemRefId = siteMapItemRefIdOrPath;
                 hstSiteMapItemPath = HstSiteMapUtils.getPath(siteMapItemByRefId);
-                if (log.isDebugEnabled()) {
-                    log.debug("sitemapitem of sitemenu, '{}', found by refid, '{}'. sitemapitem path: " + hstSiteMapItemPath, name, siteMapItemRefIdOrPath);
-                }
+
+                log.debug("sitemapitem of sitemenu, '{}', found by refid, '{}'. sitemapitem path: " + hstSiteMapItemPath, name, siteMapItemRefIdOrPath);
             } else {
                 hstSiteMapItemPath = siteMapItemRefIdOrPath;
-                if (log.isDebugEnabled()) {
-                    log.debug("sitemapitem of sitemenu, '{}', will be found by path, '{}'.", name, siteMapItemRefIdOrPath);
-                }
+
+                log.debug("sitemapitem of sitemenu, '{}', will be found by path, '{}'.", name, siteMapItemRefIdOrPath);
             }
         }
         

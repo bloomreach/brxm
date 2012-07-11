@@ -202,39 +202,31 @@ public class SecurityValve extends AbstractValve {
                 users = mount.getUsers();
             }
         }
-        
+
         if (!authenticated) {
-            if (log.isDebugEnabled()) {
-                log.debug("The sitemap item or site mount is non-authenticated.");
-            }
-            
+            log.debug("The sitemap item or site mount is non-authenticated.");
+
             return;
         }
-        
+
         Principal userPrincipal = servletRequest.getUserPrincipal();
         
         if (userPrincipal == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("The user has not been authenticated yet.");
-            }
-            
+            log.debug("The user has not been authenticated yet.");
+
             throw new ContainerSecurityNotAuthenticatedException("Not authenticated yet.");
         }
         
         if (users.isEmpty() && roles.isEmpty()) {
-            if (log.isDebugEnabled()) {
-                log.debug("The roles or users are not configured.");
-            }
+            log.debug("The roles or users are not configured.");
         }
         
         if (!users.isEmpty()) {
             if (users.contains(userPrincipal.getName())) {
                 return;
             }
-            
-            if (log.isDebugEnabled()) {
-                log.debug("The user is not assigned to users, {}", users);
-            }
+
+            log.debug("The user is not assigned to users, {}", users);
         }
         
         if (!roles.isEmpty()) {
@@ -243,10 +235,8 @@ public class SecurityValve extends AbstractValve {
                     return;
                 }
             }
-            
-            if (log.isDebugEnabled()) {
-                log.debug("The user is not assigned to roles, {}", roles);
-            }
+
+            log.debug("The user is not assigned to roles, {}", roles);
         }   
         throw new ContainerSecurityNotAuthorizedException("Not authorized.");
     }

@@ -527,7 +527,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                     previewContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
                 } catch (ServiceException e) {
                    if(log.isDebugEnabled()) {
-                       log.warn("Cannot create a preview version for mount '"+mount.getValueProvider().getPath()+"'", e);
+                       log.warn("Cannot create a preview version for mount '" + mount.getValueProvider().getPath() + "'", e);
                    } else {
                        log.warn("Cannot create a preview version for mount '{}' : '{}'", mount.getValueProvider().getPath(), e.toString());
                    }

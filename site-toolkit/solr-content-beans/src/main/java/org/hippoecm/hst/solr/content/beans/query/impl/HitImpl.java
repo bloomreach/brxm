@@ -75,7 +75,7 @@ public class HitImpl implements Hit {
                         contentBeanBinder.callbackHandler(identifiableContentBean);
                     } catch (BindingException e) {
                         if (log.isDebugEnabled()) {
-                            // log stacktrace in debug mode
+                            // Log stacktrace in debug mode
                             log.warn("Could not bind bean to provider", e);
                         } else {
                             log.warn("Could not bind bean to provider", e.getMessage());

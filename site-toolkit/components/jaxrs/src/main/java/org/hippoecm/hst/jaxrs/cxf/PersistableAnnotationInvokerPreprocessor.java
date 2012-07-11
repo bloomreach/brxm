@@ -96,9 +96,7 @@ public class PersistableAnnotationInvokerPreprocessor implements InvokerPreproce
         Persistable persistableAnnoOnMethod = method.getAnnotation(Persistable.class);
         
         if (persistableAnnoOnMethod != null) {
-            if (log.isDebugEnabled()) {
-                log.debug("The operation is persistable.");
-            }
+            log.debug("The operation is persistable.");
             return true;
         }
         

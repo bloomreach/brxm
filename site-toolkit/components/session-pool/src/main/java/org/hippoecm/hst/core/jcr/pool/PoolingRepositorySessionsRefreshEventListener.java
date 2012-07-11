@@ -54,7 +54,7 @@ public class PoolingRepositorySessionsRefreshEventListener extends GenericEventL
         }
         
         if (invalidatePools) {
-            if (log.isDebugEnabled()) log.debug("Event received. Invalidating session pools.");
+            log.debug("Event received. Invalidating session pools.");
             doInvalidation();
         }
     }

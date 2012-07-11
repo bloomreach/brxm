@@ -83,14 +83,12 @@ public class SpringComponentManager implements ComponentManager {
         String [] checkedConfigurationResources = ApplicationContextUtils.getCheckedLocationPatterns(applicationContext, getConfigurationResources());
         
         if (ArrayUtils.isEmpty(checkedConfigurationResources)) {
-            if (log.isWarnEnabled()) {
-                log.warn("There's no valid component configuration.");
-            }
+            log.warn("There's no valid component configuration.");
         } else {
             applicationContext.setConfigLocations(checkedConfigurationResources);
             applicationContext.refresh();
         }
-        
+
         if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
             addonModuleInstancesMap = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
             

@@ -17,7 +17,6 @@ package org.hippoecm.hst.configuration.model;
 
 import java.util.UUID;
 
-import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -59,7 +58,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
                     } catch (IllegalArgumentException e) {
                         log.warn("Docbase from '{}' does not contain a valid uuid. Content mirror is broken", contentNode.getPath());
                     } catch (ItemNotFoundException e) {
-                        log.warn("ItemNotFoundException: Content mirror is broken. ", e.getMessage());
+                        log.warn("ItemNotFoundException: Content mirror is broken. ", e.toString());
                     } catch (RepositoryException e) {
                         log.error("RepositoryException: Content mirror is broken. ", e);
                     }

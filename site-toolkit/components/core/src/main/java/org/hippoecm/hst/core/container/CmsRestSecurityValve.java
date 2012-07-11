@@ -70,11 +70,11 @@ public class CmsRestSecurityValve extends BaseCmsRestValve {
             context.invokeNext();
         } catch (SignatureException se) {
             ContainerException ce = new ContainerException(se);
-            log.warn("Error while processing CMS REST credentails -  {} : {} : {}", new String[]{ce.getClass().getName(), ce.getMessage(), ce.toString()});
+            log.warn("Error while processing CMS REST credentails -  {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             return;
         } catch (ContainerException ce) {
-            log.warn("Error while processing CMS REST call -  {} : {} : {}", new String[]{ce.getClass().getName(), ce.getMessage(), ce.toString()});
+            log.warn("Error while processing CMS REST call -  {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
             setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
             return;
         }

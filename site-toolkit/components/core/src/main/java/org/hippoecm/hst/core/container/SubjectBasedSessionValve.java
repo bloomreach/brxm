@@ -49,9 +49,7 @@ public class SubjectBasedSessionValve extends AbstractValve {
         
         if (subjectBasedSession) {
             if (requestContext.getSubject() == null) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Subject based session cannot be set because no subject is found.");
-                }
+                log.debug("Subject based session cannot be set because no subject is found.");
             } else {
                 setSubjectSession(context, requestContext, sessionStateful);
             }

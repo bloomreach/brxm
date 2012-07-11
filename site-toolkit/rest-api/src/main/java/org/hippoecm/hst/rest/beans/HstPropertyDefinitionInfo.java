@@ -36,12 +36,12 @@ public class HstPropertyDefinitionInfo {
     public HstPropertyDefinitionInfo() {
     }
 
-    // I had to do it this way cause Jackson JSON parser was complaining
+    // Using 'isRequired' causes Jackson JSON parser to complain not to have an 'isRequired' property getter
     public boolean getIsRequired() {
         return isRequired;
     }
 
-    // I had to do it this way cause Jackson JSON parser was complaining
+ // Using 'isRequired' causes Jackson JSON parser to complain not to have an 'isRequired' property setter
     public void setIsRequired(boolean isRequired) {
         this.isRequired = isRequired;
     }

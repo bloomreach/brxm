@@ -101,9 +101,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         }
         
         if (htmlBean == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("HippoHtml child bean not found.");
-            }
+            log.warn("HippoHtml child bean not found.");
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
@@ -159,9 +157,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         }
         
         if (htmlBean == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("HippoHtml child bean not found.");
-            }
+            log.warn("HippoHtml child bean not found.");
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
@@ -217,9 +213,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         }
         
         if (htmlBean == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("HippoHtml child bean not found.");
-            }
+            log.warn("HippoHtml child bean not found.");
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
@@ -258,9 +252,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         }
         
         if (htmlBean == null) {
-            if (log.isWarnEnabled()) {
-                log.warn("HippoHtml child bean not found.");
-            }
+            log.warn("HippoHtml child bean not found.");
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
         
