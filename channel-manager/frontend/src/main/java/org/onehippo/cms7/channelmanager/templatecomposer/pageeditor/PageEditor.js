@@ -275,6 +275,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     }
                 }
             },
+            ' ',
+            variantsComboBoxLabel,
             this.variantsComboBox,
             '->',
             {
@@ -365,6 +367,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     this.toolbarButtons['discard'],
                     this.toolbarButtons['unlock'],
                     this.toolbarButtons['label'],
+                    ' ',
                     variantsComboBoxLabel,
                     this.variantsComboBox);
             }

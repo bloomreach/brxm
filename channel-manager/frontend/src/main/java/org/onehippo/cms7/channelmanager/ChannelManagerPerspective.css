@@ -381,6 +381,10 @@
     height: 22px;
 }
 
+.channel-manager-toolbar .xtb-spacer {
+    width: 25px;
+}
+
 #channelIconPanel .x-toolbar {
     padding-left: 5px;
 }
