@@ -23,6 +23,7 @@ import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
@@ -62,15 +63,9 @@ public abstract class DownloadLink<T> extends Link<T> {
          * @see org.apache.wicket.IRequestTarget#respond(org.apache.wicket.RequestCycle)
          */
         public void respond(RequestCycle requestCycle) {
-            final Application app = Application.get();
-
-            // Determine encoding
-            final String encoding = app.getRequestCycleSettings().getResponseRequestEncoding();
 
             // Set content type based on markup type for page
             final WebResponse response = (WebResponse) requestCycle.getResponse();
-            response.setCharacterEncoding(encoding);
-            response.setContentType("text/plain; charset=" + encoding);
 
             // Make sure it is not cached by a client
             response.setHeader("Expires", Time.now().subtract(Duration.minutes(1)).toDateString());
@@ -81,6 +76,10 @@ public abstract class DownloadLink<T> extends Link<T> {
             // set filename
             final String filename = getFilename();
             if (filename != null) {
+                final String mimeType = WebApplication.get().getServletContext().getMimeType(filename);
+                if (mimeType != null) {
+                    response.setContentType(mimeType);
+                }
                 response.setAttachmentHeader(filename);
                 content = getContent();
                 if (content != null) {
