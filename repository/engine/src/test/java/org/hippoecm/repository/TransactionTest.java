@@ -17,14 +17,16 @@ package org.hippoecm.repository;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Session;
 import javax.transaction.NotSupportedException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import com.atomikos.icatch.jta.UserTransactionManager; // FIXME
+import com.atomikos.icatch.jta.UserTransactionManager;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class TransactionTest extends TestCase {
     @SuppressWarnings("unused")
@@ -82,6 +84,7 @@ public class TransactionTest extends TestCase {
         assertNotNull(txRoot.getNode("x1"));
     }
 
+    @Test
     public void testTransactionRollback() throws Exception {
         UserTransaction ut = null;
         Node root = session.getRootNode();

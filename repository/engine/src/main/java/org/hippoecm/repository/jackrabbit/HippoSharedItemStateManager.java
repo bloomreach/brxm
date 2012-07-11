@@ -16,24 +16,39 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.jcr.NamespaceException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 
+import org.apache.jackrabbit.core.cluster.Update;
+import org.apache.jackrabbit.core.cluster.UpdateEventChannel;
+import org.apache.jackrabbit.core.cluster.UpdateEventListener;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
+import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollection;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.state.ChangeLog;
 import org.apache.jackrabbit.core.state.ISMLocking;
+import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateListener;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
+import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
+import org.apache.jackrabbit.spi.Name;
+import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.replication.ReplicationUpdateEventListener;
 import org.slf4j.Logger;
@@ -48,17 +63,29 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
     public RepositoryImpl repository;
 
     private List<ReplicationUpdateEventListener> updateListeners = new ArrayList<ReplicationUpdateEventListener>();
+    private Name handleNodeName;
+    private Name documentNodeName;
+    private NodeTypeRegistry nodeTypeRegistry;
 
-    public HippoSharedItemStateManager(RepositoryImpl repository, PersistenceManager persistMgr, NodeId rootNodeId,
-            NodeTypeRegistry ntReg, boolean usesReferences, ItemStateCacheFactory cacheFactory, ISMLocking locking)
-            throws ItemStateException {
+    private Set<HandleListener> handleListeners = Collections.synchronizedSet(new HashSet<HandleListener>());
+
+    public HippoSharedItemStateManager(RepositoryImpl repository, PersistenceManager persistMgr, NodeId rootNodeId, NodeTypeRegistry ntReg, boolean usesReferences, ItemStateCacheFactory cacheFactory, ISMLocking locking) throws ItemStateException {
         super(persistMgr, rootNodeId, ntReg, usesReferences, cacheFactory, locking);
         this.repository = repository;
+        this.nodeTypeRegistry = ntReg;
+        super.setEventChannel(new DocumentChangeNotifyingEventChannelDecorator());
     }
 
     @Override
-    public void update(ChangeLog local, EventStateCollectionFactory factory) throws ReferentialIntegrityException,
-            StaleItemStateException, ItemStateException {
+    public void setEventChannel(final UpdateEventChannel upstream) {
+        UpdateEventChannel eventChannel = new DocumentChangeNotifyingEventChannelDecorator(upstream);
+        super.setEventChannel(eventChannel);
+    }
+
+    // FIXME: transactional update?
+
+    @Override
+    public void update(ChangeLog local, EventStateCollectionFactory factory) throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
         super.update(local, factory);
         updateInternalListeners(local, factory);
     }
@@ -67,6 +94,101 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
     public void externalUpdate(ChangeLog external, EventStateCollection events) {
         super.externalUpdate(external, events);
         updateExternalListeners(external, events);
+        notifyDocumentListeners(external);
+    }
+
+    void notifyDocumentListeners(ChangeLog changeLog) {
+        Name handleNodeName = getHandleName(repository);
+        if (handleNodeName == null) {
+            return;
+        }
+        Name documentNodeName = getDocumentName(repository);
+        if (documentNodeName == null) {
+            return;
+        }
+
+        try {
+            Set<NodeId> handles = new HashSet<NodeId>();
+            addHandleIds(changeLog.modifiedStates(), changeLog, handles);
+            for (NodeId handleId : handles) {
+                for (HandleListener listener : handleListeners) {
+                    listener.handleModified(handleId);
+                }
+            }
+        } catch (NoSuchNodeTypeException nsnte) {
+            log.error("Could not broadcast handle changes", nsnte);
+        } catch (ItemStateException e) {
+            log.error("Could not broadcast handle changes", e);
+        }
+    }
+
+    private void addHandleIds(final Iterable<ItemState> states, ChangeLog changes, final Set<NodeId> handles) throws ItemStateException, NoSuchNodeTypeException {
+        for (ItemState state : states) {
+            try {
+                final NodeState nodeState;
+                if (state.isNode()) {
+                    nodeState = (NodeState) state;
+                } else {
+                    if (changes.isModified(state.getParentId())) {
+                        continue;
+                    }
+                    nodeState = (NodeState) getItemState(state.getParentId());
+                }
+                final Name nodeTypeName = nodeState.getNodeTypeName();
+                if (handleNodeName.equals(nodeTypeName)) {
+                    handles.add(nodeState.getNodeId());
+                } else {
+                    final EffectiveNodeType ent = nodeTypeRegistry.getEffectiveNodeType(nodeTypeName);
+                    if (ent.includesNodeType(documentNodeName)) {
+                        // TODO: check parent type
+                        handles.add(nodeState.getParentId());
+                    }
+                }
+            } catch (NoSuchItemStateException nsise) {
+                log.error("Could not find parent item", nsise);
+            }
+        }
+    }
+
+
+    @Override
+    public void addListener(final ItemStateListener listener) {
+        super.addListener(listener);
+        if (listener instanceof HandleListener) {
+            handleListeners.add((HandleListener) listener);
+        }
+    }
+
+    @Override
+    public void removeListener(final ItemStateListener listener) {
+        if (listener instanceof HandleListener) {
+            handleListeners.remove(listener);
+        }
+        super.removeListener(listener);
+    }
+
+    private Name getHandleName(final RepositoryImpl repository) {
+        if (handleNodeName == null) {
+            try {
+                final String hippoUri = repository.getNamespaceRegistry().getURI("hippo");
+                handleNodeName = NameFactoryImpl.getInstance().create(hippoUri, "handle");
+            } catch (NamespaceException e) {
+                log.warn("hippo prefix not yet available");
+            }
+        }
+        return handleNodeName;
+    }
+
+    private Name getDocumentName(final RepositoryImpl repository) {
+        if (documentNodeName == null) {
+            try {
+                final String hippoUri = repository.getNamespaceRegistry().getURI("hippo");
+                documentNodeName = NameFactoryImpl.getInstance().create(hippoUri, "document");
+            } catch (NamespaceException e) {
+                log.warn("hippo prefix not yet available");
+            }
+        }
+        return documentNodeName;
     }
 
     public void updateInternalListeners(ChangeLog changes, EventStateCollectionFactory factory) {
@@ -102,6 +224,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
 
     /**
      * Register a {@link ReplicationUpdateEventListener}.
+     *
      * @param listener
      */
     public void registerUpdateListener(ReplicationUpdateEventListener listener) {
@@ -112,6 +235,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
 
     /**
      * Unregister a {@link ReplicationUpdateEventListener}.
+     *
      * @param listener
      */
     public void unRegisterUpdateListener(ReplicationUpdateEventListener listener) {
@@ -133,5 +257,53 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             }
         }
         return super.hasItemState(id);
+    }
+
+    private class DocumentChangeNotifyingEventChannelDecorator implements UpdateEventChannel {
+        private final UpdateEventChannel upstream;
+
+        public DocumentChangeNotifyingEventChannelDecorator() {
+            this(null);
+        }
+
+        public DocumentChangeNotifyingEventChannelDecorator(final UpdateEventChannel upstream) {
+            this.upstream = upstream;
+        }
+
+        @Override
+        public void updateCreated(final Update update) {
+            if (upstream != null) {
+                upstream.updateCreated(update);
+            }
+        }
+
+        @Override
+        public void updatePrepared(final Update update) {
+            if (upstream != null) {
+                upstream.updatePrepared(update);
+            }
+        }
+
+        @Override
+        public void updateCommitted(final Update update, final String path) {
+            if (upstream != null) {
+                upstream.updateCommitted(update, path);
+            }
+            notifyDocumentListeners(update.getChanges());
+        }
+
+        @Override
+        public void updateCancelled(final Update update) {
+            if (upstream != null) {
+                upstream.updateCancelled(update);
+            }
+        }
+
+        @Override
+        public void setListener(final UpdateEventListener listener) {
+            if (upstream != null) {
+                upstream.setListener(listener);
+            }
+        }
     }
 }

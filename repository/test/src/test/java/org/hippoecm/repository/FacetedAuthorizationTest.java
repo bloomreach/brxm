@@ -342,10 +342,37 @@ public class FacetedAuthorizationTest extends TestCase {
     }
 
     @Test
-    @Ignore
-    public void testDocumentPropertiesAreChangedAfterModification() throws RepositoryException {
-        Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
-        final Node handle = testRoot.addNode("doc", "hippo:handle");
+    public void testAccessIsNotCached() throws RepositoryException {
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("hippo:hardhandle");
+
+        Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.addMixin("hippo:harddocument");
+        doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.addMixin("hippo:harddocument");
+        doc.setProperty("authtest", "canread");
+        session.save();
+
+        Node userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node userDoc = userTestData.getNode("doc/doc");
+        assertEquals(userTestData.getPath() + "/doc/doc", userDoc.getPath());
+
+        doc.getProperty("authtest").remove();
+        session.save();
+
+        userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        assertFalse("User can still read node while authorization was revoked", userTestData.hasNode("doc/doc"));
+        try {
+            userTestData.getNode("doc/doc");
+            fail("User should not be able to see doc/doc");
+        } catch (PathNotFoundException expected) {}
+    }
+
+    @Test
+    public void testAccessIsNotCachedWhenHandleChanges() throws RepositoryException {
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
         handle.addMixin("hippo:hardhandle");
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
@@ -353,15 +380,76 @@ public class FacetedAuthorizationTest extends TestCase {
         doc.setProperty("authtest", "canread");
         session.save();
 
-        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        Node userDoc = testData.getNode("doc/doc");
-        assertEquals(testData.getPath() + "/doc/doc", userDoc.getPath());
+        Node userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node userDoc = userTestData.getNode("doc/doc");
+        assertEquals(userTestData.getPath() + "/doc/doc", userDoc.getPath());
 
         doc.getProperty("authtest").remove();
+        doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.addMixin("hippo:harddocument");
+        doc.setProperty("authtest", "canread");
+        String newId = doc.getIdentifier();
         session.save();
 
-        testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        assertFalse("User can still read node while authorization was revoked", testData.hasNode("doc/doc"));
+        userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        assertTrue("User cannot read new doc", userTestData.hasNode("doc/doc"));
+
+        assertEquals(newId, userTestData.getNode("doc/doc").getIdentifier());
+    }
+
+    @Test
+    public void testDocumentAccessIsSwitched() throws RepositoryException {
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("hippo:hardhandle");
+
+        Node doc1 = handle.addNode("doc", "hippo:authtestdocument");
+        doc1.addMixin("hippo:harddocument");
+        Node doc2 = handle.addNode("doc", "hippo:authtestdocument");
+        doc2.addMixin("hippo:harddocument");
+        doc2.setProperty("authtest", "canread");
+        session.save();
+
+        Node userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node userDoc = userTestData.getNode("doc/doc");
+        assertEquals(userTestData.getPath() + "/doc/doc", userDoc.getPath());
+
+        doc1.setProperty("authtest", "canread");
+        doc2.getProperty("authtest").remove();
+        String accessibleDocId = doc1.getIdentifier();
+        session.save();
+
+        assertTrue("User cannot read new doc", userTestData.hasNode("doc/doc"));
+
+        assertEquals(accessibleDocId, userTestData.getNode("doc/doc").getIdentifier());
+    }
+
+    @Test
+    public void testAccessChangesBasedWhenPropertyIsUpdated() throws RepositoryException {
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("hippo:hardhandle");
+
+        Node doc1 = handle.addNode("doc", "hippo:authtestdocument");
+        doc1.addMixin("hippo:harddocument");
+        doc1.setProperty("authtest", "cannotread");
+        Node doc2 = handle.addNode("doc", "hippo:authtestdocument");
+        doc2.addMixin("hippo:harddocument");
+        doc2.setProperty("authtest", "canread");
+        session.save();
+
+        Node userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node userDoc = userTestData.getNode("doc/doc");
+        assertEquals(userTestData.getPath() + "/doc/doc", userDoc.getPath());
+
+        doc1.setProperty("authtest", "canread");
+        doc2.setProperty("authtest", "cannotread");
+        String accessibleDocId = doc1.getIdentifier();
+        session.save();
+
+        assertTrue("User cannot read new doc", userTestData.hasNode("doc/doc"));
+
+        assertEquals(accessibleDocId, userTestData.getNode("doc/doc").getIdentifier());
     }
 
     @Test

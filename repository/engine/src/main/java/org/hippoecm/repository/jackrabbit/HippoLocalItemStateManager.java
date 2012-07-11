@@ -73,7 +73,7 @@ import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HippoLocalItemStateManager extends ForkedXAItemStateManager implements DataProviderContext {
+public class HippoLocalItemStateManager extends ForkedXAItemStateManager implements DataProviderContext, HandleListener {
     @SuppressWarnings("unused")
     private static final String SVN_ID = "$Id$";
 
@@ -405,8 +405,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                         log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
                         throw new ItemStateException("Failed to populate node state", ex);
                     }
-                } else if (isHandle(nodeState)) {
-                    reorderHandleChildNodeEntries(nodeState);
                 }
             }
         } catch(InvalidItemStateException ex) {
@@ -482,6 +480,8 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                 editFakeMode = editPreviousMode;
             }
             return nodeState;
+        } else if (isHandle(state)) {
+            reorderHandleChildNodeEntries(state);
         }
         return state;
     }
@@ -939,14 +939,10 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     }
 
     @Override
-    public void stateModified(final ItemState modified) {
-        super.stateModified(modified);
-
-        if (modified.getContainer() != this) {
-            ItemState state = cache.retrieve(modified.getId());
-            if (state != null && isHandle(state)) {
-                reorderHandleChildNodeEntries((NodeState) state);
-            }
+    public void handleModified(final NodeId handleId) {
+        ItemState state = cache.retrieve(handleId);
+        if (state != null && isHandle(state)) {
+            reorderHandleChildNodeEntries((NodeState) state);
         }
     }
 
