@@ -291,7 +291,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         try {
             return channelStore.getChannel(channelId);
         } catch (ChannelNotFoundException cnfe) {
-            throw new RuntimeException(String.format("Unable to get channel with id '%s'from Channel Manager", channelId), cnfe);
+            throw new RuntimeException("Unable to get channel with id '" + channelId + "'from Channel Manager", cnfe);
         }
     }
 

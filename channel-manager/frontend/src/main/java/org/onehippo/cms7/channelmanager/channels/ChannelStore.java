@@ -108,10 +108,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelStore.class);
 
-    private static final String WARNING_MESSAGE_NO_REST_SERVICE_FOUND = "No RESTful {} service configured!";
-    private static final String WARNING_MESSAGE_NO_CHANNEL_FOUND = "No channel found with id '%s'!";
-    private static final String PARAM_ERROR_MESSAGE_COULD_NOT_GET_REST_SERVICE = "Could not get {} REST service!";
-
     private transient Map<String, Channel> channels;
 
     private final String storeId;
@@ -132,9 +128,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         this.restProxyService = restProxyService;
 
         if (this.restProxyService == null) {
-            if (log.isWarnEnabled()) {
-                log.warn(WARNING_MESSAGE_NO_REST_SERVICE_FOUND, "proxy");
-            }
+            log.warn("No RESTful proxy service configured!");
         }
     }
 
@@ -366,11 +360,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         Channel channel = channels.get(id);
         if (channel == null) {
-            if (log.isWarnEnabled()) {
-                log.warn(String.format(WARNING_MESSAGE_NO_CHANNEL_FOUND, id));
-            }
-
-            throw new ChannelNotFoundException(String.format(WARNING_MESSAGE_NO_CHANNEL_FOUND, id));
+            log.warn("No channel found with id '{}'!", id);
+            throw new ChannelNotFoundException("No channel found with id '" + id + "'");
         }
 
         return channel;
@@ -423,9 +414,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
 
         if (channelService == null) {
-            if (log.isErrorEnabled()) {
-                log.error(PARAM_ERROR_MESSAGE_COULD_NOT_GET_REST_SERVICE, "channelservice");
-            }
+            log.error("Could not get channelservice REST service!");
         }
 
         List<Channel> channelsList = channelService.getChannels();
@@ -443,9 +432,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         BlueprintService blueprintService = restProxyService.createRestProxy(BlueprintService.class);
 
         if (blueprintService == null) {
-            if (log.isErrorEnabled()) {
-                log.error(PARAM_ERROR_MESSAGE_COULD_NOT_GET_REST_SERVICE, "blueprint");
-            }
+            log.error("Could not get blueprint REST service!");
         }
 
         newChannel = blueprintService.getBlueprint(blueprintId).getPrototypeChannel();

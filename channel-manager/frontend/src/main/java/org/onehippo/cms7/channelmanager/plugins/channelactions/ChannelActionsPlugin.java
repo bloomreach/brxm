@@ -74,7 +74,7 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
         final T service = getPluginContext().getService(serviceId, clazz);
         if (service == null) {
-            log.warn("Could not get service '" + serviceId + "' of type " + clazz.getName());
+            log.warn("Could not get service '{}' of type {}", serviceId, clazz.getName());
             throw new IllegalStateException("Could not find/load service '" + serviceId + "' of type " + clazz.getName());
         }
 
@@ -137,9 +137,8 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         } catch (WebApplicationException e) {
             log.error("Could not initialize channel actions menu, REST proxy returned status code '{}'",
                     e.getResponse().getStatus());
-            if (log.isDebugEnabled()) {
-                log.debug("REST proxy returned message: {}", e.getMessage());
-            }
+
+            log.debug("REST proxy returned message: {}", e.getMessage());
         }
     }
 
