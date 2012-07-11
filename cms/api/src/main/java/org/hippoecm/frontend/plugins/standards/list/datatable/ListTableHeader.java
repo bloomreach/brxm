@@ -66,6 +66,8 @@ public class ListTableHeader extends Border {
                     dir = ISortState.ASCENDING;
                 } else if (dir == ISortState.ASCENDING) {
                     dir = ISortState.DESCENDING;
+                } else if (dir == ISortState.DESCENDING) {
+                    dir = ISortState.NONE;
                 } else if (triState){
                     dir = ISortState.NONE;
                 } else {
