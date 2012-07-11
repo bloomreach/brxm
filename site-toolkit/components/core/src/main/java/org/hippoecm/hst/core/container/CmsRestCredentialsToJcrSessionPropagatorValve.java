@@ -56,7 +56,7 @@ public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestVa
         Credentials credentials =  getPropagatedCredentials(servletRequest);
 
         if (credentials == null) {
-            log.warn("Security context not found");
+            log.debug("Security context not found");
              // setResponseError(HttpServletResponse.SC_UNAUTHORIZED, servletResponse);
              // return;
         }

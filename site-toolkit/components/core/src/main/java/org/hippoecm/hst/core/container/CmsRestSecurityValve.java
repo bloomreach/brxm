@@ -21,7 +21,6 @@ import java.security.SignatureException;
 import javax.jcr.Credentials;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -57,7 +56,7 @@ public class CmsRestSecurityValve extends BaseCmsRestValve {
         String cmsRestCredentials = servletRequest.getHeader(HEADER_CMS_REST_CREDENTIALS);
 
         if (StringUtils.isBlank(cmsRestCredentials)) {
-            log.warn("No CMS REST credentials found");
+            log.debug("No CMS REST credentials found");
             // setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, ERROR_MESSAGE_NO_CMS_REST_CREDENTIALS_FOUND);
             // return;
         }
