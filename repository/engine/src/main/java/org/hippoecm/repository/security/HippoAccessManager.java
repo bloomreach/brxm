@@ -56,6 +56,7 @@ import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.core.security.authorization.WorkspaceAccessManager;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
@@ -93,7 +94,7 @@ import org.slf4j.LoggerFactory;
  * are granted.
  *
  */
-public class HippoAccessManager implements AccessManager, AccessControlManager {
+public class HippoAccessManager implements AccessManager, AccessControlManager, ItemStateListener {
 
     /** SVN id placeholder */
     @SuppressWarnings("unused")
@@ -475,6 +476,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         } catch (NoSuchItemStateException e) {
             log.info("Node with id '{}' not found, denying access", id);
             log.debug("Trace: ", e);
+            removeAccessFromCache(id);
             return false;
         }
         if (nodeState.getStatus() == NodeState.STATUS_NEW && !(nodeState.getId() instanceof HippoNodeId)) {
@@ -502,6 +504,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
                 }
             }
         }
+
         addAccessToCache(id, false);
         if (log.isInfoEnabled()) {
             log.info("DENIED read : {}", npRes.getJCRPath(hierMgr.getPath(id)));
@@ -739,7 +742,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
      * instance of the node type (sub class)
      *
      * @param nodeState the node to check
-     * @param nodeTypeName the node type name
+     * @param nodeType the node type name
      * @return boolean
      * @throws NoSuchNodeTypeException
      */
@@ -788,7 +791,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
      * Check if a node matches the current FacetRule based on a
      * check on the properties of the node.
      * @param nodeState the state of the node to check
-     * @param facetRule the facet rule to check
+     * @param rule the facet rule to check
      * @return true if the node matches the facet rule
      * @throws RepositoryException
      * @see FacetRule
@@ -1162,6 +1165,33 @@ public class HippoAccessManager implements AccessManager, AccessControlManager {
         } else {
             // itemId and absPath are null
             return false;
+        }
+    }
+
+    @Override
+    public void stateCreated(final ItemState created) {
+    }
+
+    @Override
+    public void stateModified(final ItemState modified) {
+        if (modified.isNode()) {
+            readAccessCache.remove(modified.getId());
+        } else {
+            readAccessCache.remove(modified.getParentId());
+        }
+    }
+
+    @Override
+    public void stateDestroyed(final ItemState destroyed) {
+        if (destroyed.isNode()) {
+            readAccessCache.remove(destroyed.getId());
+        }
+    }
+
+    @Override
+    public void stateDiscarded(final ItemState discarded) {
+        if (discarded.isNode()) {
+            readAccessCache.remove(discarded.getId());
         }
     }
 

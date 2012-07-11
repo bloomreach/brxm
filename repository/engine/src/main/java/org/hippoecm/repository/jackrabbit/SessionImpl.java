@@ -45,6 +45,7 @@ import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
+import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
@@ -86,6 +87,9 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
                     this, subject, context.getHierarchyManager(), this, getWorkspace().getName(), context.getNodeTypeManager(), getItemStateManager());
             AccessManager accessMgr = (AccessManager)amConfig.newInstance(AccessManager.class);
             accessMgr.init(ctx);
+            if (accessMgr instanceof ItemStateListener) {
+                context.getItemStateManager().addListener((ItemStateListener) accessMgr);
+            }
             return accessMgr;
         } catch (AccessDeniedException ex) {
             throw ex;
