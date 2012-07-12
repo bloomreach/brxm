@@ -345,6 +345,7 @@ client/src/test/java/org/hippoecm/hst/component/support/bean/AColorPropertyEdito
 client/src/test/java/org/hippoecm/hst/component/support/bean/ANewsArticleComponent.java -text
 client/src/test/java/org/hippoecm/hst/component/support/bean/ANewsArticleComponentParametersInfo.java -text
 client/src/test/java/org/hippoecm/hst/component/support/bean/TestBaseHstComponent.java -text
+client/src/test/java/org/hippoecm/hst/component/support/forms/TestFormMap.java -text
 client/src/test/java/org/hippoecm/hst/component/support/spring/util/TestMetadataReaderClasspathResourceScanner.java -text
 client/src/test/java/org/hippoecm/hst/servlet/BinariesServletTest.java svneol=native#text/plain
 client/src/test/java/org/hippoecm/hst/servlet/ResourceServletTest.java -text

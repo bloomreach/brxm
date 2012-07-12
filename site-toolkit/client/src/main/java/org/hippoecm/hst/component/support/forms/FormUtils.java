@@ -18,9 +18,9 @@ package org.hippoecm.hst.component.support.forms;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
-import java.util.Map.Entry;
 
 import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
@@ -94,6 +94,10 @@ public class FormUtils {
                     NodeIterator fieldIterator = persistedFormData.getNodes(HST_FORM_DATA_NODE);
                     while (fieldIterator.hasNext()) {
                         Node fieldNode = fieldIterator.nextNode();
+                        if (fieldNode == null) {
+                            continue;
+                        }
+
                         // sanity check (property is mandatory)
                         if(fieldNode.hasProperty(HST_FORM_FIELD_NAME)){
                             // create field (even if we do not have values)hstt
