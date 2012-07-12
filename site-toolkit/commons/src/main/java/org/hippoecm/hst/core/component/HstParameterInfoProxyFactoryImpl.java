@@ -15,11 +15,12 @@
  */
 package org.hippoecm.hst.core.component;
 
-import java.awt.Container;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -29,8 +30,6 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
-
-import javax.servlet.http.HttpSession;
 
 public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFactory {
     
