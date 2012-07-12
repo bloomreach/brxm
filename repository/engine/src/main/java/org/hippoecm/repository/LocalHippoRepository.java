@@ -498,7 +498,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     @Override
     public InitializationProcessor getInitializationProcessor() {
-        return new InitializationProcessorImpl(null);
+        return new InitializationProcessorImpl();
     }
 
     @Override

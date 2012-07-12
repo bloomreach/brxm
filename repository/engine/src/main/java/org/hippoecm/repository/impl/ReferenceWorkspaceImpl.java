@@ -68,7 +68,7 @@ public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
     public void bootstrap() throws RepositoryException, IOException {
         final Session session = login();
         try {
-            final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl(null);
+            final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
 
             if (!session.nodeExists("/hippo:configuration")) {
                 initializationProcessor.initializeNodecontent(session, "/", LocalHippoRepository.class.getResourceAsStream("configuration.xml"), "configuration.xml");

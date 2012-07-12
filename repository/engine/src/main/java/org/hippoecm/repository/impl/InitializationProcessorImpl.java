@@ -127,6 +127,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     private Logger logger;
 
+    public InitializationProcessorImpl() {}
+
     public InitializationProcessorImpl(Logger logger) {
         this.logger = logger;
     }
