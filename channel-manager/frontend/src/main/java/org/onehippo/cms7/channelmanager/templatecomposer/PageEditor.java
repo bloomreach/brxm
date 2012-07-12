@@ -22,9 +22,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 
+import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
@@ -47,6 +50,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -251,30 +255,46 @@ public class PageEditor extends ExtPanel {
                         if (Strings.isEmpty(uuid)) {
                             continue;
                         }
-                        try {
-                            javax.jcr.Node node = UserSession.get().getJcrSession().getNodeByIdentifier(uuid);
-                            JcrNodeModel nodeModel = new JcrNodeModel(node);
-                            Observer<JcrNodeModel> observer = new Observer<JcrNodeModel>(nodeModel) {
-
-                                @Override
-                                public void onEvent(final Iterator events) {
-                                    AjaxRequestTarget target = AjaxRequestTarget.get();
-                                    if (target != null) {
-                                        target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').refreshIframe();");
-                                    }
-                                }
-                            };
-                            context.registerService(observer, IObserver.class.getName());
-                            observers.add(observer);
-                        } catch (RepositoryException re) {
-                            log.warn("Unable to construct node model for document {}", uuid);
-                        }
+                        addDocumentObservers(uuid);
                     }
                 } catch (JSONException e) {
                     throw new WicketRuntimeException("Invalid JSON parameters", e);
                 }
             }
         });
+    }
+
+    private void addDocumentObservers(final String uuid) {
+        try {
+            Node node = UserSession.get().getJcrSession().getNodeByIdentifier(uuid);
+            addObserver(node);
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                for (Node child : new NodeIterable(node.getNodes())) {
+                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                        if (child.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
+                            Value[] availabilities = child.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues();
+                            for (Value availability : availabilities) {
+                                if ("preview".equals(availability.getString())) {
+                                    addObserver(child);
+                                    break;
+                                }
+                            }
+                        } else {
+                            addObserver(child);
+                        }
+                    }
+                }
+            }
+        } catch (RepositoryException re) {
+            log.warn("Unable to construct node model for document {}", uuid);
+        }
+    }
+
+    private void addObserver(final Node node) {
+        JcrNodeModel nodeModel = new JcrNodeModel(node);
+        Observer<JcrNodeModel> observer = new DocumentObserver(nodeModel);
+        context.registerService(observer, IObserver.class.getName());
+        observers.add(observer);
     }
 
     private void clearObservers() {
@@ -416,5 +436,20 @@ public class PageEditor extends ExtPanel {
             log.error("Unable to determine group membership", e);
         }
         return false;
+    }
+
+    private class DocumentObserver extends Observer<JcrNodeModel> {
+
+        public DocumentObserver(final JcrNodeModel nodeModel) {
+            super(nodeModel);
+        }
+
+        @Override
+        public void onEvent(final Iterator events) {
+            AjaxRequestTarget target = AjaxRequestTarget.get();
+            if (target != null) {
+                target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').refreshIframe();");
+            }
+        }
     }
 }
