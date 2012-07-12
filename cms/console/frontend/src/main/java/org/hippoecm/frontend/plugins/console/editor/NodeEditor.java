@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.console.editor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -45,7 +46,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class NodeEditor extends Form {
+class NodeEditor extends Form<Node> {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -58,13 +59,24 @@ class NodeEditor extends Form {
     private String primaryType;
     @SuppressWarnings("unused")
     private String mixinTypes;
+    @SuppressWarnings("unused")
+    private String name;
+    @SuppressWarnings("unused")
+    private String uuid;
+    @SuppressWarnings("unused")
+    private Integer index;
     private NamespaceProvider namespaceProvider;
     private NamespacePropertiesEditor namespacePropertiesEditor;
     private NodeTypesEditor typesEditor;
 
-    NodeEditor(String id) {
-        super(id);
+    NodeEditor(String id, IModel<Node> model) {
+        super(id, model);
         setOutputMarkupId(true);
+
+        add(new ToggleHeader("toggle-header-0", "0", "General"));
+        add(new Label("name", new PropertyModel<String>(this, "name")));
+        add(new Label("uuid", new PropertyModel<String>(this, "uuid")));
+        add(new Label("index", new PropertyModel<Integer>(this, "index")));
 
         add(new ToggleHeader("toggle-header-1", "1", "Types"));
         add(new Label("primarytype", new PropertyModel<String>(this, "primaryType")));
@@ -76,32 +88,37 @@ class NodeEditor extends Form {
         add(namespacePropertiesEditor);
 
         add(new ToggleHeader("toggle-header-3", "3", "Mixin Types"));
-        typesEditor = new NodeTypesEditor("mixintypes", new ArrayList<String>(), null);
+        typesEditor = new NodeTypesEditor("mixintypes", null);
         add(typesEditor);
+        onModelChanged();
     }
 
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        IModel<Node> model = getModel();
-        if ((model != null) && (model instanceof JcrNodeModel) && (((JcrNodeModel) model).getNode() != null)) {
+        final IModel<Node> model = getModel();
+        if (model != null && model.getObject() != null) {
+            final Node node = model.getObject();
             try {
-                JcrNodeModel newModel = (JcrNodeModel) model;
+                namespaceProvider.setWrapped(new JcrPropertiesProvider(new JcrNodeModel(node)));
 
-                namespaceProvider.setWrapped(new JcrPropertiesProvider(newModel));
+                name = node.getName();
+                uuid = node.getIdentifier();
+                index = node.getIndex();
+                primaryType = node.getPrimaryNodeType().getName();
 
-                List<String> result = new ArrayList<String>();
-                NodeType[] nodeTypes = newModel.getNode().getMixinNodeTypes();
-                for (NodeType nodeType : nodeTypes) {
-                    result.add(nodeType.getName());
-                }
-                typesEditor.setModelObject(result);
-                typesEditor.setNodeModel(newModel);
+                final Collection<String> declaredMixinTypes = getDeclaredMixinTypes(node);
+                final Collection<String> inheritedMixinTypes = getInheritedMixinTypes(node);
+                final Collection<String> allMixinTypes = new ArrayList<String>(declaredMixinTypes);
+                allMixinTypes.addAll(inheritedMixinTypes);
+                mixinTypes = joinTypes(allMixinTypes);
+
+                typesEditor.setModelObject(allMixinTypes);
+                typesEditor.setInheritedMixinTypes(inheritedMixinTypes);
+                typesEditor.setNodeModel(model);
                 typesEditor.setVisible(true);
-                namespacePropertiesEditor.setVisible(true);
 
-                primaryType = newModel.getNode().getPrimaryNodeType().getName();
-                mixinTypes = joinNames(nodeTypes);
+                namespacePropertiesEditor.setVisible(true);
 
             } catch (RepositoryException e) {
                 log.error(e.getMessage());
@@ -112,13 +129,40 @@ class NodeEditor extends Form {
         }
     }
 
-    private String joinNames(NodeType[] nodeTypes) {
+    private Collection<String> getDeclaredMixinTypes(final Node node) throws RepositoryException {
+        final List<String> result = new ArrayList<String>();
+        final NodeType[] nodeTypes = node.getMixinNodeTypes();
+        for (NodeType nodeType : nodeTypes) {
+            result.add(nodeType.getName());
+        }
+        return result;
+    }
+
+    private Collection<String> getInheritedMixinTypes(final Node node) throws RepositoryException {
+        final List<String> result = new ArrayList<String>();
+        final NodeType[] nodeTypes = node.getMixinNodeTypes();
+        for (NodeType nodeType : nodeTypes) {
+            for (NodeType superType : nodeType.getSupertypes()) {
+                if (superType.isMixin()) {
+                    result.add(superType.getName());
+                }
+            }
+        }
+        for (NodeType nodeType : node.getPrimaryNodeType().getSupertypes()) {
+            if (nodeType.isMixin()) {
+                result.add(nodeType.getName());
+            }
+        }
+        return result;
+    }
+
+    private String joinTypes(Collection<String> nodeTypes) {
         final StringBuilder result = new StringBuilder();
         String concat = StringUtils.EMPTY;
 
-        for (NodeType type: nodeTypes) {
+        for (String type: nodeTypes) {
             result.append(concat);
-            result.append(type.getName());
+            result.append(type);
             concat = ", ";
         }
 

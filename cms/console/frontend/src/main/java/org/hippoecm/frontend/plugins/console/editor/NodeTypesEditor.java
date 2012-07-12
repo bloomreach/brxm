@@ -40,15 +40,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class NodeTypesEditor extends CheckGroup<String> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+
     private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(NodeTypesEditor.class);
+    private static final Logger log = LoggerFactory.getLogger(NodeTypesEditor.class);
 
-    private JcrNodeModel nodeModel;
+    private IModel<Node> nodeModel;
+    private final Collection<String> inheritedMixinTypes = new HashSet<String>();
 
-    NodeTypesEditor(String id, List<String> nodeTypes, JcrNodeModel nodeModel) {
-        super(id, nodeTypes);
+    NodeTypesEditor(String id, IModel<Node> nodeModel) {
+        super(id, Collections.<String>emptyList());
         this.nodeModel = nodeModel;
 
         add(new ListView<String>("type", getAllNodeTypes()) {
@@ -63,13 +63,10 @@ class NodeTypesEditor extends CheckGroup<String> {
 
                 String type = model.getObject();
                 check.add(new Label("name", type));
+
+                check.setEnabled(!inheritedMixinTypes.contains(type));
             }
         });
-    }
-
-    @Override
-    public void onModelChanged() {
-
     }
 
     @Override
@@ -81,9 +78,9 @@ class NodeTypesEditor extends CheckGroup<String> {
     protected void onSelectionChanged(Collection<? extends String> selection) {
         if (getModelObject() instanceof List && nodeModel != null) {
             try {
-                Node node = nodeModel.getNode();
+                final Node node = nodeModel.getObject();
 
-                Set<String> actualTypes = new HashSet<String>();
+                final Set<String> actualTypes = new HashSet<String>();
                 if (node.hasProperty("jcr:mixinTypes")) {
                     Value[] nodeTypes = node.getProperty("jcr:mixinTypes").getValues();
                     for (Value nodeType : nodeTypes) {
@@ -91,14 +88,15 @@ class NodeTypesEditor extends CheckGroup<String> {
                     }
                 }
 
-                HashSet<String> toBeAdded = new HashSet<String>(selection);
+                final Set<String> toBeAdded = new HashSet<String>(selection);
                 toBeAdded.removeAll(actualTypes);
-                for (String add : new ArrayList<String>(toBeAdded)) {
+                for (String add : toBeAdded) {
                     node.addMixin(add);
                 }
 
-                actualTypes.removeAll(new HashSet<String>(selection));
-                for (String remove : new ArrayList<String>(actualTypes)) {
+                final Set<String> toBeRemoved = new HashSet<String>(actualTypes);
+                toBeRemoved.removeAll(selection);
+                for (String remove : toBeRemoved) {
                     node.removeMixin(remove);
                 }
             } catch (RepositoryException e) {
@@ -112,7 +110,7 @@ class NodeTypesEditor extends CheckGroup<String> {
     private List<String> getAllNodeTypes() {
         List<String> list = new ArrayList<String>();
         try {
-            UserSession session = (UserSession) getSession();
+            UserSession session = UserSession.get();
             NodeTypeManager ntmgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
             NodeTypeIterator iterator = ntmgr.getMixinNodeTypes();
             while (iterator.hasNext()) {
@@ -125,7 +123,12 @@ class NodeTypesEditor extends CheckGroup<String> {
         return list;
     }
 
-    void setNodeModel(JcrNodeModel newModel) {
-        this.nodeModel = newModel;
+    void setNodeModel(IModel<Node> newModel) {
+        nodeModel = newModel;
+    }
+
+    public void setInheritedMixinTypes(final Collection<String> inheritedMixinTypes) {
+        this.inheritedMixinTypes.clear();
+        this.inheritedMixinTypes.addAll(inheritedMixinTypes);
     }
 }

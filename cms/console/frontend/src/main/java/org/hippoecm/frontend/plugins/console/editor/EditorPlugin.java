@@ -23,17 +23,15 @@ import org.hippoecm.frontend.plugins.yui.togglebehavior.ToggleBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class EditorPlugin extends RenderPlugin<Node> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
-    private NodeEditor editor;
+    private final NodeEditor editor;
 
     public EditorPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        editor = new NodeEditor("editor");
+        editor = new NodeEditor("editor", getModel());
         add(editor);
         add(new ToggleBehavior());
     }
@@ -41,7 +39,7 @@ public class EditorPlugin extends RenderPlugin<Node> {
     @Override
     public void onModelChanged() {
         super.onModelChanged();
-        editor.setModel(getDefaultModel());
+        editor.setModel(getModel());
         redraw();
     }
 }

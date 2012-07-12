@@ -16,6 +16,21 @@
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
   <form wicket:id="editor">
+    <h3 wicket:id="toggle-header-0">[UUID]</h3>
+    <table class="editor-types-table" id="toggle-box-0" style="display:block;">
+      <tr class="type-primary">
+        <td class="type-name">Name: </td>
+        <td class="type-value"><span wicket:id="name"/></td>
+      </tr>
+      <tr class="type-primary">
+        <td class="type-name">UUID: </td>
+        <td class="type-value"><span wicket:id="uuid"/></td>
+      </tr>
+      <tr class="type-primary">
+        <td class="type-name">Index: </td>
+        <td><span wicket:id="index"/></td>
+      </tr>
+    </table>
     <h3 wicket:id="toggle-header-1">[Types]</h3>
     <table class="editor-types-table" id="toggle-box-1" style="display:block;">
       <tr class="type-primary">
