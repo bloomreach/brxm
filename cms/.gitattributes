@@ -848,8 +848,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/LeftPlugin.
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/TopPlugin.html -text svneol=unset#text/plain
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/breadcrumb/BreadcrumbPlugin.html svneol=native#text/plain
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/breadcrumb/BreadcrumbPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin$BrowserTree.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.java svneol=native#text/plain

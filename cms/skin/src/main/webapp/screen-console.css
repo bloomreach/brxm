@@ -130,6 +130,9 @@
 .hippo-console-editor .editor-types-table {margin-bottom: 12px;}
 .hippo-console-editor .editor-types-table td {padding: 0 4px 4px 0; font-size: 14px;}
 .hippo-console-editor .editor-types-table .type-name {font-weight: bold;}
+.hippo-console-editor .editor-general-table {margin-bottom: 12px;}
+.hippo-console-editor .editor-general-table td {padding: 0 4px 4px 0; font-size: 14px;}
+.hippo-console-editor .editor-general-table .general-name {font-weight: bold;}
 .hippo-console-editor .properties { margin-bottom: 16px; }
 .hippo-console-editor .properties-group { padding-left: 16px; }
 .hippo-console-editor .property { margin: 10px 0 10px; }

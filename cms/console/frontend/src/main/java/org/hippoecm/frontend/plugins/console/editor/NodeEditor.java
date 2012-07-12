@@ -64,7 +64,8 @@ class NodeEditor extends Form<Node> {
     @SuppressWarnings("unused")
     private String uuid;
     @SuppressWarnings("unused")
-    private Integer index;
+    private String nodePath;
+
     private NamespaceProvider namespaceProvider;
     private NamespacePropertiesEditor namespacePropertiesEditor;
     private NodeTypesEditor typesEditor;
@@ -74,9 +75,9 @@ class NodeEditor extends Form<Node> {
         setOutputMarkupId(true);
 
         add(new ToggleHeader("toggle-header-0", "0", "General"));
+        add(new Label("nodePath", new PropertyModel<String>(this, "nodePath")));
         add(new Label("name", new PropertyModel<String>(this, "name")));
         add(new Label("uuid", new PropertyModel<String>(this, "uuid")));
-        add(new Label("index", new PropertyModel<Integer>(this, "index")));
 
         add(new ToggleHeader("toggle-header-1", "1", "Types"));
         add(new Label("primarytype", new PropertyModel<String>(this, "primaryType")));
@@ -102,9 +103,9 @@ class NodeEditor extends Form<Node> {
             try {
                 namespaceProvider.setWrapped(new JcrPropertiesProvider(new JcrNodeModel(node)));
 
+                nodePath = node.getPath();
                 name = node.getName();
                 uuid = node.getIdentifier();
-                index = node.getIndex();
                 primaryType = node.getPrimaryNodeType().getName();
 
                 final Collection<String> declaredMixinTypes = getDeclaredMixinTypes(node);

@@ -94,13 +94,9 @@
         <sv:value>service.top</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
-        <sv:value>extension.breadcrumb</sv:value>
         <sv:value>extension.logout</sv:value>
         <sv:value>extension.menu</sv:value>
         <sv:value>extension.check</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.breadcrumb" sv:type="String">
-        <sv:value>service.breadcrumb</sv:value>
       </sv:property>
       <sv:property sv:name="extension.logout" sv:type="String">
         <sv:value>service.logout</sv:value>
@@ -176,20 +172,6 @@
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.center</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="breadcrumb">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.console.breadcrumb.BreadcrumbPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.breadcrumb</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>service.model</sv:value>
