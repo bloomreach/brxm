@@ -53,7 +53,7 @@
 
     <forge.dashboard-document-wizard.version>1.03.09</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.10.01</forge.gallerypicker.version>
-    <forge.easy-forms.version>2.11.00-SNAPSHOT</forge.easy-forms.version>
+    <forge.easy-forms.version>2.11.00</forge.easy-forms.version>
     <forge.poll.version>1.05.03</forge.poll.version>
     <forge.relateddocs.version>2.08.06</forge.relateddocs.version>
     <forge.selection.version>2.05.06</forge.selection.version>
