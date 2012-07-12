@@ -111,6 +111,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             return;
         }
 
+        this.previewMode = true;
+
         this._lock();
 
         var retry = this.initialHstConnectionTimeout;
@@ -330,10 +332,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         } else {
                             console.error('The mount is already locked.');
                             Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
-                                self.previewMode = true;
-                                var iFrame = Ext.getCmp('Iframe');
-                                iFrame.getFrame().sendMessage({}, 'hideoverlay');
-                                self._complete();
+                                self.initComposer.call(self, null);
                             });
                         }
                     },
@@ -360,18 +359,12 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         var jsonData = Ext.util.JSON.decode(result.responseText);
                         if (jsonData.data == 'locked') {
                             Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
-                                self.previewMode = true;
-                                var iFrame = Ext.getCmp('Iframe');
-                                iFrame.getFrame().sendMessage({}, 'hideoverlay');
-                                self._complete();
+                                self.initComposer.call(self, null);
                             });
                         } else {
                             console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
                             Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
-                                self.previewMode = true;
-                                var iFrame = Ext.getCmp('Iframe');
-                                iFrame.getFrame().sendMessage({}, 'hideoverlay');
-                                self._complete();
+                                self.initComposer.call(self, null);
                             });
                         }
                     }

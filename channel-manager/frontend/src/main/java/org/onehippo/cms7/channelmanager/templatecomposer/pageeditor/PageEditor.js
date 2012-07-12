@@ -520,7 +520,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             this.pageContainer.cmsPreviewPrefix = record.get('cmsPreviewPrefix') || data.cmsPreviewPrefix || this.cmsPreviewPrefix;
             this.pageContainer.renderPathInfo = data.renderPathInfo || this.renderPathInfo || record.get('mountPath');
             this.pageContainer.renderHost = record.get('hostname');
-            this.pageContainer.previewMode = true;
             this.initComposer();
         }.createDelegate(this));
     },
