@@ -210,10 +210,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                     },
                     url: self.composerRestMountUrl + '/' + mountId + './unlock?FORCE_CLIENT_HOST=true',
                     success: function () {
-                        // reset pageContext, the page and toolkit stores must be reloaded
                         self.pageContext = null;
-                        // refresh iframe to get new hst config uuids. previewMode=false will initialize
-                        // the editor for editing with the refresh
                         self.refreshIframe.call(self, null);
                     },
                     failure: function(result) {
@@ -224,9 +221,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         });
                     }
                 });
-            } else {
-                self.pageContext = null;
-                self.refreshIframe.call(self, null);
             }
         });
     },
@@ -239,7 +233,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         var hasPreviewHstConfig = this.pageContext.hasPreviewHstConfig;
 
         if (hasPreviewHstConfig) {
-
             Hippo.Msg.confirm(self.resources['discard-changes-title'], self.resources['discard-changes-message'], function(btn, text) {
                 if (btn == 'yes') {
                     Ext.Ajax.request({
@@ -251,8 +244,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         success: function () {
                             // reset pageContext, the page and toolkit stores must be reloaded
                             self.pageContext = null;
-                            // refresh iframe to get new hst config uuids. previewMode=false will initialize
-                            // the editor for editing with the refresh
                             self.refreshIframe.call(self, null);
                         },
                         failure: function(result) {
@@ -263,9 +254,6 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                             });
                         }
                     });
-                } else {
-                    self.pageContext = null;
-                    self.refreshIframe.call(self, null);
                 }
             });
         }
