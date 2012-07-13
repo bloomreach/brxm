@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.updater;
 
+import java.io.File;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -90,6 +91,13 @@ public class CndUpdateTest extends TestCase {
         session.save();
     }
 
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        reloadCnds();
+    }
+
     private RepositoryWorkflow getWorkflow() throws RepositoryException {
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         return (RepositoryWorkflow)wfmgr.getWorkflow("internal", session.getRootNode());
@@ -98,6 +106,13 @@ public class CndUpdateTest extends TestCase {
     private void flush() throws RepositoryException {
         session.logout();
         session = server.login("admin", "admin".toCharArray());
+    }
+
+    private void reloadCnds() {
+        File cndChecksums = new File("cnd-checksums");
+        if (cndChecksums.exists()) {
+            cndChecksums.delete();
+        }
     }
 
     private void buildDepth2(Node n, int countDepth2, int countDepth1a, int countDepth1b, int countDepth0a, int countDepth0b) throws Exception {
@@ -195,6 +210,7 @@ public class CndUpdateTest extends TestCase {
        session.save();
        flush();
        server.close();
+       reloadCnds();
        server = HippoRepositoryFactory.getHippoRepository();
        if (background != null) {
            background = server;
