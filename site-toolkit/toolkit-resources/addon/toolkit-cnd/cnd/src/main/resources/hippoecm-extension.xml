@@ -33,8 +33,10 @@
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
       <sv:value>hst-types.cnd</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
   </sv:node>
-  
   
   <sv:node sv:name="hst-contentpropadd-init">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
