@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -98,7 +99,7 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
     }
 
     private String createDiff() {
-        javax.jcr.Session session = null;
+        Session session = null;
         try {
 
             final ReferenceWorkspace referenceWorkspace = UserSession.get().getHippoRepository().getOrCreateReferenceWorkspace();
@@ -159,6 +160,8 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
     }
 
     private class CreatePatchStep extends Step {
+
+        private static final long serialVersionUID = 1L;
 
         @Override
         protected int execute() {

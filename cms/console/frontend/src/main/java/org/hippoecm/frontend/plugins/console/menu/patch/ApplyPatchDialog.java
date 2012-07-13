@@ -111,6 +111,8 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
 
     private class ApplyPatchStep extends Step {
 
+        private static final long serialVersionUID = 1L;
+
         @Override
         protected int execute() {
             return applyPatch() ? 1 : 0;

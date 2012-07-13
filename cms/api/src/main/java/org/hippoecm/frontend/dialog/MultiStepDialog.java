@@ -15,13 +15,16 @@
  */
 package org.hippoecm.frontend.dialog;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 
 /**
- * Simple {@link AbstractDialog} extension that adds wizard-like capability.
+ * Simple {@link AbstractDialog} extension that adds multi-step capability. If you need wizard functionality
+ * use {@link org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard} instead.
  */
 public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
 
@@ -65,7 +68,9 @@ public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
 
     protected abstract List<Step> getSteps();
 
-    protected abstract class Step {
+    protected abstract class Step implements Serializable {
+
+        private static final long serialVersionUID = 1L;
 
         /**
          * @return the number of steps to go forward (or backward in the case of a negative integer)
@@ -73,11 +78,11 @@ public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
         protected abstract int execute();
 
         protected IModel<String> getOkLabel() {
-            return new Model<String>("OK");
+            return new StringResourceModel("ok", MultiStepDialog.this, null);
         }
 
         protected IModel<String> getCancelLabel() {
-            return new Model<String>("Cancel");
+            return new StringResourceModel("cancel", MultiStepDialog.this, null);
         }
 
         public String getInfo() {
@@ -87,6 +92,8 @@ public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
 
     public class DoneStep extends Step {
 
+        private static final long serialVersionUID = 1L;
+
         @Override
         public int execute() {
             closeDialog();
@@ -95,7 +102,7 @@ public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
 
         @Override
         protected IModel<String> getOkLabel() {
-            return new Model<String>("Done");
+            return new StringResourceModel("done", MultiStepDialog.this, null);
         }
     }
 
