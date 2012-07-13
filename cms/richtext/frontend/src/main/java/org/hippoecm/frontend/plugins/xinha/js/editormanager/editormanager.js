@@ -169,7 +169,7 @@ if (!YAHOO.hippo.EditorManager) {
 
             getEditorByWidgetId : function(id) {
                 var editor = null;
-                this.forEachContext(function(context) {
+                this.forEachContext(function(key, context) {
                     if (editor == null) {
                         editor = context.getEditorByWidgetId(id);
                     }
@@ -233,7 +233,6 @@ if (!YAHOO.hippo.EditorManager) {
             },
 
             render: function() {
-                var cleanupEditors = [];
                 this.newEditors.forEach(this, function(name, editor) {
                     if (document.getElementById(editor.name)) {
                         this.editors.put(editor.name, editor);
@@ -273,7 +272,6 @@ if (!YAHOO.hippo.EditorManager) {
             },
 
             forEachActiveEditor : function(callback) {
-                var cleanupEditors = [];
                 this.activeEditors.forEach(this, function(name, editor) {
                     if (document.getElementById(name)) {
                         callback(name, editor);
