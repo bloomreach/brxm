@@ -19,11 +19,16 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
@@ -101,6 +106,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** Whether to run a derived properties validation after upgrading */
     private boolean upgradeValidateFlag = true;
 
+    private String repoPath;
+
     public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
         session = org.hippoecm.repository.decorating.SessionDecorator.unwrap(session);
         session = org.hippoecm.repository.impl.SessionDecorator.unwrap(session);
@@ -157,6 +164,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
      * @return The absolute path to the file repository
      */
     private String getRepositoryPath() {
+        if (repoPath != null) {
+            return repoPath;
+        }
         String path = System.getProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY);
 
         if (path == null || "".equals(path)) {
@@ -172,7 +182,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             path = "/" + path.substring(5);
         }
         log.info("Using repository path: " + path);
-        return path;
+        repoPath = path;
+        return repoPath;
     }
 
     /**
@@ -346,7 +357,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             if (hasHippoNamespace) {
                 switch(upgradeFlag) {
                 case TRUE:
-                    ((LocalRepositoryImpl)jackrabbitRepository).enableVirtualLayer(false);
+                    jackrabbitRepository.enableVirtualLayer(false);
                     Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
                     needsRestart = UpdaterEngine.migrate(migrateSession);
                     migrateSession.logout();
@@ -363,33 +374,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
 
-            // TODO HREPTWO-3571: hippofacnav.cnd must be removed when faceted navigation is moved to its own subproject, and should be added through extension.xml, see
-
             final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl(log);
 
-            for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd", "hippofacnav.cnd", "hipposched.cnd" }) {
-                try {
-                    log.info("Initializing nodetypes from: " + cndName);
-                    initializationProcessor.initializeNodetypes(syncSession.getWorkspace(), getClass().getClassLoader().getResourceAsStream(cndName), cndName);
-                    syncSession.save();
-                } catch (ConstraintViolationException ex) {
-                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-                } catch (InvalidItemStateException ex) {
-                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-                } catch (ItemExistsException ex) {
-                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-                } catch (LockException ex) {
-                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-                } catch (NoSuchNodeTypeException ex) {
-                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-                } catch (ParseException ex) {
-                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-                } catch (VersionException ex) {
-                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-                } catch (AccessDeniedException ex) {
-                    throw new RepositoryException("Could not initialize repository with hippo node types", ex);
-                }
-            }
+            initializeSystemNodeTypes(syncSession, initializationProcessor);
 
             jackrabbitRepository.enableVirtualLayer(true);
 
@@ -442,6 +429,91 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);
         }
+    }
+
+    private void initializeSystemNodeTypes(final Session syncSession, final InitializationProcessorImpl initializationProcessor) throws RepositoryException {
+        final Properties checksumProperties = new Properties();
+        final File checksumsFile = new File(getRepositoryPath(), "cnd-checksums");
+        if (checksumsFile.exists()) {
+            FileReader reader = null;
+            try {
+                reader = new FileReader(checksumsFile);
+                checksumProperties.load(reader);
+            } catch (IOException e) {
+                log.error("Failed to read cnd checksum file. All system cnds will be reloaded.", e);
+            } finally {
+                if (reader != null) { try { reader.close(); } catch (IOException ignore) {} }
+            }
+        }
+        for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd", "hippofacnav.cnd", "hipposched.cnd" }) {
+            InputStream cndStream = null;
+            try {
+                cndStream = getClass().getClassLoader().getResourceAsStream(cndName);
+                final String checksum = getChecksum(cndStream);
+                cndStream.close();
+                if (!checksum.equals(checksumProperties.getProperty(cndName))) {
+                    log.info("Initializing nodetypes from: " + cndName);
+                    cndStream = getClass().getClassLoader().getResourceAsStream(cndName);
+                    initializationProcessor.initializeNodetypes(syncSession.getWorkspace(), cndStream, cndName);
+                    syncSession.save();
+                    checksumProperties.setProperty(cndName, checksum);
+                } else {
+                    log.info("No need to reload " + cndName + ": no changes");
+                }
+            } catch (ConstraintViolationException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (InvalidItemStateException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (ItemExistsException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (LockException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (NoSuchNodeTypeException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (ParseException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (VersionException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (AccessDeniedException ex) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", ex);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", e);
+            } catch (IOException e) {
+                throw new RepositoryException("Could not initialize repository with hippo node types", e);
+            } finally {
+                if (cndStream != null) { try { cndStream.close(); } catch (IOException ignore) {} }
+            }
+        }
+
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(checksumsFile);
+            checksumProperties.store(writer, null);
+        } catch (IOException e) {
+            log.error("Failed to store cnd checksum file.", e);
+        } finally {
+            if (writer != null) { try { writer.close(); } catch (IOException ignore) {} }
+        }
+    }
+
+    private String getChecksum(final InputStream cndStream) throws IOException, NoSuchAlgorithmException {
+        final MessageDigest md5 = MessageDigest.getInstance("SHA-256");
+        final byte[] buffer = new byte[1024];
+        int read;
+        do {
+            read = cndStream.read(buffer, 0, buffer.length);
+            if (read > 0) {
+                md5.update(buffer, 0, read);
+            }
+        } while (read > 0);
+
+        final byte[] bytes = md5.digest();
+        //convert the byte to hex format
+        final StringBuilder sb = new StringBuilder();
+        for (final byte b : bytes) {
+            sb.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+        }
+        return sb.toString();
     }
 
     @Override
