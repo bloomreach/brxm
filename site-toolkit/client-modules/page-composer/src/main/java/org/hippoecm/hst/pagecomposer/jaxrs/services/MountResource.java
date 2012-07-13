@@ -399,12 +399,12 @@ public class MountResource extends AbstractConfigResource {
 
     private ContextualizableMount getPreviewMount(final HstRequestContext requestContext) {
         final Mount editingMount = getEditingHstMount(requestContext);
-        if (editingMount.getType().equals(Mount.PREVIEW_NAME)) {
-            log.error("The mount is configured as PREVIEW. Template composer works against live mounts decorated to preview.");
-            return null;
-        }
         if (editingMount == null || !(editingMount instanceof ContextualizableMount)) {
             log.error("Could not get the editing site to create the toolkit representation.");
+            return null;
+        }
+        if (editingMount.getType().equals(Mount.PREVIEW_NAME)) {
+            log.error("The mount is configured as PREVIEW. Template composer works against live mounts decorated to preview.");
             return null;
         }
         return (ContextualizableMount) editingMount;
