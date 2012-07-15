@@ -83,14 +83,16 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
             return null;
         }
         final int idx = documentPath.lastIndexOf("/");
-        final String handlePath = documentPath.substring(0, idx);
-        try {
-            final Node node = session.getNode(handlePath);
-            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                return node.getIdentifier();
+        if (idx > 0) {
+            final String handlePath = documentPath.substring(0, idx);
+            try {
+                final Node node = session.getNode(handlePath);
+                if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                    return node.getIdentifier();
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to determine uuid of document handle at " + handlePath + " while logging workflow event", e);
             }
-        } catch (RepositoryException e) {
-            log.error("Failed to determine uuid of document handle while logging workflow event", e);
         }
         return null;
     }
