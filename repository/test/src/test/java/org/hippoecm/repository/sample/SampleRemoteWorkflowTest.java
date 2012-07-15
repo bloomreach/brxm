@@ -64,7 +64,6 @@ public class SampleRemoteWorkflowTest {
 
     @Before
     public void setUp() throws Exception {
-        TestCase.clear();
         backgroundServer = new HippoRepositoryServer();
         backgroundServer.run(true);
         Thread.sleep(3000);
@@ -76,7 +75,6 @@ public class SampleRemoteWorkflowTest {
         server.close();
         backgroundServer.close();
         Thread.sleep(3000);
-        TestCase.clear();
     }
 
     /**

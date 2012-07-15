@@ -19,10 +19,9 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.EnumSet;
@@ -48,6 +47,8 @@ import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
+import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.fs.FileSystemException;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
@@ -244,6 +245,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         void enableVirtualLayer(boolean enabled) throws RepositoryException {
             isStarted = enabled;
         }
+
+        protected FileSystem getFileSystem() {
+            return super.getFileSystem();
+        }
     }
 
     static private void delete(File path) {
@@ -376,7 +381,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl(log);
 
-            initializeSystemNodeTypes(syncSession, initializationProcessor);
+            initializeSystemNodeTypes(syncSession, jackrabbitRepository.getFileSystem(), initializationProcessor);
 
             jackrabbitRepository.enableVirtualLayer(true);
 
@@ -431,19 +436,22 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
-    private void initializeSystemNodeTypes(final Session syncSession, final InitializationProcessorImpl initializationProcessor) throws RepositoryException {
+    private void initializeSystemNodeTypes(final Session syncSession, final FileSystem fileSystem, final InitializationProcessorImpl initializationProcessor) throws RepositoryException {
         final Properties checksumProperties = new Properties();
-        final File checksumsFile = new File(getRepositoryPath(), "cnd-checksums");
-        if (checksumsFile.exists()) {
-            FileReader reader = null;
-            try {
-                reader = new FileReader(checksumsFile);
-                checksumProperties.load(reader);
-            } catch (IOException e) {
-                log.error("Failed to read cnd checksum file. All system cnds will be reloaded.", e);
-            } finally {
-                if (reader != null) { try { reader.close(); } catch (IOException ignore) {} }
+        try {
+            if (fileSystem.exists("cnd-checksums")) {
+                InputStream in = null;
+                try {
+                    in = fileSystem.getInputStream("cnd-checksums");
+                    checksumProperties.load(in);
+                } catch (IOException e) {
+                    log.error("Failed to read cnd checksum file. All system cnds will be reloaded.", e);
+                } finally {
+                    if (in != null) { try { in.close(); } catch (IOException ignore) {} }
+                }
             }
+        } catch (FileSystemException e) {
+            log.error("Failed to read cnd checksum from the file system. All system cnds will be reloaded", e);
         }
         for(String cndName : new String[] { "hippo.cnd", "hipposys.cnd", "hipposysedit.cnd", "hippofacnav.cnd", "hipposched.cnd" }) {
             InputStream cndStream = null;
@@ -485,14 +493,16 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             }
         }
 
-        FileWriter writer = null;
+        OutputStream out = null;
         try {
-            writer = new FileWriter(checksumsFile);
-            checksumProperties.store(writer, null);
+            out = fileSystem.getOutputStream("cnd-checksums");
+            checksumProperties.store(out, null);
         } catch (IOException e) {
             log.error("Failed to store cnd checksum file.", e);
+        } catch (FileSystemException e) {
+            log.error("Failed to store cnd checksum file.", e);
         } finally {
-            if (writer != null) { try { writer.close(); } catch (IOException ignore) {} }
+            if (out != null) { try { out.close(); } catch (IOException ignore) {} }
         }
     }
 

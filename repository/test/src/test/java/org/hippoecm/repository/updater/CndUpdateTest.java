@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.updater;
 
-import java.io.File;
 import java.io.StringReader;
 import java.rmi.RemoteException;
 import java.util.Collections;
@@ -41,8 +40,6 @@ import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -91,13 +88,6 @@ public class CndUpdateTest extends TestCase {
         session.save();
     }
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        reloadCnds();
-    }
-
     private RepositoryWorkflow getWorkflow() throws RepositoryException {
         WorkflowManager wfmgr = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         return (RepositoryWorkflow)wfmgr.getWorkflow("internal", session.getRootNode());
@@ -106,13 +96,6 @@ public class CndUpdateTest extends TestCase {
     private void flush() throws RepositoryException {
         session.logout();
         session = server.login("admin", "admin".toCharArray());
-    }
-
-    private void reloadCnds() {
-        File cndChecksums = new File("cnd-checksums");
-        if (cndChecksums.exists()) {
-            cndChecksums.delete();
-        }
     }
 
     private void buildDepth2(Node n, int countDepth2, int countDepth1a, int countDepth1b, int countDepth0a, int countDepth0b) throws Exception {
@@ -192,25 +175,24 @@ public class CndUpdateTest extends TestCase {
     public void testMoveAggregate() throws Exception {
        getWorkflow().createNamespace("testUpdateModel", "http://localhost/testUpdateModel/nt/1.0");
        updateModel("testUpdateModel", cndMoveAggregate1);
-       build(session, new String[] {
-            "/test/doc",                               "hippo:handle",
-            "jcr:mixinTypes",                          "hippo:hardhandle",
-            "/test/doc/doc",                           "testUpdateModel:document",
-            "jcr:mixinTypes",                          "hippo:harddocument",
-            "/test/doc/doc/testUpdateModel:html",      "hippostd:html",
-            "hippostd:content",                        "",
-            "/test/doc/doc/testUpdateModel:html/link", "hippo:facetselect",
-            "hippo:docbase",                           "cafebabe-cafe-babe-cafe-babecafebabe",
-            "hippo:facets",                            null,
-            "hippo:values",                            null,
-            "hippo:modes",                             null,
-            "/test/doc/doc/testUpdateModel:link",      "hippo:mirror",
-            "hippo:docbase",                           "cafebabe-cafe-babe-cafe-babecafebabe"
-        });
+       build(session, new String[]{
+               "/test/doc", "hippo:handle",
+               "jcr:mixinTypes", "hippo:hardhandle",
+               "/test/doc/doc", "testUpdateModel:document",
+               "jcr:mixinTypes", "hippo:harddocument",
+               "/test/doc/doc/testUpdateModel:html", "hippostd:html",
+               "hippostd:content", "",
+               "/test/doc/doc/testUpdateModel:html/link", "hippo:facetselect",
+               "hippo:docbase", "cafebabe-cafe-babe-cafe-babecafebabe",
+               "hippo:facets", null,
+               "hippo:values", null,
+               "hippo:modes", null,
+               "/test/doc/doc/testUpdateModel:link", "hippo:mirror",
+               "hippo:docbase", "cafebabe-cafe-babe-cafe-babecafebabe"
+       });
        session.save();
        flush();
        server.close();
-       reloadCnds();
        server = HippoRepositoryFactory.getHippoRepository();
        if (background != null) {
            background = server;

@@ -103,7 +103,7 @@ public abstract class TestCase {
         } catch (SQLException e) {
             // a shutdown command always raises a SQLException
         }
-        String[] files = new String[] { ".lock", "repository", "version", "workspaces", "cnd-checksums" };
+        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
         for (int i = 0; i < files.length; i++) {
             File file = new File(files[i]);
             delete(file);
