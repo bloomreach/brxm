@@ -439,10 +439,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private void initializeSystemNodeTypes(final Session syncSession, final FileSystem fileSystem, final InitializationProcessorImpl initializationProcessor) throws RepositoryException {
         final Properties checksumProperties = new Properties();
         try {
-            if (fileSystem.exists("cnd-checksums")) {
+            if (fileSystem.exists("/cnd-checksums")) {
                 InputStream in = null;
                 try {
-                    in = fileSystem.getInputStream("cnd-checksums");
+                    in = fileSystem.getInputStream("/cnd-checksums");
                     checksumProperties.load(in);
                 } catch (IOException e) {
                     log.error("Failed to read cnd checksum file. All system cnds will be reloaded.", e);
@@ -495,7 +495,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         OutputStream out = null;
         try {
-            out = fileSystem.getOutputStream("cnd-checksums");
+            out = fileSystem.getOutputStream("/cnd-checksums");
             checksumProperties.store(out, null);
         } catch (IOException e) {
             log.error("Failed to store cnd checksum file.", e);
