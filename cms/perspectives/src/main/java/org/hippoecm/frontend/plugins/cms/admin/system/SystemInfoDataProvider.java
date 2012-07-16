@@ -107,6 +107,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         info.put("Memory total free", nf.format(((double) 
                 (runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory())) / MB) + " MB");
         info.put("Hippo CMS version", getCMSVersion());
+        info.put("Project Version", getProjectVersion());
         info.put("Repository vendor", getRepositoryVendor());
         info.put("Repository version", getRepositoryVersion());
         info.put("Java vendor", System.getProperty("java.vendor"));
@@ -125,45 +126,66 @@ public class SystemInfoDataProvider implements IDataProvider {
     public void detach() {
     }
 
-    private String getCMSVersion() {
-        StringBuffer sb = new StringBuffer();
-        InputStream istream = null;
+    private String getProjectVersion() {
         try {
-            try {
-                // try to get the version from the frontend-engine manifest
-                istream = HippoRepositoryFactory.getManifest(Home.class).openStream();
-            } catch (FileNotFoundException ex) {
-            } catch (IOException ex) {
+            final Manifest manifest = getWebAppManifest();
+            return buildVersionString(manifest, "Project-Version", "Project-Build");
+        } catch(IOException iOException) {
+            // ignore
+        }
+        return "unknown";
+    }
+
+    private String getCMSVersion() {
+        try {
+            final Manifest manifest;
+            // try to get the version from the frontend-engine manifest
+            final InputStream manifestInputStream = HippoRepositoryFactory.getManifest(Home.class).openStream();
+            if (manifestInputStream != null) {
+                manifest = new Manifest(manifestInputStream);
+            } else {
+                manifest = getWebAppManifest();
             }
-            if (istream == null) {
-                ServletContext servletContext = ((WebApplication) Application.get()).getServletContext();
-                istream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
-                if (istream == null) {
-                    File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
-                    if (manifestFile.exists()) {
-                        istream = new FileInputStream(manifestFile);
-                    }
-                }
-            }
-            if (istream != null) {
-                Manifest manifest = new Manifest(istream);
-                Attributes atts = manifest.getMainAttributes();
-                if (atts.getValue("Implementation-Version") != null) {
-                    sb.append(atts.getValue("Implementation-Version"));
-                }
-                if (atts.getValue("Implementation-Build") != null) {
-                    sb.append(" build ");
-                    sb.append(atts.getValue("Implementation-Build"));
-                }
+            if (manifest != null) {
+                return buildVersionString(manifest, "Implementation-Version", "Implementation-Build");
             }
         } catch (IOException ex) {
             // deliberate ignore
         }
-        if (sb.length() == 0) {
-            return "unknown";
-        } else {
-            return sb.toString();
+
+        return "unknown";
+    }
+
+    private Manifest getWebAppManifest() throws IOException {
+        final ServletContext servletContext = WebApplication.get().getServletContext();
+        final InputStream manifestInputStream = servletContext.getResourceAsStream("META-INF/MANIFEST.MF");
+        if (manifestInputStream != null) {
+            return new Manifest(manifestInputStream);
         }
+
+        final File manifestFile = new File(servletContext.getRealPath("/"), "META-INF/MANIFEST.MF");
+        if (manifestFile.exists()) {
+            return new Manifest(new FileInputStream(manifestFile));
+        }
+        return null;
+    }
+
+    private String buildVersionString(final Manifest manifest, final String versionAttribute, final String buildAttribute) {
+        StringBuilder versionString = new StringBuilder();
+
+        final Attributes attributes = manifest.getMainAttributes();
+        final String projectVersion = attributes.getValue(versionAttribute);
+        if (projectVersion != null) {
+            versionString.append(projectVersion);
+        }
+        final String projectBuild = attributes.getValue(buildAttribute);
+        if (projectBuild != null && !"-1".equals(projectBuild)) {
+            if (versionString.length() > 0) {
+                versionString.append(", build: ");
+            }
+            versionString.append(projectBuild);
+        }
+        return versionString.toString();
     }
 
     private String getRepositoryVersion() {
