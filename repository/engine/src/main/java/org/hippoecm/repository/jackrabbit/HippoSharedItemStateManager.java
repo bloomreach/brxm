@@ -98,6 +98,10 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
     }
 
     void notifyDocumentListeners(ChangeLog changeLog) {
+        if (handleListeners.size() == 0) {
+            return;
+        }
+
         Name handleNodeName = getHandleName(repository);
         if (handleNodeName == null) {
             return;
@@ -115,14 +119,12 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
                     listener.handleModified(handleId);
                 }
             }
-        } catch (NoSuchNodeTypeException nsnte) {
-            log.error("Could not broadcast handle changes", nsnte);
         } catch (ItemStateException e) {
             log.error("Could not broadcast handle changes", e);
         }
     }
 
-    private void addHandleIds(final Iterable<ItemState> states, ChangeLog changes, final Set<NodeId> handles) throws ItemStateException, NoSuchNodeTypeException {
+    private void addHandleIds(final Iterable<ItemState> states, ChangeLog changes, final Set<NodeId> handles) throws ItemStateException {
         for (ItemState state : states) {
             try {
                 final NodeState nodeState;
@@ -135,6 +137,10 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
                     nodeState = (NodeState) getItemState(state.getParentId());
                 }
                 final Name nodeTypeName = nodeState.getNodeTypeName();
+                if (nodeTypeName == null) {
+                    log.warn("Node type name is null for " + nodeState.getId());
+                    continue;
+                }
                 if (handleNodeName.equals(nodeTypeName)) {
                     handles.add(nodeState.getNodeId());
                 } else {
@@ -146,6 +152,8 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
                 }
             } catch (NoSuchItemStateException nsise) {
                 log.error("Could not find parent item", nsise);
+            } catch (NoSuchNodeTypeException nsnte) {
+                log.error("Could not find node type", nsnte);
             }
         }
     }
