@@ -20,11 +20,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -34,17 +37,28 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.query.ExecutableQuery;
+import org.apache.jackrabbit.core.query.QueryHandler;
+import org.apache.jackrabbit.core.query.lucene.AbstractQueryImpl;
+import org.apache.jackrabbit.core.query.lucene.CachingMultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
+import org.apache.jackrabbit.core.query.lucene.FilterMultiColumnQueryHits;
+import org.apache.jackrabbit.core.query.lucene.HippoIndexReader;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
+import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexSearcher;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
+import org.apache.jackrabbit.core.query.lucene.MultiColumnQuery;
+import org.apache.jackrabbit.core.query.lucene.MultiColumnQueryHits;
 import org.apache.jackrabbit.core.query.lucene.MultiIndex;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
+import org.apache.jackrabbit.core.query.lucene.Ordering;
 import org.apache.jackrabbit.core.query.lucene.QueryImpl;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
+import org.apache.jackrabbit.core.query.lucene.Util;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -59,9 +73,10 @@ import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
@@ -84,11 +99,133 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      */
     private Element indexingConfiguration;
 
+    private final ConcurrentHashMap<String, AuthorizationBitSet> authorizationBitSets = new ConcurrentHashMap<String, AuthorizationBitSet>();
+
     /**
      * Simple zero argument constructor.
      */
     public ServicingSearchIndex() {
         super();
+    }
+
+    private IndexReader getIndexReader(final boolean includeSystemIndex, final SessionImpl session) throws IOException {
+        if (!(session instanceof InternalHippoSession)) {
+            return super.getIndexReader(includeSystemIndex);
+        }
+
+        QueryHandler parentHandler = getContext().getParentHandler();
+        CachingMultiIndexReader parentReader = null;
+        if (parentHandler instanceof ServicingSearchIndex && includeSystemIndex) {
+            parentReader = ((ServicingSearchIndex) parentHandler).index.getIndexReader();
+        }
+
+        CachingMultiIndexReader[] readers;
+        IndexReader reader;
+        if (parentReader != null) {
+            readers = new CachingMultiIndexReader[] { index.getIndexReader(), parentReader };
+            reader = new CombinedIndexReader(readers);
+        } else {
+            readers = new CachingMultiIndexReader[] { index.getIndexReader() };
+            reader = index.getIndexReader();
+        }
+
+        return new HippoIndexReader(reader, getAuthorizationBitSet((InternalHippoSession) session, readers, reader));
+
+    }
+
+    private BitSet getAuthorizationBitSet(final InternalHippoSession session, final CachingMultiIndexReader[] readers, final IndexReader reader) throws IOException {
+        BitSet result;
+        final AuthorizationBitSet authorizationBitSet = authorizationBitSets.get(session.getUserID());
+        if (authorizationBitSet == null || !authorizationBitSet.isValid(readers)) {
+            JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher((SessionImpl) session, reader, getContext().getItemStateManager());
+            searcher.setSimilarity(getSimilarity());
+            final BitSet bits = new BitSet(reader.maxDoc());
+            searcher.search(session.getAuthorizationQuery().getQuery(), new HitCollector() {
+                public final void collect(int doc, float score) {
+                    bits.set(doc);  // set bit for hit
+                }
+            });
+            authorizationBitSets.put(session.getUserID(), new AuthorizationBitSet(readers, bits));
+            result = bits;
+        } else {
+            result = authorizationBitSet.authorizationBitSet;
+        }
+        return result;
+    }
+
+    /**
+     * Executes the query on the search index.
+     *
+     * @param session         the session that executes the query.
+     * @param queryImpl       the query impl.
+     * @param query           the lucene query.
+     * @param orderProps      name of the properties for sort order.
+     * @param orderSpecs      the order specs for the sort order properties.
+     *                        <code>true</code> indicates ascending order,
+     *                        <code>false</code> indicates descending.
+     * @param resultFetchHint a hint on how many results should be fetched.
+     * @return the query hits.
+     * @throws IOException if an error occurs while searching the index.
+     */
+    public MultiColumnQueryHits executeQuery(SessionImpl session,
+                                             AbstractQueryImpl queryImpl,
+                                             Query query,
+                                             Path[] orderProps,
+                                             boolean[] orderSpecs,
+                                             long resultFetchHint)
+            throws IOException {
+        checkOpen();
+
+        Sort sort = new Sort(createSortFields(orderProps, orderSpecs));
+
+        final IndexReader reader = getIndexReader(queryImpl.needsSystemTree(), session);
+        JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher(
+                session, reader, getContext().getItemStateManager());
+        searcher.setSimilarity(getSimilarity());
+        return new FilterMultiColumnQueryHits(
+                searcher.execute(query, sort, resultFetchHint,
+                        QueryImpl.DEFAULT_SELECTOR_NAME)) {
+            public void close() throws IOException {
+                try {
+                    super.close();
+                } finally {
+                    Util.closeOrRelease(reader);
+                }
+            }
+        };
+    }
+
+    /**
+     * Executes the query on the search index.
+     *
+     * @param session         the session that executes the query.
+     * @param query           the query.
+     * @param orderings       the order specs for the sort order.
+     * @param resultFetchHint a hint on how many results should be fetched.
+     * @return the query hits.
+     * @throws IOException if an error occurs while searching the index.
+     */
+    public MultiColumnQueryHits executeQuery(SessionImpl session,
+                                             MultiColumnQuery query,
+                                             Ordering[] orderings,
+                                             long resultFetchHint)
+            throws IOException {
+        checkOpen();
+
+        final IndexReader reader = getIndexReader(true, session);
+        JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher(
+                session, reader, getContext().getItemStateManager());
+        searcher.setSimilarity(getSimilarity());
+        return new FilterMultiColumnQueryHits(
+                query.execute(searcher, orderings, resultFetchHint)) {
+            public void close() throws IOException {
+                try {
+                    super.close();
+                } finally {
+                    Util.closeOrRelease(reader);
+                }
+            }
+        };
     }
 
     /**
@@ -119,22 +256,11 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 }
 
                 // build lucene query
-                Query userQuery = LuceneQueryBuilder.createQuery(root, sessionContext.getSessionImpl(),
+                final Query query = LuceneQueryBuilder.createQuery(root, sessionContext.getSessionImpl(),
                         index.getContext().getItemStateManager(),
                         index.getNamespaceMappings(), index.getTextAnalyzer(),
                         propReg, index.getSynonymProvider(),
                         index.getIndexFormatVersion(), cache);
-
-                Query query = userQuery;
-                if (sessionContext.getSessionImpl() instanceof InternalHippoSession) {
-                    AuthorizationQuery authorizationQuery = ((InternalHippoSession)sessionContext.getSessionImpl()).getAuthorizationQuery();
-                    if (authorizationQuery != null) {
-                        BooleanQuery bq = new BooleanQuery();
-                        bq.add(userQuery, BooleanClause.Occur.MUST);
-                        bq.add(authorizationQuery.getQuery(), BooleanClause.Occur.MUST);
-                        query = bq;
-                    }
-                }
 
                 OrderQueryNode orderNode = root.getOrderNode();
 
@@ -507,6 +633,34 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             process.remove();
         }
 
+    }
+
+    private static class AuthorizationBitSet {
+
+        private final List<WeakReference<IndexReader>> readers;
+        private final BitSet authorizationBitSet;
+
+        private AuthorizationBitSet(final IndexReader[] readers, final BitSet authorizationBitSet) {
+
+            this.readers = new ArrayList<WeakReference<IndexReader>>(readers.length);
+            for (IndexReader reader : readers) {
+                this.readers.add(new WeakReference<IndexReader>(reader));
+            }
+
+            this.authorizationBitSet = authorizationBitSet;
+        }
+
+        private boolean isValid(IndexReader[] readers) {
+            if (this.readers.size() != readers.length) {
+                return false;
+            }
+            for (int i = 0; i < readers.length; i++) {
+                if (this.readers.get(i).get() != readers[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
 }
