@@ -301,7 +301,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         if (!target.hasNode(name) || !target.getNode(name).isNodeType(HippoNodeType.NT_HANDLE)
                                 || target.getNode(name).hasNode(name)) {
                             result = target.addNode(name, "hippo:handle");
-                            result.addMixin("hippo:hardhandle");
+                            result.addMixin(HippoNodeType.NT_HARDHANDLE);
                         } else {
                             result = target.getNode(name);
                         }
@@ -315,6 +315,10 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 }
             }
             if (result != null) {
+                if(result.isNodeType(HippoNodeType.NT_DOCUMENT)
+                        && !result.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
+                    result.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
+                }
                 rootSession.save();
                 return result.getPath();
             } else {
