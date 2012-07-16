@@ -23,8 +23,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
-import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
@@ -73,7 +74,7 @@ public class DeleteDialog extends WorkflowAction.WorkflowDialog {
 
     @Override
     public IValueMap getProperties() {
-        return MEDIUM;
+        return DialogConstants.MEDIUM;
     }
 
     @Override

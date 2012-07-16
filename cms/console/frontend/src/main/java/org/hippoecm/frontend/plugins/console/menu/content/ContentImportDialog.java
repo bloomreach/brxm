@@ -44,6 +44,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
@@ -245,7 +246,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
 
     @Override
     public IValueMap getProperties() {
-        return MEDIUM;
+        return DialogConstants.MEDIUM;
     }
 
 }

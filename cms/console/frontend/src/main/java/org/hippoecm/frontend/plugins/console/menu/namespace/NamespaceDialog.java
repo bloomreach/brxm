@@ -27,6 +27,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.RequiredTextFieldWidget;
 
@@ -105,7 +106,7 @@ public class NamespaceDialog extends AbstractDialog<Node> {
     
     @Override
     public IValueMap getProperties() {
-        return SMALL;
+        return DialogConstants.SMALL;
     }
 
 }

@@ -55,6 +55,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
@@ -232,7 +233,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
                 @Override
                 public IValueMap getProperties() {
-                    return SMALL;
+                    return DialogConstants.SMALL;
                 }
             }
 
@@ -614,7 +615,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
         @Override
         public IValueMap getProperties() {
-            return MEDIUM;
+            return DialogConstants.MEDIUM;
         }
 
     }
@@ -702,7 +703,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
         @Override
         public IValueMap getProperties() {
-            return MEDIUM;
+            return DialogConstants.MEDIUM;
         }
     }
 }

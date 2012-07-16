@@ -32,6 +32,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
@@ -208,7 +209,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
             @Override
             public IValueMap getProperties() {
-                return SMALL;
+                return DialogConstants.SMALL;
             }
         }
 
@@ -235,7 +236,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
             @Override
             public IValueMap getProperties() {
-                return SMALL;
+                return DialogConstants.SMALL;
             }
         }
 
@@ -263,7 +264,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
             @Override
             public IValueMap getProperties() {
-                return MEDIUM;
+                return DialogConstants.MEDIUM;
             }
         }
 
@@ -381,7 +382,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
             @Override
             public IValueMap getProperties() {
-                return LARGE;
+                return DialogConstants.LARGE;
             }
         }
 

@@ -28,6 +28,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.TemplateEditorWorkflow;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -108,7 +109,7 @@ public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         @Override
         public IValueMap getProperties() {
-            return SMALL;
+            return DialogConstants.SMALL;
         }
     }
 }

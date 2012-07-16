@@ -34,9 +34,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +100,7 @@ public class ReferencesDialog extends AbstractDialog<Node> {
 
     @Override
     public IValueMap getProperties() {
-        return LARGE;
+        return DialogConstants.LARGE;
     }
     
     @Override

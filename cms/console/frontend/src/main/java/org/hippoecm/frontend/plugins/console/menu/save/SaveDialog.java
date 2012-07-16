@@ -28,7 +28,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
@@ -94,7 +94,7 @@ public class SaveDialog extends AbstractDialog<Node> {
 
     @Override
     public IValueMap getProperties() {
-        return MEDIUM;
+        return DialogConstants.MEDIUM;
     }
 
 }

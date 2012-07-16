@@ -28,6 +28,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -114,7 +115,7 @@ public class ImageUploadPlugin extends RenderPlugin {
                     new ExceptionDialog(new StringResourceModel("unrecognized", ImageUploadPlugin.this, null,
                             new Object[]{extension, extensions}).getString()) {
                         public IValueMap getProperties() {
-                            return SMALL;
+                            return DialogConstants.SMALL;
                         }
 
                     });

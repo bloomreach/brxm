@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.console.menu.property;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,9 +44,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
@@ -318,7 +317,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
 
     @Override
     public IValueMap getProperties() {
-        return SMALL;
+        return DialogConstants.SMALL;
     }
 
     @Override

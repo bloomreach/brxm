@@ -37,6 +37,7 @@ import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -212,7 +213,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         @Override
         public IValueMap getProperties() {
-            return SMALL;
+            return DialogConstants.SMALL;
         }
     }
 

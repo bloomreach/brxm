@@ -15,22 +15,18 @@
  */
 package org.hippoecm.frontend.editor.workflow.dialog;
 
-import java.util.List;
-
-import org.apache.wicket.Component;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.dialog.AbstractWizard;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.editor.workflow.action.Action;
-import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
 
-public abstract class CreateTypeDialog extends AjaxWizard implements IDialogService.Dialog {
+public abstract class CreateTypeDialog extends AbstractWizard {
     @SuppressWarnings("unused")
     private final static String SVN_ID = "$Id$";
 
@@ -41,8 +37,6 @@ public abstract class CreateTypeDialog extends AjaxWizard implements IDialogServ
     private IDialogService dialogService;
 
     public CreateTypeDialog(Action action, ILayoutProvider layouts) {
-        super("content", false);
-
         this.action = action;
         final IFeedbackMessageFilter[] filters = new IFeedbackMessageFilter[2];
         filters[0] = new ContainerFeedbackMessageFilter(action);
@@ -59,6 +53,7 @@ public abstract class CreateTypeDialog extends AjaxWizard implements IDialogServ
                 return false;
             }
         });
+        feedback.setOutputMarkupId(true);
 
         setOutputMarkupId(true);
     }
@@ -69,39 +64,13 @@ public abstract class CreateTypeDialog extends AjaxWizard implements IDialogServ
     }
 
     @Override
-    public void onCancel() {
-        dialogService.close();
-    }
-
-    @Override
     public void onFinish() {
         action.execute();
-
-        List<FeedbackMessage> messages = (List) feedback.getFeedbackMessagesModel().getObject();
-        for (FeedbackMessage message : messages) {
-            if (message.getLevel() == FeedbackMessage.ERROR) {
-                return;
-            }
-        }
-        dialogService.close();
+        super.onFinish();
     }
 
     public IValueMap getProperties() {
         return new ValueMap("width=500,height=325");
-    }
-
-    public Component getComponent() {
-        return this;
-    }
-
-    public void onClose() {
-    }
-
-    public void render(PluginRequestTarget target) {
-    }
-
-    public void setDialogService(IDialogService service) {
-        dialogService = service;
     }
 
 }

@@ -1,0 +1,181 @@
+/*
+ *  Copyright 2012 Hippo.
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.frontend.dialog;
+
+import java.util.List;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard;
+import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
+
+public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dialog {
+
+    private IDialogService dialogService;
+    private Component focusComponent;
+    private AjaxIndicatorAppender indicator;
+
+    public AbstractWizard() {
+        super("content", false);
+
+        setOutputMarkupId(true);
+
+        add(indicator = new AjaxIndicatorAppender() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected CharSequence getIndicatorUrl() {
+                return RequestCycle.get().urlFor(DialogConstants.AJAX_LOADER_GIF);
+            }
+        });
+    }
+
+    public AbstractWizard(IModel<T> model) {
+        this();
+
+        setDefaultModel(model);
+    }
+
+    /**
+     * Gets model
+     *
+     * @return model
+     */
+    @SuppressWarnings("unchecked")
+    public final IModel<T> getModel()
+    {
+        return (IModel<T>)getDefaultModel();
+    }
+
+    /**
+     * Sets model
+     *
+     * @param model
+     */
+    public final void setModel(IModel<T> model)
+    {
+        setDefaultModel(model);
+    }
+
+    /**
+     * Gets model object
+     *
+     * @return model object
+     */
+    @SuppressWarnings("unchecked")
+    public final T getModelObject()
+    {
+        return (T)getDefaultModelObject();
+    }
+
+    /**
+     * Sets model object
+     *
+     * @param object
+     */
+    public final void setModelObject(T object)
+    {
+        setDefaultModelObject(object);
+    }
+
+    @Override
+    public void onCancel() {
+        dialogService.close();
+    }
+
+    @Override
+    public void onFinish() {
+        if (!hasError()) {
+            dialogService.close();
+        }
+    }
+
+    protected final boolean hasError() {
+        FeedbackPanel feedback = (FeedbackPanel) getForm().get(FEEDBACK_ID);
+        List<FeedbackMessage> messages = (List) feedback.getFeedbackMessagesModel().getObject();
+        for (FeedbackMessage message : messages) {
+            if (message.getLevel() == FeedbackMessage.ERROR) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IValueMap getProperties() {
+        return DialogConstants.LARGE;
+    }
+
+    public Component getComponent() {
+        return this;
+    }
+
+    @Override
+    public IModel getTitle() {
+        return null;
+    }
+
+    public void onClose() {
+    }
+
+    public void render(PluginRequestTarget target) {
+        target.addComponent(getForm().get(FEEDBACK_ID));
+        if (focusComponent != null) {
+            target.focusComponent(focusComponent);
+            focusComponent = null;
+        }
+    }
+
+    /**
+     * Implement {@link org.apache.wicket.ajax.IAjaxIndicatorAware}, to let ajax components in the dialog trigger the ajax
+     * indicator when they trigger an ajax request.
+     *
+     * @return the markup id of the ajax indicator
+     */
+    public String getAjaxIndicatorMarkupId() {
+        return indicator.getMarkupId();
+    }
+
+    public void setDialogService(IDialogService service) {
+        dialogService = service;
+    }
+
+    public Component setFocus(Component c) {
+        if (focusComponent != null) {
+            return c;
+        }
+
+        if (!c.getOutputMarkupId()) {
+            c.setOutputMarkupId(true);
+        }
+        return focusComponent = c;
+    }
+
+    public AjaxUpdatingWidget<?> setFocus(AjaxUpdatingWidget<?> widget) {
+        setFocus(widget.getFocusComponent());
+        return widget;
+    }
+
+}

@@ -25,6 +25,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 
 /**
  * Dialog for easy creating confirmation dialogs;
@@ -72,7 +73,7 @@ public class DeleteDialog<T extends Serializable> extends AbstractDialog<T> {
 
     @Override
     public IValueMap getProperties() {
-        return SMALL;
+        return DialogConstants.SMALL;
     }
 
 }

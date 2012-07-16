@@ -43,6 +43,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -520,7 +521,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
         @Override
         public IValueMap getProperties() {
-            return MEDIUM;
+            return DialogConstants.MEDIUM;
         }
     }
 }

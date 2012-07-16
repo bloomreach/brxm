@@ -22,11 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
@@ -63,8 +61,6 @@ import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wicket.contrib.input.events.EventType;
-import wicket.contrib.input.events.InputBehavior;
 import wicket.contrib.input.events.key.KeyType;
 
 /**
@@ -79,9 +75,9 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
     static final Logger log = LoggerFactory.getLogger(AbstractDialog.class);
 
-    protected final static IValueMap SMALL = new ValueMap("width=380,height=250").makeImmutable();
-    protected final static IValueMap MEDIUM = new ValueMap("width=475,height=375").makeImmutable();
-    protected final static IValueMap LARGE = new ValueMap("width=855,height=450").makeImmutable();
+    @Deprecated protected final static IValueMap SMALL = new ValueMap("width=380,height=250").makeImmutable();
+    @Deprecated protected final static IValueMap MEDIUM = new ValueMap("width=475,height=375").makeImmutable();
+    @Deprecated protected final static IValueMap LARGE = new ValueMap("width=855,height=450").makeImmutable();
 
     static private IMarkupCacheKeyProvider cacheKeyProvider = new DefaultMarkupCacheKeyProvider();
     static private IMarkupResourceStreamProvider streamProvider = new DefaultMarkupResourceStreamProvider();
@@ -215,176 +211,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
     }
 
-    class ButtonWrapper implements IClusterable {
-        private static final long serialVersionUID = 1L;
-
-        private Button button;
-
-        private boolean ajax;
-        private IModel<String> label;
-        private boolean visible;
-        private boolean enabled;
-        private KeyType keyType;
-        private boolean hasChanges = false;
-
-        public ButtonWrapper(Button button) {
-            this.button = button;
-            visible = button.isVisible();
-            enabled = button.isEnabled();
-            label = button.getModel();
-
-            if (button instanceof AjaxButton) {
-                ajax = true;
-            }
-        }
-
-        public ButtonWrapper(IModel<String> label) {
-            this(label, true);
-        }
-
-        public ButtonWrapper(IModel<String> label, boolean ajax) {
-            this.ajax = ajax;
-            this.label = label;
-            this.visible = true;
-            this.enabled = true;
-        }
-
-        private Button createButton() {
-            if (ajax) {
-                AjaxButton button = new AjaxButton(getButtonId()) {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                        ButtonWrapper.this.onSubmit();
-                    }
-
-                    @Override
-                    public boolean isVisible() {
-                        return visible;
-                    }
-
-                    @Override
-                    public boolean isEnabled() {
-                        return enabled;
-                    }
-                };
-                button.setModel(label);
-                return button;
-            } else {
-                Button button = new Button(getButtonId()) {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    public void onSubmit() {
-                        ButtonWrapper.this.onSubmit();
-                    }
-
-                    @Override
-                    public boolean isVisible() {
-                        return visible;
-                    }
-
-                    @Override
-                    public boolean isEnabled() {
-                        return enabled;
-                    }
-                };
-                button.setModel(label);
-                return button;
-            }
-        }
-
-        public Button getButton() {
-            if (button == null) {
-                button = decorate(createButton());
-            }
-            return button;
-        }
-
-        protected Button decorate(Button button) {
-            button.setEnabled(enabled);
-            button.setVisible(visible);
-            if (getKeyType() != null) {
-                button.add(new InputBehavior(new KeyType[]{getKeyType()}, EventType.click));
-            }
-            return button;
-        }
-
-        public void setEnabled(boolean isset) {
-            enabled = isset;
-            if (button != null) {
-                button.setEnabled(isset);
-                if (ajax) {
-                    AjaxRequestTarget target = AjaxRequestTarget.get();
-                    if (target != null) {
-                        target.addComponent(button);
-                    }
-                }
-            }
-        }
-
-        public void setVisible(boolean isset) {
-            visible = isset;
-            if (button != null) {
-                button.setVisible(isset);
-                if (ajax) {
-                    AjaxRequestTarget target = AjaxRequestTarget.get();
-                    if (target != null) {
-                        target.addComponent(button);
-                    }
-                }
-            }
-        }
-
-        public void setAjax(boolean c) {
-            ajax = c;
-        }
-
-        public void setLabel(IModel<String> label) {
-            this.label = label;
-            if (button != null) {
-                button.setModel(label);
-            }
-            hasChanges = true;
-        }
-
-        public void setKeyType(KeyType keyType) {
-            this.keyType = keyType;
-        }
-
-        protected void onSubmit() {
-        }
-
-        public boolean hasChanges() {
-            if (!ajax) {
-                return false;
-            }
-
-            if (button == null) {
-                return true;
-            }
-
-            if (visible != button.isVisible()) {
-                return true;
-            }
-
-            if (enabled != button.isEnabled()) {
-                return true;
-            }
-
-            return hasChanges;
-        }
-
-        protected KeyType getKeyType() {
-            return keyType;
-        }
-
-    }
-
-    private final static ResourceReference AJAX_LOADER_GIF = new ResourceReference(AbstractDialog.class,
-            "ajax-loader.gif");
-
     protected PersistentFeedbackMessagesModel fmm;
     protected FeedbackPanel feedback;
     private Component focusComponent;
@@ -461,7 +287,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         buttons.add(cancel);
 
         if (isFullscreenEnabled()) {
-            final AjaxButton goFullscreen = new AjaxButton("button",
+            final AjaxButton goFullscreen = new AjaxButton(DialogConstants.BUTTON,
                     new AbstractReadOnlyModel<String>() {
                         @Override
                         public String getObject() {
@@ -483,7 +309,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
 
             @Override
             protected CharSequence getIndicatorUrl() {
-                return RequestCycle.get().urlFor(AJAX_LOADER_GIF);
+                return RequestCycle.get().urlFor(DialogConstants.AJAX_LOADER_GIF);
             }
         });
 
@@ -624,18 +450,20 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         this.dialogService = dialogService;
     }
 
+    @Deprecated
     protected String getButtonId() {
-        return "button";
+        log.warn("getButtonId is deprecated, use DialogConstants.BUTTON instead");
+        return DialogConstants.BUTTON;
     }
 
     /**
      * Add a {@link Button} to the button bar.  The id of the button must equal "button".
      */
     protected void addButton(Button button) {
-        if (getButtonId().equals(button.getId())) {
+        if (DialogConstants.BUTTON.equals(button.getId())) {
             buttons.addFirst(new ButtonWrapper(button));
         } else {
-            log.error("Failed to add button: component id is not '{}'", getButtonId());
+            log.error("Failed to add button: component id is not '{}'", DialogConstants.BUTTON);
         }
     }
 
@@ -746,7 +574,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      */
     @Override
     public IValueMap getProperties() {
-        return LARGE;
+        return DialogConstants.LARGE;
     }
 
     public Component setFocus(Component c) {

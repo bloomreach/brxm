@@ -22,6 +22,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 /**
@@ -120,7 +121,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
 
     @Override
     public IValueMap getProperties() {
-        return MEDIUM;
+        return DialogConstants.MEDIUM;
     }
 
     protected abstract void handleUploadItem(FileUpload upload);

@@ -39,6 +39,7 @@ import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -629,7 +630,7 @@ public class TabsPlugin extends RenderPlugin {
 
         @Override
         public IValueMap getProperties() {
-            return MEDIUM;
+            return DialogConstants.MEDIUM;
         }
     }
 
@@ -719,7 +720,7 @@ public class TabsPlugin extends RenderPlugin {
 
         @Override
         public IValueMap getProperties() {
-            return SMALL;
+            return DialogConstants.SMALL;
         }
 
     }
