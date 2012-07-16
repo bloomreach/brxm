@@ -21,6 +21,7 @@ import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.link.Link;
+import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 
@@ -64,6 +65,8 @@ abstract class MenuLink extends Link {
                     }
                 }
             });
+        } else {
+            add(new EventStoppingBehavior("onclick"));
         }
     }
 
@@ -79,10 +82,6 @@ abstract class MenuLink extends Link {
             }
         } else {
             disableLink(tag);
-            if(!isEnabled()) {
-                // to prevent the menu to disappear when a disabled menuitem is clicked
-                tag.put("onclick", "event.cancelBubble=true;");
-            }
         }
     }
 
