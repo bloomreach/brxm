@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,7 +46,6 @@ import org.apache.jackrabbit.core.query.lucene.AbstractQueryImpl;
 import org.apache.jackrabbit.core.query.lucene.CachingMultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.FilterMultiColumnQueryHits;
-import org.apache.jackrabbit.core.query.lucene.HippoIndexReader;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
 import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexSearcher;
@@ -108,11 +107,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         super();
     }
 
-    private IndexReader getIndexReader(final boolean includeSystemIndex, final SessionImpl session) throws IOException {
-        if (!(session instanceof InternalHippoSession)) {
-            return super.getIndexReader(includeSystemIndex);
-        }
-
+    private CachingMultiIndexReader[] getMultiIndexReaders(final boolean includeSystemIndex) throws IOException {
         QueryHandler parentHandler = getContext().getParentHandler();
         CachingMultiIndexReader parentReader = null;
         if (parentHandler instanceof ServicingSearchIndex && includeSystemIndex) {
@@ -120,20 +115,26 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
 
         CachingMultiIndexReader[] readers;
-        IndexReader reader;
         if (parentReader != null) {
             readers = new CachingMultiIndexReader[] { index.getIndexReader(), parentReader };
-            reader = new CombinedIndexReader(readers);
         } else {
             readers = new CachingMultiIndexReader[] { index.getIndexReader() };
-            reader = index.getIndexReader();
         }
 
-        return new HippoIndexReader(reader, getAuthorizationBitSet((InternalHippoSession) session, readers, reader));
+        return readers;
+    }
 
+    private IndexReader createIndexReader(CachingMultiIndexReader[] readers) {
+        if (readers.length == 1) {
+            return readers[0];
+        }
+        return new CombinedIndexReader(readers);
     }
 
     private BitSet getAuthorizationBitSet(final InternalHippoSession session, final CachingMultiIndexReader[] readers, final IndexReader reader) throws IOException {
+        if (session.getUserID().equals("system")) {
+            return null;
+        }
         BitSet result;
         final AuthorizationBitSet authorizationBitSet = authorizationBitSets.get(session.getUserID());
         if (authorizationBitSet == null || !authorizationBitSet.isValid(readers)) {
@@ -178,9 +179,13 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         Sort sort = new Sort(createSortFields(orderProps, orderSpecs));
 
-        final IndexReader reader = getIndexReader(queryImpl.needsSystemTree(), session);
-        JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher(
-                session, reader, getContext().getItemStateManager());
+        final CachingMultiIndexReader[] multiIndexReaders = getMultiIndexReaders(queryImpl.needsSystemTree());
+        final IndexReader reader = createIndexReader(multiIndexReaders);
+        BitSet authorizationBitSet = null;
+        if (session instanceof InternalHippoSession) {
+            authorizationBitSet = getAuthorizationBitSet((InternalHippoSession) session, multiIndexReaders, reader);
+        }
+        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationBitSet);
         searcher.setSimilarity(getSimilarity());
         return new FilterMultiColumnQueryHits(
                 searcher.execute(query, sort, resultFetchHint,
@@ -212,9 +217,13 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             throws IOException {
         checkOpen();
 
-        final IndexReader reader = getIndexReader(true, session);
-        JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher(
-                session, reader, getContext().getItemStateManager());
+        final CachingMultiIndexReader[] multiIndexReaders = getMultiIndexReaders(true);
+        final IndexReader reader = createIndexReader(multiIndexReaders);
+        BitSet authorizationBitSet = null;
+        if (session instanceof InternalHippoSession) {
+            authorizationBitSet = getAuthorizationBitSet((InternalHippoSession) session, multiIndexReaders, reader);
+        }
+        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationBitSet);
         searcher.setSimilarity(getSimilarity());
         return new FilterMultiColumnQueryHits(
                 query.execute(searcher, orderings, resultFetchHint)) {
@@ -276,6 +285,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                     orderProperties[i] = orderSpecs[i].getPropertyPath();
                     ascSpecs[i] = orderSpecs[i].isAscending();
                 }
+
 
                 return new HippoQueryResult(index, sessionContext,
                         this, query,

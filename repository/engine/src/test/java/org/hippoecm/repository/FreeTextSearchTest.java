@@ -35,6 +35,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FreeTextSearchTest extends TestCase {
@@ -117,7 +118,7 @@ public class FreeTextSearchTest extends TestCase {
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));

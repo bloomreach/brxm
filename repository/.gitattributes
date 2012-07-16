@@ -95,7 +95,6 @@ connector/src/main/java/org/hippoecm/repository/decorating/server/ServerServicin
 connector/src/main/java/org/hippoecm/repository/decorating/server/ServerWorkflowDescriptor.java -text
 dependencies/pom.xml svneol=native#text/plain
 engine/pom.xml svneol=native#text/plain
-engine/src/main/java/org/apache/jackrabbit/core/query/lucene/HippoIndexReader.java -text
 engine/src/main/java/org/hippoecm/repository/FacetedNavigationEngineImpl.java -text
 engine/src/main/java/org/hippoecm/repository/impl/InitializationProcessorImpl.java -text
 engine/src/main/java/org/hippoecm/repository/impl/ReferenceWorkspaceImpl.java -text
@@ -120,8 +119,9 @@ engine/src/main/java/org/hippoecm/repository/query/lucene/AuthorizedOnlyIndexRea
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetFiltersQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetRangeQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/HippoDateTools.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/query/lucene/HippoIndexReader.java -text
+engine/src/main/java/org/hippoecm/repository/query/lucene/HippoIndexSearcher.java -text
 engine/src/main/java/org/hippoecm/repository/query/lucene/HippoQueryHandler.java -text
+engine/src/main/java/org/hippoecm/repository/query/lucene/HippoSortedLuceneQueryHits.java -text
 engine/src/main/java/org/hippoecm/repository/query/lucene/InheritedFilterQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/QueryHelper.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/RangeFields.java svneol=native#text/plain
