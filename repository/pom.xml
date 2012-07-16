@@ -63,8 +63,8 @@
   </modules>
 
   <properties>
-    <hippo.commons.version>1.02.00-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>2-SNAPSHOT</hippo.services.version>
+    <hippo.commons.version>1.02.00</hippo.commons.version>
+    <hippo.services.version>2</hippo.services.version>
 
     <!-- Test dependencies  -->
     <atomikos.version>3.1.4</atomikos.version>
