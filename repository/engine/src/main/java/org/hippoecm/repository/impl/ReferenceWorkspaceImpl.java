@@ -50,7 +50,7 @@ public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
     public ReferenceWorkspaceImpl(final RepositoryImpl repositoryImpl) throws RepositoryException {
         this.repositoryImpl = repositoryImpl;
         try {
-            this.workspaceName = getWorkspaceHash();
+            this.workspaceName = "REF" + getWorkspaceHash();
         } catch (NoSuchAlgorithmException e) {
             throw new RepositoryException("Failed to create reference workspace", e);
         } catch (IOException e) {
