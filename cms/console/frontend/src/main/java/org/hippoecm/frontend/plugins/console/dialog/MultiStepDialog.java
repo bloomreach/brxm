@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.dialog;
+package org.hippoecm.frontend.plugins.console.dialog;
 
 import java.io.Serializable;
 import java.util.List;
@@ -21,9 +21,10 @@ import java.util.List;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.dialog.AbstractDialog;
 
 /**
- * Simple {@link AbstractDialog} extension that adds multi-step capability. If you need wizard functionality
+ * Simple {@link org.hippoecm.frontend.dialog.AbstractDialog} extension that adds multi-step capability. If you need wizard functionality
  * use {@link org.hippoecm.frontend.plugins.standards.wizard.AjaxWizard} instead.
  */
 public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
@@ -78,11 +79,11 @@ public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
         protected abstract int execute();
 
         protected IModel<String> getOkLabel() {
-            return new StringResourceModel("ok", MultiStepDialog.this, null);
+            return new Model<String>("OK");
         }
 
         protected IModel<String> getCancelLabel() {
-            return new StringResourceModel("cancel", MultiStepDialog.this, null);
+            return new Model<String>("Cancel");
         }
 
         public String getInfo() {
@@ -102,7 +103,7 @@ public abstract class MultiStepDialog<T> extends AbstractDialog<T> {
 
         @Override
         protected IModel<String> getOkLabel() {
-            return new StringResourceModel("done", MultiStepDialog.this, null);
+            return new Model<String>("Done");
         }
     }
 

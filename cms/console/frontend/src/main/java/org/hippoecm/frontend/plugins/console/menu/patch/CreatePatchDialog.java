@@ -32,7 +32,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.MultiStepDialog;
+import org.hippoecm.frontend.plugins.console.dialog.MultiStepDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.onehippo.cms7.jcrdiff.JcrDiffException;

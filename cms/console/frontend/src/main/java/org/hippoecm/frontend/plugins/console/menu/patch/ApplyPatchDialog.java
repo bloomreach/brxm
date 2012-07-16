@@ -33,7 +33,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.hippoecm.frontend.dialog.MultiStepDialog;
+import org.hippoecm.frontend.plugins.console.dialog.MultiStepDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.jcrdiff.content.jcr.JcrTreeNode;
 import org.onehippo.cms7.jcrdiff.delta.Operation;
