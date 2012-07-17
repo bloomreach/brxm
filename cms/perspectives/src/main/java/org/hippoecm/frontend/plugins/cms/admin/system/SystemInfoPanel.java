@@ -26,12 +26,10 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 
 public class SystemInfoPanel extends AdminBreadCrumbPanel {
-
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

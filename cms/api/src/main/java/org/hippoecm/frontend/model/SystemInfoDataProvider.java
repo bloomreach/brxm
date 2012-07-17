@@ -13,11 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.admin.system;
+package org.hippoecm.frontend.model;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -32,7 +31,6 @@ import java.util.jar.Manifest;
 import javax.jcr.Repository;
 import javax.servlet.ServletContext;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -107,9 +105,9 @@ public class SystemInfoDataProvider implements IDataProvider {
         info.put("Memory in use", nf.format(((double) (runtime.totalMemory() - runtime.freeMemory())) / MB) + " MB");
         info.put("Memory total free", nf.format(((double) 
                 (runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory())) / MB) + " MB");
+        info.put("Hippo Release Version", getReleaseVersion());
         info.put("Hippo CMS version", getCMSVersion());
         info.put("Project Version", getProjectVersion());
-        info.put("Hippo Release Version", getReleaseVersion());
         info.put("Repository vendor", getRepositoryVendor());
         info.put("Repository version", getRepositoryVersion());
         info.put("Java vendor", System.getProperty("java.vendor"));
@@ -128,7 +126,7 @@ public class SystemInfoDataProvider implements IDataProvider {
     public void detach() {
     }
 
-    private String getReleaseVersion() {
+    public String getReleaseVersion() {
         try {
             final Manifest manifest = getWebAppManifest();
             return manifest.getMainAttributes().getValue("Hippo-Release-Version");
@@ -138,7 +136,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         return "unknown";
     }
 
-    private String getProjectVersion() {
+    public String getProjectVersion() {
         try {
             final Manifest manifest = getWebAppManifest();
             return buildVersionString(manifest, "Project-Version", "Project-Build");
@@ -148,7 +146,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         return "unknown";
     }
 
-    private String getCMSVersion() {
+    public String getCMSVersion() {
         try {
             final Manifest manifest;
             // try to get the version from the cms-api manifest
@@ -200,7 +198,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         return versionString.toString();
     }
 
-    private String getRepositoryVersion() {
+    public String getRepositoryVersion() {
         Repository repository = ((UserSession) Session.get()).getJcrSession().getRepository();
         if (repository != null) {
             return repository.getDescriptor(Repository.REP_VERSION_DESC);
@@ -209,7 +207,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         }
     }
     
-    private String getRepositoryVendor() {
+    public String getRepositoryVendor() {
         Repository repository = ((UserSession) Session.get()).getJcrSession().getRepository();
         if (repository != null) {
             return repository.getDescriptor(Repository.REP_NAME_DESC);

@@ -16,19 +16,22 @@
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.html.basic.Label;
+import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IconSize;
 
 public class DashboardPerspective extends Perspective {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 
+    private SystemInfoDataProvider systemDataProvider = new SystemInfoDataProvider();
+
     public DashboardPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
+        add(new Label("version-label", systemDataProvider.getReleaseVersion()));
     }
 
     @Override
