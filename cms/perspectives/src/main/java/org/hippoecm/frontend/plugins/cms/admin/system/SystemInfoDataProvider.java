@@ -41,11 +41,12 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SystemInfoDataProvider implements IDataProvider {
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
+    private static final Logger log = LoggerFactory.getLogger(SystemInfoDataProvider.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -108,6 +109,7 @@ public class SystemInfoDataProvider implements IDataProvider {
                 (runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory())) / MB) + " MB");
         info.put("Hippo CMS version", getCMSVersion());
         info.put("Project Version", getProjectVersion());
+        info.put("Hippo Release Version", getReleaseVersion());
         info.put("Repository vendor", getRepositoryVendor());
         info.put("Repository version", getRepositoryVersion());
         info.put("Java vendor", System.getProperty("java.vendor"));
@@ -126,12 +128,22 @@ public class SystemInfoDataProvider implements IDataProvider {
     public void detach() {
     }
 
+    private String getReleaseVersion() {
+        try {
+            final Manifest manifest = getWebAppManifest();
+            return manifest.getMainAttributes().getValue("Hippo-Release-Version");
+        } catch(IOException iOException) {
+            log.debug("Error occurred getting the hippo cms release version from the webapp-manifest.", iOException);
+        }
+        return "unknown";
+    }
+
     private String getProjectVersion() {
         try {
             final Manifest manifest = getWebAppManifest();
             return buildVersionString(manifest, "Project-Version", "Project-Build");
         } catch(IOException iOException) {
-            // ignore
+            log.debug("Error occurred getting the project version from the webapp-manifest.", iOException);
         }
         return "unknown";
     }
@@ -139,7 +151,7 @@ public class SystemInfoDataProvider implements IDataProvider {
     private String getCMSVersion() {
         try {
             final Manifest manifest;
-            // try to get the version from the frontend-engine manifest
+            // try to get the version from the cms-api manifest
             final InputStream manifestInputStream = HippoRepositoryFactory.getManifest(Home.class).openStream();
             if (manifestInputStream != null) {
                 manifest = new Manifest(manifestInputStream);
@@ -149,8 +161,8 @@ public class SystemInfoDataProvider implements IDataProvider {
             if (manifest != null) {
                 return buildVersionString(manifest, "Implementation-Version", "Implementation-Build");
             }
-        } catch (IOException ex) {
-            // deliberate ignore
+        } catch (IOException iOException) {
+            log.debug("Error occurred getting the cms version from the manifest.", iOException);
         }
 
         return "unknown";
