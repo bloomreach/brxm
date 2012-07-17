@@ -45,6 +45,7 @@ import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.version.VersionException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
@@ -138,10 +139,11 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     public static HippoRepository create(String location) throws RepositoryException {
         LocalHippoRepository localHippoRepository;
-        if(location == null)
+        if (location == null) {
             localHippoRepository = new LocalHippoRepository();
-        else
+        } else {
             localHippoRepository = new LocalHippoRepository(location);
+        }
         localHippoRepository.initialize();
         VMHippoRepository.register(location, localHippoRepository);
         return localHippoRepository;
@@ -255,8 +257,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if(path.exists()) {
             if(path.isDirectory()) {
                 File[] files = path.listFiles();
-                for(int i=0; i<files.length; i++)
+                for (int i = 0; i < files.length; i++) {
                     delete(files[i]);
+                }
             }
             if (!path.delete()) {
                 log.warn("Unable to delete path: {}", path);
@@ -447,7 +450,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 } catch (IOException e) {
                     log.error("Failed to read cnd checksum file. All system cnds will be reloaded.", e);
                 } finally {
-                    if (in != null) { try { in.close(); } catch (IOException ignore) {} }
+                    IOUtils.closeQuietly(in);
                 }
             }
         } catch (FileSystemException e) {
@@ -502,7 +505,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         } catch (FileSystemException e) {
             log.error("Failed to store cnd checksum file.", e);
         } finally {
-            if (out != null) { try { out.close(); } catch (IOException ignore) {} }
+            IOUtils.closeQuietly(out);
         }
     }
 
