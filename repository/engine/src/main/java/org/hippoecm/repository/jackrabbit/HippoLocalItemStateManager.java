@@ -489,14 +489,19 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     private void reorderHandleChildNodeEntries(final NodeState state) {
         // returns a copy of the list
         List<ChildNodeEntry> cnes = state.getChildNodeEntries();
+        LinkedList<ChildNodeEntry> update = new LinkedList<ChildNodeEntry>();
         ChildNodeEntry previous = null;
+        int readable = 0;
+        boolean hasUpdate = false;
         for (ChildNodeEntry cne : cnes) {
+            boolean added = false;
             if (cne.getIndex() > 1) {
                 try {
                     // this is SNS number 2, so check previous one, no need to check last one, because it's already last
                     if (!accessManager.isGranted(previous.getId(), AccessManager.READ)) {
-                        state.removeChildNodeEntry(previous.getId());
-                        state.addChildNodeEntry(previous.getName(), previous.getId());
+                        update.addLast(previous);
+                        added = true;
+                        hasUpdate = true;
                     }
                 } catch (ItemNotFoundException t) {
                     log.error("Unable to order documents below handle " + state.getId(), t);
@@ -504,9 +509,19 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
                     log.error("Unable to determine access rights for " + previous.getId());
                 }
             }
+            if (!added && previous != null) {
+                update.add(readable, previous);
+                readable++;
+            }
             previous = cne;
         }
-     }
+        if (previous != null) {
+            update.add(readable, previous);
+        }
+        if (hasUpdate) {
+            state.setChildNodeEntries(update);
+        }
+    }
 
     @Override
     public PropertyState getPropertyState(PropertyId id) throws NoSuchItemStateException, ItemStateException {
