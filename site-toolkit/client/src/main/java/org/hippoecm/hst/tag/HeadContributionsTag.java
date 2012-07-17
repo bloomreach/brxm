@@ -68,11 +68,7 @@ public class HeadContributionsTag extends TagSupport {
     }
     
     public String getCategoryIncludes() {
-        if (categoryIncludes != null) {
-            StringUtils.join(categoryIncludes, ", ");
-        }
-        
-        return null;
+        return categoryIncludes != null ? StringUtils.join(categoryIncludes, ", ") : null;
     }
     
     public void setCategoryExcludes(String categoryExcludes) {
@@ -80,11 +76,7 @@ public class HeadContributionsTag extends TagSupport {
     }
     
     public String getCategoryExcludes() {
-        if (categoryExcludes != null) {
-            StringUtils.join(categoryExcludes, ", ");
-        }
-        
-        return null;
+        return categoryExcludes != null ? StringUtils.join(categoryExcludes, ", ") : null;
     }
     
     public int doEndTag() throws JspException {
