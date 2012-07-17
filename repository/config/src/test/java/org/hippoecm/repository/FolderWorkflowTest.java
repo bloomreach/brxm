@@ -42,6 +42,7 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -72,18 +73,18 @@ public class FolderWorkflowTest extends TestCase {
     WorkflowManager manager;
     String[] content = {
         "/test/f", "hippostd:folder",
-        "jcr:mixinTypes", "hippo:harddocument",
+            "jcr:mixinTypes", "hippo:harddocument",
         "/test/aap", "hippostd:folder",
-        "jcr:mixinTypes", "hippo:harddocument",
-        "/test/aap/noot", "nt:unstructured",
-        "/test/aap/noot/mies", "hippostd:folder",
-        "jcr:mixinTypes", "hippo:harddocument",
-        "/test/aap/noot/mies/vuur", "nt:unstructured",
-        "/test/aap/noot/mies/vuur/jot", "nt:unstructured",
-        "/test/aap/noot/mies/vuur/jot/gijs", "hippo:coredocument",
-        "jcr:mixinTypes", "hippo:harddocument",
-        "/test/aap/noot/mies/vuur/jot/gijs/duif", "hippo:document",
-        "jcr:mixinTypes", "hippo:harddocument"
+            "jcr:mixinTypes", "hippo:harddocument",
+            "/test/aap/noot", "nt:unstructured",
+                "/test/aap/noot/mies", "hippostd:folder",
+                    "jcr:mixinTypes", "hippo:harddocument",
+                    "/test/aap/noot/mies/vuur", "nt:unstructured",
+                        "/test/aap/noot/mies/vuur/jot", "nt:unstructured",
+                            "/test/aap/noot/mies/vuur/jot/gijs", "hippo:coredocument",
+                                "jcr:mixinTypes", "hippo:harddocument",
+                                "/test/aap/noot/mies/vuur/jot/gijs/duif", "hippo:document",
+                                    "jcr:mixinTypes", "hippo:harddocument"
     };
 
     Value[] embeddedModifyOnCopy;
@@ -120,7 +121,8 @@ public class FolderWorkflowTest extends TestCase {
 
     @After
     public void tearDown() throws Exception {
-        Node folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/embedded/folder/hipposys:config");
+        Node folderWorkflowConfig = session.getNode(
+                "/hippo:configuration/hippo:workflows/embedded/folder/hipposys:config");
         folderWorkflowConfig.setProperty("modify-on-copy", embeddedModifyOnCopy);
         folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/internal/folder/hipposys:config");
         folderWorkflowConfig.setProperty("modify-on-copy", internalModifyOnCopy);
@@ -170,6 +172,7 @@ public class FolderWorkflowTest extends TestCase {
         node = session.getRootNode().getNode(path.substring(1));
         assertEquals("/test/f/d",node.getPath());
         assertTrue(node.isNodeType("hippostd:folder"));
+        assertFalse(node.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
     }
 
     @Test
@@ -185,6 +188,7 @@ public class FolderWorkflowTest extends TestCase {
         node = session.getRootNode().getNode(path.substring(1));
         assertEquals("/test/f/d",node.getPath());
         assertTrue(node.isNodeType("hippostd:directory"));
+        assertFalse(node.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
     }
 
     @Test
@@ -212,23 +216,31 @@ public class FolderWorkflowTest extends TestCase {
         }
     }
 
-
-    @Ignore
+    @Test
     public void testTemplateDocument() throws RepositoryException, WorkflowException, RemoteException {
+        Node source = session.getNode("/hippo:configuration/hippo:queries/hippo:templates/simple/hippostd:templates/new-document");
+        assertFalse(source.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
+
         FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("internal", node);
         assertNotNull(workflow);
-        Map<String,String[]> renames = new TreeMap<String,String[]>();
         Map<String,Set<String>> types = workflow.list();
         assertNotNull(types);
         assertTrue(types.containsKey("simple"));
         assertTrue(types.get("simple").contains("new-document"));
         String path = workflow.add("simple", "new-document", "d");
         assertNotNull(path);
-        node = session.getRootNode().getNode(path.substring(1));
-        assertEquals("/test/f/d",node.getPath());
-        assertTrue(node.isNodeType("hippo:handle"));
-        assertTrue(node.hasNode(node.getName()));
-        assertTrue(node.getNode(node.getName()).isNodeType("hippostd:document"));
+
+        Node docNode = session.getRootNode().getNode(path.substring(1));
+        assertEquals("/test/f/d/d",docNode.getPath());
+        assertTrue(docNode.isNodeType(HippoNodeType.NT_DOCUMENT));
+
+        Node parent = docNode.getParent();
+        assertEquals(parent.getName(), docNode.getName());
+        assertEquals(HippoNodeType.NT_HANDLE, parent.getPrimaryNodeType().getName());
+
+        assertTrue(docNode.isNodeType("hippostd:document"));
+        assertTrue(docNode.hasProperty(HippoNodeType.HIPPO_AVAILABILITY));
+        assertEquals(0, docNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().length);
     }
 
     @Test

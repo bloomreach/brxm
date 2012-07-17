@@ -291,6 +291,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             populateRenames(renames, params, target, arguments);
         }
         try {
+            Node handleNode = null;
             for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
                 Node prototypeNode = iter.nextNode();
                 prototypeNode = rootSession.getNode(prototypeNode.getPath());
@@ -305,22 +306,34 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         } else {
                             result = target.getNode(name);
                         }
+                        handleNode = result;
                         renames.put("./_name", new String[] {name});
                         result = copy(prototypeNode, result, renames, ".");
                         break;
                     }
                 } else if (prototypeNode.getName().equals(template)) {
                     result = copy(prototypeNode, target, renames, ".");
+                    if (result.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        handleNode = result;
+                        if (result.hasNode(result.getName())) {
+                            result = result.getNode(result.getName());
+                        } else {
+                            result = null;
+                        }
+                    }
                     break;
                 }
             }
             if (result != null) {
-                if(result.isNodeType(HippoNodeType.NT_DOCUMENT)
+                if (handleNode != null && result.isNodeType(HippoNodeType.NT_DOCUMENT)
                         && !result.hasProperty(HippoNodeType.HIPPO_AVAILABILITY)) {
                     result.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[0]);
                 }
                 rootSession.save();
                 return result.getPath();
+            } else if (handleNode != null) {
+                rootSession.save();
+                return handleNode.getPath();
             } else {
                 throw new WorkflowException("No template defined for add to folder");
             }
