@@ -72,9 +72,12 @@ import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
+import org.apache.lucene.index.FilterIndexReader;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.QueryWrapperFilter;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
@@ -106,52 +109,32 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     public ServicingSearchIndex() {
         super();
     }
-
-    private CachingMultiIndexReader[] getMultiIndexReaders(final boolean includeSystemIndex) throws IOException {
-        QueryHandler parentHandler = getContext().getParentHandler();
-        CachingMultiIndexReader parentReader = null;
-        if (parentHandler instanceof ServicingSearchIndex && includeSystemIndex) {
-            parentReader = ((ServicingSearchIndex) parentHandler).index.getIndexReader();
-        }
-
-        CachingMultiIndexReader[] readers;
-        if (parentReader != null) {
-            readers = new CachingMultiIndexReader[] { index.getIndexReader(), parentReader };
-        } else {
-            readers = new CachingMultiIndexReader[] { index.getIndexReader() };
-        }
-
-        return readers;
-    }
-
-    private IndexReader createIndexReader(CachingMultiIndexReader[] readers) {
-        if (readers.length == 1) {
-            return readers[0];
-        }
-        return new CombinedIndexReader(readers);
-    }
-
-    private BitSet getAuthorizationBitSet(final InternalHippoSession session, final CachingMultiIndexReader[] readers, final IndexReader reader) throws IOException {
+    
+    /**
+     *
+     * @param session
+     * @param reader
+     * @return the authorization bitset and <code>null</code> when every bit is allowed to be read
+     * @throws IOException
+     */
+    private BitSet getAuthorizationBitSet(final InternalHippoSession session, final IndexReader reader) throws IOException {
         if (session.getUserID().equals("system")) {
             return null;
         }
-        BitSet result;
+        BitSet bits;
         final AuthorizationBitSet authorizationBitSet = authorizationBitSets.get(session.getUserID());
-        if (authorizationBitSet == null || !authorizationBitSet.isValid(readers)) {
-            JackrabbitIndexSearcher searcher = new JackrabbitIndexSearcher((SessionImpl) session, reader, getContext().getItemStateManager());
-            searcher.setSimilarity(getSimilarity());
-            final BitSet bits = new BitSet(reader.maxDoc());
-            searcher.search(session.getAuthorizationQuery().getQuery(), new HitCollector() {
-                public final void collect(int doc, float score) {
-                    bits.set(doc);  // set bit for hit
-                }
-            });
-            authorizationBitSets.put(session.getUserID(), new AuthorizationBitSet(readers, bits));
-            result = bits;
+        if (authorizationBitSet == null || !authorizationBitSet.isValid(reader)) {
+            Filter filter = new QueryWrapperFilter(session.getAuthorizationQuery().getQuery());
+            bits = filter.bits(reader);
+            authorizationBitSets.put(session.getUserID(), new AuthorizationBitSet(reader, bits));
         } else {
-            result = authorizationBitSet.authorizationBitSet;
+            bits = authorizationBitSet.bits;
         }
-        return result;
+        if (bits.cardinality() == bits.length()) {
+            // every bit is 1 , we can return null
+            return null;
+        }
+        return bits;
     }
 
     /**
@@ -178,12 +161,11 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         checkOpen();
 
         Sort sort = new Sort(createSortFields(orderProps, orderSpecs));
-
-        final CachingMultiIndexReader[] multiIndexReaders = getMultiIndexReaders(queryImpl.needsSystemTree());
-        final IndexReader reader = createIndexReader(multiIndexReaders);
+        final IndexReader reader = getIndex().getIndexReader();
+        // an authorizationBitSet that is equal to null means: no filter for bitset
         BitSet authorizationBitSet = null;
         if (session instanceof InternalHippoSession) {
-            authorizationBitSet = getAuthorizationBitSet((InternalHippoSession) session, multiIndexReaders, reader);
+            authorizationBitSet = getAuthorizationBitSet((InternalHippoSession) session, reader);
         }
         final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationBitSet);
         searcher.setSimilarity(getSimilarity());
@@ -217,11 +199,10 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             throws IOException {
         checkOpen();
 
-        final CachingMultiIndexReader[] multiIndexReaders = getMultiIndexReaders(true);
-        final IndexReader reader = createIndexReader(multiIndexReaders);
+        final IndexReader reader = getIndex().getIndexReader();
         BitSet authorizationBitSet = null;
         if (session instanceof InternalHippoSession) {
-            authorizationBitSet = getAuthorizationBitSet((InternalHippoSession) session, multiIndexReaders, reader);
+            authorizationBitSet = getAuthorizationBitSet((InternalHippoSession) session, reader);
         }
         final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationBitSet);
         searcher.setSimilarity(getSimilarity());
@@ -235,15 +216,6 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 }
             }
         };
-    }
-
-    /**
-     * Returns the multi index.
-     *
-     * @return the multi index
-     */
-    public MultiIndex getIndex() {
-        return super.getIndex();
     }
 
     @Override
@@ -647,27 +619,17 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     private static class AuthorizationBitSet {
 
-        private final List<WeakReference<IndexReader>> readers;
-        private final BitSet authorizationBitSet;
+        private final WeakReference<IndexReader> reader;
+        private final BitSet bits;
 
-        private AuthorizationBitSet(final IndexReader[] readers, final BitSet authorizationBitSet) {
-
-            this.readers = new ArrayList<WeakReference<IndexReader>>(readers.length);
-            for (IndexReader reader : readers) {
-                this.readers.add(new WeakReference<IndexReader>(reader));
-            }
-
-            this.authorizationBitSet = authorizationBitSet;
+        private AuthorizationBitSet(final IndexReader reader, final BitSet bits) {
+            this.reader = new WeakReference<IndexReader>(reader);
+            this.bits = bits;
         }
 
-        private boolean isValid(IndexReader[] readers) {
-            if (this.readers.size() != readers.length) {
+        private boolean isValid(IndexReader reader) {
+            if (this.reader.get() != reader) {
                 return false;
-            }
-            for (int i = 0; i < readers.length; i++) {
-                if (this.readers.get(i).get() != readers[i]) {
-                    return false;
-                }
             }
             return true;
         }
