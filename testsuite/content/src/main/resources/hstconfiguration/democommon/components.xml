@@ -282,7 +282,7 @@
         <sv:value>hst:component</sv:value>
       </sv:property>
       <sv:property sv:name="hst:componentclassname" sv:type="String">
-        <sv:value>org.hippoecm.hst.demo.components.SimpleNonWorkflowWikiImporterComponent</sv:value>
+        <sv:value>org.hippoecm.hst.demo.components.NonWorkflowWikiImporterComponent</sv:value>
       </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
         <sv:value>wikipedia</sv:value>

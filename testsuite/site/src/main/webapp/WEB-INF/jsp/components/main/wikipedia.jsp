@@ -66,12 +66,28 @@
             <td><input type="text" name="maxSubFolder" value=""/></td>
           </tr>
           <tr>
-            <td>Wiki location on filesystem:</td>
+            <td>Wiki location on filesystem: </td>
             <td><input type="text" name="filesystemLocation"/></td>
           </tr>
           <tr>
+            <td>Number of relations: </td>
+	        <td><input type="text" name="relate"/></td>
+          </tr>
+          <tr>
+            <td>Number of links: </td>
+            <td><input type="text" name="link"/></td>
+          </tr>
+          <tr>
+            <td>Number of translations: </td>
+            <td><input type="text" name="translate"/></td>
+          </tr>
+          <tr>
+            <td>Include images: </td>
+            <td><input type="checkbox" name="images" checked="checked" /></td>
+          </tr>
+          <tr>
             <td></td>
-            <td><input type="submit" value="Add X wikipedia docs"/></td>
+            <td><input type="submit" value="Add wikipedia docs"/></td>
           </tr>
         </table>
     </form>

@@ -1,34 +1,38 @@
-/*
- * Copyright 2010 Hippo
- *
- * Licensed under the Apache License, Version 2.0 (the  "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 <'demosite'='http://www.hippoecm.org/hst/nt/demosite/1.0'>
-<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.2'>
+<'hippo'='http://www.onehippo.org/jcr/hippo/nt/2.0.4'>
 <'hippostd'='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 <'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
-<'hippogallerypicker'='http://www.hippoecm.org/hippogallerypicker/nt/2.0'>
+<'hippotranslation'='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
+<'relateddocs'='http://forge.onehippo.org/relateddocs/nt/1.1'>
 
-[demosite:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document orderable
+[demosite:basedocument] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document
+  orderable
+
+[demosite:commentdocument] > demosite:basedocument, hippostd:relaxed
+  orderable
 
 [demosite:commentlink] > hippo:facetselect
 
-[demosite:textdocument] > demosite:basedocument, hippostd:relaxed
+[demosite:contentblockcompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[demosite:imagecompound] > hippo:compound, hippostd:relaxed
+  orderable
 
 [demosite:newsdocument] > demosite:basedocument, hippostd:relaxed
+  orderable
 
-[demosite:commentdocument] > demosite:basedocument, hippostd:relaxed
+[demosite:placecompound] > hippo:compound, hippostd:relaxed
+  orderable
+
+[demosite:placetimecompound] > hippo:compound, hippostd:relaxed
+  orderable
 
 [demosite:productdocument] > demosite:basedocument, hippostd:relaxed
+  orderable
 
-[demosite:wikidocument] > demosite:basedocument, hippostd:relaxed
+[demosite:wikidocument] > demosite:basedocument, hippostd:relaxed, hippotranslation:translated, relateddocs:relatabledocs
+  orderable
+
+[demosite:textdocument] > demosite:basedocument, hippostd:relaxed
+  orderable

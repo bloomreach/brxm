@@ -445,7 +445,7 @@
                     <sv:value>hst:sitemapitem</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                    <sv:value>hst:pages/detailpage</sv:value>
+                    <sv:value>hst:pages/detailwikipage</sv:value>
                 </sv:property>
                 <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                     <sv:value>wikipedia/archive/${1}</sv:value>
@@ -468,7 +468,7 @@
                 <sv:value>hst:sitemapitem</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
-                <sv:value>hst:pages/detailpage</sv:value>
+                <sv:value>hst:pages/detailwikipage</sv:value>
             </sv:property>
             <sv:property sv:name="hst:relativecontentpath" sv:type="String">
                 <sv:value>wikipedia/${1}</sv:value>

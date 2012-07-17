@@ -15,13 +15,32 @@
  */
 package org.hippoecm.hst.demo.beans;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.index.IndexField;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 @Node(jcrType = "demosite:wikidocument")
-public class WikiBean extends TextBean {
-
+public class WikiBean extends BaseBean {
+    private String title;
     private String[] categories;
+
+    @Override
+    @IndexField
+    public String getTitle() {
+        return title == null ? (String) getProperty("demosite:title") : title;
+    }
+
+    @Override
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public PlaceTimeBean getPlacetime() {
+        return getBean("demosite:placetime", PlaceTimeBean.class);
+    }
 
     @IndexField
     public String[] getCategories() {
@@ -30,5 +49,18 @@ public class WikiBean extends TextBean {
 
     public void setCategories(String[] cat) {
         categories = cat;
+    }
+
+    public List<BlockBean> getBlocks() {
+        return getChildBeans(BlockBean.class);
+    }
+
+    public List<HippoBean> getRelatedDocs() {
+        RelatedDocsBean rd = getBean("relateddocs:docs", RelatedDocsBean.class);
+        if (rd != null) {
+            return rd.getRelatedDocs("demosite:wikidocument");
+        } else {
+            return new ArrayList<HippoBean>();
+        }
     }
 }

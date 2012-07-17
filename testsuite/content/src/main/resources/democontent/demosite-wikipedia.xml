@@ -5,9 +5,16 @@
   </sv:property>
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
     <sv:value>hippo:harddocument</sv:value>
+    <sv:value>hippotranslation:translated</sv:value>
   </sv:property>
   <sv:property sv:name="jcr:uuid" sv:type="String">
     <sv:value>0d298512-4512-4ba0-b21d-600c20f706d9</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippotranslation:locale" sv:type="String">
+    <sv:value>en</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippotranslation:id" sv:type="String">
+    <sv:value>0d298512-4512-4ba0-b21d-601c20f706e9</sv:value>
   </sv:property>
   <sv:node sv:name="faceted">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -27,6 +34,9 @@
     </sv:property>
     <sv:property sv:name="hippofacnav:skipresultsetfacetsavailable" sv:type="Boolean">
       <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippofacnav:filters" sv:type="String">
+      <sv:value>jcr:primaryType=demosite:wikidocument</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>

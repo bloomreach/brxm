@@ -53,7 +53,7 @@
             
              <tbody>
 	            <c:forEach var="result" items="${resultset}">
-	              <hst:link var="link" hippobean="${result}" navigationStateful="true" />
+	              <hst:link var="link" hippobean="${result}" navigationStateful="true" canonical="true" />
 	                
 	                 <tr>
 	                    <td>

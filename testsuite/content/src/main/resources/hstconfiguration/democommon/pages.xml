@@ -149,6 +149,31 @@
       </sv:node>
     </sv:node>
   </sv:node>
+  
+  <sv:node sv:name="detailwikipage" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/detailpage</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/general_threecolumnlayout</sv:value>
+      </sv:property>
+      <sv:node sv:name="content">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:component</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:template" sv:type="String">
+          <sv:value>detailwikipage</sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
 
   <sv:node sv:name="searchpage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -246,6 +271,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
+
   <sv:node sv:name="gogreenindexer">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>

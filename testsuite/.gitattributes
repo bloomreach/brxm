@@ -68,12 +68,16 @@ random-numbers/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 random-numbers/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/randomnumbers/base.xml -text
 site/pom.xml svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/beans/BlockBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/beans/CommentBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/CommentLinkBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/GoGreenProductBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/beans/ImageLinkBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/NewsBean.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/beans/PlaceBean.java -text
+site/src/main/java/org/hippoecm/hst/demo/beans/PlaceTimeBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/beans/RelatedDocsBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/beans/TextBean.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/beans/WikiBean.java -text
 site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelInfo.java -text
@@ -96,11 +100,11 @@ site/src/main/java/org/hippoecm/hst/demo/components/GoGreenExternalProductIndexe
 site/src/main/java/org/hippoecm/hst/demo/components/Home.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/HstForm.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/LeftMenu.java svneol=native#text/plain
+site/src/main/java/org/hippoecm/hst/demo/components/NonWorkflowWikiImporterComponent.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/RSS.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/Right.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/Search.java svneol=native#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/Set404Component.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/SimpleNonWorkflowWikiImporterComponent.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/SitesOverview.java -text svneol=unset#text/plain
 site/src/main/java/org/hippoecm/hst/demo/components/SolrFaceting.java -text
 site/src/main/java/org/hippoecm/hst/demo/components/SolrRight.java -text
@@ -182,6 +186,7 @@ site/src/main/webapp/WEB-INF/jsp/components/main/contactdispatch.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/detailimagevariantpage.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/detailpage-ajaxresult.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/detailpage.jsp -text svneol=unset#text/plain
+site/src/main/webapp/WEB-INF/jsp/components/main/detailwikipage.jsp -text
 site/src/main/webapp/WEB-INF/jsp/components/main/error.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/faceted.jsp -text svneol=unset#text/plain
 site/src/main/webapp/WEB-INF/jsp/components/main/facetedaddproduct.jsp -text svneol=unset#text/plain
@@ -226,8 +231,10 @@ site/src/main/webapp/images/icons/calendar_icon.gif -text
 site/src/main/webapp/images/icons/document-revert-16.png -text svneol=unset#image/png
 site/src/main/webapp/images/icons/document-save-16.png -text svneol=unset#image/png
 site/src/main/webapp/images/icons/edit-16.png -text svneol=unset#image/png
+site/src/main/webapp/images/icons/flag-16_de.png -text
 site/src/main/webapp/images/icons/flag-16_en.png -text
 site/src/main/webapp/images/icons/flag-16_fr.png -text
+site/src/main/webapp/images/icons/flag-16_it.png -text
 site/src/main/webapp/images/icons/flag-16_nl.png -text
 site/src/main/webapp/images/icons/html_editor.gif -text
 site/src/main/webapp/images/icons/publish-schedule-16.png -text svneol=unset#image/png

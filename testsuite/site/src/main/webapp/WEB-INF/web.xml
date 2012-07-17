@@ -328,7 +328,6 @@
     </web-resource-collection>
     <auth-constraint>
       <role-name>everybody</role-name>
-      <role-name>editor</role-name>
     </auth-constraint>
   </security-constraint>
 
