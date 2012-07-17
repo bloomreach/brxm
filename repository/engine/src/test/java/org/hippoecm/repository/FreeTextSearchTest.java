@@ -104,7 +104,7 @@ public class FreeTextSearchTest extends TestCase {
         resource.setProperty("jcr:data", new ByteArrayInputStream(data.toByteArray()));
         resource.setProperty("jcr:lastModified", Calendar.getInstance());
     
-        testPath.save();
+        testPath.getSession().save();
         flushIndex(testPath.getSession().getRepository());
     }
     
@@ -141,7 +141,7 @@ public class FreeTextSearchTest extends TestCase {
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
@@ -164,7 +164,7 @@ public class FreeTextSearchTest extends TestCase {
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
@@ -186,7 +186,7 @@ public class FreeTextSearchTest extends TestCase {
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
@@ -211,7 +211,7 @@ public class FreeTextSearchTest extends TestCase {
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
@@ -219,7 +219,7 @@ public class FreeTextSearchTest extends TestCase {
         
         Node n = this.testPath.getNode("Document1/Document1");
         n.getNode("compoundchild").remove();
-        n.save();
+        n.getSession().save();
         
         flushIndex(testPath.getSession().getRepository());
         
@@ -229,7 +229,7 @@ public class FreeTextSearchTest extends TestCase {
         nodes = queryResult.getNodes();
         // we have removed the deeper child node that had the 'HTML_CONTENT_PART' term, hence, we should not
         // get a hit anymore
-        assertTrue(nodes.getSize() == 0L); 
+        assertEquals(0L, nodes.getSize());
         
     }
     
@@ -250,7 +250,7 @@ public class FreeTextSearchTest extends TestCase {
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
@@ -258,7 +258,7 @@ public class FreeTextSearchTest extends TestCase {
         
         Node n = this.testPath.getNode("Document1/Document1/compoundchild");
         n.getNode("hippo:testhtml").remove();
-        n.save();
+        n.getSession().save();
         
         flushIndex(testPath.getSession().getRepository());
         
@@ -268,7 +268,7 @@ public class FreeTextSearchTest extends TestCase {
         nodes = queryResult.getNodes();
         // we have removed the deeper child node that had the 'HTML_CONTENT_PART' term, hence, we should not
         // get a hit anymore
-        assertTrue(nodes.getSize() == 0L); 
+        assertEquals(0L, nodes.getSize());
         
     }
    
@@ -280,14 +280,14 @@ public class FreeTextSearchTest extends TestCase {
         Node compound = n.addNode("compoundchild", NT_COMPOUNDSTRUCTURE);
         String word = "addedcompound";
         compound.setProperty("compoundtitle", "This is the compoundtitle containing " + word);
-        n.save();
+        n.getSession().save();
         
         flushIndex(testPath.getSession().getRepository());
         
         String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
@@ -301,14 +301,14 @@ public class FreeTextSearchTest extends TestCase {
         Node html = n.addNode("hippo:html2", NT_HTML);
         String word =  "addedhtmlnode";
         html.setProperty("hippo:testcontent", "The content property of testhtml node containing " + word);
-        n.save();
+        n.getSession().save();
         
         flushIndex(testPath.getSession().getRepository());
         
         String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
@@ -323,14 +323,14 @@ public class FreeTextSearchTest extends TestCase {
         Node compound = testPath.getNode("Document1/Document1/compoundchild");
         String word = "changedcompound";
         compound.setProperty("compoundtitle", "This is now the new compoundtitle containing " + word);
-        n.save();
+        n.getSession().save();
         
         flushIndex(testPath.getSession().getRepository());
         
         String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
@@ -347,14 +347,14 @@ public class FreeTextSearchTest extends TestCase {
         Node html = testPath.getNode("Document1/Document1/compoundchild/hippo:testhtml");
         String word = "changedtesthtml";
         html.setProperty("hippo:testcontent", "The content property of testhtml node now containing " + word);
-        n.save();
+        n.getSession().save();
         
         flushIndex(testPath.getSession().getRepository());
         
         String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+word+"')] order by @jcr:score descending";
         QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
         NodeIterator nodes = queryResult.getNodes();
-        assertTrue(nodes.getSize() == 1L); 
+        assertEquals(1L, nodes.getSize());
         while(nodes.hasNext()) {
             Node doc = nodes.nextNode();
             assertTrue(doc.getName().equals("Document1"));
