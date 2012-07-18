@@ -306,13 +306,6 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             Node node = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");
             HstLink navigationStatefulNewsLink = linkCreator.create(node, requestContext, null, false, true);
             assertEquals("wrong navigationStateful link.getPath for /unittestcontent/documents/unittestproject/News/News1","news/News1.html", navigationStatefulNewsLink.getPath());
-
-
-            // TODO cannot test now because navigationStateful is baked into HstLinkTag. Should be moved to HstLink#toURLForm
-            // TODO see HSTTWO-1786
-            //assertEquals("wrong navigationStateful absolute link for /hst:hst/hst:sites/unittestproject-preview/hst:content/News/News1","/site/news/News1.html?query=foo&page=6", navigationStatefulNewsLink.toUrlForm(requestContext, false));
-            //assertEquals("wrong navigationStateful fully qualified link for /hst:hst/hst:sites/unittestproject-preview/hst:content/News/News1","http://localhost:8080/site/news/News1.html?query=foo&page=6", navigationStatefulNewsLink.toUrlForm(requestContext, true));
-
         }
         
         @Test
