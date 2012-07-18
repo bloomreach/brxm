@@ -1,8 +1,10 @@
 /.classpath
+/.idea
 /.pom.xml.swp
 /.project
 /.settings
 /bin
+/hippo-packages.iml
 package-app-dependencies/.project
 package-app-dependencies/.settings
 package-app-dependencies/target

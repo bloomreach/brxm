@@ -36,6 +36,7 @@
   </scm>
 
   <properties>
+    <hippo.utilities.version>1.01.00-SNAPSHOT</hippo.utilities.version>
     <hippo.repository.version>2.23.02-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.23.02-SNAPSHOT</hippo.cms.version>
     <hippo.addon-publication-workflow.version>2.23.02-SNAPSHOT</hippo.addon-publication-workflow.version>

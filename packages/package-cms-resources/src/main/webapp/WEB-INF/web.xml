@@ -33,16 +33,6 @@
         <filter-class>org.hippoecm.frontend.plugins.login.ConcurrentLoginFilter</filter-class>
     </filter>
 
-    <!--Remap resources as anti-cache-->
-    <filter>
-        <filter-name>ResourceAntiCache</filter-name>
-        <filter-class>org.hippoecm.frontend.ResourceRewriteFilter</filter-class>
-        <!-- init-param>
-            <param-name>prefix</param-name>
-            <param-value>nocache</param-value>
-        </init-param -->
-    </filter>
-
     <!--Default application-->
     <filter>
         <filter-name>CMS</filter-name>
@@ -115,6 +105,44 @@
         <listener-class>org.hippoecm.frontend.plugins.login.ConcurrentLoginListener</listener-class>
     </listener>
 
+  <servlet>
+    <servlet-name>XinhaResourceServlet</servlet-name>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <init-param>
+      <param-name>jarPathPrefix</param-name>
+      <param-value>/xinha</param-value>
+    </init-param>
+    <init-param>
+      <param-name>allowedResourcePaths</param-name>
+      <param-value>
+        ^/.*\..*
+      </param-value>
+    </init-param>
+    <init-param>
+      <param-name>cacheTimeout</param-name>
+      <param-value>0</param-value>
+    </init-param>
+  </servlet>
+
+  <servlet>
+    <servlet-name>SkinResourceServlet</servlet-name>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
+    <init-param>
+      <param-name>jarPathPrefix</param-name>
+      <param-value>/skin</param-value>
+    </init-param>
+    <init-param>
+      <param-name>allowedResourcePaths</param-name>
+      <param-value>
+        ^/.*\..*
+      </param-value>
+    </init-param>
+    <init-param>
+      <param-name>cacheTimeout</param-name>
+      <param-value>0</param-value>
+    </init-param>
+  </servlet>
+
     <servlet>
         <servlet-name>StatusServlet</servlet-name>
         <servlet-class>org.hippoecm.repository.StatusServlet</servlet-class>
@@ -160,6 +188,16 @@
         <servlet-name>Repository</servlet-name>
         <url-pattern>/repository/*</url-pattern>
     </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>XinhaResourceServlet</servlet-name>
+    <url-pattern>/xinha/*</url-pattern>
+  </servlet-mapping>
+
+  <servlet-mapping>
+    <servlet-name>SkinResourceServlet</servlet-name>
+    <url-pattern>/skin/*</url-pattern>
+  </servlet-mapping>
 
     <!-- Timeout in minutes -->
     <session-config>
