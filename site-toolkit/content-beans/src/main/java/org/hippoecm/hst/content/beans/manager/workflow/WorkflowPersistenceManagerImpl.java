@@ -257,9 +257,9 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     throw new ObjectBeanPersistenceException("Failed to add document/folder for type '" + nodeTypeName
                             + "'. Make sure there is a prototype.");
                 }
-                Node addedDocumentVariant = folderNode.getSession().getNode(added);
+                Node addedNode = folderNode.getSession().getNode(added);
                 if (!nodeName.equals(name)) {
-                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow(defaultWorkflowCategory, addedDocumentVariant);
+                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow(defaultWorkflowCategory, addedNode);
                     defaultWorkflow.localizeName(name);
                 }
 
@@ -270,13 +270,13 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 // state to 'draft' and hippostd:stateSummary to 'new'
                 // This is a workaround to be backwards compatible due to REPO-444
                 if (documentAdditionWorkflowCategory.equals(category)) {
-                    if (!addedDocumentVariant.hasProperty(HippoNodeType.HIPPO_AVAILABILITY) ||
-                            addedDocumentVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().length != 1 ||
-                            !"preview".equals(addedDocumentVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues()[0].getString())) {
+                    if (!addedNode.hasProperty(HippoNodeType.HIPPO_AVAILABILITY) ||
+                            addedNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().length != 1 ||
+                            !"preview".equals(addedNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues()[0].getString())) {
                         // now set the correct values (not through workflow as this is just overhead)
-                        addedDocumentVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"preview"});
-                        addedDocumentVariant.setProperty("hippostd:state", "unpublished");
-                        addedDocumentVariant.setProperty("hippostd:stateSummary", "new");
+                        addedNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"preview"});
+                        addedNode.setProperty("hippostd:state", "unpublished");
+                        addedNode.setProperty("hippostd:stateSummary", "new");
                     }
                 }
 
