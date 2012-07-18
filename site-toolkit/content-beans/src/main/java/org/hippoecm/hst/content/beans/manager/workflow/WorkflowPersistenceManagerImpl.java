@@ -37,6 +37,7 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -256,11 +257,27 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                     throw new ObjectBeanPersistenceException("Failed to add document/folder for type '" + nodeTypeName
                             + "'. Make sure there is a prototype.");
                 }
-                Item addedDocumentVariant = folderNode.getSession().getItem(added);
-                if (addedDocumentVariant instanceof Node && !nodeName.equals(name)) {
-                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow(defaultWorkflowCategory, (Node)addedDocumentVariant);
+                Node addedDocumentVariant = folderNode.getSession().getNode(added);
+                if (!nodeName.equals(name)) {
+                    DefaultWorkflow defaultWorkflow = (DefaultWorkflow) getWorkflow(defaultWorkflowCategory, addedDocumentVariant);
                     defaultWorkflow.localizeName(name);
                 }
+
+                // added new document : because the document must be in 'preview' availability, we now set this explicitly
+                // if needed UNLESS the document already has availability 'preview' (from the prototype)
+                // To be sure, we also set the hippostd:stateSummary and hippostd:state correct
+                // IF the document does not have availability = preview but is in state 'unpublished', we first need to change the
+                // state to 'draft' and hippostd:stateSummary to 'new'
+                // This is a workaround to be backwards compatible due to REPO-444
+                if (!addedDocumentVariant.hasProperty(HippoNodeType.HIPPO_AVAILABILITY) ||
+                        addedDocumentVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().length != 1 ||
+                        !"preview".equals(addedDocumentVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues()[0].getString())) {
+                    // now set the correct values (not through workflow as this is just overhead)
+                    addedDocumentVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"preview"});
+                    addedDocumentVariant.setProperty("hippostd:state", "unpublished");
+                    addedDocumentVariant.setProperty("hippostd:stateSummary", "new");
+                }
+
                 return added;
             } else {
                 throw new ObjectBeanPersistenceException("Can't create folder " + name + " [" + nodeTypeName + "] in the folder " + folderNode.getPath() + ", because there is no FolderWorkflow possible on the folder node: " + wf);

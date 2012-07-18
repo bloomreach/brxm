@@ -67,7 +67,50 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
         this.persistBinders.put("unittestproject:textpage", new PersistableTextPageBinder());
     }
 
+    @Test
+    public void testNewDocumentIsPreviewAvailable() throws Exception {
+        Session session = null;
 
+        try {
+            ObjectConverter objectConverter = getObjectConverter();
+
+            session = this.getSession();
+
+            wpm = new WorkflowPersistenceManagerImpl(session, objectConverter, persistBinders);
+
+            HippoFolderBean newFolder = null;
+
+            try {
+                // create a document with type and name 
+                String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME, false);
+                // retrieves the document created just before
+                PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath);
+                assertNotNull(newPage);
+
+                String[] availability =  newPage.getValueProvider().getStrings("hippo:availability");
+                // the wpm createAndReturn must have created a document that has 'hippo:availability = preview'
+                assertEquals( "String[] availability should contain 1 string", 1, availability.length);
+                assertEquals( "availability[0] should equal 'preview'", "preview", availability[0]);
+            } finally {
+                PersistableTextPage newPage = null;
+
+                try {
+                    newPage = (PersistableTextPage) wpm.getObject(TEST_NEW_DOCUMENT_NODE_PATH);
+                } catch (Exception e) {
+                }
+
+                if (newPage != null) {
+                    wpm.remove(newPage);
+                }
+            }
+
+        } finally {
+            if (session != null) {
+                session.logout();
+            }
+        }
+    }
+    
     @Test
     public void testDocumentManipulation() throws Exception {
         Session session = null;
