@@ -92,6 +92,14 @@ public class MockHstResponseBase implements HttpServletResponse {
         return contentLength;
     }
 
+    public List<Cookie> getCookies() {
+        return cookies;
+    }
+
+    public Map<String, List<Object>> getHeaders() {
+        return headers;
+    }
+
     public int getStatusCode() {
         return statusCode;
     }
