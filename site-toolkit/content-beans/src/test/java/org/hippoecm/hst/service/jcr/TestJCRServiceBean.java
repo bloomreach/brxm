@@ -35,7 +35,7 @@ import org.junit.Test;
 
 public class TestJCRServiceBean extends AbstractBeanTestCase {
     
-    private static final String TESTPROJECT_EXISTING_VIRTUALNODE = BasicHstTestCase.TEST_PREVIEW_SITE_CONTENT_PATH + "/common/homepage/homepage";
+    private static final String TESTPROJECT_EXISTING_NODE = BasicHstTestCase.TEST_SITE_CONTENT_PATH + "/common/homepage/homepage";
 
 
     @Before
@@ -53,7 +53,7 @@ public class TestJCRServiceBean extends AbstractBeanTestCase {
     @Test
     public void testServiceBeanProxy() throws Exception {
         Session session = this.getSession();
-        Node node = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALNODE);
+        Node node = (Node)session.getItem(TESTPROJECT_EXISTING_NODE);
         TextPage t = ServiceFactory.create(node, TextPage.class);
         
         assertNotNull("title property is null!", t.getTitle());
@@ -77,7 +77,7 @@ public class TestJCRServiceBean extends AbstractBeanTestCase {
         
         Session session = this.getSession();
         
-        Node node = (Node)session.getItem(TESTPROJECT_EXISTING_VIRTUALNODE);
+        Node node = (Node)session.getItem(TESTPROJECT_EXISTING_NODE);
         TextPage t = ServiceFactory.create(node, TextPageImpl.class);
         
         assertTrue("the returned class is not implementation delegatee class.", t instanceof TextPageImpl);

@@ -17,6 +17,8 @@ package org.hippoecm.hst.test.basic;
 
 import static org.junit.Assert.assertTrue;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Session;
 import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Test;
@@ -24,11 +26,9 @@ import org.junit.Test;
 public class BasicHstTestCase extends AbstractHstTestCase{
 
     public final static String TEST_VIRTURALHOSTS_PATH = "/hst:hst/hst:hosts";
-    public final static String TEST_HSTCONFIGURATION_PATH = "/hst:hst/hst:configurations/unittest";
     public final static String TEST_PREVIEW_SITE_PATH= "/hst:hst/hst:sites/unittestproject-preview";
-    public final static String TEST_PREVIEW_SITE_CONTENT_PATH= "/hst:hst/hst:sites/unittestproject-preview/hst:content";
     public final static String TEST_LIVE_SITE_PATH= "/hst:hst/hst:sites/unittestproject";
-    public final static String TEST_LIVE_SITE_CONTENT_PATH= "/hst:hst/hst:sites/unittestproject/hst:content";
+    public final static String TEST_SITE_CONTENT_PATH = "/unittestcontent/documents/unittestproject";
    
     
     /**
@@ -38,13 +38,14 @@ public class BasicHstTestCase extends AbstractHstTestCase{
      */
     @Test
     public void testDefaultHstConfiguration() throws Exception {
-        
+
        Session session = this.getSession();
-       
-       assertTrue("Node '"+TEST_PREVIEW_SITE_PATH+"' must exist",session.itemExists(TEST_PREVIEW_SITE_PATH));
-       assertTrue("Node '"+TEST_LIVE_SITE_PATH+"' must exist",session.itemExists(TEST_LIVE_SITE_PATH));
-       assertTrue("Node '"+TEST_VIRTURALHOSTS_PATH+"s' must exist", session.itemExists(TEST_VIRTURALHOSTS_PATH));
-       assertTrue("Node '"+TEST_PREVIEW_SITE_PATH+"/hst:content/common/homepage' must exist", session.itemExists(TEST_PREVIEW_SITE_PATH+"/hst:content/common/homepage"));
+
+       assertTrue("Node '"+TEST_PREVIEW_SITE_PATH+"' must exist",session.nodeExists(TEST_PREVIEW_SITE_PATH));
+       assertTrue("Node '"+TEST_SITE_CONTENT_PATH+"' must exist",session.nodeExists(TEST_SITE_CONTENT_PATH));
+       assertTrue("Node '"+TEST_LIVE_SITE_PATH+"' must exist",session.nodeExists(TEST_LIVE_SITE_PATH));
+       assertTrue("Node '"+TEST_VIRTURALHOSTS_PATH+"s' must exist", session.nodeExists(TEST_VIRTURALHOSTS_PATH));
+       assertTrue("Node '"+TEST_PREVIEW_SITE_PATH+"/hst:content/common/homepage' must exist", session.nodeExists(TEST_PREVIEW_SITE_PATH + "/hst:content/common/homepage"));
 
     }
     

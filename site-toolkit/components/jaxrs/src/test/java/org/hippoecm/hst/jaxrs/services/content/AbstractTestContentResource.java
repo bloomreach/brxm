@@ -58,8 +58,7 @@ import org.springframework.mock.web.MockServletContext;
 public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTestCase {
 
     private static final String MOUNT_POINT = "/hst:hst/hst:sites/testproject-preview";
-    private static final String MOUNT_CONTENTPATH = "/hst:hst/hst:sites/testproject-preview/hst:content";
-    private static final String MOUNT_CANONICAL_CONTENTPATH = "/documents/testproject";
+    private static final String MOUNT_CONTENTPATH = "/testcontent/documents/testproject";
     private static final String MOUNT_PATH = "/preview/services";
     
     protected Pipelines pipelines;
@@ -118,7 +117,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         mount = EasyMock.createNiceMock(Mount.class);
         EasyMock.expect(mount.getMountPoint()).andReturn(MOUNT_POINT).anyTimes();
         EasyMock.expect(mount.getContentPath()).andReturn(MOUNT_CONTENTPATH).anyTimes();
-        EasyMock.expect(mount.getCanonicalContentPath()).andReturn(MOUNT_CANONICAL_CONTENTPATH).anyTimes();
+        EasyMock.expect(mount.getCanonicalContentPath()).andReturn(MOUNT_CONTENTPATH).anyTimes();
         EasyMock.expect(mount.isMapped()).andReturn(true).anyTimes();
         EasyMock.expect(mount.getVirtualHost()).andReturn(virtualHost).anyTimes();
         EasyMock.expect(mount.getTypes()).andReturn(new ArrayList<String>()).anyTimes();
