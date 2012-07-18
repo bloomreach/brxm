@@ -70,7 +70,6 @@
     <module>versioning</module>
     <module>workflowmenu</module>
 
-    <module>resources</module>
     <module>shared-dependencies</module>
     <module>dependencies</module>
     <module>repository-dependencies</module>

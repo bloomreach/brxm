@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2008 Hippo.
+  Copyright 2007-2012 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -27,28 +27,5 @@
   <description>Hippo CMS Skin</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-skin</artifactId>
-  <packaging>war</packaging>
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Implementation-Build>${buildNumber}</Implementation-Build>
-            </manifestEntries>
-          </archive>
-          <failOnMissingWebXml>false</failOnMissingWebXml>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

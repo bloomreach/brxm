@@ -270,8 +270,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 @Override
                 protected Map<String, Object> getVariables() {
                     final Page page = getPluginContext().getService(Home.class.getName(), Home.class);
-                    String url = WebApplication.get().getRequestCycleProcessor().getRequestCodingStrategy()
-                            .rewriteStaticRelativeUrl("xinha/xinha/");
+                    String url = WebApplication.get().getRequestCycleProcessor().getRequestCodingStrategy().rewriteStaticRelativeUrl("xinha/");
                     String lang = page.getLocale().getLanguage();
                     String skin = configuration.getSkin();
 

@@ -246,11 +246,6 @@ repository-dependencies/*.iml
 repository-dependencies/.project
 repository-dependencies/.settings
 repository-dependencies/target
-resources/.classpath
-resources/.project
-resources/.settings
-resources/hippo-cms-resources.iml
-resources/target
 richtext/*.iml
 richtext/.project
 richtext/.settings

@@ -56,13 +56,15 @@ public class EditorManagerBehavior extends AbstractYuiBehavior {
             protected Map<String, Object> getVariables() {
                 final Page page = getComponent().getPage();
                 String url = WebApplication.get().getRequestCycleProcessor().getRequestCodingStrategy()
-                        .rewriteStaticRelativeUrl("xinha/xinha/");
+                        .rewriteStaticRelativeUrl("xinha/");
                 String lang = page.getLocale().getLanguage();
                 String skin = "hippo-lite";
 
                 Map<String, Object> map = super.getVariables();
+                System.out.println("editorUrl:: " + url);
                 map.put("editorUrl", url);
                 map.put("editorLang", lang);
+                System.out.println("editorSkin:: " + skin);
                 map.put("editorSkin", skin);
                 return map;
             }
