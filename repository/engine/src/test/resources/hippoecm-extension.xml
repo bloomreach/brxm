@@ -19,7 +19,7 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
   <!-- Roles configuration -->
-  <sv:node sv:name="role-jcrread">
+  <sv:node sv:name="role-jcrread-test">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -33,7 +33,7 @@
       <sv:value>904.0</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="role-jcrwrite">
+  <sv:node sv:name="role-jcrwrite-test">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -48,7 +48,7 @@
     </sv:property>
   </sv:node>
   <!-- Groups configuration -->
-  <sv:node sv:name="group-everybody">
+  <sv:node sv:name="group-everybody-test">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -63,7 +63,7 @@
     </sv:property>
   </sv:node>
   <!--Domains configuration -->
-  <sv:node sv:name="domain-defaultwrite">
+  <sv:node sv:name="domain-defaultwrite-test">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -74,10 +74,10 @@
       <sv:value>/hippo:configuration/hippo:domains</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>908.0</sv:value>
+      <sv:value>908.1</sv:value>
     </sv:property>
   </sv:node>
-  <sv:node sv:name="domain-defaultread">
+  <sv:node sv:name="domain-defaultread-test">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -88,7 +88,7 @@
       <sv:value>/hippo:configuration/hippo:domains</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>908.0</sv:value>
+      <sv:value>908.1</sv:value>
     </sv:property>
   </sv:node>
   <!-- Test node types configuration -->
