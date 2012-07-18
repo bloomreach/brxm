@@ -90,6 +90,7 @@
     <hippo.cms.version>2.23.02-SNAPSHOT</hippo.cms.version>
     <hippo.repository.version>2.23.02-SNAPSHOT</hippo.repository.version>
     <hippo.addon-publication-workflow.version>2.23.02-SNAPSHOT</hippo.addon-publication-workflow.version>
+    <hippo.utilities.version>1.01.00-SNAPSHOT</hippo.utilities.version>
     
     <htmlcleaner.version>2.1</htmlcleaner.version>
     
@@ -179,7 +180,13 @@
         <version>${hippo.repository.version}</version>
         <scope>provided</scope>
       </dependency>
-      
+
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms7-utilities</artifactId>
+        <version>${hippo.utilities.version}</version>
+      </dependency>
+
       <!-- JSP-related API dependencies -->
       
       <dependency>
