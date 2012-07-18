@@ -38,7 +38,7 @@
 
   <properties>
     <hippo.release.version>7.8.0-SNAPSHOT</hippo.release.version>
-    <hippo.commons.version>1.02.00-SNAPSHOT</hippo.commons.version>
+    <hippo.commons.version>1.02.01-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>2-SNAPSHOT</hippo.services.version>
     <hippo.utilities.version>1.01.00-SNAPSHOT</hippo.utilities.version>
     <hippo.repository.version>2.23.02-SNAPSHOT</hippo.repository.version>
