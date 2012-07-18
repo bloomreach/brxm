@@ -191,7 +191,7 @@
   
   <servlet>
     <servlet-name>YUIResourceServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/org/onehippo/yui/inc/2.8.1</param-value>
@@ -200,7 +200,7 @@
 
   <servlet>
     <servlet-name>TemplateComposerResourceServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/META-INF/hst/pagecomposer</param-value>
@@ -209,7 +209,7 @@
 
   <servlet>
     <servlet-name>SecurityResourceServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/META-INF/hst/security</param-value>
@@ -218,7 +218,7 @@
 
   <servlet>
     <servlet-name>HstResourceServlet</servlet-name>
-    <servlet-class>org.hippoecm.hst.servlet.ResourceServlet</servlet-class>
+    <servlet-class>org.onehippo.cms7.utilities.servlet.ResourceServlet</servlet-class>
     <init-param>
       <param-name>jarPathPrefix</param-name>
       <param-value>/META-INF/web-resources</param-value>
