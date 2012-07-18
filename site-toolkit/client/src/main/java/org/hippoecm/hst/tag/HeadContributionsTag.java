@@ -95,6 +95,11 @@ public class HeadContributionsTag extends TagSupport {
             }
         }
 
+        try {
+            pageContext.getOut().flush();
+        } catch (IOException e) {
+            throw new JspException("Cannot flush the output", e);
+        }
         return SKIP_BODY;
     }
 
@@ -119,14 +124,15 @@ public class HeadContributionsTag extends TagSupport {
             outHeadElement.removeAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE);
         }
 
-        try {
-            if (xhtml) {
-                pageContext.getOut().println(HeadElementUtils.toXhtmlString(outHeadElement, isResponseTextHtmlContent()));
-            } else {
-                pageContext.getOut().println(HeadElementUtils.toHtmlString(outHeadElement));
-            }
+        String elementOutput;
+        if (xhtml) {
+            elementOutput = HeadElementUtils.toXhtmlString(outHeadElement, isResponseTextHtmlContent());
+        } else {
+            elementOutput = HeadElementUtils.toHtmlString(outHeadElement);
+        }
 
-            pageContext.getOut().flush();
+        try {
+            pageContext.getOut().println(elementOutput);
         } catch (IOException ioe) {
             throw new JspException("HeadContributionsTag Exception: cannot write to the output writer.");
         }

@@ -35,20 +35,17 @@ import org.w3c.dom.Element;
  */
 public class TestHeadContributionsTag {
 
-    private MockServletContext servletContext;
-    private MockPageContext pageContext;
     private HeadContributionsTag tag;
-    private MockHstRequest hstRequest;
     private MockHstResponse hstResponse;
 
     @Before
     public void setUp() throws Exception {
-        servletContext = new MockServletContext();
+        MockServletContext servletContext = new MockServletContext();
 
-        hstRequest = new MockHstRequest();
+        MockHstRequest hstRequest = new MockHstRequest();
         hstResponse = new MockHstResponse();
 
-        pageContext = new MockPageContext(servletContext, hstRequest, hstResponse);
+        MockPageContext pageContext = new MockPageContext(servletContext, hstRequest, hstResponse);
 
         tag = new HeadContributionsTag();
         tag.setPageContext(pageContext);
