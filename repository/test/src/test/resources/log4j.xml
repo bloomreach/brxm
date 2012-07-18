@@ -60,14 +60,6 @@
     <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
-  <category additivity="false" name="org.hippoecm.repository.export">
-    <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
-  <category additivity="false" name="org.hippoecm.repository.export.test">
-    <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
 
   <category additivity="false" name="org.hippoecm.repository.jackrabbit.HippoVirtualProvider">
     <level value="error"/>

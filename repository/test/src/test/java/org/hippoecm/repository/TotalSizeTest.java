@@ -24,13 +24,15 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TotalSizeTest extends TestCase {
     @SuppressWarnings("unused")
@@ -61,6 +63,7 @@ public class TotalSizeTest extends TestCase {
         String queryLanguage = Query.SQL;
 
         Query adminQuery = session.getWorkspace().getQueryManager().createQuery(queryStatement, queryLanguage);
+        adminQuery.setLimit(1);
         QueryResult adminResult = adminQuery.execute();
         NodeIterator adminIterator = adminResult.getNodes();
         assertTrue(adminIterator.getSize() > 0L);
@@ -69,11 +72,12 @@ public class TotalSizeTest extends TestCase {
         int adminCount = 0;
         while(adminIterator.hasNext()) {
             Node node = adminIterator.nextNode();
-            if(node != null)
+            if (node != null) {
                 ++adminCount;
+            }
         }
         long adminSize = adminIterator.getSize();
-        assertEquals(adminSize, adminTotal);
+        assertTrue(adminTotal > adminSize);
         assertEquals(adminCount, adminSize);
 
         // now do the same search but set a limit of 5. We then expect a getSize of 5, but a getTotalSize of *all* the hits
@@ -94,8 +98,9 @@ public class TotalSizeTest extends TestCase {
         int authorCount = 0;
         while(authorIterator.hasNext()) {
             Node node = authorIterator.nextNode();
-            if(node != null)
+            if (node != null) {
                 ++authorCount;
+            }
         }
         assertEquals(0L, authorIterator.getSize());
         assertEquals(0L, authorCount);
@@ -127,35 +132,20 @@ public class TotalSizeTest extends TestCase {
         authorSession.logout();
     }
 
-    @Ignore
     @Test
     public void testAuthorSearchesAndChanges() throws RepositoryException {
 
         Session authorSession = server.login("author", "author".toCharArray());
         assertEquals("author", authorSession.getUserID());
 
-        String queryStatement = "//* order by @jcr:score";
+        String queryStatement = "/jcr:root/test//element(*,hippo:translation) order by @jcr:score";
         String queryLanguage = Query.XPATH;
         Query authorQuery = authorSession.getWorkspace().getQueryManager().createQuery(queryStatement, queryLanguage);
-        authorQuery.setLimit(100);
-        QueryResult authorResult = authorQuery.execute();
-        NodeIterator authorIterator = authorResult.getNodes();
-        while(authorIterator.hasNext()) {
-            Node node = authorIterator.nextNode();
-            if(node != null) {
-                System.out.println(node.getPath());
-            }
-
-        }
-
-        queryStatement = "/jcr:root/test//element(*,hippo:translation) order by @jcr:score";
-        queryLanguage = Query.XPATH;
-        authorQuery = authorSession.getWorkspace().getQueryManager().createQuery(queryStatement, queryLanguage);
         authorQuery.setLimit(1);
         // we set a limit of 1 so getSize at most 1 and getTotalSize might be bigger
 
-        authorResult = authorQuery.execute();
-        authorIterator = authorResult.getNodes();
+        QueryResult authorResult = authorQuery.execute();
+        NodeIterator authorIterator = authorResult.getNodes();
 
         assertEquals(0L, authorIterator.getSize());
         assertEquals(0L, ((HippoNodeIterator) authorIterator).getTotalSize());
@@ -198,7 +188,7 @@ public class TotalSizeTest extends TestCase {
      */
 
     private volatile long expectedTotalSizeTranslationNodes;
-    @Ignore
+
     @Test
     public void testAuthorSearchesAndConcurrentChanges() throws RepositoryException, InterruptedException {
 
