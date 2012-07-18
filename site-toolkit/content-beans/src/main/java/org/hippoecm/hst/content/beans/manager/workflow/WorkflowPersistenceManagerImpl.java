@@ -269,13 +269,15 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                 // IF the document does not have availability = preview but is in state 'unpublished', we first need to change the
                 // state to 'draft' and hippostd:stateSummary to 'new'
                 // This is a workaround to be backwards compatible due to REPO-444
-                if (!addedDocumentVariant.hasProperty(HippoNodeType.HIPPO_AVAILABILITY) ||
-                        addedDocumentVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().length != 1 ||
-                        !"preview".equals(addedDocumentVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues()[0].getString())) {
-                    // now set the correct values (not through workflow as this is just overhead)
-                    addedDocumentVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"preview"});
-                    addedDocumentVariant.setProperty("hippostd:state", "unpublished");
-                    addedDocumentVariant.setProperty("hippostd:stateSummary", "new");
+                if (documentAdditionWorkflowCategory.equals(category)) {
+                    if (!addedDocumentVariant.hasProperty(HippoNodeType.HIPPO_AVAILABILITY) ||
+                            addedDocumentVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues().length != 1 ||
+                            !"preview".equals(addedDocumentVariant.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues()[0].getString())) {
+                        // now set the correct values (not through workflow as this is just overhead)
+                        addedDocumentVariant.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"preview"});
+                        addedDocumentVariant.setProperty("hippostd:state", "unpublished");
+                        addedDocumentVariant.setProperty("hippostd:stateSummary", "new");
+                    }
                 }
 
                 return added;
