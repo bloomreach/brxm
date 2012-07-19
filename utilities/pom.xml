@@ -28,7 +28,7 @@
   <packaging>jar</packaging>
 
   <artifactId>hippo-cms7-utilities</artifactId>
-  <version>1.01.00-alpha</version>
+  <version>1.01.00-SNAPSHOT</version>
 
   <properties>
     <commons-lang.version>2.4</commons-lang.version>
@@ -62,9 +62,9 @@
   </dependencies>
 
  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/tags/hippo-cms7-utilities-1.01.00-alpha</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/tags/hippo-cms7-utilities-1.01.00-alpha</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/tags/hippo-cms7-utilities-1.01.00-alpha</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/utilities/trunk</url>
   </scm>
 
   <repositories>
