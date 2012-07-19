@@ -44,6 +44,8 @@ import org.onehippo.cms7.jcrdiff.match.PatchFactory;
 
 public class CreatePatchDialog extends MultiStepDialog<Node> {
 
+    private static final long serialVersionUID = 1L;
+
     private static final String[] ILLEGAL_PATHS = new String[] {
             "/content",
             "/hippo:log",

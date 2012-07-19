@@ -43,6 +43,8 @@ import org.onehippo.cms7.jcrdiff.patch.Patcher;
 
 public class ApplyPatchDialog extends MultiStepDialog<Node> {
 
+    private static final long serialVersionUID = 1L;
+
     private final Label log;
     private final FileUploadField fileUploadField;
     private List<Step> steps;
