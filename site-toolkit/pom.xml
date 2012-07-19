@@ -87,11 +87,11 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
-    <hippo.cms.version>2.23.04-alpha</hippo.cms.version>
-    <hippo.repository.version>2.23.04-alpha</hippo.repository.version>
-    <hippo.addon-publication-workflow.version>2.23.04-alpha</hippo.addon-publication-workflow.version>
-    <hippo.utilities.version>1.01.01-alpha</hippo.utilities.version>
-    
+    <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
+    <hippo.addon-publication-workflow.version>2.23.05-SNAPSHOT</hippo.addon-publication-workflow.version>
+    <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
+
     <htmlcleaner.version>2.1</htmlcleaner.version>
     
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
