@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2011 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,22 +15,25 @@
  */
 package org.hippoecm.frontend.plugins.gallery.processor;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
 
-import javax.jcr.Binary;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.beanutils.PropertyUtils;
 import org.hippoecm.editor.type.PlainJcrTypeStore;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceException;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageMetadata;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageMetadataException;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
+import org.hippoecm.frontend.plugins.gallery.imageutil.UnsupportedImageException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -60,6 +63,29 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
     public void makeImage(Node node, InputStream stream, String mimeType, String fileName) throws GalleryException,
             RepositoryException {
         long time = System.currentTimeMillis();
+
+        ImageMetadata metadata = new ImageMetadata(mimeType, fileName);
+        try {
+            stream = metadata.parse(stream);
+        } catch (ImageMetadataException e) {
+            throw new GalleryException(e.getMessage());
+        }
+
+        if(metadata.isUnknown()) {
+            throw new GalleryException("Unknown color profile for " + metadata.toString());
+        }
+
+        if(!metadata.isRGB()) {
+            try {
+                stream = ImageUtils.convertToRGB(stream, metadata.isYCCK());
+            } catch (IOException e) {
+                log.error("Error during conversion to RGB", e);
+                throw new GalleryException("Error during conversion to RGB for " + metadata.toString(), e);
+            } catch (UnsupportedImageException e) {
+                log.error("Image can't be converted to RGB", e);
+                throw new GalleryException("Image can't be converted to RGB for " + metadata.toString(), e);
+            }
+        }
 
         Node primaryChild = getPrimaryChild(node);
         if (primaryChild.isNodeType(HippoNodeType.NT_RESOURCE)) {
@@ -99,7 +125,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
         log.debug("Initializing primary resource");
         InputStream primaryData = primaryChild.getProperty("jcr:data").getBinary().getStream();
         initGalleryResource(primaryChild, primaryData, primaryMimeType, fileName, lastModified);
-        
+
         time = System.currentTimeMillis() - time;
         log.debug("Processing image '{}' took {} ms.", fileName, time);
     }

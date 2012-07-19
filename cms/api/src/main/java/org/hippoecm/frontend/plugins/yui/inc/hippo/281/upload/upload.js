@@ -54,6 +54,12 @@ if (!YAHOO.hippo.Upload) {
                 }
             },
 
+            stopIndicator : function() {
+                if(this.latest != null) {
+                    this.latest.stopIndicator();
+                }
+            },
+
             restoreScrollPosition : function(posY) {
                 if(this.latest != null) {
                     this.latest.restoreScrollPosition(posY);
@@ -267,6 +273,12 @@ if (!YAHOO.hippo.Upload) {
                         });
                     }
                 /*}*/
+            },
+
+            stopIndicator : function() {
+                if(this.indicator != null) {
+                    this.indicator.hide();
+                }
             },
 
             clearAfterUpload : function() {

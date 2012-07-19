@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,9 +18,18 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
+import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 import javax.imageio.IIOImage;
@@ -28,8 +37,10 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.imgscalr.Scalr;
 
@@ -75,7 +86,7 @@ public class ImageUtils {
         ScalingStrategy(Scalr.Method scalrMethod) {
             this.scalrMethod = scalrMethod;
         }
-        
+
         private Scalr.Method getScalrMethod() {
             return scalrMethod;
         }
@@ -229,7 +240,7 @@ public class ImageUtils {
      *
      * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either
      * the target width or target height is 0 or less.
-     * 
+     *
      * @deprecated Use {@link ImageUtils#scaleImage(java.awt.image.BufferedImage, int, int, org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils.ScalingStrategy)} instead
      * for faster scaling and/or better image quality)}
      */
@@ -289,5 +300,103 @@ public class ImageUtils {
         } while (width != targetWidth || height != targetHeight);
 
         return result;
+    }
+
+    /**
+     * Java's ImageIO can't process 4-component images and Java2D can't apply AffineTransformOp either, so convert
+     * raster data to RGB. Technique due to MArk Stephens. Free for any use. See
+     * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4799903 or
+     * http://www.mail-archive.com/java2d-interest@capra.eng.sun.com/msg03247.html
+     *
+     * @param is image
+     * @param hasYCCKProfile
+     * @return image
+     */
+    public static InputStream convertToRGB(InputStream is, boolean hasYCCKProfile) throws IOException, UnsupportedImageException {
+
+        // Get an ImageReader.
+        ImageInputStream input = ImageIO.createImageInputStream(is);
+        Iterator<ImageReader> readers = ImageIO.getImageReaders(input);
+        if (readers == null || !readers.hasNext())
+        {
+            throw new UnsupportedImageException("No ImageReaders found");
+        }
+
+        ImageReader reader = readers.next();
+        reader.setInput(input);
+        Raster raster = reader.readRaster(0, reader.getDefaultReadParam());
+
+        int w = raster.getWidth();
+        int h = raster.getHeight();
+        byte[] rgb = new byte[w * h * 3];
+
+        // if (Adobe_APP14 and transform==2) then YCCK else CMYK
+        if (hasYCCKProfile)
+        { // YCCK -- Adobe
+
+            float[] Y = raster.getSamples(0, 0, w, h, 0, (float[]) null);
+            float[] Cb = raster.getSamples(0, 0, w, h, 1, (float[]) null);
+            float[] Cr = raster.getSamples(0, 0, w, h, 2, (float[]) null);
+            float[] K = raster.getSamples(0, 0, w, h, 3, (float[]) null);
+
+            for (int i = 0, imax = Y.length, base = 0; i < imax; i++, base += 3)
+            {
+                float k = 220 - K[i], y = 255 - Y[i], cb = 255 - Cb[i], cr = 255 - Cr[i];
+
+                double val = y + 1.402 * (cr - 128) - k;
+                val = (val - 128) * .65f + 128;
+                rgb[base] = val < 0.0 ? (byte) 0 : val > 255.0 ? (byte) 0xff : (byte) (val + 0.5);
+
+                val = y - 0.34414 * (cb - 128) - 0.71414 * (cr - 128) - k;
+                val = (val - 128) * .65f + 128;
+                rgb[base + 1] = val < 0.0 ? (byte) 0 : val > 255.0 ? (byte) 0xff : (byte) (val + 0.5);
+
+                val = y + 1.772 * (cb - 128) - k;
+                val = (val - 128) * .65f + 128;
+                rgb[base + 2] = val < 0.0 ? (byte) 0 : val > 255.0 ? (byte) 0xff : (byte) (val + 0.5);
+            }
+        }
+        else
+        {
+            // assert xform==0: xform; // CMYK
+
+            int[] C = raster.getSamples(0, 0, w, h, 0, (int[]) null);
+            int[] M = raster.getSamples(0, 0, w, h, 1, (int[]) null);
+            int[] Y = raster.getSamples(0, 0, w, h, 2, (int[]) null);
+            int[] K = raster.getSamples(0, 0, w, h, 3, (int[]) null);
+
+            for (int i = 0, imax = C.length, base = 0; i < imax; i++, base += 3)
+            {
+                int c = 255 - C[i];
+                int m = 255 - M[i];
+                int y = 255 - Y[i];
+                int k = 255 - K[i];
+                float kk = k / 255f;
+
+                rgb[base] = (byte) (255 - Math.min(255f, c * kk + k));
+                rgb[base + 1] = (byte) (255 - Math.min(255f, m * kk + k));
+                rgb[base + 2] = (byte) (255 - Math.min(255f, y * kk + k));
+            }
+        }
+
+        // from other image types we know InterleavedRaster's can be
+        // manipulated by AffineTransformOp, so create one of those.
+        raster = Raster.createInterleavedRaster(
+                new DataBufferByte(rgb, rgb.length),
+                w,
+                h,
+                w * 3,
+                3,
+                new int[]{0, 1, 2 },
+                null);
+
+        ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
+        ColorModel cm = new ComponentColorModel(cs, false, true, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+        BufferedImage convertedImage = new BufferedImage(cm, (WritableRaster) raster, true, null);
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(convertedImage, "jpg", os);
+        IOUtils.closeQuietly(is);
+        return new ByteArrayInputStream(os.toByteArray());
     }
 }
