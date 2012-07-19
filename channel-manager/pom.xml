@@ -16,10 +16,10 @@
   <name>Hippo Addon Channel Manager</name>
 
   <properties>
-    <hippo.cms.version>2.23.04-alpha</hippo.cms.version>
-    <hippo.hst.version>2.25.04-alpha</hippo.hst.version>
-    <hippo.repository.version>2.23.04-alpha</hippo.repository.version>
-    <hippo.addon-hst-configuration-editor.version>1.10.03-alpha</hippo.addon-hst-configuration-editor.version>
+    <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>2.25.05-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
+    <hippo.addon-hst-configuration-editor.version>1.10.04-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>
     <junit.version>4.5</junit.version>
 
