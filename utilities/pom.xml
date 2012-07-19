@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>12</version>
+    <version>13</version>
   </parent>
 
   <name>Hippo CMS7 Utilities</name>
