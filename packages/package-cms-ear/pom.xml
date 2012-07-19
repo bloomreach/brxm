@@ -34,7 +34,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-richtext-resources</artifactId>
       <version>${hippo.cms.version}</version>
-      <type>war</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -54,7 +53,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-skin</artifactId>
       <version>${hippo.cms.version}</version>
-      <type>war</type>
     </dependency>
 
     <!-- End applications -->
@@ -272,16 +270,6 @@
             </manifestEntries>
           </archive>
           <modules>
-            <webModule>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-cms-skin</artifactId>
-              <contextRoot>/skin</contextRoot>
-            </webModule>
-            <webModule>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-cms-richtext-resources</artifactId>
-              <contextRoot>/xinha</contextRoot>
-            </webModule>
             <webModule>
               <groupId>org.onehippo.cms7</groupId>
               <artifactId>hippo-repository-application</artifactId>
