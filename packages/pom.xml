@@ -36,12 +36,12 @@
   </scm>
 
   <properties>
-    <hippo.utilities.version>1.01.01-alpha</hippo.utilities.version>
-    <hippo.repository.version>2.23.04-alpha</hippo.repository.version>
-    <hippo.cms.version>2.23.04-alpha</hippo.cms.version>
-    <hippo.addon-publication-workflow.version>2.23.04-alpha</hippo.addon-publication-workflow.version>
-    <hippo.addon-faceteddate.version>2.23.04-alpha</hippo.addon-faceteddate.version>
-    <hippo.addon-brokenlinks.version>2.23.04-alpha</hippo.addon-brokenlinks.version>
+    <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
+    <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
+    <hippo.addon-publication-workflow.version>2.23.05-SNAPSHOT</hippo.addon-publication-workflow.version>
+    <hippo.addon-faceteddate.version>2.23.05-SNAPSHOT</hippo.addon-faceteddate.version>
+    <hippo.addon-brokenlinks.version>2.23.05-SNAPSHOT</hippo.addon-brokenlinks.version>
 
     <commons-lang.version>2.4</commons-lang.version>
 
@@ -50,7 +50,7 @@
     <atomikos.version>3.1.4</atomikos.version>
 
     <easymock.version>2.4</easymock.version>
-    <hippo.hst.version>2.25.04-alpha</hippo.hst.version>
+    <hippo.hst.version>2.25.05-SNAPSHOT</hippo.hst.version>
   </properties>
 
   <repositories>
