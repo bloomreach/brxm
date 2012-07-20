@@ -48,7 +48,6 @@ import javax.jcr.observation.ObservationManager;
 import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.VersionException;
 
-import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -71,7 +70,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
     protected static final Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
 
-    private static final WeakHashMap<Session, Set<EventListenerDecorator>> listeners = new WeakHashMap<Session, Set<EventListenerDecorator>>();
+    private static final WeakHashMap<Session, Set<EventListener>> listeners = new WeakHashMap<Session, Set<EventListener>>();
 
     /** The underlying workspace instance. */
     protected final Workspace workspace;
@@ -170,19 +169,23 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
             public void addEventListener(EventListener listener, int eventTypes, String absPath, boolean isDeep,
                     String[] uuid, String[] nodeTypeName, boolean noLocal) throws RepositoryException {
-                EventListenerDecorator decorator = new EventListenerDecorator(listener);
+                EventListener registeringListener = listener;
+                // if the listener is marked as SynchronousEventListener, then decorate it with Jackrabbit synchronous event listener.
+                if (listener instanceof org.hippoecm.repository.api.SynchronousEventListener) {
+                    registeringListener = new JackrabbitSynchronousEventListenerDecorator(registeringListener);
+                }
                 synchronized (listeners) {
                     if (!listeners.containsKey(session)) {
-                        listeners.put(session, new HashSet<EventListenerDecorator>());
+                        listeners.put(session, new HashSet<EventListener>());
                     }
-                    listeners.get(session).add(decorator);
+                    listeners.get(session).add(registeringListener);
                 }
-                upstream.addEventListener(decorator, eventTypes, absPath, isDeep, uuid, nodeTypeName, noLocal);
+                upstream.addEventListener(registeringListener, eventTypes, absPath, isDeep, uuid, nodeTypeName, noLocal);
             }
 
             public EventListenerIterator getRegisteredEventListeners() throws RepositoryException {
                 // create local copy
-                final Set<EventListenerDecorator> currentListeners = new HashSet<EventListenerDecorator>();
+                final Set<EventListener> currentListeners = new HashSet<EventListener>();
                 synchronized (listeners) {
                     if (listeners.containsKey(session)) {
                         currentListeners.addAll(listeners.get(session));
@@ -190,7 +193,7 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                 }
 
                 return new EventListenerIterator() {
-                    private final Iterator<EventListenerDecorator> listenerIterator = currentListeners.iterator();
+                    private final Iterator<EventListener> listenerIterator = currentListeners.iterator();
                     private final long size = currentListeners.size();
                     private long pos = 0;
 
@@ -199,7 +202,11 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
                             throw new NoSuchElementException();
                         }
                         pos++;
-                        return listenerIterator.next().listener;
+                        EventListener listener = listenerIterator.next();
+                        if (listener instanceof JackrabbitSynchronousEventListenerDecorator) {
+                            return ((JackrabbitSynchronousEventListenerDecorator) listener).listener;
+                        }
+                        return listener;
                     }
 
                     public void skip(long skipNum) {
@@ -232,13 +239,13 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
 
             public void removeEventListener(EventListener listener) throws RepositoryException {
                 synchronized (listeners) {
-                    Set<EventListenerDecorator> registered = listeners.get(session);
+                    Set<EventListener> registered = listeners.get(session);
                     if (registered != null) {
-                        for (Iterator<EventListenerDecorator> iter = registered.iterator(); iter.hasNext();) {
-                            EventListenerDecorator decorator = iter.next();
-                            if (decorator.listener == listener) {
+                        for (Iterator<EventListener> iter = registered.iterator(); iter.hasNext();) {
+                            EventListener registeredListener = iter.next();
+                            if (registeredListener == listener || (registeredListener instanceof JackrabbitSynchronousEventListenerDecorator && ((JackrabbitSynchronousEventListenerDecorator) registeredListener).listener == listener)) {
                                 iter.remove();
-                                upstream.removeEventListener(decorator);
+                                upstream.removeEventListener(registeredListener);
                                 if (registered.size() == 0) {
                                     listeners.remove(session);
                                 }
@@ -263,10 +270,10 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
         };
     }
 
-    static class EventListenerDecorator implements SynchronousEventListener {
+    static class JackrabbitSynchronousEventListenerDecorator implements org.apache.jackrabbit.core.observation.SynchronousEventListener {
         EventListener listener;
 
-        public EventListenerDecorator(EventListener listener) {
+        public JackrabbitSynchronousEventListenerDecorator(EventListener listener) {
             this.listener = listener;
         }
 

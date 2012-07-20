@@ -11,6 +11,7 @@ api/src/main/java/org/hippoecm/repository/api/ImportReferenceBehavior.java svneo
 api/src/main/java/org/hippoecm/repository/api/InitializationProcessor.java -text
 api/src/main/java/org/hippoecm/repository/api/MappingException.java -text
 api/src/main/java/org/hippoecm/repository/api/ReferenceWorkspace.java -text
+api/src/main/java/org/hippoecm/repository/api/SynchronousEventListener.java -text
 api/src/main/java/org/hippoecm/repository/ext/InternalWorkflow.java -text
 api/src/main/java/org/hippoecm/repository/ext/WorkflowInvocationHandlerModuleFactory.java -text
 api/src/main/java/org/hippoecm/repository/ext/WorkflowManagerModule.java -text
