@@ -55,10 +55,11 @@ import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.SynchronousEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class JcrListener extends WeakReference<EventListener> implements EventListener, Comparable<JcrListener> {
+class JcrListener extends WeakReference<EventListener> implements SynchronousEventListener, Comparable<JcrListener> {
     
     private final static Logger log = LoggerFactory.getLogger(JcrListener.class);
     
