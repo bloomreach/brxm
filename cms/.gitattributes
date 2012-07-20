@@ -1,4 +1,5 @@
 * text=auto !eol
+/README -text
 api/pom.xml -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin$WorkflowAction$DateDialog_de.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin$WorkflowAction$DestinationDialog.properties -text
