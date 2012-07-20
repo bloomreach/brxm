@@ -24,16 +24,16 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>7.8.0-SNAPSHOT</version>
+  <version>7.8.0-alpha</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/release/tags/hippo-cms7-release-7.8.0-alpha</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/release/tags/hippo-cms7-release-7.8.0-alpha</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/release/tags/hippo-cms7-release-7.8.0-alpha</url>
   </scm>
 
   <properties>
