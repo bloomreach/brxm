@@ -19,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 import org.apache.wicket.Page;
 import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.AbstractReadOnlyModel;
@@ -32,6 +30,8 @@ import org.hippoecm.frontend.plugins.xinha.js.editormanager.XinhaExtension.ListE
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
+
+import net.sf.json.JSONObject;
 
 public class EditorManagerBehavior extends AbstractYuiBehavior {
     @SuppressWarnings("unused")
@@ -61,10 +61,8 @@ public class EditorManagerBehavior extends AbstractYuiBehavior {
                 String skin = "hippo-lite";
 
                 Map<String, Object> map = super.getVariables();
-                System.out.println("editorUrl:: " + url);
                 map.put("editorUrl", url);
                 map.put("editorLang", lang);
-                System.out.println("editorSkin:: " + skin);
                 map.put("editorSkin", skin);
                 return map;
             }
