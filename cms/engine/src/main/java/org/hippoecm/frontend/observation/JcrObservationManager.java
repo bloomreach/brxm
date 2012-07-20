@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.observation;
 
-import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -41,10 +40,6 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-enum TriState {
-    FALSE, TRUE, UNKNOWN
-};
-
 public class JcrObservationManager implements ObservationManager {
     
     @SuppressWarnings("unused")
@@ -52,9 +47,9 @@ public class JcrObservationManager implements ObservationManager {
     private final static Logger log = LoggerFactory.getLogger(JcrObservationManager.class);
     private final static JcrObservationManager INSTANCE = new JcrObservationManager();
 
-    private WeakHashMap<Session, Map<String, NodeState>> cache = new WeakHashMap<Session, Map<String, NodeState>>();
-    private ReferenceQueue<EventListener> listenerQueue;
-    private Map<EventListener, JcrListener> listeners;
+    private final WeakHashMap<Session, Map<String, NodeState>> cache = new WeakHashMap<Session, Map<String, NodeState>>();
+    private final ReferenceQueue<EventListener> listenerQueue;
+    private final Map<EventListener, JcrListener> listeners;
 
     private JcrObservationManager() {
         this.listeners = new WeakHashMap<EventListener, JcrListener>();

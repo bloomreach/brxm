@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.session;
 
-import static org.hippoecm.frontend.util.WebApplicationHelper.PLUGIN_APPLICATION_NAME_PARAMETER;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -55,6 +53,8 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.util.WebApplicationHelper.PLUGIN_APPLICATION_NAME_PARAMETER;
 
 /**
  * A Wicket {@link org.apache.wicket.Session} that maintains a reference to a JCR {@link javax.jcr.Session}.  It is
@@ -406,7 +406,7 @@ public class PluginUserSession extends UserSession {
      */
     public FacetRootsObserver getFacetRootsObserver() {
         if (facetRootsObserver == null) {
-            facetRootsObserver = new FacetRootsObserver(getJcrSession());
+            facetRootsObserver = new FacetRootsObserver();
         }
         return facetRootsObserver;
     }

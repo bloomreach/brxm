@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.model.event;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -46,6 +43,9 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class ObservationTest extends PluginTest {
     @SuppressWarnings("unused")
@@ -492,6 +492,11 @@ public class ObservationTest extends PluginTest {
         assertEquals(1, copy.count);
     }
 
+    /**
+     * Test whether event listeners on virtual roots receive events when something changes under their docbase target.
+     *
+     * @throws Exception
+     */
     @Test
     public void testFacetSearchEventInSession() throws Exception {
         testFacetSearchEvent(true);
@@ -541,7 +546,7 @@ public class ObservationTest extends PluginTest {
 
             }
 
-        }, Event.NODE_ADDED | Event.NODE_REMOVED, "/test/sink", true, null, null);
+        }, Event.NODE_ADDED | Event.NODE_REMOVED, "/test/sink/search", false, null, null);
         listener.start();
 
         javax.jcr.Session editSession;

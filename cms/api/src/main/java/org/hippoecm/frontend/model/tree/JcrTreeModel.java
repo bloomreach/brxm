@@ -26,6 +26,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
+import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -44,7 +45,8 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeMode
 
     private ObservableTreeModel jcrTreeModel;
     private List<TreeModelListener> listeners;
-    
+    private ITreeState state;
+
     public JcrTreeModel(IJcrTreeNode rootModel) {
         jcrTreeModel = new ObservableTreeModel(rootModel);
         listeners = new LinkedList<TreeModelListener>();
@@ -137,4 +139,7 @@ public class JcrTreeModel implements IJcrTreeModel, IObserver<ObservableTreeMode
         jcrTreeModel.detach();
     }
 
+    public void setTreeState(final ITreeState state) {
+        jcrTreeModel.setTreeState(state);
+    }
 }

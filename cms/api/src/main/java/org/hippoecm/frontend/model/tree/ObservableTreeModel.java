@@ -15,18 +15,26 @@
  */
 package org.hippoecm.frontend.model.tree;
 
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.observation.Event;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.wicket.markup.html.tree.ITreeState;
+import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.model.IDetachable;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.EventCollection;
 import org.hippoecm.frontend.model.event.IEvent;
@@ -34,7 +42,6 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.JcrEvent;
-import org.hippoecm.frontend.model.event.JcrEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,16 +74,183 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
 
     }
 
+    class ExpandedNode implements Serializable {
+
+        private boolean expanded = false;
+        private final IJcrTreeNode treeNode;
+        private final String identifier;
+        private final Map<String, ExpandedNode> children;
+        private IObserver observer;
+
+        ExpandedNode(final IJcrTreeNode treeNode) {
+            this.treeNode = treeNode;
+            this.children = new TreeMap<String, ExpandedNode>();
+            IModel<Node> nodeModel = treeNode.getNodeModel();
+            String id = "<unknown>";
+            try {
+                final Node node = nodeModel.getObject();
+                id = node.getIdentifier();
+            } catch (RepositoryException e) {
+                log.error("Could not determine node identifier", e);
+            }
+            identifier = id;
+        }
+
+        ExpandedNode get(String[] path, int index) {
+            if (path == null) {
+                return null;
+            }
+            if (path.length == index) {
+                return this;
+            }
+            String name = path[index];
+            if (name.indexOf('[') < 0) {
+                name = name + "[1]";
+            }
+            ExpandedNode child = children.get(name);
+            if (child != null) {
+                return child.get(path, index + 1);
+            } else {
+                log.warn("Unable to find child " + name + " in observable tree model for " + treeNode.getNodeModel());
+                return null;
+            }
+        }
+
+        void collapse() {
+            stopObservation();
+            for (Map.Entry<String, ExpandedNode> entry : children.entrySet()) {
+                entry.getValue().collapse();
+            }
+            children.clear();
+            expanded = false;
+        }
+
+        void expand() {
+            loadChildren(this.children);
+            expanded = true;
+
+            startObservation();
+        }
+
+        private void loadChildren(Map<String, ExpandedNode> children) {
+            final Enumeration nodeChildren = treeNode.children();
+            while (nodeChildren.hasMoreElements()) {
+                final IJcrTreeNode childNode = (IJcrTreeNode) nodeChildren.nextElement();
+                IModel<Node> nodeModel = childNode.getNodeModel();
+                try {
+                    final Node node = nodeModel.getObject();
+                    String name = node.getName() + "[" + node.getIndex() + "]";
+                    children.put(name, new ExpandedNode(childNode));
+                } catch (RepositoryException e) {
+                    log.error("Unable to load children in tree node", e);
+                }
+            }
+        }
+
+        private Map<String, String> byId(Map<String, ExpandedNode> nodes) {
+            Map<String, String> ids = new TreeMap<String, String>();
+            for (Map.Entry<String, ExpandedNode> entry : nodes.entrySet()) {
+                ids.put(entry.getValue().identifier, entry.getKey());
+            }
+            return ids;
+        }
+
+        void reloadChildren () {
+            Map<String, ExpandedNode> newChildren = new TreeMap<String, ExpandedNode>();
+            loadChildren(newChildren);
+
+            Map<String, String> newIds = byId(newChildren);
+            Map<String, String> oldIds = byId(children);
+
+            for (Map.Entry<String, String> entry : oldIds.entrySet()) {
+                final String id = entry.getKey();
+                final String name = entry.getValue();
+                if (!newIds.containsKey(id)) {
+                    final ExpandedNode expandedNode = children.remove(name);
+                    expandedNode.stopObservation();
+                } else if (!newIds.get(id).equals(name)) {
+                    final ExpandedNode expandedNode = children.remove(name);
+                    children.put(newIds.get(id), expandedNode);
+                }
+            }
+
+            for (Map.Entry<String, String> entry : newIds.entrySet()) {
+                final String id = entry.getKey();
+                if (!oldIds.containsKey(id)) {
+                    final String name = entry.getValue();
+                    final ExpandedNode expandedNode = newChildren.get(name);
+                    children.put(name, expandedNode);
+                    expandedNode.startObservation();
+                }
+            }
+        }
+
+        public void startObservation() {
+            if (expanded && observationContext != null) {
+                observer = new IObserver() {
+
+                    @Override
+                    public IObservable getObservable() {
+                        return (IObservable) treeNode.getNodeModel();
+                    }
+
+                    @Override
+                    public void onEvent(final Iterator events) {
+                        reloadChildren();
+
+                        EventCollection<IEvent<ObservableTreeModel>> treeModelEvents = new EventCollection<IEvent<ObservableTreeModel>>();
+                        while (events.hasNext()) {
+                            IEvent<ObservableTreeModel> treeModelEvent = new ObservableTreeModelEvent(
+                                    (JcrEvent) events.next());
+                            treeModelEvents.add(treeModelEvent);
+                        }
+                        observationContext.notifyObservers(treeModelEvents);
+                    }
+                };
+                observationContext.registerObserver(observer);
+                for (Map.Entry<String, ExpandedNode> entry : children.entrySet()) {
+                    entry.getValue().startObservation();
+                }
+            }
+        }
+
+        public void stopObservation() {
+            for (Map.Entry<String, ExpandedNode> entry : children.entrySet()) {
+                entry.getValue().stopObservation();
+            }
+            if (observer != null) {
+                observationContext.unregisterObserver(observer);
+            }
+        }
+    }
+
     final static Logger log = LoggerFactory.getLogger(ObservableTreeModel.class);
 
     private IObservationContext<ObservableTreeModel> observationContext;
-    private JcrEventListener listener;
     protected final IJcrTreeNode root;
+    private final String rootPath;
+    private final ExpandedNode expandedRoot;
+    private ITreeState state;
 
     public ObservableTreeModel(IJcrTreeNode rootModel) {
         super(rootModel);
 
         root = rootModel;
+        expandedRoot = new ExpandedNode(root);
+        final IModel<Node> jcrNodeModel = root.getNodeModel();
+        String path;
+        try {
+            path = jcrNodeModel.getObject().getPath();
+        } catch (RepositoryException e) {
+            log.error("fail", e);
+            path = "";
+        }
+        rootPath = path;
+    }
+
+    public void setTreeState(final ITreeState state) {
+        this.state = state;
+        this.state.addTreeStateListener(new ObservableTreeStateListener());
     }
 
     public TreePath lookup(JcrNodeModel nodeModel) {
@@ -117,38 +291,11 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
     }
 
     public void startObservation() {
-        listener = new JcrEventListener(
-                new IObservationContext<JcrNodeModel>() {
-                    private static final long serialVersionUID = 1L;
-
-                    public void notifyObservers(EventCollection<IEvent<JcrNodeModel>> events) {
-                        EventCollection<IEvent<ObservableTreeModel>> treeModelEvents = new EventCollection<IEvent<ObservableTreeModel>>();
-                        for (IEvent<JcrNodeModel> event : events) {
-                            IEvent<ObservableTreeModel> treeModelEvent = new ObservableTreeModelEvent((JcrEvent) event);
-                            treeModelEvents.add(treeModelEvent);
-                        }
-                        observationContext.notifyObservers(treeModelEvents);
-                    }
-
-                    public void registerObserver(IObserver<?> observer) {
-                        observationContext.registerObserver(observer);
-                    }
-
-                    public void unregisterObserver(IObserver<?> observer) {
-                        observationContext.registerObserver(observer);
-
-                    }
-                }, Event.NODE_REMOVED | Event.NODE_ADDED | Event.NODE_MOVED,
-                ((JcrNodeModel) root.getNodeModel()).getItemModel().getPath(), true,
-                null, null);
-        listener.start();
+        expandedRoot.startObservation();
     }
 
     public void stopObservation() {
-        if (listener != null) {
-            listener.stop();
-            listener = null;
-        }
+        expandedRoot.stopObservation();
     }
 
     @Override
@@ -174,4 +321,60 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
         return new HashCodeBuilder(13, 67).append(root).toHashCode();
     }
 
+    private class ObservableTreeStateListener implements ITreeStateListener, Serializable {
+
+        @Override
+        public void allNodesCollapsed() {
+            expandedRoot.collapse();
+        }
+
+        @Override
+        public void allNodesExpanded() {
+        }
+
+        @Override
+        public void nodeCollapsed(final Object node) {
+            ExpandedNode stateNode = find(node);
+            if (stateNode != null) {
+                stateNode.collapse();
+            }
+        }
+
+        private ExpandedNode find(Object node) {
+            IJcrTreeNode treeNode = (IJcrTreeNode) node;
+            final IModel<Node> jcrNodeModel = treeNode.getNodeModel();
+            try {
+                String path = jcrNodeModel.getObject().getPath();
+                if (!path.startsWith(rootPath)) {
+                    log.warn("Path " + path + " is not a descendant of " + rootPath);
+                    return null;
+                }
+                if (path.length() == rootPath.length()) {
+                    return expandedRoot;
+                }
+                path = path.substring(rootPath.length() + 1);
+                String[] elements = path.split("/");
+                return expandedRoot.get(elements, 0);
+            } catch (RepositoryException e) {
+                log.error("Could not collapse node", e);
+            }
+            return null;
+        }
+
+        @Override
+        public void nodeExpanded(final Object node) {
+            ExpandedNode stateNode = find(node);
+            if (stateNode != null) {
+                stateNode.expand();
+            }
+        }
+
+        @Override
+        public void nodeSelected(final Object node) {
+        }
+
+        @Override
+        public void nodeUnselected(final Object node) {
+        }
+    }
 }

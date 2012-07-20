@@ -15,19 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse.tree;
 
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
-import org.hippoecm.frontend.plugins.standards.tree.icon.DefaultTreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.widgets.ContextMenuTree;
 import org.slf4j.Logger;
@@ -75,15 +75,19 @@ public abstract class CmsJcrTree extends ContextMenuTree {
     private final ITreeNodeTranslator treeNodeTranslator;
     private final ITreeNodeIconProvider treeNodeIconService;
 
-    public CmsJcrTree(String id, TreeModel treeModel, ITreeNodeTranslator treeNodeTranslator) {
-        this(id, treeModel, treeNodeTranslator, new DefaultTreeNodeIconProvider());
-    }
-
-    public CmsJcrTree(String id, TreeModel treeModel, ITreeNodeTranslator treeNodeTranslator,
+    public CmsJcrTree(String id, JcrTreeModel treeModel, ITreeNodeTranslator treeNodeTranslator,
             ITreeNodeIconProvider iconService) {
         super(id, treeModel);
         this.treeNodeTranslator = treeNodeTranslator;
         this.treeNodeIconService = iconService;
+    }
+
+    @Override
+    protected ITreeState newTreeState() {
+        ITreeState state = super.newTreeState();
+        JcrTreeModel model = (JcrTreeModel) getModelObject();
+        model.setTreeState(state);
+        return state;
     }
 
     @Override

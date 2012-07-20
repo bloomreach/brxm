@@ -50,10 +50,10 @@ import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -233,31 +233,22 @@ class JcrListener extends WeakReference<EventListener> implements EventListener,
         // subscribe when listening to deep tree structures;
         // there will/might be facetsearches in there.
         if (isDeep && uuids == null) {
-            if (nodeTypes == null) {
-                fro.subscribe(this, path);
-            } else {
-                for (String type : nodeTypes) {
-                    if (type.equals(HippoNodeType.NT_DOCUMENT)) {
-                        fro.subscribe(this, path);
-                    }
-                }
-            }
             return;
         }
 
         // subscribe when target has a facetsearch as an ancestor
         try {
             for (Node node = getRoot(); node.getDepth() > 0;) {
-                if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
-                    fro.subscribe(this, node.getPath());
+                if (JcrHelper.isVirtualRoot(node)) {
+                    fro.subscribe(this, node);
                     break;
                 }
                 node = node.getParent();
             }
 
             for (Node node : getReferencedNodes()) {
-                if (node.isNodeType(HippoNodeType.NT_FACETSEARCH)) {
-                    fro.subscribe(this, node.getPath());
+                if (JcrHelper.isVirtualRoot(node)) {
+                    fro.subscribe(this, node);
                 }
             }
         } catch (PathNotFoundException pnfe) {
@@ -268,7 +259,7 @@ class JcrListener extends WeakReference<EventListener> implements EventListener,
     }
 
     private void unsubscribe() throws RepositoryException {
-        fro.unsubscribe(this);
+        fro.unsubscribe(this, session);
         fro = null;
 
         if (session.isLive()) {
