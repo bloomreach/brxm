@@ -17,12 +17,12 @@ package org.hippoecm.hst.configuration.model;
 
 import javax.jcr.observation.EventIterator;
 
-import org.hippoecm.hst.core.jcr.AsynchronousDispatchingEventListener;
 import org.hippoecm.hst.core.jcr.EventListenersContainerListener;
+import org.hippoecm.hst.core.jcr.GenericEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstConfigurationEventListener extends AsynchronousDispatchingEventListener implements EventListenersContainerListener {
+public class HstConfigurationEventListener extends GenericEventListener implements EventListenersContainerListener {
     
     static Logger log = LoggerFactory.getLogger(HstConfigurationEventListener.class);
     
@@ -33,7 +33,7 @@ public class HstConfigurationEventListener extends AsynchronousDispatchingEventL
     }
 
     @Override
-    public void onAsynchronousEvent(EventIterator events) {
+    public void onEvent(EventIterator events) {
         hstManager.invalidate(events);
     }
     

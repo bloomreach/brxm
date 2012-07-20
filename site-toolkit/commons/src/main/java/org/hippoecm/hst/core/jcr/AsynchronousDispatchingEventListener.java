@@ -31,13 +31,16 @@ import javax.jcr.observation.EventIterator;
 import org.hippoecm.hst.site.HstServices;
 
 /**
- * This abstract class can be used if the events need to be processed asynchronous. By default, hippo repository creates 
- * synchronous observers. If you depend on a synchronous observer in a synchronized method and at the same time read nodes 
+ * This abstract class can be used if the events need to be processed asynchronous.
+ * Hippo Repository used to create synchronous observers, but it creates asynchronous observers since 2.23.05 by default.
+ * If you depend on a synchronous observer in a synchronized method and at the same time read nodes 
  * in another synchronized method, then in clustered environments deadlocks can occur.
  * 
  * A way to circumvent this, is to extend from this {@link AsynchronousDispatchingEventListener} and implement 
  * {@link #onAsynchronousEvent(EventIterator)} yourself : This method is invoked with a different Thread and with a jcr {@link EventIterator} which 
  * is detached from the repository containing {@link Event}s which are detached from the repository
+ * 
+ * @deprecated Hippo Repository creates asynchronous observer by default since 2.23.05. So, this wouldn't be used any more.
  */
 public abstract class AsynchronousDispatchingEventListener extends GenericEventListener {
    
