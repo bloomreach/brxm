@@ -143,7 +143,7 @@
           <sv:value>timeoutLength=1500</sv:value>
         </sv:property>
         <sv:property sv:name="Xinha.config.css" sv:type="String">
-          <sv:value>../../skin/xinhaInternal.css</sv:value>
+          <sv:value>../skin/xinhaInternal.css</sv:value>
         </sv:property>
         <sv:property sv:name="Xinha.config.toolbar" sv:type="String">
           <sv:value>fullscreen</sv:value>
