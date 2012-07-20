@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>12</version>
+    <version>13</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -37,21 +37,21 @@
   </scm>
 
   <properties>
-    <hippo.release.version>7.8.0-SNAPSHOT</hippo.release.version>
-    <hippo.commons.version>1.02.01-SNAPSHOT</hippo.commons.version>
-    <hippo.services.version>2-SNAPSHOT</hippo.services.version>
-    <hippo.utilities.version>1.01.00-SNAPSHOT</hippo.utilities.version>
-    <hippo.repository.version>2.23.02-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.23.02-SNAPSHOT</hippo.cms.version>
-    <hippo.addon-faceteddate.version>2.23.02-SNAPSHOT</hippo.addon-faceteddate.version>
-    <hippo.addon-publication-workflow.version>2.23.02-SNAPSHOT</hippo.addon-publication-workflow.version>
-    <hippo.addon-hst-configuration-editor.version>1.10.02-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>2.23.02-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-google-analytics.version>2.23.02-SNAPSHOT</hippo.addon-google-analytics.version>
-    <hippo.addon-brokenlinks.version>2.23.02-SNAPSHOT</hippo.addon-brokenlinks.version>
+    <hippo.release.version>7.8.0-alpha</hippo.release.version>
+    <hippo.commons.version>1.02.00</hippo.commons.version>
+    <hippo.services.version>2</hippo.services.version>
+    <hippo.utilities.version>1.01.01-alpha</hippo.utilities.version>
+    <hippo.repository.version>2.23.04-alpha</hippo.repository.version>
+    <hippo.cms.version>2.23.04-alpha</hippo.cms.version>
+    <hippo.addon-faceteddate.version>2.23.04-alpha</hippo.addon-faceteddate.version>
+    <hippo.addon-publication-workflow.version>2.23.04-alpha</hippo.addon-publication-workflow.version>
+    <hippo.addon-hst-configuration-editor.version>1.10.03-alpha</hippo.addon-hst-configuration-editor.version>
+    <hippo.addon-channel-manager.version>2.23.04-alpha</hippo.addon-channel-manager.version>
+    <hippo.addon-google-analytics.version>2.23.04-alpha</hippo.addon-google-analytics.version>
+    <hippo.addon-brokenlinks.version>2.23.04-alpha</hippo.addon-brokenlinks.version>
     <hippo.addon-automatic-export.version>2.02.03</hippo.addon-automatic-export.version>
-    <hippo.packages.version>2.23.02-SNAPSHOT</hippo.packages.version>
-    <hippo.hst.version>2.25.02-SNAPSHOT</hippo.hst.version>
+    <hippo.packages.version>2.23.04-alpha</hippo.packages.version>
+    <hippo.hst.version>2.25.04-alpha</hippo.hst.version>
 
     <forge.dashboard-document-wizard.version>1.03.09</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.10.01</forge.gallerypicker.version>
@@ -59,7 +59,7 @@
     <forge.poll.version>1.05.03</forge.poll.version>
     <forge.relateddocs.version>2.08.06</forge.relateddocs.version>
     <forge.selection.version>2.05.06</forge.selection.version>
-    <forge.sitemap.version>1.03.00-SNAPSHOT</forge.sitemap.version>
+    <forge.sitemap.version>1.02.01</forge.sitemap.version>
     <forge.taxonomy.version>1.08.03</forge.taxonomy.version>
     <forge.tcmp.version>1.05.02</forge.tcmp.version>
     <forge.properties.version>2.07.06</forge.properties.version>
@@ -660,13 +660,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-        <artifactId>hst-shared-dependencies</artifactId>
-        <version>${hippo.hst.version}</version>
-        <type>pom</type>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
         <artifactId>hst-spring-dependencies</artifactId>
         <version>${hippo.hst.version}</version>
         <type>pom</type>
@@ -869,12 +862,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-publication-workflow-common</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
-      <artifactId>hst-shared-dependencies</artifactId>
-      <type>pom</type>
-    </dependency>
-
   </dependencies>
 
   <profiles>
