@@ -9,7 +9,7 @@ How to test and build Hippo Site Toolkit
 2. Requirements --
 
   (1) Java 1.6
-  (2) Maven 2.2.1 or higher
+  (2) Maven 3.0.x
   (3) [Optional] Tomcat 6.0 or higher if you want to deploy and run on Tomcat.)
 
 3. Build 
@@ -21,6 +21,15 @@ How to test and build Hippo Site Toolkit
     (2) Build with skipping tests
     
       $ mvn clean install -DskipTests 
+    
+    (3) Build with Hippo Snapshot Repository Flag
+      - Note: Mostly you do not need this when you check out and build a released version!
+              Only when you build the TRUNK having snapshot dependencies!
+      - Add `-Dhippo.snapshots' for snapshot dependencies.
+        For example,
+        
+        $ mvn clean install -Dhippo.snapshots -DskipTests
+        
     
 4. Creating the mvn site with javadocs: type from the root
    $ mvn -o site     
