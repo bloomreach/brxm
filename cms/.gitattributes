@@ -2416,6 +2416,7 @@ test/src/test/java/org/hippoecm/frontend/model/PropertyValueProviderTest.java sv
 test/src/test/java/org/hippoecm/frontend/model/event/ObservationTest.java -text
 test/src/test/java/org/hippoecm/frontend/model/map/JcrValueListTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/model/ocm/JcrObjectTest.java -text
+test/src/test/java/org/hippoecm/frontend/model/tree/ObservableTreeModelTest.java -text
 test/src/test/java/org/hippoecm/frontend/plugin/ServiceFactoryTest.java -text
 test/src/test/java/org/hippoecm/frontend/plugin/config/impl/ClusterConfigDecoratorTest.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/plugin/config/impl/JcrConfigServiceFactoryTest.java svneol=native#text/plain

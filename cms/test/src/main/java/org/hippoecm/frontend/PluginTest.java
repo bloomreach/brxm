@@ -167,7 +167,7 @@ public abstract class PluginTest extends RepositoryTest {
     }
     
     protected void refreshPage() {
-        WebRequestCycle requestCycle = tester.setupRequestAndResponse(true);;
+        WebRequestCycle requestCycle = tester.setupRequestAndResponse(true);
         HippoTester.callOnBeginRequest(requestCycle);
         AjaxRequestTarget target = new PluginRequestTarget(home);
         requestCycle.setRequestTarget(target);
