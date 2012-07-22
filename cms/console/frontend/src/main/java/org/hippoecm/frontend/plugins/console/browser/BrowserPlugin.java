@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.console.browser;
 
 import javax.jcr.Node;
-import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
@@ -27,6 +26,7 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -88,7 +88,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         onModelChanged();
     }
 
-    protected JcrTree newTree(TreeModel treeModel) {
+    protected JcrTree newTree(JcrTreeModel treeModel) {
         JcrTree tree = new BrowserTree(treeModel);
 
         tree.add(treeBehavior = new TreeWidgetBehavior(new TreeWidgetSettings()));
@@ -125,8 +125,16 @@ public class BrowserPlugin extends RenderPlugin<Node> {
     private class BrowserTree extends JcrTree {
         private static final long serialVersionUID = 1L;
 
-        public BrowserTree(final TreeModel treeModel) {
+        public BrowserTree(final JcrTreeModel treeModel) {
             super("tree", treeModel);
+        }
+
+        @Override
+        protected ITreeState newTreeState() {
+            DefaultTreeState state = new DefaultTreeState();
+            JcrTreeModel model = (JcrTreeModel) getModelObject();
+            model.setTreeState(state);
+            return state;
         }
 
         @Override

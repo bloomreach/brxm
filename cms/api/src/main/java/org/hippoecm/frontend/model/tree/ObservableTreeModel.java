@@ -31,6 +31,7 @@ import javax.swing.tree.TreePath;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.model.IDetachable;
@@ -74,7 +75,7 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
 
     }
 
-    class ExpandedNode implements Serializable {
+    class ExpandedNode implements Serializable, IDetachable {
 
         private boolean expanded = false;
         private final IJcrTreeNode treeNode;
@@ -106,6 +107,10 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
             String name = path[index];
             if (name.indexOf('[') < 0) {
                 name = name + "[1]";
+            }
+            if (!children.containsKey(name)) {
+                log.info("Reloading children because " + name + " is expected to be there, but isn't");
+                reloadChildren();
             }
             ExpandedNode child = children.get(name);
             if (child != null) {
@@ -222,6 +227,14 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
                 observationContext.unregisterObserver(observer);
             }
         }
+
+        @Override
+        public void detach() {
+            treeNode.detach();
+            for (Map.Entry<String, ExpandedNode> entry : children.entrySet()) {
+                entry.getValue().detach();
+            }
+        }
     }
 
     final static Logger log = LoggerFactory.getLogger(ObservableTreeModel.class);
@@ -241,6 +254,9 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
         String path;
         try {
             path = jcrNodeModel.getObject().getPath();
+            if ("/".equals(path)) {
+                path = "";
+            }
         } catch (RepositoryException e) {
             log.error("fail", e);
             path = "";
@@ -248,9 +264,18 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
         rootPath = path;
     }
 
-    public void setTreeState(final ITreeState state) {
+    public void setTreeState(final DefaultTreeState state) {
         this.state = state;
+        expandNodes(state, expandedRoot);
         this.state.addTreeStateListener(new ObservableTreeStateListener());
+    }
+
+    private void expandNodes(DefaultTreeState state, ExpandedNode node) {
+        if (state.isNodeExpanded(node.treeNode)) {
+            for (Map.Entry<String, ExpandedNode> entry : node.children.entrySet()) {
+                expandNodes(state, entry.getValue());
+            }
+        }
     }
 
     public TreePath lookup(JcrNodeModel nodeModel) {
@@ -282,7 +307,7 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
     }
 
     public void detach() {
-        root.detach();
+        expandedRoot.detach();
     }
 
     @SuppressWarnings("unchecked")
@@ -348,6 +373,9 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
                 if (!path.startsWith(rootPath)) {
                     log.warn("Path " + path + " is not a descendant of " + rootPath);
                     return null;
+                }
+                if ("/".equals(path)) {
+                    path = "";
                 }
                 if (path.length() == rootPath.length()) {
                     return expandedRoot;

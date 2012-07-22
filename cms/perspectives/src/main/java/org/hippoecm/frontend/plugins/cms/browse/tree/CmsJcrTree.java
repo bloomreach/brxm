@@ -21,6 +21,7 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -84,7 +85,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
 
     @Override
     protected ITreeState newTreeState() {
-        ITreeState state = super.newTreeState();
+        DefaultTreeState state = new DefaultTreeState();
         JcrTreeModel model = (JcrTreeModel) getModelObject();
         model.setTreeState(state);
         return state;
