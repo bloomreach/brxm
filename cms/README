@@ -23,9 +23,12 @@ How to test and build Hippo CMS 7
     
     (3) Build with Hippo Snapshot Repository Flag
       - Note: Mostly you do not need this when you check out and build a released version!
-              Only when you build the TRUNK having snapshot dependencies!
+              Needed only when you build the TRUNK having snapshot dependencies!
+      - Note: Please beware that the `-Dhippo.snapshots' option is effective only when you define
+              a Maven profile with this property in your settings.xml for the Hippo snapshot repository.
+              For detail, see https://wiki.onehippo.com/display/CMS7/Build+Hippo+CMS+7.5+or+higher+from+scratch
       - Add `-Dhippo.snapshots' for snapshot dependencies.
         For example,
         
-        $ mvn clean install -Dhippo.snapshots -DskipTests
+          $ mvn clean install -Dhippo.snapshots -DskipTests
         
