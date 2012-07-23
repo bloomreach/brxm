@@ -46,7 +46,6 @@ public class NodeResetDialog extends AbstractDialog<Node> {
     };
 
     private String path;
-    private ReferenceWorkspace referenceWorkspace;
 
     public NodeResetDialog(IModel<Node> model) {
         super(model);
@@ -55,8 +54,7 @@ public class NodeResetDialog extends AbstractDialog<Node> {
                 " Changes will not be automatically saved so you can inspect the result of resetting first."));
 
         try {
-            referenceWorkspace = UserSession.get().getHippoRepository().getOrCreateReferenceWorkspace();
-            if (referenceWorkspace == null) {
+            if (UserSession.get().getHippoRepository().getOrCreateReferenceWorkspace() == null) {
                 error("This functionality is not available in your environment");
                 setOkEnabled(false);
                 return;
@@ -71,7 +69,6 @@ public class NodeResetDialog extends AbstractDialog<Node> {
             if (isSameNameSibling(node)) {
                 error("Resetting same name siblings is not supported");
                 setOkEnabled(false);
-                return;
             }
         } catch (RepositoryException e) {
             error("An unexpected error occurred: " + e.getMessage());
@@ -107,6 +104,7 @@ public class NodeResetDialog extends AbstractDialog<Node> {
         Session session = null;
         try {
 
+            final ReferenceWorkspace referenceWorkspace = UserSession.get().getHippoRepository().getOrCreateReferenceWorkspace();
             session = referenceWorkspace.login();
 
             if (!session.nodeExists("/hippo:configuration")) {
