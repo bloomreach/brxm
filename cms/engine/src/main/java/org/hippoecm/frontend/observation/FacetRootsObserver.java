@@ -33,6 +33,7 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.SynchronousEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,11 +125,11 @@ public class FacetRootsObserver implements IFacetRootsObserver {
         LinkedList<FacetRootListener> rootListeners;
     }
 
-    private static class FacetRootListener implements EventListener {
+    private static class FacetRootListener implements SynchronousEventListener {
 
         // path to the facet root node
         private String nodePath;
-        private boolean refresh = false;
+        private volatile boolean refresh = false;
         private final EventListener listener;
 
         FacetRootListener(String path, EventListener listener) {
