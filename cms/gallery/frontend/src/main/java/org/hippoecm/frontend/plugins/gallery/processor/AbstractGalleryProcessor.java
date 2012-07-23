@@ -30,7 +30,7 @@ import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.ocm.IStore;
 import org.hippoecm.frontend.model.ocm.StoreException;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ImageMetadata;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageMetaData;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageMetadataException;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
 import org.hippoecm.frontend.plugins.gallery.imageutil.UnsupportedImageException;
@@ -64,20 +64,20 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
             RepositoryException {
         long time = System.currentTimeMillis();
 
-        ImageMetadata metadata = new ImageMetadata(mimeType, fileName);
+        ImageMetaData metadata = new ImageMetaData(mimeType, fileName);
         try {
             stream = metadata.parse(stream);
         } catch (ImageMetadataException e) {
             throw new GalleryException(e.getMessage());
         }
 
-        if(metadata.isUnknown()) {
+        if (metadata.getColorModel().equals(ImageMetaData.ColorModel.UNKNOWN)) {
             throw new GalleryException("Unknown color profile for " + metadata.toString());
         }
 
-        if(!metadata.isRGB()) {
+        if (!metadata.getColorModel().equals(ImageMetaData.ColorModel.RGB)) {
             try {
-                stream = ImageUtils.convertToRGB(stream, metadata.isYCCK());
+                stream = ImageUtils.convertToRGB(stream, metadata.getColorModel());
             } catch (IOException e) {
                 log.error("Error during conversion to RGB", e);
                 throw new GalleryException("Error during conversion to RGB for " + metadata.toString(), e);

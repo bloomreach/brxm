@@ -140,7 +140,7 @@ api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrClusterConfig.java
 api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrConfigServiceFactory.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/config/impl/JcrPluginConfig.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/config/impl/PluginConfigFactory.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetadata.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetaData.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetadataException.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/ReusableInputStream.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/gallery/imageutil/UnsupportedImageException.java -text
@@ -746,9 +746,8 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left-right.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/right-corners.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
-api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/AbstractImageTest.java -text
-api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageImportTest.java -text
-api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetadataTest.java -text
+api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetaDataTest.java -text
+api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageUtilTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ReusableInputStreamTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ScaleImageOperationTest.java -text
 api/src/test/resources/test-1x5000.png -text

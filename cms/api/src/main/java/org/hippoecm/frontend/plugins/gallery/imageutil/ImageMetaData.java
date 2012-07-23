@@ -30,20 +30,20 @@ import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageMetadata implements IClusterable {
+/**
+ * Provides meta-data about a image: its color model, MIME type, and file name.
+ */
+public class ImageMetaData implements IClusterable {
 
-    final Logger log = LoggerFactory.getLogger(ImageMetadata.class);
+    final Logger log = LoggerFactory.getLogger(ImageMetaData.class);
 
-    public final static int UNKNOWN = -1;
-    public final static int RGB = 0;
-    public final static int CMYK = 1;
-    public final static int YCCK = 2;
+    public enum ColorModel { UNKNOWN, RGB, CMYK, YCCK }
 
-    private int colorType = UNKNOWN;
+    private ColorModel colorModel = ColorModel.UNKNOWN;
     private String mimeType;
     private String fileName;
 
-    public ImageMetadata(String mimeType, String fileName) {
+    public ImageMetaData(String mimeType, String fileName) {
         if (mimeType.equals(ResourceHelper.MIME_IMAGE_PJPEG)) {
             // IE uploads JPEG files with the non-standard MIME type image/pjpeg for which ImageIO
             // doesn't have an ImageReader. Simply replacing the MIME type with image/jpeg solves this.
@@ -51,16 +51,15 @@ public class ImageMetadata implements IClusterable {
             // http://groups.google.com/group/comp.infosystems.www.authoring.images/msg/7706603e4bd1d9d4?hl=en
             mimeType = ResourceHelper.MIME_IMAGE_JPEG;
         }
-
         this.mimeType = mimeType;
         this.fileName = fileName;
     }
 
     /**
-     * Currently only Jpeg metadata is detected, al others formats are expected to be in the RGB color profile.
+     * Currently only JPEG metadata is detected, al others formats are expected to be in the RGB color profile.
      */
     public InputStream parse(InputStream is) throws ImageMetadataException {
-        if(isJpeg()) {
+        if (isJpeg()) {
             ReusableInputStream ris = new ReusableInputStream(is);
             try {
                 parse(ris);
@@ -73,12 +72,12 @@ public class ImageMetadata implements IClusterable {
             }
             return ris;
         } else {
-            colorType = RGB;
+            colorModel = ColorModel.RGB;
             return is;
         }
     }
 
-    private void parse(ReusableInputStream ris) throws IOException, ImageReadException{
+    private void parse(ReusableInputStream ris) throws IOException, ImageReadException {
         try {
             ImageInfo info = Sanselan.getImageInfo(ris, fileName);
             ris.reset();
@@ -87,22 +86,19 @@ public class ImageMetadata implements IClusterable {
                 info.getColorType() == ImageInfo.COLOR_TYPE_BW ||
                 info.getColorType() == ImageInfo.COLOR_TYPE_GRAYSCALE) {
 
-                colorType = RGB;
-            }
-            else if (info.getColorType() == ImageInfo.COLOR_TYPE_CMYK) {
-                colorType = CMYK;
+                colorModel = ColorModel.RGB;
+            } else if (info.getColorType() == ImageInfo.COLOR_TYPE_CMYK) {
+                colorModel = ColorModel.CMYK;
                 try {
                     JpegSegmentReader segmentReader = new JpegSegmentReader(ris);
                     byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPE);
 
                     if (exifSegment != null && exifSegment[11] == 2) {
-                        colorType = YCCK;
+                        colorModel = ColorModel.YCCK;
                     }
-                }
-                catch (JpegProcessingException e1) {
-                    log.warn("Unable to read color space");
-                }
-                finally {
+                } catch (JpegProcessingException e1) {
+                    log.warn("Unable to read color space", e1);
+                } finally {
                     ris.reset();
                 }
             }
@@ -115,34 +111,21 @@ public class ImageMetadata implements IClusterable {
         return ResourceHelper.MIME_IMAGE_JPEG.equalsIgnoreCase(mimeType);
     }
 
-    public boolean isRGB() {
-        return colorType == RGB;
-    }
-
-    public boolean isCMYK() {
-        return colorType == CMYK;
-    }
-
-    public boolean isYCCK() {
-        return colorType == YCCK;
-    }
-
-    public boolean isUnknown() {
-        return colorType == UNKNOWN;
+    public ColorModel getColorModel() {
+        return colorModel;
     }
 
     public String getFilename() {
         return fileName;
     }
 
-    public String getMimetype() {
+    public String getMimeType() {
         return mimeType;
     }
 
     @Override
     public String toString() {
-        String profile = isUnknown() ? "Unknown" : isRGB() ? "RGB" : isCMYK() ? "CMYK" : "YCCK";
-        return "[filename: " + fileName + ", mimetype=" + mimeType + ", profile=" + profile + "]";
-
+        return "[file name: " + fileName + ", MIME type=" + mimeType + ", color model=" + colorModel.name() + "]";
     }
+
 }

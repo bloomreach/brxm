@@ -52,7 +52,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         setOkEnabled(false);
         setOkVisible(false);
 
-        ajaxButton = new AjaxButton(getButtonId(), new Model<String>("Ok")) {
+        ajaxButton = new AjaxButton(DialogConstants.BUTTON, new Model<String>("Ok")) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
@@ -65,7 +65,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         ajaxButton.setVisible(false);
         addButton(ajaxButton);
 
-        closeButton = new AjaxButton(getButtonId(), new Model<String>("Close")) {
+        closeButton = new AjaxButton(DialogConstants.BUTTON, new Model<String>("Close")) {
 
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
