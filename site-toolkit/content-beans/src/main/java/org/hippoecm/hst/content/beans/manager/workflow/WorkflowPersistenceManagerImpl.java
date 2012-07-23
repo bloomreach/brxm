@@ -275,8 +275,12 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
                             !"preview".equals(addedNode.getProperty(HippoNodeType.HIPPO_AVAILABILITY).getValues()[0].getString())) {
                         // now set the correct values (not through workflow as this is just overhead)
                         addedNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"preview"});
-                        addedNode.setProperty("hippostd:state", "unpublished");
-                        addedNode.setProperty("hippostd:stateSummary", "new");
+                        if (addedNode.isNodeType("hippostd:publishable")) {
+                            addedNode.setProperty("hippostd:state", "unpublished");
+                        }
+                        if (addedNode.isNodeType("hippostd:publishableSummary")) {
+                            addedNode.setProperty("hippostd:stateSummary", "new");
+                        }
                     }
                 }
 
