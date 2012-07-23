@@ -181,7 +181,6 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-resources</artifactId>
         <version>${hippo.repository.version}</version>
-        <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
