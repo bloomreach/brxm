@@ -955,6 +955,20 @@
         </sv:node>
       </sv:node>
     </sv:node>
+    <sv:node sv:name="defaultColumns">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.cms.browse.list.DefaultListColumnProviderPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
+      <sv:property sv:name="documentTypeIconRenderer" sv:type="String">
+        <sv:value>resourceIconRenderer</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="rep:root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
