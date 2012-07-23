@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IComponentAssignedModel;
 import org.apache.wicket.model.IModel;
@@ -182,9 +183,15 @@ public class EventModel implements IComponentAssignedModel<String> {
             try {
                 if (nameModel != null) {
                     String name = nameModel.getObject();
-                    name = StringEscapeUtils.escapeHtml(name);
-                    StringResourceModel operationModel = new StringResourceModel(method, component, null,
-                                                                                 new Object[]{user, name});
+                    StringResourceModel operationModel;
+                    if(name != null && name.startsWith("org.hippoecm.repository.api.Document[uuid=")) {
+                        final String method2 = StringUtils.replaceOnce(method, "delete", "delete-unknown");
+                        operationModel = new StringResourceModel(method2, component, null, new Object[]{user});
+                    } else {
+                        name = StringEscapeUtils.escapeHtml(name);
+                        operationModel = new StringResourceModel(method, component, null,
+                                                                                     new Object[]{user, name});
+                    }
                     return new StringResourceModel(time, component, null, "").getString() + operationModel.getString();
                 } else {
                     StringResourceModel operationModel = new StringResourceModel(method, component, null,
