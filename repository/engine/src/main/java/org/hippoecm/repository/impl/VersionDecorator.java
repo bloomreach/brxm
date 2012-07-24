@@ -44,6 +44,11 @@ public class VersionDecorator extends org.hippoecm.repository.decorating.Version
         }
     }
 
+    @Override
+    public boolean isVirtual() throws RepositoryException {
+        return getIdentifier().startsWith("cafeface");
+    }
+
     public String getLocalizedName() throws RepositoryException {
         return ((HippoNode)version).getLocalizedName();
     }

@@ -54,6 +54,11 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
         }
     }
 
+    @Override
+    public boolean isVirtual() throws RepositoryException {
+        return getIdentifier().startsWith("cafeface");
+    }
+
     public String getLocalizedName() throws RepositoryException {
         try {
             return remote.getLocalizedName(Localized.getInstance(Locale.getDefault()));
@@ -82,4 +87,5 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
     public NodeIterator pendingChanges() throws RepositoryException {
         return pendingChanges(null, false);
     }
+
 }

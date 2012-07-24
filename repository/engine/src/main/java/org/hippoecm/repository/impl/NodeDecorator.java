@@ -74,6 +74,11 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         }
     }
 
+    @Override
+    public boolean isVirtual() throws RepositoryException {
+        return getIdentifier().startsWith("cafeface");
+    }
+
     /** {@inheritDoc} */
     @Override
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,

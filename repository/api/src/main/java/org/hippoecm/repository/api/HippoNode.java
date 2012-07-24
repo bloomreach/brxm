@@ -139,4 +139,12 @@ public interface HippoNode extends Node {
      * @see #pendingChanges(String,boolean)
      */
     public NodeIterator pendingChanges() throws RepositoryException;
+
+    /**
+     * Whether this is a virtual node or not.
+     *
+     * @return  whether this is a virtual node or not.
+     * @throws RepositoryException
+     */
+    public boolean isVirtual() throws RepositoryException;
 }
