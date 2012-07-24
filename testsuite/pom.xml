@@ -192,6 +192,9 @@
         <module>linear-algebra</module>
         <!-- End Add-on component context -->
         <module>content</module>
+        <module>components</module>
+        <module>dependencies</module>
+        <module>resources</module>
         <module>cms</module>
         <module>site</module>
         <module>solr</module>

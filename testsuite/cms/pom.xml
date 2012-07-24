@@ -31,68 +31,12 @@
   <packaging>war</packaging>
 
   <dependencies>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-rest-api</artifactId>
-    </dependency>
-
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-frontend</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-channel-manager-repository</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-package-cms-dependencies</artifactId>
+      <artifactId>hippo-testsuite-cms-dependencies</artifactId>
+      <version>1.03.02-SNAPSHOT</version>
       <type>pom</type>
     </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-package-cms-resources</artifactId>
-      <type>war</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-repository</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-testsuite-content</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    
-    <!--  Gallery picker dependency -->
-    <dependency>
-      <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
-      <artifactId>gallerypicker</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.wicket</groupId>
-          <artifactId>wicket</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <!-- Related documents plugin -->
-    <dependency>
-        <groupId>org.onehippo.forge</groupId>
-        <artifactId>relateddocs</artifactId>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -101,14 +45,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <overlays>
-            <overlay>
-              <groupId>org.onehippo.cms7</groupId>
-              <artifactId>hippo-package-cms-resources</artifactId>
-            </overlay>
-          </overlays>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.codehaus.cargo</groupId>

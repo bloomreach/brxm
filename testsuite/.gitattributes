@@ -5,6 +5,105 @@ api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/MatrixOperator.java -te
 api/src/main/java/org/hippoecm/hst/demo/addonmodules/api/RandomGenerator.java -text
 cms/pom.xml -text
 cms/src/main/webapp/WEB-INF/web.xml -text
+components/pom.xml -text
+components/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/beans/BlockBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/beans/CommentBean.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/beans/CommentLinkBean.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/beans/GoGreenProductBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/beans/ImageLinkBean.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/beans/NewsBean.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/beans/PlaceBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/beans/PlaceTimeBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/beans/RelatedDocsBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/beans/TextBean.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/beans/WikiBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelInfo.java -text
+components/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelManagerEventListener.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/Algebra.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/Archive.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/BannerInfo.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/Block.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/BlockInfo.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/CustomDefaultHstComponent.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/Detail.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/DummyCarDocsCreator.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/Faceted.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/FacetedAddProduct.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/FacetedDetail.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/FacetedRight.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/GoGreenExternalProductIndexer.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/Home.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/HstForm.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/LeftMenu.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/NonWorkflowWikiImporterComponent.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/RSS.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/Right.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/Search.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/Set404Component.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/SitesOverview.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/SolrFaceting.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/SolrRight.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/SolrSearch.java -text
+components/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/components/solrutil/SolrSearchParams.java -text
+components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilter.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/NewsDocumentRepresentation.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/ProductRepresentation.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/model/TextDocumentRepresentation.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/services/BaseDocumentContentResource.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/services/NewsDocumentContentResource.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/services/ProductContentResource.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/services/ProductPlainResource.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/services/TextDocumentContentResource.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/services/TopProductsResource.java -text
+components/src/main/java/org/hippoecm/hst/demo/jaxrs/services/util/ResponseUtils.java -text
+components/src/main/java/org/hippoecm/hst/demo/linking/DemositeResourceContainer.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/linking/ExampleHstLinkProcessor.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/servlet/DateTimeServlet.java -text
+components/src/main/java/org/hippoecm/hst/demo/servlet/ModifyingHstConfigurationServlet.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/sitemapitemhandler/PageCachingSiteMapHandler.java -text svneol=unset#text/plain
+components/src/main/java/org/hippoecm/hst/demo/spring/ContactSpring.java -text
+components/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactFormController.java -text
+components/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactMessageBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactMessageValidator.java -text
+components/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ExampleServletContextAwareBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/spring/webmvc/SiteMapItemRedirectView.java -text
+components/src/main/java/org/hippoecm/hst/demo/util/DemoRepoBasedMenuItem.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/util/SimplePageErrorHandler.java svneol=native#text/plain
+components/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBeanFactory.java -text
+components/src/main/java/org/hippoecm/hst/demo/wicketexamples/NodeBean.java -text
+components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserApplication.java -text
+components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.java -text
+components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerApplication.java -text
+components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.java -text
+components/src/main/resources/META-INF/client-assembly/base.xml svneol=native#text/plain
+components/src/main/resources/META-INF/hst-assembly/overrides/channelManagerListenerExample.xml -text
+components/src/main/resources/META-INF/hst-assembly/overrides/componentWindowFiltering-valve.xml -text svneol=unset#text/plain
+components/src/main/resources/META-INF/hst-assembly/overrides/custom-jaxrs-resources.xml -text
+components/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExample.xml svneol=native#text/plain
+components/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
+components/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -text
+components/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
+components/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
+components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text svneol=unset#text/plain
+components/src/main/resources/messages_en_US.properties -text svneol=unset#text/plain
+components/src/main/resources/messages_fr_FR.properties -text svneol=unset#text/plain
+components/src/main/resources/org/hippoecm/hst/demo/channel/DemoChannelInfo.properties -text
+components/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions.properties -text
+components/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions_en.properties -text
+components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.html -text
+components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.properties -text
+components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage_en.properties -text
+components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.html -text
+components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.properties -text
+components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage_en.properties -text
 conf/context.xml -text
 conf/log4j.dtd -text
 conf/log4j.xml -text svneol=unset#text/plain
@@ -57,6 +156,9 @@ content/src/main/resources/security/user-editor.xml -text
 content/src/main/resources/security/user-liveuser.xml -text
 content/src/main/resources/security/user-previewuser.xml -text
 content/src/main/resources/security/user-writablesiteuser.xml -text
+dependencies/cms/pom.xml -text
+dependencies/pom.xml -text
+dependencies/site/pom.xml -text
 linear-algebra/pom.xml -text
 linear-algebra/src/main/java/org/hippoecm/hst/demo/addonmodules/linearalgebra/MatrixOperatorImpl.java -text
 linear-algebra/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
@@ -66,186 +168,89 @@ random-numbers/pom.xml -text
 random-numbers/src/main/java/org/hippoecm/hst/demo/addonmodules/randomnumbers/RandomGeneratorImpl.java -text
 random-numbers/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 random-numbers/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/randomnumbers/base.xml -text
+resources/pom.xml -text
+resources/src/main/webapp/META-INF/context.xml svneol=native#text/plain
+resources/src/main/webapp/WEB-INF/applicationContext.xml -text
+resources/src/main/webapp/WEB-INF/beans-annotated-classes.xml svneol=native#text/plain
+resources/src/main/webapp/WEB-INF/ftl/components/main/detailpage.ftl -text
+resources/src/main/webapp/WEB-INF/ftl/components/main/home.ftl -text
+resources/src/main/webapp/WEB-INF/hst-config.properties svneol=native#text/plain
+resources/src/main/webapp/WEB-INF/jetty-env.xml -text
+resources/src/main/webapp/WEB-INF/jsp/components/footer/footer.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/footer/fr_footer.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/header/header.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/layout/mashup.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/layout/threecolumnlayout.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/algebra.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/archive.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/banner.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/block.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/contact.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/contactdispatch.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/detailimagevariantpage.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/detailpage-ajaxresult.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/detailpage.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/detailwikipage.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/error.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/faceted.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/facetedaddproduct.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/facetedproductpage.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/facetedright.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/formpage.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/gogreenindexer.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/home.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/leftmenu.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/productpage.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/right.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/search.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/sitesoverview.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/solrfaceting.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/solrright.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/solrsearch.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/solrsuggest-ajaxresult.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/thankyou.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/components/main/todolist.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/main/wikipedia.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage401.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage403.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/errorpages/component-error-page.jsp svneol=native#text/plain
+resources/src/main/webapp/WEB-INF/jsp/spring/contactspring.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/spring/contactspringmvc-form.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/spring/contactspringmvc-success.jsp -text
+resources/src/main/webapp/WEB-INF/jsp/templates/rss.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/templates/webpage.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/web.xml -text
+resources/src/main/webapp/css/ie6.css svneol=native#text/plain
+resources/src/main/webapp/css/inline-editing.css svneol=native#text/plain
+resources/src/main/webapp/examples/custom_form_login.jsp -text
+resources/src/main/webapp/images/button_edit.gif -text
+resources/src/main/webapp/images/containerBack.gif -text
+resources/src/main/webapp/images/dropshadow.png -text svneol=unset#image/png
+resources/src/main/webapp/images/footerBack.gif -text
+resources/src/main/webapp/images/goback.jpg -text svneol=unset#image/jpeg
+resources/src/main/webapp/images/headerBack.jpg -text svneol=unset#image/jpeg
+resources/src/main/webapp/images/headerBackTop.jpg -text svneol=unset#image/jpeg
+resources/src/main/webapp/images/hippo.gif -text
+resources/src/main/webapp/images/icons/calendar_icon.gif -text
+resources/src/main/webapp/images/icons/document-revert-16.png -text svneol=unset#image/png
+resources/src/main/webapp/images/icons/document-save-16.png -text svneol=unset#image/png
+resources/src/main/webapp/images/icons/edit-16.png -text svneol=unset#image/png
+resources/src/main/webapp/images/icons/flag-16_de.png -text
+resources/src/main/webapp/images/icons/flag-16_en.png -text
+resources/src/main/webapp/images/icons/flag-16_fr.png -text
+resources/src/main/webapp/images/icons/flag-16_it.png -text
+resources/src/main/webapp/images/icons/flag-16_nl.png -text
+resources/src/main/webapp/images/icons/html_editor.gif -text
+resources/src/main/webapp/images/icons/publish-schedule-16.png -text svneol=unset#image/png
+resources/src/main/webapp/images/icons/workflow-requestpublish-16.png -text svneol=unset#image/png
+resources/src/main/webapp/images/news.png -text
+resources/src/main/webapp/images/onehippo.gif -text
+resources/src/main/webapp/images/rss.gif -text
+resources/src/main/webapp/images/volgende.gif -text
+resources/src/main/webapp/images/vorige.gif -text
+resources/src/main/webapp/javascript/inline-editing.js svneol=native#text/plain
+resources/src/main/webapp/javascript/simple-io.js -text
 site/pom.xml svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/beans/BaseBean.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/beans/BlockBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/beans/CommentBean.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/beans/CommentLinkBean.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/beans/GoGreenProductBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/beans/ImageLinkBean.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/beans/NewsBean.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/beans/PlaceBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/beans/PlaceTimeBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/beans/ProductBean.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/beans/RelatedDocsBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/beans/TextBean.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/beans/WikiBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelInfo.java -text
-site/src/main/java/org/hippoecm/hst/demo/channel/DemoChannelManagerEventListener.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/AbstractFacetedComponnent.java -text svneol=unset#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/AbstractSearchComponent.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/Algebra.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/Archive.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/BannerInfo.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/Block.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/BlockInfo.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/CustomDefaultHstComponent.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/Detail.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/DummyCarDocsCreator.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/Faceted.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/FacetedAddProduct.java -text svneol=unset#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/FacetedDetail.java -text svneol=unset#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/FacetedRight.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/GoGreenExternalProductIndexer.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/Home.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/HstForm.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/LeftMenu.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/NonWorkflowWikiImporterComponent.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/RSS.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/Right.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/Search.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/Set404Component.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/SitesOverview.java -text svneol=unset#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/SolrFaceting.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/SolrRight.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/SolrSearch.java -text
-site/src/main/java/org/hippoecm/hst/demo/components/TodoList.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/components/solrutil/SolrSearchParams.java -text
-site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilter.java -text svneol=unset#text/plain
-site/src/main/java/org/hippoecm/hst/demo/container/ExampleComponentWindowFilteringValve.java -text svneol=unset#text/plain
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/BaseDocumentRepresentation.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/NewsDocumentRepresentation.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/ProductRepresentation.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/model/TextDocumentRepresentation.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/BaseDocumentContentResource.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/NewsDocumentContentResource.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/ProductContentResource.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/ProductPlainResource.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/TextDocumentContentResource.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/TopProductsResource.java -text
-site/src/main/java/org/hippoecm/hst/demo/jaxrs/services/util/ResponseUtils.java -text
-site/src/main/java/org/hippoecm/hst/demo/linking/DemositeResourceContainer.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/linking/ExampleHstLinkProcessor.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/servlet/DateTimeServlet.java -text
-site/src/main/java/org/hippoecm/hst/demo/servlet/ModifyingHstConfigurationServlet.java -text svneol=unset#text/plain
-site/src/main/java/org/hippoecm/hst/demo/sitemapitemhandler/PageCachingSiteMapHandler.java -text svneol=unset#text/plain
-site/src/main/java/org/hippoecm/hst/demo/spring/ContactSpring.java -text
-site/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactFormController.java -text
-site/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactMessageBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ContactMessageValidator.java -text
-site/src/main/java/org/hippoecm/hst/demo/spring/webmvc/ExampleServletContextAwareBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/spring/webmvc/SiteMapItemRedirectView.java -text
-site/src/main/java/org/hippoecm/hst/demo/util/DemoRepoBasedMenuItem.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/util/SimplePageErrorHandler.java svneol=native#text/plain
-site/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBeanFactory.java -text
-site/src/main/java/org/hippoecm/hst/demo/wicketexamples/NodeBean.java -text
-site/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserApplication.java -text
-site/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.java -text
-site/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerApplication.java -text
-site/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.java -text
-site/src/main/resources/META-INF/client-assembly/base.xml svneol=native#text/plain
-site/src/main/resources/META-INF/hst-assembly/overrides/channelManagerListenerExample.xml -text
-site/src/main/resources/META-INF/hst-assembly/overrides/componentWindowFiltering-valve.xml -text svneol=unset#text/plain
-site/src/main/resources/META-INF/hst-assembly/overrides/custom-jaxrs-resources.xml -text
-site/src/main/resources/META-INF/hst-assembly/overrides/customLinkProcessorsExample.xml svneol=native#text/plain
-site/src/main/resources/META-INF/hst-assembly/overrides/customResourceContainers.xml svneol=native#text/plain
-site/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -text
-site/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
-site/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
-site/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text svneol=unset#text/plain
-site/src/main/resources/messages_en_US.properties -text svneol=unset#text/plain
-site/src/main/resources/messages_fr_FR.properties -text svneol=unset#text/plain
-site/src/main/resources/org/hippoecm/hst/demo/channel/DemoChannelInfo.properties -text
-site/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions.properties -text
-site/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions_en.properties -text
-site/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.html -text
-site/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.properties -text
-site/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage_en.properties -text
-site/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.html -text
-site/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.properties -text
-site/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage_en.properties -text
-site/src/main/webapp/META-INF/context.xml svneol=native#text/plain
-site/src/main/webapp/WEB-INF/applicationContext.xml -text
-site/src/main/webapp/WEB-INF/beans-annotated-classes.xml svneol=native#text/plain
-site/src/main/webapp/WEB-INF/ftl/components/main/detailpage.ftl -text
-site/src/main/webapp/WEB-INF/ftl/components/main/home.ftl -text
-site/src/main/webapp/WEB-INF/hst-config.properties svneol=native#text/plain
-site/src/main/webapp/WEB-INF/jetty-env.xml -text
-site/src/main/webapp/WEB-INF/jsp/components/footer/footer.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/footer/fr_footer.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/header/header.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/layout/mashup.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/layout/threecolumnlayout.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/algebra.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/archive.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/banner.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/block.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/contact.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/contactdispatch.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/detailimagevariantpage.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/detailpage-ajaxresult.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/detailpage.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/detailwikipage.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/error.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/faceted.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/facetedaddproduct.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/facetedproductpage.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/facetedright.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/formpage.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/gogreenindexer.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/home.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/leftmenu.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/productpage.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/right.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/search.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/sitesoverview.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/solrfaceting.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/solrright.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/solrsearch.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/solrsuggest-ajaxresult.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/thankyou.jsp -text
-site/src/main/webapp/WEB-INF/jsp/components/main/todolist.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/components/main/wikipedia.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage401.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/errorpages/ErrorPage403.jsp -text
-site/src/main/webapp/WEB-INF/jsp/errorpages/component-error-page.jsp svneol=native#text/plain
-site/src/main/webapp/WEB-INF/jsp/spring/contactspring.jsp -text
-site/src/main/webapp/WEB-INF/jsp/spring/contactspringmvc-form.jsp -text
-site/src/main/webapp/WEB-INF/jsp/spring/contactspringmvc-success.jsp -text
-site/src/main/webapp/WEB-INF/jsp/templates/rss.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/jsp/templates/webpage.jsp -text svneol=unset#text/plain
-site/src/main/webapp/WEB-INF/web.xml -text
-site/src/main/webapp/css/ie6.css svneol=native#text/plain
-site/src/main/webapp/css/inline-editing.css svneol=native#text/plain
-site/src/main/webapp/examples/custom_form_login.jsp -text
-site/src/main/webapp/images/button_edit.gif -text
-site/src/main/webapp/images/containerBack.gif -text
-site/src/main/webapp/images/dropshadow.png -text svneol=unset#image/png
-site/src/main/webapp/images/footerBack.gif -text
-site/src/main/webapp/images/goback.jpg -text svneol=unset#image/jpeg
-site/src/main/webapp/images/headerBack.jpg -text svneol=unset#image/jpeg
-site/src/main/webapp/images/headerBackTop.jpg -text svneol=unset#image/jpeg
-site/src/main/webapp/images/hippo.gif -text
-site/src/main/webapp/images/icons/calendar_icon.gif -text
-site/src/main/webapp/images/icons/document-revert-16.png -text svneol=unset#image/png
-site/src/main/webapp/images/icons/document-save-16.png -text svneol=unset#image/png
-site/src/main/webapp/images/icons/edit-16.png -text svneol=unset#image/png
-site/src/main/webapp/images/icons/flag-16_de.png -text
-site/src/main/webapp/images/icons/flag-16_en.png -text
-site/src/main/webapp/images/icons/flag-16_fr.png -text
-site/src/main/webapp/images/icons/flag-16_it.png -text
-site/src/main/webapp/images/icons/flag-16_nl.png -text
-site/src/main/webapp/images/icons/html_editor.gif -text
-site/src/main/webapp/images/icons/publish-schedule-16.png -text svneol=unset#image/png
-site/src/main/webapp/images/icons/workflow-requestpublish-16.png -text svneol=unset#image/png
-site/src/main/webapp/images/news.png -text
-site/src/main/webapp/images/onehippo.gif -text
-site/src/main/webapp/images/rss.gif -text
-site/src/main/webapp/images/volgende.gif -text
-site/src/main/webapp/images/vorige.gif -text
-site/src/main/webapp/javascript/inline-editing.js svneol=native#text/plain
-site/src/main/webapp/javascript/simple-io.js -text
 solr/pom.xml -text
 solr/src/main/java/org/hippoecm/hst/demo/servlet/SolrConfigContextListener.java -text
 solr/src/main/webapp/WEB-INF/solr/README.txt -text
