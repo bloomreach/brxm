@@ -92,7 +92,7 @@
     <hippo.addon-publication-workflow.version>2.23.05-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
 
-    <htmlcleaner.version>2.1</htmlcleaner.version>
+    <htmlcleaner.version>2.2</htmlcleaner.version>
     
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
     
@@ -514,9 +514,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-      
-      <!-- HTML Cleaner -->
-      
+
       <dependency>
         <groupId>net.sourceforge.htmlcleaner</groupId>
         <artifactId>htmlcleaner</artifactId>
