@@ -25,6 +25,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,6 +41,7 @@ import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
+import javax.jcr.ItemVisitor;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.Node;
@@ -71,6 +73,7 @@ import org.apache.jackrabbit.spi.commons.namespace.NamespaceMapping;
 import org.apache.jackrabbit.spi.commons.nodetype.QDefinitionBuilderFactory;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HierarchyResolver;
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -93,6 +96,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private static final Logger log = LoggerFactory.getLogger(InitializationProcessorImpl.class);
 
     private static final String INIT_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
+
+    private static final String SHELF_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SHELF_PATH;
 
     private static final String[] INIT_ITEM_PROPERTIES = new String[] {
             HippoNodeType.HIPPO_SEQUENCE,
@@ -423,28 +428,110 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final String root = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/");
         // verify that content root is not under the initialization node
         if (root.startsWith(INIT_PATH)) {
-            getLogger().error("Bootstrapping content to " + INIT_PATH + " is no supported");
+            getLogger().error("Bootstrapping content to " + INIT_PATH + " is not supported");
             return;
         }
 
         if (isReload(node)) {
             boolean success = false;
-            String contextNodeName = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTEXTNODENAME, null);
+            final String contextNodeName = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTEXTNODENAME, null);
             if (contextNodeName != null) {
-                String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
+                final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
+                final Collection<Node> shelvedNodes = shelveNodes(session, contextNodePath, dryRun);
                 success = removeNodecontent(session, contextNodePath, false);
                 if (success) {
                     initializeNodecontent(session, root, contentStream, contentResource);
+                    if (!dryRun) {
+                        session.save();
+                    }
+                    restoreNodes(session, shelvedNodes, dryRun);
                 }
             }
             if (!success) {
                 getLogger().error("Cannot remove node for reloading content: content for item " + node.getName() + " not reloaded");
+                session.refresh(false);
             }
         } else {
-            getLogger().info("Initializing content from: " + contentResource + " to " + root);
             initializeNodecontent(session, root, contentStream, contentResource);
         }
 
+    }
+
+    private void restoreNodes(final Session session, final Collection<Node> shelvedNodes, final boolean dryRun) throws RepositoryException {
+        for (Node shelvedNode : shelvedNodes) {
+            final String destAbsPath = shelvedNode.getProperty(HippoNodeType.HIPPOSYS_RESTORELOCATION).getString();
+            if (session.nodeExists(destAbsPath)) {
+                session.getNode(destAbsPath).remove();
+            }
+            try {
+                final String srcAbsPath = shelvedNode.getPath();
+                session.move(srcAbsPath, destAbsPath);
+                getLogger().info("Restored restorable to " + destAbsPath);
+                JcrUtils.getLastNodeIfExists(destAbsPath, session).getProperty(HippoNodeType.HIPPOSYS_RESTORELOCATION).remove();
+                if (!dryRun) {
+                    session.save();
+                }
+            } catch (ConstraintViolationException e) {
+                getLogger().warn("Restoring node to " + destAbsPath + " was unsuccessful: constraint violation");
+                session.refresh(false);
+            } catch (PathNotFoundException e) {
+                getLogger().warn("Restoring node to " + destAbsPath + " was unsuccessful: path is no longer valid");
+                session.refresh(false);
+            }
+        }
+    }
+
+    private Collection<Node> shelveNodes(final Session session, final String contextNodePath, final boolean dryRun) throws RepositoryException {
+        final Node contextNode = session.getNode(contextNodePath);
+        final Collection<Node> restorableNodes = new ArrayList<Node>();
+        contextNode.accept(new ItemVisitor() {
+            @Override
+            public void visit(final Property property) throws RepositoryException {}
+
+            @Override
+            public void visit(final Node node) throws RepositoryException {
+                if (node instanceof HippoNode && ((HippoNode) node).isVirtual()) {
+                    return;
+                }
+
+                if (node.isNodeType(HippoNodeType.NT_RESTORABLE)) {
+                    if (node == contextNode) {
+                        getLogger().warn("Reload root is restorable: net effect of reload will be zero");
+                    }
+                    restorableNodes.add(node);
+                    return;
+                }
+
+                final NodeIterator nodes = node.getNodes();
+                while (nodes.hasNext()) {
+                    nodes.nextNode().accept(this);
+                }
+            }
+        });
+        final Collection<Node> shelvedNodes = new ArrayList<Node>();
+        if (restorableNodes.size() > 0) {
+            createShelfIfNotExists(session, dryRun);
+            for (final Node restorableNode : restorableNodes) {
+                final String shelfAbsPath = SHELF_PATH + "/" + restorableNode.getName();
+                final String restorableAbsPath = restorableNode.getPath();
+                getLogger().info("Shelving restorable " + restorableAbsPath);
+                session.move(restorableAbsPath, shelfAbsPath);
+                final Node shelvedNode = JcrUtils.getLastNodeIfExists(shelfAbsPath, session);
+                shelvedNode.setProperty(HippoNodeType.HIPPOSYS_RESTORELOCATION, restorableAbsPath);
+                shelvedNodes.add(shelvedNode);
+            }
+        }
+        return shelvedNodes;
+    }
+
+    private void createShelfIfNotExists(final Session session, final boolean dryRun) throws RepositoryException {
+        if (!session.nodeExists(SHELF_PATH)) {
+            final Node configurationNode = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
+            configurationNode.addNode(HippoNodeType.SHELF_PATH, HippoNodeType.NT_SHELF);
+            if (!dryRun) {
+                session.save();
+            }
+        }
     }
 
     private void processContentDelete(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
@@ -576,18 +663,19 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 copyProperty(tempInitItemNode, initItemNode, propertyName);
             }
 
-            final String contextNodeName = isReload(initItemNode) && initItemNode.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) ? readContextNodeName(initItemNode) : null;
+            final String contextNodeName = initItemNode.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) ? readContextNodeName(initItemNode) : null;
             if (contextNodeName != null) {
-                initItemNode.setProperty(HippoNodeType.HIPPO_CONTEXTNODENAME, contextNodeName);
-
-                final String root = JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_CONTENTROOT, "/");
-                final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
-                final NodeIterator downstreamItems = getDownstreamItems(session, contextNodePath);
-                while (downstreamItems.hasNext()) {
-                    final Node downStreamItem = downstreamItems.nextNode();
-                    getLogger().info("Marking downstream item " + downStreamItem.getName() + " for reload");
-                    downStreamItem.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
-                    initializeItems.add(downStreamItem);
+                if (isReload(initItemNode)) {
+                    initItemNode.setProperty(HippoNodeType.HIPPO_CONTEXTNODENAME, contextNodeName);
+                    final String root = JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_CONTENTROOT, "/");
+                    final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
+                    final NodeIterator downstreamItems = getDownstreamItems(session, contextNodePath);
+                    while (downstreamItems.hasNext()) {
+                        final Node downStreamItem = downstreamItems.nextNode();
+                        getLogger().info("Marking downstream item " + downStreamItem.getName() + " for reload");
+                        downStreamItem.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
+                        initializeItems.add(downStreamItem);
+                    }
                 }
             }
 

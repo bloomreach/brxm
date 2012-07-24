@@ -20,10 +20,12 @@ import java.util.Calendar;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.ConstraintViolationException;
 
 /**
  * Some utility methods for writing code against JCR API. This code can be removed when we upgrade to JR 2.6...
@@ -60,6 +62,31 @@ public class JcrUtils {
         } catch (PathNotFoundException e) {
             return null;
         }
+    }
+
+    /**
+     * Gets the node at <code>absPath</code> or <code>null</code> if no such node exists.
+     * In case there are more nodes at <code>absPath</code>, the last node is returned.
+     *
+     * @param absPath the absolute path to the node to return
+     * @param session to use
+     * @return  the node at <code>absPath</code> or <code>null</code> if no such node exists.
+     * @throws RepositoryException
+     */
+    public static Node getLastNodeIfExists(String absPath, Session session) throws RepositoryException {
+        if (absPath.equals("/")) {
+            return session.getRootNode();
+        }
+        final int idx = absPath.lastIndexOf('/');
+        final String parentAbsPath = absPath.substring(0, idx);
+        final String nodeName = absPath.substring(idx+1);
+        final Node parentNode = session.getNode(parentAbsPath);
+        final NodeIterator nodes = parentNode.getNodes(nodeName);
+        Node result = null;
+        while (nodes.hasNext()) {
+            result = nodes.nextNode();
+        }
+        return result;
     }
 
     /**
@@ -359,5 +386,6 @@ public class JcrUtils {
             return null;
         }
     }
+
 
 }

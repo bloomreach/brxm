@@ -252,6 +252,13 @@
 - hipposys:excluded (string) multiple
 - hipposys:location (string)
 
+[hipposys:shelf] > nt:base
++ * (nt:base) multiple
+
+[hipposys:restorable] mixin
+- hipposys:restorelocation (string)
+
+
 // REPOSITORY: CONFIGURATION ROOT
 
 [hipposys:configuration] > nt:base
@@ -268,3 +275,4 @@
 + hippo:queries (hipposys:queryfolder) = hipposys:queryfolder mandatory autocreated
 + hippo:security (hipposys:securityfolder) = hipposys:securityfolder
 + hippo:modules (hipposys:modulefolder) = hipposys:modulefolder
++ hippo:shelf (hipposys:shelf) = hipposys:shelf

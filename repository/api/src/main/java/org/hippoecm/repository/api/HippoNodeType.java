@@ -60,6 +60,8 @@ public interface HippoNodeType {
 
     public static final String LOG_PATH = "hippo:log";
 
+    public static final String SHELF_PATH = "hippo:shelf";
+
     public static final String NT_AUTHROLE = "hipposys:authrole";
 
     public static final String NT_CONFIGURATION = "hipposys:configuration";
@@ -169,6 +171,10 @@ public interface HippoNodeType {
     public static final String NT_WORKFLOWCATEGORY = "hipposys:workflowcategory";
 
     public static final String NT_WORKFLOWFOLDER = "hipposys:workflowfolder";
+
+    public static final String NT_RESTORABLE = "hipposys:restorable";
+
+    public static final String NT_SHELF = "hipposys:shelf";
 
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
@@ -368,4 +374,7 @@ public interface HippoNodeType {
     public static final String HIPPO_STATUS = "hippo:status";
 
     public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";
+
+    public static final String HIPPOSYS_RESTORELOCATION = "hipposys:restorelocation";
+
 }
