@@ -109,48 +109,48 @@ public class CXFJaxrsService extends AbstractJaxrsService {
     }
 
     protected synchronized ServletController getController(ServletContext servletContext) {
-		if (controller == null) {
-		    defaultBus = createBus();
-			ServletTransportFactory df = new ServletTransportFactory(defaultBus);
-			jaxrsServerFactoryBean.setDestinationFactory(df);
-			server = jaxrsServerFactoryBean.create();
-			controller = new ServletController(df, getJaxrsServletConfig(servletContext), servletContext, defaultBus);
+        if (controller == null) {
+            defaultBus = createBus();
+            ServletTransportFactory df = new ServletTransportFactory(defaultBus);
+            jaxrsServerFactoryBean.setDestinationFactory(df);
+            server = jaxrsServerFactoryBean.create();
+            controller = new ServletController(df, getJaxrsServletConfig(servletContext), servletContext, defaultBus);
             // guard against potential concurrency issue in cxf dynamic endpoint state management: HSTTWO-1663, CXF-2997
             controller.setDisableAddressUpdates(true);
-		}
-		else {
-			BusFactory.setThreadDefaultBus(defaultBus);
-		}
-		return controller;
-	}
-	
-	@Override
-	public void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response) throws ContainerException {
-		
-		try {
-			ServletController controller = getController(requestContext.getServletContext());
-			HttpServletRequest jaxrsRequest = getJaxrsRequest(requestContext, request); 
-			controller.invoke(jaxrsRequest, response);
-		} catch (ContainerException e) {
-		    throw e;
-		} catch (Throwable th) {
-			throw new ContainerException(th);
-		} finally {
-			BusFactory.setThreadDefaultBus(null);
-		}
-	}
-	
-	@Override
-    public void destroy() {
-	    if (server != null) {
-	        try {
-	            server.destroy();
-	        } catch (Exception e) {
-	            log.warn("Failed to destroy CXF JAXRS Server", e);
-	        }
-	    }
+        } else {
+            BusFactory.setThreadDefaultBus(defaultBus);
+        }
+        return controller;
+    }
 
-	    if (defaultBus != null) {
+    @Override
+    public void invoke(HstRequestContext requestContext, HttpServletRequest request, HttpServletResponse response)
+            throws ContainerException {
+
+        try {
+            ServletController controller = getController(requestContext.getServletContext());
+            HttpServletRequest jaxrsRequest = getJaxrsRequest(requestContext, request);
+            controller.invoke(jaxrsRequest, response);
+        } catch (ContainerException e) {
+            throw e;
+        } catch (Throwable th) {
+            throw new ContainerException(th);
+        } finally {
+            BusFactory.setThreadDefaultBus(null);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (server != null) {
+            try {
+                server.destroy();
+            } catch (Exception e) {
+                log.warn("Failed to destroy CXF JAXRS Server", e);
+            }
+        }
+
+        if (defaultBus != null) {
             try {
                 BusFactory.clearDefaultBusForAnyThread(defaultBus);
             } catch (Exception e) {
