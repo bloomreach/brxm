@@ -149,6 +149,11 @@
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
   
+  <!-- Listener that dispatches http session events to Spring. -->
+  <listener>
+    <listener-class>org.hippoecm.hst.site.container.HstSessionEventPublisher</listener-class>
+  </listener>
+
   <servlet>
     <servlet-name>HstSiteConfigServlet</servlet-name>
     <servlet-class>org.hippoecm.hst.site.container.HstSiteConfigServlet</servlet-class>
