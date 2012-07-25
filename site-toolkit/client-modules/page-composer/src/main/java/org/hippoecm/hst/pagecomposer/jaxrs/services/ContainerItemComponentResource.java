@@ -365,11 +365,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         }
 
         // mark the container for restoration
-        final Node container = node.getParent();
-        if (!container.isNodeType(HippoNodeType.NT_RESTORABLE)) {
-            container.addMixin(HippoNodeType.NT_RESTORABLE);
-            container.setProperty(HippoNodeType.HIPPOSYS_RESTOREBEHAVIOR, "replace");
-        }
+        ensureRestorable(node.getParent());
 
         node.getSession().save();
 

@@ -207,14 +207,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
         return ok("Successfully removed node with UUID: " + itemUUID);
     }
 
-
-    private void ensureRestorable(final Node containerNode) throws RepositoryException {
-        if (!containerNode.isNodeType(HippoNodeType.NT_RESTORABLE)) {
-            containerNode.addMixin(HippoNodeType.NT_RESTORABLE);
-            containerNode.setProperty(HippoNodeType.HIPPOSYS_RESTOREBEHAVIOR, "replace");
-        }
-    }
-
     private String findNewName(String base, Node parent) throws RepositoryException {
         String newName = base;
         int counter = 0;
