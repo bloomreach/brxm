@@ -23,9 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HstConfigurationEventListener extends GenericEventListener implements EventListenersContainerListener {
-    
-    static Logger log = LoggerFactory.getLogger(HstConfigurationEventListener.class);
-    
+
     protected HstManager hstManager;
     
     public void setHstManager(HstManager hstManager) {

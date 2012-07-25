@@ -29,6 +29,8 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This abstract class can be used if the events need to be processed asynchronous.
@@ -40,10 +42,13 @@ import org.hippoecm.hst.site.HstServices;
  * {@link #onAsynchronousEvent(EventIterator)} yourself : This method is invoked with a different Thread and with a jcr {@link EventIterator} which 
  * is detached from the repository containing {@link Event}s which are detached from the repository
  * 
- * @deprecated Hippo Repository creates asynchronous observer by default since 2.23.05. So, this wouldn't be used any more.
+ * @deprecated Hippo Repository creates asynchronous observer by default since 2.23.05. Your custom eventListener implementation 
+ * can now just extend {@link GenericEventListener} directly. Do not extend from this {@link AsynchronousDispatchingEventListener} any more
  */
 public abstract class AsynchronousDispatchingEventListener extends GenericEventListener {
-   
+    
+    static Logger log = LoggerFactory.getLogger(AsynchronousDispatchingEventListener.class);
+
     /**
      * The service that will execute the {@link AsynchronousEventDispatcher}
      */
@@ -53,6 +58,7 @@ public abstract class AsynchronousDispatchingEventListener extends GenericEventL
      * Creates a AsynchronousDispatchingEventListener where the ExecutorService is a single threaded executor
      */
     public AsynchronousDispatchingEventListener() {
+        log.warn("{} extends from AsynchronousDispatchingEventListener which has been deprecated. Extend from GenericEventListener instead", getClass().getName());
         this.executor = Executors.newSingleThreadExecutor();
     }
     
