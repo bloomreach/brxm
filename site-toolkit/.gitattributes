@@ -535,6 +535,8 @@ components/core/src/main/java/org/hippoecm/hst/site/container/BlockingEhCacheFac
 components/core/src/main/java/org/hippoecm/hst/site/container/ComponentManagerFacade.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/DefaultComponentManagerApplicationContext.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/FilteringByExpressionListableBeanFactory.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/HstSessionEventListener.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/HstSessionEventPublisher.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/HstSiteConfigServlet.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/ModuleDescriptorUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/OverridingByAttributesPropertyPlaceholderConfigurer.java svneol=native#text/plain
@@ -562,6 +564,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-container.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml -text svneol=unset#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml svneol=native#text/plain
+components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-httpevents.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-jcr.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-jmx.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml svneol=native#text/plain
