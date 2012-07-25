@@ -257,7 +257,8 @@
 
 [hipposys:restorable] mixin
 - hipposys:restorelocation (string)
-
+- hipposys:restorebehavior (string) < 'replace'
+- hipposys:restorationfailuremessage (string)
 
 // REPOSITORY: CONFIGURATION ROOT
 

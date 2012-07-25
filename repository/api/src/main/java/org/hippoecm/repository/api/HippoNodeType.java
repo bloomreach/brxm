@@ -377,4 +377,8 @@ public interface HippoNodeType {
 
     public static final String HIPPOSYS_RESTORELOCATION = "hipposys:restorelocation";
 
+    public static final String HIPPOSYS_RESTOREBEHAVIOR = "hipposys:restorebehavior";
+
+    public static final String HIPPOSYS_RESTORATIONFAILUREMESSAGE = "hipposys:restorationfailuremessage";
+
 }
