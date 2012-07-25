@@ -42,9 +42,11 @@ import org.slf4j.LoggerFactory;
  * {@link #onAsynchronousEvent(EventIterator)} yourself : This method is invoked with a different Thread and with a jcr {@link EventIterator} which 
  * is detached from the repository containing {@link Event}s which are detached from the repository
  * 
- * @deprecated Hippo Repository creates asynchronous observer by default since 2.23.05. Your custom eventListener implementation 
- * can now just extend {@link GenericEventListener} directly. Do not extend from this {@link AsynchronousDispatchingEventListener} any more
+ * @deprecated Hippo Repository creates asynchronous observer by default since 2.25.05. Your custom eventListener implementation
+ * can now just extend {@link GenericEventListener} directly and rename {@link #onAsynchronousEvent(javax.jcr.observation.EventIterator)} to {@link #onEvent(javax.jcr.observation.EventIterator)}. Do not extend from this {@link AsynchronousDispatchingEventListener} any more
+ * @see GenericEventListener
  */
+@Deprecated
 public abstract class AsynchronousDispatchingEventListener extends GenericEventListener {
     
     static Logger log = LoggerFactory.getLogger(AsynchronousDispatchingEventListener.class);
