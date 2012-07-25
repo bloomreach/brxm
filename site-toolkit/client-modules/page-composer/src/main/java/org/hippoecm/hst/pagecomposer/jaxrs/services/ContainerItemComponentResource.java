@@ -49,6 +49,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -298,7 +299,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         } catch (IllegalStateException e) {
             return error(e.getMessage());
         }
-        // now get the map of parameters for the current 'prefix' as those are the once we will change
+        // now get the map of parameters for the current 'prefix' as those are the ones we will change
         Map<String, String> prefixedParameters = hstParameters.get(prefix);
         if (prefixedParameters == null) {
             prefixedParameters = new HashMap<String, String>();
@@ -362,8 +363,15 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             node.setProperty(HST_PARAMETERNAMES, names.toArray(new String[names.size()]));
             node.setProperty(HST_PARAMETERVALUES, values.toArray(new String[values.size()]));
         }
-        node.getSession().save();
 
+        // mark the container for restoration
+        final Node container = node.getParent();
+        if (!container.isNodeType(HippoNodeType.NT_RESTORABLE)) {
+            container.addMixin(HippoNodeType.NT_RESTORABLE);
+            container.setProperty(HippoNodeType.HIPPOSYS_RESTOREBEHAVIOR, "replace");
+        }
+
+        node.getSession().save();
 
         return ok("Properties saved successfully.", null);
     }

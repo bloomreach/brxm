@@ -45,6 +45,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PostRepresentation;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,6 +92,8 @@ public class ContainerComponentResource extends AbstractConfigResource {
             session.getWorkspace().copy(containerItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
             Node newItem = containerNode.getNode(newItemNodeName);
 
+            ensureRestorable(containerNode);
+
             // now save the container node
             session.save();
 
@@ -114,11 +117,11 @@ public class ContainerComponentResource extends AbstractConfigResource {
     public Response updateContainer(@Context HttpServletRequest servletRequest,
                                     @Context HttpServletResponse servletResponse,
                                     @PathParam("itemUUID") String itemUUID, String json) {
-        
+
         // TODO Instead of 'String json' in the argument it should be possible to have: ContainerRepresentation presentation
         // It should be possible to automatically bind to ContainerRepresentation. Also, I don't think we need a Gson dependency here
         // See HSTTWO-1823
-        
+
         Type type = new TypeToken<PostRepresentation<ContainerRepresentation>>() {}.getType();
         PostRepresentation<ContainerRepresentation> pr = new Gson().fromJson(json, type);
         ContainerRepresentation container = pr.getData();
@@ -135,12 +138,12 @@ public class ContainerComponentResource extends AbstractConfigResource {
                         checkIfMoveIntended(containerNode, childId, session);
                     }
                     int index = childCount - 1;
-             
+
                     while (index > -1) {
                         String childId = children.get(index);
                         Node childNode = session.getNodeByIdentifier(childId);
                         String nodeName = childNode.getName();
-        
+
                         int next = index + 1;
                         if (next == childCount) {
                             containerNode.orderBefore(nodeName, null);
@@ -154,6 +157,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                     return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
                 }
             }
+            ensureRestorable(containerNode);
             session.save();
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);
 
@@ -167,7 +171,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
         }
     }
 
-
     @GET
     @Path("/delete/{itemUUID}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -177,13 +180,20 @@ public class ContainerComponentResource extends AbstractConfigResource {
         HstRequestContext requestContext = getRequestContext(servletRequest);
         try {
             Session session = requestContext.getSession();
-            Node node;
+            Node containerItem;
             try {
-                node = session.getNodeByIdentifier(itemUUID);
+                containerItem = session.getNodeByIdentifier(itemUUID);
             } catch (ItemNotFoundException e) {
                 return error("ItemNotFoundException: unknown uuid '"+itemUUID+"'. Cannot delete item");
             }
-            node.remove();
+            if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                return error("The item to be deleted is not of the correct type. Cannot delete item '"+itemUUID+"'");
+            }
+
+            final Node containerNode = getRequestConfigNode(requestContext);
+            ensureRestorable(containerNode);
+
+            containerItem.remove();
             session.save();
         } catch (RepositoryException e) {
             if(log.isDebugEnabled()) {
@@ -195,6 +205,14 @@ public class ContainerComponentResource extends AbstractConfigResource {
             return error("Failed  to delete node with id '"+itemUUID+"': " + e.getMessage());
         }
         return ok("Successfully removed node with UUID: " + itemUUID);
+    }
+
+
+    private void ensureRestorable(final Node containerNode) throws RepositoryException {
+        if (!containerNode.isNodeType(HippoNodeType.NT_RESTORABLE)) {
+            containerNode.addMixin(HippoNodeType.NT_RESTORABLE);
+            containerNode.setProperty(HippoNodeType.HIPPOSYS_RESTOREBEHAVIOR, "replace");
+        }
     }
 
     private String findNewName(String base, Node parent) throws RepositoryException {
