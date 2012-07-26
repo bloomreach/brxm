@@ -24,8 +24,6 @@ import org.apache.wicket.markup.html.WebPage;
  * @author Jettro Coenradie
  */
 public class MyHomePage extends WebPage {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     public MyHomePage() {
     }

@@ -21,8 +21,6 @@ import java.util.regex.Pattern;
 //TODO: remove
 @Deprecated
 public class JavascriptUtil {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static final String SINGLE_QUOTE = "'";
 

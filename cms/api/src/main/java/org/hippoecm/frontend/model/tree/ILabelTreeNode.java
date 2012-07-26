@@ -18,7 +18,6 @@ package org.hippoecm.frontend.model.tree;
 import javax.swing.tree.TreeNode;
 
 public interface ILabelTreeNode extends TreeNode {
-    final static String SVN_ID = "$Id$";
 
     String getLabel();
 }

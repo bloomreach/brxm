@@ -22,8 +22,6 @@ import org.hippoecm.frontend.plugins.yui.JsFunction;
 import java.util.Map;
 
 public class AjaxSettings extends YuiObject implements IAjaxSettings {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

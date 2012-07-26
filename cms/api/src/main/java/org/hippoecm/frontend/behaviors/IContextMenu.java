@@ -22,7 +22,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
  * Class that implements this interface should be able to do one thing: close a visible contextmenu
  */
 public interface IContextMenu extends IClusterable {
-    final static String SVN_ID = "$Id$";
     
     /**
      * Close the contextmenu  

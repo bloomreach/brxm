@@ -22,8 +22,6 @@ import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.apache.wicket.protocol.http.portlet.PortletRequestContext;
 
 public class RichTextUtil {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static final String encode(String path) {
         String[] elements = StringUtils.split(path, '/');

@@ -48,8 +48,6 @@ import java.util.Map;
  */
 
 public abstract class AbstractYuiAjaxBehavior extends AbstractDefaultAjaxBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

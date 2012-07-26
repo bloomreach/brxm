@@ -45,8 +45,6 @@ import static org.junit.Assert.assertFalse;
  * Tests for {@link org.hippoecm.frontend.model.PropertyValueProvider}
  */
 public class PropertyValueProviderTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     private static final String TEST_NODE_NAME = "test";
 
     protected Value createValue(String value) throws UnsupportedRepositoryOperationException, RepositoryException {

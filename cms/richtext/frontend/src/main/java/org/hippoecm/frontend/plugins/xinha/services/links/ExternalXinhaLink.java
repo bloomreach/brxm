@@ -25,8 +25,6 @@ import org.apache.wicket.util.string.Strings;
 public class ExternalXinhaLink extends XinhaLink {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static final List<String> PROTOCOLS = Arrays.asList("http://", "https://", "mailto:", "ftp://");
 

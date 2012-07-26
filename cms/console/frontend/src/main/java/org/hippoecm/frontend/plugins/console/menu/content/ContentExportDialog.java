@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 public class ContentExportDialog extends AbstractDialog<Node> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     private static final Logger log = LoggerFactory.getLogger(ContentExportDialog.class);
     private static final long serialVersionUID = 1L;
 

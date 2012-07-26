@@ -30,7 +30,6 @@ import org.apache.wicket.model.IDetachable;
  * @param <T> the service interface of the referenced service
  */
 public interface IServiceReference<T extends IClusterable> extends IDetachable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The referenced service.

@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.util;
 
 public class MappingTestBean {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private int testInt;
     private boolean testBool;

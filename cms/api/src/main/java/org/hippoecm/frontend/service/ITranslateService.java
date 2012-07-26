@@ -20,7 +20,6 @@ import java.util.Map;
 import org.apache.wicket.IClusterable;
 
 public interface ITranslateService extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     String TRANSLATOR_ID = "translator.id";
 

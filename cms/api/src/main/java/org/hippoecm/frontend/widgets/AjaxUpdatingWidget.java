@@ -26,8 +26,6 @@ import org.apache.wicket.util.time.Duration;
 
 public abstract class AjaxUpdatingWidget<T> extends Panel {
     private static final long serialVersionUID = 1L;
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private FormComponent<? extends T> focus;
     private Duration throttleDelay;

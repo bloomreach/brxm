@@ -19,7 +19,6 @@ package org.hippoecm.repository.translation;
  * Node types used by content localization.
  */
 public interface HippoTranslationNodeType {
-    final static String SVN_ID = "$Id$";
 
     String NS = "http://www.onehippo.org/jcr/hippotranslation/nt/1.0";
     

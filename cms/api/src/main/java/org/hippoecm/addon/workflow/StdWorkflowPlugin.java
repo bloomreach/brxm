@@ -35,8 +35,6 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
 class StdWorkflowPlugin extends Panel {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     StdWorkflowPlugin(String id, WorkflowDescriptorModel model) {
         super(id, model);

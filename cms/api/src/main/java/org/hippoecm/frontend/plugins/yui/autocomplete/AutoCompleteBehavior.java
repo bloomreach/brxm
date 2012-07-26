@@ -25,8 +25,6 @@ import org.hippoecm.frontend.plugins.yui.header.templates.HippoTextTemplate;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiObject;
 
 public abstract class AutoCompleteBehavior extends AbstractYuiAjaxBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

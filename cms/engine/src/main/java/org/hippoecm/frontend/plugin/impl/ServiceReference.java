@@ -21,8 +21,6 @@ import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.IServiceReference;
 
 public class ServiceReference<T extends IClusterable> implements IServiceReference<T> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

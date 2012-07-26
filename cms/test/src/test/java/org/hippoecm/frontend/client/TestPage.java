@@ -18,7 +18,5 @@ package org.hippoecm.frontend.client;
 import org.apache.wicket.markup.html.WebPage;
 
 abstract public class TestPage extends WebPage  {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
 }

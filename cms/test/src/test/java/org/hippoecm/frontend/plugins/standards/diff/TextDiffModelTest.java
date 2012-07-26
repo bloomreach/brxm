@@ -22,8 +22,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class TextDiffModelTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Test
     public void testTextDiffModel() {

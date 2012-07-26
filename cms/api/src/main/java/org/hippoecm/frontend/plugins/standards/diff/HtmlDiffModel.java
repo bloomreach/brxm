@@ -31,8 +31,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 public class HtmlDiffModel extends LoadableDetachableModel<String> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -53,8 +53,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 
 public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflow {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

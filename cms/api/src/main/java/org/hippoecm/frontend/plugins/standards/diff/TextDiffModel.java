@@ -21,8 +21,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 public class TextDiffModel extends LoadableDetachableModel<String> {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     TextDiffer differ = new TextDiffer();
 

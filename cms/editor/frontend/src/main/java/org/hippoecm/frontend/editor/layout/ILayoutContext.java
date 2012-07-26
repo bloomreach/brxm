@@ -21,7 +21,6 @@ import org.apache.wicket.IClusterable;
  * Interface for layout aware services to control their position.
  */
 public interface ILayoutContext extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The layout pad for the layout aware service.

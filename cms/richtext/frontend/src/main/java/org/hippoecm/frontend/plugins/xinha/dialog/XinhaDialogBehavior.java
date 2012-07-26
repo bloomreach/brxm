@@ -29,8 +29,6 @@ import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin;
 public abstract class XinhaDialogBehavior extends AbstractDefaultAjaxBehavior {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private final IPluginContext context;
     private final IPluginConfig config;

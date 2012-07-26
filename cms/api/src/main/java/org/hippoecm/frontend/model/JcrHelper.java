@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
  * Helper class for common jcr operations
  */
 public class JcrHelper {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(JcrHelper.class);
     

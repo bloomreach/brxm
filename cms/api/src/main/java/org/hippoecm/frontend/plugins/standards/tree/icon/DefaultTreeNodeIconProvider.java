@@ -24,8 +24,6 @@ import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
 import org.hippoecm.frontend.service.IconSize;
 
 public class DefaultTreeNodeIconProvider extends AbstractJcrTreeNodeIconProvider {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

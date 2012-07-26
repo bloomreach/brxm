@@ -28,8 +28,6 @@ import org.hippoecm.repository.api.StringCodecFactory.UriEncoding;
 import org.junit.Test;
 
 public class CopyNameHelperTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     @Test
     public void testFirst() throws RepositoryException {

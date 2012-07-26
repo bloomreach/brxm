@@ -36,8 +36,6 @@ import java.util.Map;
  * already existing wireframe).  
  */
 public class UnitBehavior extends AbstractBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

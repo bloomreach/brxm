@@ -22,8 +22,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 
 class MenuSpacer extends Panel {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

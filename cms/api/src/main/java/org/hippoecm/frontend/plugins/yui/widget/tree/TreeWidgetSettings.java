@@ -3,8 +3,6 @@ package org.hippoecm.frontend.plugins.yui.widget.tree;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 
 public class TreeWidgetSettings extends WidgetSettings {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     //nicer names..
 //    private String setWidthToElementWithClassname;

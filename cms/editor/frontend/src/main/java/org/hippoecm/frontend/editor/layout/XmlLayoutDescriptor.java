@@ -47,8 +47,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class XmlLayoutDescriptor implements ILayoutDescriptor {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

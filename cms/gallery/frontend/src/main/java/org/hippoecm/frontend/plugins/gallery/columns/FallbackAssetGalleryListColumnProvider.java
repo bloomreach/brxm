@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FallbackAssetGalleryListColumnProvider implements IListColumnProvider {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(FallbackAssetGalleryListColumnProvider.class);
 

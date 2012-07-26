@@ -23,7 +23,6 @@ package org.hippoecm.frontend.model.event;
  * They are received by observers in their {@link IObserver#onEvent(java.util.Iterator)} method.
  */
 public interface IEvent<T extends IObservable> {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The {@link IObservable} that generated the event.

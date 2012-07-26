@@ -72,8 +72,6 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.frontend.util.WebApplicationHelper.PLUGIN_APPLICATION_NAME_PARAMETER;
 
 public class Main extends WebApplication {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(Main.class);
 

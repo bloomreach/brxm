@@ -28,8 +28,6 @@ import org.hippoecm.frontend.plugins.xinha.services.links.XinhaLinkService;
 public class InternalLinkBehavior extends XinhaDialogBehavior {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private XinhaLinkService linkService;
     private boolean newWindowDisabled;

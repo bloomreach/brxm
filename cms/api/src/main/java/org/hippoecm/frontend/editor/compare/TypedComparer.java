@@ -21,8 +21,6 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
  * Compares two objects for equality based on their content.
  */
 public abstract class TypedComparer<T> implements IComparer<T> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

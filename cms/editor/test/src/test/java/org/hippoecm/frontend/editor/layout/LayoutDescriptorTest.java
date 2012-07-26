@@ -26,8 +26,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class LayoutDescriptorTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     /**
      * verify the parsing of the layout.xml file

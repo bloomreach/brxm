@@ -24,7 +24,6 @@ import org.hippoecm.frontend.model.event.IObservable;
  * The field descriptor contains the meta information of a field in a type.
  */
 public interface IFieldDescriptor extends IClusterable, IObservable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Symbolic name of the field.

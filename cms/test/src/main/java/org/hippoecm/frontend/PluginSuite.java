@@ -27,8 +27,6 @@ import javax.jcr.RepositoryException;
 import java.io.File;
 
 public class PluginSuite extends Suite {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: PluginSuite.java 26868 2011-02-08 09:35:19Z fvlankvelt $";
 
     static final Logger log = LoggerFactory.getLogger(PluginSuite.class);
     

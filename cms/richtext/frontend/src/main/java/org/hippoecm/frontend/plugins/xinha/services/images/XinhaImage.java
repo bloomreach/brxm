@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 public abstract class XinhaImage extends DocumentLink {
     private static final long serialVersionUID = 1L;
 
-    final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(XinhaImage.class);
 

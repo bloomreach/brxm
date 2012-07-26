@@ -48,8 +48,6 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
 public class ObservationTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private final class TestWriter implements Runnable {
         volatile boolean stop = false;

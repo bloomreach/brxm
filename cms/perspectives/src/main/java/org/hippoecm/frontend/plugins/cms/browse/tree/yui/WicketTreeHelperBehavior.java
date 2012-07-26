@@ -23,8 +23,6 @@ import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 public abstract class WicketTreeHelperBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
     
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$"; 
   
     WicketTreeHelperSettings settings;
     

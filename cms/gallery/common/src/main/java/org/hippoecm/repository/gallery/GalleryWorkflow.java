@@ -25,8 +25,6 @@ import org.hippoecm.repository.api.Document;
 
 public interface GalleryWorkflow extends Workflow
 {
-    @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
 
     public List<String> getGalleryTypes() throws RemoteException, RepositoryException;
     public Document createGalleryItem(String name, String type) throws RemoteException, RepositoryException;

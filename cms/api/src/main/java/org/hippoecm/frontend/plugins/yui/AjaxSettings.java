@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.yui;
 import java.util.Map;
 
 public class AjaxSettings implements IAjaxSettings {
-    final static String SVN_ID = "$Id$";
 
     private String callbackUrl;
     private JsFunction callbackFunction;

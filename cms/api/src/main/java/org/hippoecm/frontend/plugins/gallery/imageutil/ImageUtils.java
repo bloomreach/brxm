@@ -48,8 +48,6 @@ import org.imgscalr.Scalr;
  * Generic image manipulation utility methods.
  */
 public class ImageUtils {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     /**
      * The available strategies for scaling images.

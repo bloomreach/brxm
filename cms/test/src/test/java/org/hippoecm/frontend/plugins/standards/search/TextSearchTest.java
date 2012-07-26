@@ -34,8 +34,6 @@ import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.junit.Test;
 
 public class TextSearchTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     String[] content = {
         "/test", "nt:unstructured",

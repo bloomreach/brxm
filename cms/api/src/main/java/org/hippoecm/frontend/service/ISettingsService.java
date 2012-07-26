@@ -22,7 +22,6 @@ import org.hippoecm.repository.api.StringCodecFactory;
  * The settings service provides plugin access to global settings and factories.
  */
 public interface ISettingsService extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     String SERVICE_ID = "service.settings";
 

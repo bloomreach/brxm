@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.model.ocm;
 
 public class StoreException extends Exception {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

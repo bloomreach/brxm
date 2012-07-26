@@ -14,8 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FallbackImageGalleryListColumnProvider implements IListColumnProvider {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public IHeaderContributor getHeaderContributor() {
         return null;

@@ -19,8 +19,6 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 public class MimeTypeComparator extends PropertyComparator {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     public MimeTypeComparator(String prop) {

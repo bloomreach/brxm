@@ -22,8 +22,6 @@ import org.hippoecm.frontend.plugins.yui.javascript.StringSetting;
 import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 
 public class DragSettings extends DragDropSettings {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

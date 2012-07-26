@@ -25,8 +25,6 @@ import org.hippoecm.frontend.PluginTest;
 import org.junit.Test;
 
 public class JcrHelperTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Test
     public void primaryItemIsFound() throws RepositoryException {

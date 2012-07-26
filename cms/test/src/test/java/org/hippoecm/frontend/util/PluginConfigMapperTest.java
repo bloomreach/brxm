@@ -21,8 +21,6 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.junit.Test;
 
 public class PluginConfigMapperTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testEmpty() throws MappingException {

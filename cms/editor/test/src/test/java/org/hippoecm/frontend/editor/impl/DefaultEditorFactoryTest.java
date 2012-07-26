@@ -54,8 +54,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 public class DefaultEditorFactoryTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static final String EDITORS = "editors";
     static final String PREVIEWS = "previews";

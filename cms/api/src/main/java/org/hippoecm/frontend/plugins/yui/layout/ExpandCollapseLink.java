@@ -23,8 +23,6 @@ import org.apache.wicket.behavior.IBehavior;
 
 public class ExpandCollapseLink<T> extends AjaxLink<T> {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private Boolean hasExpandableParent;
 

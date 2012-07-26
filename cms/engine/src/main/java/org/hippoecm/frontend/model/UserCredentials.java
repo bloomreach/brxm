@@ -29,8 +29,6 @@ import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 import org.hippoecm.frontend.session.LoginException;
 
 public class UserCredentials {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private Credentials credentials = null;
     private String username = "";

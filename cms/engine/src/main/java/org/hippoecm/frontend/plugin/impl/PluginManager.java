@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unchecked")
 public class PluginManager implements IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

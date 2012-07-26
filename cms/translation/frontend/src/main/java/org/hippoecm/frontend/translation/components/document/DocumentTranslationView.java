@@ -39,8 +39,6 @@ import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 @ExtClass("Hippo.Translation.Document")
 public class DocumentTranslationView extends ExtPanel {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

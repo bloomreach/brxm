@@ -31,8 +31,6 @@ import javax.jcr.query.QueryResult;
 import java.util.StringTokenizer;
 
 public class TextSearchBuilder implements IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

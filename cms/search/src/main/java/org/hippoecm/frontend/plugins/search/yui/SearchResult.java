@@ -19,8 +19,6 @@ package org.hippoecm.frontend.plugins.search.yui;
  * Helper bean for an easy jcr-nodes2JSON translation
  */
 public class SearchResult {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private ResultItem[] results;
     private int totalHits;

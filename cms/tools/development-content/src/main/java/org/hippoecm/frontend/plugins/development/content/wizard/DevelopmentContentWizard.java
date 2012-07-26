@@ -48,8 +48,6 @@ import java.util.List;
 public abstract class DevelopmentContentWizard extends AjaxWizard {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     IPluginConfig config;
     IPluginContext context;

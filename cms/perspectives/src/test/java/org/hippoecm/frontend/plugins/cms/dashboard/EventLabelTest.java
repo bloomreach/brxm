@@ -34,8 +34,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 public class EventLabelTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static class TestLabel extends Label {
         private static final long serialVersionUID = 1L;

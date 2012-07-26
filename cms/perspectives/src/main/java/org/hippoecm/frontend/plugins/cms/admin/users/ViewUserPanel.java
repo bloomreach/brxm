@@ -36,8 +36,6 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 
 public class ViewUserPanel extends AdminBreadCrumbPanel {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     private final IModel<User> model;

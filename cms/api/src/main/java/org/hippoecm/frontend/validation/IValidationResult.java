@@ -24,7 +24,6 @@ import org.apache.wicket.model.IDetachable;
  * what fields are invalid.
  */
 public interface IValidationResult extends IDetachable {
-    final static String SVN_ID = "$Id$";
 
     Set<Violation> getViolations();
 

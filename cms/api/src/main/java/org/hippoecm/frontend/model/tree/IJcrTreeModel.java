@@ -21,7 +21,6 @@ import javax.swing.tree.TreePath;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public interface IJcrTreeModel extends TreeModel {
-    final static String SVN_ID = "$Id$";
 
     TreePath lookup(JcrNodeModel model);
 }

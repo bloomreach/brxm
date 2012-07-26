@@ -53,8 +53,6 @@ import org.slf4j.LoggerFactory;
 public class CreateUserPanel extends AdminBreadCrumbPanel {
     private static final String UNUSED = "unused";
 
-    @SuppressWarnings(UNUSED)
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CreateUserPanel.class);

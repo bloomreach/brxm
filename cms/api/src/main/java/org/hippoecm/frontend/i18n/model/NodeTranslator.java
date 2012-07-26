@@ -51,8 +51,6 @@ import org.slf4j.LoggerFactory;
  * is present or the node doesn't exist, the last element of the node path is returned.
  */
 public class NodeTranslator extends NodeModelWrapper<NodeTranslator> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     final static Logger log = LoggerFactory.getLogger(NodeTranslator.class);
 

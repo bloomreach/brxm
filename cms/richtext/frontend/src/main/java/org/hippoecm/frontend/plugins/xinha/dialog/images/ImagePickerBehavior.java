@@ -25,8 +25,6 @@ import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImage;
 import org.hippoecm.frontend.plugins.xinha.services.images.XinhaImageService;
 
 public class ImagePickerBehavior extends XinhaDialogBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

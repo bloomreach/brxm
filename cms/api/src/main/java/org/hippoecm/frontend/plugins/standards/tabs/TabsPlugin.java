@@ -75,9 +75,6 @@ import org.slf4j.LoggerFactory;
  * </ul>
  */
 public class TabsPlugin extends RenderPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(TabsPlugin.class);
@@ -635,9 +632,6 @@ public class TabsPlugin extends RenderPlugin {
     }
 
     private static class OnCloseDialog extends AbstractDialog {
-        @SuppressWarnings("unused")
-        private final static String SVN_ID = "$Id$";
-
         private static final long serialVersionUID = 1L;
 
         static final Logger log = LoggerFactory.getLogger(OnCloseDialog.class);

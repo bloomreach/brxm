@@ -18,8 +18,6 @@ package org.hippoecm.frontend.editor.workflow.dialog;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 
 public final class CancelLink extends AbstractWizardLink {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     public CancelLink(String id, RemodelWizard wizard) {

@@ -74,8 +74,6 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends RenderPlugin<WorkflowDescriptor> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: AbstractWorkflowPlugin.java 16815 2009-03-11 16:09:10Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 

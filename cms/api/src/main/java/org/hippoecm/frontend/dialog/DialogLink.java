@@ -24,8 +24,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 
 public class DialogLink extends Panel {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     protected AjaxLink link;

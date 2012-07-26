@@ -21,8 +21,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import java.io.Serializable;
 
 public class JsFunction implements Serializable {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private String function;
 

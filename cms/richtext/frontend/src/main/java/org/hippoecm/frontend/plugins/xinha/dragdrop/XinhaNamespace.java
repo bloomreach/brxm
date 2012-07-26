@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugins.xinha.dragdrop;
 import org.onehippo.yui.YuiNamespace;
 
 public class XinhaNamespace implements YuiNamespace {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static final XinhaNamespace NS = new XinhaNamespace();
 

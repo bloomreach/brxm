@@ -18,8 +18,6 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
 
 public class SearchListColumnProviderPlugin extends AbstractListColumnProviderPlugin {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public SearchListColumnProviderPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);

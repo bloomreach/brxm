@@ -13,8 +13,6 @@ import javax.jcr.RepositoryException;
 import java.io.Serializable;
 
 public abstract class PropertyRenderer<T extends Serializable> extends AbstractNodeRenderer {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private String prop;
     private String relPath;

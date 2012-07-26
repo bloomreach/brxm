@@ -139,8 +139,6 @@ import net.sf.json.JsonConfig;
 public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWireframe {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private final PackagedTextTemplate behaviorJs = new PackagedTextTemplate(WireframeBehavior.class,
             "add_wireframe.js");

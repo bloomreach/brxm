@@ -22,8 +22,6 @@ import org.hippoecm.frontend.dialog.AbstractDialog;
 class TooManyEditorsDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     TooManyEditorsDialog() {
         setCancelVisible(false);

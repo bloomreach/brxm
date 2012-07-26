@@ -20,8 +20,6 @@ import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 
 public abstract class PanelPluginBreadCrumbPanel extends BreadCrumbPanel implements IPanelPluginParticipant {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: PanelPluginBreadCrumbPanel.java 19365 2009-08-24 16:47:23Z bvdschans $";
     private static final long serialVersionUID = 1L;
 
     private FeedbackPanel feedback;

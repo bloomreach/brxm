@@ -22,8 +22,6 @@ import org.apache.wicket.extensions.wizard.Wizard;
 public class AjaxWizard extends Wizard {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public AjaxWizard(String id, boolean addDefaultCssStyle) {
         super(id, addDefaultCssStyle);

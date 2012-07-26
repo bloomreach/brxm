@@ -39,8 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrFieldDescriptor extends JcrObject implements IFieldDescriptor {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: JcrFieldDescriptor.java 19407 2009-08-26 10:44:37Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 

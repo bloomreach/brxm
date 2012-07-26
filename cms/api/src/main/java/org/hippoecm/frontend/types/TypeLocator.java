@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
  * It should not be used by store implementations.
  */
 public class TypeLocator implements ITypeLocator {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

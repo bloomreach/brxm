@@ -28,7 +28,6 @@ import org.hippoecm.frontend.service.ITitleDecorator;
  * their "wicket.id" service name.
  */
 public interface IBrowserSection extends IRenderService, ITitleDecorator {
-    final static String SVN_ID = "$Id$";
 
     class Match {
         private int distance;

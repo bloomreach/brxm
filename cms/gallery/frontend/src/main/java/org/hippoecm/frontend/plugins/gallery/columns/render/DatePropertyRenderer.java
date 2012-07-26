@@ -5,8 +5,6 @@ import javax.jcr.RepositoryException;
 import java.util.Date;
 
 public class DatePropertyRenderer extends PropertyRenderer<Date> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public DatePropertyRenderer(String prop) {
         super(prop);

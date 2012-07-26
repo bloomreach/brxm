@@ -23,7 +23,6 @@ import org.hippoecm.frontend.PluginRequestTarget;
  * The service interface that is used to create {@link Component} hierarchies.
  */
 public interface IRenderService extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The Wicket {@link Component} that is added to the parent.  The component

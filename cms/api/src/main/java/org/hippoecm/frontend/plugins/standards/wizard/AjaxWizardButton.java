@@ -26,8 +26,6 @@ import org.apache.wicket.model.ResourceModel;
 public abstract class AjaxWizardButton extends AjaxButton {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private final IWizard wizard;
 

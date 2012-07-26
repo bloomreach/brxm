@@ -25,8 +25,6 @@ import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
  * an {@link IPluginConfig} instance with name "yui.config" from the provided {@link IPluginConfig} parent.  
  */
 public class YuiPluginHelper {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
 
     private static final String SERVICE_ID = "service.behavior.yui";

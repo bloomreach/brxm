@@ -18,8 +18,6 @@ package org.hippoecm.frontend.editor.layout;
 import org.apache.wicket.model.IModel;
 
 class ClassLoaderModel implements IModel {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public Object getObject() {
         return getClass().getClassLoader();

@@ -33,8 +33,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 public class LinkPickerDialog extends AbstractDialog<String> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

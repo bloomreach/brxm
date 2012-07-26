@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTreeNode {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(JcrTreeNode.class);
 

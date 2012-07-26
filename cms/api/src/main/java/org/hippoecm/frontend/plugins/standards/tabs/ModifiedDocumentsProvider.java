@@ -28,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class ModifiedDocumentsProvider implements ISortableDataProvider {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ReferringDocumentsProvider.java 23894 2010-09-09 16:09:43Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 

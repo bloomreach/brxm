@@ -51,8 +51,6 @@ import org.slf4j.LoggerFactory;
  * equal to the original.</p>
  */
 public class ScaleImageOperation extends AbstractImageOperation {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(ScaleImageOperation.class);
     private static final Object scalingLock = new Object();

@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
  * initialize additional properties and the other resource child nodes.
  */
 public abstract class AbstractGalleryProcessor implements GalleryProcessor {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     protected static final String MIMETYPE_IMAGE_PREFIX = "image";
 

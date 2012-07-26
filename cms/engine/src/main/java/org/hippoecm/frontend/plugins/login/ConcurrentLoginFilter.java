@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 public class ConcurrentLoginFilter implements Filter {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     final private static String ATTRIBUTE_SESSIONMATCH = ConcurrentLoginFilter.class.getName() + ".match";
 

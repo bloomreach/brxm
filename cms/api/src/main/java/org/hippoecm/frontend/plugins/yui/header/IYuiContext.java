@@ -33,7 +33,6 @@ import org.onehippo.yui.YuiNamespace;
  * minimize the response footprint.  
  */
 public interface IYuiContext extends IHeaderContributor {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Load YUI module from the {@link org.onehippo.yui.YahooNamespace} context

@@ -42,8 +42,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class TwoColumnTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     String[] content = {
             "/test", "nt:unstructured",

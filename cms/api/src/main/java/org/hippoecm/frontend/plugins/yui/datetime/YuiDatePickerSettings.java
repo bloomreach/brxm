@@ -21,8 +21,6 @@ import java.io.Serializable;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
 public class YuiDatePickerSettings implements Serializable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
     public static final String DEFAULT_DATE_PATTERN = "M/d/yyyy";
 

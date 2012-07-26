@@ -24,8 +24,6 @@ import java.util.List;
  * of siblings; all requests for the node will return the edited instance.
  */
 public class EditedT9Tree extends T9Tree {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private final T9Tree upstream;
     private final T9Node editedNode;

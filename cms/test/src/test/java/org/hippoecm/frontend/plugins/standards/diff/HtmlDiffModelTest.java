@@ -35,8 +35,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class HtmlDiffModelTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private HippoTester tester;
 

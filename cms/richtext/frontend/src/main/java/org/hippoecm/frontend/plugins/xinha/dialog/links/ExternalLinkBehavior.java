@@ -27,8 +27,6 @@ import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 public class ExternalLinkBehavior extends XinhaDialogBehavior {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public ExternalLinkBehavior(IPluginContext context, IPluginConfig config) {
         super(context, config);

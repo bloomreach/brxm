@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
 
 public class JcrObservationManager implements ObservationManager {
     
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private final static Logger log = LoggerFactory.getLogger(JcrObservationManager.class);
     private final static JcrObservationManager INSTANCE = new JcrObservationManager();
 

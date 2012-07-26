@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugin.config;
 import org.hippoecm.frontend.model.event.IEvent;
 
 public class PluginConfigEvent implements IEvent<IPluginConfig> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public enum EventType {
         CONFIG_CHANGED,

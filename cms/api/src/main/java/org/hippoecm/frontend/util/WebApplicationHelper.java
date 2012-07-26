@@ -30,8 +30,6 @@ public class WebApplicationHelper {
     public static final String HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME = "hal";
     public static final String REMEMBERME_COOKIE_BASE_NAME = "rememberme";
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private WebApplicationHelper() {
     }

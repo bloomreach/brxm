@@ -65,8 +65,6 @@ import org.slf4j.LoggerFactory;
  * @see {@link ScalingGalleryProcessor}
  */
 public class ScalingGalleryProcessorPlugin extends Plugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ScalingGalleryProcessorPlugin.class);

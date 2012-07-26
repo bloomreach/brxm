@@ -24,8 +24,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class JCRHtmlCleanerTemplateBuilder {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static final String HTMLCLEANER_PREFIX = "hippohtmlcleaner:";
     public static final String CLEANUP = HTMLCLEANER_PREFIX + "cleanup";

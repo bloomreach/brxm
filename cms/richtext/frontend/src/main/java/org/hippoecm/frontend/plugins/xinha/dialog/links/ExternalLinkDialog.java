@@ -38,8 +38,6 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 public class ExternalLinkDialog extends AbstractXinhaDialog<ExternalXinhaLink> {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final String SIZE = "49";
     private boolean disableOpenInANewWindow;

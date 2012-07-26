@@ -33,8 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrPrototypeStore implements IPrototypeStore<Node>, IDetachable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: JcrPrototypeStore.java 18825 2009-07-10 15:26:30Z abogaart $";
 
     private static final long serialVersionUID = 1L;
 

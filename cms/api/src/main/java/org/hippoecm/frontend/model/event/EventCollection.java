@@ -21,8 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 public class EventCollection<T extends IEvent> implements Iterable<T>, Serializable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

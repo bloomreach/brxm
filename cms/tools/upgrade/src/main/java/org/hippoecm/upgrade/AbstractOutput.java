@@ -19,8 +19,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 public abstract class AbstractOutput {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     final PrintStream out;
 

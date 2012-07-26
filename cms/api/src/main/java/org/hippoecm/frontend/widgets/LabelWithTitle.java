@@ -20,8 +20,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
 public class LabelWithTitle extends Label {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public LabelWithTitle(String id, String label) {
         super(id, label);

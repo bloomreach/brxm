@@ -34,8 +34,6 @@ import org.hippoecm.frontend.plugins.yui.webapp.IYuiManager;
  *  </p>
  */
 public class AbstractYuiBehavior extends AbstractBehavior {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

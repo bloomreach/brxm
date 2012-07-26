@@ -23,8 +23,6 @@ import org.hippoecm.frontend.plugins.xinha.dialog.JavascriptUtil;
 public abstract class AbstractPersistedMap extends HashMap<String, String> implements IPersisted {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private Map<String, String> initialValues;
 

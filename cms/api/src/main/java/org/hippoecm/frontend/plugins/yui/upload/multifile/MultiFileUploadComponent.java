@@ -32,7 +32,6 @@ import org.apache.wicket.util.convert.ConversionException;
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 
 public class MultiFileUploadComponent extends Panel {
-    final static String SVN_ID = "$Id$";
 
     private static final String MULTI_FILE_UPLOAD_CSS = "MultiFileUpload.css";
     private static final String MULTI_FILE_UPLOAD_CUSTOM_JS = "MultiFileUploadFieldCustomized.js";

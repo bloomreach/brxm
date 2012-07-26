@@ -20,8 +20,6 @@ import org.apache.wicket.IClusterable;
 import java.util.Map;
 
 public interface IAjaxSettings extends IClusterable {
-    @SuppressWarnings("unused")
-    static final String SVN_ID = "$Id$";
 
     void setCallbackUrl(String url);
 

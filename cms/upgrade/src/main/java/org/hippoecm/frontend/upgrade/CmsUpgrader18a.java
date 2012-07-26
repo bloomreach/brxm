@@ -36,8 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CmsUpgrader18a implements UpdaterModule {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(CmsUpgrader18a.class);
 

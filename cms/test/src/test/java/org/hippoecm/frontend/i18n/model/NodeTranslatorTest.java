@@ -55,8 +55,6 @@ public class NodeTranslatorTest extends PluginTest {
         }
     }
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     /**

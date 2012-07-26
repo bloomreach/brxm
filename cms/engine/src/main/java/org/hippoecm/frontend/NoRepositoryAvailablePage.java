@@ -20,8 +20,6 @@ import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 
 public class NoRepositoryAvailablePage extends PluginPage {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public NoRepositoryAvailablePage() {
         super(new IApplicationFactory() {

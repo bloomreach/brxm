@@ -19,8 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IDetachable;
 
 public class RichTextLink implements IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

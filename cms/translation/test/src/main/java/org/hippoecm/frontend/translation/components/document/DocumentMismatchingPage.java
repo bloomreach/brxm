@@ -19,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DocumentMismatchingPage extends DocumentTranslationPage {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Override
     protected final List<FolderTranslation> getFolderTranslations() {

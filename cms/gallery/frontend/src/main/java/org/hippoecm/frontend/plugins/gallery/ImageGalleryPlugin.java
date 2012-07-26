@@ -68,8 +68,6 @@ import static org.hippoecm.frontend.plugins.gallery.ImageGalleryPlugin.Mode.THUM
 public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     final static Logger log = LoggerFactory.getLogger(ImageGalleryPlugin.class);
 

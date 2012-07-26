@@ -61,8 +61,6 @@ import org.slf4j.LoggerFactory;
  * PluginRequestTarget handles this case by discarding the component.
  */
 public class PluginRequestTarget extends AjaxRequestTarget implements AjaxRequestTarget.IListener {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(PluginRequestTarget.class);
 

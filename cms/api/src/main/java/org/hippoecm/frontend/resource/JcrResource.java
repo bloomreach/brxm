@@ -19,8 +19,6 @@ import org.apache.wicket.Resource;
 import org.apache.wicket.util.resource.IResourceStream;
 
 public class JcrResource extends Resource {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

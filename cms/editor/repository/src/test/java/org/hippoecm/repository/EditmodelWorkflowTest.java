@@ -40,8 +40,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class EditmodelWorkflowTest extends TestCase {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Before
     @Override

@@ -26,8 +26,6 @@ import org.hippoecm.frontend.plugins.gallery.upload.UploadDialog;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class GalleryShortcutPlugin extends RenderPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     public GalleryShortcutPlugin(IPluginContext context, IPluginConfig config) {

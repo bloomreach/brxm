@@ -26,8 +26,6 @@ import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 public class AccordionManagerBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
     
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     //Provide a more generic approach by making the function call variable as well
     private final PackagedTextTemplate INIT = new PackagedTextTemplate(AccordionManagerBehavior.class, "init.js");

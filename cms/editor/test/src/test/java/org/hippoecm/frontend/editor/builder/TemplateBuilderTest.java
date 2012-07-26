@@ -57,8 +57,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TemplateBuilderTest extends EditorTestCase {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
 
     private static class ExtPtModel implements IModel {
 

@@ -41,8 +41,6 @@ import org.slf4j.LoggerFactory;
  * The service redraws completely when a child service (dis)appears.
  */
 public class ListViewService<T> extends RenderService<T> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

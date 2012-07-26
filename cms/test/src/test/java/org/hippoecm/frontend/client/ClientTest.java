@@ -46,8 +46,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
 abstract public class ClientTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(ClientTest.class);
 

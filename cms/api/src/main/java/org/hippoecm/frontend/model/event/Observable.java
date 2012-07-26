@@ -24,8 +24,6 @@ import org.apache.wicket.model.IDetachable;
  * It is intended to be used by clients to delegate the task of observation to.
  */
 public class Observable implements IObservable, IDetachable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private IObservationContext obContext;
     private IObserver observer;

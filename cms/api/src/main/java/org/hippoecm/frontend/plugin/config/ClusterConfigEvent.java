@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugin.config;
 import org.hippoecm.frontend.model.event.IEvent;
 
 public class ClusterConfigEvent implements IEvent<IClusterConfig> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public enum EventType {
         PLUGIN_ADDED,

@@ -19,8 +19,6 @@ import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
 
 public class YuiWicketApplication extends WebApplication {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Override
     protected void init() {

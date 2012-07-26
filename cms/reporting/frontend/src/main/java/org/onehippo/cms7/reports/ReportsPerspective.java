@@ -42,8 +42,6 @@ public class ReportsPerspective extends PanelPluginPerspective {
     
     private static final long serialVersionUID = 1L;
     
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ReportsPerspective.java 113440 2011-06-30 10:58:31Z uhommes $";
     public static final String REPORTING_SERVICE = "reporting.service";
 
     private final WebMarkupContainer refreshGroup;

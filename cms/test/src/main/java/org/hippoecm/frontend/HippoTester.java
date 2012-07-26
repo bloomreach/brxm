@@ -64,8 +64,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class HippoTester extends WicketTester {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static class NullNodeIterator implements NodeIterator {
 

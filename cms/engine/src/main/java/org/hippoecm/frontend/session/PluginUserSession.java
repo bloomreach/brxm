@@ -63,8 +63,6 @@ import static org.hippoecm.frontend.util.WebApplicationHelper.PLUGIN_APPLICATION
  * When the Wicket session is no longer referenced, the JCR session model is detached.
  */
 public class PluginUserSession extends UserSession {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
     private static final String FRONTEND_APPLICATION_ABSOLUTE_PATH = "/hippo:configuration/hippo:frontend/";

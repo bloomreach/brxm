@@ -22,8 +22,6 @@ import org.hippoecm.frontend.translation.components.document.DocumentRegularPage
 import org.hippoecm.frontend.translation.components.folder.FolderTranslationPage;
 
 public class WicketApplication extends WebApplication {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Override
     public Class<? extends WebPage> getHomePage() {

@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, IRefreshable {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static int editorCount = 0;
 

@@ -30,8 +30,6 @@ import org.apache.wicket.model.IModel;
 
 public class AdminDataTable<T> extends DataTable<T> {
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

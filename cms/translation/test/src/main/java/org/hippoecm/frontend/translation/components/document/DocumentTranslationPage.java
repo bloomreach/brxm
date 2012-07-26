@@ -25,8 +25,6 @@ import org.hippoecm.frontend.translation.components.TestLocaleProvider;
 import org.hippoecm.frontend.translation.components.TestStringCodecModel;
 
 public abstract class DocumentTranslationPage extends WebPage {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public DocumentTranslationPage() {
         add(JavascriptPackageResource.getHeaderContribution(WicketEventReference.INSTANCE));

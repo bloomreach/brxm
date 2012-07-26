@@ -31,8 +31,6 @@ import org.hippoecm.frontend.model.ocm.IStore;
 import org.junit.Test;
 
 public class TypeStoreTest extends EditorTestCase {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testJcrTypeDescriptor() throws Exception {

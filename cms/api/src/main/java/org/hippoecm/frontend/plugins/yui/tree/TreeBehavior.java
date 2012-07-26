@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
  * Renders a YUI-treeview: http://developer.yahoo.com/yui/treeview/
  */
 public abstract class TreeBehavior extends AbstractYuiAjaxBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

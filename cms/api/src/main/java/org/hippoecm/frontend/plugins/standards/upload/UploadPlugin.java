@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
 public class UploadPlugin extends RenderPlugin {
     private final static long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private final static Logger log = LoggerFactory.getLogger(UploadPlugin.class);
 
     private FileUploadForm form;

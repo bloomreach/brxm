@@ -24,8 +24,6 @@ import org.hippoecm.frontend.plugin.IServiceTracker;
  * @param <S> the service interface class
  */
 public class ServiceTracker<S extends IClusterable> implements IServiceTracker<S> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -25,7 +25,6 @@ import org.apache.wicket.markup.html.tree.ITreeState;
  * Service that provides icons for nodes in the CMS folder tree.
  */
 public interface ITreeNodeIconProvider extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Retrieve a 16px icon to represent the tree node.

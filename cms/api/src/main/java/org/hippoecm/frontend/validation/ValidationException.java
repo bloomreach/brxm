@@ -19,8 +19,6 @@ package org.hippoecm.frontend.validation;
  * Exception thrown during validation.  When thrown, the validation was aborted.
  */
 public class ValidationException extends Exception {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

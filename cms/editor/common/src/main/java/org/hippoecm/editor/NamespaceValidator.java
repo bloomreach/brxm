@@ -18,8 +18,6 @@ package org.hippoecm.editor;
 import java.util.regex.Pattern;
 
 public class NamespaceValidator {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final Pattern NAME_PATTERN = Pattern.compile("^[A-Za-z]+$");
     private static final Pattern URL_PATTERN = Pattern.compile("^http:.*/[0-9].[0-9]$");

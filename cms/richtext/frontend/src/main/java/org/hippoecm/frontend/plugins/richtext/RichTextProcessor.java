@@ -26,8 +26,6 @@ import org.apache.wicket.protocol.http.WicketURLDecoder;
 import org.hippoecm.frontend.plugins.xinha.services.links.ExternalXinhaLink;
 
 public class RichTextProcessor {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static Pattern LINK_AND_IMAGES_PATTERN = Pattern.compile("<(a|img)(\\s+)(.*?)(src|href)=\"(.*?)\"(.*?)>",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);

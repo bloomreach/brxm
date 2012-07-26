@@ -34,8 +34,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
  * hippo-ecm-addon-yui/src/main/java/org/hippoecm/frontend/plugins/yui/inc/hippo/2.7.0/hippodom/hippodom.js  
  */
 public class YuiId implements Serializable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

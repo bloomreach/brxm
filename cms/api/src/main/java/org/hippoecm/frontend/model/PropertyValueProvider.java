@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
  * {@link Property}.
  */
 public class PropertyValueProvider extends AbstractProvider<Property, JcrPropertyValueModel> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -20,8 +20,6 @@ import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 
 public class UsernameValidator extends StringValidator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     @Override

@@ -18,6 +18,4 @@ package org.hippoecm.frontend.translation.components;
 import org.apache.wicket.markup.html.WebPage;
 
 public class Index extends WebPage {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 }

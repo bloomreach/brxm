@@ -22,8 +22,6 @@ import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
 
 
 public class ImageCropSettings extends WidgetSettings {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final String FIXED_BOTH = "both";
     private static final String FIXED_WIDTH = "width";

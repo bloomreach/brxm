@@ -52,7 +52,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * </ul>
  */
 public interface IPlugin extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     String CLASSNAME = "plugin.class";
 

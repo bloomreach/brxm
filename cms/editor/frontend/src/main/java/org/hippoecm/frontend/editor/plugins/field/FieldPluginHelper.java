@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FieldPluginHelper implements IDetachable {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 3671506410576836811L;
 

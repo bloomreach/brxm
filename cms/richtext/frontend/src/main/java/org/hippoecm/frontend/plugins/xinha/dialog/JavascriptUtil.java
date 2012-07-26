@@ -19,8 +19,6 @@ package org.hippoecm.frontend.plugins.xinha.dialog;
 import java.util.regex.Pattern;
 
 public class JavascriptUtil {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static final String SINGLE_QUOTE = "'";
 

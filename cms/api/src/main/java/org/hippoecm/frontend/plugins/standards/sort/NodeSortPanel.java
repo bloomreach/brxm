@@ -24,8 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NodeSortPanel extends Panel {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: Sorter.java 20490 2009-11-03 11:49:07Z abogaart $";
 
     private static final long serialVersionUID = 1L;
 

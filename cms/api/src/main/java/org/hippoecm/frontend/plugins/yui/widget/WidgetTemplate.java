@@ -34,7 +34,6 @@ import java.util.Map;
 public class WidgetTemplate implements IHeaderContributor, IDetachable {
     private static final long serialVersionUID = 1L;
 
-    final static String SVN_ID = "$Id$";
 
     private TextTemplateHeaderContributor headerContributor;
     private Map<String, Object> variables;

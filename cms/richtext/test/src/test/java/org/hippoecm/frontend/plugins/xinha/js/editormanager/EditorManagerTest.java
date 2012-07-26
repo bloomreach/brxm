@@ -40,8 +40,6 @@ import static org.junit.Assert.assertTrue;
 
 @Ignore // YUI 2.9.0 uses getBoundingRectClient, which is not supported by htmlunit
 public class EditorManagerTest extends XinhaTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static String value;
 

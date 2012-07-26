@@ -25,8 +25,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ClusterConfigDecoratorTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testDecoratedPluginConfigContainsSetProperty() {

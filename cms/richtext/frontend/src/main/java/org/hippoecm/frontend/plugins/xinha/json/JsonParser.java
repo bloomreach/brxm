@@ -29,8 +29,6 @@ import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin.BaseConfiguration
 import org.hippoecm.frontend.plugins.xinha.AbstractXinhaPlugin.PluginConfiguration;
 
 public class JsonParser {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     private static final String SINGLE_QUOTE = "'";
     private static final Pattern NUMBER_PATTERN = Pattern.compile("\\d*");

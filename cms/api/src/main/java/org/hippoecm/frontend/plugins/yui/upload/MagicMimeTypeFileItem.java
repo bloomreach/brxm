@@ -31,8 +31,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 
 public class MagicMimeTypeFileItem implements FileItem {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(MagicMimeTypeFileItem.class);
 

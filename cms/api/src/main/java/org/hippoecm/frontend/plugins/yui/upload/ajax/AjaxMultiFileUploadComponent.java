@@ -42,8 +42,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.LinkedList;
 
 public abstract class AjaxMultiFileUploadComponent extends Panel {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(AjaxMultiFileUploadComponent.class);
 

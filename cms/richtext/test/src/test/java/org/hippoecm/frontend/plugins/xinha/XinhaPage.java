@@ -21,8 +21,6 @@ import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 
 public class XinhaPage extends WebPage {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public XinhaPage() {
         add(new WebAppBehavior(new WebAppSettings()));

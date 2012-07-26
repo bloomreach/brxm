@@ -57,8 +57,6 @@ import org.slf4j.LoggerFactory;
  * represent the state.  Can be used with handles, documents and (document) versions.
  */
 public class TranslationRenderer extends AbstractNodeRenderer {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

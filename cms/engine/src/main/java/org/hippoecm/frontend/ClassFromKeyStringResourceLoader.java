@@ -50,8 +50,6 @@ import org.slf4j.LoggerFactory;
  * did not yield a result.
  */
 public class ClassFromKeyStringResourceLoader extends ComponentStringResourceLoader {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(ClassFromKeyStringResourceLoader.class);
 

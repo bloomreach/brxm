@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * Consumers can find it then at the same location.
  */
 public interface ITitleDecorator extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(ITitleDecorator.class);
 

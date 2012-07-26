@@ -19,8 +19,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.repository.api.StringCodec;
 
 public class TestStringCodecModel extends LoadableDetachableModel<StringCodec> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

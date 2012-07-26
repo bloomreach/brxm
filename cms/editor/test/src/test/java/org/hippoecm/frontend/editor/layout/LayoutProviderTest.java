@@ -23,8 +23,6 @@ import org.apache.wicket.model.IModel;
 import org.junit.Test;
 
 public class LayoutProviderTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testExtensionLoader() {

@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugins.yui;
 import org.onehippo.yui.YuiNamespace;
 
 public class HippoNamespace implements YuiNamespace {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

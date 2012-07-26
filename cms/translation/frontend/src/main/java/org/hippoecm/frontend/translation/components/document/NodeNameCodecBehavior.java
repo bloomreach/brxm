@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.AbstractExtBehavior;
 
 final class NodeNameCodecBehavior extends AbstractExtBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

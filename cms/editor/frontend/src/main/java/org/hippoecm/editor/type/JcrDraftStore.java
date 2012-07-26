@@ -24,8 +24,6 @@ import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 
 public class JcrDraftStore implements IStore<ITypeDescriptor> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

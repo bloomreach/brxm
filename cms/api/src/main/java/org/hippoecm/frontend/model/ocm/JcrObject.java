@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
  * to the hashCode and equals methods.
  */
 abstract public class JcrObject implements IDetachable, IObservable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -33,8 +33,6 @@ import org.hippoecm.frontend.service.render.AbstractRenderService;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class FieldPluginEditor extends Panel {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

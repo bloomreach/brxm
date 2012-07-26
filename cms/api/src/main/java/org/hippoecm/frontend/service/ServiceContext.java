@@ -33,8 +33,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * registered and what clusters are started.  These can later be cleaned up by invoking stop().
  */
 public class ServiceContext implements IPluginContext {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -19,8 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugins.yui.JsFunction;
 
 public class WidgetSettings implements IClusterable {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private JsFunction calculateWidthAndHeight;
 

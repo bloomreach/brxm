@@ -24,7 +24,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
  * with their parent through the Wicket component tree model.
  */
 public interface IWireframe extends Serializable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Return the root id of this wireframe

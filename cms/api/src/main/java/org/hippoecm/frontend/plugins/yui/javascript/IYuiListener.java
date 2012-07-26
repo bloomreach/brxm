@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 import org.apache.wicket.IClusterable;
 
 public interface IYuiListener extends IClusterable {
-    @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
 
     abstract class Event {
         abstract public YuiObject getSource();

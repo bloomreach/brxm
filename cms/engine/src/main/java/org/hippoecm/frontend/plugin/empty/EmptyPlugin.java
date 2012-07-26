@@ -20,8 +20,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public class EmptyPlugin extends RenderPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     public EmptyPlugin(IPluginContext context, IPluginConfig config) {

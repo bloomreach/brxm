@@ -34,8 +34,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.junit.Test;
 
 public class JcrPropertyValueModelTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Test
     public void testConstructors() throws Exception {

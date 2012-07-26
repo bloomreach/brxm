@@ -34,8 +34,6 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
 public class AbstractDialogTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static class Dialog extends AbstractDialog {
 

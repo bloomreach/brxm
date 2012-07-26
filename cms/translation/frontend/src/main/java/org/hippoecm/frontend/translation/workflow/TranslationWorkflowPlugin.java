@@ -503,8 +503,6 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         }
     }
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     final static String COULD_NOT_CREATE_FOLDERS = "could-not-create-folders";
 

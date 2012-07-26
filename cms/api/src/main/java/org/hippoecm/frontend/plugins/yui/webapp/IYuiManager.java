@@ -25,7 +25,6 @@ import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
  */
 public interface IYuiManager extends IClusterable {
 
-    final static String SVN_ID = "$Id$";
 
     /**
      * Create a new {@link IYuiContext} that is backed up by a centrally managed

@@ -22,8 +22,6 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 public class ListenerList<T extends EventListener> extends LinkedList<T> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
 
     private static final long serialVersionUID = 1L;
 

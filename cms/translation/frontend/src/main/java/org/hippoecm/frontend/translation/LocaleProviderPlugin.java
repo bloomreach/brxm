@@ -45,8 +45,6 @@ import org.wicketstuff.js.ext.util.ExtResourcesBehaviour;
  * for their names.
  */
 public final class LocaleProviderPlugin extends Plugin implements ILocaleProvider, IDetachable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

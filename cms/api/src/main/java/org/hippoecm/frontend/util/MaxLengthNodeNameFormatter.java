@@ -21,8 +21,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 
 public class MaxLengthNodeNameFormatter extends MaxLengthStringFormatter {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

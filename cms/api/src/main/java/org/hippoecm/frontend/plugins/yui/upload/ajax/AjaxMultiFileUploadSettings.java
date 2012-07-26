@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AjaxMultiFileUploadSettings extends AjaxSettings {
-    final static String SVN_ID = "$Id$";
 
     //URL of the Flash file
     private String flashUrl;

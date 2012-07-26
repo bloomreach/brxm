@@ -32,8 +32,6 @@ import org.apache.wicket.model.Model;
 public class PanelPluginBreadCrumbBar extends BreadCrumbBar {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: PanelPluginBreadCrumbBar.java 22056 2010-03-09 16:35:24Z bvanhalderen $";
 
     private static final class BreadCrumbComponent extends Panel {
         private static final long serialVersionUID = 1L;

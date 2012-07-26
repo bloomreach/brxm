@@ -29,8 +29,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class JcrItemModelTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Override
     @Before

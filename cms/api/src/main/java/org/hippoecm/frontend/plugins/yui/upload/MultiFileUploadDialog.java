@@ -35,8 +35,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 public abstract class MultiFileUploadDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private FileUploadWidget widget;
     private AjaxButton ajaxButton;

@@ -19,8 +19,6 @@ import net.sf.json.JsonConfig;
 import net.sf.json.processors.JsonValueProcessor;
 
 public class JsFunctionProcessor implements JsonValueProcessor {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public Object processArrayValue(Object o, JsonConfig jsonConfig) {
         return null;

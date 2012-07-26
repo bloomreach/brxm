@@ -26,8 +26,6 @@ import java.util.List;
  * by this class; this enables quick turnaround in the testing of the view in the test war.
  */
 public abstract class T9Tree {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public abstract T9Node getRoot();
 

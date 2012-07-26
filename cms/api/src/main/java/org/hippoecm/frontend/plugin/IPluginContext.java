@@ -41,7 +41,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * </ul>
  */
 public interface IPluginContext extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Create a new cluster of plugins.  The template specifies what services are

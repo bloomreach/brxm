@@ -22,8 +22,6 @@ import org.apache.wicket.model.IModel;
 public class LabelledBooleanFieldWidget extends BooleanFieldWidget {
     private static final long serialVersionUID = 1L;
     
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public LabelledBooleanFieldWidget(String id, IModel<Boolean> model, IModel<String> labelModel) {
         super(id, model);

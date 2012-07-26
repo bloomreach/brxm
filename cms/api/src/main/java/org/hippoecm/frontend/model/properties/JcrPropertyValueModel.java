@@ -48,8 +48,6 @@ import org.slf4j.LoggerFactory;
  * One can also set and retrieve the underlying {@link Value}.
  */
 public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>, IObjectClassAwareModel<T> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

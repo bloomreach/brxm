@@ -30,8 +30,6 @@ import org.apache.wicket.util.time.Time;
 import org.apache.wicket.util.value.IValueMap;
 
 public abstract class AbstractValueMap extends AbstractMap<String, Object> implements IValueMap {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

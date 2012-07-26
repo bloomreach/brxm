@@ -37,8 +37,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class TemplateEditorWorkflowTest extends TestCase {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Before
     public void setUp() throws Exception {

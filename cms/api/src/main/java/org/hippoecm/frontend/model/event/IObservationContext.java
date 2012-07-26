@@ -22,7 +22,6 @@ import org.apache.wicket.IClusterable;
  * Framework clients should not implement this interface.
  */
 public interface IObservationContext<T extends IObservable> extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Notify observers of events that pertain to an observable.

@@ -50,8 +50,6 @@ import org.slf4j.LoggerFactory;
  * Plugins can subclass this model to refine the way the session is obtained.
  */
 public class JcrSessionModel extends LoadableDetachableModel<Session> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     // The jcr session is wrapped in a LoadableDetachableModel because it can't be serialized
     // and therefore cannot be a direct field of the wicket session. Wrapping the jcr session

@@ -29,8 +29,6 @@ import org.hippoecm.frontend.service.IBehaviorService;
  * See {@link IBehaviorService} for info how to configure this.
  */
 public class WireframePlugin extends Plugin implements IBehaviorService {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

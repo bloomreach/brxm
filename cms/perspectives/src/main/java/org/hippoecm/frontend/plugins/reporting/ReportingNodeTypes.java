@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.reporting;
 
 public interface ReportingNodeTypes {
-    final static String SVN_ID = "$Id$";
 
     // NodeTypes
     public static final String NT_REPORT = "reporting:report";

@@ -34,8 +34,6 @@ import org.slf4j.LoggerFactory;
  * A dialog that shows where a document is used, i.e. what other documents refer to it.
  */
 public class WhereUsedDialog extends AbstractDialog {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

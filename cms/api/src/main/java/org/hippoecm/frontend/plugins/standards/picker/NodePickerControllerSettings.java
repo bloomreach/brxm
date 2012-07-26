@@ -23,8 +23,6 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 public class NodePickerControllerSettings implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     //IPluginconfig keys
     private static final String SELECTION_SERVICE_KEY   = "wicket.model";

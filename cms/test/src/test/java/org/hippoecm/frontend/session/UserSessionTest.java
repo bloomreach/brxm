@@ -24,8 +24,6 @@ import static org.junit.Assert.assertTrue;
 
 
 public class UserSessionTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testSaveOnLogout() throws Exception {

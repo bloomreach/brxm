@@ -24,8 +24,6 @@ import org.apache.wicket.util.time.Duration;
  * Component that pings the server regularly preventing unwanted session-timeouts.
  */
 public class Pinger extends Label {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -26,7 +26,6 @@ import org.apache.wicket.IClusterable;
  * plugins.
  */
 public interface IObservable extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Before observation is started on the observable, an observation context is injected by

@@ -26,7 +26,6 @@ package org.hippoecm.frontend;
  */
 
 public interface FrontendNodeType {
-    final static String SVN_ID = "$Id";
 
     //--- Frontend NodeTypes ---//
     String NT_PLUGINCONFIG = "frontend:pluginconfig";

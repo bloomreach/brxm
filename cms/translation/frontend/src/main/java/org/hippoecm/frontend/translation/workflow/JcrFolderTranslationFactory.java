@@ -24,8 +24,6 @@ import org.hippoecm.frontend.translation.components.document.FolderTranslation;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public final class JcrFolderTranslationFactory {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private JcrFolderTranslationFactory() {
     }

@@ -23,8 +23,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 class Item extends TreeMap<String, Value[]> implements Comparable<Item> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

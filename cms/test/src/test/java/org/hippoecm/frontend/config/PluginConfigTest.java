@@ -50,8 +50,6 @@ import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 
 public class PluginConfigTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     String[] content = new String[] {
             "/test", "nt:unstructured",

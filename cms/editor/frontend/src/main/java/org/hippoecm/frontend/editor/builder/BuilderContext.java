@@ -37,8 +37,6 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
  * for the models and services that are used in the template builder.
  */
 public class BuilderContext implements IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

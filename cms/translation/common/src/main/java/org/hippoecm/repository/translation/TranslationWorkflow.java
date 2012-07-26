@@ -36,7 +36,6 @@ import org.hippoecm.repository.api.WorkflowException;
  *      which this document can be translated.
  */
 public interface TranslationWorkflow extends Workflow {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Create a new translation of the document.  Only valid when the containing folder

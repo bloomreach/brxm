@@ -25,8 +25,6 @@ import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 
 public class GIFImageWriterSpi extends ImageWriterSpi {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public GIFImageWriterSpi() {
         super(

@@ -31,8 +31,6 @@ import org.hippoecm.frontend.dialog.DialogConstants;
  * Dialog for easy creating confirmation dialogs;
  */
 public class DeleteDialog<T extends Serializable> extends AbstractDialog<T> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

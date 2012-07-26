@@ -27,8 +27,6 @@ import org.hippoecm.frontend.model.event.IObservationContext;
  * An {@link IModel} that is observable by plugins.
  */
 public class ObservableModel<T extends Serializable> extends Model<T> implements IObservable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

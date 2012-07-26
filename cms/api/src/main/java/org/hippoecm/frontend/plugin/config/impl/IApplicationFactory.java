@@ -19,7 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 
 public interface IApplicationFactory extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     IPluginConfigService getDefaultApplication();
 

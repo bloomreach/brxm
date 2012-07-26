@@ -42,8 +42,6 @@ import org.junit.Test;
 public class TranslationWorkflowTest extends TestCase {
     private static final String INVALID_ID = "invalid id - to be overwritten by folderworkflow";
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     static final String FOLDER_T9N_ID = "700a09f1-eac5-482c-a09e-ec0a6a5d6abc";
     static final String DOCUMENT_T9N_ID = "dbe51269-1211-4695-9dd4-1d6ea578f134";

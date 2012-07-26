@@ -44,8 +44,6 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
 
 public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWorkflow {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

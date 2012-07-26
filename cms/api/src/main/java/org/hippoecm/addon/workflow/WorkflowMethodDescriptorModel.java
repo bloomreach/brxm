@@ -25,8 +25,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
 public class WorkflowMethodDescriptorModel extends LoadableDetachableModel {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private WorkflowDescriptorModel descriptorModel;
     private String methodName;

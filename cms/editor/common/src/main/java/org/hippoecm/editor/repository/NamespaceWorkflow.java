@@ -24,7 +24,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface NamespaceWorkflow extends Workflow {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Add a new document type descriptor node with 'basedocument' as the super type

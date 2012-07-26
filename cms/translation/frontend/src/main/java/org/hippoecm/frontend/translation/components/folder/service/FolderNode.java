@@ -24,8 +24,6 @@ import org.wicketstuff.js.ext.tree.ExtTreeNode;
 import org.wicketstuff.js.ext.util.ExtProperty;
 
 public final class FolderNode extends ExtTreeNode {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

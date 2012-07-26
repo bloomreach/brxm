@@ -21,7 +21,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.event.IObservable;
 
 public interface IListCellRenderer<T> extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     Component getRenderer(String id, IModel<T> model);
 

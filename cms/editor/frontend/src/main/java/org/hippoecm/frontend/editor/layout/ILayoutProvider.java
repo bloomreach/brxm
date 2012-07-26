@@ -20,7 +20,6 @@ import java.util.List;
 import org.apache.wicket.IClusterable;
 
 public interface ILayoutProvider extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     List<String> getLayouts();
 

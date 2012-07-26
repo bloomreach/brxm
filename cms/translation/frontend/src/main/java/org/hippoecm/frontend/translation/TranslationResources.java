@@ -20,8 +20,6 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 
 public final class TranslationResources {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private TranslationResources() {
     }

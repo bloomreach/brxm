@@ -30,8 +30,6 @@ import org.hippoecm.frontend.editor.workflow.action.NewDocumentTypeAction;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class CreateDocumentTypeDialog extends CreateTypeDialog {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

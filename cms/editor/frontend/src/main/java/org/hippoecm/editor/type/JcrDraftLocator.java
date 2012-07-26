@@ -28,8 +28,6 @@ import org.hippoecm.frontend.types.TypeLocator;
 public class JcrDraftLocator implements ITypeLocator, IDetachable {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private TypeLocator locator;
     private JcrTypeStore jcrTypeStore;

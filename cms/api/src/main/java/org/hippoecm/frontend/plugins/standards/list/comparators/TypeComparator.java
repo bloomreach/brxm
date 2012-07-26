@@ -23,8 +23,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class TypeComparator extends NodeComparator {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     @Override

@@ -34,8 +34,6 @@ import java.io.Serializable;
 import java.util.Map;
 
 public class DynamicTextTemplate implements IHeaderContributor, IDetachable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

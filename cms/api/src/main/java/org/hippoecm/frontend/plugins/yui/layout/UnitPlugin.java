@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
  * See {@link IBehaviorService} and {@link IPlugin} for more info.
  */
 public class UnitPlugin extends Plugin implements IBehaviorService {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

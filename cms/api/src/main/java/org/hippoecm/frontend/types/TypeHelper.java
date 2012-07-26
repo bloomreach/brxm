@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.types;
 
 public class TypeHelper {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static String getFieldName(String path, String type) {
         if (!"*".equals(path)) {

@@ -19,8 +19,6 @@ package org.hippoecm.frontend.plugins.yui.dragdrop;
 import org.hippoecm.frontend.model.JcrNodeModel;
 
 public class ImageNodeDragBehavior extends NodeDragBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -22,8 +22,6 @@ import net.sf.json.JsonConfig;
 import org.junit.Test;
 
 public class YuiIdTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static class TestSetting {
 

@@ -22,8 +22,6 @@ import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.version.undo.Change;
 
 public abstract class PanelPluginBreadCrumbLink extends AjaxFallbackLink {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: PanelPluginBreadCrumbLink.java 15368 2008-12-18 11:46:10Z bvdschans $";
     private static final long serialVersionUID = 1L;
 
     /** The bread crumb model. */

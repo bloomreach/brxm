@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
  * node may disappear or it may even never have existed.
  */
 public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

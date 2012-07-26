@@ -23,7 +23,6 @@ import org.apache.wicket.IClusterable;
  * register the service at classname of this interface, IRefreshable.class.getName().
  */
 public interface IRefreshable extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     void refresh();
 }

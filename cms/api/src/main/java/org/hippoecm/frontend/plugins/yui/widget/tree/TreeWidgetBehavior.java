@@ -28,8 +28,6 @@ import org.hippoecm.frontend.plugins.yui.widget.WidgetBehavior;
 public class TreeWidgetBehavior extends WidgetBehavior {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     TreeWidgetSettings settings;
 

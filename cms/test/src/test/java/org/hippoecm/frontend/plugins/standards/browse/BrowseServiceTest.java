@@ -31,8 +31,6 @@ import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.junit.Test;
 
 public class BrowseServiceTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static final String BROWSE_SERVICE = "service.browser";
     static final String DOCUMENT_SERVICE = "service.document";

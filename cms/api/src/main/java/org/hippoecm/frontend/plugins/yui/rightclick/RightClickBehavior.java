@@ -25,8 +25,6 @@ import org.hippoecm.frontend.behaviors.IContextMenu;
  * This behavior adds a right-click event-handler to the component. 
  */
 public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior implements IContextMenu {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
 
     private static final long serialVersionUID = 1L;
 

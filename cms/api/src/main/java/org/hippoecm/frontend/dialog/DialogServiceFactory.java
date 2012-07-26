@@ -31,8 +31,6 @@ import org.hippoecm.frontend.plugin.IServiceFactory;
  * closed when the plugin that opened it is stopped.
  */
 public class DialogServiceFactory implements IServiceFactory<IDialogService> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

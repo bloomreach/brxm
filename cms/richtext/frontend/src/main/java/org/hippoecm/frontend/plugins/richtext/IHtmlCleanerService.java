@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.richtext;
 import org.apache.wicket.IClusterable;
 
 public interface IHtmlCleanerService extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     String clean(String value) throws Exception;
 }

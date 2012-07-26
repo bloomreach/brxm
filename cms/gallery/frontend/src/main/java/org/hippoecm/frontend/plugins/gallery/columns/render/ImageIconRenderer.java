@@ -10,8 +10,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 public class ImageIconRenderer extends IconRenderer {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Override
     protected ResourceReference getResourceReference(Node node) throws RepositoryException {

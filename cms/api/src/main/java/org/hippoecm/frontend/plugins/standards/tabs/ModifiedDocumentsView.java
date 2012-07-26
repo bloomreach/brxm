@@ -34,8 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class ModifiedDocumentsView extends Panel implements IPagingDefinition {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ReferringDocumentsView.java 24007 2010-09-21 15:35:40Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 

@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugins.standards.list.datatable;
 import org.apache.wicket.markup.html.navigation.paging.IPagingLabelProvider;
 
 public class ListPagingLabelProvider implements IPagingLabelProvider {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -18,7 +18,6 @@ package org.hippoecm.frontend.model;
 import java.io.Serializable;
 
 public interface IChangeListener extends Serializable {
-    final static String SVN_ID = "$Id$";
 
     void onChange();
 

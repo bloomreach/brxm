@@ -25,8 +25,6 @@ import org.hippoecm.frontend.translation.ILocaleProvider.LocaleState;
 import org.wicketstuff.js.ext.data.AbstractExtBehavior;
 
 public final class LocaleImageService extends AbstractExtBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
     

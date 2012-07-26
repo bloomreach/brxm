@@ -23,8 +23,6 @@ import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 public class PreferencesStore implements IPreferencesStore {
     private static final long serialVersionUID = 1L;
     
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     private IPluginConfig store;
     

@@ -34,8 +34,6 @@ import org.hippoecm.repository.api.NodeNameCodec;
 
 public class Domain implements Comparable<Domain>, IClusterable {
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

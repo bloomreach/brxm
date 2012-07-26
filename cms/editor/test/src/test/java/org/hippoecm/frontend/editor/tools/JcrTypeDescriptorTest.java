@@ -32,8 +32,6 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.junit.Test;
 
 public class JcrTypeDescriptorTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testAllFieldsReturned() throws Exception {

@@ -28,8 +28,6 @@ import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 
 public abstract class PanelPluginPerspective extends Perspective {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: PanelPluginPerspective.java 25817 2010-12-20 09:37:20Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 

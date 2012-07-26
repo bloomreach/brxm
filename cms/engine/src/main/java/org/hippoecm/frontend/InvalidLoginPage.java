@@ -24,8 +24,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.session.LoginException;
 
 public class InvalidLoginPage extends PluginPage {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private final static String DEFAULT_KEY = "invalid.login";
     private final static Map<String, String> causeKeys;
 

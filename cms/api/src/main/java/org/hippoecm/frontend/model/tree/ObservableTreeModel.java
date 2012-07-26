@@ -52,8 +52,6 @@ import org.slf4j.LoggerFactory;
  * instead to register {@link TreeModelListener}s.
  */
 public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeModel, IObservable, IDetachable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

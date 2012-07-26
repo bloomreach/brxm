@@ -24,8 +24,6 @@ import org.hippoecm.frontend.plugins.xinha.model.DocumentLink;
 public abstract class InternalXinhaLink extends DocumentLink {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     public InternalXinhaLink(Map<String, String> values, IDetachable parentModel) {
         super(values, parentModel);

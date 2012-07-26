@@ -31,8 +31,6 @@ import org.hippoecm.repository.gallery.HippoGalleryNodeType;
  * Displays a file name of an image set without editing options.
  */
 public class FileNameDisplayPlugin extends RenderPlugin<Node> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

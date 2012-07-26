@@ -24,7 +24,6 @@ import org.hippoecm.frontend.model.ocm.IStore;
  * from persistent or transient storage.
  */
 public interface ITypeStore extends IStore<ITypeDescriptor> {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Retrieve the type descriptor of a particular name

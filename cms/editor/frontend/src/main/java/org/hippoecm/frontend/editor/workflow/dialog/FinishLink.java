@@ -23,8 +23,6 @@ import org.apache.wicket.markup.html.link.Link;
  * processed during "finish".  So do a full page refresh.
  */
 public final class FinishLink extends Link {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     private final RemodelWizard wizard;

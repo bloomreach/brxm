@@ -27,8 +27,6 @@ import org.hippoecm.frontend.service.IRenderService;
  * layout by addressing the {@link org.hippoecm.frontend.editor.layout.ILayoutContext}.
  */
 public interface ILayoutAware extends IRenderService {
-    @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
 
     void setLayoutContext(ILayoutContext control);
 

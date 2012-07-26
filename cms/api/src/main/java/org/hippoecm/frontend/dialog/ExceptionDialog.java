@@ -20,8 +20,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 
 public class ExceptionDialog extends AbstractDialog {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     private Exception exception;

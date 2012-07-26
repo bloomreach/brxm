@@ -70,8 +70,6 @@ import org.slf4j.LoggerFactory;
 public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWorkflow> {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(GalleryWorkflowPlugin.class);
 

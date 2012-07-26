@@ -20,7 +20,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.service.EditorException;
 
 public interface IFieldResolver extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     IModel resolve(IModel model, ModelPath path) throws EditorException;
 }

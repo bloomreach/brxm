@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
  * of the image in the main node, and the width and height of each scaled image in the resource nodes.
  */
 public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(ScalingGalleryProcessor.class);
     private static final long serialVersionUID = 1L;

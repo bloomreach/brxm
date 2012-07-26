@@ -32,8 +32,6 @@ public class BrowserCheckBehavior extends AbstractBehavior {
 
     static Logger log = LoggerFactory.getLogger(BrowserCheckBehavior.class);
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     BrowserCheck check;
 

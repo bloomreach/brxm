@@ -25,8 +25,6 @@ import org.junit.Test;
 
 public class BrowserTest {
     
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     static final TestBrowserInfo IE6 = new TestBrowserInfo("ie", 6, -1);
     static final TestBrowserInfo IE7 = new TestBrowserInfo("ie", 7, -1);

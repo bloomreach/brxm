@@ -28,7 +28,6 @@ import org.apache.wicket.behavior.IBehavior;
  * When an ancestor context menu manager searches for context menu's, it 
  */
 public interface IContextMenuManager {
-    final static String SVN_ID = "$Id$";
 
     void showContextMenu(IContextMenu active);
 }

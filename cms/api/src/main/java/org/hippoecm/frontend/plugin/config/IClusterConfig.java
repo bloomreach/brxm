@@ -38,7 +38,6 @@ import org.hippoecm.frontend.service.IRenderService;
  * configuration is read-only in that case.
  */
 public interface IClusterConfig extends IPluginConfig {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The plugin configurations in the cluster.

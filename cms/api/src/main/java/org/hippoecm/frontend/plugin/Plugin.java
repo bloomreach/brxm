@@ -22,8 +22,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * to the {@link IPluginContext} and {@link IPluginConfig}.
  */
 public abstract class Plugin implements IPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -44,8 +44,6 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IconAttributeModif
 public class ImageGalleryColumnProviderPlugin extends AbstractListColumnProviderPlugin {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private String primaryItemName;
 

@@ -65,8 +65,6 @@ import org.slf4j.LoggerFactory;
  * these.
  */
 public class JcrPluginConfig extends AbstractValueMap implements IPluginConfig, IDetachable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

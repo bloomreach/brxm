@@ -29,8 +29,6 @@ import org.hippoecm.frontend.plugins.xinha.model.IPersisted;
 public abstract class AbstractXinhaDialog<T extends IPersisted> extends AbstractDialog<T> {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private boolean hasExistingLink;
 

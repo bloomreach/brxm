@@ -20,8 +20,6 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 public class ConcurrentLoginListener implements  HttpSessionListener {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public void sessionCreated(HttpSessionEvent evt) {
     }

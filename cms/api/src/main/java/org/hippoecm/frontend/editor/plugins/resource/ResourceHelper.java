@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
  * Resource helper for creating and validating nodes of type <code>hippo:resource</code>
  */
 public class ResourceHelper {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static final String MIME_IMAGE_PJPEG = "image/pjpeg";
     public static final String MIME_IMAGE_JPEG = "image/jpeg";

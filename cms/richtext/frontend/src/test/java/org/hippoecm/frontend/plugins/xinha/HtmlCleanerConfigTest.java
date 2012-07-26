@@ -32,8 +32,6 @@ import org.hippoecm.frontend.plugins.xinha.htmlcleaner.JCRHtmlCleanerTemplateBui
 import org.junit.Test;
 
 public class HtmlCleanerConfigTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     protected IPluginConfig getPluginConfig() throws Exception {
         Node cleanerConfigNode = root.getNode("cleaner.config");

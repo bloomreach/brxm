@@ -22,7 +22,6 @@ import org.apache.wicket.IClusterable;
  * Register instances of this type at the IEditor instance.
  */
 public interface IEditorFilter extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Pre-close lifecycle callback.  When the close() operation is cancelled

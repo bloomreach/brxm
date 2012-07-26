@@ -21,8 +21,6 @@ import org.apache.wicket.model.IModel;
 public class RequiredTextFieldWidget extends TextFieldWidget {
     private static final long serialVersionUID = 1L;
     
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     public RequiredTextFieldWidget(String id, IModel<String> model) {
         this(id, model, null);

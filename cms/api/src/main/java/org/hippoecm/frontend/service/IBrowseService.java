@@ -25,7 +25,6 @@ import org.apache.wicket.model.IModel;
  * @param <T> type of models supported by the service
  */
 public interface IBrowseService<T extends IModel> extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     String BROWSER_ID = "browser.id";
 

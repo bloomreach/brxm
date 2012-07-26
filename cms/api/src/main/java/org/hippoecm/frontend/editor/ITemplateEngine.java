@@ -24,7 +24,6 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 
 public interface ITemplateEngine extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The configuration key to use when locating the template engine service.

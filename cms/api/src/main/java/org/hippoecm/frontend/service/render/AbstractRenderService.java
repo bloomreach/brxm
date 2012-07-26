@@ -100,8 +100,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractRenderService<T> extends Panel implements IObserver, IRenderService,
         IStringResourceProvider {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

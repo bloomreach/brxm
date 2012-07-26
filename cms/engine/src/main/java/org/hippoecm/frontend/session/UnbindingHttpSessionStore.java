@@ -42,8 +42,6 @@ import org.apache.wicket.util.collections.ConcurrentHashSet;
  *       earlier when they are serialized.
  */
 public class UnbindingHttpSessionStore extends HttpSessionStore {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private final Map<String, WeakReference<UserSession>> sessions = new HashMap<String, WeakReference<UserSession>>();
     private final Set<String> sessionsWithInvalidPageMaps = new ConcurrentHashSet<String>();

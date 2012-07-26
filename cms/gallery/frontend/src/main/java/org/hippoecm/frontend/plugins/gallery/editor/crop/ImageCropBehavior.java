@@ -25,8 +25,6 @@ import org.onehippo.yui.YuiNamespace;
 public class ImageCropBehavior extends WidgetBehavior implements YuiNamespace {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public ImageCropBehavior(ImageCropSettings settings) {
         super(settings);

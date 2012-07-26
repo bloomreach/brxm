@@ -23,8 +23,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class HtmlValidatorTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     private static final String NORMAL_SPACE = Character.toString((char) 32);
     private static final String NON_BREAKING_SPACE = Character.toString((char) 160);

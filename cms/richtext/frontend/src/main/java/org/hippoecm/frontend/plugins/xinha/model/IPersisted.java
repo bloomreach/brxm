@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.xinha.model;
 import org.apache.wicket.IClusterable;
 
 public interface IPersisted extends IClusterable {
-    final static String SVN_ID = "$Id$";
     
     boolean isValid();
     

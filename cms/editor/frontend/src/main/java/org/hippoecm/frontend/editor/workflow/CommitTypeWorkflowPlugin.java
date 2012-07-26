@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
 
 public class CommitTypeWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: EditmodelWorkflowPlugin.java 27010 2011-02-18 07:57:58Z fvlankvelt $";
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CommitTypeWorkflowPlugin.class);
     private MarkupContainer commitAction;

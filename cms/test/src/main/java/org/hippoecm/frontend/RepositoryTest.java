@@ -45,8 +45,6 @@ import javax.jcr.nodetype.PropertyDefinition;
 // FIXME: this is a direct fork of the TestCase in hippo-repository-engine
 public abstract class RepositoryTest
 {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: RepositoryTest.java 26868 2011-02-08 09:35:19Z fvlankvelt $";
 
     protected static final String SYSTEMUSER_ID = "admin";
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();

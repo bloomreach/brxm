@@ -25,8 +25,6 @@ import org.apache.wicket.model.IModel;
  * are dropped until a match is found.
  */
 public class StagedLocalizer extends Localizer {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
 
     public StagedLocalizer() {
     }

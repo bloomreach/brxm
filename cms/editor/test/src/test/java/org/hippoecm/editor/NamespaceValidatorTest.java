@@ -19,8 +19,6 @@ import org.hippoecm.editor.NamespaceValidator;
 import org.junit.Test;
 
 public class NamespaceValidatorTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     void checkName(String name) {
         try {

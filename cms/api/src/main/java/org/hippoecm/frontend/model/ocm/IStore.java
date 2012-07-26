@@ -28,7 +28,6 @@ import org.apache.wicket.IClusterable;
  * @param <T>
  */
 public interface IStore<T> extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Search for objects that meet the specified criteria.

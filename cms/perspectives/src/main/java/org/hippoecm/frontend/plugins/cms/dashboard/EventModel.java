@@ -36,8 +36,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EventModel implements IComponentAssignedModel<String> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long ONE_MINUTE = 60 * 1000;
     private static final long FIVE_MINUTES = 5 * 60 * 1000;

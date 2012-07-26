@@ -30,8 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     DynamicTextTemplate template;
 

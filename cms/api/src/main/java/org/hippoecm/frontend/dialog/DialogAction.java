@@ -18,8 +18,6 @@ package org.hippoecm.frontend.dialog;
 import org.apache.wicket.IClusterable;
 
 public class DialogAction implements IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     final private IDialogFactory factory;

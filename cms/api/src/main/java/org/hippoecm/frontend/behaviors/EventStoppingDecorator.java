@@ -19,8 +19,6 @@ import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.AjaxPreprocessingCallDecorator;
 
 public final class EventStoppingDecorator extends AjaxPreprocessingCallDecorator {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
 
     private static final long serialVersionUID = 1L;
 

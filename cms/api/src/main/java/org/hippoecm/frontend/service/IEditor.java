@@ -25,7 +25,6 @@ import org.apache.wicket.model.IModel;
  * (node) model.
  */
 public interface IEditor<T> extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     enum Mode {
         VIEW, EDIT, COMPARE;

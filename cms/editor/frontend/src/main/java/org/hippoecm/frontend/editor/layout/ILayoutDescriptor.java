@@ -26,7 +26,6 @@ import org.apache.wicket.model.IModel;
  * of the plugin correspond to pads in the layout.
  */
 public interface ILayoutDescriptor extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The "class" name of the layout.  When there is a plugin corresponding

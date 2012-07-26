@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class HippoMap extends HashMap<String, Object> implements IHippoMap {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

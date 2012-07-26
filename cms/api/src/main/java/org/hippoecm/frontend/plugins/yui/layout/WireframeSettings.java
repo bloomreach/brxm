@@ -55,8 +55,6 @@ import java.util.List;
  * file. Not sure how to handle default values and things like dont-escape-string yet.
  */
 public class WireframeSettings extends AjaxSettings {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

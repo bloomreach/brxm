@@ -40,8 +40,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class LayoutProvider implements ILayoutProvider {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

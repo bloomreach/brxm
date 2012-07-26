@@ -18,8 +18,6 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class BooleanSetting extends Setting<Boolean> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

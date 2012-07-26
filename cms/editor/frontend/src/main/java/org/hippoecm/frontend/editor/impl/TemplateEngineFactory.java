@@ -35,8 +35,6 @@ import org.hippoecm.frontend.plugin.IServiceFactory;
 import org.hippoecm.frontend.types.ITypeLocator;
 
 public class TemplateEngineFactory implements IServiceFactory<ITemplateEngine>, IDetachable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
 
     private static final long serialVersionUID = 1L;
 

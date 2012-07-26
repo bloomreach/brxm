@@ -49,8 +49,6 @@ import java.util.Random;
 import java.util.Set;
 
 public class ContentBuilder implements IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

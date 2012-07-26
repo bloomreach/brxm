@@ -27,8 +27,6 @@ import org.apache.wicket.IClusterable;
 public class ByteSizeFormatter implements IClusterable {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final double ONE_KB = new Double(1024);
     private static final double ONE_MB = Math.pow(ONE_KB, 2);

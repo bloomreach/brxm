@@ -25,8 +25,6 @@ import org.apache.wicket.behavior.IBehavior;
 import org.apache.wicket.model.IModel;
 
 public abstract class DragBehavior extends AbstractDragDropBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

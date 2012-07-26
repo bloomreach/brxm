@@ -29,8 +29,6 @@ import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.apache.wicket.util.template.TextTemplateHeaderContributor;
 
 public class ScrollBehavior extends AbstractBehavior {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ScrollBehavior.java 22030 2010-03-04 16:06:45Z fvlankvelt $";
     private static final long serialVersionUID = 1L;
 
     private static final ResourceReference SCRIPT = new JavascriptResourceReference(ScrollBehavior.class, "scroll.js");

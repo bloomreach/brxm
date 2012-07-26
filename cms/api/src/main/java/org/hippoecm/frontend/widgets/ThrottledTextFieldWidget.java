@@ -19,7 +19,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.time.Duration;
 
 public class ThrottledTextFieldWidget extends TextFieldWidget {
-    final static String SVN_ID = "$Id$";
 
     public static final Duration THROTTLE_DELAY = Duration.milliseconds(750);
 

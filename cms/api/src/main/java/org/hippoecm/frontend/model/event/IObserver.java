@@ -29,7 +29,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
  * of any events sent by the observable.
  */
 public interface IObserver<T extends IObservable> extends EventListener, IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The observable that the observer is interested in.  This observable may not

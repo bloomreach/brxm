@@ -37,8 +37,6 @@ import org.wicketstuff.js.ext.util.ExtPropertyConverter;
 
 @ExtClass("Hippo.Translation.SiblingLocator")
 public final class SiblingLocator extends ExtObservable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

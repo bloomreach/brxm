@@ -31,8 +31,6 @@ import org.apache.wicket.model.IModel;
 
 public class SystemPropertiesDataProvider extends SortableDataProvider {
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     
     private static final long serialVersionUID = 1L;
 

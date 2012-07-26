@@ -28,8 +28,6 @@ import net.sf.json.JsonConfig;
 public class WidgetBehavior extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Component component;
     WidgetTemplate template;

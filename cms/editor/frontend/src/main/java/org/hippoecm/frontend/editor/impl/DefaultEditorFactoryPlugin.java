@@ -39,8 +39,6 @@ import org.hippoecm.repository.api.HippoNodeType;
  * This will likely be turned into a service at some point.  
  */
 public final class DefaultEditorFactoryPlugin extends Plugin implements IEditorFactory {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

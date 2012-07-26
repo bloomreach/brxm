@@ -30,8 +30,6 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public final class JsonT9Tree extends T9Tree {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private final T9Node root;
     private Map<String, T9Node> nodes = new HashMap<String, T9Node>();

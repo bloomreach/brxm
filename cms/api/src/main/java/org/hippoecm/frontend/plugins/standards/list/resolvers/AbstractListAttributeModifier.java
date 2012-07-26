@@ -28,8 +28,6 @@ import org.apache.wicket.model.IModel;
  * @param <T> model type of the grid
  */
 public abstract class AbstractListAttributeModifier<T> implements Serializable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

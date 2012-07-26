@@ -26,8 +26,6 @@ import org.hippoecm.frontend.validation.ModelPathElement;
  * It can be used to uniformly manipulate such lists.
  */
 public abstract class AbstractProvider<T, M extends IModel> extends ItemModelWrapper<T> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

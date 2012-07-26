@@ -26,7 +26,6 @@ package org.hippoecm.editor;
  */
 
 public interface EditorNodeType {
-    final static String SVN_ID = "$Id";
 
     //--- Hippo Editor NodeTypes ---//
     String NT_TEMPLATESET = "editor:templateset";

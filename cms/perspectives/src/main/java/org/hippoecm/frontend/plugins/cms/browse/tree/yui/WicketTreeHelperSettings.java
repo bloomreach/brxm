@@ -25,8 +25,6 @@ import org.hippoecm.frontend.plugins.yui.javascript.YuiType;
 public class WicketTreeHelperSettings extends YuiObject {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     protected static final BooleanSetting TREE_AUTOWIDTH = new BooleanSetting("treeAutowidth", true);
     protected static final StringSetting SET_WIDTH_TO_CLASSNAME = new StringSetting("setWidthToClassname", "hippo-tree");

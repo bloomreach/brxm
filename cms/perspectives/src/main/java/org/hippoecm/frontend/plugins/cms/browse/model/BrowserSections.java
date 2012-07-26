@@ -28,8 +28,6 @@ import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
 
 public class BrowserSections implements IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

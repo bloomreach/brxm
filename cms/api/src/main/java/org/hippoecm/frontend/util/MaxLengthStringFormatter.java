@@ -18,8 +18,6 @@ package org.hippoecm.frontend.util;
 import org.apache.wicket.IClusterable;
 
 public class MaxLengthStringFormatter implements IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

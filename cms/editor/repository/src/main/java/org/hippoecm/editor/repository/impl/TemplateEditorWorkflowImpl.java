@@ -32,8 +32,6 @@ import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 public class TemplateEditorWorkflowImpl extends WorkflowImpl implements TemplateEditorWorkflow {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public TemplateEditorWorkflowImpl() throws RemoteException {
         super();

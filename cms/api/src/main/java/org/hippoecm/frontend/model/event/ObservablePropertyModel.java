@@ -21,8 +21,6 @@ import org.apache.wicket.model.PropertyModel;
  * A property model that observes an observable target.
  */
 public class ObservablePropertyModel<T> extends PropertyModel<T> implements IObservable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

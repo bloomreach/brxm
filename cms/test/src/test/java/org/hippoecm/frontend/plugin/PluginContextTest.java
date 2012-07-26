@@ -37,8 +37,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class PluginContextTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public interface ITestService extends IClusterable {
 

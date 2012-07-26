@@ -54,8 +54,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: JcrTypeDescriptor.java 19407 2009-08-26 10:44:37Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 

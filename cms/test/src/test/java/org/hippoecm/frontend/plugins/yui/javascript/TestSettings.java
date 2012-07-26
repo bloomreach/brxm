@@ -43,8 +43,6 @@ import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.junit.Test;
 
 public class TestSettings extends TestCase {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static class SimpleSettings extends YuiObject {
         private static final long serialVersionUID = 1L;

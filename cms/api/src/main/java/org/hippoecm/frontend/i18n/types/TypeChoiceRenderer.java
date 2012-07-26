@@ -21,8 +21,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 
 public class TypeChoiceRenderer implements IChoiceRenderer {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

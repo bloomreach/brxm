@@ -27,8 +27,6 @@ import org.hippoecm.frontend.service.render.ListViewPlugin;
 import org.junit.Test;
 
 public class TemplateFactoryTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testTwoPane() {

@@ -34,8 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TranslationsColumnProviderPlugin extends AbstractListColumnProviderPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: DocumentListingPlugin.java 24575 2010-10-22 10:23:51Z bvanhalderen $";
 
     private static final long serialVersionUID = 1L;
 

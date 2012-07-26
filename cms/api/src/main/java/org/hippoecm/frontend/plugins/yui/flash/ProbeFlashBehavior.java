@@ -27,7 +27,6 @@ import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 
 public abstract class ProbeFlashBehavior extends AbstractYuiAjaxBehavior {
-    final static String SVN_ID = "$Id$";
 
     DynamicTextTemplate template;
 

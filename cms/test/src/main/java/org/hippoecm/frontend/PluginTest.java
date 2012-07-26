@@ -67,8 +67,6 @@ public abstract class PluginTest extends RepositoryTest {
         }
     }
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected static ValueMap CREDENTIALS = new ValueMap("username=" + RepositoryTest.SYSTEMUSER_ID + ",password=" + RepositoryTest.SYSTEMUSER_PASSWORD.toString());
 

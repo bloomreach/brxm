@@ -22,8 +22,6 @@ import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
 import org.junit.Test;
 
 public class ByteSizeFormatterTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testZeroDecimalPlaces() throws Exception {

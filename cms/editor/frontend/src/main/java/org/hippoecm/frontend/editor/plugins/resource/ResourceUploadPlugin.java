@@ -46,8 +46,6 @@ import org.slf4j.LoggerFactory;
  * This plugin can be configured with specific types, so not all file types are allowed to be uploaded.
  */
 public class ResourceUploadPlugin extends RenderPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

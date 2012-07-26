@@ -10,8 +10,6 @@ import javax.jcr.RepositoryException;
 import java.util.Comparator;
 
 public abstract class PropertyComparator implements Comparator<Node>, IClusterable {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private String prop;
     private String relPath;

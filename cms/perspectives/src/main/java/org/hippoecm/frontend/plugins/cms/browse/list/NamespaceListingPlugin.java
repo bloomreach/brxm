@@ -36,8 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class NamespaceListingPlugin extends ExpandCollapseListingPlugin<Node> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     public NamespaceListingPlugin(IPluginContext context, IPluginConfig config) {

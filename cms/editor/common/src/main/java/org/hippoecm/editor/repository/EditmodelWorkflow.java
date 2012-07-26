@@ -24,7 +24,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.MappingException;
 
 public interface EditmodelWorkflow extends Workflow {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Returns the path of the JCR node containing the template definition to edit.

@@ -28,8 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NamespaceWorkflowPlugin extends CompatibilityWorkflowPlugin<NamespaceWorkflow> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(NamespaceWorkflowPlugin.class);
 

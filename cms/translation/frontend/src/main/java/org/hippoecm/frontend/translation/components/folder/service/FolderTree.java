@@ -29,8 +29,6 @@ import org.wicketstuff.js.ext.util.ExtClass;
 
 @ExtClass("Ext.ux.tree.TreeGridLoader")
 public final class FolderTree extends ExtTreeLoader {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

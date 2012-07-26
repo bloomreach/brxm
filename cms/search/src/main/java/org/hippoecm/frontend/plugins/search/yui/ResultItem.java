@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.plugins.search.yui;
 
 public class ResultItem {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     String label;
     String path;

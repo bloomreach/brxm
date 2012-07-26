@@ -21,8 +21,6 @@ import org.hippoecm.frontend.plugins.standards.diff.TextDiffer;
 import org.junit.Test;
 
 public class TextDifferTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     @Test
     public void testDiffer() {

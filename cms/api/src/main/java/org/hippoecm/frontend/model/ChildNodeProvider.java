@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
  * add new child nodes.
  */
 public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

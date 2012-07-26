@@ -32,8 +32,6 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
 
 public class ResetDialog extends AbstractDialog<Node> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     protected boolean hasPendingChanges;

@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
  * (since 'efficient' is dependent on the query being carried out, this cannot be done generically)
  */
 public class JcrQueryModel extends LoadableDetachableModel implements IDataProvider, IObservable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

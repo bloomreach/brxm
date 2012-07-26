@@ -32,8 +32,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 
 public class JavaPluginConfig extends ValueMap implements IPluginConfig {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

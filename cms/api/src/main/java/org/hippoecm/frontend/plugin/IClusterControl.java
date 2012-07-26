@@ -27,7 +27,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * will stop the cluster when the plugin is stopped.
  */
 public interface IClusterControl extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The cluster configuration.  All parameters have been filled in, so it is no longer the template

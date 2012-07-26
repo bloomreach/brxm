@@ -41,8 +41,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
 public class NamespaceWorkflowPluginTest extends PluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ";
 
     public static final class MenuTesterPlugin extends RenderPlugin {
         private static final long serialVersionUID = 1L;

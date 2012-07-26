@@ -28,8 +28,6 @@ import org.hippoecm.frontend.validation.Violation;
  * violations for items that exist as part of the field, applied to a node.
  */
 public class FilteredValidationResult implements IValidationResult {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

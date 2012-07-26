@@ -38,8 +38,6 @@ import java.util.Map;
 public class YuiDatePicker extends AbstractYuiBehavior {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final ResourceReference SKIN = new CompressedResourceReference(YuiDatePicker.class, "resources/skin.css");
 

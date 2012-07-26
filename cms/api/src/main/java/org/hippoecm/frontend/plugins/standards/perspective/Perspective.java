@@ -26,8 +26,6 @@ import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
 public abstract class Perspective extends RenderPlugin<Void> implements ITitleDecorator {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

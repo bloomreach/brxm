@@ -21,8 +21,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class StripScriptTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Test
     public void stripJavascriptTest() throws Exception {

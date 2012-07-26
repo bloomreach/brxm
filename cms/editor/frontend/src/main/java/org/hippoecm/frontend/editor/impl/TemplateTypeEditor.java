@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
 class TemplateTypeEditor extends AbstractCmsEditor<Node> {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(TemplateTypeEditor.class);
 

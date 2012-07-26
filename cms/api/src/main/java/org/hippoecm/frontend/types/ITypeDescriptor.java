@@ -34,7 +34,6 @@ import org.hippoecm.frontend.model.event.IObservable;
  * In other cases, the type should be considered immutable and the mutator methods may not be invoked.
  */
 public interface ITypeDescriptor extends IClusterable, IObservable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The name of the type.  It can be used to retrieve the type from a type store.

@@ -46,8 +46,6 @@ public class NamespaceWorkflowImpl extends WorkflowImpl implements NamespaceWork
 
     static final Logger log = LoggerFactory.getLogger(NamespaceWorkflowImpl.class);
     
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private final String prefix;
 

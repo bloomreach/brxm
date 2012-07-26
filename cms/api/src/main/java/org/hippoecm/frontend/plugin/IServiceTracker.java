@@ -26,7 +26,6 @@ import org.apache.wicket.IClusterable;
  * @param <S> the type of the service to track
  */
 public interface IServiceTracker<S extends IClusterable> extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * A service is being registered.

@@ -49,8 +49,6 @@ import org.onehippo.yui.YahooNamespace;
  * @see IYuiManager
  */
 public class WebAppBehavior extends AbstractBehavior implements IYuiManager {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

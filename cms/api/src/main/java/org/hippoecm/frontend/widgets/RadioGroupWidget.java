@@ -33,8 +33,6 @@ import org.apache.wicket.util.string.AppendingStringBuffer;
 public class RadioGroupWidget<T> extends Panel {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     /**
      * Instantiates a new radio group widget.

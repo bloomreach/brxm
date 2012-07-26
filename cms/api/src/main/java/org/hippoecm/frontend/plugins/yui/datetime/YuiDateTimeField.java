@@ -50,8 +50,6 @@ import org.joda.time.format.DateTimeFormatter;
  */
 
 public class YuiDateTimeField extends DateTimeField {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: AjaxDateTimeField.java 19048 2009-07-28 16:08:33Z abogaart $";
 
     private static final long serialVersionUID = 1L;
 

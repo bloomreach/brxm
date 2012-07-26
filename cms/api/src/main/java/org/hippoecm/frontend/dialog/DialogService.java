@@ -24,8 +24,6 @@ import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.service.ServiceTracker;
 
 public class DialogService extends DialogWindow {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

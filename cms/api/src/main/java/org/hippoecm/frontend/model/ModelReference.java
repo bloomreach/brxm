@@ -33,8 +33,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
  * @param <T> the type of the object for the shared model
  */
 public class ModelReference<T> implements IModelReference<T> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

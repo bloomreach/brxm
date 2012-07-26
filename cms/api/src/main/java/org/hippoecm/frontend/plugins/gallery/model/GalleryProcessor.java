@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.IClusterable;
 
 public interface GalleryProcessor extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     public void makeImage(Node node, InputStream istream, String mimeType, String filename) throws GalleryException,
             RepositoryException;

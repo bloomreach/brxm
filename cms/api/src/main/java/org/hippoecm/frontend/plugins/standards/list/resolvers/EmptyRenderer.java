@@ -21,8 +21,6 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.event.IObservable;
 
 public class EmptyRenderer<T> implements IListCellRenderer<T> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -5,8 +5,6 @@ import javax.jcr.RepositoryException;
 import java.util.Calendar;
 
 public class CalendarComparator extends PropertyComparator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public CalendarComparator(String prop) {
         super(prop);

@@ -23,7 +23,6 @@ import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 
 public interface IJcrTreeNode extends TreeNode, IDetachable {
-    final static String SVN_ID = "$Id$";
 
     IModel<Node> getNodeModel();
     

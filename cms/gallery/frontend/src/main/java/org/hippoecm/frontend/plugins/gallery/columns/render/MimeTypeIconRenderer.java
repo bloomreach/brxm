@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MimeTypeIconRenderer extends IconRenderer {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(MimeTypeIconRenderer.class);
 

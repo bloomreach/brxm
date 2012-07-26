@@ -28,8 +28,6 @@ import org.apache.wicket.model.IModel;
  * is detached.
  */
 class JcrSessionReference extends WeakReference<UserSession> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     static final ReferenceQueue<UserSession> refQueue = new ReferenceQueue<UserSession>();
 

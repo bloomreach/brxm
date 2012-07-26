@@ -16,8 +16,6 @@
 package org.hippoecm.repository.gallery;
 
 public class HippoGalleryNodeType {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: HippoGalleryNodeType.java 24843 2010-11-04 13:15:00Z bvanhalderen $";
 
     public static final String IMAGE = "hippogallery:image";
     public static final String IMAGE_WIDTH = "hippogallery:width";

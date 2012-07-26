@@ -47,8 +47,6 @@ import static org.easymock.EasyMock.verify;
  * @author Jettro Coenradie
  */
 public class GotolinkDocumentsShortcutPluginTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     final IBrowseService mockBrowseService = createMock("browseService", IBrowseService.class);
     final IModelReference mockModelReference = createMock("modelReference", IModelReference.class);

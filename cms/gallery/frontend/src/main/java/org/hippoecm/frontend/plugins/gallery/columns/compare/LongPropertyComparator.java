@@ -4,8 +4,6 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 public class LongPropertyComparator extends PropertyComparator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public LongPropertyComparator(String prop) {
         super(prop);

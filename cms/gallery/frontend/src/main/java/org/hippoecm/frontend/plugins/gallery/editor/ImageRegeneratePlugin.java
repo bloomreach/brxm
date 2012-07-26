@@ -38,8 +38,6 @@ import org.slf4j.LoggerFactory;
 
 public class ImageRegeneratePlugin extends RenderPlugin {
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: ImageRegeneratePlugin.java 27169 2011-03-01 14:25:35Z mchatzidakis $";
 
     private static final long serialVersionUID = 1L;
 

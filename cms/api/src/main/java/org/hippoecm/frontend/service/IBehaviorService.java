@@ -19,7 +19,6 @@ import org.apache.wicket.IClusterable;
 import org.apache.wicket.behavior.IBehavior;
 
 public interface IBehaviorService extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     String ID = "behavior.id";
     String PATH = "behavior.path";

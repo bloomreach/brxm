@@ -37,8 +37,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  * </ul>
  */
 public class FileUploadWidgetSettings implements IClusterable{
-    @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
 
     public static final String FILEUPLOAD_FLASH_ENABLED_SETTING = "fileupload.flashEnabled";
     public static final String FILEUPLOAD_MAX_ITEMS_SETTING = "fileupload.maxItems";

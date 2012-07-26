@@ -25,8 +25,6 @@ import org.hippoecm.frontend.translation.components.folder.model.T9Node;
 import org.hippoecm.frontend.translation.components.folder.model.T9Tree;
 
 public class FolderTranslationPage extends WebPage {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public FolderTranslationPage(PageParameters parameters) {
         String folder = parameters.getString("folder", "evenements");

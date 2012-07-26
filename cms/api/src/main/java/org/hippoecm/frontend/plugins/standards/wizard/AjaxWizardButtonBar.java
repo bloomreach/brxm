@@ -26,8 +26,6 @@ import org.apache.wicket.markup.html.form.Form;
 public class AjaxWizardButtonBar extends WizardButtonBar {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public AjaxWizardButtonBar(String id, final Wizard wizard) {
         super(id, wizard);

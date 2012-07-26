@@ -25,7 +25,6 @@ import org.apache.wicket.IClusterable;
  * @param <S> the service interface that is wrapped by the factory
  */
 public interface IServiceFactory<S extends IClusterable> extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The service class to be wrapped.  Needs to be be present here since the type parameter is not

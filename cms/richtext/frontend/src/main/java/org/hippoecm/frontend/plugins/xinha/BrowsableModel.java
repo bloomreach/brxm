@@ -23,8 +23,6 @@ import org.hippoecm.frontend.plugins.richtext.RichTextProcessor;
  * Model that decorates the links in html.
  */
 public class BrowsableModel implements IModel<String> {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

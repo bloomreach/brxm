@@ -23,8 +23,6 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
  * Path to a value that maintains references to {@link IFieldDescriptor}s.
  */
 public final class ModelPath implements IDetachable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -39,8 +39,6 @@ import net.sf.json.JsonConfig;
  * @see WireframeBehavior
  */
 public class PageLayoutBehavior extends AbstractYuiBehavior implements IWireframe {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -34,8 +34,6 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.Panel
 import org.hippoecm.frontend.widgets.AbstractView;
 
 public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: PanelPluginPanel.java 27677 2011-04-09 12:14:28Z fvlankvelt $";
     private static final long serialVersionUID = 1L;
 
     static class PanelPluginProvider implements IDataProvider<PanelPlugin> {

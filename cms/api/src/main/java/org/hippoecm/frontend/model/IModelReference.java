@@ -39,7 +39,6 @@ import org.hippoecm.frontend.model.event.IObserver;
  * @param <T> the type of the object for the model
  */
 public interface IModelReference<T> extends IDetachable, IObservable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * Event that's sent to {@link IObserver}s of the service.

@@ -42,8 +42,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.PluginConfigEvent;
 
 public abstract class AbstractPluginDecorator extends AbstractValueMap implements IPluginConfig, IDetachable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

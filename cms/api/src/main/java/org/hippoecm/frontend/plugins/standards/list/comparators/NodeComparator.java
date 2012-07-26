@@ -24,8 +24,6 @@ import javax.jcr.RepositoryException;
 import java.util.Comparator;
 
 public abstract class NodeComparator implements Comparator<Node>, IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

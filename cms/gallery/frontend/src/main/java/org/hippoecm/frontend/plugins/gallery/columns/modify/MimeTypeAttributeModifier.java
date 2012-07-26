@@ -39,8 +39,6 @@ import org.slf4j.LoggerFactory;
 
 @Deprecated
 public class MimeTypeAttributeModifier extends AbstractNodeAttributeModifier {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(MimeTypeAttributeModifier.class);

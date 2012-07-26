@@ -22,8 +22,6 @@ import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.service.IRenderService;
 
 public abstract class Home extends WebPage implements IRenderService, IContextMenuManager {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: Home.java 26868 2011-02-08 09:35:19Z fvlankvelt $";
 
     private static final long serialVersionUID = 1L;
 

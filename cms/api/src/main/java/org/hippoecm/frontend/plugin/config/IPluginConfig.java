@@ -38,7 +38,6 @@ import org.hippoecm.frontend.service.IRenderService;
  * and {@link JavaPluginConfig}.
  */
 public interface IPluginConfig extends IValueMap, IObservable, Serializable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The name of the configuration.  When the configuration is passed to a plugin,

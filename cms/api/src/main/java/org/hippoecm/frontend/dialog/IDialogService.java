@@ -27,7 +27,6 @@ import org.hippoecm.frontend.service.IRenderService;
  * under the name IDialogService.class.getName().
  */
 public interface IDialogService extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     final static String DIALOG_WICKET_ID = "content";
 

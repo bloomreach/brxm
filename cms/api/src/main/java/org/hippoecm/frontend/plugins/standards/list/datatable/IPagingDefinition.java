@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.standards.list.datatable;
 import org.apache.wicket.IClusterable;
 
 public interface IPagingDefinition extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     /**
      * The maximum number of results on a page.

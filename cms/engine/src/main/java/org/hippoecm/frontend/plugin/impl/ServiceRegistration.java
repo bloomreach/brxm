@@ -23,8 +23,6 @@ import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugin.impl.PluginManager.RefCount;
 
 class ServiceRegistration implements IClusterable {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

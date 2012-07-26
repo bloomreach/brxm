@@ -52,8 +52,6 @@ import org.slf4j.LoggerFactory;
  * is not sufficient, the client must also invoke {@link #setObject(List)}.
  */
 public class JcrMultiPropertyValueModel<T extends Serializable> implements IModel<List<T>> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

@@ -24,7 +24,6 @@ import org.apache.wicket.IClusterable;
  * violation.
  */
 public interface IValidationService extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     String VALIDATE_ID = "validator.id";
 

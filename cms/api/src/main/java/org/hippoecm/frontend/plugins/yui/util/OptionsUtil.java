@@ -23,8 +23,6 @@ import java.util.Map;
 
 @Deprecated
 public class OptionsUtil {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public static final String KEY_VALUE_DELIM = "=";
 

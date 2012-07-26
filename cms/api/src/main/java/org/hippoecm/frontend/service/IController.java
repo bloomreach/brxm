@@ -23,7 +23,6 @@ import org.apache.wicket.IClusterable;
  * Interface for services that can process request parameters.
  */
 public interface IController extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     void process(Map parameters);
 }

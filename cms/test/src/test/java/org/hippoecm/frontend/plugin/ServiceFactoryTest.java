@@ -29,8 +29,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class ServiceFactoryTest {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id: $";
 
     HippoTester tester;
     PluginPage home;

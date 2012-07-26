@@ -19,8 +19,6 @@ import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.Model;
 
 public class IconAttributeModifier extends AbstractNodeAttributeModifier {
-    @SuppressWarnings("unused")
-    final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

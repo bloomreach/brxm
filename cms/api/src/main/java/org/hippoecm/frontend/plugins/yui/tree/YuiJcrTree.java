@@ -34,8 +34,6 @@ import org.hippoecm.frontend.plugins.yui.tree.TreeBehavior.DefaultTreeItem;
 public class YuiJcrTree extends Panel {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     public YuiJcrTree(String id, IPluginConfig config, final IModel model) {
         super(id);

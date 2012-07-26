@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
  * This class handles the creation and storage of RichTextImages in the JCR repository.
  */
 public class JcrRichTextImageFactory implements IRichTextImageFactory {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

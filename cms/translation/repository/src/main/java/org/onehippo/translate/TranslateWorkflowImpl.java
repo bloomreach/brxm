@@ -56,8 +56,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TranslateWorkflowImpl implements TranslateWorkflow, InternalWorkflow {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(TranslateWorkflowImpl.class);
 

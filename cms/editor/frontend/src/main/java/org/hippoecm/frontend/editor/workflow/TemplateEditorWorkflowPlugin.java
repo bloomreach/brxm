@@ -38,8 +38,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
 
 public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

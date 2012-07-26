@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface IHippoMap extends Map<String, Object> {
-    final static String SVN_ID = "$Id$";
 
     String getPrimaryType();
 

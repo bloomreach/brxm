@@ -18,7 +18,6 @@ package org.hippoecm.frontend.dialog;
 import org.apache.wicket.IClusterable;
 
 public interface IDialogFactory extends IClusterable {
-    final static String SVN_ID = "$Id$";
 
     public IDialogService.Dialog createDialog();
 }

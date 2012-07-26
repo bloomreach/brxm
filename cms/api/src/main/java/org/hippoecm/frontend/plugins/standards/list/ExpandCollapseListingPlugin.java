@@ -45,8 +45,6 @@ import org.hippoecm.frontend.plugins.yui.layout.ExpandCollapseLink;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
 
 public abstract class ExpandCollapseListingPlugin<T> extends AbstractListingPlugin<T> implements IExpandableCollapsable {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     private static final long serialVersionUID = 1L;
 
     private static final String TOGGLE_FULLSCREEN_IMG = "but-small.png";

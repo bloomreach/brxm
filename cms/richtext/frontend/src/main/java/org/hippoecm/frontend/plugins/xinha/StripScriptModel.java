@@ -20,8 +20,6 @@ import org.apache.wicket.model.IModel;
 import java.util.regex.Pattern;
 
 public class StripScriptModel implements IModel<String> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static Pattern SCRIPT_PATTERN = Pattern.compile("<script.*?((>.*?</script>)|(/>))",
             Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
