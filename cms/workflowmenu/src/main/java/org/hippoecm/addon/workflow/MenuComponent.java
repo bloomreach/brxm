@@ -16,6 +16,5 @@
 package org.hippoecm.addon.workflow;
 
 interface MenuComponent {
-    final String SVN_ID = "$Id$";
 
 }

@@ -19,8 +19,6 @@ import java.io.Serializable;
 import java.util.List;
 
 public interface XinhaExtension extends Serializable {
-    @SuppressWarnings("unused")
-    final String SVN_ID = "$Id$";
 
     class ListEntry {
         private String key;

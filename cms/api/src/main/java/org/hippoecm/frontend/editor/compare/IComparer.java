@@ -18,8 +18,6 @@ package org.hippoecm.frontend.editor.compare;
 import java.io.Serializable;
 
 public interface IComparer<T> extends Serializable {
-    @SuppressWarnings("unused")
-    final String SVN_ID = "$Id$";
 
     boolean areEqual(T base, T target);
 
