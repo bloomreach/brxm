@@ -18,8 +18,10 @@ package org.hippoecm.frontend.plugins.cms.root;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
+import org.hippoecm.frontend.extjs.LazyExtComponentRegistry;
 import org.hippoecm.frontend.js.GlobalJsResourceBehavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -51,6 +53,7 @@ public class RootPlugin extends TabsPlugin {
     static final Logger log = LoggerFactory.getLogger(RootPlugin.class);
     
     private boolean rendered = false;
+    private final LazyExtComponentRegistry lazyExtComponentRegistry;
 
     public RootPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -89,6 +92,9 @@ public class RootPlugin extends TabsPlugin {
         add(new ExtResourcesBehaviour());
         add(new ExtHippoThemeBehavior());
 
+        lazyExtComponentRegistry = new LazyExtComponentRegistry(getPluginContext());
+        add(lazyExtComponentRegistry);
+
         addExtensionPoint("top");
 
         TabbedPanel tabbedPanel = getTabbedPanel();
@@ -97,6 +103,16 @@ public class RootPlugin extends TabsPlugin {
 
         get("tabs:panel-container").add(new UnitBehavior("center"));
         get("tabs:tabs-container").add(new UnitBehavior("left"));
+    }
+
+
+    @Override
+    public void renderHead(final HtmlHeaderContainer container) {
+        // Force the rendering of the lazy Ext component registry before other head contributions to ensure that the
+        // the configuration of lazy Ext components is rendered and registered before other Ext objects are instantiated.
+        // This way lazy Ext components are always accessible to non-lazy Ext components.
+        lazyExtComponentRegistry.renderHead(container);
+        super.renderHead(container);
     }
 
     @Override
