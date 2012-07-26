@@ -28,8 +28,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class FacetedNavigationTest extends FacetedNavigationAbstractTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Before
     @Override

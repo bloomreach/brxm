@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 
 public abstract class HippoVirtualProvider implements DataProviderModule
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private DataProviderContext stateMgr;
 

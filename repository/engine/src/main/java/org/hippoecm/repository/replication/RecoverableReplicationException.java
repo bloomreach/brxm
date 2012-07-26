@@ -22,8 +22,6 @@ package org.hippoecm.repository.replication;
 public class RecoverableReplicationException extends RuntimeException {
 
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Serial

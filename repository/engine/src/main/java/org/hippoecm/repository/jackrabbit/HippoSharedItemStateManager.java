@@ -55,8 +55,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HippoSharedItemStateManager extends SharedItemStateManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(HippoSharedItemStateManager.class);
 

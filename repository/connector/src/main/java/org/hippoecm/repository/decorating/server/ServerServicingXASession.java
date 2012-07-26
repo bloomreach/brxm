@@ -35,8 +35,6 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
 
 public class ServerServicingXASession extends ServerXASession implements RemoteServicingXASession {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private HippoSession session;
 

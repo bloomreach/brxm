@@ -10,8 +10,6 @@ import java.util.List;
 
 public class ExcludeDoclet
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     
     public static void main(String[] args)
     {

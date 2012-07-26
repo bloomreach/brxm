@@ -23,8 +23,6 @@ public class HippoPropertyId extends PropertyId
 {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     NodeId virtualParentId;
 

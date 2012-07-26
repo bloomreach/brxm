@@ -39,8 +39,6 @@ import org.hippoecm.repository.jackrabbit.HippoHierarchyManager;
 public class SimpleAccessManager extends org.apache.jackrabbit.core.security.simple.SimpleAccessManager implements AccessManager {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private boolean initialized;
     

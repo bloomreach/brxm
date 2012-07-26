@@ -29,8 +29,6 @@ import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.Test;
 
 public class FacetedNavigationChildNameTest extends FacetedNavigationAbstractTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Test
     public void testHREPTWO270Issue() throws RepositoryException {

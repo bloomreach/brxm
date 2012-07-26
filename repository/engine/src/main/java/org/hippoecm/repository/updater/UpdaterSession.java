@@ -68,8 +68,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 final public class UpdaterSession implements HippoSession {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(UpdaterSession.class);
 

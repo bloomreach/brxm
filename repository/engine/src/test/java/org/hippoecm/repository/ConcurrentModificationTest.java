@@ -32,8 +32,6 @@ import org.junit.Test;
  * to http://issues.apache.org/jira/browse/JCR-2129.
  */
 public class ConcurrentModificationTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final String testRoot = "/test";
     private Session userSession;

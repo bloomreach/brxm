@@ -21,8 +21,6 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.WorkflowManager;
 
 public abstract class WorkflowManagerDecorator implements WorkflowManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Session session;
 

@@ -28,7 +28,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteXASession;
 
 public interface RemoteServicingXASession extends RemoteXASession, Remote, Serializable {
-    static final String SVN_ID = "$Id$";
 
     public RemoteNode copy(String originalPath, String absPath) throws RepositoryException, RemoteException;
 

@@ -23,8 +23,6 @@ import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.MappingException;
 
 public abstract class DocumentManagerDecorator implements DocumentManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Session session;
 

@@ -25,8 +25,6 @@ import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
 
 public interface HippoSecurityManager extends JackrabbitSecurityManager {
 
-    @SuppressWarnings("unused")
-    static final String SVN_ID = "$Id$";
 
     /**
      * Initialize the SecurityManager.

@@ -49,8 +49,6 @@ public class FreeTextSearchTest extends TestCase {
     public static final String  HTML_CONTENT_PART = "lux";
     public static final String  BINARY_CONTENT_PART = "dog";
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
    
     private static final String TEST_PATH = "test";
     private Node testPath;

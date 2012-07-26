@@ -30,8 +30,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ImpersonateTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final String TEST_USER_ID = "testuser";
     private static final String TEST_USER_PASS = "password";

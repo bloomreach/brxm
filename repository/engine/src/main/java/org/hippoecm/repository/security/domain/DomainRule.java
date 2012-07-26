@@ -39,8 +39,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class DomainRule implements Serializable {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Serial version id

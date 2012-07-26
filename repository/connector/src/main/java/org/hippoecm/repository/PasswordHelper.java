@@ -57,8 +57,6 @@ public class PasswordHelper {
     /**
      * SVN ID
      */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Alogrithm to use for random number generation

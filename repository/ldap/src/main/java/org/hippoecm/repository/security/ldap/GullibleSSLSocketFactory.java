@@ -39,8 +39,6 @@ import javax.net.ssl.X509TrustManager;
  */
 public class GullibleSSLSocketFactory extends SSLSocketFactory {
 
-    @SuppressWarnings("unused")
-    static final String SVN_ID = "$Id$";
 
     static class GullibleTrustManager implements X509TrustManager {
         GullibleTrustManager() {

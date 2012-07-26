@@ -28,8 +28,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class ChainingImpl extends WorkflowImpl implements Chaining {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static Vector<String> result = new Vector<String>();
 

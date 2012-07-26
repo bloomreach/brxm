@@ -41,8 +41,6 @@ import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteRepository;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public ClientServicesAdapterFactory() {
     }

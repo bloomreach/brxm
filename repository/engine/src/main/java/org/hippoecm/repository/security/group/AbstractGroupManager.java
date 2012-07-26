@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 */
 public abstract class AbstractGroupManager implements GroupManager {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The system/root session

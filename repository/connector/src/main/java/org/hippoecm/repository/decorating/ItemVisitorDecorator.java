@@ -24,8 +24,6 @@ import javax.jcr.Session;
 /**
  */
 public class ItemVisitorDecorator extends AbstractDecorator implements ItemVisitor {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final ItemVisitor visitor;
 

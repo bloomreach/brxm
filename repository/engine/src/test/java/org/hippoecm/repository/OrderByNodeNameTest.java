@@ -30,8 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class OrderByNodeNameTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private Node testPath;
 

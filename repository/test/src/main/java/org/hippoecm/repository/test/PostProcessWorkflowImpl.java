@@ -19,8 +19,6 @@ import java.rmi.RemoteException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class PostProcessWorkflowImpl extends WorkflowImpl implements PostProcessWorkflow {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private long identifier;
 

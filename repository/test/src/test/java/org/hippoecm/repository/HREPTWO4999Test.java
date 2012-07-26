@@ -23,8 +23,6 @@ import org.junit.Test;
 import static org.junit.Assert.fail;
 
 public class HREPTWO4999Test extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Override
     @Before

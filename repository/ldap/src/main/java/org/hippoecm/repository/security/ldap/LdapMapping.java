@@ -21,8 +21,6 @@ package org.hippoecm.repository.security.ldap;
  */
 public class LdapMapping {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     // the properties don't have to be exposed through the api because they are ldap specific
     public static final String PROPERTY_SOURCE = "hippoldap:source";

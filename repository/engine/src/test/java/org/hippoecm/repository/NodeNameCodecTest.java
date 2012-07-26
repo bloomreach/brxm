@@ -30,8 +30,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class NodeNameCodecTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final String TEST_PATH = "testnodes";
     private Node testPath;

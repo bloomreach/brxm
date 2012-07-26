@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
  * is itself committed.
  */
 public class ForkedXAItemStateManager extends LocalItemStateManager implements InternalXAResource {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The logger instance.

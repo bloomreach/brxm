@@ -35,8 +35,6 @@ import javax.jcr.version.VersionException;
 /**
  */
 public class PropertyDecorator extends ItemDecorator implements Property {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final Property property;
 

@@ -26,7 +26,6 @@ public interface WorkflowContext {
     /**
      * 
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Obtains an alternative work-flow context, which has special behavior depending on the specification parameter passed.

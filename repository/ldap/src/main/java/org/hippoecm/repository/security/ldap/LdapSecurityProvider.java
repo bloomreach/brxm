@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 
 public class LdapSecurityProvider extends AbstractSecurityProvider {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     // the nodetypes don't have to be exposed through the api because they are ldap specific
     public static final String NT_LDAPMAPPING = "hippoldap:mapping";

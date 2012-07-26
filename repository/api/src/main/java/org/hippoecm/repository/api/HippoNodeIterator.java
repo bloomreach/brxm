@@ -26,7 +26,6 @@ public interface HippoNodeIterator extends NodeIterator {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Obtains the number of elements that would be retrievable if the user your have access to all elements in the repository

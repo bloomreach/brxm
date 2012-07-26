@@ -47,8 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private final Logger log = LoggerFactory.getLogger(FacetNavigationProvider.class);
     

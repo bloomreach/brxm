@@ -58,8 +58,6 @@ import org.slf4j.LoggerFactory;
         </code>
  */
 public abstract class TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(TestCase.class);
 

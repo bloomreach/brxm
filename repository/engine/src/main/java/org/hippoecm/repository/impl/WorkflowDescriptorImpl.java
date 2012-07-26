@@ -38,8 +38,6 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 
 final class WorkflowDescriptorImpl implements WorkflowDescriptor {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     String uuid;
     String category;

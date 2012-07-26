@@ -25,8 +25,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class FacetedNavigationNamespaceTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long PROP_COUNT = 2;
     private static final long NODE_COUNT = 3;

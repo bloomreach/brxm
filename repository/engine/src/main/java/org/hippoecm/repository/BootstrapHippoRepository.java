@@ -40,8 +40,6 @@ import org.slf4j.LoggerFactory;
 
 class BootstrapHippoRepository extends HippoRepositoryImpl {
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final Logger log = LoggerFactory.getLogger(BootstrapHippoRepository.class);
 

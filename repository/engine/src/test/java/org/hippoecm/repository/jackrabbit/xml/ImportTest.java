@@ -45,8 +45,6 @@ import static org.junit.Assert.assertEquals;
 
 public class ImportTest extends TestCase {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: EnhancedImportTest.java 24844 2010-11-04 13:15:16Z bvanhalderen $";
     byte[] data;
 
     @Before

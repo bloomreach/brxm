@@ -30,8 +30,6 @@ import org.apache.jackrabbit.spi.commons.query.qom.ColumnImpl;
 import org.apache.lucene.search.Query;
 
 public class HippoQueryResult extends QueryResultImpl {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private int totalSize;
 

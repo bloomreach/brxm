@@ -29,8 +29,6 @@ import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.Test;
 
 public class FacetedNavigationSortingTest extends AbstractDateFacetNavigationTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
       
     /*
     * This test is to make sure sorting of the found facet values which are translated to nodenames are working as expected

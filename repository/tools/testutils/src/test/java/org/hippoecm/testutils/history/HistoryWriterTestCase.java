@@ -19,8 +19,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class HistoryWriterTestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Test
     @Ignore

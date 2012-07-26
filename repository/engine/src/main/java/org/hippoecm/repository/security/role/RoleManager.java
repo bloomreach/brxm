@@ -25,7 +25,6 @@ import org.hippoecm.repository.security.ManagerContext;
  * Interface for managing roles in the backend
  */
 public interface RoleManager {
-    static final String SVN_ID = "$Id$";
 
     /**
      * Initialize the backend with the given context and load the roles

@@ -32,8 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.DecoratorFactoryImpl implements DecoratorFactory {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(DecoratorFactory.class);
 

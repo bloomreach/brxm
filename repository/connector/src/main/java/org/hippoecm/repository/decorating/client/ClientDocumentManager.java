@@ -28,8 +28,6 @@ import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 
 public class ClientDocumentManager extends ClientObject implements DocumentManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private RemoteDocumentManager remote;
     private Session session;

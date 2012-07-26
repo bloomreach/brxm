@@ -34,7 +34,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 public class DropboxTest extends TestCase {
-    private static final String SVN_ID = "$Id$";
 
     @Before
     public void setUp() throws Exception {

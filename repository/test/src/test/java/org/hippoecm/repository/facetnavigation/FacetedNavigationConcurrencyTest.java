@@ -48,8 +48,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FacetedNavigationConcurrencyTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: FacetedNavigationSimpleTest.java 23793 2010-08-31 09:40:49Z aschrijvers $";
 
     private final Calendar globalCal = Calendar.getInstance();
     

@@ -27,8 +27,6 @@ import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
 
 public class ServerQueryManager extends org.apache.jackrabbit.rmi.server.ServerQueryManager
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected Session session;
     protected QueryManager manager;

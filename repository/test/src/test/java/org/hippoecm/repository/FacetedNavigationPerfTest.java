@@ -22,6 +22,4 @@ import org.junit.runners.Suite;
   org.hippoecm.repository.FacetedNavigationPerfTestCase.class
 })
 public class FacetedNavigationPerfTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 }

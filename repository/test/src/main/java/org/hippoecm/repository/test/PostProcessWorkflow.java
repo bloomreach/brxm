@@ -18,7 +18,6 @@ package org.hippoecm.repository.test;
 import org.hippoecm.repository.api.Workflow;
 
 public interface PostProcessWorkflow extends Workflow {
-    static final String SVN_ID = "$Id$";
 
     public void setIdentifier(long identifier);
 }

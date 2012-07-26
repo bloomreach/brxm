@@ -56,8 +56,6 @@ import org.junit.runners.Suite;
 })
 public class RemoteSPITest extends Suite
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public RemoteSPITest(Class<?> klass) throws InitializationError {
         super(klass);

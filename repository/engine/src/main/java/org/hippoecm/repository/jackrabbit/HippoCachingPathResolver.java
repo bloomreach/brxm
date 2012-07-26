@@ -32,8 +32,6 @@ import org.apache.jackrabbit.spi.commons.name.CargoNamePath;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 
 class HippoCachingPathResolver implements PathResolver {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private NameResolver nResolver;
     PathResolver pResolver;

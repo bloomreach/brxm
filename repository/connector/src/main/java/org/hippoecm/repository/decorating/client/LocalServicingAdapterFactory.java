@@ -28,7 +28,6 @@ import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 
 public interface LocalServicingAdapterFactory extends LocalAdapterFactory {
-    static final String SVN_ID = "$Id$";
 
     public DocumentManager getDocumentManager(Session session, RemoteDocumentManager remote);
     public WorkflowManager getWorkflowManager(Session session, RemoteWorkflowManager remote);

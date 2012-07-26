@@ -31,8 +31,6 @@ import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 
 public class ServerHierarchyResolver extends ServerObject implements RemoteHierarchyResolver
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected Session session;
     protected HierarchyResolver resolver;

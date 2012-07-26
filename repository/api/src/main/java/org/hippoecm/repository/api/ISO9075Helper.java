@@ -20,8 +20,6 @@ package org.hippoecm.repository.api;
  * @deprecated use StringCodec instead
  */
 public class ISO9075Helper {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private ISO9075Helper() {};
 

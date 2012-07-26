@@ -44,8 +44,6 @@ import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.hippoecm.repository.jackrabbit.FacetResultSetProvider;
 
 public abstract class AbstractFacetNavigationProvider extends HippoVirtualProvider {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected static final String VALID_RANGE_EXAMPLE = "hippo:date$[{name:'this week', resolution:'week', begin:-1, end:0}, {name:'last 7 days', resolution:'day', begin:-7, end:0 }]";
     protected static final String VALID_NODENAME_EXAMPLE = "date${sortby:'facetvalue', sortorder:'descending'}";

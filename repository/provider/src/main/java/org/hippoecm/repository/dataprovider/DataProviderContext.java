@@ -37,8 +37,6 @@ import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
 
 public interface DataProviderContext {
-    @SuppressWarnings("unused")
-    static final String SVN_ID = "$Id$";
 
     public HippoVirtualProvider lookupProvider(String moduleName);
 

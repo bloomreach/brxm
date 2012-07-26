@@ -44,8 +44,6 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
 public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDecorator implements HippoQuery {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final Query query;
     protected Map<String, Value> arguments = null;

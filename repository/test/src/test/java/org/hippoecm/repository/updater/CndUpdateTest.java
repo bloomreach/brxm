@@ -48,8 +48,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class CndUpdateTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private String cnd1 =
             "<testUpdateModel='http://localhost/testUpdateModel/nt/1.0'>\n"

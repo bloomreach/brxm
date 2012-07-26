@@ -27,8 +27,6 @@ import org.hippoecm.repository.replication.Replicator;
  */
 public class ReplicatorConfig extends BeanConfig {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Creates a journal configuration object from the given bean configuration.

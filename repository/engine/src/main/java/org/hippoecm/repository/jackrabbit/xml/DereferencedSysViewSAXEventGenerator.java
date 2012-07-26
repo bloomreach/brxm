@@ -47,8 +47,6 @@ import org.xml.sax.helpers.AttributesImpl;
  * Store references as: [MULTI_VALUE|SINGLE_VALUE]+REFERENCE_SEPARATOR+propname+REFERENCE_SEPARATOR+refpath
  */
 public class DereferencedSysViewSAXEventGenerator extends PhysicalSysViewSAXEventGenerator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(DereferencedSysViewSAXEventGenerator.class);
 

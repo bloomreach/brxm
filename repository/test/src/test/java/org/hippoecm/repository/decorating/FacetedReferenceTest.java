@@ -32,8 +32,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static String[] content1 = new String[] {
         "/test",                                                             "nt:unstructured",

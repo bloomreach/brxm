@@ -35,8 +35,6 @@ public class JcrOID implements OID, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(JcrOID.class);
 

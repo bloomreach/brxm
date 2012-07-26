@@ -22,8 +22,6 @@ package org.hippoecm.repository.security;
 public class FacetAuthConstants {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** The wildcard to match everything */
     public static final String WILDCARD = "*";

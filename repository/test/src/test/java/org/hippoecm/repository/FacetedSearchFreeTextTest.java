@@ -28,8 +28,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class FacetedSearchFreeTextTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static String[] content = new String[] {
         "/test",           "nt:unstructured",

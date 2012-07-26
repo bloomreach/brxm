@@ -17,8 +17,6 @@ package org.hippoecm.repository.security.ldap;
 
 public class LdapGroupSearch extends LdapUserSearch {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public static final String PROPERTY_MEMBER_ATTR = "hippoldap:memberattribute";
     public static final String PROPERTY_MEMBERNAME_MATCHER = "hippoldap:membernamematcher";

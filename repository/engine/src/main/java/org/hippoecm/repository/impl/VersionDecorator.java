@@ -25,8 +25,6 @@ import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
 public class VersionDecorator extends org.hippoecm.repository.decorating.VersionDecorator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final Version version;
 

@@ -24,8 +24,6 @@ import javax.jcr.query.RowIterator;
 /**
  */
 public class QueryResultDecorator extends AbstractDecorator implements QueryResult {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final QueryResult result;
 

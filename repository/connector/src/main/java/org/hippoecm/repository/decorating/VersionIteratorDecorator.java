@@ -22,8 +22,6 @@ import javax.jcr.version.VersionIterator;
 /**
  */
 public class VersionIteratorDecorator extends RangeIteratorDecorator implements VersionIterator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Creates a decorating version iterator.

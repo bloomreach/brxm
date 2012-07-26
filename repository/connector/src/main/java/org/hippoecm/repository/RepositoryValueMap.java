@@ -22,8 +22,6 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.ValueMap;
 
 public class RepositoryValueMap extends RepositoryMapImpl implements ValueMap {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private RepositoryValueMap() {
         super("/");

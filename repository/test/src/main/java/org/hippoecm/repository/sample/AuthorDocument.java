@@ -18,8 +18,6 @@ package org.hippoecm.repository.sample;
 import org.hippoecm.repository.api.Document;
 
 public class AuthorDocument extends Document {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     int authorId;
 }

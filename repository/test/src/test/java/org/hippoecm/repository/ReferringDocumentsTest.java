@@ -40,8 +40,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 
 public class ReferringDocumentsTest extends TestCase
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(ReferringDocumentsTest.class);
 

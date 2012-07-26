@@ -22,8 +22,6 @@ import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 
 public class ServicingNameFormat {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private ServicingNameFormat() {
         // private constructor: only static methods

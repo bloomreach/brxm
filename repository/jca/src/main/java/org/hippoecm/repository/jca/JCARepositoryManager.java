@@ -28,8 +28,6 @@ import org.hippoecm.repository.HippoRepositoryFactory;
  * This class implements the repository manager.
  */
 public final class JCARepositoryManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Instance of manager.

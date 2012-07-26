@@ -39,7 +39,6 @@ public interface VersionWorkflow extends Workflow {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Creates a version of the current document state, such that the current state of the document may be re-retrieved or restored

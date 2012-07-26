@@ -27,8 +27,6 @@ import org.hippoecm.repository.HippoRepository;
 
 abstract class SampleWorkflowSetup
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static int oldAuthorId;
     static int newAuthorId;

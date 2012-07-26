@@ -26,7 +26,6 @@ package org.hippoecm.repository;
  */
 public interface HippoStdNodeType {
     /** @exclude */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Within the hippo document model, there are two basic default container documents that can hold a set of other documents,

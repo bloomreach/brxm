@@ -32,8 +32,6 @@ import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 
 public class ClientHierarchyResolver extends ClientObject implements HierarchyResolver {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private RemoteHierarchyResolver remote;
     private Session session;

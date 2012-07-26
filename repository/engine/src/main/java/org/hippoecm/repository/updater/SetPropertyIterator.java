@@ -22,8 +22,6 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 
 class SetPropertyIterator implements PropertyIterator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Iterator<UpdaterProperty> iter;
     long position = 0;

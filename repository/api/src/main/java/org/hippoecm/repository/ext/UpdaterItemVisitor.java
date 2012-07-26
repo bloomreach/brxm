@@ -40,8 +40,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
  * 
  */
 public abstract class UpdaterItemVisitor implements ItemVisitor {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * 

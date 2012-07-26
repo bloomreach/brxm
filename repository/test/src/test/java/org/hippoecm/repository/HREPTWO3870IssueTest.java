@@ -42,8 +42,6 @@ import org.slf4j.LoggerFactory;
  * - https://issues.onehippo.com/browse/HREPTWO-3870 should be closed.
  */
 public class HREPTWO3870IssueTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private final Logger log = LoggerFactory.getLogger(HREPTWO3870IssueTest.class);
 

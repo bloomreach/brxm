@@ -41,8 +41,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class FacetedAuthorizationTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Node hipDocDomain;
     Node readDomain;

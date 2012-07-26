@@ -26,8 +26,6 @@ import org.apache.jackrabbit.core.config.BeanConfig;
  */
 public class FilterConfig extends BeanConfig {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Creates a journal configuration object from the given bean configuration.

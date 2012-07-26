@@ -51,8 +51,6 @@ import EDU.oswego.cs.dl.util.concurrent.Mutex;
  */
 public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordConsumer {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Status constant.

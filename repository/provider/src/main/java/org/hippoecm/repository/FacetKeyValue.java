@@ -18,8 +18,6 @@ package org.hippoecm.repository;
 
 
 public class FacetKeyValue implements KeyValue<String, String> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private String key;
     private String value;

@@ -23,7 +23,6 @@ public interface WorkflowInvocationHandlerModuleFactory<T> {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id: WorkflowInvocationHandlerModule.java 27507 2011-03-29 12:01:19Z bvanhalderen $";
             
     public WorkflowInvocationHandlerModule createInvocationHandler(T object);
 }

@@ -21,8 +21,6 @@ import javax.jcr.nodetype.NodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class TypeResolverImpl implements TypeResolver {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
     
     private Node types;
 

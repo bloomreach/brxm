@@ -30,8 +30,6 @@ import org.apache.jackrabbit.core.state.ChangeLog;
  */
 public class StateCollectionStack {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * A map with all the {@link StateCollection}s. Used as a kind of stack.

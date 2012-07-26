@@ -35,7 +35,6 @@ public interface DefaultWorkflow extends CopyWorkflow {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Permanently removes the document from the repository.  Unlike the #archive method, this makes it impossible

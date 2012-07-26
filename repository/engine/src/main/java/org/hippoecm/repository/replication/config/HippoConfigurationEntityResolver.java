@@ -41,8 +41,6 @@ import java.util.Map;
  * files included in the hippo-ecm-repository-engine jar archive.
  */
 class HippoConfigurationEntityResolver implements EntityResolver {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The singleton instance of this class.

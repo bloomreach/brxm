@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PathFilter implements Filter {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(PathFilter.class);

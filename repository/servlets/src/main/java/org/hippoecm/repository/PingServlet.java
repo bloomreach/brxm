@@ -94,8 +94,6 @@ import javax.servlet.http.HttpSession;
 public class PingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** Servlet parameters */
     private static final String REPOSITORY_ADDRESS_PARAM = "repository-address";

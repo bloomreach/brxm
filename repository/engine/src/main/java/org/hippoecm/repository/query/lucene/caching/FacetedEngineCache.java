@@ -27,8 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FacetedEngineCache {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
     
     private static final Logger log = LoggerFactory.getLogger(FacetedEngineCache.class);
    

@@ -22,8 +22,6 @@ import java.util.NoSuchElementException;
  * Path used during upgrade.  Assures that items are processed in the correct order.
  */
 public class UpdaterPath implements Comparable<UpdaterPath> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private String[] names;
     private Integer[] indices;

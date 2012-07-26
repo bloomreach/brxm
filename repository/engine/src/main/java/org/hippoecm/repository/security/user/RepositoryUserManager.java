@@ -32,8 +32,6 @@ import org.hippoecm.repository.security.ManagerContext;
 public class RepositoryUserManager extends AbstractUserManager {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
     

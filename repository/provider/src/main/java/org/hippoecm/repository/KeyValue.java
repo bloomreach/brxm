@@ -22,7 +22,6 @@ package org.hippoecm.repository;
  */
 public interface KeyValue<K,V>
 {
-    static final String SVN_ID = "$Id$";
     
     /**
      * Returns the key corresponding to the pair.

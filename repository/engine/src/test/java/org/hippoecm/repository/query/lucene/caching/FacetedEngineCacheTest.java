@@ -24,8 +24,6 @@ import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.junit.Test;
 
 public class FacetedEngineCacheTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
 
     @Test
     public void testCacheMaximumSize() {

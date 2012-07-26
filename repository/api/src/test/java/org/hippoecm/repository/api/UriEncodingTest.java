@@ -24,8 +24,6 @@ import static org.junit.Assert.assertEquals;
  * Tests StringCodecFactory$UriEncoding
  */
 public class UriEncodingTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
 
     private StringCodecFactory.UriEncoding uri;
 

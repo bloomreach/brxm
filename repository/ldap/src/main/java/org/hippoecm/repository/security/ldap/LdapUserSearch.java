@@ -18,8 +18,6 @@ package org.hippoecm.repository.security.ldap;
 
 public class LdapUserSearch {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The search base: ou=Users,dc=onehippo,dc=org

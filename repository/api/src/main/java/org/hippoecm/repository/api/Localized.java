@@ -30,8 +30,6 @@ import javax.jcr.RepositoryException;
  * of language.
  */
 public final class Localized implements Serializable {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private Locale locale;
 

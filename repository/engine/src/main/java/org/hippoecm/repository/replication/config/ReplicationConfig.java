@@ -36,8 +36,6 @@ import org.xml.sax.InputSource;
  */
 public class ReplicationConfig {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** the default logger */
     private static Logger log = LoggerFactory.getLogger(ReplicationConfig.class);

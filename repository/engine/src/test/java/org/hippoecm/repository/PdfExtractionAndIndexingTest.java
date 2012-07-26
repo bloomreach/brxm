@@ -40,8 +40,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PdfExtractionAndIndexingTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
    
     public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";

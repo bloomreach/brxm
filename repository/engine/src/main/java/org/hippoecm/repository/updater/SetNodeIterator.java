@@ -22,8 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
 class SetNodeIterator implements NodeIterator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Iterator<UpdaterNode> iter;
     long position = 0;

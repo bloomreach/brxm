@@ -51,8 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private final Logger log = LoggerFactory.getLogger(HippoVirtualProvider.class);
 

@@ -34,7 +34,6 @@ public interface WorkflowEventWorkflow extends Workflow {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * This method is called when a work-flow event is fired in case the triggering workflow method

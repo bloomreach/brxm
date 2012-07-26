@@ -31,8 +31,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class RefreshTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Ignore
     public void testRefreshAfterRemoveIssueJackrabbit() throws Exception {

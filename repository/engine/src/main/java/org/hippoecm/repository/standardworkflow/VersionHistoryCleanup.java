@@ -141,8 +141,6 @@ class TupleSetImpl<T extends Tuple> implements TupleSet<T> {
 }
 
 public class VersionHistoryCleanup {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
     private final static Logger log = LoggerFactory.getLogger(VersionHistoryCleanup.class);
     private Set<String> unreferenced = new HashSet<String>();
     private TupleSet<StringPairTuple> references = new TupleSetImpl<StringPairTuple>();

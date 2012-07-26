@@ -39,8 +39,6 @@ import org.slf4j.LoggerFactory;
  */
 public class LdapContextFactory {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The Sun LDAP property used to enable connection pooling.  This is used in the default implementation

@@ -67,8 +67,6 @@ import org.slf4j.LoggerFactory;
 
 public class LocalHippoRepository extends HippoRepositoryImpl {
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** System property for overriding the repository path */
     public static final String SYSTEM_PATH_PROPERTY = "repo.path";

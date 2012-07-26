@@ -82,8 +82,6 @@ import java.io.InputStream;
  * <code>HippoSessionItemStateManager</code> ...
  */
 public class HippoSessionItemStateManager extends SessionItemStateManager implements UpdatableItemStateManager, OperationVisitor {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
 
     private static Logger log = LoggerFactory.getLogger(SessionItemStateManager.class);
 

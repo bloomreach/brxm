@@ -26,8 +26,6 @@ import org.apache.jackrabbit.spi.Path;
 
 public class Reference {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** this implementation requires a property that can be set on a parent node.  Because this
      * node isn't actually persisted, there will be no constraint violation, but this property

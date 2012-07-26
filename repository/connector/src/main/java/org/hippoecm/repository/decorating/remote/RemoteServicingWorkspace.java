@@ -22,7 +22,6 @@ import javax.jcr.RepositoryException;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
 
 public interface RemoteServicingWorkspace extends RemoteWorkspace {
-    static final String SVN_ID = "$Id$";
 
     public RemoteDocumentManager getDocumentManager() throws RepositoryException, RemoteException;
     public RemoteWorkflowManager getWorkflowManager() throws RepositoryException, RemoteException;

@@ -36,8 +36,6 @@ import org.hippoecm.repository.dataprovider.StateProviderContext;
 
 public abstract class MirrorVirtualProvider extends HippoVirtualProvider
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Name docbaseName;
     Name jcrUUIDName;

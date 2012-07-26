@@ -29,8 +29,6 @@ import org.hippoecm.repository.security.domain.DomainRule;
 public class FacetAuthPrincipal implements Serializable, Principal {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Serial verion id

@@ -26,8 +26,6 @@ import javax.jcr.query.qom.QueryObjectModelFactory;
 /**
  */
 public class QueryManagerDecorator extends AbstractDecorator implements QueryManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final QueryManager manager;
 

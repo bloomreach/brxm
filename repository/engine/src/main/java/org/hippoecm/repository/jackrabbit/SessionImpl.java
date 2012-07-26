@@ -58,8 +58,6 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
 public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implements InternalHippoSession {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
 

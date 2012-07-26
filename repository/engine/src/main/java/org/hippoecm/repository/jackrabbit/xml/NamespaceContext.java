@@ -36,8 +36,6 @@ import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
  */
 public class NamespaceContext implements NamespaceResolver {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The parent namespace context.

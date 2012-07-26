@@ -27,8 +27,6 @@ import javax.jcr.Session;
  * decorator factory to decorate all the returned node instances.
  */
 public class NodeIteratorDecorator extends RangeIteratorDecorator implements NodeIterator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Creates a decorating node iterator.

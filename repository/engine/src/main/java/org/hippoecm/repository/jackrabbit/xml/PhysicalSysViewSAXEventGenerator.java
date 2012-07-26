@@ -26,8 +26,6 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class PhysicalSysViewSAXEventGenerator extends SysViewSAXEventGenerator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public PhysicalSysViewSAXEventGenerator(Node node, boolean noRecurse, boolean skipBinary,
             ContentHandler contentHandler) throws RepositoryException {

@@ -24,8 +24,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class SampleWorkflowImpl extends WorkflowImpl implements SampleWorkflow {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     ArticleDocument article;
     String dummy;

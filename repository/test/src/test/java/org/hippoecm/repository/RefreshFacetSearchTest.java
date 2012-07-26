@@ -37,8 +37,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class RefreshFacetSearchTest extends TestCase{
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Test
     public void testRefreshAfterAddingNodes() throws RepositoryException {

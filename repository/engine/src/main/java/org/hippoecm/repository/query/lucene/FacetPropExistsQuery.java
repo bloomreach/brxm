@@ -20,8 +20,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 
 public class FacetPropExistsQuery {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The lucene query

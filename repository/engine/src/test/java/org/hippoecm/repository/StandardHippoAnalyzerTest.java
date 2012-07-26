@@ -27,8 +27,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class StandardHippoAnalyzerTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     
     public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";

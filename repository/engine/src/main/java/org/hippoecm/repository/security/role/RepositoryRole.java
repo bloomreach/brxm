@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 public class RepositoryRole implements Role {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The system/root session

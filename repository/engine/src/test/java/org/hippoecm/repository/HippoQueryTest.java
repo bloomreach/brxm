@@ -28,8 +28,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class HippoQueryTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private QueryManager qmgr;
 

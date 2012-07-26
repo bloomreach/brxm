@@ -27,8 +27,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class SessionTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: PathsTest.java 30172 2011-09-14 07:44:36Z mdenburger $";
 
     @Before
     public void setUp() throws Exception {

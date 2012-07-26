@@ -21,8 +21,6 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 
 public class DateSchedulerInvocationModule extends AbstractSchedulerInvocationModule {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Date timestamp;
 

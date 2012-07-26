@@ -10,8 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class MirrorPerfTestCase extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     private String[] content = {
         "/test", "nt:unstructured",
         "/test/root", "hippostd:folder",

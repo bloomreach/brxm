@@ -26,8 +26,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class RepositoryMapTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private Node root;
 

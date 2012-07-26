@@ -44,7 +44,6 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.DaemonModule;
 
 public class DropboxDaemonModule extends Thread implements DaemonModule {
-    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(DropboxDaemonModule.class);
     protected Session session;

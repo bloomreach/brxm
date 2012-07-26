@@ -26,8 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class MemoryTest extends FacetedNavigationAbstractTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
 
     private static final String TEST_USER_ID = "testuser";

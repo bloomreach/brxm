@@ -27,8 +27,6 @@ import org.apache.jackrabbit.spi.Path;
 import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
 
 public class ParsedFacet {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public static final String VALID_RANGE_EXAMPLE = "hippo:date$[{name:'this week', resolution:'week', begin:-1, end:0}, {name:'last 7 days', resolution:'day', begin:-7, end:0 }]";
 

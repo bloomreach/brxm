@@ -36,8 +36,6 @@ import org.hippoecm.repository.dataprovider.StateProviderContext;
 
 public class BootstrapRepositoryProvider extends HippoVirtualProvider
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected class BootstrapNodeId extends HippoNodeId {
         private static final long serialVersionUID = 1L;

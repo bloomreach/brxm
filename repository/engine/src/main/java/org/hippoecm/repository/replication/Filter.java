@@ -30,7 +30,6 @@ import org.apache.jackrabbit.core.state.ChangeLog;
 public interface Filter {
 
     /** @exclude */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Initialize the replicator filter.

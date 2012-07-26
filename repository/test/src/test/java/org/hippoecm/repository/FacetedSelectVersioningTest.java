@@ -19,8 +19,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 
 public class FacetedSelectVersioningTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     String[] content1 = new String[] {
         "/test", "nt:unstructured",

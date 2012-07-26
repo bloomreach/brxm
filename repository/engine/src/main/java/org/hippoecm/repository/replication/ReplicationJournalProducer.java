@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ReplicationJournalProducer implements ReplicationUpdateEventListener {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Logger.

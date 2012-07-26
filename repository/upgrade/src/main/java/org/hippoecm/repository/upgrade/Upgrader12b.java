@@ -34,8 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Upgrader12b implements UpdaterModule {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(Upgrader12b.class);
     

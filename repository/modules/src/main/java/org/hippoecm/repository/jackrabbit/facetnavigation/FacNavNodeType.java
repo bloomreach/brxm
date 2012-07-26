@@ -16,7 +16,6 @@
 package org.hippoecm.repository.jackrabbit.facetnavigation;
 
 public interface FacNavNodeType {
-    static final String SVN_ID = "$Id$";
 
     /**
      * 

@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 public class LdapUserManager extends AbstractUserManager {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * On sync save every after every SAVE_INTERVAL changes

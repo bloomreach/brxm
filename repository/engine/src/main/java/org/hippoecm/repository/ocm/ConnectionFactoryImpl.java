@@ -36,8 +36,6 @@ import org.datanucleus.store.connection.ManagedConnection;
 import org.datanucleus.store.connection.ManagedConnectionResourceListener;
 
 public class ConnectionFactoryImpl extends AbstractConnectionFactory implements ConnectionFactory {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public ConnectionFactoryImpl(OMFContext omfContext, String resourceType) throws RepositoryException {
         super(omfContext, resourceType);

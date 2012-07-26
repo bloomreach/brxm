@@ -32,8 +32,6 @@ import org.hippoecm.repository.api.HippoNodeType;
 public class AuthRole {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The role id

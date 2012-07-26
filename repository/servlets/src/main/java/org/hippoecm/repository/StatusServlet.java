@@ -36,8 +36,6 @@ import javax.jcr.Repository;
 import javax.jcr.Session;
 
 public class StatusServlet extends HttpServlet {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public static final String DEFAULT_REPOSITORY_ADDRESS = "rmi://localhost:1099/hipporepository";

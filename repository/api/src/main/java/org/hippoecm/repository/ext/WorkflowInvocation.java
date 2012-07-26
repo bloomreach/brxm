@@ -31,7 +31,6 @@ public interface WorkflowInvocation extends Externalizable {
     /**
      * 
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * 

@@ -27,8 +27,6 @@ import java.security.Principal;
 public class AdminPrincipal implements Principal, Serializable {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

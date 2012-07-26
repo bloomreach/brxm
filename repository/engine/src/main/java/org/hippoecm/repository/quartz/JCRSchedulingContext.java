@@ -20,8 +20,6 @@ import javax.jcr.Session;
 import org.quartz.core.SchedulingContext;
 
 public class JCRSchedulingContext extends SchedulingContext {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private Session session;
 

@@ -26,7 +26,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteItem;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 
 public interface RemoteHierarchyResolver extends Remote {
-    static final String SVN_ID = "$Id$";
 
     public class RemoteHierarchyResult implements Serializable {
         public RemoteItem item;

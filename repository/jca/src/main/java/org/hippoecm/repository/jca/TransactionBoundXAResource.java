@@ -20,8 +20,6 @@ import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
 public class TransactionBoundXAResource implements XAResource {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private XAResource xaResource;
 

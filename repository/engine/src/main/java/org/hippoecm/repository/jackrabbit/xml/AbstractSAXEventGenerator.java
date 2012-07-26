@@ -54,8 +54,6 @@ import org.xml.sax.SAXException;
  * for every item it encounters.
  */
 abstract class AbstractSAXEventGenerator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(AbstractSAXEventGenerator.class);
 

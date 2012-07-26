@@ -23,6 +23,4 @@ import org.junit.runners.Suite;
   org.hippoecm.testutils.history.HistoryWriterTestCase.class
 })
 public class HistoryWriterTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 }

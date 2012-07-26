@@ -27,8 +27,6 @@ import org.apache.jackrabbit.spi.Name;
 
 public class FacetedNavigationEngineWrapperImpl<Q extends FacetedNavigationEngine.Query, C extends FacetedNavigationEngine.Context>
         implements FacetedNavigationEngine<Q, C> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private FacetedNavigationEngine<Q, C> upstream;
 

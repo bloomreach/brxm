@@ -19,8 +19,6 @@ package org.hippoecm.repository.standardworkflow;
  * A map from node type name to a list of changes to be performed on that node type
  */
 public class Change {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

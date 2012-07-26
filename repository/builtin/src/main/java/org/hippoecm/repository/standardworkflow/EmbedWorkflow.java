@@ -40,7 +40,6 @@ public interface EmbedWorkflow extends Workflow {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Work-flow call performed on the source container document to copy a document, this call itself will escalate to

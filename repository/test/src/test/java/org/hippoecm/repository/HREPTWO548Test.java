@@ -24,8 +24,6 @@ import org.junit.*;
 import static org.junit.Assert.*;
 
 public class HREPTWO548Test extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private String[] content1 = {
         "/test", "nt:unstructured",

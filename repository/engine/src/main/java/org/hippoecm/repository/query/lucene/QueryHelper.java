@@ -21,8 +21,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.BooleanClause.Occur;
 
 public class QueryHelper {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private QueryHelper() {
     }

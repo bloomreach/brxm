@@ -44,8 +44,6 @@ import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 
 public class JAASLoginModule implements LoginModule {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: $";
 
     protected Subject subject;
     protected CallbackHandler callbackHandler;

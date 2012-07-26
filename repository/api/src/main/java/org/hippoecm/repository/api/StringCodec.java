@@ -25,7 +25,6 @@ public interface StringCodec {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Encodes a string of characters.

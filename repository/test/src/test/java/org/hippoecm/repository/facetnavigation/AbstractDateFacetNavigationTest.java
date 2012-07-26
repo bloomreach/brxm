@@ -33,8 +33,6 @@ import org.junit.Before;
 
 public abstract class AbstractDateFacetNavigationTest extends TestCase {
    
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static final Calendar start = Calendar.getInstance();
     static {

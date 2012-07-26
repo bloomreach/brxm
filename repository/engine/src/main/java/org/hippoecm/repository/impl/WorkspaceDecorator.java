@@ -65,8 +65,6 @@ import org.slf4j.LoggerFactory;
  * Simple workspace decorator.
  */
 public class WorkspaceDecorator extends org.hippoecm.repository.decorating.WorkspaceDecorator implements HippoWorkspace {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected static final Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
 

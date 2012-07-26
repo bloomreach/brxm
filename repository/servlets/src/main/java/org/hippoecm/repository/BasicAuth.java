@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 
 public class BasicAuth {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final String WWW_AUTHENTICATE = "WWW-Authenticate";
     private static final String BASIC_AUTH_PREFIX = "Basic "; // intentional trailing space

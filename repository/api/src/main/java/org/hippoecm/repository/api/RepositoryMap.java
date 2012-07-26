@@ -24,7 +24,6 @@ public interface RepositoryMap extends Map {
     /**
      * 
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * 

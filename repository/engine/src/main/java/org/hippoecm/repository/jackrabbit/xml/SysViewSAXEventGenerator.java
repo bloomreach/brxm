@@ -43,8 +43,6 @@ import org.xml.sax.helpers.AttributesImpl;
  * representing the serialized form of an item in System View XML.
  */
 public class SysViewSAXEventGenerator extends AbstractSAXEventGenerator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public static final String CDATA_TYPE = "CDATA";
     public static final String ENUMERATION_TYPE = "ENUMERATION";

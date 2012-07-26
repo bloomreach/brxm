@@ -68,8 +68,6 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 
 final public class UpdaterNode extends UpdaterItem implements Node {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     boolean hollow;
     Map<String, List<UpdaterItem>> children;// = new LinkedHashMap<String, List<UpdaterItem>>();

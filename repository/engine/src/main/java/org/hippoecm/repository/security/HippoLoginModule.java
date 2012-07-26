@@ -43,8 +43,6 @@ import org.slf4j.LoggerFactory;
 public class HippoLoginModule implements LoginModule {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     // initial state
     private Subject subject;

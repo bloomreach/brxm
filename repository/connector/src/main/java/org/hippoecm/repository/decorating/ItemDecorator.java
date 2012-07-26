@@ -32,8 +32,6 @@ import javax.jcr.version.VersionException;
  */
 public class ItemDecorator extends AbstractDecorator implements Item {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The underlying item to decorate.

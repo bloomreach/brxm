@@ -26,7 +26,6 @@ import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.ext.WorkflowImpl;
 
 public class TestWorkflowImpl extends WorkflowImpl implements TestWorkflow, InternalWorkflow {
-    private static final String SVN_ID = "$Id$";
 
     public static int invocationCountNoArg = 0;
     public static int invocationCountDateArg = 0;

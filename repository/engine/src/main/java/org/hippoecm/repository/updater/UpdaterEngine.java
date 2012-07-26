@@ -93,8 +93,6 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
 public class UpdaterEngine {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected static final Logger log = LoggerFactory.getLogger(UpdaterEngine.class);
 

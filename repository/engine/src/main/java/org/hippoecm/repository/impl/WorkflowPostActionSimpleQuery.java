@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 
 /** This class is not part of a public accessible API or extensible interface */
 class WorkflowPostActionSimpleQuery implements WorkflowPostActions {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
 
     static final Logger log = LoggerFactory.getLogger(WorkflowPostActionSimpleQuery.class);
 

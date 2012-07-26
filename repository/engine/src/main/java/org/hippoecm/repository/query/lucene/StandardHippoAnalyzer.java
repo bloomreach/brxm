@@ -30,8 +30,6 @@ import org.apache.lucene.analysis.standard.StandardTokenizer;
  *
  */
 public class StandardHippoAnalyzer extends Analyzer{
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Override
     public TokenStream tokenStream(String fieldName, Reader reader) {

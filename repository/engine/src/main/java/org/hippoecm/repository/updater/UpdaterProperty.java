@@ -40,8 +40,6 @@ import javax.jcr.version.OnParentVersionAction;
 import javax.jcr.version.VersionException;
 
 final public class UpdaterProperty extends UpdaterItem implements Property {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     boolean isWeakReference;
     Value value;

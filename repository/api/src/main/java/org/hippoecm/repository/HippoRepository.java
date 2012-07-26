@@ -44,7 +44,6 @@ import org.hippoecm.repository.api.ValueMap;
  */
 public interface HippoRepository {
     /** @exclude */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Creates a new Session for the current user, which might involve opening an anonymous session.

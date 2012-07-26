@@ -26,8 +26,6 @@ import org.junit.Test;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class HREPTWO475Test extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Test
     public void testIssue() throws RepositoryException {

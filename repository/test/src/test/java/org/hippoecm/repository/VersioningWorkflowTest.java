@@ -28,8 +28,6 @@ import static org.junit.Assert.*;
 
 public class VersioningWorkflowTest extends TestCase {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: VersioningWorkflowTest.java 22358 2010-04-07 14:31:21Z bvanhalderen $";
 
     @Test
     public void testSimpleVersioning() throws WorkflowException, MappingException, RepositoryException, RemoteException {

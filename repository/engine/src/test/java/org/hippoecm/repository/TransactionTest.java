@@ -29,8 +29,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 public class TransactionTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Handle atomikos setup and create transaction test node

@@ -29,8 +29,6 @@ import org.hippoecm.repository.decorating.RangeIteratorDecorator;
  * decorator factory to decorate all the returned node instances.
  */
 public class NodeIteratorDecorator extends RangeIteratorDecorator implements NodeIterator, HippoNodeIterator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private long totalSize = -1;
 

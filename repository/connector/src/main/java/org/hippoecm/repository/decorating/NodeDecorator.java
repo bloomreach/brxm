@@ -51,8 +51,6 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 
 public abstract class NodeDecorator extends ItemDecorator implements HippoNode {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final Node node;
     protected HippoSession session;

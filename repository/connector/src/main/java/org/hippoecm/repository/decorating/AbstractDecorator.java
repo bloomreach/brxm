@@ -26,8 +26,6 @@ import javax.jcr.Session;
  * </ul>
  */
 public abstract class AbstractDecorator {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The decorator factory. Used to decorate returned objects.

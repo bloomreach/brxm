@@ -26,7 +26,6 @@ import org.apache.jackrabbit.core.config.ConfigurationException;
  */
 public interface Replicator {
     /** @exclude */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Initialize the replicator

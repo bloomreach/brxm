@@ -31,7 +31,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 
 public interface RemoteServicingSession extends RemoteSession, Remote, Serializable {
-    static final String SVN_ID = "$Id$";
 
     public RemoteNode copy(String originalPath, String absPath) throws RepositoryException, RemoteException;
     public RemoteIterator pendingChanges(String absPath, String nodeType, boolean prune) throws NamespaceException,

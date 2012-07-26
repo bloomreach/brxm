@@ -42,8 +42,6 @@ import javax.jcr.version.VersionManager;
 import org.xml.sax.ContentHandler;
 
 public class UpdaterWorkspace implements Workspace {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Workspace upstream;
     UpdaterSession session;

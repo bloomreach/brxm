@@ -20,8 +20,6 @@ package org.hippoecm.repository.api;
  */
 public class WorkflowException extends Exception
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Constructs a new workflow exception with the specified detail message and without initialized cause

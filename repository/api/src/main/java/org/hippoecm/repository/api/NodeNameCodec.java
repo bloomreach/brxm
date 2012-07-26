@@ -79,8 +79,6 @@ import java.util.regex.Pattern;
  * <p>
  */
 public final class NodeNameCodec {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** Pattern on an encoded character */
     private static final Pattern ENCODE_PATTERN = Pattern.compile("_x\\p{XDigit}{4}_");

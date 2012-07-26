@@ -22,7 +22,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface TestWorkflow extends Workflow {
-    static final String SVN_ID = "$Id$";
 
     public void test() throws RemoteException, WorkflowException, RepositoryException;
     public void test(Date date) throws RemoteException, WorkflowException, RepositoryException;

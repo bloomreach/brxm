@@ -27,7 +27,6 @@ public interface DocumentManager {
     /**
      * 
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Document Managers are associated with an authenticated session.

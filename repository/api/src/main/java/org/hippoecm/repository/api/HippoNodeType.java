@@ -28,7 +28,6 @@ public interface HippoNodeType {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     public static final String CONFIGURATION_PATH = "hippo:configuration";
 

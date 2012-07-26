@@ -32,7 +32,6 @@ public interface EventLoggerWorkflow extends Workflow {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Method that is invoked after a successful work-flow call.

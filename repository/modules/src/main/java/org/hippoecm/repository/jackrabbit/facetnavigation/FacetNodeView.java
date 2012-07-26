@@ -26,8 +26,6 @@ import org.hippoecm.repository.jackrabbit.facetnavigation.AbstractFacetNavigatio
 import org.hippoecm.repository.jackrabbit.facetnavigation.AbstractFacetNavigationProvider.FacetNavigationEntryComparator;
 
 public class FacetNodeView implements Cloneable {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     
     String facet;

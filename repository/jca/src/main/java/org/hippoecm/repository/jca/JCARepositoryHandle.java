@@ -33,8 +33,6 @@ import javax.resource.spi.ConnectionManager;
  * This class implements the JCA implementation of repository.
  */
 public final class JCARepositoryHandle implements Repository, Referenceable, Serializable {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Managed connection factory.

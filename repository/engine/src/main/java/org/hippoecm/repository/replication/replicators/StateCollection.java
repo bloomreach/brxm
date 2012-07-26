@@ -35,8 +35,6 @@ import org.apache.jackrabbit.core.state.PropertyState;
 public class StateCollection {
 
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** The node and the properties are newly added */
     public static final int ADD_NODE = 0;

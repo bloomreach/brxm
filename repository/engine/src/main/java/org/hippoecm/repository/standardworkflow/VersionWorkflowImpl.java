@@ -49,8 +49,6 @@ import org.hippoecm.repository.ext.InternalWorkflow;
 
 public class VersionWorkflowImpl extends Document implements VersionWorkflow, InternalWorkflow {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static Node findSubject(Node version) throws RepositoryException {
         Session session = version.getSession();

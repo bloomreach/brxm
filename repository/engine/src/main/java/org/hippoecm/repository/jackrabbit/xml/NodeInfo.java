@@ -20,8 +20,6 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
 
 public class NodeInfo extends org.apache.jackrabbit.core.xml.NodeInfo {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     String mergeBehavior;
     NodeImpl originItem = null;

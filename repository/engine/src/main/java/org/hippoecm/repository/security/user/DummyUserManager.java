@@ -27,8 +27,6 @@ import org.hippoecm.repository.security.ManagerContext;
  */
 public class DummyUserManager extends AbstractUserManager {
 
-    @SuppressWarnings("unused")
-    static final String SVN_ID = "$Id$";
 
     public static final String PROVIDER_ID = "<dummyProvider>";
 

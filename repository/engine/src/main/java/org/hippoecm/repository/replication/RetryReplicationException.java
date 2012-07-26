@@ -23,8 +23,6 @@ import org.apache.jackrabbit.core.cluster.ClusterRecordProcessor;
  */
 public class RetryReplicationException extends RuntimeException {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     
     /**
      * Serial

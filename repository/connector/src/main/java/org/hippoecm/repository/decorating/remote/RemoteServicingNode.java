@@ -27,7 +27,6 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.hippoecm.repository.api.Localized;
 
 public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
-    static final String SVN_ID = "$Id$";
 
     public RemoteNode getCanonicalNode() throws RepositoryException, RemoteException;
 

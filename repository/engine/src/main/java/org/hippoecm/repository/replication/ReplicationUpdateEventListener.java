@@ -30,7 +30,6 @@ import org.apache.jackrabbit.core.state.ChangeLog;
  */
 public interface ReplicationUpdateEventListener {
     /** @exclude */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Handle an external update.

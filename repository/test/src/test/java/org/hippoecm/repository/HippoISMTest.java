@@ -40,8 +40,6 @@ import static org.junit.Assert.*;
  * in Jackrabbit)
  */
 public class HippoISMTest extends FacetedNavigationAbstractTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final String SYSTEMUSER_ID = "admin";
     private static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();

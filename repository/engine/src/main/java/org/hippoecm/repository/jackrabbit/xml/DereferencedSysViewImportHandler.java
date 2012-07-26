@@ -43,8 +43,6 @@ import org.xml.sax.helpers.DefaultHandler;
 
 public class DereferencedSysViewImportHandler extends DefaultHandler {
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     
     private static final Name SV_MULTIPLE = NameFactoryImpl.getInstance().create(Name.NS_SV_URI, "multiple");
     

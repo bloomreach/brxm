@@ -36,8 +36,6 @@ import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.ocm.JcrOID;
 
 public class ColumnResolverImpl implements ColumnResolver {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
     
     private HierarchyResolver resolver;
     

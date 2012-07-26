@@ -26,8 +26,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 public class UpdaterEngineAdministrationTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     UpdaterEngine engine;
     Vector<ModuleRegistration> modules;

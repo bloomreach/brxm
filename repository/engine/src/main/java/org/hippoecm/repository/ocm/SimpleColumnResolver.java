@@ -25,8 +25,6 @@ import javax.jcr.nodetype.PropertyDefinition;
 import javax.jdo.spi.PersistenceCapable;
 
 public class SimpleColumnResolver implements ColumnResolver {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
     
     public SimpleColumnResolver() {
     }

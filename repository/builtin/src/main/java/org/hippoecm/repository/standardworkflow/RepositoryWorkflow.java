@@ -24,7 +24,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface RepositoryWorkflow extends Workflow {
-    static final String SVN_ID = "$Id$";
 
     /**
      * create a new namespace

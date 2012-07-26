@@ -36,8 +36,6 @@ import org.apache.jackrabbit.spi.commons.name.PathBuilder;
 import org.hippoecm.repository.dataprovider.ParameterizedNodeId;
 
 public class HippoHierarchyManager implements HierarchyManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected HierarchyManager hierMgr;
     protected HippoSessionItemStateManager itemStateMgr;

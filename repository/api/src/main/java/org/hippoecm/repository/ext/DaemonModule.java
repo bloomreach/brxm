@@ -26,7 +26,6 @@ public interface DaemonModule {
     /**
      * 
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * 

@@ -55,8 +55,6 @@ import org.slf4j.LoggerFactory;
 
 public class FacetResultSetProvider extends HippoVirtualProvider
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private final Logger log = LoggerFactory.getLogger(FacetResultSetProvider.class);
 

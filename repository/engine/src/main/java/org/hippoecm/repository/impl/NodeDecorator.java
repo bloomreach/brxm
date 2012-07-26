@@ -53,8 +53,6 @@ import org.hippoecm.repository.api.Localized;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 
 public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecorator implements HippoNode {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected NodeDecorator(DecoratorFactory factory, Session session, Node node) {
         super(factory, session, node);

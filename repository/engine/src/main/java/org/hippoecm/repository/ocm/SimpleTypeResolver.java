@@ -18,8 +18,6 @@ package org.hippoecm.repository.ocm;
 import javax.jcr.RepositoryException;
 
 public class SimpleTypeResolver implements TypeResolver {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
     
     @Override
     public String[] resolve(String className) throws RepositoryException {

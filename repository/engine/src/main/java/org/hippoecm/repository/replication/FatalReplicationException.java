@@ -23,8 +23,6 @@ package org.hippoecm.repository.replication;
 public class FatalReplicationException extends RuntimeException {
 
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     
     /**
      * Serial

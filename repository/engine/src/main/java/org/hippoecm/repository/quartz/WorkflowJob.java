@@ -28,8 +28,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 public class WorkflowJob implements Job {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final String IMPERSONATED_USER = "workflowuser";
     private static final char[] IMPERSONATED_PASSWORD = new char[0];

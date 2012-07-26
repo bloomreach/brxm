@@ -34,8 +34,6 @@ import org.hippoecm.repository.decorating.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 
 public class ServerServicingWorkspace extends ServerWorkspace implements RemoteServicingWorkspace {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private HippoWorkspace workspace;
 

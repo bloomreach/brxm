@@ -58,8 +58,6 @@ import org.xml.sax.SAXParseException;
  */
 public class ReplicationConfigurationParser extends ConfigurationParser {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** Name of the repository home directory parser variable. */
     public static final String REPOSITORY_HOME_VARIABLE = "rep.home";

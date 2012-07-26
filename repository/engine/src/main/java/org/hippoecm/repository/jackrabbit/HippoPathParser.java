@@ -36,8 +36,6 @@ import javax.jcr.NamespaceException;
  * {@link NameResolver} and a {@link PathFactory}.
  */
 public class HippoPathParser {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: ";
 
     // constants for parser
     private static final int STATE_PREFIX_START = 0;

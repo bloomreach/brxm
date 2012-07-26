@@ -30,8 +30,6 @@ import javax.jcr.ValueFormatException;
 /**
  */
 public class ValueFactoryDecorator extends AbstractDecorator implements ValueFactory {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final ValueFactory valueFactory;
 

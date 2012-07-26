@@ -18,8 +18,6 @@ package org.hippoecm.repository.dataprovider;
 import org.hippoecm.repository.FacetedNavigationEngine;
 
 public class StateProviderContext {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private String parameter;
 

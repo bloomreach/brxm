@@ -46,8 +46,6 @@ public class LoggingServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(LoggingServlet.class);
 

@@ -86,8 +86,6 @@ public class ConcurrentLinkModificationTest extends TestCase {
         }
     }
 
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private Session userSession;
 

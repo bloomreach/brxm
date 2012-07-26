@@ -28,8 +28,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CopyNodeTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Before
     public void setUp() throws Exception {

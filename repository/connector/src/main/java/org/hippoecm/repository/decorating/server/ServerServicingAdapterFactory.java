@@ -50,8 +50,6 @@ import org.hippoecm.repository.decorating.remote.RemoteRepository;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 
 public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private RepositoryUrl location;
 

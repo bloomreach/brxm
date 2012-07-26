@@ -27,8 +27,6 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 
 public class Initialize
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final Logger log = LoggerFactory.getLogger(Initialize.class);
 

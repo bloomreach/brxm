@@ -56,8 +56,6 @@ import org.hippoecm.repository.api.HippoSession;
  * This class implements the JCA implementation of session.
  */
 public final class JCASessionHandle implements HippoSession {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Managed connection.

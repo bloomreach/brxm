@@ -26,8 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InsertFieldManager extends AbstractFieldManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected final Logger log = LoggerFactory.getLogger(InsertFieldManager.class);
 

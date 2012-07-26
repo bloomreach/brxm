@@ -29,8 +29,6 @@ import java.io.Serializable;
  * getIdentity() method may be used to obtain the UUID of the javax.jcr.Node representing the document.
  */
 public class Document extends Object implements Serializable, Cloneable {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private transient Document isCloned = null;
     private String identity = null;

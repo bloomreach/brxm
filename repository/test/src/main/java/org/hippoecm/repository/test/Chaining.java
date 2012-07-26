@@ -26,7 +26,6 @@ import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 
 public interface Chaining extends Workflow {
-    static final String SVN_ID = "$Id$";
 
     public void test() throws WorkflowException, MappingException, RepositoryException, RemoteException;
     public void test1() throws WorkflowException, MappingException, RepositoryException, RemoteException;

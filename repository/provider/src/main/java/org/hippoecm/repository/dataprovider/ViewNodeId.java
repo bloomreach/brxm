@@ -24,8 +24,6 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
 
 public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

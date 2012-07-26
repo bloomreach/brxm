@@ -55,7 +55,6 @@ public interface FolderWorkflow extends Workflow {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Returns the possible set of documents that may normally be contained within this container document.  Only those

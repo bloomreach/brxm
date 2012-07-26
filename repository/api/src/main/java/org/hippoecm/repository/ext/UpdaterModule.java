@@ -23,7 +23,6 @@ public interface UpdaterModule {
     /**
      * 
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * 

@@ -7,6 +7,4 @@ import org.junit.runners.Suite;
     org.hippoecm.repository.test.MirrorPerfTestCase.class
 })
 public class MirrorPerfTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 }

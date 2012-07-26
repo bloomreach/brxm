@@ -33,8 +33,6 @@ import org.hippoecm.repository.api.WorkflowContext;
  */
 public abstract class WorkflowImpl implements Remote, Workflow
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Work-flow context in use, which ought to be not public accessible.  Use getWorkflowContext instead.

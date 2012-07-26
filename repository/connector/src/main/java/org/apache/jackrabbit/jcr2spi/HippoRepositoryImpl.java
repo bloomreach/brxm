@@ -49,8 +49,6 @@ import org.apache.jackrabbit.value.ValueFactoryImpl;
  * <code>HippoRepositoryImpl</code>...
  */
 public class HippoRepositoryImpl extends AbstractRepository implements Referenceable {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     // configuration of the repository
     private final RepositoryConfig config;

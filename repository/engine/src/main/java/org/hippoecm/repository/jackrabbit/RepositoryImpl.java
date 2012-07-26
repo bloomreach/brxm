@@ -58,8 +58,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
 

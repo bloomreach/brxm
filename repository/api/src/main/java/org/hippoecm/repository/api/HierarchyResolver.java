@@ -28,7 +28,6 @@ public interface HierarchyResolver {
     /**
      * 
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * 

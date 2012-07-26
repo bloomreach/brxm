@@ -97,8 +97,6 @@ import org.slf4j.LoggerFactory;
 public class HippoAccessManager implements AccessManager, AccessControlManager, ItemStateListener {
 
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Subject whose access rights this AccessManager should reflect

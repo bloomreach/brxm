@@ -17,8 +17,6 @@ package org.hippoecm.repository.test;
 
 public class SubClass extends SuperClass
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     public String subfield;
     public SubClass() {

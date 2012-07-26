@@ -26,8 +26,6 @@ import org.hippoecm.repository.dataprovider.StateProviderContext;
 
 public class FacetSelectProvider extends ViewVirtualProvider
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     ViewVirtualProvider subNodesProvider;
     

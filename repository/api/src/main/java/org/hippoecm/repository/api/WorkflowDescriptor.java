@@ -27,7 +27,6 @@ public interface WorkflowDescriptor {
     /**
      * 
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Obtain the human-interpretable display name of this workflow.

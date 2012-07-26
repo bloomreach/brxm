@@ -35,8 +35,6 @@ import org.junit.Test;
  * An example class to show how to write unit tests for the repository.
  */
 public class HREPTWO2655IssueTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private Session session2;
 

@@ -41,8 +41,6 @@ import javax.jcr.version.OnParentVersionAction;
 import org.hippoecm.repository.api.ISO9075Helper;
 
 public class JcrCompactNodeTypeDefWriter {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final String INDENT = "  ";
     private StringWriter out;

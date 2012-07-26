@@ -33,8 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HippoCompactNodeTypeDefReader<T,N> extends CompactNodeTypeDefReader<T,N> {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static final Logger log = LoggerFactory.getLogger(HippoCompactNodeTypeDefReader.class);
 

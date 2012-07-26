@@ -42,8 +42,6 @@ import org.junit.Test;
 import com.atomikos.icatch.jta.UserTransactionManager;
 
 public class SampleWorkflowTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Before
     public void setUp() throws Exception {

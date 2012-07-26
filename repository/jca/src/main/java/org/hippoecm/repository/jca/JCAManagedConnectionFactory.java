@@ -34,8 +34,6 @@ import org.hippoecm.repository.api.HippoSession;
  * Implements the JCA ManagedConnectionFactory contract.
  */
 public class JCAManagedConnectionFactory implements ManagedConnectionFactory {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * Home directory.

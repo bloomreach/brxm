@@ -30,7 +30,6 @@ public interface WorkflowEventsWorkflow extends WorkflowEventWorkflow {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * This method is called before a workflow event is fired passing in the concrete category name of the Worfklow

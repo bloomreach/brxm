@@ -37,8 +37,6 @@ public class UserTransactionImpl implements UserTransaction {
     /**
      * SVN ID
      */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * XAResource

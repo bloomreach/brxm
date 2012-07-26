@@ -33,8 +33,6 @@ import org.apache.jackrabbit.spi.Name;
  */
 public class HippoNodeId extends NodeId
 {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final long serialVersionUID = 1L;
 

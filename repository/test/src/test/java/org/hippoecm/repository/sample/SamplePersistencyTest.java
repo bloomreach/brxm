@@ -27,8 +27,6 @@ import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 
 public class SamplePersistencyTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Before
     public void setUp() throws Exception {

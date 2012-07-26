@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
  * An example class to show how to write unit tests for the repository.
  */
 public class HREPTWO3402IssueTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private static final Logger log = LoggerFactory.getLogger(HREPTWO3402IssueTest.class);
 

@@ -35,8 +35,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
 public abstract class UpdaterItem implements Item {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     Item origin;
     UpdaterNode parent;

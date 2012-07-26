@@ -22,6 +22,4 @@ import org.junit.runners.Suite;
     org.hippoecm.repository.test.TraversePerfTestCase.class
 })
 public class TraversePerfTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 }

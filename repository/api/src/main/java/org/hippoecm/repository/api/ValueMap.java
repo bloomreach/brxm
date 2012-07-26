@@ -24,7 +24,6 @@ import java.util.Map;
  */
 public interface ValueMap extends Map {
     /** @exclude */
-    public static final String SVN_ID = "$Id$";
 
     /**
      * Returns the string representation of the entry in the map, or the defaultValue parameter if the key is not present or cannot be converted to a string.

@@ -38,8 +38,6 @@ import org.junit.Ignore;
 import static org.junit.Assert.*;
 
 public class TraversePerfTestCase extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
     private String[] content = {
         "/test", "nt:unstructured",
         "/test/aap", "nt:unstructured",

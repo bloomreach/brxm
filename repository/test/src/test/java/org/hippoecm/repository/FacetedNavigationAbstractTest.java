@@ -35,8 +35,6 @@ import org.junit.After;
 import org.junit.Before;
 
 public abstract class FacetedNavigationAbstractTest extends TestCase {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     static class Document {
         int docid;

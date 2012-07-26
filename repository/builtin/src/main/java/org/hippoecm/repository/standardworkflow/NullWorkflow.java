@@ -28,5 +28,4 @@ public interface NullWorkflow extends Workflow {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 }

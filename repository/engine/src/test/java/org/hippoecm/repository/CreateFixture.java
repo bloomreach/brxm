@@ -45,8 +45,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class CreateFixture {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     @Before
     public void setUp() throws Exception {

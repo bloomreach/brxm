@@ -27,8 +27,6 @@ import org.apache.jackrabbit.core.id.ItemId;
  */
 public class HippoAccessCache {
     /** SVN id placeholder */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The read access cache map

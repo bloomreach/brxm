@@ -27,8 +27,6 @@ import static org.onehippo.repository.testutils.AssertLogMessage.expectNone;
 import static org.onehippo.repository.testutils.AssertLogMessage.expectRemove;
 
 public class LogTest {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected static final Logger log = LoggerFactory.getLogger(LogTest.class);
 

@@ -16,7 +16,6 @@
 package org.hippoecm.repository.query.lucene;
 
 public interface ServicingFieldNames {
-    static final String SVN_ID = "$Id$";
    
     // never used chars in lucene, so can be used as delimiter
     public static final char DATE_RESOLUTION_DELIMITER = '\uFAFA';

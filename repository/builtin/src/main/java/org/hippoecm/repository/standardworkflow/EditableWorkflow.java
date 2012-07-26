@@ -35,7 +35,6 @@ public interface EditableWorkflow extends Workflow {
     /**
      * @exclude
      */
-    static final String SVN_ID = "$Id$";
 
     /**
      * Request this editable copy of the document.

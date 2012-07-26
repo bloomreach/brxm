@@ -49,8 +49,6 @@ import org.slf4j.LoggerFactory;
  */
 abstract class AbstractReplicator implements Replicator {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(AbstractReplicator.class);

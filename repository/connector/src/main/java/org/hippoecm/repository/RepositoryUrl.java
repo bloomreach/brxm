@@ -21,8 +21,6 @@ import java.net.URISyntaxException;
 import java.rmi.registry.Registry;
 
 public class RepositoryUrl {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     // defaults
     public static final String DEFAULT_RMI_NAME = "hipporepository";

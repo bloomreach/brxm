@@ -25,8 +25,6 @@ import javax.jcr.ValueFormatException;
 import org.hippoecm.repository.api.HippoNodeType;
 
 public class SecurityProviderFactory {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private final String securityPath;
     private final String usersPath;

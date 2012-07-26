@@ -30,8 +30,6 @@ import org.hippoecm.repository.decorating.remote.RemoteWorkflowDescriptor;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 
 public class ServerWorkflowManager extends ServerObject implements RemoteWorkflowManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private WorkflowManager workflowManager;
 

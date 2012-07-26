@@ -52,8 +52,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseCallback {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private final Logger log = LoggerFactory.getLogger(DocumentManagerImpl.class);
 

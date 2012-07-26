@@ -82,8 +82,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SecurityManager implements HippoSecurityManager {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     // TODO: this string is matched as node name in the repository.
     public static final String INTERNAL_PROVIDER = "internal";

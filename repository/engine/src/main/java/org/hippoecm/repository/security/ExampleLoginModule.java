@@ -31,8 +31,6 @@ import org.hippoecm.repository.ParameterCallback;
 import org.hippoecm.repository.WebCredentials;
 
 public class ExampleLoginModule implements LoginModule {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id: $";
 
     protected Subject subject;
 

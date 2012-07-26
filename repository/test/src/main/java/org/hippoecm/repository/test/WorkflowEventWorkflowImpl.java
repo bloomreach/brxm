@@ -26,8 +26,6 @@ import org.hippoecm.repository.ext.WorkflowImpl;
 import org.hippoecm.repository.standardworkflow.WorkflowEventWorkflow;
 
 public class WorkflowEventWorkflowImpl extends WorkflowImpl implements WorkflowEventWorkflow {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     private long counter;
 

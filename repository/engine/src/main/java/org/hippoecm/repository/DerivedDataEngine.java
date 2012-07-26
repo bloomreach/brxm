@@ -59,8 +59,6 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.ext.DerivedDataFunction;
 
 public class DerivedDataEngine {
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     protected static final Logger logger = LoggerFactory.getLogger(DerivedDataEngine.class);
 

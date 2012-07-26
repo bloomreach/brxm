@@ -40,8 +40,6 @@ import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
  */
 public class ReplicationJournal extends FileJournal {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /** Logger. */
     private static Logger log = LoggerFactory.getLogger(ReplicationJournal.class);

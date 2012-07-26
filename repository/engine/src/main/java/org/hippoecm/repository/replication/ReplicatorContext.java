@@ -25,8 +25,6 @@ import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
  */
 public class ReplicatorContext {
     /** @exclude */
-    @SuppressWarnings("unused")
-    private static final String SVN_ID = "$Id$";
 
     /**
      * The replicator journal
