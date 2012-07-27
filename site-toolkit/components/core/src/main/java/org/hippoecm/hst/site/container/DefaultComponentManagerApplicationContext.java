@@ -27,13 +27,9 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class DefaultComponentManagerApplicationContext extends ClassPathXmlApplicationContext implements
-                                BeanPostProcessor, ComponentManagerAware {
-
-    private ThreadLocal<Boolean> publishing = new ThreadLocal<Boolean>();
+public class DefaultComponentManagerApplicationContext extends ClassPathXmlApplicationContext implements BeanPostProcessor, ComponentManagerAware {
 
     private ContainerConfiguration containerConfiguration;
     private ComponentManager componentManager;
@@ -41,25 +37,21 @@ public class DefaultComponentManagerApplicationContext extends ClassPathXmlAppli
     public DefaultComponentManagerApplicationContext() {
         this(null);
     }
-
+    
     public DefaultComponentManagerApplicationContext(ContainerConfiguration containerConfiguration) {
         this(containerConfiguration, null);
     }
-
-    public DefaultComponentManagerApplicationContext(ContainerConfiguration containerConfiguration,
-                                    ApplicationContext parentApplicationContext) {
+    
+    public DefaultComponentManagerApplicationContext(ContainerConfiguration containerConfiguration, ApplicationContext parentApplicationContext) {
         super(parentApplicationContext);
-
+        
         this.containerConfiguration = containerConfiguration;
-
+        
         if (this.containerConfiguration != null && !this.containerConfiguration.isEmpty()) {
             Properties initProps = this.containerConfiguration.toProperties();
             PropertyPlaceholderConfigurer ppc = new OverridingByAttributesPropertyPlaceholderConfigurer();
-            ppc.setIgnoreUnresolvablePlaceholders(this.containerConfiguration.getBoolean(
-                                            SpringComponentManager.IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
-            ppc.setSystemPropertiesMode(this.containerConfiguration.getInt(
-                                            SpringComponentManager.SYSTEM_PROPERTIES_MODE,
-                                            PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
+            ppc.setIgnoreUnresolvablePlaceholders(this.containerConfiguration.getBoolean(SpringComponentManager.IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
+            ppc.setSystemPropertiesMode(this.containerConfiguration.getInt(SpringComponentManager.SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
             ppc.setProperties(initProps);
             addBeanFactoryPostProcessor(ppc);
         }
@@ -99,16 +91,4 @@ public class DefaultComponentManagerApplicationContext extends ClassPathXmlAppli
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean;
     }
-
-    public void publishEvent(ApplicationEvent event) {
-        if (publishing.get() == null || publishing.get() == false) {
-            publishing.set(true);
-            try {
-                super.publishEvent(event);
-            } finally {
-                publishing.remove();
-            }
-        }
-    }
-
 }

@@ -35,7 +35,6 @@ import org.hippoecm.hst.site.addon.module.runtime.ModuleInstanceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 
 /**
@@ -44,24 +43,23 @@ import org.springframework.context.support.AbstractRefreshableConfigApplicationC
  * @version $Id$
  */
 public class SpringComponentManager implements ComponentManager {
-
+    
     private static final String LOGGER_FQCN = SpringComponentManager.class.getName();
     private static Logger log = LoggerFactory.getLogger(LOGGER_FQCN);
-
-    public static final String IGNORE_UNRESOLVABLE_PLACE_HOLDERS = SpringComponentManager.class.getName()
-                                    + ".ignoreUnresolvablePlaceholders";
-
-    public static final String SYSTEM_PROPERTIES_MODE = SpringComponentManager.class.getName()
-                                    + ".systemPropertiesMode";
-
+    
+    public static final String IGNORE_UNRESOLVABLE_PLACE_HOLDERS = SpringComponentManager.class.getName() + ".ignoreUnresolvablePlaceholders";
+    
+    public static final String SYSTEM_PROPERTIES_MODE = SpringComponentManager.class.getName() + ".systemPropertiesMode";
+    
     public static final String BEAN_REGISTER_CONDITION = SpringComponentManager.class.getName() + ".registerCondition";
-
+    
     protected AbstractRefreshableConfigApplicationContext applicationContext;
     protected Configuration configuration;
     protected ContainerConfiguration containerConfiguration;
-    protected String[] configurationResources = new String[] {
-                                    SpringComponentManager.class.getName().replace(".", "/") + ".xml",
-                                    SpringComponentManager.class.getName().replace(".", "/") + "-*.xml" };
+    protected String [] configurationResources = new String[] {
+            SpringComponentManager.class.getName().replace(".", "/") + ".xml", 
+            SpringComponentManager.class.getName().replace(".", "/") + "-*.xml"
+            };
 
     private List<ModuleDefinition> addonModuleDefinitions;
     private Map<String, ModuleInstance> addonModuleInstancesMap;
@@ -69,61 +67,53 @@ public class SpringComponentManager implements ComponentManager {
     public SpringComponentManager() {
         this(new PropertiesConfiguration());
     }
-
+    
     public SpringComponentManager(Configuration configuration) {
         this.configuration = configuration;
         this.containerConfiguration = new ContainerConfigurationImpl(this.configuration);
     }
-
+    
     public void initialize() {
         applicationContext = new DefaultComponentManagerApplicationContext(containerConfiguration);
-
+        
         if (applicationContext instanceof ComponentManagerAware) {
             ((ComponentManagerAware) applicationContext).setComponentManager(this);
         }
-
-        String[] checkedConfigurationResources = ApplicationContextUtils.getCheckedLocationPatterns(applicationContext,
-                                        getConfigurationResources());
-
-        if (ArrayUtils.isEmpty(checkedConfigurationResources)
-                                        && (addonModuleDefinitions == null || addonModuleDefinitions.isEmpty())) {
+        
+        String [] checkedConfigurationResources = ApplicationContextUtils.getCheckedLocationPatterns(applicationContext, getConfigurationResources());
+        
+        if (ArrayUtils.isEmpty(checkedConfigurationResources)) {
             log.warn("There's no valid component configuration.");
-            checkedConfigurationResources = new String[0];
         }
+        
         applicationContext.setConfigLocations(checkedConfigurationResources);
         applicationContext.refresh();
 
         if (addonModuleDefinitions != null && !addonModuleDefinitions.isEmpty()) {
             addonModuleInstancesMap = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
-
+            
             for (ModuleDefinition addonModuleDefinition : addonModuleDefinitions) {
                 ModuleInstance addonModuleInstance = new ModuleInstanceImpl(addonModuleDefinition);
-
+                
                 if (addonModuleInstance instanceof ComponentManagerAware) {
                     ((ComponentManagerAware) addonModuleInstance).setComponentManager(this);
                 }
-
+                
                 if (addonModuleInstance instanceof ApplicationContextAware) {
                     ((ApplicationContextAware) addonModuleInstance).setApplicationContext(applicationContext);
                 }
-
-                if (addonModuleInstance instanceof ApplicationListener) {
-                    applicationContext.addApplicationListener((ApplicationListener) addonModuleInstance);
-                }
-
+                
                 try {
                     log.info("Initializing addon module, {}", addonModuleInstance.getFullName());
                     addonModuleInstance.initialize();
                     addonModuleInstancesMap.put(addonModuleInstance.getName(), addonModuleInstance);
                 } catch (Exception e) {
-                    log.warn("Failed to initialize invalid module instance, " + addonModuleInstance.getFullName()
-                                                    + ", which will be just closed and ignored.", e);
-
+                    log.warn("Failed to initialize invalid module instance, " + addonModuleInstance.getFullName() + ", which will be just closed and ignored.", e);
+                    
                     try {
                         addonModuleInstance.close();
                     } catch (Exception ce) {
-                        log.warn("Failed to close invalid module instance, " + addonModuleInstance.getFullName() + ".",
-                                                        e);
+                        log.warn("Failed to close invalid module instance, " + addonModuleInstance.getFullName() + ".", e);
                     }
                 }
             }
@@ -132,33 +122,32 @@ public class SpringComponentManager implements ComponentManager {
 
     public void start() {
         applicationContext.start();
-
+        
         List<ModuleInstance> failedModuleInstances = new ArrayList<ModuleInstance>();
-
+        
         for (ModuleInstance addonModuleInstance : getAddonModuleInstances()) {
             try {
                 log.info("Starting addon module, {}", addonModuleInstance.getFullName());
                 addonModuleInstance.start();
             } catch (Exception e) {
-                log.warn("Failed to start module instance, " + addonModuleInstance.getFullName()
-                                                + ", which will be just removed.", e);
+                log.warn("Failed to start module instance, " + addonModuleInstance.getFullName() + ", which will be just removed.", e);
                 failedModuleInstances.add(addonModuleInstance);
             }
         }
-
+        
         for (ModuleInstance addonModuleInstance : failedModuleInstances) {
             try {
                 addonModuleInstance.stop();
             } catch (Exception e) {
                 log.warn("Failed to stop non-starting module instance, " + addonModuleInstance.getFullName() + ".", e);
             }
-
+            
             try {
                 addonModuleInstance.close();
             } catch (Exception e) {
                 log.warn("Failed to close non-starting module instance, " + addonModuleInstance.getFullName() + ".", e);
             }
-
+            
             addonModuleInstancesMap.remove(addonModuleInstance);
         }
     }
@@ -172,10 +161,10 @@ public class SpringComponentManager implements ComponentManager {
                 log.warn("Failed to stop module instance, " + addonModuleInstance.getFullName() + ".", e);
             }
         }
-
+        
         applicationContext.stop();
     }
-
+    
     public void close() {
         for (ModuleInstance addonModuleInstance : getAddonModuleInstances()) {
             try {
@@ -185,16 +174,16 @@ public class SpringComponentManager implements ComponentManager {
                 log.warn("Failed to close module instance, " + addonModuleInstance.getFullName() + ".", e);
             }
         }
-
+        
         applicationContext.close();
     }
-
+    
     public <T> T getComponent(String name) {
-        return getComponent(name, (String[]) null);
+        return getComponent(name, (String []) null);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getComponent(String name, String... addonModuleNames) {
+    public <T> T getComponent(String name, String ... addonModuleNames) {
         T bean = null;
 
         if (addonModuleNames == null || addonModuleNames.length == 0) {
@@ -207,7 +196,7 @@ public class SpringComponentManager implements ComponentManager {
             if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
                 throw new ModuleNotFoundException("No Addon Module is found.");
             }
-
+            
             ModuleInstance moduleInstance = addonModuleInstancesMap.get(addonModuleNames[0]);
 
             if (moduleInstance == null) {
@@ -218,17 +207,15 @@ public class SpringComponentManager implements ComponentManager {
                 moduleInstance = moduleInstance.getModuleInstance(addonModuleNames[i]);
 
                 if (moduleInstance == null) {
-                    throw new ModuleNotFoundException("Module is not found in '"
-                                                    + ArrayUtils.toString(ArrayUtils.subarray(addonModuleNames, 0,
-                                                                                    i + 1)) + "'");
+                    throw new ModuleNotFoundException("Module is not found in '" + ArrayUtils.toString(ArrayUtils.subarray(addonModuleNames, 0, i + 1)) + "'");
                 }
             }
 
             try {
                 bean = (T) moduleInstance.getComponent(name);
             } catch (Exception ignore) {
-                log.warn("The requested bean doesn't exist: '{}' in the addon module context, '{}'.", name,
-                                                ArrayUtils.toString(addonModuleNames));
+               log.warn("The requested bean doesn't exist: '{}' in the addon module context, '{}'.",
+                         name, ArrayUtils.toString(addonModuleNames));
             }
         }
 
@@ -236,10 +223,10 @@ public class SpringComponentManager implements ComponentManager {
     }
 
     public <T> Map<String, T> getComponentsOfType(Class<T> requiredType) {
-        return getComponentsOfType(requiredType, (String[]) null);
+        return getComponentsOfType(requiredType, (String []) null);
     }
 
-    public <T> Map<String, T> getComponentsOfType(Class<T> requiredType, String... addonModuleNames) {
+    public <T> Map<String, T> getComponentsOfType(Class<T> requiredType, String ... addonModuleNames) {
         Map<String, T> beansMap = Collections.emptyMap();
 
         if (addonModuleNames == null || addonModuleNames.length == 0) {
@@ -252,7 +239,7 @@ public class SpringComponentManager implements ComponentManager {
             if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
                 throw new ModuleNotFoundException("No Addon Module is found.");
             }
-
+            
             ModuleInstance moduleInstance = addonModuleInstancesMap.get(addonModuleNames[0]);
 
             if (moduleInstance == null) {
@@ -263,17 +250,15 @@ public class SpringComponentManager implements ComponentManager {
                 moduleInstance = moduleInstance.getModuleInstance(addonModuleNames[i]);
 
                 if (moduleInstance == null) {
-                    throw new ModuleNotFoundException("Module is not found in '"
-                                                    + ArrayUtils.toString(ArrayUtils.subarray(addonModuleNames, 0,
-                                                                                    i + 1)) + "'");
+                    throw new ModuleNotFoundException("Module is not found in '" + ArrayUtils.toString(ArrayUtils.subarray(addonModuleNames, 0, i + 1)) + "'");
                 }
             }
 
             try {
                 beansMap = moduleInstance.getComponentsOfType(requiredType);
             } catch (Exception ignore) {
-                log.warn("The required typed bean doesn't exist: '{}' in the addon module context, '{}'.",
-                                                requiredType, ArrayUtils.toString(addonModuleNames));
+                log.warn("The required typed bean doesn't exist: '{}' in the addon module context, '{}'.", 
+                        requiredType, ArrayUtils.toString(addonModuleNames));
             }
         }
 
@@ -288,13 +273,13 @@ public class SpringComponentManager implements ComponentManager {
         if (configurationResources == null) {
             return null;
         }
-
-        String[] cloned = new String[configurationResources.length];
+        
+        String [] cloned = new String[configurationResources.length];
         System.arraycopy(configurationResources, 0, cloned, 0, configurationResources.length);
         return cloned;
     }
-
-    public void setConfigurationResources(String[] configurationResources) {
+    
+    public void setConfigurationResources(String [] configurationResources) {
         if (configurationResources == null) {
             this.configurationResources = null;
         } else {
@@ -302,7 +287,7 @@ public class SpringComponentManager implements ComponentManager {
             System.arraycopy(configurationResources, 0, this.configurationResources, 0, configurationResources.length);
         }
     }
-
+    
     public void setAddonModuleDefinitions(List<ModuleDefinition> addonModuleDefinitions) {
         if (addonModuleDefinitions == null) {
             this.addonModuleDefinitions = null;
@@ -310,18 +295,18 @@ public class SpringComponentManager implements ComponentManager {
             this.addonModuleDefinitions = new ArrayList<ModuleDefinition>(addonModuleDefinitions);
         }
     }
-
+    
     private List<ModuleInstance> getAddonModuleInstances() {
         if (addonModuleInstancesMap == null) {
             return Collections.emptyList();
         }
-
+        
         List<ModuleInstance> addonModuleInstances = null;
-
+        
         synchronized (addonModuleInstancesMap) {
             addonModuleInstances = new ArrayList<ModuleInstance>(addonModuleInstancesMap.values());
         }
-
+        
         return addonModuleInstances;
     }
 }

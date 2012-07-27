@@ -34,12 +34,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 
-public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware, ApplicationContextAware,
-                                ApplicationListener {
+public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware, ApplicationContextAware {
 
     private static final String LOGGER_FQCN = ModuleInstanceImpl.class.getName();
     private static Logger log = LoggerFactory.getLogger(LOGGER_FQCN);
@@ -47,28 +44,28 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
     private ModuleDefinition moduleDefinition;
     private String name;
     private String fullName;
-
+    
     private ApplicationContext parentApplicationContext;
     private AbstractRefreshableConfigApplicationContext applicationContext;
     private ComponentManager componentManager;
-
+    
     private Map<String, ModuleInstance> childModuleInstances;
 
     public ModuleInstanceImpl(ModuleDefinition moduleDefinition) {
         this(moduleDefinition, null);
     }
 
-    public ModuleInstanceImpl(ModuleDefinition moduleDefinition, String[] namePrefixes) {
+    public ModuleInstanceImpl(ModuleDefinition moduleDefinition, String [] namePrefixes) {
         this.moduleDefinition = moduleDefinition;
         this.name = this.moduleDefinition.getName();
-        String[] mergedNamePrefixes = (String[]) ArrayUtils.add(namePrefixes, this.name);
+        String [] mergedNamePrefixes = (String []) ArrayUtils.add(namePrefixes, this.name);
         this.fullName = ArrayUtils.toString(mergedNamePrefixes);
-
+        
         List<ModuleDefinition> childModuleDefinitions = this.moduleDefinition.getModuleDefinitions();
-
+        
         if (childModuleDefinitions != null && !childModuleDefinitions.isEmpty()) {
             childModuleInstances = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
-
+            
             for (ModuleDefinition childModuleDefinition : childModuleDefinitions) {
                 ModuleInstance childModuleInstance = new ModuleInstanceImpl(childModuleDefinition, mergedNamePrefixes);
                 childModuleInstances.put(childModuleInstance.getName(), childModuleInstance);
@@ -93,43 +90,37 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
     }
 
     public void initialize() {
-        applicationContext = new DefaultComponentManagerApplicationContext(
-                                        componentManager.getContainerConfiguration(), parentApplicationContext);
-
+        applicationContext = new DefaultComponentManagerApplicationContext(componentManager.getContainerConfiguration(), parentApplicationContext);
+        
         if (componentManager != null && applicationContext instanceof ComponentManagerAware) {
             ((ComponentManagerAware) applicationContext).setComponentManager(componentManager);
         }
-
-        String[] checkedConfigurationResources = ApplicationContextUtils.getCheckedLocationPatterns(applicationContext,
-                                        moduleDefinition.getConfigLocations());
+        
+        String [] checkedConfigurationResources = ApplicationContextUtils.getCheckedLocationPatterns(applicationContext, moduleDefinition.getConfigLocations());
 
         if (ArrayUtils.isEmpty(checkedConfigurationResources)) {
             log.warn("There's no valid component configuration for addon module, '{}'.", name);
-        } else {
-            applicationContext.setConfigLocations(checkedConfigurationResources);
-            applicationContext.refresh();
         }
+        
+        applicationContext.setConfigLocations(checkedConfigurationResources);
+        applicationContext.refresh();
 
         for (ModuleInstance moduleInstance : getModuleInstances()) {
             if (componentManager != null && moduleInstance instanceof ComponentManagerAware) {
                 ((ComponentManagerAware) moduleInstance).setComponentManager(componentManager);
             }
-
+            
             if (componentManager != null && moduleInstance instanceof ApplicationContextAware) {
                 ((ApplicationContextAware) moduleInstance).setApplicationContext(applicationContext);
             }
-
-            if (moduleInstance instanceof ApplicationListener) {
-                applicationContext.addApplicationListener((ApplicationListener) moduleInstance);
-            }
-
+            
             moduleInstance.initialize();
         }
     }
 
     public void start() {
         applicationContext.start();
-
+        
         for (ModuleInstance moduleInstance : getModuleInstances()) {
             moduleInstance.start();
         }
@@ -139,15 +130,15 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         for (ModuleInstance moduleInstance : getModuleInstances()) {
             moduleInstance.stop();
         }
-
+        
         applicationContext.stop();
     }
-
+    
     public void close() {
         for (ModuleInstance moduleInstance : getModuleInstances()) {
             moduleInstance.close();
         }
-
+        
         applicationContext.close();
     }
 
@@ -160,7 +151,7 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         } catch (Exception ignore) {
             HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}'", name);
         }
-
+        
         return bean;
     }
 
@@ -172,7 +163,7 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         } catch (Exception ignore) {
             HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("The requested bean doesn't exist: '{}'", name);
         }
-
+        
         return beansMap;
     }
 
@@ -180,13 +171,13 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         if (childModuleInstances == null) {
             return Collections.emptyList();
         }
-
+        
         List<ModuleInstance> moduleInstances = null;
-
+        
         synchronized (childModuleInstances) {
             moduleInstances = new ArrayList<ModuleInstance>(childModuleInstances.values());
         }
-
+        
         return moduleInstances;
     }
 
@@ -194,12 +185,7 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         if (childModuleInstances == null) {
             return null;
         }
-
+        
         return childModuleInstances.get(name);
-    }
-
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        applicationContext.publishEvent(event);
     }
 }
