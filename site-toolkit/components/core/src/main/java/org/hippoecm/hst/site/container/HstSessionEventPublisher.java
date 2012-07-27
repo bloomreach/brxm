@@ -21,14 +21,21 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.hippoecm.hst.site.HstServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HstSessionEventPublisher implements HttpSessionListener {
+    private static Logger log = LoggerFactory.getLogger(HstSessionEventPublisher.class);
 
     @Override
     public void sessionCreated(HttpSessionEvent event) {
         Map<String, HttpSessionListener> listeners = HstServices.getComponentManager().getComponentsOfType(
                                         HttpSessionListener.class);
         for (Map.Entry<String, HttpSessionListener> entry : listeners.entrySet()) {
+            if (entry.getValue() == this) {
+                log.warn("{} should never be configured as Spring component. Make sure it gets removed.", this.getClass().getName());
+                continue;
+            }
             entry.getValue().sessionCreated(event);
         }
     }
@@ -38,6 +45,10 @@ public class HstSessionEventPublisher implements HttpSessionListener {
         Map<String, HttpSessionListener> listeners = HstServices.getComponentManager().getComponentsOfType(
                                         HttpSessionListener.class);
         for (Map.Entry<String, HttpSessionListener> entry : listeners.entrySet()) {
+            if (entry.getValue() == this) {
+                log.warn("{} should never be configured as Spring component. Make sure it gets removed.", this.getClass().getName());
+                continue;
+            }
             entry.getValue().sessionDestroyed(event);
         }
     }
