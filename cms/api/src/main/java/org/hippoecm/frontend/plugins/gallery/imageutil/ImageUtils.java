@@ -155,12 +155,14 @@ public class ImageUtils {
      *
      * @param writer the writer to use for writing the image data.
      * @param image the image to write.
+     * @param compressionQuality a float between 0 and 1 that indicates the desired compression quality. Values lower than
+     *                           0 will be interpreted as 0, values higher than 1 will be interpreted as 1.
      *
      * @return an output stream with the data of the given image.
      *
      * @throws IOException when creating the binary output stream failed.
      */
-    public static ByteArrayOutputStream writeImage(ImageWriter writer, BufferedImage image) throws IOException {
+    public static ByteArrayOutputStream writeImage(ImageWriter writer, BufferedImage image, float compressionQuality) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         if (image != null) {
@@ -176,7 +178,11 @@ public class ImageUtils {
                     if (compressionTypes != null && compressionTypes.length > 0) {
                         writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                         writeParam.setCompressionType(compressionTypes[0]);
-                        writeParam.setCompressionQuality(1f);
+
+                        // ensure a compression quality between 0 and 1
+                        float trimmedCompressionQuality = Math.max(compressionQuality, 0);
+                        trimmedCompressionQuality = Math.min(trimmedCompressionQuality, 1f);
+                        writeParam.setCompressionQuality(trimmedCompressionQuality);
                     }
                 }
 
@@ -191,6 +197,19 @@ public class ImageUtils {
         }
 
         return out;
+    }
+
+    /**
+     * Returns the data of a {@link BufferedImage} as a binary output stream. If the image is <code>null</code>, a
+     * stream of zero bytes is returned. The data is written with a compression quality of 1.
+     *
+     * @param writer the writer to use for writing the image data.
+     * @param image  the image to write.
+     * @return an output stream with the data of the given image.
+     * @throws IOException when creating the binary output stream failed.
+     */
+    public static ByteArrayOutputStream writeImage(ImageWriter writer, BufferedImage image) throws IOException {
+        return writeImage(writer, image, 1f);
     }
 
     /**

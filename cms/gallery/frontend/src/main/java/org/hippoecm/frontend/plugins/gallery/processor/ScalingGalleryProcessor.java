@@ -95,7 +95,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
             if (p != null) {
                 try {
                     final ScaleImageOperation scaleOperation = new ScaleImageOperation(p.getWidth(), p.getHeight(),
-                            p.getUpscaling(), p.getStrategy());
+                            p.getUpscaling(), p.getStrategy(), p.getCompressionQuality());
 
                     scaleOperation.execute(data, mimeType);
 

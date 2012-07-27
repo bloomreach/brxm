@@ -73,12 +73,14 @@ public class ScalingGalleryProcessorPlugin extends Plugin {
     protected static final String CONFIG_PARAM_HEIGHT = "height";
     protected static final String CONFIG_PARAM_UPSCALING = "upscaling";
     protected static final String CONFIG_PARAM_OPTIMIZE = "optimize";
-    
+    protected static final String CONFIG_PARAM_COMPRESSION = "compression";
+
     protected static final int DEFAULT_WIDTH = 0;
     protected static final int DEFAULT_HEIGHT = 0;
     protected static final boolean DEFAULT_UPSCALING = false;
     protected static final String DEFAULT_OPTIMIZE = "quality";
-    
+    protected static final double DEFAULT_COMPRESSION = 1.0;
+
     private static final Map<String, ImageUtils.ScalingStrategy> SCALING_STRATEGY_MAP = new LinkedHashMap<String, ImageUtils.ScalingStrategy>();
     static {
         SCALING_STRATEGY_MAP.put("auto", ImageUtils.ScalingStrategy.AUTO);
@@ -107,7 +109,8 @@ public class ScalingGalleryProcessorPlugin extends Plugin {
                 final int width = scaleConfig.getAsInteger(CONFIG_PARAM_WIDTH, DEFAULT_WIDTH);
                 final int height = scaleConfig.getAsInteger(CONFIG_PARAM_HEIGHT, DEFAULT_HEIGHT);
                 final boolean upscaling = scaleConfig.getAsBoolean(CONFIG_PARAM_UPSCALING, DEFAULT_UPSCALING);
-                
+                final float compressionQuality = (float) scaleConfig.getAsDouble(CONFIG_PARAM_COMPRESSION, DEFAULT_COMPRESSION);
+
                 final String strategyName = scaleConfig.getString(CONFIG_PARAM_OPTIMIZE, DEFAULT_OPTIMIZE);
                 ImageUtils.ScalingStrategy strategy = SCALING_STRATEGY_MAP.get(strategyName);
                 if (strategy == null) {
@@ -116,7 +119,7 @@ public class ScalingGalleryProcessorPlugin extends Plugin {
                     strategy = SCALING_STRATEGY_MAP.get(DEFAULT_OPTIMIZE);
                 }
                 
-                final ScalingParameters parameters = new ScalingParameters(width, height, upscaling, strategy);
+                final ScalingParameters parameters = new ScalingParameters(width, height, upscaling, strategy, compressionQuality);
                 log.debug("Scaling parameters for {}: {}", nodeName, parameters);
                 processor.addScalingParameters(nodeName, parameters);
             }

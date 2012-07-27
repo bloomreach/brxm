@@ -128,6 +128,64 @@ public class ScaleImageOperationTest {
         checkImageDimensions(scaleOp, "image/gif", 88, 100);
     }
 
+    @Test
+    public void scaleJpgWithCompression() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation normalOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED, 1f);
+        normalOp.execute(data, "image/jpeg");
+        byte[] normalData = IOUtils.toByteArray(normalOp.getScaledData());
+
+        data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation compressedOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED, 0.8f);
+        compressedOp.execute(data, "image/jpeg");
+        checkImageDimensions(compressedOp, "image/jpeg", 88, 100);
+    }
+
+    @Test
+    public void compressedJpgIsSmaller() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation normalOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED, 1f);
+        normalOp.execute(data, "image/jpeg");
+        byte[] normalData = IOUtils.toByteArray(normalOp.getScaledData());
+
+        data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation compressedOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED, 0.5f);
+        compressedOp.execute(data, "image/jpeg");
+        byte[] compressedData = IOUtils.toByteArray(compressedOp.getScaledData());
+
+        assertTrue("The compressed scaled image (" + compressedData.length + " bytes) "
+                + "should be smaller than the normal scaled image (" + normalData.length + " bytes)",
+                compressedData.length < normalData.length);
+    }
+
+    @Test
+    public void compressionQualityHigherThanOne() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation normalOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED, 1f);
+        normalOp.execute(data, "image/jpeg");
+
+        data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation compressedOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED, 100);
+        compressedOp.execute(data, "image/jpeg");
+
+        assertTrue("Compression quality higher than 1 should be interpreted as 1",
+                IOUtils.contentEquals(normalOp.getScaledData(), compressedOp.getScaledData()));
+    }
+
+    @Test
+    public void compressionQualityLowerThanZero() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation normalOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED, 0);
+        normalOp.execute(data, "image/jpeg");
+
+        data = getClass().getResourceAsStream("/test-380x428.jpg");
+        ScaleImageOperation compressedOp = new ScaleImageOperation(200, 100, true, ImageUtils.ScalingStrategy.SPEED, -42);
+        compressedOp.execute(data, "image/jpeg");
+
+        assertTrue("Compression quality lower than 0 should be interpreted as 0",
+                IOUtils.contentEquals(normalOp.getScaledData(), compressedOp.getScaledData()));
+    }
+
     private void checkImageDimensions(ScaleImageOperation scaleOp, String mimeType, int expectedWidth, int expectedHeight) throws IOException {
         assertEquals(expectedWidth, scaleOp.getScaledWidth());
         assertEquals(expectedHeight, scaleOp.getScaledHeight());

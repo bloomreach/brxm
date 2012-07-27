@@ -62,6 +62,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
     private InputStream scaledData;
     private int scaledWidth;
     private int scaledHeight;
+    private float compressionQuality = 1f;
 
     /**
      * Creates a image scaling operation, defined by the bounding box of a certain width and height.
@@ -86,10 +87,26 @@ public class ScaleImageOperation extends AbstractImageOperation {
      *                 these two, etc.)
      */
     public ScaleImageOperation(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy) {
+        this(width, height, upscaling, strategy, 1f);
+    }
+
+    /**
+     * Creates a image scaling operation, defined by the bounding box of a certain width and height.
+     *
+     * @param width     the width of the bounding box in pixels
+     * @param height    the height of the bounding box in pixels
+     * @param upscaling whether to enlarge images that are smaller than the bounding box
+     * @param strategy  the strategy to use for scaling the image (e.g. optimize for speed, quality, a trade-off between
+     *                  these two, etc.)
+     * @param compressionQuality a float between 0 and 1 indicating the compression quality to use for writing the
+     *                           scaled image data.
+     */
+    public ScaleImageOperation(int width, int height, boolean upscaling, ImageUtils.ScalingStrategy strategy, float compressionQuality) {
         this.width = width;
         this.height = height;
         this.upscaling = upscaling;
         this.strategy = strategy;
+        this.compressionQuality = compressionQuality;
     }
 
     /**
@@ -163,7 +180,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
                 scaledWidth = scaledImage.getWidth();
                 scaledHeight = scaledImage.getHeight();
 
-                ByteArrayOutputStream scaledOutputStream = ImageUtils.writeImage(writer, scaledImage);
+                ByteArrayOutputStream scaledOutputStream = ImageUtils.writeImage(writer, scaledImage, compressionQuality);
                 scaledData = new ByteArrayInputStream(scaledOutputStream.toByteArray());
             }
         } finally {
@@ -227,6 +244,10 @@ public class ScaleImageOperation extends AbstractImageOperation {
      */
     public int getScaledHeight() {
         return scaledHeight;
+    }
+
+    public float getCompressionQuality() {
+        return compressionQuality;
     }
 
 }
