@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.core.container.ModuleNotFoundException;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.session.HttpSessionCreatedEvent;
 import org.hippoecm.hst.site.container.session.HttpSessionDestroyedEvent;
@@ -332,6 +334,39 @@ public class TestSpringComponentManagerWithAddonModules {
         assertEquals(0, sessionIdStore1.size());
         assertEquals(0, sessionIdStore11.size());
         assertEquals(0, sessionIdStore12.size());
+
+        componentManager.stop();
+        componentManager.close();
+    }
+
+    @Test
+    public void testFailedModuleInstances() throws Exception {
+        Configuration configuration = new PropertiesConfiguration();
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
+
+        // addon module definitions
+        List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
+
+        // build and add analytics module definition
+        ModuleDefinition def1 = new ModuleDefinition();
+        def1.setName("org.example.failing");
+        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/failing/*.xml"));
+        addonModuleDefs.add(def1);
+
+        componentManager.setAddonModuleDefinitions(addonModuleDefs);
+
+        componentManager.initialize();
+        componentManager.start();
+
+        // due to the failure of 'alwaysFailingOnStartBean', the module shouldn't exist at all; 
+        // it should have been removed during starting.
+        try {
+            componentManager.getComponent("myGreeting", "org.example.failing");
+            fail("The component must not be found because the module instance should have been removed.");
+        } catch (ModuleNotFoundException mnfe) {
+            // Expected exception because the module instance should have been removed.
+        }
 
         componentManager.stop();
         componentManager.close();
