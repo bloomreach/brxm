@@ -65,7 +65,7 @@ public class DefaultComponentManagerApplicationContext extends ClassPathXmlAppli
     @Override
     public void publishEvent(ApplicationEvent event) {
         if (ApplicationEventBubblingContext.canBubble()) {
-            ApplicationEventBubblingContext.bubbled();
+            ApplicationEventBubblingContext.bubble();
             super.publishEvent(event);
         }
     }

@@ -70,7 +70,7 @@ public class ApplicationEventBubblingContext {
         }
     }
 
-    public static void bubbled() {
+    public static void bubble() {
         MutableInt count = tlCount.get();
 
         if (count != null) {
