@@ -16,8 +16,11 @@
 package org.hippoecm.hst.site.container;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,11 +29,18 @@ import java.util.List;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
+import org.hippoecm.hst.site.container.session.HttpSessionCreatedEvent;
+import org.hippoecm.hst.site.container.session.HttpSessionDestroyedEvent;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockHttpSession;
 
 public class TestSpringComponentManagerWithAddonModules {
     
     private static final String WITH_ADDON_MODULES = "/META-INF/assembly/with-addon-modules.xml";
+    
+    private static Logger log = LoggerFactory.getLogger(TestSpringComponentManagerWithAddonModules.class);
     
     @Test
     public void testWithModuleDefinitions() throws Exception {
@@ -181,6 +191,147 @@ public class TestSpringComponentManagerWithAddonModules {
         assertEquals("Hello from container", greetingList.get(0));
         assertEquals("Hello from analytics2", greetingList.get(1));
         assertEquals("Hello from analytics2 statistics", greetingList.get(2));
+
+        componentManager.stop();
+        componentManager.close();
+    }
+
+    @Test
+    public void testHttpSessionApplicationEventListeners() throws Exception {
+        Configuration configuration = new PropertiesConfiguration();
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
+        
+        // addon module definitions
+        List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
+        
+        // build and add analytics module definition
+        ModuleDefinition def1 = new ModuleDefinition();
+        def1.setName("org.example.analytics");
+        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/*.xml"));
+        // build and add analytics/reports module definition
+        ModuleDefinition def11 = new ModuleDefinition();
+        def11.setName("reports");
+        def11.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/reports/*.xml"));
+        // build and add analytics/statistics module definition
+        ModuleDefinition def12 = new ModuleDefinition();
+        def12.setName("statistics");
+        def12.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/statistics/*.xml"));
+        def1.setModuleDefinitions(Arrays.asList(def11, def12));
+        addonModuleDefs.add(def1);
+        
+        componentManager.setAddonModuleDefinitions(addonModuleDefs);
+        
+        componentManager.initialize();
+        componentManager.start();
+
+        List<String> sessionIdStore = componentManager.getComponent("sessionIdStore");
+        List<String> sessionIdStore1 = componentManager.getComponent("sessionIdStore", "org.example.analytics");
+        List<String> sessionIdStore11 = componentManager.getComponent("sessionIdStore", "org.example.analytics", "reports");
+        List<String> sessionIdStore12 = componentManager.getComponent("sessionIdStore", "org.example.analytics", "statistics");
+
+        assertNotNull(sessionIdStore);
+        assertEquals(0, sessionIdStore.size());
+        assertNotNull(sessionIdStore1);
+        assertEquals(0, sessionIdStore1.size());
+        assertNotNull(sessionIdStore11);
+        assertEquals(0, sessionIdStore11.size());
+        assertNotNull(sessionIdStore12);
+        assertEquals(0, sessionIdStore12.size());
+
+        assertNotSame(sessionIdStore, sessionIdStore1);
+        assertNotSame(sessionIdStore, sessionIdStore11);
+        assertNotSame(sessionIdStore, sessionIdStore12);
+        assertNotSame(sessionIdStore1, sessionIdStore11);
+        assertNotSame(sessionIdStore1, sessionIdStore12);
+        assertNotSame(sessionIdStore11, sessionIdStore12);
+
+        List<MockHttpSession> sessionList = new ArrayList<MockHttpSession>();
+
+        for (int i = 0; i < 10; i++) {
+            sessionList.add(new MockHttpSession());
+        }
+
+        int sessionCount = 0;
+
+        for (MockHttpSession session : sessionList) {
+            componentManager.publishEvent(new HttpSessionCreatedEvent(session));
+            ++sessionCount;
+
+            assertEquals(sessionCount, sessionIdStore.size());
+            assertTrue(sessionIdStore.contains(session.getId()));
+        }
+
+        log.debug("sessionIdStore: {}", sessionIdStore);
+        log.debug("sessionIdStore1: {}", sessionIdStore1);
+        log.debug("sessionIdStore11: {}", sessionIdStore11);
+        log.debug("sessionIdStore12: {}", sessionIdStore12);
+
+        for (MockHttpSession session : sessionList) {
+            componentManager.publishEvent(new HttpSessionDestroyedEvent(session));
+            --sessionCount;
+
+            assertEquals(sessionCount, sessionIdStore.size());
+            assertFalse(sessionIdStore.contains(session.getId()));
+        }
+
+        log.debug("sessionIdStore: {}", sessionIdStore);
+        log.debug("sessionIdStore1: {}", sessionIdStore1);
+        log.debug("sessionIdStore11: {}", sessionIdStore11);
+        log.debug("sessionIdStore12: {}", sessionIdStore12);
+
+        assertEquals(0, sessionIdStore.size());
+        assertEquals(0, sessionIdStore1.size());
+        assertEquals(0, sessionIdStore11.size());
+        assertEquals(0, sessionIdStore12.size());
+
+        //
+        // test publishing to add-on modules from here
+        //
+
+        MockHttpSession sessionForModule1 = new MockHttpSession();
+        componentManager.publishEvent(new HttpSessionCreatedEvent(sessionForModule1), "org.example.analytics");
+        assertEquals(0, sessionIdStore.size());
+        assertEquals(1, sessionIdStore1.size());
+        assertEquals(1, sessionIdStore11.size());
+        assertEquals(1, sessionIdStore12.size());
+        assertTrue(sessionIdStore1.contains(sessionForModule1.getId()));
+        assertTrue(sessionIdStore11.contains(sessionForModule1.getId()));
+        assertTrue(sessionIdStore12.contains(sessionForModule1.getId()));
+
+        componentManager.publishEvent(new HttpSessionDestroyedEvent(sessionForModule1), "org.example.analytics");
+        assertEquals(0, sessionIdStore.size());
+        assertEquals(0, sessionIdStore1.size());
+        assertEquals(0, sessionIdStore11.size());
+        assertEquals(0, sessionIdStore12.size());
+
+        MockHttpSession sessionForModule11 = new MockHttpSession();
+        componentManager.publishEvent(new HttpSessionCreatedEvent(sessionForModule11), "org.example.analytics", "reports");
+        assertEquals(0, sessionIdStore.size());
+        assertEquals(0, sessionIdStore1.size());
+        assertEquals(1, sessionIdStore11.size());
+        assertEquals(0, sessionIdStore12.size());
+        assertTrue(sessionIdStore11.contains(sessionForModule11.getId()));
+
+        componentManager.publishEvent(new HttpSessionDestroyedEvent(sessionForModule11), "org.example.analytics", "reports");
+        assertEquals(0, sessionIdStore.size());
+        assertEquals(0, sessionIdStore1.size());
+        assertEquals(0, sessionIdStore11.size());
+        assertEquals(0, sessionIdStore12.size());
+
+        MockHttpSession sessionForModule12 = new MockHttpSession();
+        componentManager.publishEvent(new HttpSessionCreatedEvent(sessionForModule12), "org.example.analytics", "statistics");
+        assertEquals(0, sessionIdStore.size());
+        assertEquals(0, sessionIdStore1.size());
+        assertEquals(0, sessionIdStore11.size());
+        assertEquals(1, sessionIdStore12.size());
+        assertTrue(sessionIdStore12.contains(sessionForModule12.getId()));
+
+        componentManager.publishEvent(new HttpSessionDestroyedEvent(sessionForModule12), "org.example.analytics", "statistics");
+        assertEquals(0, sessionIdStore.size());
+        assertEquals(0, sessionIdStore1.size());
+        assertEquals(0, sessionIdStore11.size());
+        assertEquals(0, sessionIdStore12.size());
 
         componentManager.stop();
         componentManager.close();

@@ -17,6 +17,7 @@ package org.hippoecm.hst.site.addon.module.runtime;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +29,14 @@ import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ApplicationContextUtils;
+import org.hippoecm.hst.site.container.ApplicationEventBubblingContext;
 import org.hippoecm.hst.site.container.DefaultComponentManagerApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 
 public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware, ApplicationContextAware {
@@ -49,7 +52,8 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
     private AbstractRefreshableConfigApplicationContext applicationContext;
     private ComponentManager componentManager;
     
-    private Map<String, ModuleInstance> childModuleInstances;
+    private Map<String, ModuleInstance> childModuleInstancesMap;
+    private List<ModuleInstance> childModuleInstancesList;
 
     public ModuleInstanceImpl(ModuleDefinition moduleDefinition) {
         this(moduleDefinition, null);
@@ -64,11 +68,15 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         List<ModuleDefinition> childModuleDefinitions = this.moduleDefinition.getModuleDefinitions();
         
         if (childModuleDefinitions != null && !childModuleDefinitions.isEmpty()) {
-            childModuleInstances = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
+            childModuleInstancesMap = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
             
             for (ModuleDefinition childModuleDefinition : childModuleDefinitions) {
                 ModuleInstance childModuleInstance = new ModuleInstanceImpl(childModuleDefinition, mergedNamePrefixes);
-                childModuleInstances.put(childModuleInstance.getName(), childModuleInstance);
+                childModuleInstancesMap.put(childModuleInstance.getName(), childModuleInstance);
+            }
+            
+            synchronized (childModuleInstancesMap) {
+                childModuleInstancesList = Collections.synchronizedList(new ArrayList<ModuleInstance>(childModuleInstancesMap.values()));
             }
         }
     }
@@ -168,24 +176,43 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
     }
 
     public List<ModuleInstance> getModuleInstances() {
-        if (childModuleInstances == null) {
+        if (childModuleInstancesList == null) {
             return Collections.emptyList();
         }
         
         List<ModuleInstance> moduleInstances = null;
         
-        synchronized (childModuleInstances) {
-            moduleInstances = new ArrayList<ModuleInstance>(childModuleInstances.values());
+        synchronized (childModuleInstancesList) {
+            moduleInstances = new ArrayList<ModuleInstance>(childModuleInstancesList);
         }
         
         return moduleInstances;
     }
 
     public ModuleInstance getModuleInstance(String name) {
-        if (childModuleInstances == null) {
+        if (childModuleInstancesMap == null) {
             return null;
         }
         
-        return childModuleInstances.get(name);
+        return childModuleInstancesMap.get(name);
+    }
+
+    public void publishEvent(EventObject event) {
+        if (event instanceof ApplicationEvent) {
+            try {
+                ApplicationEventBubblingContext.reset(1);
+                applicationContext.publishEvent((ApplicationEvent) event);
+            } finally {
+                ApplicationEventBubblingContext.clear();
+            }
+
+            if (childModuleInstancesList != null) {
+                for (ModuleInstance childModuleInstance : childModuleInstancesList) {
+                    childModuleInstance.publishEvent(event);
+                }
+            }
+        } else {
+            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("Unsupported EventObject by the current ModuleInstance. Please provide Spring Framework ApplicationEvent object.");
+        }
     }
 }

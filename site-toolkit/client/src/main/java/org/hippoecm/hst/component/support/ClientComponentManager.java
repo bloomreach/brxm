@@ -18,6 +18,7 @@ package org.hippoecm.hst.component.support;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EventObject;
 import java.util.Map;
 import java.util.Properties;
 
@@ -38,6 +39,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
@@ -46,7 +48,8 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class ClientComponentManager implements ComponentManager, ServletContextAware, BeanPostProcessor {
 
-    Logger logger = LoggerFactory.getLogger(ClientComponentManager.class);
+    private static final String LOGGER_FQCN = ClientComponentManager.class.getName();
+    private static Logger logger = LoggerFactory.getLogger(LOGGER_FQCN);
     
     public static final String IGNORE_UNRESOLVABLE_PLACE_HOLDERS = ClientComponentManager.class.getName() + ".ignoreUnresolvablePlaceholders";
     
@@ -191,6 +194,19 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
         }
         
         return beansMap;
+    }
+
+    public void publishEvent(EventObject event) {
+        publishEvent(event, (String []) null);
+    }
+
+    public void publishEvent(EventObject event, String ... contextNames) {
+        if (!(event instanceof ApplicationEvent)) {
+            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("Unsupported EventObject by the current ComponentManager. Please provide Spring Framework ApplicationEvent object.");
+            return;
+        }
+
+        applicationContext.publishEvent((ApplicationEvent) event);
     }
 
     public String[] getConfigurationResources() {

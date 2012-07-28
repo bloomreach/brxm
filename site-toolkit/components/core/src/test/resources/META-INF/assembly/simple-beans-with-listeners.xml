@@ -24,12 +24,8 @@
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-  <bean id="myGreeting" class="java.lang.String">
-    <constructor-arg value="[ComponentManager] ${with.addon.modules.greeting}" />
-  </bean>
-
-  <bean id="containerGreeting" class="java.lang.String">
-    <constructor-arg value="Hello from container"/>
+  <bean id="greetingTemplate" class="java.lang.String">
+    <constructor-arg value="Hello, {0}!"/>
   </bean>
 
   <bean id="sessionIdStore" class="java.util.LinkedList">

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.EventObject;
 import java.util.Map;
 
 /**
@@ -77,7 +78,7 @@ public interface ComponentManager
      * 
      * @param <T>
      * @param name
-     * @param contextNames
+     * @param addonModuleNames
      * @return
      * @throws ModuleNotFoundException thrown when module is not found by the addonModuleNames
      */
@@ -94,11 +95,39 @@ public interface ComponentManager
      * 
      * @param <T>
      * @param requiredType
-     * @param contextNames
+     * @param addonModuleNames
      * @return component map
      * @throws ModuleNotFoundException thrown when module is not found by the addonModuleNames
      */
     <T> Map<String, T> getComponentsOfType(Class<T> requiredType, String ... addonModuleNames);
+
+    /**
+     * Publish the given event to all components which wants to listen to.
+     * Note that an implementation may decide to support specific child types of <CODE>EventObject</CODE> objects only.
+     * Spring Framework based implementations can support Spring Framework's <CODE>ApplicationEvent</CODE> objects only, for instance.
+     * If an implementation doesn't support the specific type of EventObject objects, then the EventObject object will be just ignored.
+     * @param event the event to publish (may be an application-specific or built-in HST-2 event)
+     */
+    void publishEvent(EventObject event);
+
+    /**
+     * Publish the given event to all components which wants to listen to.
+     * Note that an implementation may decide to support specific child types of <CODE>EventObject</CODE> objects only.
+     * Spring Framework based implementations can support Spring Framework's <CODE>ApplicationEvent</CODE> objects only, for instance.
+     * If an implementation doesn't support the specific type of EventObject objects, then the EventObject object will be just ignored.
+     * <P>
+     * If <CODE>addonModuleNames</CODE> is provided, then the given event is published to the specific module instance and its child
+     * module instances only.
+     * </P>
+     * <P>
+     * If <CODE>addonModuleNames</CODE> consists of multiple items, then 
+     * each <CODE>addonModuleNames</CODE> item is regarded as child addon module name 
+     * in the descendant hierarchy, as ordered.
+     * </P>
+     * @param event the event to publish (may be an application-specific or built-in HST-2 event)
+     * @param addonModuleNames
+     */
+    void publishEvent(EventObject event, String ... addonModuleNames);
 
     /**
      * Stop the component manager.

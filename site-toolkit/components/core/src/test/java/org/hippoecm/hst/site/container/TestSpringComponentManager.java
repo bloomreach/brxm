@@ -19,12 +19,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.hippoecm.hst.site.container.session.HttpSessionCreatedEvent;
+import org.hippoecm.hst.site.container.session.HttpSessionDestroyedEvent;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockHttpSession;
 
 public class TestSpringComponentManager {
     
@@ -33,6 +41,9 @@ public class TestSpringComponentManager {
     private static final String SIMPLE_BEANS_3 = "/META-INF/assembly/simple-beans-3.xml";
     private static final String SIMPLE_BEANS_4 = "/META-INF/assembly/simple-beans-4.xml";
     private static final String NON_EXISTING_BEANS = "/META-INF/assembly/non-existing-ones/*.xml";
+    private static final String SIMPLE_BEANS_WITH_LISTENERS = "/META-INF/assembly/simple-beans-with-listeners.xml";
+    
+    private static Logger log = LoggerFactory.getLogger(TestSpringComponentManager.class);
     
     @Test
     public void testSimpleBeans() {
@@ -163,6 +174,57 @@ public class TestSpringComponentManager {
         assertEquals("Hello, World! (1)", exampleStringBuildersMap.get("exampleStringBuilder1").toString());
         assertEquals("Hello, World! (2)", exampleStringBuildersMap.get("exampleStringBuilder2").toString());
         
+        componentManager.stop();
+        componentManager.close();
+    }
+
+    @Test
+    public void testHttpSessionApplicationEventListeners() {
+        Configuration configuration = new PropertiesConfiguration();
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        String[] configurationResources = new String[] { SIMPLE_BEANS_WITH_LISTENERS };
+        componentManager.setConfigurationResources(configurationResources);
+
+        componentManager.initialize();
+        componentManager.start();
+
+        String greetingTemplate = componentManager.getComponent("greetingTemplate");
+        assertNotNull(greetingTemplate);
+
+        List<String> sessionIdStore = componentManager.getComponent("sessionIdStore");
+        assertNotNull(sessionIdStore);
+        assertEquals(0, sessionIdStore.size());
+
+        List<MockHttpSession> sessionList = new ArrayList<MockHttpSession>();
+
+        for (int i = 0; i < 10; i++) {
+            sessionList.add(new MockHttpSession());
+        }
+
+        int sessionCount = 0;
+
+        for (MockHttpSession session : sessionList) {
+            componentManager.publishEvent(new HttpSessionCreatedEvent(session));
+            ++sessionCount;
+
+            assertEquals(sessionCount, sessionIdStore.size());
+            assertTrue(sessionIdStore.contains(session.getId()));
+        }
+
+        log.debug("sessionIdStore: {}", sessionIdStore);
+
+        for (MockHttpSession session : sessionList) {
+            componentManager.publishEvent(new HttpSessionDestroyedEvent(session));
+            --sessionCount;
+
+            assertEquals(sessionCount, sessionIdStore.size());
+            assertFalse(sessionIdStore.contains(session.getId()));
+        }
+
+        log.debug("sessionIdStore: {}", sessionIdStore);
+
+        assertEquals(0, sessionIdStore.size());
+
         componentManager.stop();
         componentManager.close();
     }

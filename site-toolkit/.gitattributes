@@ -530,6 +530,7 @@ components/core/src/main/java/org/hippoecm/hst/site/addon/module/model/ModuleDef
 components/core/src/main/java/org/hippoecm/hst/site/addon/module/model/package-info.java -text
 components/core/src/main/java/org/hippoecm/hst/site/addon/module/runtime/ModuleInstanceImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/ApplicationContextUtils.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/ApplicationEventBubblingContext.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/ApplicationEventMethodsInvoker.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/BlockingEhCacheFactoryBean.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/ComponentManagerFacade.java svneol=native#text/plain
@@ -543,6 +544,9 @@ components/core/src/main/java/org/hippoecm/hst/site/container/ResourceFactoryBea
 components/core/src/main/java/org/hippoecm/hst/site/container/SpringComponentManager.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/SpringMetadataReaderClasspathResourceScanner.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/UnregisterableMBeanExporter.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/session/HttpSessionCreatedEvent.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/session/HttpSessionDestroyedEvent.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/session/HttpSessionEventPublisher.java -text
 components/core/src/main/java/org/hippoecm/hst/site/request/BasicHstSiteMapMatcher.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/ComponentConfigurationImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/DefaultContextCredentialsProvider.java svneol=native#text/plain
@@ -598,6 +602,7 @@ components/core/src/test/java/org/hippoecm/hst/core/container/TestHstContainerUR
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstNavigationalStateCodec.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValve.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/session/TestHttpSessionEventPublisher.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewriting.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/logging/TestLogEventBuffer.java svneol=native#text/plain
@@ -609,6 +614,8 @@ components/core/src/test/java/org/hippoecm/hst/site/container/TestModuleDescript
 components/core/src/test/java/org/hippoecm/hst/site/container/TestResourceFactoryBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManager.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestSpringComponentManagerWithAddonModules.java -text
+components/core/src/test/java/org/hippoecm/hst/site/container/session/SessionIdRemovingApplicationListener.java -text
+components/core/src/test/java/org/hippoecm/hst/site/container/session/SessionIdStoringApplicationListener.java -text
 components/core/src/test/java/org/hippoecm/hst/site/request/TestHstRequestContextImpl.java -text
 components/core/src/test/java/org/hippoecm/hst/site/request/TestMountDecoratorImpl.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/request/TestSiteNameDecoratedContextCredentialsProvider.java svneol=native#text/plain
@@ -626,14 +633,18 @@ components/core/src/test/resources/META-INF/assembly/simple-beans-1.xml svneol=n
 components/core/src/test/resources/META-INF/assembly/simple-beans-2.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-beans-3.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-beans-4.xml svneol=native#text/plain
+components/core/src/test/resources/META-INF/assembly/simple-beans-with-listeners.xml -text
 components/core/src/test/resources/META-INF/assembly/simple-config.properties svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/with-addon-modules-config.properties -text
 components/core/src/test/resources/META-INF/assembly/with-addon-modules.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/module.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/module2.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics/event-listeners.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics/reports/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics/reports/event-listeners.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics/statistics/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics/statistics/event-listeners.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics2/base.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics2/reports/base.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics2/statistics/base.xml -text
