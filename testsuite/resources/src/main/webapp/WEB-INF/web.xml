@@ -151,7 +151,7 @@
   
   <!-- Listener that dispatches http session events to Spring. -->
   <listener>
-    <listener-class>org.hippoecm.hst.site.container.HstSessionEventPublisher</listener-class>
+    <listener-class>org.hippoecm.hst.site.container.session.HttpSessionEventPublisher</listener-class>
   </listener>
 
   <servlet>
