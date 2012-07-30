@@ -212,7 +212,7 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
                 }
             }
         } else {
-            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("Unsupported EventObject by the current ModuleInstance. Please provide Spring Framework ApplicationEvent object.");
+            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("Unsupported EventObject '{}' by the current ModuleInstance. Please provide Spring Framework ApplicationEvent object.", event.getClass().getName());
         }
     }
 }
