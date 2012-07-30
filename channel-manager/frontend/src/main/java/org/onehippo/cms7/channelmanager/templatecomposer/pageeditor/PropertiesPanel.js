@@ -498,28 +498,28 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             });
             this.saveButton.hide();
         } else {
-            for (var i = 0; i < length; ++i) {
-                var property = records[i];
-                var value = property.get('value');
-                var defaultValue = property.get('defaultValue');
+            for (var i=0; i < length; ++i) {
+                var record = records[i];
+                var value = record.get('value');
+                var defaultValue = record.get('defaultValue');
                 var isDefaultValue = false;
                 if (!value || value.length === 0) {
                     value = defaultValue;
                     isDefaultValue = true;
                 }
                 var propertyField;
-                if (property.get('type') == 'combo') {
+                if ('documentcombobox' === record.get('type')) {
                     var comboStore = new Ext.data.JsonStore({
                         root : 'data',
-                        url : this.composerRestMountUrl + '/' + this.mountId + './documents/' + property.get('docType') + '?FORCE_CLIENT_HOST=true',
+                        url : this.composerRestMountUrl + '/' + this.mountId + './documents/' + record.get('docType') + '?FORCE_CLIENT_HOST=true',
                         fields : ['path']
                     });
 
                     propertyField = this.add({
-                        fieldLabel : property.get('label'),
+                        fieldLabel : record.get('label'),
                         xtype : 'combo',
-                        allowBlank : !property.get('required'),
-                        name : property.get('name'),
+                        allowBlank : !record.get('required'),
+                        name : record.get('name'),
                         value : value,
                         defaultValue : defaultValue,
                         store : comboStore,
@@ -529,7 +529,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         valueField : 'path'
                     });
 
-                    if (property.get('allowCreation')) {
+                    if (record.get('allowCreation')) {
                         this.add({
                             bodyCfg : {
                                 tag : 'div',
@@ -541,21 +541,51 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                         });
 
                         Ext.get("combo" + i).on("click", this._createDocument, this, {
-                            docType : property.get('docType'),
-                            docLocation : property.get('docLocation'),
+                            docType : record.get('docType'),
+                            docLocation : record.get('docLocation'),
                             comboId : propertyField.id
                         });
                     }
+                } else if ('combo' === record.get('type')) {
+                    var comboBoxValues = record.get(
+                        'dropDownListValues'
+                    );
+                    var comboBoxDisplayValues = record.get(
+                        'dropDownListDisplayValues'
+                    );
+                    var data = [];
+                    for (var dataIndex=0, comboBoxValuesLength=comboBoxValues.length; dataIndex<comboBoxValuesLength; dataIndex++) {
+                        data.push([comboBoxValues[dataIndex], comboBoxDisplayValues[dataIndex]]);
+                    }
 
+                    var dropDown = this.add({
+                        xtype: record.get('type'),
+                        fieldLabel : record.get('label'),
+                        store : new Ext.data.ArrayStore({
+                            fields: [
+                                'id',
+                                'displayText'
+                            ],
+                            data: data
+                        }),
+                        value : value,
+                        hiddenName : record.get('name'),
+                        typeAhead: true,
+                        mode: 'local',
+                        triggerAction: 'all',
+                        selectOnFocus:true,
+                        valueField : 'id',
+                        displayField : 'displayText'
+                    });
                 } else {
-                    var xtype = property.get('type');
+                    var xtype = record.get('type');
                     var propertyFieldConfig = {
-                        fieldLabel : property.get('label'),
+                        fieldLabel : record.get('label'),
                         xtype : xtype,
                         value : value,
                         defaultValue : defaultValue,
-                        allowBlank : !property.get('required'),
-                        name : property.get('name'),
+                        allowBlank : !record.get('required'),
+                        name : record.get('name'),
                         listeners : {
                             change : function () {
                                 var value = this.getValue();
@@ -573,12 +603,12 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                     } else if (xtype == 'linkpicker') {
                         propertyFieldConfig.renderStripValue = /^\/?(?:[^\/]+\/)*/g;
                         propertyFieldConfig.pickerConfig = {
-                            configuration: property.get('pickerConfiguration'),
-                            remembersLastVisited: property.get('pickerRemembersLastVisited'),
-                            initialPath: property.get('pickerInitialPath'),
-                            isRelativePath: property.get('pickerPathIsRelative'),
-                            rootPath: property.get('pickerRootPath'),
-                            selectableNodeTypes: property.get('pickerSelectableNodeTypes')
+                            configuration: record.get('pickerConfiguration'),
+                            remembersLastVisited: record.get('pickerRemembersLastVisited'),
+                            initialPath: record.get('pickerInitialPath'),
+                            isRelativePath: record.get('pickerPathIsRelative'),
+                            rootPath: record.get('pickerRootPath'),
+                            selectableNodeTypes: record.get('pickerSelectableNodeTypes')
                         }
                     }
                     propertyField = this.add(propertyFieldConfig);
@@ -612,7 +642,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 method : 'GET',
                 root : 'properties',
                 fields : ['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
-                    'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes' ],
+                    'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
+                    'dropDownListValues', 'dropDownListDisplayValues' ],
                 url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.locale + '/' + this.variant.id + '?FORCE_CLIENT_HOST=true'
             });
 
