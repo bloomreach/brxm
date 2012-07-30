@@ -61,6 +61,8 @@ public interface HippoNodeType {
 
     public static final String SHELF_PATH = "hippo:shelf";
 
+    public static final String TEMPORARY_PATH = "hippo:temporary";
+
     public static final String NT_AUTHROLE = "hipposys:authrole";
 
     public static final String NT_CONFIGURATION = "hipposys:configuration";
@@ -175,6 +177,8 @@ public interface HippoNodeType {
 
     public static final String NT_SHELF = "hipposys:shelf";
 
+    public static final String NT_SHELVEDITEM = "hipposys:shelveditem";
+
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
     public static final String HIPPO_AUTOCREATED = "hipposysedit:autocreated";
@@ -221,6 +225,8 @@ public interface HippoNodeType {
     public static final String HIPPO_EXTENSIONVERSION = "hipposys:extensionversion";
 
     public static final String HIPPO_RELOADONSTARTUP = "hippo:reloadonstartup";
+
+    public static final String HIPPO_RESTOREAFTERRELOAD = "hippo:restoreafterreload";
 
     public static final String HIPPO_FACET = "hipposys:facet";
 
@@ -375,9 +381,5 @@ public interface HippoNodeType {
     public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";
 
     public static final String HIPPOSYS_RESTORELOCATION = "hipposys:restorelocation";
-
-    public static final String HIPPOSYS_RESTOREBEHAVIOR = "hipposys:restorebehavior";
-
-    public static final String HIPPOSYS_RESTORATIONFAILUREMESSAGE = "hipposys:restorationfailuremessage";
 
 }

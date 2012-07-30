@@ -25,7 +25,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -98,6 +97,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private static final String INIT_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
 
     private static final String SHELF_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SHELF_PATH;
+
+    private static final String TEMP_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.TEMPORARY_PATH;
 
     private static final String[] INIT_ITEM_PROPERTIES = new String[] {
             HippoNodeType.HIPPO_SEQUENCE,
@@ -433,23 +434,33 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
 
         if (isReload(node)) {
-            boolean success = false;
             final String contextNodeName = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTEXTNODENAME, null);
+            final boolean restore = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_RESTOREAFTERRELOAD, true);
             if (contextNodeName != null) {
                 final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
-                final Collection<Node> shelvedNodes = shelveNodes(session, contextNodePath, dryRun);
-                success = removeNodecontent(session, contextNodePath, false);
-                if (success) {
-                    initializeNodecontent(session, root, contentStream, contentResource);
-                    if (!dryRun) {
-                        session.save();
-                    }
-                    restoreNodes(session, shelvedNodes, dryRun);
+                Node backupContextNode = null;
+                if (restore) {
+                    backupContextNode = backupContextNode(session, contextNodePath);
                 }
-            }
-            if (!success) {
-                getLogger().error("Cannot remove node for reloading content: content for item " + node.getName() + " not reloaded");
-                session.refresh(false);
+                try {
+                    if (removeNodecontent(session, contextNodePath, false)) {
+                        initializeNodecontent(session, root, contentStream, contentResource);
+                        if (!dryRun) {
+                            session.save();
+                        }
+                        if (restore) {
+                            restoreNodes(session, contextNodePath, backupContextNode, dryRun);
+                        }
+                    } else {
+                        getLogger().error("Cannot reload item " + node.getPath() + ": removing node failed");
+                    }
+                } finally {
+                    if (backupContextNode != null) {
+                        backupContextNode.remove();
+                    }
+                }
+            } else {
+                getLogger().error("Cannot reload item " + node.getPath() + ": possibly because it is a delta.");
             }
         } else {
             initializeNodecontent(session, root, contentStream, contentResource);
@@ -457,7 +468,14 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     }
 
-    private Collection<Node> shelveNodes(final Session session, final String contextNodePath, final boolean dryRun) throws RepositoryException {
+    private Node backupContextNode(final Session session, final String contextNodePath) throws RepositoryException {
+        final Node contextNode = session.getNode(contextNodePath);
+        final String tempNodePath = TEMP_PATH + "/" + contextNode.getIdentifier();
+        JcrUtils.copy(session, contextNodePath, tempNodePath);
+        return session.getNode(tempNodePath);
+    }
+
+    private void restoreNodes(final Session session, final String contextNodePath, final Node backupNode, final boolean dryRun) throws RepositoryException {
         final Node contextNode = session.getNode(contextNodePath);
         final List<Node> restorableNodes = new ArrayList<Node>();
         contextNode.accept(new ItemVisitor() {
@@ -484,75 +502,43 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 }
             }
         });
-        final Collection<Node> shelvedNodes = new ArrayList<Node>();
-        if (restorableNodes.size() > 0) {
-            createShelfIfNotExists(session, dryRun);
-            for (final Node restorableNode : restorableNodes) {
-                final String restorableAbsPath = restorableNode.getPath();
-                final String shelfAbsPath = SHELF_PATH + "/" + restorableAbsPath.substring(1).replace(':', '_').replace('/', '-');
-                getLogger().info("Shelving restorable " + restorableAbsPath);
-                session.move(restorableAbsPath, shelfAbsPath);
-                final Node shelvedNode = JcrUtils.getLastNodeIfExists(shelfAbsPath, session);
-                shelvedNode.setProperty(HippoNodeType.HIPPOSYS_RESTORELOCATION, restorableAbsPath);
-                shelvedNodes.add(shelvedNode);
-            }
-        }
-        return shelvedNodes;
-    }
-
-    private void restoreNodes(final Session session, final Collection<Node> shelvedNodes, final boolean dryRun) throws RepositoryException {
-        for (Node shelvedNode : shelvedNodes) {
-            final String restoreLocation = shelvedNode.getProperty(HippoNodeType.HIPPOSYS_RESTORELOCATION).getString();
-            final String restoreBehavior = JcrUtils.getStringProperty(shelvedNode, HippoNodeType.HIPPOSYS_RESTOREBEHAVIOR, null);
-            if ("replace".equals(restoreBehavior)) {
-                if (session.nodeExists(restoreLocation)) {
-                    session.getNode(restoreLocation).remove();
-                    restoreNode(session, shelvedNode, restoreLocation);
-                } else {
-                    final String message = "no node to replace";
-                    shelvedNode.setProperty(HippoNodeType.HIPPOSYS_RESTORATIONFAILUREMESSAGE, message);
-                    getLogger().warn("Restoring node to " + restoreLocation + " was unsuccessful: " + message);
+        for (Node restorableNode : restorableNodes) {
+            final String destAbsPath = restorableNode.getPath();
+            final String srcAbsPath = backupNode.getPath() + (restorableNode == contextNode ? "" : "/" + restorableNode.getPath().substring(contextNodePath.length()+1));
+            try {
+                if (session.nodeExists(srcAbsPath)) {
+                    restorableNode.remove();
+                    JcrUtils.copy(session, srcAbsPath, destAbsPath);
+                    if (!dryRun) {
+                        session.save();
+                    }
+                    getLogger().info("Restored node at " + destAbsPath);
                 }
-            } else {
-                if (session.nodeExists(restoreLocation)) {
-                    session.getNode(restoreLocation).remove();
-                }
-                restoreNode(session, shelvedNode, restoreLocation);
-            }
-            if (!dryRun) {
-                session.save();
+            } catch (ConstraintViolationException e) {
+                getLogger().warn("Failed to restore node at " + destAbsPath + ": shelving item");
+                session.refresh(false);
+                shelveNode(session, srcAbsPath, destAbsPath);
             }
         }
+
     }
 
-    private void restoreNode(final Session session, final Node shelvedNode, final String restoreLocation) throws RepositoryException {
-        try {
-            final String srcAbsPath = shelvedNode.getPath();
-            session.move(srcAbsPath, restoreLocation);
-            getLogger().info("Restored restorable to " + restoreLocation);
-            JcrUtils.getLastNodeIfExists(restoreLocation, session).getProperty(HippoNodeType.HIPPOSYS_RESTORELOCATION).remove();
-        } catch (ConstraintViolationException e) {
-            session.refresh(false);
-            final String message = "constraint violation";
-            shelvedNode.setProperty(HippoNodeType.HIPPOSYS_RESTORATIONFAILUREMESSAGE, message);
-            session.save();
-            getLogger().warn("Restoring node to " + restoreLocation + " was unsuccessful: " + message);
-        } catch (PathNotFoundException e) {
-            session.refresh(false);
-            final String message = "path is no longer valid";
-            shelvedNode.setProperty(HippoNodeType.HIPPOSYS_RESTORATIONFAILUREMESSAGE, message);
-            session.save();
-            getLogger().warn("Restoring node to " + restoreLocation + " was unsuccessful: " + message);
-        }
+    private void shelveNode(final Session session, final String srcAbsPath, final String restoreLocation) throws RepositoryException {
+        createShelfIfNotExists(session);
+        final Node failedRestorable = session.getNode(srcAbsPath);
+        final String destAbsPath = SHELF_PATH + "/" + failedRestorable.getIdentifier();
+        JcrUtils.copy(session, srcAbsPath, destAbsPath);
+        final Node shelvedItem = session.getNode(destAbsPath);
+        shelvedItem.addMixin(HippoNodeType.NT_SHELVEDITEM);
+        shelvedItem.setProperty(HippoNodeType.HIPPOSYS_RESTORELOCATION, restoreLocation);
+        session.save();
     }
 
-    private void createShelfIfNotExists(final Session session, final boolean dryRun) throws RepositoryException {
+    private void createShelfIfNotExists(final Session session) throws RepositoryException {
         if (!session.nodeExists(SHELF_PATH)) {
             final Node configurationNode = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
             configurationNode.addNode(HippoNodeType.SHELF_PATH, HippoNodeType.NT_SHELF);
-            if (!dryRun) {
-                session.save();
-            }
+            session.save();
         }
     }
 

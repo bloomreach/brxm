@@ -23,9 +23,13 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NodeType;
+
+import org.hippoecm.repository.api.HippoNode;
 
 /**
  * Some utility methods for writing code against JCR API. This code can be removed when we upgrade to JR 2.6...
@@ -387,5 +391,47 @@ public class JcrUtils {
         }
     }
 
+    public static void copy(Session session, String srcAbsPath, String destAbsPath) throws RepositoryException {
+        if (destAbsPath.equals("/")) {
+            throw new IllegalArgumentException("Root cannot be the destination of a copy");
+        }
+        if (destAbsPath.startsWith(srcAbsPath)) {
+            throw new IllegalArgumentException("Destination cannot be child of source node");
+        }
+        final Node srcNode = session.getNode(srcAbsPath);
+        final int idx = destAbsPath.lastIndexOf('/');
+        final String parentDestAbsPath = idx == 0 ? destAbsPath : destAbsPath.substring(0, idx);
+        final String destNodeName = destAbsPath.substring(idx+1);
+        final Node destParentNode = session.getNode(parentDestAbsPath);
 
+        copy(srcNode, destNodeName, destParentNode);
+    }
+
+    private static void copy(final Node srcNode, final String destNodeName, final Node destParentNode) throws RepositoryException {
+        if (srcNode instanceof HippoNode && ((HippoNode)srcNode).isVirtual()) {
+            return;
+        }
+        final Node destNode = destParentNode.addNode(destNodeName, srcNode.getPrimaryNodeType().getName());
+        for (NodeType nodeType : srcNode.getMixinNodeTypes()) {
+            destNode.addMixin(nodeType.getName());
+        }
+
+        final PropertyIterator properties = srcNode.getProperties();
+        while (properties.hasNext()) {
+            final Property property = properties.nextProperty();
+            if (!property.getDefinition().isProtected()) {
+                if (property.isMultiple()) {
+                    destNode.setProperty(property.getName(), property.getValues());
+                } else {
+                    destNode.setProperty(property.getName(), property.getValue());
+                }
+            }
+        }
+
+        final NodeIterator nodes = srcNode.getNodes();
+        while (nodes.hasNext()) {
+            final Node child = nodes.nextNode();
+            copy(child, child.getName(), destNode);
+        }
+    }
 }

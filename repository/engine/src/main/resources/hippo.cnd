@@ -128,6 +128,7 @@
 - hippo:contentpropset (string) multiple
 - hippo:contentpropadd (string) multiple
 - hippo:reloadonstartup (boolean)
+- hippo:restoreafterreload (boolean)
 - hippo:status (string) < 'pending', 'done', 'disabled'
 - hippo:contextnodename (string)
 - hippo:version (string)
