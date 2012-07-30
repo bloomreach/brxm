@@ -498,14 +498,15 @@ public class HippoItem implements HippoBean {
             return (T) this;
         }
         try {
-            Node canonical = ((HippoNode)this.getNode()).getCanonicalNode();
+            HippoNode hn = (HippoNode)this.getNode();
+            if (!hn.isVirtual()) {
+                // already canonical
+                return (T)this;
+            }
+            Node canonical = hn.getCanonicalNode();
             if(canonical == null) {
                 log.debug("Cannot get canonical for a node that is virtual only: '{}'. Return null", this.getPath());
                 return null;
-            }
-            if (canonical.isSame(getNode())) {
-                log.debug("Canonical node is same one as for current bean. Just return same bean");
-                return (T)this;
             }
             Object o = this.objectConverter.getObject(canonical);
             if (o instanceof HippoBean) {
