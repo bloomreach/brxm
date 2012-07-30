@@ -25,14 +25,13 @@ import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.time.Time;
 
 public abstract class DownloadLink<T> extends Link<T> {
 
     private static final long serialVersionUID = 1L;
-
-    private InputStream content;
 
     public DownloadLink(String id) {
         super(id);
@@ -81,17 +80,18 @@ public abstract class DownloadLink<T> extends Link<T> {
                     response.setContentType(mimeType);
                 }
                 response.setAttachmentHeader(filename);
-                content = getContent();
+                final InputStream content = getContent();
                 if (content != null) {
-                    response.write(content);
+                    try {
+                        response.write(content);
+                    } finally {
+                        IOUtils.closeQuietly(content);
+                    }
                 }
             }
         }
 
         public void detach(RequestCycle requestCycle) {
-            if (content != null) {
-                try { content.close(); } catch (IOException ignore) {}
-            }
             onDownloadTargetDetach();
         }
 
