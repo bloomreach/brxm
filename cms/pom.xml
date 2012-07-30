@@ -123,7 +123,7 @@
     <htmlcleaner.version>1.02.07-SNAPSHOT</htmlcleaner.version>
     <xerces.xercesImpl.version>2.8.1</xerces.xercesImpl.version>
     <guava.version>10.0.1</guava.version>
-    <hippo.jcrdiff.version>1.01.01</hippo.jcrdiff.version>
+    <hippo.jcrdiff.version>1.01.02-SNAPSHOT</hippo.jcrdiff.version>
     <sanselan.version>0.97-incubator</sanselan.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
