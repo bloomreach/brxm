@@ -22,12 +22,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
-import org.hippoecm.hst.core.parameters.ImageSetPath;
-import org.hippoecm.hst.core.parameters.JcrPath;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.parameters.*;
 import org.junit.Test;
 
 public class ParametersInfoProcessorTest {
@@ -79,6 +74,10 @@ public class ParametersInfoProcessorTest {
         @Parameter(name="13-relativejcrpath")
         @JcrPath(isRelative = true, pickerInitialPath = "subdir/foo", pickerConfiguration = "cms-pickers/mycustompicker")
         String getRelativeJcrPath();
+
+        @Parameter(name="14-dropdownvalue")
+        @DropDownList(value={"value1", "value2", "value3"})
+        String getDropDownValue();
     }
     @ParametersInfo(type=NewstyleInterface.class)
     static class NewstyleContainer {
@@ -90,7 +89,7 @@ public class ParametersInfoProcessorTest {
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null, currentMountCanonicalContentPath);
-        assertEquals(14, properties.size());
+        assertEquals(15, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
@@ -101,7 +100,7 @@ public class ParametersInfoProcessorTest {
 
         ContainerItemComponentPropertyRepresentation docLocProperty = properties.get(1);
         assertEquals("/content", docLocProperty.getDocLocation());
-        assertEquals("combo", docLocProperty.getType());
+        assertEquals("documentcombobox", docLocProperty.getType());
         assertEquals("hst:testdocument", docLocProperty.getDocType());
 
         ContainerItemComponentPropertyRepresentation imageProperty = properties.get(2);
@@ -146,6 +145,11 @@ public class ParametersInfoProcessorTest {
         assertEquals("cms-pickers/mycustompicker", relativeJcrPathProperty.getPickerConfiguration());
         assertEquals("subdir/foo", relativeJcrPathProperty.getPickerInitialPath());
         assertEquals(currentMountCanonicalContentPath, relativeJcrPathProperty.getPickerRootPath());
+
+        final ContainerItemComponentPropertyRepresentation dropDownProperty = properties.get(14);
+        assertEquals("combo", dropDownProperty.getType());
+        final String values[] = dropDownProperty.getDropDownListValues();
+        assertEquals(values.length, 3);
     }
 
     private static class PropertyComparator implements Comparator<ContainerItemComponentPropertyRepresentation> {
