@@ -23,6 +23,9 @@ public class ContainerItemComponentPropertyRepresentation {
     private boolean pickerRemembersLastVisited;
     private String[] pickerSelectableNodeTypes;
 
+    private String[] dropDownListValues;
+    private String[] dropDownListDisplayValues;
+
     public ContainerItemComponentPropertyRepresentation() {
         name = "";
         value = "";
@@ -162,6 +165,22 @@ public class ContainerItemComponentPropertyRepresentation {
 
     public void setPickerSelectableNodeTypes(final String[] pickerSelectableNodeTypes) {
         this.pickerSelectableNodeTypes = pickerSelectableNodeTypes;
+    }
+
+    public String[] getDropDownListValues() {
+        return dropDownListValues;
+    }
+
+    public void setDropDownListValues(String[] dropDownValues) {
+        this.dropDownListValues = dropDownValues;
+    }
+
+    public String[] getDropDownListDisplayValues() {
+        return dropDownListDisplayValues;
+    }
+
+    public void setDropDownListDisplayValues(String[] dropDownListDisplayValues) {
+        this.dropDownListDisplayValues = dropDownListDisplayValues;
     }
 
 }

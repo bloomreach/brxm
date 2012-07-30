@@ -34,11 +34,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hippoecm.hst.core.parameters.Color;
-import org.hippoecm.hst.core.parameters.DocumentLink;
-import org.hippoecm.hst.core.parameters.JcrPath;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.parameters.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,19 +66,20 @@ public class ContainerItemComponentRepresentation {
      * The ParameterType.UNKNOWN will result in xtype "textfield"
      */
     enum ParameterType {
-        STRING("textfield", new Class[]{String.class}, null), 
+        STRING("textfield", new Class[]{String.class}, null),
+        VALUE_FROM_LIST("combo", new Class[]{String.class}, DropDownList.class),
         NUMBER("numberfield", new Class[]{Long.class, long.class, Integer.class, int.class, Short.class, short.class}, null), 
         BOOLEAN("checkbox", new Class[]{Boolean.class, boolean.class}, null), 
         DATE("datefield", new Class[]{Date.class, Calendar.class}, null), 
         COLOR("colorfield", new Class[]{String.class}, Color.class), 
-        DOCUMENT("combo", new Class[]{String.class}, DocumentLink.class),
+        DOCUMENT("documentcombobox", new Class[]{String.class}, DocumentLink.class),
         JCR_PATH("linkpicker", new Class[]{String.class}, JcrPath.class),
         UNKNOWN("textfield", null, null);
         
         final String xtype;
         HashSet<Class<?>> supportedReturnTypes = null;
         final Class<?> annotationType;
-        
+
         ParameterType(String xtype, Class<?>[] supportedReturnTypes, Class<?> annotationType) {
             this.xtype = xtype;
             if(supportedReturnTypes != null) {
@@ -97,26 +94,35 @@ public class ContainerItemComponentRepresentation {
             }
             return supportedReturnTypes.contains(returnType);
         }
-        
-        static ParameterType getType(final Method method, Parameter propAnnotation) {
-            // first check the annotations combined with return type. If no match from annotations, check return type only
+
+        static Annotation getTypeAnnotation(final Method method) {
             for (Annotation annotation : method.getAnnotations()) {
-                if (annotation == propAnnotation) {
-                    continue;
-                }
-                for(ParameterType type : ParameterType.values()) {
-                    if(annotation.annotationType() == type.annotationType) {
-                        if (type.supportsReturnType(method.getReturnType())) {
-                           return type;  
-                        } else {
-                            log.warn("return type '{}' of method '{}' is not supported for annotation '{}'.", new String[]{method.getReturnType().getName(), method.getName(), type.annotationType.getName()});
+                if (!(annotation instanceof Parameter)) {
+                    for (ParameterType type : ParameterType.values()) {
+                        if (annotation.annotationType() == type.annotationType) {
+                            if (type.supportsReturnType(method.getReturnType())) {
+                                return annotation;
+                            } else {
+                                log.warn("return type '{}' of method '{}' is not supported for annotation '{}'.", new String[]{method.getReturnType().getName(), method.getName(), type.annotationType.getName()});
+                            }
                         }
                     }
                 }
             }
-            
-            for(ParameterType type : ParameterType.values()) {
-                if(type.supportsReturnType(method.getReturnType())) {
+            return null;
+        }
+
+        static ParameterType getType(final Method method, Annotation annotation) {
+            // first check the annotations combined with return type. If no match from annotations, check return type only
+            if (annotation != null) {
+                for (ParameterType type : ParameterType.values()) {
+                    if (annotation.annotationType() == type.annotationType) {
+                        return type;
+                    }
+                }
+            }
+            for (ParameterType type : ParameterType.values()) {
+                if (type.supportsReturnType(method.getReturnType())) {
                     return type;
                 }
             }
@@ -124,8 +130,7 @@ public class ContainerItemComponentRepresentation {
         }
 
     }
-    
-  
+
     
     /**
      * Constructs a component node wrapper
@@ -226,39 +231,40 @@ public class ContainerItemComponentRepresentation {
                     }
                 }
 
-                ParameterType type = ParameterType.getType(method, propAnnotation);
-
-                if (type.annotationType == DocumentLink.class) {
+                final Annotation annotation = ParameterType.getTypeAnnotation(method);
+                if (annotation instanceof DocumentLink) {
                     // for DocumentLink we need some extra processing
-                    for (Annotation annotation : method.getAnnotations()) {
-                        if (annotation.annotationType() != type.annotationType) {
-                            continue;
-                        }
-                        type = ContainerItemComponentRepresentation.ParameterType.DOCUMENT;
-                        DocumentLink documentLink = (DocumentLink) annotation;
-                        prop.setDocType(documentLink.docType());
-                        prop.setDocLocation(documentLink.docLocation());
-                        prop.setAllowCreation(documentLink.allowCreation());
-                        break;
-                    }
-                } else if (type.annotationType == JcrPath.class) {
+                    final DocumentLink documentLink = (DocumentLink) annotation;
+                    prop.setDocType(documentLink.docType());
+                    prop.setDocLocation(documentLink.docLocation());
+                    prop.setAllowCreation(documentLink.allowCreation());
+                } else if (annotation instanceof JcrPath) {
                     // for JcrPath we need some extra processing too
-                    for (Annotation annotation : method.getAnnotations()) {
-                        if (annotation.annotationType() != type.annotationType) {
-                            continue;
+                    final JcrPath jcrPath = (JcrPath) annotation;
+                    prop.setPickerConfiguration(jcrPath.pickerConfiguration());
+                    prop.setPickerInitialPath(jcrPath.pickerInitialPath());
+                    prop.setPickerRootPath(currentMountCanonicalContentPath);
+                    prop.setPickerPathIsRelative(jcrPath.isRelative());
+                    prop.setPickerRemembersLastVisited(jcrPath.pickerRemembersLastVisited());
+                    prop.setPickerSelectableNodeTypes(jcrPath.pickerSelectableNodeTypes());
+                } else if (annotation instanceof DropDownList) {
+                    final DropDownList dropDownList = (DropDownList)annotation;
+                    final String values[] = dropDownList.value();
+                    final String[] displayValues = new String[values.length];
+
+                    for (int i=0; i<values.length; i++) {
+                        if (resourceBundle != null && resourceBundle.containsKey(values[i])) {
+                            displayValues[i] = resourceBundle.getString(values[i]);
+                        } else {
+                            displayValues[i] = values[i];
                         }
-                        type = ParameterType.JCR_PATH;
-                        JcrPath jcrPath = (JcrPath) annotation;
-                        prop.setPickerConfiguration(jcrPath.pickerConfiguration());
-                        prop.setPickerInitialPath(jcrPath.pickerInitialPath());
-                        prop.setPickerRootPath(currentMountCanonicalContentPath);
-                        prop.setPickerPathIsRelative(jcrPath.isRelative());
-                        prop.setPickerRemembersLastVisited(jcrPath.pickerRemembersLastVisited());
-                        prop.setPickerSelectableNodeTypes(jcrPath.pickerSelectableNodeTypes());
-                        break;
                     }
+
+                    prop.setDropDownListValues(values);
+                    prop.setDropDownListDisplayValues(displayValues);
                 }
-                    
+
+                final ParameterType type = ParameterType.getType(method, annotation);
                 prop.setType(type);
 
                 // Set the value to be default value before setting it with original value
@@ -268,6 +274,5 @@ public class ContainerItemComponentRepresentation {
 
         return properties;
     }
-
 
 }
