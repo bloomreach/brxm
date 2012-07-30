@@ -62,9 +62,11 @@ public class AclChecker {
 
         if (StringUtils.isBlank(privileges) || StringUtils.isBlank(privilegesPath)) {
             log.info("No privileges check configured for application: " + applicationName);
-            log.debug("Application " + applicationName + " had privileges: " + privileges + ", and path: "
+            log.debug("No privileges check configured for application: " + applicationName + ", privileges: " + privileges + ", and privileges path: "
                     + privilegesPath);
         } else {
+            log.debug("Applying check for application " + applicationName + " with privileges: " + privileges + ", and privileges path: "
+                    + privilegesPath);
             session.checkPermission(privilegesPath, privileges);
         }
     }
