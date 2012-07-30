@@ -24,19 +24,8 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 
 @Node(jcrType = "demosite:wikidocument")
 public class WikiBean extends BaseBean {
-    private String title;
+
     private String[] categories;
-
-    @Override
-    @IndexField
-    public String getTitle() {
-        return title == null ? (String) getProperty("demosite:title") : title;
-    }
-
-    @Override
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     public PlaceTimeBean getPlacetime() {
         return getBean("demosite:placetime", PlaceTimeBean.class);

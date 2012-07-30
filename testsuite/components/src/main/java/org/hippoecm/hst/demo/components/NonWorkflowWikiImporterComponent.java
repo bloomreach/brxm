@@ -674,7 +674,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                     .getWorkspace()
                     .getQueryManager()
                     .createQuery(
-                            "/jcr:root" + wikipedia.getPath() + "//element(*,demosite:wikidocument) order by @uuid",
+                            "//element(*,demosite:wikidocument)[@hippo:paths='"+wikipedia.getIdentifier()+"'] order by @jcr:uuid",
                             Query.XPATH);
             QueryResult result = q.execute();
             NodeIterator it = result.getNodes();
@@ -685,8 +685,8 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
             LinkedList<Node> previous = new LinkedList<Node>();
             while (it.hasNext() && firsts.size() != relations) {
                 current = it.nextNode();
-                firsts.offer(current);
-                previous.offer(current);
+                firsts.add(current);
+                previous.add(current);
             }
 
             // Link to previous documents, update previous documents queue, occasionally save
@@ -700,7 +700,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 }
 
                 previous.remove();
-                previous.offer(current);
+                previous.add(current);
 
                 if (count++ % 500 == 0) {
                     writableSession.save();
@@ -718,7 +718,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 }
 
                 previous.remove();
-                previous.offer(current);
+                previous.add(current);
             }
 
             writableSession.save();
