@@ -52,10 +52,7 @@ public class HttpSessionEventPublisher implements HttpSessionListener {
 
     private void publishSessionEventToComponentManagers(HttpSessionEvent event, boolean isSessionCreatedEvent) {
         if (!HstServices.isAvailable()) {
-            if (log.isDebugEnabled()) {
-                log.debug("HST Services are not available yet. Skips publishing {} to componentManager(s).", event);
-            }
-
+            log.debug("HST Services are not available yet. Skips publishing {} to componentManager(s).", event);
             return;
         }
 
@@ -74,19 +71,14 @@ public class HttpSessionEventPublisher implements HttpSessionListener {
             return;
         }
 
-        if (log.isDebugEnabled()) {
-            log.debug("Publishing event object to component manager(s): {}", eventObject);
-        }
+        log.debug("Publishing event object to component manager(s): {}", eventObject);
 
         containerComponentManager.publishEvent(eventObject);
 
         ComponentManager clientComponentManager = HstFilter.getClientComponentManager(event.getSession().getServletContext());
 
         if (clientComponentManager == null) {
-            if (log.isDebugEnabled()) {
-                log.debug("ClientComponentManager not found. Skips session created event publishing to clientComponentManager: {}", eventObject);
-            }
-
+            log.debug("ClientComponentManager not found. Skips session created event publishing to clientComponentManager: {}", eventObject);
             return;
         }
 
