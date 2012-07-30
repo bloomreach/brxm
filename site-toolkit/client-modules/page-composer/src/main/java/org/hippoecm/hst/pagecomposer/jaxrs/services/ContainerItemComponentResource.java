@@ -364,9 +364,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             node.setProperty(HST_PARAMETERVALUES, values.toArray(new String[values.size()]));
         }
 
-        // mark the container for restoration
-        ensureRestorable(node.getParent());
-
         node.getSession().save();
 
         return ok("Properties saved successfully.", null);

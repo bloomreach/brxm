@@ -92,8 +92,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
             session.getWorkspace().copy(containerItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
             Node newItem = containerNode.getNode(newItemNodeName);
 
-            ensureRestorable(containerNode);
-
             // now save the container node
             session.save();
 
@@ -157,7 +155,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
                     return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
                 }
             }
-            ensureRestorable(containerNode);
             session.save();
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);
 
@@ -189,9 +186,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
             if (!containerItem.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
                 return error("The item to be deleted is not of the correct type. Cannot delete item '"+itemUUID+"'");
             }
-
-            final Node containerNode = getRequestConfigNode(requestContext);
-            ensureRestorable(containerNode);
 
             containerItem.remove();
             session.save();

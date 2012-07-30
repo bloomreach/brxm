@@ -173,20 +173,12 @@ public class AbstractConfigResource {
         return annotatedClasses;
     }
 
-
     protected ObjectConverter getObjectConverter(HstRequestContext requestContext) {
         if (objectConverter == null) {
             List<Class<? extends HippoBean>> annotatedClasses = getAnnotatedClasses(requestContext);
             objectConverter = ObjectConverterUtils.createObjectConverter(annotatedClasses);
         }
         return objectConverter;
-    }
-
-    protected void ensureRestorable(final Node containerNode) throws RepositoryException {
-        if (!containerNode.isNodeType(HippoNodeType.NT_RESTORABLE)) {
-            containerNode.addMixin(HippoNodeType.NT_RESTORABLE);
-            containerNode.setProperty(HippoNodeType.HIPPOSYS_RESTOREBEHAVIOR, "replace");
-        }
     }
 
 }
