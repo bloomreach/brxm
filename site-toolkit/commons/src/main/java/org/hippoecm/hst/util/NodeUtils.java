@@ -110,7 +110,8 @@ public class NodeUtils {
     }
 
     /**
-     * 
+     * Returns the canonical {@link Node} this <code>mirrorNode</code> is pointing to and returns <code>null</code> when
+     * the <code>mirrorNode</code> is not a node of (sub)type hippo:mirror or hippo:facetselect
      * @param mirrorNode
      * @return the dereferenced node and <code>null</code> when the mirrorNode is not a dereferenceable type or when no dereferenced node can be found
      */
