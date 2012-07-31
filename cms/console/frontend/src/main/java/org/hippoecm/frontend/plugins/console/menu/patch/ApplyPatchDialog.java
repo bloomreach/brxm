@@ -15,8 +15,13 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.patch;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +31,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.basic.Label;
@@ -33,6 +39,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.plugins.console.dialog.MultiStepDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.jcrdiff.content.jcr.JcrTreeNode;
@@ -40,23 +47,29 @@ import org.onehippo.cms7.jcrdiff.delta.Operation;
 import org.onehippo.cms7.jcrdiff.delta.Patch;
 import org.onehippo.cms7.jcrdiff.patch.PatchLog;
 import org.onehippo.cms7.jcrdiff.patch.Patcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ApplyPatchDialog extends MultiStepDialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    private final Label log;
+    private static final Logger log = LoggerFactory.getLogger(ApplyPatchDialog.class);
+
+    private final Label label;
     private final FileUploadField fileUploadField;
     private List<Step> steps;
+    private File tempFile;
 
     public ApplyPatchDialog(IModel<Node> model) {
         super(model);
-        log = new Label("log");
-        log.setOutputMarkupId(true);
-        add(log);
+        label = new Label("log");
+        label.setOutputMarkupId(true);
+        add(label);
 
         setMultiPart(true);
         add(fileUploadField = new FileUploadField("fileInput"));
+        fileUploadField.setOutputMarkupId(true);
 
     }
 
@@ -66,73 +79,105 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
             error("No file selected");
             return false;
         }
-        StringBuilder sb = new StringBuilder();
+
+        boolean result = false;
+        InputStream uis = null, fis = null;
+        OutputStream fos = null;
+        final StringBuilder sb = new StringBuilder();
         try {
-            final Patch patch = parsePatch(upload);
+            uis = upload.getInputStream();
+            tempFile = File.createTempFile("patch-" + Time.now(), ".xml");
+            fos = new FileOutputStream(tempFile);
+            IOUtils.copy(uis, fos);
+            fis = new FileInputStream(tempFile);
+            final Patch patch = parsePatch(fis);
             final String target = patch.getTarget();
             if (!getModelObject().getPath().equals(target)) {
-                sb.append("The patch seems to be targeted at a different node than the one to which you are about to apply it.\n");
-                sb.append("Patch is targeted at ").append(target).append("\n");
-                sb.append("About to apply patch to ").append(getModelObject().getPath()).append("\n");
-                sb.append("Continue?");
+                sb.append("The patch seems to be targeted at a different node than the one to which you are about to apply it.");
+                sb.append(" Patch is targeted at ").append(target).append(".");
+                sb.append(" About to apply patch to ").append(getModelObject().getPath()).append(".");
+                sb.append(" Continue?");
             }
             if (patch.getOperations().isEmpty()) {
-                sb.append("The patch is empty");
+                sb.append("The patch is empty.");
             }
-            return true;
+            result = true;
         } catch (JAXBException e) {
-            error("An unexpected error occurred: " + e.getMessage());
+            final String message = "An unexpected error occurred: " + e.getMessage();
+            error(message);
+            log.error(message, e);
         } catch (IOException e) {
-            error("An unexpected error occurred: " + e.getMessage());
+            final String message = "An unexpected error occurred: " + e.getMessage();
+            error(message);
+            log.error(message, e);
         } catch (RepositoryException e) {
-            error("An unexpected error occurred: " + e.getMessage());
+            final String message = "An unexpected error occurred: " + e.getMessage();
+            error(message);
+            log.error(message, e);
         } finally {
-            String message = sb.toString();
+            IOUtils.closeQuietly(uis);
+            IOUtils.closeQuietly(fos);
+            IOUtils.closeQuietly(fis);
+            final String message = sb.toString();
             if (!message.isEmpty()) {
-                log.setDefaultModel(new Model<String>(message));
-                AjaxRequestTarget.get().addComponent(log);
+                info(message);
+            }
+            if (result) {
+                try {
+                    fis = new FileInputStream(tempFile);
+                    label.setDefaultModel(new Model<String>(new String(IOUtils.toCharArray(fis))));
+                    AjaxRequestTarget.get().addComponent(label);
+                } catch (IOException e) {
+                    log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+                } finally {
+                    IOUtils.closeQuietly(fis);
+                }
+                fileUploadField.setEnabled(false);
+                AjaxRequestTarget.get().addComponent(fileUploadField);
             }
         }
 
-        return false;
+        return result;
     }
 
-    private Patch parsePatch(final FileUpload upload) throws JAXBException, IOException {
+    private Patch parsePatch(final InputStream is) throws JAXBException, IOException {
         final JAXBContext context = JAXBContext.newInstance(Patch.class);
         final Unmarshaller unmarshaller = context.createUnmarshaller();
-        return (Patch) unmarshaller.unmarshal(new InputStreamReader(upload.getInputStream()));
+        return (Patch) unmarshaller.unmarshal(new InputStreamReader(is));
     }
 
     private boolean applyPatch() {
-        final FileUpload upload = fileUploadField.getFileUpload();
-        if (upload == null) {
-            error("No file selected");
-            return false;
-        }
-
+        InputStream fis = null;
         final StringBuilder logMessage = new StringBuilder();
         try {
-            final Patch patch = parsePatch(upload);
+            fis = new FileInputStream(tempFile);
+            final Patch patch = parsePatch(fis);
             final javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             final Node atticNode = session.getRootNode().addNode("hippo:patch-attic");
             final Patcher patcher = new Patcher(new JcrTreeNode(getModelObject()), new JcrTreeNode(atticNode));
-            patcher.applyPatch(patch, new PatchLog() {
-                @Override
-                public void logOperation(final Operation action, final boolean success) {
-                    logMessage.append("Action : " + action + ": success = " + success + "\n");
-                }
-            });
+            final MyPatchLog patchLog = new MyPatchLog(logMessage);
+            patcher.applyPatch(patch, patchLog);
             atticNode.remove();
+            if (patchLog.errors) {
+                warn("Some patch operations failed");
+            }
             return true;
         } catch (JAXBException e) {
-            error("An unexpected error occurred: " + e.getMessage());
+            final String message = "An unexpected error occurred: " + e.getMessage();
+            error(message);
+            log.error(message, e);
         } catch (RepositoryException e) {
-            error("An unexpected error occurred: " + e.getMessage());
+            final String message = "An unexpected error occurred: " + e.getMessage();
+            error(message);
+            log.error(message, e);
         } catch (IOException e) {
-            error("An unexpected error occurred: " + e.getMessage());
+            final String message = "An unexpected error occurred: " + e.getMessage();
+            error(message);
+            log.error(message);
         } finally {
-            log.setDefaultModel(new Model<String>(logMessage.toString()));
-            AjaxRequestTarget.get().addComponent(log);
+            IOUtils.closeQuietly(fis);
+            label.setDefaultModel(new Model<String>(logMessage.toString()));
+            AjaxRequestTarget.get().addComponent(label);
         }
         return false;
     }
@@ -151,6 +196,23 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
     @Override
     public IModel getTitle() {
         return new Model<String>("Apply patch");
+    }
+
+    private static class MyPatchLog implements PatchLog {
+        private final StringBuilder logMessage;
+
+        private boolean errors = false;
+
+        public MyPatchLog(final StringBuilder logMessage) {
+            this.logMessage = logMessage;
+        }
+
+        @Override
+        public void logOperation(final Operation action, final boolean success) {
+            errors |= !success;
+            logMessage.append("Action : ").append(action).append(": success = ").append(success).append("\n");
+        }
+
     }
 
     private class UploadPatchStep extends Step {
