@@ -227,7 +227,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
 
         BooleanQuery getAuthorizationQuery() {
-            return authorizationQuery.getQuery();
+            return authorizationQuery != null ? authorizationQuery.getQuery() : null;
         }
     }
 
@@ -379,7 +379,10 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                 facetFiltersQuery = new FacetFiltersQuery(initialQuery.facetFilters, nsMappings, this.getTextAnalyzer(), this.getSynonymProvider()); 
             }
 
-            addQueryAsBitSetToFilter(contextImpl.getAuthorizationQuery(), bitSetFilterList, cache, indexReader);
+            final BooleanQuery authorizationQuery = contextImpl.getAuthorizationQuery();
+            if (authorizationQuery != null) {
+                addQueryAsBitSetToFilter(authorizationQuery, bitSetFilterList, cache, indexReader);
+            }
 
             if (resultset != null) {
                // If there are more than one facet in the 'resultset' we return an empty result as this is not allowed

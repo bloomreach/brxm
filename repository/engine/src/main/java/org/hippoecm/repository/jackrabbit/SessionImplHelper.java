@@ -303,8 +303,7 @@ abstract class SessionImplHelper {
         final RepositoryImpl repository = (RepositoryImpl) context.getRepository();
         HippoQueryHandler queryHandler = repository.getHippoQueryHandler(sessionImpl.getWorkspace().getName());
         if (queryHandler != null) {
-
-        this.authorizationQuery = new AuthorizationQuery(context.getSessionImpl().getSubject(),
+            this.authorizationQuery = new AuthorizationQuery(context.getSessionImpl().getSubject(),
                                                          queryHandler.getNamespaceMappings(),
                                                          queryHandler.getIndexingConfig(),
                                                          context.getNodeTypeManager(),
