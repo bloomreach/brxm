@@ -115,7 +115,11 @@ content/src/main/resources/democontent/demosite-gallery.xml svneol=native#text/p
 content/src/main/resources/democontent/demosite-news.xml svneol=native#text/plain
 content/src/main/resources/democontent/demosite-products.xml -text
 content/src/main/resources/democontent/demosite-wikipedia.xml -text
+content/src/main/resources/democontent_de/demo-wikipedia-de.xml -text
 content/src/main/resources/democontent_fr/demo-common-fr.xml -text svneol=unset#text/plain
+content/src/main/resources/democontent_fr/demo-wikipedia-fr.xml -text
+content/src/main/resources/democontent_it/demo-wikipedia-it.xml -text
+content/src/main/resources/democontent_nl/demo-wikipedia-nl.xml -text
 content/src/main/resources/demosite-namespace.xml svneol=native#text/plain
 content/src/main/resources/demosite-types.cnd -text
 content/src/main/resources/hippo-configuration/formdata-domain.xml -text svneol=unset#text/plain
@@ -139,9 +143,12 @@ content/src/main/resources/hstconfiguration/demosite/sitemap.xml svneol=native#t
 content/src/main/resources/hstconfiguration/demosite/sitemapitemhandlers.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite/sitemenus.xml svneol=native#text/plain
 content/src/main/resources/hstconfiguration/demosite/templates.xml -text svneol=unset#text/plain
+content/src/main/resources/hstconfiguration/demosite_de/sitemap.xml -text
 content/src/main/resources/hstconfiguration/demosite_fr/sitemap.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_fr/sitemenus.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_fr/templates.xml -text svneol=unset#text/plain
+content/src/main/resources/hstconfiguration/demosite_it/sitemap.xml -text
+content/src/main/resources/hstconfiguration/demosite_nl/sitemap.xml -text
 content/src/main/resources/hstconfiguration/demosite_test_many/pages.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemap.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemenus.xml -text svneol=unset#text/plain

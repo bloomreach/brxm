@@ -14,7 +14,7 @@
     <sv:value>en</sv:value>
   </sv:property>
   <sv:property sv:name="hippotranslation:id" sv:type="String">
-    <sv:value>0d298512-4512-4ba0-b21d-601c20f706e9</sv:value>
+    <sv:value>demosite-wikipedia-folder-id</sv:value>
   </sv:property>
   <sv:node sv:name="faceted">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

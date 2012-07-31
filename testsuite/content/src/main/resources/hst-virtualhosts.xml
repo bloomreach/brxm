@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-  <!--
+<!--
 
-    Copyright (C) 2010-2011 Hippo B.V. Licensed under the Apache License,
-    Version 2.0 (the "License"); you may not use this file except in
-    compliance with the License. You may obtain a copy of the License at
+  Copyright (C) 2010-2011 Hippo B.V. Licensed under the Apache License,
+  Version 2.0 (the "License"); you may not use this file except in
+  compliance with the License. You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0 Unless required by
-    applicable law or agreed to in writing, software distributed under
-    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
-    OR CONDITIONS OF ANY KIND, either express or implied. See the
-    License for the specific language governing permissions and
-    limitations under the License.
-  -->
+  http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+  applicable law or agreed to in writing, software distributed under
+  the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+  OR CONDITIONS OF ANY KIND, either express or implied. See the
+  License for the specific language governing permissions and
+  limitations under the License.
+-->
 <sv:node sv:name="hst:hosts" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hst:virtualhosts</sv:value>
@@ -122,6 +122,57 @@
           </sv:property>
           <sv:property sv:name="hst:homepage" sv:type="String">
             <sv:value>accueil</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:pagenotfound" sv:type="String">
+            <sv:value>error</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="demosite_it">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:mount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/hst:hst/hst:sites/demosite_it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:locale" sv:type="String">
+            <sv:value>it_IT</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:homepage" sv:type="String">
+            <sv:value>wikipedia</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:pagenotfound" sv:type="String">
+            <sv:value>error</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="demosite_de">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:mount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/hst:hst/hst:sites/demosite_de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:locale" sv:type="String">
+            <sv:value>de_DE</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:homepage" sv:type="String">
+            <sv:value>wikipedia</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:pagenotfound" sv:type="String">
+            <sv:value>error</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="demosite_nl">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hst:mount</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:mountpoint" sv:type="String">
+            <sv:value>/hst:hst/hst:sites/demosite_nl</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:locale" sv:type="String">
+            <sv:value>nl_NL</sv:value>
+          </sv:property>
+          <sv:property sv:name="hst:homepage" sv:type="String">
+            <sv:value>wikipedia</sv:value>
           </sv:property>
           <sv:property sv:name="hst:pagenotfound" sv:type="String">
             <sv:value>error</sv:value>
@@ -403,13 +454,13 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hst:virtualhost</sv:value>
       </sv:property>
-        <sv:node sv:name="hst:root">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hst:mount</sv:value>
-          </sv:property>
-          <sv:property sv:name="hst:mountpoint" sv:type="String">
-            <sv:value>/hst:hst/hst:sites/demosite-test-many</sv:value>
-          </sv:property>
+      <sv:node sv:name="hst:root">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hst:mount</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:mountpoint" sv:type="String">
+          <sv:value>/hst:hst/hst:sites/demosite-test-many</sv:value>
+        </sv:property>
       </sv:node>
     </sv:node>
   </sv:node>

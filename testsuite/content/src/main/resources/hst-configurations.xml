@@ -40,6 +40,30 @@
       <sv:value>../democommon</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="demosite_it">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../democommon</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="demosite_de">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../democommon</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="demosite_nl">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:configuration</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:inheritsfrom" sv:type="String">
+      <sv:value>../democommon</sv:value>
+    </sv:property>
+  </sv:node>
   <sv:node sv:name="demosite-test-many">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:configuration</sv:value>
