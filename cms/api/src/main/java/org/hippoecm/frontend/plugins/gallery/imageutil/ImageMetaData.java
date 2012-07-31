@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
@@ -31,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Provides meta-data about a image: its color model, MIME type, and file name.
+ * Provides meta-data about an image: its color model, MIME type, and file name.
  */
 public class ImageMetaData implements IClusterable {
 
@@ -79,7 +81,12 @@ public class ImageMetaData implements IClusterable {
 
     private void parse(ReusableInputStream ris) throws IOException, ImageReadException {
         try {
-            ImageInfo info = Sanselan.getImageInfo(ris, fileName);
+            //If an image contains a corrupt thumbnail it will throw an error reading metadata, so skip it.
+            //See https://issues.apache.org/jira/browse/IMAGING-50?focusedCommentId=13162306&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-13162306
+            Map params = new HashMap();
+            params.put(Sanselan.PARAM_KEY_READ_THUMBNAILS, Boolean.FALSE);
+
+            ImageInfo info = Sanselan.getImageInfo(ris, fileName, params);
             ris.reset();
 
             if (info.getColorType() == ImageInfo.COLOR_TYPE_RGB ||

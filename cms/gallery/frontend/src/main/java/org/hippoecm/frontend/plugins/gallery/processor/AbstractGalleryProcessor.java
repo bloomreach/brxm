@@ -49,10 +49,11 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractGalleryProcessor implements GalleryProcessor {
 
-    protected static final String MIMETYPE_IMAGE_PREFIX = "image";
-
-    private static final Logger log = LoggerFactory.getLogger(AbstractGalleryProcessor.class);
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(AbstractGalleryProcessor.class);
+    private static final Object conversionLock = new Object();
+
+    protected static final String MIMETYPE_IMAGE_PREFIX = "image";
 
     public AbstractGalleryProcessor() {
         // do nothing
@@ -75,7 +76,9 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
 
         if (!metadata.getColorModel().equals(ImageMetaData.ColorModel.RGB)) {
             try {
-                stream = ImageUtils.convertToRGB(stream, metadata.getColorModel());
+                synchronized(conversionLock) {
+                    stream = ImageUtils.convertToRGB(stream, metadata.getColorModel());
+                }
             } catch (IOException e) {
                 log.error("Error during conversion to RGB", e);
                 throw new GalleryException("Error during conversion to RGB for " + metadata.toString(), e);

@@ -24,6 +24,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class ImageMetaDataTest {
 
@@ -32,6 +33,8 @@ public class ImageMetaDataTest {
     private static final String TEST_YCCK_JPG = "test-YCCK.jpg";
     private static final String TEST_RGB_PNG = "test-5000x1.png";
     private static final String TEST_RGB_GIF = "test-380x428.gif";
+
+    private static final String TEST_BROKEN_THUMBS_JPG = "test-broken-thumbnails.jpg";
 
     private static final String JPEG_MIME_TYPE = "image/jpeg";
     private static final String PNG_MIME_TYPE = "image/png";
@@ -123,6 +126,27 @@ public class ImageMetaDataTest {
         assertEquals(ImageMetaData.ColorModel.RGB, meta.getColorModel());
 
         IOUtils.closeQuietly(is);
+    }
+
+    /**
+     * Sometimes images contain broken thumbnails which generates an error when the metadata is parsed. This test
+     * verifies that this error is not thrown.
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testMetadataForBrokenThumbnailsJpg() throws Exception {
+
+        ImageMetaData meta = new ImageMetaData(JPEG_MIME_TYPE, TEST_BROKEN_THUMBS_JPG);
+
+        InputStream is = null;
+        try {
+            is = meta.parse(readImage(TEST_BROKEN_THUMBS_JPG));
+        } catch(ImageMetadataException e) {
+            fail("ImageMetadataException should not have been thrown");
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
     }
 
 }
