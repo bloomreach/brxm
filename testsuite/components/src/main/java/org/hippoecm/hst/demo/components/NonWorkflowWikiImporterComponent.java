@@ -69,12 +69,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Wikipedia document importer creates documents from wikipedia dumps
- * 
+ *
  * Note that this is <strong>not</strong> production code! Real code should use
  * workflow instead of the low-level jcr calls in this class. This just serves
  * to import many wiki documents as efficient as possible
- * 
- * 
  */
 public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
@@ -276,8 +274,8 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
         int count = 0;
         int offsetcount = 0;
         long startTime = 0;
-        private final String[] users = { "ard", "bard", "arje", "artur", "reijn", "berry", "frank", "mathijs",
-                "junaid", "ate", "tjeerd", "verberg", "simon", "jannis" };
+        private final String[] users = {"ard", "bard", "arje", "artur", "reijn", "berry", "frank", "mathijs",
+                "junaid", "ate", "tjeerd", "verberg", "simon", "jannis"};
         private final Random rand;
 
         public WikiPediaToJCRHandler(Node wikiFolder, int total, final int offset, final int maxDocsPerFolder,
@@ -387,7 +385,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                         doc.addMixin("hippo:harddocument");
                         doc.addMixin("hippotranslation:translated");
 
-                        String[] availability = { "live", "preview" };
+                        String[] availability = {"live", "preview"};
                         doc.setProperty("hippo:availability", availability);
                         doc.setProperty("hippostd:stateSummary", "live");
                         doc.setProperty("hippostd:state", "published");
@@ -535,9 +533,9 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 if (!images.hasNode("wikipedia")) {
                     wikiImages = images.addNode("wikipedia", "hippogallery:stdImageGallery");
                     wikiImages.addMixin("hippo:harddocument");
-                    String[] foldertype = { "new-image-folder" };
+                    String[] foldertype = {"new-image-folder"};
                     wikiImages.setProperty("hippostd:foldertype", foldertype);
-                    String[] gallerytype = { "hippogallery:imageset" };
+                    String[] gallerytype = {"hippogallery:imageset"};
                     wikiImages.setProperty("hippostd:gallerytype", gallerytype);
                 } else {
                     wikiImages = images.getNode("wikipedia");
@@ -548,9 +546,9 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 if (!wikiImages.hasNode(currentSubFolder.getName())) {
                     imgSubFolder = wikiImages.addNode(currentSubFolder.getName(), "hippogallery:stdImageGallery");
                     imgSubFolder.addMixin("hippo:harddocument");
-                    String[] foldertype = { "new-image-folder" };
+                    String[] foldertype = {"new-image-folder"};
                     imgSubFolder.setProperty("hippostd:foldertype", foldertype);
-                    String[] gallerytype = { "hippogallery:imageset" };
+                    String[] gallerytype = {"hippogallery:imageset"};
                     imgSubFolder.setProperty("hippostd:gallerytype", gallerytype);
                 } else {
                     imgSubFolder = wikiImages.getNode(currentSubFolder.getName());
@@ -561,9 +559,9 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 if (!imgSubFolder.hasNode(doc.getName())) {
                     imgFolder = imgSubFolder.addNode(doc.getName(), "hippogallery:stdImageGallery");
                     imgFolder.addMixin("hippo:harddocument");
-                    String[] foldertype = { "new-image-folder" };
+                    String[] foldertype = {"new-image-folder"};
                     imgFolder.setProperty("hippostd:foldertype", foldertype);
-                    String[] gallerytype = { "hippogallery:imageset" };
+                    String[] gallerytype = {"hippogallery:imageset"};
                     imgFolder.setProperty("hippostd:gallerytype", gallerytype);
                 } else {
                     imgFolder = imgSubFolder.getNode(doc.getName());
@@ -582,7 +580,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 if (!imgHandle.hasNode(name)) {
                     Node imgDoc = imgHandle.addNode(name, "hippogallery:imageset");
                     imgDoc.addMixin("hippo:harddocument");
-                    String[] availability = { "live", "preview" };
+                    String[] availability = {"live", "preview"};
                     imgDoc.setProperty("hippo:availability", availability);
                     imgDoc.setProperty("hippogallery:filename", name);
 
@@ -657,6 +655,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
     /**
      * Relates the nodes to the previous nodes (in order of UUID)
+     *
      * @param request
      * @param response
      */
@@ -674,7 +673,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                     .getWorkspace()
                     .getQueryManager()
                     .createQuery(
-                            "//element(*,demosite:wikidocument)[@hippo:paths='"+wikipedia.getIdentifier()+"'] order by @jcr:uuid",
+                            "//element(*,demosite:wikidocument)[@hippo:paths='" + wikipedia.getIdentifier() + "'] order by @jcr:uuid",
                             Query.XPATH);
             QueryResult result = q.execute();
             NodeIterator it = result.getNodes();
@@ -702,7 +701,7 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 previous.remove();
                 previous.add(current);
 
-                if (count++ % 500 == 0) {
+                if (count++ % 200 == 0) {
                     writableSession.save();
                 }
             }
@@ -804,38 +803,26 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
                 try {
                     Node handle = from.getParent();
-                    Node subFolder = from.getParent().getParent();
-                    Node folder = from.getParent().getParent().getParent();
+                    Node subFolder = handle.getParent();
+                    Node folder = subFolder.getParent();
 
                     Node tHandle;
-                    Node tSubFolder;
                     Node tFolder;
+                    Node tSubFolder;
                     Node tDoc;
 
+                    // Get the wikipedia folder for the translated site
+                    Node tContentRoot = folder.getParent().getParent().getParent().getNode("demosite_" + locales.get(localeIndex));
+                    Node tWikipedia = tContentRoot.getNode("wikipedia");
+
+
                     String tFolderName = folder.getName() + "-" + locales.get(localeIndex);
-                    if (folder.getParent().hasNode(tFolderName)) {
-                        tFolder = folder.getParent().getNode(tFolderName);
-                    } else {
-                        tFolder = folder.getParent().addNode(tFolderName, "hippostd:folder");
-                        tFolder.addMixin("hippo:harddocument");
-                        tFolder.addMixin("hippotranslation:translated");
-                        tFolder.setProperty("hippotranslation:locale", locales.get(localeIndex));
-                        tFolder.setProperty("hippotranslation:id", folder.getProperty("hippotranslation:id")
-                                .getString());
-                    }
+                    tFolder = getTranslatedFolder(tWikipedia, tFolderName, locales.get(localeIndex), folder);
 
                     String tSubFolderName = subFolder.getName() + "-" + locales.get(localeIndex);
-                    if (tFolder.hasNode(tSubFolderName)) {
-                        tSubFolder = tFolder.getNode(tSubFolderName);
-                    } else {
-                        tSubFolder = tFolder.addNode(tSubFolderName, "hippostd:folder");
-                        tSubFolder.addMixin("hippo:harddocument");
-                        tSubFolder.addMixin("hippotranslation:translated");
-                        tSubFolder.setProperty("hippotranslation:locale", locales.get(localeIndex));
-                        tSubFolder.setProperty("hippotranslation:id", subFolder.getProperty("hippotranslation:id")
-                                .getString());
-                    }
+                    tSubFolder = getTranslatedFolder(tFolder, tSubFolderName, locales.get(localeIndex), subFolder);
 
+                    // Create handle for translated document
                     tHandle = tSubFolder.addNode(handle.getName(), "hippo:handle");
                     tHandle.addMixin("hippo:hardhandle");
                     tHandle.addMixin("hippo:translated");
@@ -844,11 +831,12 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                     translation.setProperty("hippo:message", handle.getName());
                     translation.setProperty("hippo:language", "");
 
+                    // Create translated document
                     tDoc = tHandle.addNode(handle.getName(), "demosite:wikidocument");
                     tDoc.addMixin("hippo:harddocument");
                     tDoc.addMixin("hippotranslation:translated");
 
-                    String[] availability = { "live", "preview" };
+                    String[] availability = {"live", "preview"};
                     tDoc.setProperty("hippo:availability", availability);
                     tDoc.setProperty("hippostd:stateSummary", "live");
                     tDoc.setProperty("hippostd:state", "published");
@@ -865,6 +853,21 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                 }
             }
         };
+    }
+
+    private static Node getTranslatedFolder(Node parent, String name, String locale, Node folderToTranslate) throws RepositoryException {
+        Node translatedFolder;
+        if (parent.hasNode(name)) {
+            translatedFolder = parent.getNode(name);
+        } else {
+            translatedFolder = parent.addNode(name, "hippostd:folder");
+            translatedFolder.addMixin("hippo:harddocument");
+            translatedFolder.addMixin("hippotranslation:translated");
+            translatedFolder.setProperty("hippotranslation:locale", locale);
+            translatedFolder.setProperty("hippotranslation:id", folderToTranslate.getProperty("hippotranslation:id")
+                    .getString());
+        }
+        return translatedFolder;
     }
 
     class ForcedStopException extends RuntimeException {

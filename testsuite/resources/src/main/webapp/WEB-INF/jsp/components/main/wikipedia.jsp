@@ -83,7 +83,7 @@
           </tr>
           <tr>
             <td>Include images: </td>
-            <td><input type="checkbox" name="images" checked="checked" /></td>
+            <td><input type="checkbox" name="images" /></td>
           </tr>
           <tr>
             <td></td>
