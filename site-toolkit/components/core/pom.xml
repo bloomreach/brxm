@@ -81,6 +81,11 @@
       <artifactId>commons-proxy</artifactId>
     </dependency>
     
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
+    
     <!-- Exclude commons-logging explicitly by a provided dependency. -->
     <dependency> 
       <groupId>commons-logging</groupId> 
@@ -167,7 +172,11 @@
     </dependency>
     
     <!-- Test dependencies -->
-    
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

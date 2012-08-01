@@ -17,13 +17,17 @@ package org.hippoecm.hst.site.container.session;
 
 import java.util.List;
 
-import org.junit.Ignore;
-import org.springframework.context.ApplicationListener;
+import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
+import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
+import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ComponentManagerAware;
 
-@Ignore
-public class SessionIdStoringApplicationListener implements ApplicationListener<HttpSessionCreatedEvent> {
+import com.google.common.eventbus.Subscribe;
+
+public class SessionIdStoringApplicationListener implements ComponentManagerAware {
 
     private List<String> sessionIdStore;
+    private ComponentManager componentManager;
 
     public SessionIdStoringApplicationListener(List<String> sessionIdStore) {
         if (null == sessionIdStore) {
@@ -33,12 +37,27 @@ public class SessionIdStoringApplicationListener implements ApplicationListener<
         this.sessionIdStore = sessionIdStore;
     }
 
-    /* (non-Javadoc)
-     * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
-     */
     @Override
-    public void onApplicationEvent(HttpSessionCreatedEvent event) {
+    public void setComponentManager(ComponentManager componentManager) {
+        this.componentManager = componentManager;
+    }
+
+    public void init() {
+        componentManager.registerEventSubscriber(this);
+    }
+
+    public void destroy() {
+        componentManager.unregisterEventSubscriber(this);
+    }
+
+    @Subscribe
+    public void onHttpSessionCreatedEvent(HttpSessionCreatedEvent event) {
         sessionIdStore.add(event.getSession().getId());
+    }
+
+    @Subscribe
+    public void onHttpSessionDestroyedEvent(HttpSessionDestroyedEvent event) {
+        sessionIdStore.remove(event.getSession().getId());
     }
 
 }

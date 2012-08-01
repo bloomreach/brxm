@@ -13,20 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.site.container.session;
+package org.hippoecm.hst.container.event;
+
+import java.util.EventObject;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.context.ApplicationEvent;
-
 /**
- * Published by the {@link HttpSessionEventPublisher} when an <CODE>HttpSession</CODE> is created by the container
+ * Published by the {@link HttpSessionEventPublisher} when an <CODE>HttpSession</CODE> is destroyed by the container
  */
-public class HttpSessionCreatedEvent extends ApplicationEvent {
+public class HttpSessionDestroyedEvent extends EventObject {
 
     private static final long serialVersionUID = 1L;
 
-    public HttpSessionCreatedEvent(HttpSession httpSession) {
+    public HttpSessionDestroyedEvent(HttpSession httpSession) {
         super(httpSession);
     }
 

@@ -92,6 +92,10 @@
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
     </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
     <!-- Exclude commons-logging explicitly by a provided dependency. -->
     <dependency> 
       <groupId>commons-logging</groupId> 

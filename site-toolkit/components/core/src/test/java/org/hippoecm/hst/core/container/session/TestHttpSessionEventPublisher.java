@@ -22,10 +22,10 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
+import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
+import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.site.container.session.HttpSessionCreatedEvent;
-import org.hippoecm.hst.site.container.session.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.site.container.session.HttpSessionEventPublisher;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpSession;

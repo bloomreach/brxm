@@ -27,7 +27,6 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class DefaultComponentManagerApplicationContext extends ClassPathXmlApplicationContext implements BeanPostProcessor, ComponentManagerAware {
@@ -60,14 +59,6 @@ public class DefaultComponentManagerApplicationContext extends ClassPathXmlAppli
 
     public void setComponentManager(ComponentManager componentManager) {
         this.componentManager = componentManager;
-    }
-
-    @Override
-    public void publishEvent(ApplicationEvent event) {
-        if (ApplicationEventBubblingContext.canBubble()) {
-            ApplicationEventBubblingContext.bubble();
-            super.publishEvent(event);
-        }
     }
 
     // According to the javadoc of org/springframework/context/support/AbstractApplicationContext.html#postProcessBeanFactory,

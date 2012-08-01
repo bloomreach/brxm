@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.addon.module;
 
-import java.util.EventObject;
 import java.util.List;
 import java.util.Map;
 
@@ -40,14 +39,5 @@ public interface ModuleInstance {
     public ModuleInstance getModuleInstance(String name);
 
     public List<ModuleInstance> getModuleInstances();
-
-    /**
-     * Publish the given event to all components which want to listen to {@link EventObject}s.
-     * Note that an implementation may decide to support specific child types of {@link EventObject}s only.
-     * Spring Framework based implementations can support Spring Framework's <CODE>ApplicationEvent</CODE> objects only, for instance.
-     * If an implementation doesn't support the specific type of {@link EventObject}s , then the {@link EventObject} will just be ignored.
-     * @param event the event to publish (may be an application-specific or built-in HST-2 event)
-     */
-    public void publishEvent(EventObject event);
 
 }

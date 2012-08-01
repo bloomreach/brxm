@@ -21,6 +21,8 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.hippoecm.hst.container.HstFilter;
+import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
+import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;

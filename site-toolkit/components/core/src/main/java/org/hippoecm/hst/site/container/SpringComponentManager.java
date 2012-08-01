@@ -31,14 +31,14 @@ import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.addon.module.runtime.ModuleInstanceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
+
+import com.google.common.eventbus.EventBus;
 
 /**
  * SpringComponentManager
@@ -67,6 +67,8 @@ public class SpringComponentManager implements ComponentManager {
     private List<ModuleDefinition> addonModuleDefinitions;
     private Map<String, ModuleInstance> addonModuleInstancesMap;
     private List<ModuleInstance> addonModuleInstancesList;
+
+    private EventBus containerEventBus = new EventBus();
 
     public SpringComponentManager() {
         this(new PropertiesConfiguration());
@@ -296,48 +298,19 @@ public class SpringComponentManager implements ComponentManager {
             System.arraycopy(configurationResources, 0, this.configurationResources, 0, configurationResources.length);
         }
     }
-    
+
     public void publishEvent(EventObject event) {
-        publishEvent(event, (String []) null);
+        containerEventBus.post(event);
     }
-    
-    public void publishEvent(EventObject event, String ... addonModuleNames) {
-        if (!(event instanceof ApplicationEvent)) {
-            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("Unsupported EventObject by the current ComponentManager. Please provide Spring Framework ApplicationEvent object.");
-            return;
-        }
 
-        if (addonModuleNames == null || addonModuleNames.length == 0) {
-            applicationContext.publishEvent((ApplicationEvent) event);
-
-            if (addonModuleInstancesList != null) {
-                for (ModuleInstance addonModuleInstance : addonModuleInstancesList) {
-                    addonModuleInstance.publishEvent(event);
-                }
-            }
-        } else {
-            if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
-                throw new ModuleNotFoundException("No Addon Module is found.");
-            }
-            
-            ModuleInstance moduleInstance = addonModuleInstancesMap.get(addonModuleNames[0]);
-
-            if (moduleInstance == null) {
-                throw new ModuleNotFoundException("Module is not found: '" + addonModuleNames[0] + "'");
-            }
-
-            for (int i = 1; i < addonModuleNames.length; i++) {
-                moduleInstance = moduleInstance.getModuleInstance(addonModuleNames[i]);
-
-                if (moduleInstance == null) {
-                    throw new ModuleNotFoundException("Module is not found in '" + ArrayUtils.toString(ArrayUtils.subarray(addonModuleNames, 0, i + 1)) + "'");
-                }
-            }
-
-            moduleInstance.publishEvent((ApplicationEvent) event);
-        }
+    public void registerEventSubscriber(Object subscriber) {
+        containerEventBus.register(subscriber);
     }
-    
+
+    public void unregisterEventSubscriber(Object subscriber) {
+        containerEventBus.unregister(subscriber);
+    }
+
     public void setAddonModuleDefinitions(List<ModuleDefinition> addonModuleDefinitions) {
         if (addonModuleDefinitions == null) {
             this.addonModuleDefinitions = null;

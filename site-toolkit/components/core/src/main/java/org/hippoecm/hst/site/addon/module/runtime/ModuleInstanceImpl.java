@@ -17,7 +17,6 @@ package org.hippoecm.hst.site.addon.module.runtime;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,14 +28,12 @@ import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ApplicationContextUtils;
-import org.hippoecm.hst.site.container.ApplicationEventBubblingContext;
 import org.hippoecm.hst.site.container.DefaultComponentManagerApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 
 public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware, ApplicationContextAware {
@@ -195,24 +192,5 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         }
         
         return childModuleInstancesMap.get(name);
-    }
-
-    public void publishEvent(EventObject event) {
-        if (event instanceof ApplicationEvent) {
-            try {
-                ApplicationEventBubblingContext.reset(1);
-                applicationContext.publishEvent((ApplicationEvent) event);
-            } finally {
-                ApplicationEventBubblingContext.clear();
-            }
-
-            if (childModuleInstancesList != null) {
-                for (ModuleInstance childModuleInstance : childModuleInstancesList) {
-                    childModuleInstance.publishEvent(event);
-                }
-            }
-        } else {
-            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("Unsupported EventObject '{}' by the current ModuleInstance. Please provide Spring Framework ApplicationEvent object.", event.getClass().getName());
-        }
     }
 }

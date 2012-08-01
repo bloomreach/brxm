@@ -63,8 +63,12 @@ public class ComponentManagerFacade implements ComponentManagerAware, ComponentM
         this.componentManager.publishEvent(event);
     }
 
-    public void publishEvent(EventObject event, String ... contextNames) {
-        this.componentManager.publishEvent(event, contextNames);
+    public void registerEventSubscriber(Object subscriber) {
+        this.componentManager.registerEventSubscriber(subscriber);
+    }
+
+    public void unregisterEventSubscriber(Object subscriber) {
+        this.componentManager.unregisterEventSubscriber(subscriber);
     }
 
     public ContainerConfiguration getContainerConfiguration() {

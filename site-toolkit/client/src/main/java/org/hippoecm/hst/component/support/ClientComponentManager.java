@@ -39,12 +39,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.support.AbstractRefreshableConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.ServletContextAwareProcessor;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import com.google.common.eventbus.EventBus;
 
 public class ClientComponentManager implements ComponentManager, ServletContextAware, BeanPostProcessor {
 
@@ -59,7 +60,9 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
     protected String [] configurationResources;
     protected Configuration configuration;
     protected ServletContext servletContext;
-    
+
+    private EventBus clientEventBus = new EventBus();
+
     public ClientComponentManager() {
         this(null);
     }
@@ -197,16 +200,15 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
     }
 
     public void publishEvent(EventObject event) {
-        publishEvent(event, (String []) null);
+        clientEventBus.post(event);
     }
 
-    public void publishEvent(EventObject event, String ... contextNames) {
-        if (!(event instanceof ApplicationEvent)) {
-            HstServices.getLogger(LOGGER_FQCN, LOGGER_FQCN).warn("Unsupported EventObject by the current ComponentManager. Please provide Spring Framework ApplicationEvent object.");
-            return;
-        }
+    public void registerEventSubscriber(Object subscriber) {
+        clientEventBus.register(subscriber);
+    }
 
-        applicationContext.publishEvent((ApplicationEvent) event);
+    public void unregisterEventSubscriber(Object subscriber) {
+        clientEventBus.unregister(subscriber);
     }
 
     public String[] getConfigurationResources() {
@@ -232,5 +234,4 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         return bean; 
     }
-    
 }

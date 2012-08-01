@@ -27,11 +27,8 @@
   <bean id="sessionIdStore" class="java.util.LinkedList">
   </bean>
 
-  <bean class="org.hippoecm.hst.site.container.session.SessionIdStoringApplicationListener">
-    <constructor-arg ref="sessionIdStore" />
-  </bean>
-
-  <bean class="org.hippoecm.hst.site.container.session.SessionIdRemovingApplicationListener">
+  <bean class="org.hippoecm.hst.site.container.session.SessionIdStoringApplicationListener"
+        init-method="init" destroy-method="destroy">
     <constructor-arg ref="sessionIdStore" />
   </bean>
 

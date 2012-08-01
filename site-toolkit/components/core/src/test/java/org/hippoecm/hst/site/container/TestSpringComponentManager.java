@@ -27,8 +27,8 @@ import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.hippoecm.hst.site.container.session.HttpSessionCreatedEvent;
-import org.hippoecm.hst.site.container.session.HttpSessionDestroyedEvent;
+import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
+import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
