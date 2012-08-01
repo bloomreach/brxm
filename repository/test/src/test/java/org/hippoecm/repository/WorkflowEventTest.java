@@ -24,11 +24,11 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -139,16 +139,14 @@ public class WorkflowEventTest extends TestCase {
             FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("threepane", folder);
             assertEquals(1L, root.getProperty("counter/counter/hippo:counter").getLong());
             String path = workflow.add("test", "prototype", "new");
-            Node node = session.getRootNode().getNode(path.substring(1));
-            node = node.getNode(node.getName());
+            Node node = session.getNode(path);
             assertTrue(node.hasProperty("hippo:counter"));
             assertEquals(1L, node.getProperty("hippo:counter").getLong());
         } {
             FolderWorkflow workflow = (FolderWorkflow)manager.getWorkflow("threepane", folder);
             assertEquals(2L, root.getProperty("counter/counter/hippo:counter").getLong());
             String path = workflow.add("test", "prototype", "new");
-            Node node = session.getRootNode().getNode(path.substring(1));
-            node = node.getNode(node.getName());
+            Node node = session.getNode(path);
             assertTrue(node.hasProperty("hippo:counter"));
             assertEquals(2L, node.getProperty("hippo:counter").getLong());
         }
