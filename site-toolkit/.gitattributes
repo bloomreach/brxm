@@ -988,6 +988,7 @@ test/src/test/java/org/hippoecm/hst/test/JcrHippoRepository.java svneol=native#t
 test/src/test/java/org/hippoecm/hst/test/basic/BasicHstTestCase.java svneol=native#text/plain
 toolkit-resources/addon/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/pom.xml svneol=native#text/plain
+toolkit-resources/addon/repository/src/main/resources/hippo-configuration/all-documents.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/group-webmaster.xml -text
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/hstconfig-domain.xml -text svneol=unset#text/plain
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/subsite-template.xml -text
