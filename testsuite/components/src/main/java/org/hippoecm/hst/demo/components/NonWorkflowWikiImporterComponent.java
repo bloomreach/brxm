@@ -733,6 +733,11 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
             public void perform(Node from, Node to) {
                 Node relateddocs;
                 try {
+                    // Don't do anything if the node is checked in
+                    if (!from.isCheckedOut()) {
+                        return;
+                    }
+
                     if (from.hasNode("relateddocs:docs")) {
                         relateddocs = from.getNode("relateddocs:docs");
                     } else {
@@ -757,6 +762,11 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
             @Override
             public void perform(Node from, Node to) {
                 try {
+                    // Don't do anything if the node is checked in
+                    if (!from.isCheckedOut()) {
+                        return;
+                    }
+
                     // Add the facetselect node
                     Node blockBody = from.getNode("demosite:block/demosite:body");
                     Node facetselect;
@@ -826,10 +836,6 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                     tHandle = tSubFolder.addNode(handle.getName(), "hippo:handle");
                     tHandle.addMixin("hippo:hardhandle");
                     tHandle.addMixin("hippo:translated");
-
-                    Node translation = handle.addNode("hippo:translation", "hippo:translation");
-                    translation.setProperty("hippo:message", handle.getName());
-                    translation.setProperty("hippo:language", "");
 
                     // Create translated document
                     tDoc = tHandle.addNode(handle.getName(), "demosite:wikidocument");
