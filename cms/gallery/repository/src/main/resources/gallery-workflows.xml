@@ -71,7 +71,7 @@
         <sv:value>25</sv:value>
       </sv:property>
       <sv:property sv:name="fileupload.buttonWidth" sv:type="String">
-        <sv:value>154px</sv:value>
+        <sv:value>244px</sv:value>
       </sv:property>
       <sv:property sv:name="fileupload.autoUpload" sv:type="String">
         <sv:value>false</sv:value>
@@ -143,7 +143,7 @@
         <sv:value>25</sv:value>
       </sv:property>
       <sv:property sv:name="fileupload.buttonWidth" sv:type="String">
-        <sv:value>154px</sv:value>
+        <sv:value>244px</sv:value>
       </sv:property>
       <sv:property sv:name="fileupload.autoUpload" sv:type="String">
         <sv:value>true</sv:value>
