@@ -25,3 +25,8 @@
 .hippo-root div.modal_fullscreen div.w_content_1 {
     margin-right: 0;
 }
+
+.exception-dialog-message {
+    padding: 5px;
+    font-size: 1.1em;
+}

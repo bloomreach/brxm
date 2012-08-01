@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -180,21 +180,10 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         protected Component newMessageDisplayComponent(String id, FeedbackMessage message) {
             Serializable serializable = message.getMessage();
             if (serializable instanceof Exception) {
-                Exception ex = (Exception) serializable;
-                Map<String, String> details = new HashMap<String, String>();
-                details.put("type", ex.getClass().getName());
-                details.put("message", ex.getMessage());
-                StackTraceElement[] elements = ex.getStackTrace();
-                if (elements.length > 0) {
-                    StackTraceElement top = elements[0];
-                    details.put("clazz", top.getClassName());
-                }
-                ExceptionLabel label = new ExceptionLabel(id, new StringResourceModel(
-                        "exception,type=${type},message=${message}"
-                                + (details.containsKey("clazz") ? ",class=${clazz}" : ""), AbstractDialog.this,
-                        new Model<Serializable>((Serializable) details), ex.getLocalizedMessage()), ex,
+                Exception ex = (Exception) message.getMessage();
+                IModel<String> exceptionModel = getTranslatedException(ex);
+                return new ExceptionLabel(id, exceptionModel, ex,
                         ExceptionFeedbackPanel.this.getEscapeModelStrings());
-                return label;
             } else {
                 Label label = new Label(id);
                 label.setDefaultModel(new Model<String>(serializable == null ? "" : serializable.toString()));
@@ -207,6 +196,22 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         protected FeedbackMessagesModel newFeedbackMessagesModel() {
             return AbstractDialog.this.getFeedbackMessagesModel();
         }
+    }
+
+    protected IModel<String> getTranslatedException(final Exception ex) {
+        String key = "exception,type=${type},message=${message}";
+        Map<String, String> details = new HashMap<String, String>();
+        details.put("type", ex.getClass().getName());
+        details.put("message", ex.getMessage());
+        StackTraceElement[] elements = ex.getStackTrace();
+        if (elements.length > 0) {
+            StackTraceElement top = elements[0];
+            details.put("clazz", top.getClassName());
+            key += ",class=${clazz}";
+        }
+        return new StringResourceModel(key, AbstractDialog.this,
+                new Model<Serializable>((Serializable) details), ex.getLocalizedMessage());
+
     }
 
     protected PersistentFeedbackMessagesModel fmm;
