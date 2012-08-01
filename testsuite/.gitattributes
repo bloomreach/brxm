@@ -183,6 +183,7 @@ resources/src/main/webapp/WEB-INF/ftl/components/main/detailpage.ftl -text
 resources/src/main/webapp/WEB-INF/ftl/components/main/home.ftl -text
 resources/src/main/webapp/WEB-INF/hst-config.properties svneol=native#text/plain
 resources/src/main/webapp/WEB-INF/jetty-env.xml -text
+resources/src/main/webapp/WEB-INF/jsp/components/footer/datetime.jsp -text
 resources/src/main/webapp/WEB-INF/jsp/components/footer/footer.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/footer/fr_footer.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/header/header.jsp -text svneol=unset#text/plain

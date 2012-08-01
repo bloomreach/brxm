@@ -29,6 +29,8 @@
     <a title="NewsRSS" href="<hst:link path="/rss.xml"/>">RSS <img src="<hst:link path="/images/rss.gif"/>" alt="RSS icon"/></a>
     &nbsp;
     <span id="<hst:namespace/>datetime"><hst:include ref="datetime"/></span>
+    &nbsp;
+    <a href="javascript:<hst:namespace/>refreshTime();">Refresh Time</a>
   </p>
 </div>
 
@@ -45,5 +47,9 @@ function <hst:namespace/>refreshDateTime() {
 	simpleio_sendrequest("<hst:resourceURL/>", <hst:namespace/>mycb, null);
 }
 window.setTimeout("<hst:namespace/>refreshDateTime();", 60000, "javascript");
+
+function <hst:namespace/>refreshTime() {
+    simpleio_sendrequest("<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/datetime.jsp'/>/", <hst:namespace/>mycb, null);
+}
 //-->
 </script>
