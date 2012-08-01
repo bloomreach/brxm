@@ -80,7 +80,7 @@ public class TestGenericHstComponent {
         final String resourceID = "my-custom-ajax-action";
 
         ContainerConfiguration containerConfiguration = EasyMock.createNiceMock(ContainerConfiguration.class);
-        EasyMock.expect(containerConfiguration.getBoolean(GenericHstComponent.RESOURCE_PATH_BY_RESOURCE_ID, false)).andReturn(false).anyTimes();
+        EasyMock.expect(containerConfiguration.getBoolean(GenericHstComponent.RESOURCE_PATH_BY_RESOURCE_ID, false)).andReturn(true).anyTimes();
         EasyMock.replay(containerConfiguration);
 
         HstRequestContext requestContext = EasyMock.createNiceMock(HstRequestContext.class);
@@ -94,17 +94,21 @@ public class TestGenericHstComponent {
 
         HstResponse response = EasyMock.createNiceMock(HstResponse.class);
         response.setServeResourcePath(resourceID);
-        EasyMock.expectLastCall().andAnswer(new IAnswer<String>() {
-            @Override
-            public String answer() throws Throwable {
-                String serveResourcePath = (String) EasyMock.getCurrentArguments()[0];
-                Assert.assertEquals(resourceID, serveResourcePath);
-                return serveResourcePath;
-            }
-        });
+        EasyMock.expectLastCall().andThrow(
+                new AssertionError("HstResponse.setServeResourcePath() must not be called because component configuration already has serveResourcePath config."));
         EasyMock.replay(response);
 
-        GenericHstComponent component = new GenericHstComponent();
+        // when you're using a custom resourceID for ajax programming, you're responsible for dealing with it by yourself by overriding #doBeforeServeResource(...)
+        GenericHstComponent component = new GenericHstComponent() {
+            public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+                if ("my-custom-ajax-action".equals(request.getResourceID())) {
+                    // set serveResourcePath for this ajax action...
+                }
+ 
+                return;
+            }
+        };
+
         component.init(servletContext, componentConfig);
         component.doBeforeServeResource(request, response);
     }
