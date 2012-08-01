@@ -866,7 +866,7 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="testsuite-sitewriters-documents">
+  <sv:node sv:name="testsuite-sitewriters-readfolders">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -874,7 +874,7 @@
       <sv:value>sitewriters</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:domains/all-documents/readonly/hipposys:groups</sv:value>
+      <sv:value>//hippo:configuration/hippo:domains/hippofolders/readonly/hipposys:groups</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>13100.7</sv:value>
