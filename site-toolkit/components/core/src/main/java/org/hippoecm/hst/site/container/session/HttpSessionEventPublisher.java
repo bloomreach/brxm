@@ -58,7 +58,7 @@ public class HttpSessionEventPublisher implements HttpSessionListener {
             return;
         }
 
-        EventObject eventObject = null;
+        EventObject eventObject;
 
         if (isSessionCreatedEvent) {
             eventObject = new HttpSessionCreatedEvent(event.getSession());

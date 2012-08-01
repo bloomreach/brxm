@@ -20,7 +20,7 @@ import java.util.EventObject;
 import javax.servlet.http.HttpSession;
 
 /**
- * Published by the {@link HttpSessionEventPublisher} when an <CODE>HttpSession</CODE> is created by the container
+ * Published by a {@link javax.servlet.http.HttpSessionListener} when an <CODE>HttpSession</CODE> is created by the container
  */
 public class HttpSessionCreatedEvent extends EventObject {
 
