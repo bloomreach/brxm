@@ -53,7 +53,13 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <!-- To exclude commons-collections depedency explicitly. 
          hst-commons must not have this dependency because it is deployed to shared lib directory. -->
     <dependency>

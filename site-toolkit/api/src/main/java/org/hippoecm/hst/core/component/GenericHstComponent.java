@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.component;
 
 import javax.servlet.ServletContext;
 
-import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 
 /**
@@ -46,10 +45,11 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
  * @version $Id$
  */
 public class GenericHstComponent implements HstComponent {
-    
-    private ComponentConfiguration componentConfig;
 
-    protected final static String URL_COMPONENT_RESOURCE_ID_SUPPORTED = "url.component.resourceId.supported";
+    /** Configuration key for flag whether or not to allow resource path resolving by resourceID as fallback. */
+    public static final String RESOURCE_PATH_BY_RESOURCE_ID = "org.hippoecm.hst.core.component.serveResourcePathByResourceID";
+
+    private ComponentConfiguration componentConfig;
 
     public void init(ServletContext servletContext, ComponentConfiguration componentConfig) throws HstComponentException {
         this.componentConfig = componentConfig;
@@ -70,28 +70,19 @@ public class GenericHstComponent implements HstComponent {
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
         if (componentConfig.getServeResourcePath() == null) {
             String resourceID = request.getResourceID();
-            if (resourceID != null && !"".equals(resourceID.trim())) {
-                final ContainerConfiguration containerConfiguration = request.getRequestContext().getContainerConfiguration();
 
-                if (!containerConfiguration.containsKey(URL_COMPONENT_RESOURCE_ID_SUPPORTED)) {
-                    throw new HstComponentException("ResourceID '"+resourceID+"' is not allowed to be set.");
-                }
-
-                String resourceIdModifiable = containerConfiguration.getString(URL_COMPONENT_RESOURCE_ID_SUPPORTED);
-
-                if ("true".equals(resourceIdModifiable)) {
+            if (resourceID != null) {
+                if (request.getRequestContext().getContainerConfiguration().getBoolean(RESOURCE_PATH_BY_RESOURCE_ID, false)) {
                     if (resourceID.endsWith(".jsp") || resourceID.endsWith(".ftl")) {
                         response.setServeResourcePath(resourceID);
                     } else {
-                        throw new HstComponentException("ResourceID '"+resourceID+"' is invalid.");
+                        throw new HstComponentException("ResourceID for serveResourcePath as fallback is valid only when it is .jsp or .ftl.");
                     }
-                } else {
-                    throw new HstComponentException("ResourceID '"+resourceID+"' is not allowed to be set.");
                 }
             }
         }
     }
-    
+
     protected ComponentConfiguration getComponentConfiguration() {
         return this.componentConfig;
     }
