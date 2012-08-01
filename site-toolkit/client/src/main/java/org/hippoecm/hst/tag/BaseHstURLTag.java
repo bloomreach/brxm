@@ -67,6 +67,7 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
         HstURL url = getUrl();
         
         if (url == null) {
+            cleanup();
             throw new IllegalStateException("internal error: url not set");
         }
         
@@ -89,27 +90,32 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
                 JspWriter writer = pageContext.getOut();
                 writer.print(urlString);
             } catch (IOException ioe) {
+                cleanup();
                 throw new JspException("HstURL-Tag Exception: cannot write to the output writer.");
             }
         } 
         else {
             pageContext.setAttribute(var, urlString, PageContext.PAGE_SCOPE);
         }
-        
-        /*cleanup*/
-        parametersMap.clear();
-        removedParametersList.clear();
-        
-        setUrl(null);
+
+        cleanup();
         
         return EVAL_PAGE;
     }
-    
-    
+
+    private void cleanup() {
+        parametersMap.clear();
+        removedParametersList.clear();
+        resourceId = null;
+        escapeXml = true;
+        var = null;
+        setUrl(null);
+    }
+
 
     /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#release()
-     */
+    * @see javax.servlet.jsp.tagext.TagSupport#release()
+    */
     @Override
     public void release(){
         super.release();        
