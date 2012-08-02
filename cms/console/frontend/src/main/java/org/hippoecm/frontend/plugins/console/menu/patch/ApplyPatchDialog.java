@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.patch;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -27,14 +28,14 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.form.upload.FileUploadField;
 import org.apache.wicket.model.IModel;
@@ -56,16 +57,16 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(ApplyPatchDialog.class);
 
-    private final Label label;
+    private final TextArea<String> textArea;
     private final FileUploadField fileUploadField;
     private List<Step> steps;
     private File tempFile;
 
     public ApplyPatchDialog(IModel<Node> model) {
         super(model);
-        label = new Label("log");
-        label.setOutputMarkupId(true);
-        add(label);
+        textArea = new TextArea<String>("log", new Model<String>());
+        textArea.setOutputMarkupId(true);
+        add(textArea);
 
         setMultiPart(true);
         add(fileUploadField = new FileUploadField("fileInput"));
@@ -125,8 +126,8 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
             if (result) {
                 try {
                     fis = new FileInputStream(tempFile);
-                    label.setDefaultModel(new Model<String>(new String(IOUtils.toCharArray(fis))));
-                    AjaxRequestTarget.get().addComponent(label);
+                    textArea.setDefaultModelObject(new String(IOUtils.toCharArray(fis)));
+                    AjaxRequestTarget.get().addComponent(textArea);
                 } catch (IOException e) {
                     log.error(e.getClass().getName() + ": " + e.getMessage(), e);
                 } finally {
@@ -147,12 +148,12 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
     }
 
     private boolean applyPatch() {
-        InputStream fis = null;
         final StringBuilder logMessage = new StringBuilder();
+        ByteArrayInputStream bais = null;
         try {
-            fis = new FileInputStream(tempFile);
-            final Patch patch = parsePatch(fis);
-            final javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            bais = new ByteArrayInputStream(textArea.getModelObject().getBytes());
+            final Patch patch = parsePatch(bais);
+            final Session session = UserSession.get().getJcrSession();
             final Node atticNode = session.getRootNode().addNode("hippo:patch-attic");
             final Patcher patcher = new Patcher(new JcrTreeNode(getModelObject()), new JcrTreeNode(atticNode));
             final MyPatchLog patchLog = new MyPatchLog(logMessage);
@@ -175,9 +176,9 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
             error(message);
             log.error(message);
         } finally {
-            IOUtils.closeQuietly(fis);
-            label.setDefaultModel(new Model<String>(logMessage.toString()));
-            AjaxRequestTarget.get().addComponent(label);
+            IOUtils.closeQuietly(bais);
+            textArea.setDefaultModel(new Model<String>(logMessage.toString()));
+            AjaxRequestTarget.get().addComponent(textArea);
         }
         return false;
     }
