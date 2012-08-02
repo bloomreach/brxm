@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -52,12 +51,10 @@ public class ImageMetaDataTest {
         assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
         assertTrue(meta.isJpeg());
 
-        InputStream is = meta.parse(readImage(TEST_RGB_JPG));
+        meta.parse(readImage(TEST_RGB_JPG));
         assertEquals(TEST_RGB_JPG, meta.getFilename());
         assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
         assertEquals(ImageMetaData.ColorModel.RGB, meta.getColorModel());
-
-        IOUtils.closeQuietly(is);
     }
 
     @Test
@@ -68,13 +65,11 @@ public class ImageMetaDataTest {
         assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
         assertTrue(meta.isJpeg());
 
-        InputStream is = meta.parse(readImage(TEST_YCCK_JPG));
+        meta.parse(readImage(TEST_YCCK_JPG));
         assertEquals(TEST_YCCK_JPG, meta.getFilename());
         assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
         assertTrue(meta.isJpeg());
         assertEquals(ImageMetaData.ColorModel.YCCK, meta.getColorModel());
-
-        IOUtils.closeQuietly(is);
     }
 
     @Test
@@ -85,13 +80,11 @@ public class ImageMetaDataTest {
         assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
         assertTrue(meta.isJpeg());
 
-        InputStream is = meta.parse(readImage(TEST_CMYK_JPG));
+        meta.parse(readImage(TEST_CMYK_JPG));
         assertEquals(TEST_CMYK_JPG, meta.getFilename());
         assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
         assertTrue(meta.isJpeg());
         assertEquals(ImageMetaData.ColorModel.CMYK, meta.getColorModel());
-
-        IOUtils.closeQuietly(is);
     }
 
     @Test
@@ -102,13 +95,11 @@ public class ImageMetaDataTest {
         assertEquals(PNG_MIME_TYPE, meta.getMimeType());
         assertFalse(meta.isJpeg());
 
-        InputStream is = meta.parse(readImage(TEST_RGB_PNG));
+        meta.parse(readImage(TEST_RGB_PNG));
         assertEquals(TEST_RGB_PNG, meta.getFilename());
         assertEquals(PNG_MIME_TYPE, meta.getMimeType());
         assertFalse(meta.isJpeg());
         assertEquals(ImageMetaData.ColorModel.RGB, meta.getColorModel());
-
-        IOUtils.closeQuietly(is);
     }
 
     @Test
@@ -119,18 +110,17 @@ public class ImageMetaDataTest {
         assertEquals(GIF_MIME_TYPE, meta.getMimeType());
         assertFalse(meta.isJpeg());
 
-        InputStream is = meta.parse(readImage(TEST_RGB_GIF));
+        meta.parse(readImage(TEST_RGB_GIF));
         assertEquals(TEST_RGB_GIF, meta.getFilename());
         assertEquals(GIF_MIME_TYPE, meta.getMimeType());
         assertFalse(meta.isJpeg());
         assertEquals(ImageMetaData.ColorModel.RGB, meta.getColorModel());
-
-        IOUtils.closeQuietly(is);
     }
 
     /**
      * Sometimes images contain broken thumbnails which generates an error when the metadata is parsed. This test
      * verifies that this error is not thrown.
+     * See https://issues.apache.org/jira/browse/IMAGING-50?focusedCommentId=13162306&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-13162306
      *
      * @throws Exception
      */
@@ -139,13 +129,10 @@ public class ImageMetaDataTest {
 
         ImageMetaData meta = new ImageMetaData(JPEG_MIME_TYPE, TEST_BROKEN_THUMBS_JPG);
 
-        InputStream is = null;
         try {
-            is = meta.parse(readImage(TEST_BROKEN_THUMBS_JPG));
+            meta.parse(readImage(TEST_BROKEN_THUMBS_JPG));
         } catch(ImageMetadataException e) {
             fail("ImageMetadataException should not have been thrown");
-        } finally {
-            IOUtils.closeQuietly(is);
         }
     }
 

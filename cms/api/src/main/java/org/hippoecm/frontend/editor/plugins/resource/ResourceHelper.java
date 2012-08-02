@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,7 +60,7 @@ public class ResourceHelper {
             }
             if (mimeType.startsWith("image/")) {
                 ImageInfo imageInfo = new ImageInfo();
-                imageInfo.setInput(resource.getProperty(JcrConstants.JCR_DATA).getStream());
+                imageInfo.setInput(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream());
                 if (imageInfo.check()) {
                     String imageInfoMimeType = imageInfo.getMimeType();
                     if (imageInfoMimeType == null) {
@@ -78,14 +78,14 @@ public class ResourceHelper {
                 }
             } else if (mimeType.equals(MIME_TYPE_PDF)) {
                 String line;
-                line = new BufferedReader(new InputStreamReader(resource.getProperty(JcrConstants.JCR_DATA).getStream()))
+                line = new BufferedReader(new InputStreamReader(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream()))
                         .readLine().toUpperCase();
                 if (!line.startsWith("%PDF-")) {
                     throw new ResourceException("impermissible pdf type content");
                 }
             } else if (mimeType.equals("application/postscript")) {
                 String line;
-                line = new BufferedReader(new InputStreamReader(resource.getProperty(JcrConstants.JCR_DATA).getStream()))
+                line = new BufferedReader(new InputStreamReader(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream()))
                         .readLine().toUpperCase();
                 if (!line.startsWith("%!")) {
                     throw new ResourceException("impermissible postscript type content");
@@ -161,7 +161,7 @@ public class ResourceHelper {
 
     /**
      * Gets the {@link ValueFactory} from the {@link Session}
-     * 
+     *
      * @param node the {@link Node} from which to get the {@link Session}
      *
      * @return a {@link ValueFactory}

@@ -24,6 +24,7 @@ import java.util.Map;
 import com.drew.imaging.jpeg.JpegProcessingException;
 import com.drew.imaging.jpeg.JpegSegmentReader;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
@@ -60,11 +61,10 @@ public class ImageMetaData implements IClusterable {
     /**
      * Currently only JPEG metadata is detected, al others formats are expected to be in the RGB color profile.
      */
-    public InputStream parse(InputStream is) throws ImageMetadataException {
+    public void parse(InputStream is) throws ImageMetadataException {
         if (isJpeg()) {
-            ReusableInputStream ris = new ReusableInputStream(is);
             try {
-                parse(ris);
+                parse(new ReusableInputStream(is));
             } catch (IOException e) {
                 log.error("Error parsing image metadata", e);
                 throw new ImageMetadataException("Error parsing image metadata for " + toString(), e);
@@ -72,10 +72,8 @@ public class ImageMetaData implements IClusterable {
                 log.error("Error parsing image metadata", e);
                 throw new ImageMetadataException("Error parsing image metadata for " + toString(), e);
             }
-            return ris;
         } else {
             colorModel = ColorModel.RGB;
-            return is;
         }
     }
 
@@ -89,29 +87,41 @@ public class ImageMetaData implements IClusterable {
             ImageInfo info = Sanselan.getImageInfo(ris, fileName, params);
             ris.reset();
 
-            if (info.getColorType() == ImageInfo.COLOR_TYPE_RGB ||
-                info.getColorType() == ImageInfo.COLOR_TYPE_BW ||
-                info.getColorType() == ImageInfo.COLOR_TYPE_GRAYSCALE) {
-
-                colorModel = ColorModel.RGB;
-            } else if (info.getColorType() == ImageInfo.COLOR_TYPE_CMYK) {
-                colorModel = ColorModel.CMYK;
-                try {
-                    JpegSegmentReader segmentReader = new JpegSegmentReader(ris);
-                    byte[] exifSegment = segmentReader.readSegment(JpegSegmentReader.SEGMENT_APPE);
-
-                    if (exifSegment != null && exifSegment[11] == 2) {
-                        colorModel = ColorModel.YCCK;
-                    }
-                } catch (JpegProcessingException e1) {
-                    log.warn("Unable to read color space", e1);
-                } finally {
-                    ris.reset();
-                }
+            switch(info.getColorType()) {
+                case ImageInfo.COLOR_TYPE_RGB:
+                    colorModel = ColorModel.RGB;
+                    break;
+                case ImageInfo.COLOR_TYPE_BW:
+                    colorModel = ColorModel.RGB;
+                    break;
+                case ImageInfo.COLOR_TYPE_GRAYSCALE:
+                    colorModel = ColorModel.RGB;
+                    break;
+                case ImageInfo.COLOR_TYPE_CMYK:
+                    //Sanselan detects YCCK as CMYK so do a custom check
+                    colorModel = isCYYK(ris) ? ColorModel.YCCK : ColorModel.CMYK;
+                    break;
+                default:
+                    colorModel = ColorModel.UNKNOWN;
+                    break;
             }
         } finally {
             ris.canBeClosed();
+            IOUtils.closeQuietly(ris);
         }
+    }
+
+    private boolean isCYYK(final ReusableInputStream ris) throws IOException {
+        try {
+            JpegSegmentReader reader = new JpegSegmentReader(ris);
+            byte[] appe = reader.readSegment(JpegSegmentReader.SEGMENT_APPE);
+            return appe != null && appe[11] == 2;
+        } catch (JpegProcessingException e1) {
+            log.warn("Unable to read color space", e1);
+        } finally {
+            ris.reset();
+        }
+        return false;
     }
 
     public boolean isJpeg() {
