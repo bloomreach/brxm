@@ -34,7 +34,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hippoecm.hst.core.parameters.*;
+import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.JcrPath;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +76,7 @@ public class ContainerItemComponentRepresentation {
         NUMBER("numberfield", new Class[]{Long.class, long.class, Integer.class, int.class, Short.class, short.class}, null), 
         BOOLEAN("checkbox", new Class[]{Boolean.class, boolean.class}, null), 
         DATE("datefield", new Class[]{Date.class, Calendar.class}, null), 
-        COLOR("colorfield", new Class[]{String.class}, Color.class), 
+        COLOR("colorfield", new Class[]{String.class}, Color.class),
         DOCUMENT("documentcombobox", new Class[]{String.class}, DocumentLink.class),
         JCR_PATH("linkpicker", new Class[]{String.class}, JcrPath.class),
         UNKNOWN("textfield", null, null);
@@ -97,14 +102,12 @@ public class ContainerItemComponentRepresentation {
 
         static Annotation getTypeAnnotation(final Method method) {
             for (Annotation annotation : method.getAnnotations()) {
-                if (!(annotation instanceof Parameter)) {
-                    for (ParameterType type : ParameterType.values()) {
-                        if (annotation.annotationType() == type.annotationType) {
-                            if (type.supportsReturnType(method.getReturnType())) {
-                                return annotation;
-                            } else {
-                                log.warn("return type '{}' of method '{}' is not supported for annotation '{}'.", new String[]{method.getReturnType().getName(), method.getName(), type.annotationType.getName()});
-                            }
+                for (ParameterType type : ParameterType.values()) {
+                    if (annotation.annotationType() == type.annotationType) {
+                        if (type.supportsReturnType(method.getReturnType())) {
+                            return annotation;
+                        } else {
+                            log.warn("return type '{}' of method '{}' is not supported for annotation '{}'.", new String[]{method.getReturnType().getName(), method.getName(), type.annotationType.getName()});
                         }
                     }
                 }
@@ -113,7 +116,6 @@ public class ContainerItemComponentRepresentation {
         }
 
         static ParameterType getType(final Method method, Annotation annotation) {
-            // first check the annotations combined with return type. If no match from annotations, check return type only
             if (annotation != null) {
                 for (ParameterType type : ParameterType.values()) {
                     if (annotation.annotationType() == type.annotationType) {
@@ -205,12 +207,15 @@ public class ContainerItemComponentRepresentation {
         }
 
         ResourceBundle resourceBundle = null;
-        if (locale != null) {
-            try {
-                resourceBundle = ResourceBundle.getBundle(parameterInfo.type().getName(), locale);
-            } catch (MissingResourceException missingResourceException) {
-                log.debug("Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.", new Object[]{parameterInfo.type().getName(), locale});
+        final String typeName = parameterInfo.type().getName();
+        try {
+            if (locale != null) {
+                resourceBundle = ResourceBundle.getBundle(typeName, locale);
+            } else {
+                resourceBundle = ResourceBundle.getBundle(typeName);
             }
+        } catch (MissingResourceException missingResourceException) {
+            log.debug("Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.", new Object[]{typeName, locale});
         }
 
         for (Method method : classType.getMethods()) {
@@ -252,9 +257,10 @@ public class ContainerItemComponentRepresentation {
                     final String values[] = dropDownList.value();
                     final String[] displayValues = new String[values.length];
 
-                    for (int i=0; i<values.length; i++) {
-                        if (resourceBundle != null && resourceBundle.containsKey(values[i])) {
-                            displayValues[i] = resourceBundle.getString(values[i]);
+                    for (int i = 0; i < values.length; i++) {
+                        final String resourceKey = propAnnotation.name() + "/" + values[i];
+                        if (resourceBundle != null && resourceBundle.containsKey(resourceKey)) {
+                            displayValues[i] = resourceBundle.getString(resourceKey);
                         } else {
                             displayValues[i] = values[i];
                         }
