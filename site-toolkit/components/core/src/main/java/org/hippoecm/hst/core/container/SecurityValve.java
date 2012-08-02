@@ -60,8 +60,8 @@ public class SecurityValve extends AbstractValve {
     
     @Override
     public void invoke(ValveContext context) throws ContainerException {
-        HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
-        HttpServletResponse servletResponse = (HttpServletResponse) context.getServletResponse();
+        HttpServletRequest servletRequest =  context.getServletRequest();
+        HttpServletResponse servletResponse =  context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
         ResolvedMount resolvedMount = requestContext.getResolvedMount();
          
