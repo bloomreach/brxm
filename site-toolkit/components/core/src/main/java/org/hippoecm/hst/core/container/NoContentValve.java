@@ -41,7 +41,7 @@ public class NoContentValve implements Valve {
         }
         log.warn("Return HttpServletResponse.SC_NO_CONTENT (204) because NoopPipeline was invoked for request {}", url);
         servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        context.invokeNext();
+        // do not call invoke next as we already return no content
     }
 
     @Override
