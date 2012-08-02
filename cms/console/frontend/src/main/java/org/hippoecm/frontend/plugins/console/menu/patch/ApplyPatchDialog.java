@@ -93,7 +93,7 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
             fis = new FileInputStream(tempFile);
             final Patch patch = parsePatch(fis);
             final String target = patch.getTarget();
-            if (!getModelObject().getPath().equals(target)) {
+            if (target != null && !target.equals(getModelObject().getPath())) {
                 sb.append("The patch seems to be targeted at a different node than the one to which you are about to apply it.");
                 sb.append(" Patch is targeted at ").append(target).append(".");
                 sb.append(" About to apply patch to ").append(getModelObject().getPath()).append(".");
