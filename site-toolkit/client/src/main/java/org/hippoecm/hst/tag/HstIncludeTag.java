@@ -66,13 +66,18 @@ public class HstIncludeTag extends TagSupport {
             writer.flush();
             hstResponse.flushChildContent(ref);
         } catch (IOException e) {
+            cleanup();
         }
-        
-        ref = null;
-        
+
+        cleanup();
+
         return EVAL_PAGE;
     }
-    
+
+    protected void cleanup() {
+        ref = null;
+    }
+
     /**
      * Returns the referenced name of the child window content to include
      * @return String

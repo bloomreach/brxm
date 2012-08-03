@@ -49,8 +49,6 @@ public class HstHtmlTag extends TagSupport {
     protected String var;
     
     protected String scope;
-
-    protected Boolean escapeXml = true;
         
     protected ContentRewriter<String> contentRewriter;
 
@@ -167,7 +165,7 @@ public class HstHtmlTag extends TagSupport {
 
     }
 
-    private void cleanup() {
+    protected void cleanup() {
         var = null;
         scope = null;
         fullyQualifiedLinks = Boolean.FALSE;

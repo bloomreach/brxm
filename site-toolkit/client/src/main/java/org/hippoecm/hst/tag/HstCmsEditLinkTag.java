@@ -86,11 +86,13 @@ public class HstCmsEditLinkTag extends TagSupport  {
      */
     @Override
     public int doEndTag() throws JspException{
-        if(skipTag) { 
+        if(skipTag) {
+            cleanup();
             return EVAL_PAGE;
         }
         if(this.hippoBean == null || this.hippoBean.getNode() == null || !(this.hippoBean.getNode() instanceof HippoNode)) {
             log.warn("Cannot create a cms edit url for a bean that is null or has a jcr node that is null or not an instanceof HippoNode");
+            cleanup();
             return EVAL_PAGE;
         }
         
@@ -99,6 +101,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
        
         if(hstRequest == null) {
             log.warn("Cannot create a cms edit url outside the hst request processing for '{}'", this.hippoBean.getPath());
+            cleanup();
             return EVAL_PAGE;
         } 
  
@@ -106,10 +109,12 @@ public class HstCmsEditLinkTag extends TagSupport  {
            
         if(!hstRequestContext.isPreview()) {
             log.debug("Skipping cms edit url because not in preview.");
+            cleanup();
             return EVAL_PAGE;
         }
         if (var == null && servletRequest.getSession(false) != null && !Boolean.TRUE.equals(servletRequest.getSession(false).getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED)) ) {
             log.debug("Skipping cms edit html comment snippet because request is not in a SSO CMS CONTEXT.");
+            cleanup();
             return EVAL_PAGE;
         } 
 
@@ -121,6 +126,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
 
         if(cmsBaseUrl == null || "".equals(cmsBaseUrl)) {
             log.warn("Skipping cms edit url because cms location property is not configured in hst hostgroup configuration");
+            cleanup();
             return EVAL_PAGE;
         }
         if(cmsBaseUrl.endsWith("/")) {
@@ -134,6 +140,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
             Node editNode = node.getCanonicalNode();
             if( editNode == null) {
                 log.debug("Cannot create a 'surf and edit' link for a pure virtual jcr node: '{}'", node.getPath());
+                cleanup();
                 return EVAL_PAGE;
             }  else {
                 Node rootNode = (Node)editNode.getAncestor(0);
@@ -162,11 +169,13 @@ public class HstCmsEditLinkTag extends TagSupport  {
             }
         } catch (RepositoryException e) {
             log.error("Exception while trying to retrieve the node path for the edit location", e);
+            cleanup();
             return EVAL_PAGE;
         }
         
         if(nodeLocation == null) {
             log.warn("Did not find a jcr node location for the bean to create a cms edit location with. ");
+            cleanup();
             return EVAL_PAGE;
         }
         
@@ -178,6 +187,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
             try {
                 write(cmsEditLink, nodeId);
              } catch (IOException ioe) {
+                cleanup();
                 throw new JspException("Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
             }
         } 
@@ -196,14 +206,18 @@ public class HstCmsEditLinkTag extends TagSupport  {
             
             pageContext.setAttribute(var, cmsEditLink, varScope);
         }
-        
-        /*cleanup*/
+
+        cleanup();
+        return EVAL_PAGE;
+    }
+
+    protected void cleanup() {
         var = null;
         hippoBean = null;
         scope = null;
-        return EVAL_PAGE;
+        skipTag = false;
     }
-    
+
     protected void write(String url, String nodeId) throws IOException {
         JspWriter writer = pageContext.getOut();
         StringBuilder htmlComment = new StringBuilder(); 

@@ -81,6 +81,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
        
         if(this.current == null || (this.remove == null && (this.removeList == null || this.removeList.isEmpty()))) {
             log.warn("Cannot remove a facet-value combi because 'current' or 'remove(List)' is null or empty");
+            cleanup();
             return EVAL_PAGE;
         }
         
@@ -91,6 +92,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
         
         if(hstRequest == null) {
             log.warn("The request is not an HstRequest. Cannot create an HstLink outside the hst request processing. Return");
+            cleanup();
             return EVAL_PAGE;
         }
         
@@ -100,6 +102,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
         
         if(link == null || link.getPath() == null) {
             log.warn("Unable to rewrite link for '{}'. Return EVAL_PAGE", current.getPath());
+            cleanup();
             return EVAL_PAGE;
         }
         
@@ -136,6 +139,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
                 JspWriter writer = pageContext.getOut();
                 writer.print(urlString);
             } catch (IOException ioe) {
+                cleanup();
                 throw new JspException(
                     "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
             }
@@ -144,19 +148,22 @@ public class HstFacetNavigationLinkTag extends TagSupport {
             int varScope = PageContext.PAGE_SCOPE;
             pageContext.setAttribute(var, urlString, varScope);
         }
-        
-        /*cleanup*/
+
+        cleanup();
+        return EVAL_PAGE;
+    }
+
+    protected void cleanup() {
         parametersMap.clear();
         var = null;
         current = null;
         remove = null;
         removeList = null;
-        return EVAL_PAGE;
     }
-    
+
     /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#release()
-     */
+    * @see javax.servlet.jsp.tagext.TagSupport#release()
+    */
     @Override
     public void release(){
         super.release();        

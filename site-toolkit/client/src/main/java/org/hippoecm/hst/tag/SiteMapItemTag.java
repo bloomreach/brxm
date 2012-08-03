@@ -68,6 +68,7 @@ public class SiteMapItemTag extends TagSupport {
     @Override
     public int doStartTag() throws JspException {
         if(skipTag){
+            cleanup();
             return SKIP_BODY;
         }
         
@@ -76,6 +77,7 @@ public class SiteMapItemTag extends TagSupport {
         
         if(hstRequest == null) {
             log.warn("The request is not an HstRequest. Cannot create an preferred sitemap item outside the hst request processing. Return");
+            cleanup();
             return SKIP_BODY;
         }
         
@@ -108,19 +110,24 @@ public class SiteMapItemTag extends TagSupport {
                 findAncestorWithClass(this, HstLinkTag.class);
 
         if (hstLinkTag == null) {
+            cleanup();
             throw new JspException("the 'SiteMapItemTag' Tag must have a HST's 'link' tag as a parent");
         }
 
         hstLinkTag.setPreferredSiteMapItem(siteMapItem);
         hstLinkTag.setFallback(fallback);
 
+        cleanup();
+        
+        return SKIP_BODY;
+    }
+
+    protected void cleanup() {
         siteMapItem = null;
         fallback = true;
         preferItemId = null;
         preferPath = null;
         skipTag = false;
-        
-        return SKIP_BODY;
     }
 
     /**
@@ -134,7 +141,7 @@ public class SiteMapItemTag extends TagSupport {
 
     /**
      * Sets the siteMapItem.
-     * @param the siteMapItem to set
+     * @param siteMapItem to set
      */
     public void setPreferItem(HstSiteMapItem siteMapItem) {
         this.siteMapItem = siteMapItem;
@@ -151,7 +158,7 @@ public class SiteMapItemTag extends TagSupport {
     
     /**
      * Sets the fallback
-     * @param the fallback to set
+     * @param fallback to set
      */
     public void setFallback(boolean fallback) {
         this.fallback = fallback;

@@ -48,8 +48,13 @@ public class ParamTag extends TagSupport {
         }
 
         paramContainerTag.addParameter(getName(), getValue());
-
+        cleanup();
         return SKIP_BODY;
+    }
+
+    protected void cleanup() {
+        name = null;
+        value = null;
     }
 
     /**

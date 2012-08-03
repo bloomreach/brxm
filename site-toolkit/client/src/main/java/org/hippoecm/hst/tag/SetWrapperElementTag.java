@@ -52,6 +52,7 @@ public class SetWrapperElementTag extends BodyTagSupport {
         }
         
         if (hstResponse == null) {
+            cleanup();
             return SKIP_BODY;
         }
         
@@ -70,6 +71,7 @@ public class SetWrapperElementTag extends BodyTagSupport {
                 Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
                 element = doc.getDocumentElement();
             } catch (Exception ex) {
+                cleanup();
                 throw new JspException(ex);
             } finally {
                 if (reader != null) try { reader.close(); } catch (Exception ce) { }
@@ -79,12 +81,16 @@ public class SetWrapperElementTag extends BodyTagSupport {
         if (element != null) {
             hstResponse.setWrapperElement(element);
         }
-        
-        element = null;
-        
+
+        cleanup();
+
         return EVAL_PAGE;
     }
-    
+
+    protected void cleanup() {
+        element = null;
+    }
+
     public void setElement(Element element) {
         this.element = element;
     }

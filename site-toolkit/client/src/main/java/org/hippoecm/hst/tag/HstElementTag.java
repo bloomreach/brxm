@@ -101,20 +101,21 @@ public class HstElementTag extends BodyTagSupport {
                 element.appendChild(element.getOwnerDocument().createTextNode(textContent));
             }
         }
-        
+        cleanup();
+        return EVAL_PAGE;
+    }
+
+    protected void cleanup() {
         var = null;
         name = null;
         element = null;
         parentElement = null;
-
-        return EVAL_PAGE;
     }
-    
-    
+
 
     /* (non-Javadoc)
-     * @see javax.servlet.jsp.tagext.TagSupport#release()
-     */
+    * @see javax.servlet.jsp.tagext.TagSupport#release()
+    */
     @Override
     public void release(){
         super.release();        

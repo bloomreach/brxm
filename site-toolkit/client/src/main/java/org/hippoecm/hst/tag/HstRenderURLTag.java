@@ -30,6 +30,12 @@ public class HstRenderURLTag extends BaseHstURLTag {
     protected HstURL url;
 
     @Override
+    protected void cleanup() {
+        url = null;
+        super.cleanup();
+    }
+
+    @Override
     protected HstURL getUrl() {
         if (this.url == null) {
             // if hstResponse is retrieved, then this servlet has been dispatched by hst component.

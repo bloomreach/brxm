@@ -99,17 +99,15 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
         }
 
         cleanup();
-        
         return EVAL_PAGE;
     }
 
-    private void cleanup() {
-        parametersMap.clear();
-        removedParametersList.clear();
+    @Override
+    protected void cleanup() {
         resourceId = null;
         escapeXml = true;
         var = null;
-        setUrl(null);
+        super.cleanup();
     }
 
 

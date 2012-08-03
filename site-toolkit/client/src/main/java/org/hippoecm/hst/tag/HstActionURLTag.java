@@ -28,7 +28,13 @@ public class HstActionURLTag extends BaseHstURLTag {
     private static final long serialVersionUID = 1L;
     
     protected HstURL url;
-    
+
+    @Override
+    protected void cleanup() {
+        url = null;
+        super.cleanup();
+    }
+
     @Override
     protected HstURL getUrl() {
         if (this.url == null) {

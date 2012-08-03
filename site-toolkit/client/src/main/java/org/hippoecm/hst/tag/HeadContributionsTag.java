@@ -98,9 +98,19 @@ public class HeadContributionsTag extends TagSupport {
         try {
             pageContext.getOut().flush();
         } catch (IOException e) {
+            cleanup();
             throw new JspException("Cannot flush the output", e);
         }
+        cleanup();
+
         return SKIP_BODY;
+    }
+
+    protected void cleanup() {
+        xhtml = false;
+        categoryIncludes = null;
+        categoryExcludes = null;
+
     }
 
     private boolean shouldBeIncludedInOutput(Element headElement) {

@@ -29,6 +29,12 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 
     protected HstURL url;
 
+     @Override
+     protected void cleanup() {
+         url = null;
+         super.cleanup();
+     }
+
     @Override
     protected HstURL getUrl() {
         if (this.url == null) {

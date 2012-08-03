@@ -57,10 +57,12 @@ public class HeadContributionTag extends BodyTagSupport {
         }
         
         if (hstResponse == null) {
+            cleanup();
             return SKIP_BODY;
         }
         
         if (this.keyHint != null && hstResponse.containsHeadElement(this.keyHint)) {
+            cleanup();
             return SKIP_BODY;
         }
         
@@ -78,6 +80,7 @@ public class HeadContributionTag extends BodyTagSupport {
                     this.keyHint = xmlText;
                     
                     if (hstResponse.containsHeadElement(this.keyHint)) {
+                        cleanup();
                         return SKIP_BODY;
                     }
                 }
@@ -87,6 +90,7 @@ public class HeadContributionTag extends BodyTagSupport {
                 Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
                 element = doc.getDocumentElement();
             } catch (Exception ex) {
+                cleanup();
                 throw new JspException(ex);
             } finally {
                 if (reader != null) try { reader.close(); } catch (Exception ce) { }
@@ -98,6 +102,7 @@ public class HeadContributionTag extends BodyTagSupport {
                 this.keyHint = HeadElementUtils.toHtmlString(new HeadElementImpl(element));
                 
                 if (hstResponse.containsHeadElement(this.keyHint)) {
+                    cleanup();
                     return SKIP_BODY;
                 }
             }
@@ -112,13 +117,17 @@ public class HeadContributionTag extends BodyTagSupport {
             
             hstResponse.addHeadElement(element, this.keyHint);
         }
-        
-        keyHint = null;
-        element = null;
-        
+
+        cleanup();
         return EVAL_PAGE;
     }
-    
+
+    protected void cleanup() {
+        keyHint = null;
+        element = null;
+        category = null;
+    }
+
     public void setKeyHint(String keyHint) {
         this.keyHint = keyHint;
     }

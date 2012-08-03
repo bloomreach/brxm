@@ -74,14 +74,18 @@ public class HstAttributeTag extends BodyTagSupport {
                 element.removeAttribute(name);
             }
         } else {
+            cleanup();
             throw new JspException("Invalid attribute name: " + name);
         }
-        
+
+        cleanup();
+        return EVAL_PAGE;
+    }
+
+    protected void cleanup() {
         name = null;
         value = null;
         element = null;
-        
-        return EVAL_PAGE;
     }
 
     /* (non-Javadoc)
@@ -119,7 +123,7 @@ public class HstAttributeTag extends BodyTagSupport {
     
     /**
      * Sets the value property.
-     * @param var The value to set
+     * @param value The value to set
      * @return void
      */
     public void setValue(String value) {

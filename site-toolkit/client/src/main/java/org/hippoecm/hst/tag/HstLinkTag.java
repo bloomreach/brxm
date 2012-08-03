@@ -99,8 +99,6 @@ public class HstLinkTag extends ParamContainerTag {
     
     protected boolean skipTag; 
 
-    protected Boolean escapeXml = true;
-    
     /**
      * if defined, first a link for this preferSiteMapItem is tried to be created. 
      */
@@ -316,9 +314,7 @@ public class HstLinkTag extends ParamContainerTag {
         
         
         writeOrSetVar(urlString);
-        
-        /*cleanup*/
-        
+
         cleanup();
         
         return EVAL_PAGE;
@@ -374,10 +370,10 @@ public class HstLinkTag extends ParamContainerTag {
                pageContext.setAttribute(var, url, varScope);
            }
     }
-    
-    private void cleanup() {
-        parametersMap.clear();
-        removedParametersList.clear();
+
+    @Override
+    protected void cleanup() {
+        super.cleanup();
         var = null;
         identifiableContentBean = null;
         scope = null;

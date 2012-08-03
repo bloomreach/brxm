@@ -89,12 +89,16 @@ public class HstImageVariantTag extends BodyTagSupport {
             ImageVariant imageVariant = new DefaultImageVariant(name, replaceVariants, fallback);
             htmlTag.setImageVariant(imageVariant);
         }
-        
+
+        cleanup();
+        return EVAL_PAGE;
+    }
+
+    protected void cleanup() {
         name = null;
         replaces = null;
         htmlTag = null;
         fallback = false;
-        return EVAL_PAGE;
     }
 
     public void setName(String name) {

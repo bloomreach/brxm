@@ -37,6 +37,12 @@ public abstract class ParamContainerTag extends TagSupport {
     protected List<String> removedParametersList = 
         new ArrayList<String>();
 
+
+    protected void cleanup() {
+        parametersMap.clear();
+        removedParametersList.clear();
+    }
+
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
      */
