@@ -48,8 +48,10 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
 
     initComponent : function() {
         Hippo.ChannelManager.ExtLinkPicker.superclass.initComponent.call(this);
-        this.on('resize', this.resizeRenderTextField);
-        this.on('afterrender', this.updateClearButton);
+        this.on('valid', this.validateRenderTextField, this);
+        this.on('invalid', this.invalidateRenderTextField, this);
+        this.on('resize', this.resizeRenderTextField, this);
+        this.on('afterrender', this.updateClearButton, this);
     },
 
     editable: false,
@@ -85,7 +87,11 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
     },
 
     picked: function(value) {
-        this.setValue(value);
+        if (Ext.isDefined(value)) {
+            this.setValue(value);
+        } else {
+            this.setValue('');
+        }
         this.updateClearButton();
     },
 
@@ -101,36 +107,47 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
     setValue: function(value) {
         Hippo.ChannelManager.ExtLinkPicker.superclass.setValue.apply(this, arguments);
         if (this.rendered) {
-            var value = this.value;
-            if (this.renderStripValue) {
+            var value = this.getValue();
+            if (Ext.isDefined(this.renderStripValue)) {
                 value = value.replace(this.renderStripValue, '');
             }
-            this.renderTextField.value = value;
+            this.renderTextField.dom.value = value;
         }
     },
 
     resizeRenderTextField: function(width, height, options) {
         if (this.renderTextField) {
-            this.renderTextField.style.width = this.el.dom.style.width;
+            this.renderTextField.dom.style.width = this.el.dom.style.width;
         }
+    },
+
+    validateRenderTextField: function() {
+        this.renderTextField.removeClass('x-form-invalid');
+    },
+
+    invalidateRenderTextField: function() {
+        this.renderTextField.addClass('x-form-invalid');
     },
 
     onRender: function() {
         Hippo.ChannelManager.ExtLinkPicker.superclass.onRender.apply(this, arguments);
+
         this.el.dom.style.display = "none";
-        var value = this.value;
-        if (this.renderStripValue) {
+
+        var value = this.getValue();
+        if (Ext.isDefined(this.renderStripValue)) {
             value = value.replace(this.renderStripValue, '');
         }
 
-        this.renderTextField = document.createElement('input');
-        this.renderTextField.setAttribute('type', 'text');
-        this.renderTextField.setAttribute('readonly', 'readonly');
-        this.renderTextField.setAttribute('class', 'customExtLinkPickerRenderValue');
-        this.renderTextField.value = value;
-        this.renderTextField.style.width = this.el.dom.style.width;
-
-        this.el.parent().dom.insertBefore(this.renderTextField, this.el.dom);
+        this.renderTextField = Ext.DomHelper.insertBefore(this.el, {
+            tag: 'input',
+            type: 'text',
+            readonly: 'readonly',
+            value: value,
+            width: this.el.getWidth()
+        }, true);
+        this.renderTextField.addClass('x-form-text');
+        this.renderTextField.addClass('x-form-field');
     }
 
 });

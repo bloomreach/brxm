@@ -401,8 +401,3 @@
 .channel-manager #channel-grid-panel {
     overflow: auto;
 }
-
-.customExtLinkPickerRenderValue {
-    height: 18px;
-    width: 94px;
-}
