@@ -400,12 +400,6 @@ public class JcrUtils {
             throw new IllegalArgumentException("Destination cannot be child of source node");
         }
 
-        // If source and destination are the same
-        if (destAbsPath.equals(srcAbsPath)) {
-            // Simply do nothing
-            return;
-        }
-
         final Node srcNode = session.getNode(srcAbsPath);
         final int idx = destAbsPath.lastIndexOf('/');
         final String parentDestAbsPath = idx == 0 ? destAbsPath : destAbsPath.substring(0, idx);
