@@ -186,11 +186,6 @@ test/workspaces
 tools/*.iml
 tools/.project
 tools/.settings
-tools/documentation/.classpath
-tools/documentation/.project
-tools/documentation/.settings
-tools/documentation/hippo-repository-tools-documentation.iml
-tools/documentation/target
 tools/target
 tools/testutils/*.tmp
 tools/testutils/.classpath

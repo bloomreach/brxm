@@ -317,7 +317,6 @@ test/src/test/resources/sample-demodata.xml -text svneol=unset#text/plain
 test/src/test/resources/sample.cnd -text
 test/src/test/resources/user-author.xml -text svneol=unset#text/plain
 test/src/test/resources/user-editor.xml -text svneol=unset#text/plain
-tools/documentation/pom.xml svneol=native#text/plain
 tools/testutils/pom.xml -text
 tools/testutils/src/site/apt/index.apt -text
 tools/testutils/src/site/site.xml svneol=native#text/plain
