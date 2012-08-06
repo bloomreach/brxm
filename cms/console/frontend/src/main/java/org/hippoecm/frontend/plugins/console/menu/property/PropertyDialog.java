@@ -243,20 +243,19 @@ public class PropertyDialog extends AbstractDialog<Node> {
             JcrNodeModel nodeModel = (JcrNodeModel) plugin.getDefaultModel();
             Node node = nodeModel.getNode();
 
-            Value jcrValue = getJcrValue();
-            if (isMultiple.booleanValue()) {
-                if (jcrValue == null || value == null || value.equals("")) {
-                    jcrValue = getValueFactory().createValue("...", PropertyType.STRING);
-                }
-                node.setProperty(name, new Value[] { jcrValue });
+            final int propertyType = PropertyType.valueFromName(type);
+            final Value value = getJcrValue(propertyType);
+            if (isMultiple) {
+                Value[] values = value != null ? new Value[] { value } : new Value[] {};
+                node.setProperty(name, values, propertyType);
             } else {
-                node.setProperty(name, jcrValue);
+                node.setProperty(name, value, propertyType);
             }
-
             JcrNodeModel newNodeModel = new JcrNodeModel(node);
             plugin.setDefaultModel(newNodeModel);
-        } catch (RepositoryException ex) {
-            error(ex.toString());
+        } catch (RepositoryException e) {
+            error(e.toString());
+            log.error(e.getClass().getName() + " : " + e.getMessage(), e);
         }
     }
 
@@ -300,16 +299,16 @@ public class PropertyDialog extends AbstractDialog<Node> {
         return type;
     }
 
-    private Value getJcrValue() {
+    private Value getJcrValue(final int propertyType) {
         try {
-            return getValueFactory().createValue(value, PropertyType.valueFromName(type));
+            return getValueFactory().createValue(value, propertyType);
         } catch (RepositoryException ex) {
             log.info(ex.getMessage());
         }
         return null;
     }
 
-    private ValueFactory getValueFactory() throws UnsupportedRepositoryOperationException, RepositoryException {
+    private ValueFactory getValueFactory() throws RepositoryException {
         return ((UserSession) Session.get()).getJcrSession().getValueFactory();
     }
 

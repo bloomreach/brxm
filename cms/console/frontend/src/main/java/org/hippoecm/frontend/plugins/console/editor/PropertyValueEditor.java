@@ -119,11 +119,11 @@ class PropertyValueEditor extends DataView {
                             Property prop = propertyModel.getProperty();
                             Value[] values = prop.getValues();
                             values = (Value[]) ArrayUtils.remove(values, valueModel.getIndex());
-                            prop.setValue(values);
+                            prop.getParent().setProperty(prop.getName(), values, prop.getType());
                         } catch (RepositoryException e) {
                             log.error(e.getMessage());
                         }
-                        NodeEditor editor = (NodeEditor) findParent(NodeEditor.class);
+                        NodeEditor editor = findParent(NodeEditor.class);
                         if (editor != null) {
                             target.addComponent(editor);
                         }

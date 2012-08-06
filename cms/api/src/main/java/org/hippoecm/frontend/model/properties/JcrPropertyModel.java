@@ -256,7 +256,7 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof JcrPropertyModel == false) {
+        if (!(object instanceof JcrPropertyModel)) {
             return false;
         }
         if (this == object) {
