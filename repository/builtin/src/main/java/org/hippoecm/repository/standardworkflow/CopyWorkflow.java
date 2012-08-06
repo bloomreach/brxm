@@ -29,11 +29,6 @@ import org.hippoecm.repository.api.WorkflowException;
  * A class implementing CopyWorkflow is returned by one of the calls in #WorkflowManager returning a #Workflow.
  */
 public interface CopyWorkflow extends Workflow {
-    /**
-     * @exclude
-     */
-    @SuppressWarnings("unused")
-    final String SVN_ID = "$Id: ";
 
     /**
      * Creates a new document below the container document that this work-flow refers to, based upon another document.

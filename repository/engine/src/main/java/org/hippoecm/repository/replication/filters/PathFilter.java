@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * The {@link PathFilter} filters which nodes to replicate based on the path of the  
  */
 public class PathFilter implements Filter {
-    /** @exclude */
 
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(PathFilter.class);

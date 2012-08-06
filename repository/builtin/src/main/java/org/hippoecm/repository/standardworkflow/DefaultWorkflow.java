@@ -32,9 +32,6 @@ import org.hippoecm.repository.api.WorkflowException;
  * A class implementing DefaultWorkflow is returned by one of the calls in #WorkflowManager returning a #Workflow.
  */
 public interface DefaultWorkflow extends CopyWorkflow {
-    /**
-     * @exclude
-     */
 
     /**
      * Permanently removes the document from the repository.  Unlike the #archive method, this makes it impossible

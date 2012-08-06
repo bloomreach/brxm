@@ -29,7 +29,6 @@ import org.apache.jackrabbit.core.state.ChangeLog;
  *
  */
 public class StateCollectionStack {
-    /** @exclude */
 
     /**
      * A map with all the {@link StateCollection}s. Used as a kind of stack.

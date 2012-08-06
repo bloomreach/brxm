@@ -22,9 +22,6 @@ package org.hippoecm.repository.api;
  * Encoding and decoding should also be thread-safe.
  */
 public interface StringCodec {
-    /**
-     * @exclude
-     */
 
     /**
      * Encodes a string of characters.

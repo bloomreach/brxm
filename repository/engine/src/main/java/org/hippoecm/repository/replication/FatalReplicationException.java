@@ -22,8 +22,6 @@ package org.hippoecm.repository.replication;
  */
 public class FatalReplicationException extends RuntimeException {
 
-    /** @exclude */
-    
     /**
      * Serial
      */

@@ -25,20 +25,19 @@ package org.hippoecm.repository;
  * standard extensions of the Hippo repository.
  */
 public interface HippoStdNodeType {
-    /** @exclude */
 
     /**
      * Within the hippo document model, there are two basic default container documents that can hold a set of other documents,
      * akin to directories or folders on a file-system.  One is a document of JCR primary type hippostd:directory which refers
      * to an unordered set of documents.
-     * @see NT_FOLDER
+     * @see #NT_FOLDER
      */
     String NT_DIRECTORY = "hippostd:directory";
 
     /**
      * The hippostd:folder JCR primary type is the second of two basic default container documents, which refers to a ordered
      * set of documents.
-     * @see NT_DIRECTORY
+     * @see #NT_DIRECTORY
      */
     String NT_FOLDER = "hippostd:folder";
 

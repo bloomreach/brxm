@@ -36,9 +36,6 @@ import org.hippoecm.repository.api.WorkflowException;
  * for instance.  So it invokes the VersionWorkflow.version() whenever its publish action is invoked.
  */
 public interface VersionWorkflow extends Workflow {
-    /**
-     * @exclude
-     */
 
     /**
      * Creates a version of the current document state, such that the current state of the document may be re-retrieved or restored

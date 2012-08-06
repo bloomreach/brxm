@@ -34,8 +34,6 @@ import org.apache.jackrabbit.core.state.PropertyState;
  */
 public class StateCollection {
 
-    /** @exclude */
-
     /** The node and the properties are newly added */
     public static final int ADD_NODE = 0;
 

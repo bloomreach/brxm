@@ -23,7 +23,6 @@ import org.hippoecm.repository.replication.ReplicatorNode;
  * The replicator node configuration hold the configuration for a {@link ReplicatorNode}.
  */
 public class ReplicatorNodeConfig {
-    /** @exclude */
 
     /**
      * Identifier.

@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
  * some miscellaneous parsing methods.
  */
 public class ReplicatorHelper {
-    /** @exclude */
 
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(PathFilter.class);

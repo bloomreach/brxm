@@ -23,9 +23,6 @@ import javax.jcr.NodeIterator;
  * provided by these methods may still not be available.
  */
 public interface HippoNodeIterator extends NodeIterator {
-    /**
-     * @exclude
-     */
 
     /**
      * Obtains the number of elements that would be retrievable if the user your have access to all elements in the repository

@@ -24,9 +24,6 @@ package org.hippoecm.repository.api;
  * The mergeBehavior parameter must be just one of these values.
  */
 public interface ImportMergeBehavior {
-    /**
-     * @exclude
-     */
 
     /**
      * When a node already exists in the repository on the same path, skip the node in the import and its subtree.

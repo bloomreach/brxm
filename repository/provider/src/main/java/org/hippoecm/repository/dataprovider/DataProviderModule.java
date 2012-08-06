@@ -18,7 +18,6 @@ package org.hippoecm.repository.dataprovider;
 import javax.jcr.RepositoryException;
 
 public interface DataProviderModule {
-    final String SVN_ID = "$Id$";
 
     public void initialize(DataProviderContext stateMgr) throws RepositoryException;
 }

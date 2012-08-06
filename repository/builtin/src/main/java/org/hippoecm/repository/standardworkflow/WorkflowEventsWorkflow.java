@@ -27,9 +27,6 @@ package org.hippoecm.repository.standardworkflow;
  * before the fire method is invoked.
  */
 public interface WorkflowEventsWorkflow extends WorkflowEventWorkflow {
-    /**
-     * @exclude
-     */
 
     /**
      * This method is called before a workflow event is fired passing in the concrete category name of the Worfklow

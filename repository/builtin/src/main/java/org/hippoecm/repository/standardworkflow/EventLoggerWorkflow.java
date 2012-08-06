@@ -29,9 +29,6 @@ import org.hippoecm.repository.api.Workflow;
  * This interface may be used to manually enter additional logging to the report log.
  */
 public interface EventLoggerWorkflow extends Workflow {
-    /**
-     * @exclude
-     */
 
     /**
      * Method that is invoked after a successful work-flow call.

@@ -52,9 +52,6 @@ import org.hippoecm.repository.api.WorkflowException;
  * a org.hippoecm.repository.api.Document would have been more appropriate.
  */
 public interface FolderWorkflow extends Workflow {
-    /**
-     * @exclude
-     */
 
     /**
      * Returns the possible set of documents that may normally be contained within this container document.  Only those

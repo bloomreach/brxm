@@ -22,7 +22,5 @@ package org.hippoecm.repository.ext;
  */
 // FIXME: this interface should be moved to the repository engine package
 public interface InternalWorkflow {
-    /**
-     * @exclude
-     */
+
 }

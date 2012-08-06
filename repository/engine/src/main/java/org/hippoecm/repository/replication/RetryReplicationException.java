@@ -22,8 +22,7 @@ import org.apache.jackrabbit.core.cluster.ClusterRecordProcessor;
  * allow for checked exceptions.
  */
 public class RetryReplicationException extends RuntimeException {
-    /** @exclude */
-    
+
     /**
      * Serial
      */

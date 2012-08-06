@@ -25,9 +25,6 @@ package org.hippoecm.repository.api;
  * The referenceBehavior parameter must be just one of these values.
  */
 public interface ImportReferenceBehavior {
-    /**
-     * @exclude
-     */
 
     /**
      * When a reference to occurs which cannot be resolved, remove the property containing the reference.  In case the the lack of the property is not valid for the node definition in which the property occurred, a {@link javax.jcr.ConstrainViolation} will be thrown by either the import method or when the data in the session is being saved.

@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
  * writes the changes to a {@link Journal}.
  */
 public class ReplicationJournalProducer implements ReplicationUpdateEventListener {
-    /** @exclude */
 
     /**
      * Logger.

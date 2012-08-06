@@ -26,9 +26,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
  * Any {@link javax.jcr.Node} instance returned by any method of a Hippo Repostitory may be cast to the HippoNode interface to expose additional functionality.
  */
 public interface HippoNode extends Node {
-    /**
-     * @exclude
-     */
 
     /*
      * Other (future) extensions to the interface may include:

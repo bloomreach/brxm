@@ -16,9 +16,6 @@
 package org.hippoecm.repository.ext;
 
 public interface WorkflowManagerModule {
-    /**
-     * @exclude
-     */
 
     public void register(WorkflowManagerRegister register);
 }

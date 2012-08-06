@@ -21,8 +21,6 @@ package org.hippoecm.repository.replication;
  */
 public class RecoverableReplicationException extends RuntimeException {
 
-    /** @exclude */
-
     /**
      * Serial
      */

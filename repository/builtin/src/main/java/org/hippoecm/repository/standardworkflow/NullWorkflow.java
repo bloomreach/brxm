@@ -25,7 +25,5 @@ import org.hippoecm.repository.api.Workflow;
  * interface only.
  */
 public interface NullWorkflow extends Workflow {
-    /**
-     * @exclude
-     */
+
 }

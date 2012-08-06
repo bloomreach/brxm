@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * through the synchronized {@link #replicate(ChangeLogRecord)} method.
  */
 abstract class AbstractReplicator implements Replicator {
-    /** @exclude */
 
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(AbstractReplicator.class);

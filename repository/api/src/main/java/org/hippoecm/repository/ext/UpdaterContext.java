@@ -31,9 +31,6 @@ import javax.jcr.nodetype.NodeType;
  * and may be called.
  */
 public interface UpdaterContext {
-    /**
-     * @exclude
-     */
 
     /**
      * The registerName method MUST be called EXACTLY ONCE by every class

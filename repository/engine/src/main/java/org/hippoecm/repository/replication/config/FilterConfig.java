@@ -25,7 +25,6 @@ import org.apache.jackrabbit.core.config.BeanConfig;
  * more generic bean configuration information.
  */
 public class FilterConfig extends BeanConfig {
-    /** @exclude */
 
     /**
      * Creates a journal configuration object from the given bean configuration.

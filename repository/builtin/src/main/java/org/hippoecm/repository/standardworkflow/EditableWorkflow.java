@@ -32,9 +32,6 @@ import org.hippoecm.repository.api.WorkflowException;
  * using the EditableWorkflow interface returned by #WorflowManager.getWorkflow in the "edit" category.
  */
 public interface EditableWorkflow extends Workflow {
-    /**
-     * @exclude
-     */
 
     /**
      * Request this editable copy of the document.

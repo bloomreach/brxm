@@ -24,7 +24,6 @@ import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
  * The ReplicatorContext provides a context for {@link Replicator}s and {@link ReplicatorNode}s.
  */
 public class ReplicatorContext {
-    /** @exclude */
 
     /**
      * The replicator journal

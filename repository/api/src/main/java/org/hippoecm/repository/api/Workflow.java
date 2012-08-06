@@ -34,9 +34,6 @@ import javax.jcr.RepositoryException;
  * @see org.hippoecm.repository.standardworkflow.FolderWorkflow
  */
 public interface Workflow extends Remote, Serializable {
-    /**
-     * @exclude
-     */
 
     /**
      * The hints method is not an actual workflow call, but a method by which information can be retrieved from the workflow.  All implementations must implement this call as a pure function, no modification may be made, nor no state may be maintained and and in principle no additional lookups of data is allowed.  This allows for caching the result as long as the document on which the workflow operates isn't modified.

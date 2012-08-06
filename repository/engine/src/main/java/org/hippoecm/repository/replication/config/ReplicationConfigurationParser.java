@@ -57,7 +57,6 @@ import org.xml.sax.SAXParseException;
  * Note that this class is based on {@link org.apache.jackrabbit.core.config.RepositoryConfigurationParser}
  */
 public class ReplicationConfigurationParser extends ConfigurationParser {
-    /** @exclude */
 
     /** Name of the repository home directory parser variable. */
     public static final String REPOSITORY_HOME_VARIABLE = "rep.home";

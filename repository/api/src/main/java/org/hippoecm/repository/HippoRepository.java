@@ -43,7 +43,6 @@ import org.hippoecm.repository.api.ValueMap;
  * @see javax.jcr.Repository
  */
 public interface HippoRepository {
-    /** @exclude */
 
     /**
      * Creates a new Session for the current user, which might involve opening an anonymous session.

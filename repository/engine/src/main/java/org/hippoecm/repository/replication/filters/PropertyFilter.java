@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
  * The {@link PropertyFilter} filters nodes to replicate based on the properties of a node.
  */
 public class PropertyFilter implements Filter {
-    /** @exclude */
 
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(PropertyFilter.class);

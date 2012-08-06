@@ -38,7 +38,6 @@ import javax.transaction.xa.XAResource;
  * a HippoSession allowing access to the extensions to the JCR API.
  */
 public interface HippoSession extends Session {
-    /** @exclude */
 
     /**
      * Convenience function to copy a node to a destination path in the same workspace.  Unlike the copy method in the javax.jcr.Workspace class,

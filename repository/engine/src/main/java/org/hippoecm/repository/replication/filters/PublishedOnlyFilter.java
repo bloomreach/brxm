@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  * The {@link PublishedOnlyFilter} filters nodes to replicate based on the properties of a node.
  */
 public class PublishedOnlyFilter implements Filter {
-    /** @exclude */
 
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(PublishedOnlyFilter.class);

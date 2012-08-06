@@ -50,7 +50,6 @@ import EDU.oswego.cs.dl.util.concurrent.Mutex;
  * {@link Replicator}.</p>
  */
 public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordConsumer {
-    /** @exclude */
 
     /**
      * Status constant.

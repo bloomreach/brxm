@@ -41,9 +41,6 @@ import javax.jcr.Session;
  * referenceable and contain no pending changes in the current session.
  */
 public interface WorkflowManager {
-    /**
-     * @exclude
-     */
 
     /**
      * Workflow Managers are associated with an authenticated session, even though most of the operations executed by workflows

@@ -29,7 +29,6 @@ import org.apache.jackrabbit.core.state.ChangeLog;
  * update events.
  */
 public interface ReplicationUpdateEventListener {
-    /** @exclude */
 
     /**
      * Handle an external update.

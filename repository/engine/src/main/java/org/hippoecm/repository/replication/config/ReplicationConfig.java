@@ -35,7 +35,6 @@ import org.xml.sax.InputSource;
  * This class holds the configuration of all {@link ReplicatorNodeConfig}s.
  */
 public class ReplicationConfig {
-    /** @exclude */
 
     /** the default logger */
     private static Logger log = LoggerFactory.getLogger(ReplicationConfig.class);

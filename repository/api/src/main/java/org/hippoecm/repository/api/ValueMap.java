@@ -23,7 +23,6 @@ import java.util.Map;
  * A {@see java.util.Map} enhanced with a number of methods to obtain more type-safe information from the Map.
  */
 public interface ValueMap extends Map {
-    /** @exclude */
 
     /**
      * Returns the string representation of the entry in the map, or the defaultValue parameter if the key is not present or cannot be converted to a string.

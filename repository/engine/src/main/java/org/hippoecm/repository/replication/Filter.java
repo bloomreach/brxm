@@ -29,8 +29,6 @@ import org.apache.jackrabbit.core.state.ChangeLog;
  */
 public interface Filter {
 
-    /** @exclude */
-
     /**
      * Initialize the replicator filter.
      * @param context the {@link ReplicatorContext}

@@ -25,9 +25,6 @@ import org.hippoecm.repository.api.WorkflowManager;
  * without modifying the repository implementation.
  */
 public interface WorkflowInvocationHandlerModule {
-    /**
-     * @exclude
-     */
 
     public Object submit(WorkflowManager workflowManager, WorkflowInvocation invocation) throws RepositoryException, WorkflowException;
 }

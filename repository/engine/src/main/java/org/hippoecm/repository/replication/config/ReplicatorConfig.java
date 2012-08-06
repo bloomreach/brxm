@@ -26,7 +26,6 @@ import org.hippoecm.repository.replication.Replicator;
  * more generic bean configuration information.
  */
 public class ReplicatorConfig extends BeanConfig {
-    /** @exclude */
 
     /**
      * Creates a journal configuration object from the given bean configuration.

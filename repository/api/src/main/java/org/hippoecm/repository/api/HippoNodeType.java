@@ -25,9 +25,6 @@ package org.hippoecm.repository.api;
  * the Hippo repository build on top of JCR.
  */
 public interface HippoNodeType {
-    /**
-     * @exclude
-     */
 
     public static final String CONFIGURATION_PATH = "hippo:configuration";
 

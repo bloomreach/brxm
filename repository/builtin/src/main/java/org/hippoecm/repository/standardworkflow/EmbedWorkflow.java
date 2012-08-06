@@ -37,9 +37,6 @@ import org.hippoecm.repository.api.WorkflowException;
  * same location.
  */
 public interface EmbedWorkflow extends Workflow {
-    /**
-     * @exclude
-     */
 
     /**
      * Work-flow call performed on the source container document to copy a document, this call itself will escalate to

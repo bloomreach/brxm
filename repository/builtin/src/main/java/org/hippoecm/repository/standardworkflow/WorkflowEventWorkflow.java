@@ -31,9 +31,6 @@ import org.hippoecm.repository.api.WorkflowException;
  * to fire) and condition that is being met.
  */
 public interface WorkflowEventWorkflow extends Workflow {
-    /**
-     * @exclude
-     */
 
     /**
      * This method is called when a work-flow event is fired in case the triggering workflow method

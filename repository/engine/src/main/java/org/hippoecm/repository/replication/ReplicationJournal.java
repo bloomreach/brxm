@@ -39,7 +39,6 @@ import EDU.oswego.cs.dl.util.concurrent.ReentrantWriterPreferenceReadWriteLock;
  * created be the same journal (producer). 
  */
 public class ReplicationJournal extends FileJournal {
-    /** @exclude */
 
     /** Logger. */
     private static Logger log = LoggerFactory.getLogger(ReplicationJournal.class);

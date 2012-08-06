@@ -59,8 +59,6 @@ import org.slf4j.LoggerFactory;
  */
 public class JCRReplicator extends AbstractReplicator {
 
-    /** @exclude */
-
     /** Logger. */
     private static final Logger log = LoggerFactory.getLogger(JCRReplicator.class);
 

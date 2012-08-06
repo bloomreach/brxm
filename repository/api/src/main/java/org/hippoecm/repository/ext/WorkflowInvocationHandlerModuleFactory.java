@@ -20,9 +20,6 @@ package org.hippoecm.repository.ext;
  * without modifying the repository implementation.
  */
 public interface WorkflowInvocationHandlerModuleFactory<T> {
-    /**
-     * @exclude
-     */
             
     public WorkflowInvocationHandlerModule createInvocationHandler(T object);
 }

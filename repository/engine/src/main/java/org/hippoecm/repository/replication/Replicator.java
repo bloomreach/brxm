@@ -25,7 +25,6 @@ import org.apache.jackrabbit.core.config.ConfigurationException;
  * {@link ChangeLogRecord} to a remote repository. 
  */
 public interface Replicator {
-    /** @exclude */
 
     /**
      * Initialize the replicator

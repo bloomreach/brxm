@@ -24,9 +24,6 @@ import javax.jcr.Workspace;
  * workspace was obtained.
  */
 public interface HippoWorkspace extends Workspace {
-    /**
-     * @exclude
-     */
 
     /**
      * The document manager service allows the representation of a document stored as a subtree of a {link javax.jcr.Node} as a Java object.
