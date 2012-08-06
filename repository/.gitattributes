@@ -317,10 +317,10 @@ test/src/test/resources/sample-demodata.xml -text svneol=unset#text/plain
 test/src/test/resources/sample.cnd -text
 test/src/test/resources/user-author.xml -text svneol=unset#text/plain
 test/src/test/resources/user-editor.xml -text svneol=unset#text/plain
-tools/testutils/pom.xml -text
-tools/testutils/src/site/apt/index.apt -text
-tools/testutils/src/site/site.xml svneol=native#text/plain
-tools/testutils/wicket-selenium.patch -text
+testutils/pom.xml -text
+testutils/src/site/apt/index.apt -text
+testutils/src/site/site.xml svneol=native#text/plain
+testutils/wicket-selenium.patch -text
 upgrade/pom.xml svneol=native#text/plain
 upgrade/src/main/java/org/hippoecm/repository/upgrade/Upgrader12c.java svneol=native#text/plain
 upgrade/src/main/java/org/hippoecm/repository/upgrade/Upgrader16a.java svneol=native#text/plain

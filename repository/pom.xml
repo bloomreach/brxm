@@ -43,6 +43,7 @@
 
   <modules>
     <module>api</module>
+    <module>testutils</module>
     <module>connector</module>
     <module>provider</module>
     <module>engine</module>
@@ -53,7 +54,6 @@
     <module>test</module>
     <module>builtin</module>
     <module>ldap</module>
-    <module>tools</module>
     <module>config</module>
     <module>resources</module>
     <module>dependencies</module>

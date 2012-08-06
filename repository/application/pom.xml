@@ -45,7 +45,7 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-tools-testutils</artifactId>
+      <artifactId>hippo-repository-testutils</artifactId>
       <version>${project.version}</version>
       <type>jar</type>
       <scope>test</scope>
