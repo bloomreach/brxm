@@ -26,6 +26,8 @@ import javax.servlet.jsp.tagext.TagSupport;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Supporting class for including the content of a child component window.
@@ -35,6 +37,8 @@ public class HstIncludeTag extends TagSupport {
     
     private static final long serialVersionUID = 1L;
     
+    private final static Logger log = LoggerFactory.getLogger(HstIncludeTag.class);
+
     protected String ref = null;
     
     /* (non-Javadoc)
@@ -66,7 +70,11 @@ public class HstIncludeTag extends TagSupport {
             writer.flush();
             hstResponse.flushChildContent(ref);
         } catch (IOException e) {
-            cleanup();
+            if (log.isDebugEnabled()) {
+                log.warn("Exception happened while including child content for '"+ref+"'.", e);
+            } else {
+                log.warn("Exception happened while including child content for '{}' : {}",ref, e.toString());
+            }
         }
 
         cleanup();
