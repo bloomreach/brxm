@@ -71,6 +71,11 @@ public @interface Parameter {
     String description() default "";
 
     /**
+     * @return <code>true</code> if the parameter should not be shown in the channel manager UI
+     */
+    boolean hideInChannelManager() default false;
+
+    /**
      * This is still experimental.
      * @return a PropertyEditor
      */

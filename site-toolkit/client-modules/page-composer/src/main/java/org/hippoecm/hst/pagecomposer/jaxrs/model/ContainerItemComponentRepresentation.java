@@ -222,6 +222,9 @@ public class ContainerItemComponentRepresentation {
             if (method.isAnnotationPresent(Parameter.class)) {
                 final Parameter propAnnotation = method.getAnnotation(Parameter.class);
                 final ContainerItemComponentPropertyRepresentation prop = new ContainerItemComponentPropertyRepresentation();
+                if (propAnnotation.hideInChannelManager()) {
+                    continue;
+                }
                 prop.setName(propAnnotation.name());
                 prop.setDefaultValue(propAnnotation.defaultValue());
                 prop.setDescription(propAnnotation.description());
