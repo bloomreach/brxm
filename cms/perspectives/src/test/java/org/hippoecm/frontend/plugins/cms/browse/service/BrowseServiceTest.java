@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -121,13 +121,13 @@ public class BrowseServiceTest extends PluginTest {
                 public String[] getSelectorNames() throws RepositoryException {
                     throw new UnsupportedOperationException("Not supported yet.");
                 }
-                
+
             };
         }
 
         public void setObject(QueryResult object) {
             // TODO Auto-generated method stub
-            
+
         }
     }
 
@@ -178,12 +178,22 @@ public class BrowseServiceTest extends PluginTest {
 
         start(new JcrPluginConfig(new JcrNodeModel("/test/browseplugin")));
     }
-    
+
     @Test
     public void updateModelsOnBrowse() throws Exception {
         BrowseService service = new BrowseService(context, new JcrPluginConfig(new JcrNodeModel("/test/config")),
                 new JcrNodeModel("/test"));
         service.browse(new JcrNodeModel("/test/content/document"));
+
+        assertEquals(new JcrNodeModel("/test/content"), service.getCollectionModel().getObject().getFolder());
+        assertEquals(new JcrNodeModel("/test/content/document"), getDocumentService().getModel());
+    }
+
+    @Test
+    public void selectHandleForDocument() throws Exception {
+        BrowseService service = new BrowseService(context, new JcrPluginConfig(new JcrNodeModel("/test/config")),
+                                                  new JcrNodeModel("/test"));
+        service.browse(new JcrNodeModel("/test/content/document/document"));
 
         assertEquals(new JcrNodeModel("/test/content"), service.getCollectionModel().getObject().getFolder());
         assertEquals(new JcrNodeModel("/test/content/document"), getDocumentService().getModel());
@@ -300,7 +310,7 @@ public class BrowseServiceTest extends PluginTest {
 
         BrowseService service = new BrowseService(context, new JcrPluginConfig(new JcrNodeModel("/test/config")),
                 new JcrNodeModel("/test/content/document"));
-        
+
         root.getNode("test").addNode("other", "hippostd:folder");
 
         JavaPluginConfig browseSectionClone = new JavaPluginConfig(new JcrPluginConfig(new JcrNodeModel("/test/browseplugin")));

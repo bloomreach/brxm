@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -187,7 +187,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
      * When a Version is supplied from the version storage, the physical node is used.
      */
     public void browse(IModel<Node> model) {
-        IModel<Node> document = getPhysicalNode(model);
+        IModel<Node> document = getHandleOrFolder(model);
         if (document.getObject() == null) {
             return;
         }
@@ -201,7 +201,7 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                 closestMatch = match;
                 closestName = sections.getActiveSection();
             }
-        }		
+        }
         for (String name : sections.getSections()) {
             IBrowserSection section = sections.getSection(name);
             Match match = section.contains(document);
@@ -239,8 +239,9 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
         documentService.detach();
     }
 
-    // retrieve the physical node when the node is versioned
-    private IModel<Node> getPhysicalNode(IModel<Node> model) {
+    // retrieve the (unversioned) handle when the node is versioned,
+    // the handle when the node is a document variant or the folder otherwise.
+    private IModel<Node> getHandleOrFolder(IModel<Node> model) {
         Node node = model.getObject();
         if (node != null) {
             try {
@@ -267,6 +268,11 @@ public class BrowseService implements IBrowseService<IModel<Node>>, IDetachable 
                             }
                         }
                         throw infe;
+                    }
+                } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    Node parent = node.getParent();
+                    if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
+                        return new JcrNodeModel(parent);
                     }
                 }
             } catch (RepositoryException ex) {
