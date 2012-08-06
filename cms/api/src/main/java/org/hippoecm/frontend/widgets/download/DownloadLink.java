@@ -15,10 +15,8 @@
  */
 package org.hippoecm.frontend.widgets.download;
 
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.markup.html.link.Link;
