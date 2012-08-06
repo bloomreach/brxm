@@ -211,7 +211,6 @@ public class HippoRepositoryFactory {
     }
 
     /**
-     * @exclude
      * <b>This call is not part of the API.</b><p/>
      * @param clazz the class object for which to obtain a reference to the manifest
      * @return the URL of the manifest found, or null if it could not be obtained

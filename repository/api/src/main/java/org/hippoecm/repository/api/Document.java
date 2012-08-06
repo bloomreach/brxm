@@ -41,7 +41,6 @@ public class Document extends Object implements Serializable, Cloneable {
     }
 
     /**
-     * @exclude
      * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
      * @param identity the uuid of the backing {@link javax.jcr.Node} in the repository that this document instance represents.
      */
@@ -84,7 +83,6 @@ public class Document extends Object implements Serializable, Cloneable {
     }
 
     /**
-     * @exclude
      * <b>This call is not part of the API, in no circumstance should this call be used.</b><p/>
      * @param uuid the UUID of the backing {@link javax.jcr.Node} this document instance represents
      */
@@ -93,7 +91,6 @@ public class Document extends Object implements Serializable, Cloneable {
     }
 
     /**
-     * @exclude
      * <b>This call is not part of the API, this call is not useful for extension programmers, and should normally
      * not be used.</b><p/>
      * @return the document instance from which this document was cloned

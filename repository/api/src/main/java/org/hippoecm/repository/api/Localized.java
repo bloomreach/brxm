@@ -120,7 +120,6 @@ public final class Localized implements Serializable {
 
     /**
      * DO NOT USE THIS METHOD IS NOT PART OF THE PUBLIC API
-     * @exclude
      */
     public Localized matches(Localized candidate1, Localized candidate2) {
         if (candidate1 == null && candidate2 == null)
@@ -190,7 +189,6 @@ public final class Localized implements Serializable {
 
     /**
      * DO NOT USE THIS METHOD IS NOT PART OF THE PUBLIC API.
-     * @exclude
      */
     public void setTranslation(Node node) throws RepositoryException{
         if(node.isNodeType(HippoNodeType.NT_TRANSLATION)) {

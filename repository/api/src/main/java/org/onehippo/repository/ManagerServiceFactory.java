@@ -27,12 +27,9 @@ import org.hippoecm.repository.api.HippoSession;
  * will provide the right implementation for the ManagerService depending on whether the
  * JCR session is a {@link HippoSession}, a plain Jackrabbit JCR session or a Jackrabbit
  * RMI based JCR session.
- * @exclude
  */
 public class ManagerServiceFactory {
-    /**
-     * @exclude
-     */
+
     static WeakHashMap<Session, ManagerService> services = new WeakHashMap<Session, ManagerService>();
 
     /**

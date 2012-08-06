@@ -18,8 +18,7 @@ package org.hippoecm.repository.api;
 import java.util.Map;
 
 /**
- * @exclude
- * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
+ * <b>This class is not (yet) part of the API, but under evaluation.</b><p/>
  * A {@see java.util.Map} enhanced with a number of methods to obtain more type-safe information from the Map.
  */
 public interface ValueMap extends Map {

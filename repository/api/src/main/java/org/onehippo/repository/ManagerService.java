@@ -31,7 +31,6 @@ import org.hippoecm.repository.api.WorkflowManager;
  * access to these services.  The HippoWorkspace is really a Hippo
  * specific implementation, while some of the additional services can
  * also be retrieved from a plain Jackrabbit JCR session.
- * @exclude
  */
 public interface ManagerService {
     /**

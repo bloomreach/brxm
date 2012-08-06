@@ -103,7 +103,6 @@ public interface HippoRepository {
     public Repository getRepository();
 
     /**
-     * @exclude
      * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
      * Returns a java.util.Map representation of the subtree starting with the indicated node in the repository.
      * @param node the starting node of the subtree to map as a java.util.Map
@@ -113,7 +112,6 @@ public interface HippoRepository {
     public RepositoryMap getRepositoryMap(Node node) throws RepositoryException;
 
     /**
-     * @exclude
      * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
      * Returns a ValueMap (which is an enhanced java.util.Map interface) representation of the subtree starting
      * with the indicated node in the repository.
@@ -124,8 +122,7 @@ public interface HippoRepository {
     public ValueMap getValueMap(Node node) throws RepositoryException;
 
     /**
-     * @exclude
-     * DO NOT USE THIS CALL IS NOT YET PART OF THE API AS IT IS CURRENTLY UNDER EVALUATION
+     * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
      * returns true whenever the session has grown to such an extend that it is advisable to persist or flush changes.
      * @param session the session for which to compute the resource consumption
      * @param interests the states for which the threshold should be inspected, or null for any state

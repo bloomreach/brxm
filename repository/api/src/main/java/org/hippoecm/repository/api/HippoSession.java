@@ -106,7 +106,6 @@ public interface HippoSession extends Session {
     public NodeIterator pendingChanges() throws RepositoryException;
 
     /**
-     * @exclude
      * <b>This call is not (yet) part of the API, but under evaluation.</b>
      * Export a dereferenced view of a node.
      *
@@ -123,7 +122,6 @@ public interface HippoSession extends Session {
             throws IOException, PathNotFoundException, RepositoryException;
 
     /**
-     * @exclude
      * <b>This call is not (yet) part of the API, but under evaluation.</b>
      * Import a dereferenced export.
      * @param parentAbsPath the parent node below which to in
@@ -159,7 +157,6 @@ public interface HippoSession extends Session {
     public XAResource getXAResource();
 
     /**
-     * @exclude
      * <b>This call is not (yet) part of the API, but under evaluation.</b>
      * Probably it will change into getSessionClassLoader(Node) or similar.
      * Get a classloader which uses the JCR  repository to load the classes from.
@@ -169,7 +166,6 @@ public interface HippoSession extends Session {
     public ClassLoader getSessionClassLoader() throws RepositoryException;
     
     /**
-     * @exclude
      * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
      * This registers a callback at a JCR session, which will be called when the
      * session is being logged out.  Either by an explicit call of the user
@@ -183,7 +179,6 @@ public interface HippoSession extends Session {
     public void registerSessionCloseCallback(CloseCallback callback);
     
     /**
-     * @exclude
      * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
      * The interface of the callback handler that is called when the session is
      * logged out.

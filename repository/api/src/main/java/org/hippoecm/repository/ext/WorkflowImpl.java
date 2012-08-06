@@ -36,7 +36,6 @@ public abstract class WorkflowImpl implements Remote, Workflow
 
     /**
      * Work-flow context in use, which ought to be not public accessible.  Use getWorkflowContext instead.
-     * @exclude
      */
     protected WorkflowContext context;
 
@@ -48,9 +47,8 @@ public abstract class WorkflowImpl implements Remote, Workflow
     }
 
     /**
-     * This method should never be invoked by extensions or applications.
+     * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
      * @param context the new context that should be used
-     * @exclude
      */
     final public void setWorkflowContext(WorkflowContext context) {
         this.context = context;

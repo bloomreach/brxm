@@ -24,7 +24,6 @@ import javax.jcr.RepositoryException;
 
 /**
  * DO NOT USE THIS CLASS!  This class is NOT part of the API.
- * @exclude
  */
 public class VMHippoRepository {
 
@@ -65,7 +64,6 @@ public class VMHippoRepository {
     }
 
     /** DO NOT USE THIS METHOD!  This class and all its methods are NOT part of the API.
-     * @exclude
      * @param location location of the repository
      * @param repository the location to register at the location
      */

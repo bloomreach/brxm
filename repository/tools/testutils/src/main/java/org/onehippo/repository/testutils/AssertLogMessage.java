@@ -62,7 +62,6 @@ public class AssertLogMessage extends Handler {
         }
     }
 
-    /** @exclude */
     @Override
     public void publish(LogRecord record) {
         if (expectations != null) {
@@ -81,12 +80,10 @@ public class AssertLogMessage extends Handler {
         }
     }
 
-    /** @exclude */
     @Override
     public void flush() {
     }
 
-    /** @exclude */
     @Override
     public void close() throws SecurityException {
     }

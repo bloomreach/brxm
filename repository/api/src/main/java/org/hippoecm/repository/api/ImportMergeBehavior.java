@@ -16,7 +16,6 @@
 package org.hippoecm.repository.api;
 
 /**
- * @exclude
  * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
  * The possible actions specified by the <code>mergeBehavior</code>
  * parameter in {@link HippoSession#importDereferencedXML}.

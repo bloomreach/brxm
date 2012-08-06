@@ -16,7 +16,6 @@
 package org.hippoecm.repository.ext;
 
 /**
- * @exclude
  * <b>This interface is not part of the API, and should never be implemented by classes other than in the core repository implementation.</b><p/>
  * This interface is used as a marker interface indicating that the workflow is implemented by the repository itself.
  */
