@@ -448,7 +448,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         if (!dryRun) {
                             session.save();
                         }
-                        if (restore) {
+                        if (restore && backupContextNode != null) {
                             restoreNodes(session, contextNodePath, backupContextNode, dryRun);
                         }
                     } else {
@@ -469,10 +469,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private Node backupContextNode(final Session session, final String contextNodePath) throws RepositoryException {
-        final Node contextNode = session.getNode(contextNodePath);
-        final String tempNodePath = TEMP_PATH + "/" + contextNode.getIdentifier();
-        JcrUtils.copy(session, contextNodePath, tempNodePath);
-        return session.getNode(tempNodePath);
+        if (session.nodeExists(contextNodePath)) {
+            final Node contextNode = session.getNode(contextNodePath);
+            final String tempNodePath = TEMP_PATH + "/" + contextNode.getIdentifier();
+            JcrUtils.copy(session, contextNodePath, tempNodePath);
+            return session.getNode(tempNodePath);
+        }
+        return null;
     }
 
     private void restoreNodes(final Session session, final String contextNodePath, final Node backupNode, final boolean dryRun) throws RepositoryException {
