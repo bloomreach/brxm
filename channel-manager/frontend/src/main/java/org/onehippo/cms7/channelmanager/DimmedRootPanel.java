@@ -24,7 +24,6 @@ import org.json.JSONObject;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 
-// @ExtClass("Hippo.ChannelManager.RootPanel")
 public class DimmedRootPanel extends ExtPanel {
 
     private static final long serialVersionUID = 1L;
