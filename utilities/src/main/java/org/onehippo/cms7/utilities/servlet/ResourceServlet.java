@@ -439,6 +439,11 @@ public class ResourceServlet extends HttpServlet {
             response.setDateHeader(HTTP_EXPIRES_HEADER, System.currentTimeMillis() + cacheTimeout * 1000L);
             // Http 1.1 header
             response.setHeader(HTTP_CACHE_CONTROL_HEADER, "max-age=" + cacheTimeout);
+        } else {
+            // Http 1.0 header
+            response.setDateHeader(HTTP_EXPIRES_HEADER, -1);
+            // Http 1.1 header
+            response.setHeader(HTTP_CACHE_CONTROL_HEADER, "no-cache");
         }
     }
     
