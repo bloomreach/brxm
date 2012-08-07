@@ -41,6 +41,7 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
         this.pickerConfig = config.pickerConfig;
         this.defaultValue = config.defaultValue;
         this.renderStripValue = config.renderStripValue;
+        this.renderTextFieldInvalid = false;
         this.setValue(this.defaultValue);
 
         Hippo.ChannelManager.ExtLinkPicker.superclass.constructor.call(this, config);
@@ -122,11 +123,19 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
     },
 
     validateRenderTextField: function() {
-        this.renderTextField.removeClass('x-form-invalid');
+        if (this.rendered) {
+            this.renderTextField.removeClass('x-form-invalid');
+        } else {
+            this.renderTextFieldInvalid = false;
+        }
     },
 
     invalidateRenderTextField: function() {
-        this.renderTextField.addClass('x-form-invalid');
+        if (this.rendered) {
+            this.renderTextField.addClass('x-form-invalid');
+        } else {
+            this.renderTextFieldInvalid = true;
+        }
     },
 
     onRender: function() {
@@ -148,6 +157,9 @@ Hippo.ChannelManager.ExtLinkPicker = Ext.extend(Ext.form.TwinTriggerField,  {
         }, true);
         this.renderTextField.addClass('x-form-text');
         this.renderTextField.addClass('x-form-field');
+        if (this.renderTextFieldInvalid) {
+            this.renderTextField.addClass('x-form-invalid');
+        }
     }
 
 });
