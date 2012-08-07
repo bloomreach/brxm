@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-// *************************************************************************
-// NOTE: REMOVE updater module with frontend-v24 from the pom.xml as end tag after any micro or minor change
-// in the CND below
-// *************************************************************************
-
 <rep='internal'>
 <jcr='http://www.jcp.org/jcr/1.0'>
 <nt='http://www.jcp.org/jcr/nt/1.0'>
