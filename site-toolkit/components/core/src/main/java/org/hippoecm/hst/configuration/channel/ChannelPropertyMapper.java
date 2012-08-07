@@ -248,7 +248,7 @@ public class ChannelPropertyMapper {
                 log.warn("Cannot store a Integer (Long in jcr) '{}' for '{}'. Store default value instead", value, propDef.getName());
                 return defaultValueToJcr(vf, propDef);
             } else {
-                return vf.createValue((Long) value);
+                return vf.createValue(((Integer)value).longValue());
             }
         } else if (value instanceof Long) {
             if (propDef.getValueType() != HstValueType.LONG) {
