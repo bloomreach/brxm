@@ -54,7 +54,6 @@
     <jmxremote.port>9875</jmxremote.port>
 
     <dependency.solr.version>3.5.0</dependency.solr.version>
-    <forge.gallerypicker.version>1.10.00</forge.gallerypicker.version>
   </properties>
 
   <repositories>
@@ -68,10 +67,6 @@
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
-    </repository>
-    <repository>
-      <id>hippogallerypicker</id>
-      <url>http://forge.onehippo.org/svn/gallerypicker/maven2</url>
     </repository>
   </repositories>
 
@@ -152,13 +147,6 @@
           </exclusion>
         </exclusions>
       </dependency>
-
-      <dependency>
-        <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
-        <artifactId>gallerypicker</artifactId>
-        <version>${forge.gallerypicker.version}</version>
-      </dependency>
-
 
     </dependencies>
   </dependencyManagement>
