@@ -18,6 +18,7 @@ package org.hippoecm.hst.jaxrs.services;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.SpringComponentManager;
 import org.junit.After;
 import org.junit.Before;
@@ -50,6 +51,7 @@ public abstract class AbstractJaxrsSpringTestCase
     public void tearDown() throws Exception {
         this.componentManager.stop();
         this.componentManager.close();
+        HstServices.setComponentManager(null);
     }
 
     /**

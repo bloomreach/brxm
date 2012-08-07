@@ -76,6 +76,7 @@ public abstract class AbstractSpringTestCase
     public void tearDown() throws Exception {
         this.componentManager.stop();
         this.componentManager.close();
+        HstServices.setComponentManager(null);
     }
 
     /**

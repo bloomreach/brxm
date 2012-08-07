@@ -27,6 +27,7 @@ import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.session.HttpSessionEventPublisher;
+import org.junit.After;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
@@ -35,6 +36,11 @@ import org.springframework.mock.web.MockServletContext;
  * TestHttpSessionEventPublisher
  */
 public class TestHttpSessionEventPublisher {
+
+    @After
+    public void tearDown() throws Exception {
+        HstServices.setComponentManager(null);
+    }
 
     @Test
     public void testHttpSessionCreated() throws Exception {

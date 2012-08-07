@@ -49,6 +49,8 @@ public class TestDefaultPipeline extends AbstractSpringTestCase {
     protected HttpServletRequest servletRequest;
     protected HttpServletResponse servletResponse;
 
+
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
