@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public enum HstValueType {
 
-    STRING(""), BOOLEAN(false), INTEGER(0), DOUBLE(0.0), DATE();
+    STRING(""), BOOLEAN(false), INTEGER(0), DOUBLE(0.0), LONG(0.0), DATE();
 
     static final Logger log = LoggerFactory.getLogger(HstValueType.class);
     
@@ -56,6 +56,13 @@ public enum HstValueType {
                 } catch (NumberFormatException e) {
                     log.debug("Could not parse '{}' to a int, taking default value of 0", string);
                     return 0;
+                }
+            case LONG:
+                try {
+                    return Long.parseLong(string);
+                } catch (NumberFormatException e) {
+                    log.debug("Could not parse '{}' to a Long, taking default value of 0", string);
+                    return 0L;
                 }
             case DOUBLE:
                 try {

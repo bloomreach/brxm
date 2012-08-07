@@ -154,7 +154,7 @@ public class ChannelPropertyMapper {
         }
         for (HstPropertyDefinition definition : definitions) {
             if (properties.containsKey(definition.getName()) && properties.get(definition.getName()) != null) {
-                setHstValueToJcr(mountNode, definition.getName(), properties.get(definition.getName()));
+                setHstValueToJcr(mountNode, definition, properties.get(definition.getName()));
             }
         }
     }
@@ -214,35 +214,108 @@ public class ChannelPropertyMapper {
         }
     }
 
-    private static void setHstValueToJcr(Node node, String name, Object value) throws RepositoryException {
+    private static void setHstValueToJcr(Node node, HstPropertyDefinition propDef, Object value) throws RepositoryException {
         ValueFactory vf = node.getSession().getValueFactory();
         if (value instanceof List) {
             Value[] values = new Value[((List) value).size()];
             int i = 0;
             for (Object val : (List) value) {
-                values[i++] = javaToJcr(vf, val);
+                values[i++] = javaToJcr(vf, val, propDef);
             }
-            node.setProperty(name, values);
+            node.setProperty(propDef.getName(), values);
         } else {
-            node.setProperty(name, javaToJcr(vf, value));
+            node.setProperty(propDef.getName(), javaToJcr(vf, value, propDef));
         }
     }
 
-    private static Value javaToJcr(ValueFactory vf, Object value) throws RepositoryException {
+    private static Value javaToJcr(ValueFactory vf, Object value, HstPropertyDefinition propDef) throws RepositoryException {
         if (value instanceof String) {
-            return vf.createValue((String) value);
+            if (propDef.getValueType() != HstValueType.STRING) {
+                log.warn("Cannot store a String '{}' for '{}'. Store default value instead", value, propDef.getName());
+                return defaultValueToJcr(vf, propDef);
+            } else {
+                return vf.createValue((String) value);
+            }
         } else if (value instanceof Boolean) {
-            return vf.createValue((Boolean) value);
+            if (propDef.getValueType() != HstValueType.BOOLEAN) {
+                log.warn("Cannot store a Boolean '{}' for '{}'. Store default value instead", value, propDef.getName());
+                return defaultValueToJcr(vf, propDef);
+            } else {
+                return vf.createValue((Boolean) value);
+            }
         } else if (value instanceof Integer) {
-            return vf.createValue((Integer) value);
+            if (propDef.getValueType() != HstValueType.INTEGER) {
+                log.warn("Cannot store a Integer (Long in jcr) '{}' for '{}'. Store default value instead", value, propDef.getName());
+                return defaultValueToJcr(vf, propDef);
+            } else {
+                return vf.createValue((Long) value);
+            }
         } else if (value instanceof Long) {
-            return vf.createValue((Long) value);
+            if (propDef.getValueType() != HstValueType.LONG) {
+                log.warn("Cannot store a Long '{}' for '{}'. Store default value instead", value, propDef.getName());
+                return defaultValueToJcr(vf, propDef);
+            } else {
+                return vf.createValue((Long) value);
+            }
         } else if (value instanceof Double) {
-            return vf.createValue((Double) value);
+            if (propDef.getValueType() != HstValueType.DOUBLE) {
+                log.warn("Cannot store a Double '{}' for '{}'. Store default value instead", value, propDef.getName());
+                return defaultValueToJcr(vf, propDef);
+            } else {
+                return vf.createValue((Double) value);
+            }
         } else if (value instanceof Calendar) {
-            return vf.createValue((Calendar) value);
+            if (propDef.getValueType() != HstValueType.DATE) {
+                log.warn("Cannot store a Calendar '{}' for '{}'. Store default value instead", value, propDef.getName());
+                return defaultValueToJcr(vf, propDef);
+            } else {
+                return vf.createValue((Calendar) value);
+            }
         } else {
             throw new RepositoryException("Unable to find valid value type for " + value);
+        }
+    }
+
+    private static Value defaultValueToJcr(ValueFactory vf, HstPropertyDefinition propDef) throws RepositoryException {
+        switch (propDef.getValueType()) {
+            case STRING:
+                if (!(propDef.getDefaultValue() instanceof String)) {
+                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    return vf.createValue("");
+                }
+                return vf.createValue((String) propDef.getDefaultValue());
+            case BOOLEAN:
+                if (!(propDef.getDefaultValue() instanceof Boolean)) {
+                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    return vf.createValue(false);
+                }
+                return vf.createValue((Boolean) propDef.getDefaultValue());
+            case DATE:
+                if (!(propDef.getDefaultValue() instanceof Calendar)) {
+                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    return vf.createValue(Calendar.getInstance());
+                }
+                return vf.createValue((Calendar) propDef.getDefaultValue());
+            case DOUBLE:
+                if (!(propDef.getDefaultValue() instanceof Double)) {
+                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    return vf.createValue(0D);
+                }
+                return vf.createValue((Double) propDef.getDefaultValue());
+            case INTEGER:
+                if (!(propDef.getDefaultValue() instanceof Integer)) {
+                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    return vf.createValue(0L);
+                }
+                return vf.createValue(((Integer)propDef.getDefaultValue()).longValue());
+            case LONG:
+                if (!(propDef.getDefaultValue() instanceof Long)) {
+                    log.warn("HstPropertyDefinition Default value '{}' incompatible with HstPropertyDefinition type '{}'. Return default value for type", propDef.getDefaultValue(), propDef.getValueType());
+                    return vf.createValue(0L);
+                }
+                return vf.createValue((Long)propDef.getDefaultValue());
+            default:
+                return null;
         }
     }
 }

@@ -46,6 +46,10 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         @Parameter(name = "test-integer")
         int getInteger();
     }
+    public static interface TestInfoIntegerWithDefaultValue extends ChannelInfo {
+        @Parameter(name = "test-integer", defaultValue = "4")
+        int getInteger();
+    }
 
     public static interface TestInfoDefaultValuesMissing extends ChannelInfo {
         @Parameter(name = "integer")
@@ -114,7 +118,7 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
     public void simplePropertyIsStoredWithOwnName() throws RepositoryException {
         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfo.class);
         Map<String, Object> values = new HashMap<String, Object>();
-        values.put(definitions.get(0).getName(), "aap");
+        values.put("test-name", "aap");
         ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
 
         assertTrue(getSession().itemExists("/test/test-name"));
@@ -126,12 +130,42 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
     public void integerPropertyIsStored() throws RepositoryException {
         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoInteger.class);
         Map<String, Object> values = new HashMap<String, Object>();
-        values.put(definitions.get(0).getName(), 42);
+        values.put("test-integer", 42);
         ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
 
         assertTrue(getSession().itemExists("/test/test-integer"));
         Property integerProperty = (Property) getSession().getItem("/test/test-integer");
         assertEquals(42, integerProperty.getLong());
+    }
+
+    @Test
+    public void IncorrectIntegerPropertyIsStored() throws RepositoryException {
+        List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoInteger.class);
+        Map<String, Object> values = new HashMap<String, Object>();
+        // foo is not a correct integer
+        values.put("test-integer", "foo");
+        ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
+
+        assertTrue(getSession().itemExists("/test/test-integer"));
+        Property integerProperty = (Property) getSession().getItem("/test/test-integer");
+        // we should get the default value for the integer which is 0 because not present in
+        // @Parameter(name = "test-integer")
+        assertEquals(0, integerProperty.getLong());
+    }
+
+    @Test
+    public void IncorrectIntegerPropertyIsStoredButDefaultValuePresent() throws RepositoryException {
+        List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoIntegerWithDefaultValue.class);
+        Map<String, Object> values = new HashMap<String, Object>();
+        // foo is not a correct integer
+        values.put("test-integer", "foo");
+        ChannelPropertyMapper.saveProperties(getSession().getNode("/test"), definitions, values);
+
+        assertTrue(getSession().itemExists("/test/test-integer"));
+        Property integerProperty = (Property) getSession().getItem("/test/test-integer");
+        // we should get the default value for the integer which is 4 because of
+        //  @Parameter(name = "test-integer", defaultValue = "4")
+        assertEquals(4L, integerProperty.getLong());
     }
     
     @Test
