@@ -242,7 +242,7 @@ public class HstRequestUtils {
 
     /**
      * Returns the rendering host of the current request, i.e. the host at which the request output is rendered.
-     * The rendering host can be set as a request parameter, or be present in the HTTP session. The request paramater
+     * The rendering host can be set as a request parameter, or be present in the HTTP session. The request parameter
      * value has precedence over the value in the HTTP session.
      *
      * @param request the servlet request
