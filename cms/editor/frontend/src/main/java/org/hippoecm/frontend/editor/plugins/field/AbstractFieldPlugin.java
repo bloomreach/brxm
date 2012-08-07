@@ -72,7 +72,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private final int maxItems;
     private IPluginConfig parameters;
 
-    static abstract class ValidationFilter extends Model<String> {
+    abstract static class ValidationFilter extends Model<String> {
         private static final long serialVersionUID = 1L;
 
         private boolean valid = true;
@@ -89,11 +89,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
         @Override
         public String getObject() {
-            if (valid) {
-                return "";
-            } else {
-                return "invalid";
-            }
+            return valid ? "" : "invalid";
         }
     }
 
@@ -129,7 +125,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
         helper = new FieldPluginHelper(context, config);
         if (helper.getValidationModel() != null && helper.getValidationModel() instanceof IObservable) {
-            context.registerService(new Observer((IObservable) helper.getValidationModel()) {
+            context.registerService(new Observer<IObservable>((IObservable) helper.getValidationModel()) {
                 private static final long serialVersionUID = 1L;
 
                 public void onEvent(Iterator events) {
@@ -186,30 +182,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
             IFieldDescriptor field = helper.getField();
             if (field != null && !doesTemplateSupportValidation()) {
-                final ValidationFilter holder = new ValidationFilter() {
+                final ValidationFilter filter = new ValidationFilter() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onValidation(IValidationResult validation) {
-                        boolean valid = true;
-                        if (!validation.isValid()) {
-                            IFieldDescriptor field = getFieldHelper().getField();
-                            for (Violation violation : validation.getViolations()) {
-                                Set<ModelPath> paths = violation.getDependentPaths();
-                                for (ModelPath path : paths) {
-                                    if (path.getElements().length > 0) {
-                                        ModelPathElement first = path.getElements()[0];
-                                        if (first.getField().equals(field)) {
-                                            valid = false;
-                                        }
-                                        break;
-                                    }
-                                }
-                                if (!valid) {
-                                    break;
-                                }
-                            }
-                        }
+                        boolean valid = isFieldValid(validation);
                         if (valid != isValid()) {
                             redraw();
                             setValid(valid);
@@ -218,16 +196,41 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
                 };
                 if (validationModel != null && validationModel.getObject() != null) {
-                    holder.setValid(validationModel.getObject().isValid());
+                    IValidationResult validationResult = validationModel.getObject();
+                    filter.setValid(isFieldValid(validationResult));
                 }
-                addValidationFilter(this, holder);
+                addValidationFilter(this, filter);
 
                 managedValidation = true;
                 if (!field.isMultiple()) {
-                    add(new CssClassAppender(holder));
+                    add(new CssClassAppender(filter));
                 }
             }
         }
+    }
+
+    /**
+     * Checks if a field has any violations attached to it.
+     *
+     * @param validation The IValidationResult that contains all violations that occurred for this editor
+     * @return true if there are no violations present or non of the validation belong to the current field
+     */
+    private boolean isFieldValid(final IValidationResult validation) {
+        if(!validation.isValid()) {
+            IFieldDescriptor field = getFieldHelper().getField();
+            for (Violation violation : validation.getViolations()) {
+                Set<ModelPath> paths = violation.getDependentPaths();
+                for (ModelPath path : paths) {
+                    if (path.getElements().length > 0) {
+                        ModelPathElement first = path.getElements()[0];
+                        if (first.getField().equals(field)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     protected IComparer<?> getComparer() {
@@ -321,7 +324,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 ITypeDescriptor subType = field.getTypeDescriptor();
                 AbstractProvider<P, C> provider = newProvider(field, subType, model);
                 if (IEditor.Mode.EDIT == mode && (provider.size() == 0)
-                        && (!field.isMultiple() || field.getValidators().contains("required")) && 
+                        && (!field.isMultiple() || field.getValidators().contains("required")) &&
                         !field.getValidators().contains("optional")) {
                     provider.addNew();
                 }
@@ -347,11 +350,11 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     protected boolean canAddItem() {
         IFieldDescriptor field = getFieldHelper().getField();
-        if (IEditor.Mode.EDIT == mode && (field != null)) {
+        if (IEditor.Mode.EDIT == mode && field != null) {
             if (field.isMultiple()) {
                 if (getMaxItems() > 0) {
                     return getNumberOfItems() < getMaxItems();
-                }
+            }
                 return true;
             }
 
@@ -469,7 +472,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         String caption = getPluginConfig().getString("caption");
         String captionKey = field != null ? field.getName() : caption;
         if (captionKey == null) {
-            return new Model("undefined");
+            return new Model<String>("undefined");
         }
         if (caption == null && field != null && field.getName().length() >= 1) {
             caption = field.getName().substring(0, 1).toUpperCase() + field.getName().substring(1);

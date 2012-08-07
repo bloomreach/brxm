@@ -1,23 +1,17 @@
-
 .hippo-preview-document-wrapper {
 }
 
 .hippo-editor {
   background: #f5f5f5;
-  padding-top: 0px;
-  padding-bottom: 20px;
-  padding-left: 0px;
-  padding-right: 20px;
+  padding: 0 20px 20px 0;
 }
 
 .hippo-preview-document ol {
-  list-style-type: decimal;
-  list-style-position: inside
+  list-style: decimal inside;
 }
 
 .hippo-preview-document ul {
-  list-style-type: disc;
-  list-style-position: inside
+  list-style: disc inside;
 }
 
 .hippo-preview-document strong {
@@ -30,13 +24,13 @@
 
 /* override some editors styling in preview mode */
 .hippo-editor .hippo-preview-document .hippo-editor-field .hippo-editor-field-subfield {
-  padding: 0px
+  padding: 0
 }
 
 .hippo-editor .hippo-preview-document .hippo-editor-field {
   font-size: 12px;
   line-height: 18px;
-  font-family: arial, sans-serif, helvetica;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .hippo-editor .hippo-editor-large .hippo-editor-field {
@@ -88,7 +82,7 @@
 .hippo-editor .hippo-editor-template-field-edit .hippo-editor-field-title {
   font-size: 11px;
   font-weight: bold;
-  font-family: Tahoma, Arial, sans-serif, Helvetica;
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
   font-style: normal;
   color: #666;
   margin: 7px 10px;
@@ -115,7 +109,7 @@
 /* field styling */
 .hippo-editor-field {
   padding: 8px;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 .hippo-editor .hippo-editor-field-subfield {
@@ -146,7 +140,7 @@
   font-size: 15px;
   font-weight: normal;
   margin: 0 0 3px 8px;
-  font-family: Georgia, Trebuchet MS, Arial, sans-serif, Helvetica;
+  font-family: Georgia, Trebuchet MS, Arial, Helvetica, sans-serif;
   font-style: italic;
 }
 
@@ -166,7 +160,7 @@
   font-size: 11px;
   font-weight: bold;
   margin-bottom: 4px;
-  font-family: Tahoma, Arial, sans-serif, Helvetica;
+  font-family: Tahoma, Arial, Helvetica, sans-serif;
   font-style: normal;
 }
 
@@ -183,7 +177,7 @@
   border: none;
   color: #333333;
   margin: 2px;
-  font-family: arial, sans-serif, helvetica;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 .hippo-editor-large .hippo-window-form input,
@@ -256,7 +250,7 @@
 }
 
 .hippo-editor .hippo-editor-field-subfield-item .hippo-editor-field-datepicker {
-  padding: 5px 0px;
+  padding: 5px 0;
 }
 
 .hippo-editor .hippo-editor-field-subfield .dialog-link {
@@ -280,7 +274,7 @@
 
 /* field template editing */
 .hippo-editor-template-field {
-  padding: 0px;
+  padding: 0;
   background-color: transparent;
   border: 2px solid #bbb;
 }
@@ -384,8 +378,7 @@
 
 .hippo-editor .hippo-editor-template-field-new li span em,
 .hippo-editor .hippo-editor-template-field-new li a {
-  background-image: url("images/icons/workflow-16.png");
-  background-repeat: no-repeat;
+  background: url("images/icons/workflow-16.png") no-repeat;
   padding-left: 20px;
   display: inline;
 }
@@ -396,10 +389,7 @@
 
 /* .hippo-editor .hippo-editor-template-field-new li span em{display: none;} */
 .hippo-editor-template-field-edit {
-  padding-left: 15px;
-  padding-right: 15px;
-  padding-top: 10px;
-  padding-bottom: 5px;
+  padding: 10px 15px 5px;
 }
 
 .hippo-editor-template-field-edit .hippo-editor-template-css {
@@ -503,7 +493,7 @@
 
 .hippo-editor .hippo-preview-document .hippo-editor-field-subfield-item {
   margin: 0;
-  border: 0px;
+  border: 0;
 }
 
 /* sub sub fields */
@@ -524,6 +514,7 @@
 .hippo-editor .hippo-editor-field .hippo-editor-field-subfield .hippo-editor-field-subfield.dialog-link {
   padding: 2px 0 2px 1px;
   margin-right: 100px;
+  background-color: transparent;
 }
 
 /* threepanes in editor */
@@ -538,8 +529,7 @@
 /* meta data */
 .hippo-editor .hippo-editor-metadata {
   background: #f2f2f2;
-  padding: 4px;
-  padding-top: 0px;
+  padding: 0 4px 4px;
   min-width: 200px;
 }
 
