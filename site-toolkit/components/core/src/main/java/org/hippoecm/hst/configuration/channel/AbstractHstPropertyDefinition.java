@@ -47,7 +47,6 @@ public abstract class AbstractHstPropertyDefinition implements HstPropertyDefini
     public Object getDefaultValue() {
         return defaultValue;
     }
-
     void setDefaultValue(Object defaultValue) {
         this.defaultValue = defaultValue;
     }

@@ -17,6 +17,9 @@ package org.hippoecm.hst.core.parameters;
 
 import java.util.Calendar;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Value type of an HstPropertyDefinition. STRING, BOOLEAN, INTEGER and DOUBLE types map to their obvious java
  * counterparts. DATE uses Calendar objects.
@@ -25,6 +28,8 @@ public enum HstValueType {
 
     STRING(""), BOOLEAN(false), INTEGER(0), DOUBLE(0.0), DATE();
 
+    static final Logger log = LoggerFactory.getLogger(HstValueType.class);
+    
     private final Object defaultValue;
 
     private HstValueType() {
@@ -46,12 +51,26 @@ public enum HstValueType {
             case BOOLEAN:
                 return Boolean.parseBoolean(string);
             case INTEGER:
-                return Integer.parseInt(string);
+                try {
+                    return Integer.parseInt(string);
+                } catch (NumberFormatException e) {
+                    log.debug("Could not parse '{}' to a int, taking default value of 0", string);
+                    return 0;
+                }
             case DOUBLE:
-                return Double.parseDouble(string);
+                try {
+                    return Double.parseDouble(string);
+                } catch (NumberFormatException e) {
+                    log.debug("Could not parse '{}' to a double, taking default value of 0", string);
+                    return 0D;
+                }
             case DATE: {
                 Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(Integer.parseInt(string));
+                try {
+                    cal.setTimeInMillis(Integer.parseInt(string));
+                } catch (NumberFormatException e) {
+                    log.debug("Could not parse '{}' to a long timestamp, returning current date", string);
+                }
                 return cal;
             }
         }

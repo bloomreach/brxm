@@ -28,6 +28,7 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.parameters.HstValueType;
@@ -163,15 +164,25 @@ public class ChannelPropertyMapper {
         if (property.isMultiple()) {
             List values = (List) (value = new LinkedList());
             for (Value jcrValue : property.getValues()) {
-                values.add(jcrToJava(jcrValue, pd.getValueType()));
+                try {
+                    values.add(jcrToJava(jcrValue, pd.getValueType()));
+                } catch (ValueFormatException e) {
+                    log.warn("Invalid channel property value '{}' found for property '{}'. Using default value", value.toString(), pd.getName());
+                    values.add(pd.getDefaultValue());
+                }
             }
         } else {
-            value = jcrToJava(property.getValue(), pd.getValueType());
+            try {
+                value = jcrToJava(property.getValue(), pd.getValueType());
+            } catch (ValueFormatException e) {
+                log.warn("Invalid channel property value '{}' found for property '{}'. Using default value", property.getValue().toString(), pd.getName());
+                value = pd.getDefaultValue();
+            }
         }
         return value;
     }
 
-    public static Object jcrToJava(final Value value, final HstValueType type) throws RepositoryException {
+    public static Object jcrToJava(final Value value, final HstValueType type) throws ValueFormatException, RepositoryException {
         if (type == null) {
             switch (value.getType()) {
                 case PropertyType.STRING:

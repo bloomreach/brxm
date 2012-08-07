@@ -35,7 +35,7 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
     private void init(Annotation propAnnotation,Class<?> returnType, Annotation[] annotations, boolean required, String defaultValue) {
         type = getHstType(returnType);
         this.required = required;
-        this.defaultValue = defaultValue;
+        this.defaultValue = type.from(defaultValue);
 
         for (Annotation annotation : annotations) {
             if (annotation == propAnnotation) {
