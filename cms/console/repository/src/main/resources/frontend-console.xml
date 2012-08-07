@@ -14,8 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="console">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="console">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:application</sv:value>
   </sv:property>
