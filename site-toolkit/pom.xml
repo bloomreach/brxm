@@ -107,7 +107,6 @@
     <jackson.version>1.9.5</jackson.version>
     <mime4j.version>0.6</mime4j.version>
     <atomikos.version>3.1.4</atomikos.version>
-    <forge.gallerypicker.version>1.10.00</forge.gallerypicker.version>
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
     <maven.plugin.jxr.version>2.2</maven.plugin.jxr.version>
     <maven.plugins.jaxb-schemagen.version>1.2</maven.plugins.jaxb-schemagen.version>
@@ -152,10 +151,6 @@
       <releases>
         <updatePolicy>never</updatePolicy>
       </releases>
-    </repository>
-    <repository>
-      <id>hippogallerypicker</id>
-      <url>http://forge.onehippo.org/svn/gallerypicker/maven2</url>
     </repository>
   </repositories>
 
@@ -696,13 +691,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-      
-      <dependency>
-        <groupId>org.onehippo.addon.frontend.gallerypicker</groupId>
-        <artifactId>gallerypicker</artifactId>
-        <version>${forge.gallerypicker.version}</version>
-      </dependency>
-      
+
       <!-- Test dependencies -->
     
       <dependency>
