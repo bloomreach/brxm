@@ -12,10 +12,4 @@ package-cms-dependencies/.classpath
 package-cms-dependencies/.project
 package-cms-dependencies/.settings
 package-cms-dependencies/target
-package-cms-ear/.classpath
-package-cms-ear/.pom.xml.swp
-package-cms-ear/.project
-package-cms-ear/.settings
-package-cms-ear/bin
-package-cms-ear/target
 /target

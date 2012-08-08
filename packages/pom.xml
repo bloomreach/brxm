@@ -70,7 +70,6 @@
   <modules>
     <module>package-app-dependencies</module>
     <module>package-cms-dependencies</module>
-    <module>package-cms-ear</module>
   </modules>
 
   <build>
