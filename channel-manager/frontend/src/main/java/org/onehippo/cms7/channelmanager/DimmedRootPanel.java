@@ -22,7 +22,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.wicketstuff.js.ext.ExtPanel;
-import org.wicketstuff.js.ext.util.ExtClass;
 
 public class DimmedRootPanel extends ExtPanel {
 
