@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 
@@ -31,10 +32,11 @@ public interface HstComponentFactory {
      * 
      * @param requestContainerConfig the HstContainer configuration
      * @param compConfig the HstComponent configuration
+     * @param mount the Mount to create the component instance for
      * @return the instance of the HstComponent
      * @throws HstComponentException
      */
-    HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig) throws HstComponentException;
+    HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException;
     
     /**
      * Returns arbitrary object instance from the HstComponent context.

@@ -70,7 +70,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         HstComponentException componentFactoryException = null;
 
         try {
-            component = compFactory.getComponentInstance(requestContainerConfig, compConfig);
+            component = compFactory.getComponentInstance(requestContainerConfig, compConfig, requestContext.getResolvedMount().getMount());
         } catch (HstComponentFatalException e) {
             throw e;
         } catch (HstComponentException e) {

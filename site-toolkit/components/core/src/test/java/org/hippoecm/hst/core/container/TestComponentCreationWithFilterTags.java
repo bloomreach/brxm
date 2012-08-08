@@ -15,13 +15,18 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
-import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createNiceMock;
@@ -37,29 +42,36 @@ public class TestComponentCreationWithFilterTags {
     public void testDefaultAndNonMatchingConditionsAreIgnored() {
         HstComponentWindowFactoryImpl factory = new HstComponentWindowFactoryImpl();
 
-        // set up request context
-        MockHstRequestContext requestContext = new MockHstRequestContext();
+        Mount mount = createNiceMock(Mount.class);
+        ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+
+        HstRequestContext requestContext = createNiceMock(HstRequestContext.class);
+        expect(requestContext.getResolvedMount()).andReturn(resolvedMount).anyTimes();
+        List<HstComponentWindowFilter> filters = new ArrayList<HstComponentWindowFilter>();
+        expect(requestContext.getComponentWindowFilters()).andReturn(filters).anyTimes();
+
         TreeSet<String> tags = new TreeSet<String>();
         tags.add("enabled");
-        requestContext.setComponentFilterTags(tags);
+        expect(requestContext.getComponentFilterTags()).andReturn(tags).anyTimes();
 
         // mock environment
         HstContainerConfig mockHstContainerConfig = createNiceMock(HstContainerConfig.class);
         HstComponentConfiguration compConfig = createNiceMock(HstComponentConfiguration.class);
         expect(compConfig.getReferenceName()).andReturn("refName");
         HstComponentFactory compFactory = createNiceMock(HstComponentFactory.class);
-        expect(compFactory.getComponentInstance(mockHstContainerConfig, compConfig)).andReturn(new GenericHstComponent());
+        expect(compFactory.getComponentInstance(mockHstContainerConfig, compConfig, mount)).andReturn(new GenericHstComponent());
 
         // container items with matching, non-matching and no tags
         TreeMap<String, HstComponentConfiguration> children = getContainerItemConfigurations();
         expect(compConfig.getChildren()).andReturn(children);
 
         // instantiate the window
-        replay(mockHstContainerConfig, compConfig, compFactory);
+        replay(mockHstContainerConfig, compConfig, compFactory, mount, resolvedMount, requestContext);
         HstComponentWindow window = factory.create(mockHstContainerConfig, requestContext, compConfig, compFactory);
 
         // verify results
-        verify(mockHstContainerConfig, compConfig, compFactory);
+        verify(mockHstContainerConfig, compConfig, compFactory, mount, resolvedMount, requestContext);
         assertNotNull(window.getChildWindow("enabled"));
         assertNull(window.getChildWindow("disabled"));
         assertNull(window.getChildWindow("default"));
@@ -69,26 +81,33 @@ public class TestComponentCreationWithFilterTags {
     public void testDefaultIsUsedWhenNoTagsAreProvided() {
         HstComponentWindowFactoryImpl factory = new HstComponentWindowFactoryImpl();
 
-        // set up request context
-        MockHstRequestContext requestContext = new MockHstRequestContext();
+        Mount mount = createNiceMock(Mount.class);
+        ResolvedMount resolvedMount = createNiceMock(ResolvedMount.class);
+        expect(resolvedMount.getMount()).andReturn(mount).anyTimes();
+
+        HstRequestContext requestContext = createNiceMock(HstRequestContext.class);
+        expect(requestContext.getResolvedMount()).andReturn(resolvedMount).anyTimes();
+        List<HstComponentWindowFilter> filters = new ArrayList<HstComponentWindowFilter>();
+        expect(requestContext.getComponentWindowFilters()).andReturn(filters).anyTimes();
+        expect(requestContext.getComponentFilterTags()).andReturn(new HashSet<String>()).anyTimes();
 
         // mock environment
         HstContainerConfig mockHstContainerConfig = createNiceMock(HstContainerConfig.class);
         HstComponentConfiguration compConfig = createNiceMock(HstComponentConfiguration.class);
         expect(compConfig.getReferenceName()).andReturn("refName");
         HstComponentFactory compFactory = createNiceMock(HstComponentFactory.class);
-        expect(compFactory.getComponentInstance(mockHstContainerConfig, compConfig)).andReturn(new GenericHstComponent());
+        expect(compFactory.getComponentInstance(mockHstContainerConfig, compConfig, mount)).andReturn(new GenericHstComponent());
 
         // container items with matching, non-matching and no tags
         TreeMap<String, HstComponentConfiguration> children = getContainerItemConfigurations();
         expect(compConfig.getChildren()).andReturn(children);
 
         // instantiate the window
-        replay(mockHstContainerConfig, compConfig, compFactory);
+        replay(mockHstContainerConfig, compConfig, compFactory, mount, resolvedMount, requestContext);
         HstComponentWindow window = factory.create(mockHstContainerConfig, requestContext, compConfig, compFactory);
 
         // verify results
-        verify(mockHstContainerConfig, compConfig, compFactory);
+        verify(mockHstContainerConfig, compConfig, compFactory, mount, resolvedMount, requestContext);
         assertNull(window.getChildWindow("enabled"));
         assertNull(window.getChildWindow("disabled"));
         assertNotNull(window.getChildWindow("default"));

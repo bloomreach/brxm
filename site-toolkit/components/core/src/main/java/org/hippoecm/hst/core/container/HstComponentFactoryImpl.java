@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -51,9 +52,15 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
         defaultHstComponentClassName = defaultHstComponentClass.getName();
     }
     
-    public HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig) throws HstComponentException {
+    public HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException {
         
-        String componentId = compConfig.getId() + compConfig.hashCode();
+        //String componentId = compConfig.getId() + compConfig.hashCode();
+        StringBuilder componentIdBuilder = new StringBuilder();
+        // account for the Mount info in the componentId since one and the same HstComponentConfiguration instance
+        // can be shared by multiple mounts
+        componentIdBuilder.append("mount:").append(mount.hashCode()).append('\uFFFF').append(mount.getIdentifier()).append('\uFFFF');
+        componentIdBuilder.append("compId:").append(compConfig.getId()).append('\uFFFF').append(compConfig.hashCode());
+        String componentId = componentIdBuilder.toString();
         HstComponent component = this.componentRegistry.getComponent(requestContainerConfig, componentId);
         
         if (component == null) {
