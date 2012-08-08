@@ -55,7 +55,9 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
             return HstValueType.STRING;
         } else if (type == Boolean.class || type == boolean.class) {
             return HstValueType.BOOLEAN;
-        } else if (type == Long.class || type == Integer.class || type == int.class || type == long.class) {
+        } else if (type == Long.class || type == long.class) {
+            return HstValueType.LONG;
+        } else if (type == Integer.class || type == int.class) {
             return HstValueType.INTEGER;
         } else if (type == Calendar.class) {
             return HstValueType.DATE;

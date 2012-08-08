@@ -315,7 +315,7 @@ public class ChannelPropertyMapper {
                 }
                 return vf.createValue((Long)propDef.getDefaultValue());
             default:
-                throw new RepositoryException("Unable to find valid value type for " + propDef.getDefaultValue());
+                throw new RuntimeException("Unexpected HstValueType " + propDef.getDefaultValue().getClass().getName());
         }
     }
 }
