@@ -58,12 +58,12 @@ public @interface JcrPath {
     boolean pickerRemembersLastVisited() default true;
 
     /**
-     * Types of nodes to be able to select in the picker. The default list only contains the type
-     * 'hippo:document'.
+     * Types of nodes to be able to select in the picker. The default list is empty, resulting in the default
+     * behavior of the picker.
      *
      * @return the node types to be able to select in the picker.
      */
-    String[] pickerSelectableNodeTypes() default { "hippo:document" };
+    String[] pickerSelectableNodeTypes() default {};
 
     /**
      * Whether this path is relative to the canonical content root path of the channel in which this annotation is
