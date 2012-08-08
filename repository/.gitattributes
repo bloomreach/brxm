@@ -22,16 +22,6 @@ api/src/site/apt/index.apt -text
 api/src/site/findbugs-exclude.xml svneol=native#text/plain
 api/src/site/site.xml svneol=native#text/plain
 api/src/test/java/org/hippoecm/repository/api/UriEncodingTest.java -text
-application/pom.xml svneol=native#text/plain
-application/src/main/webapp/META-INF/services/javax.xml.parsers.DocumentBuilderFactory -text
-application/src/main/webapp/META-INF/services/javax.xml.parsers.SAXParserFactory -text
-application/src/main/webapp/META-INF/services/javax.xml.transform.TransformerFactory -text
-application/src/main/webapp/META-INF/services/org.apache.commons.logging.LogFactory -text
-application/src/main/webapp/META-INF/services/org.apache.xerces.xni.parser.XMLParserConfiguration -text
-application/src/main/webapp/META-INF/services/org.xml.sax.driver -text
-application/src/main/webapp/WEB-INF/web.xml svneol=native#text/plain
-application/src/site/apt/index.apt -text
-application/src/site/site.xml svneol=native#text/plain
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/CopyWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflow.java -text
