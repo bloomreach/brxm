@@ -64,7 +64,7 @@ public class ExtLinkPicker extends ExtObservable {
 
     private static final String DEFAULT_PICKER_CONFIGURATION = "cms-pickers/documents";
     private static final boolean DEFAULT_PICKER_REMEMBERS_LAST_VISITED = true;
-    private static final String[] DEFAULT_PICKER_SELECTABLE_NODE_TYPES = {"hippo:document"};
+    private static final String[] DEFAULT_PICKER_SELECTABLE_NODE_TYPES = {};
     private static final String DEFAULT_PICKER_INITIAL_PATH = "";
     private static final String DEFAULT_PICKER_ROOT_PATH = "";
     private static final boolean DEFAULT_PICKER_PATH_IS_RELATIVE = false;
