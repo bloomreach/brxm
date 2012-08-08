@@ -58,10 +58,10 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
     private TemplateBuilder builder;
     private IClusterControl child;
     private IObserver<IObservable> templateObserver;
-    private String clusterModelId;
-    private String typeModelId;
-    private String selectedPluginId;
-    private String selectedExtPtId;
+    private final String clusterModelId;
+    private final String typeModelId;
+    private final String selectedPluginId;
+    private final String selectedExtPtId;
     private String engineId;
 
     private List<String> names = null;
@@ -167,7 +167,6 @@ public class TemplateTypeEditorPlugin extends RenderPlugin<Node> {
             builderParameters.put("wicket.model", clusterModelId);
             builderParameters.put("model.type", typeModelId);
             builderParameters.put("model.plugin", selectedPluginId);
-//            builderParameters.put("model.extensionpoint", selectedExtPtId);
             PreviewClusterConfig template = new PreviewClusterConfig(builder.getTemplate(), builderParameters,
                                                                      "edit".equals(mode));
 

@@ -47,8 +47,8 @@ public class BuilderContext implements IClusterable {
     protected final IPluginContext context;
     protected final IPluginConfig config;
 
-    private String pluginId;
-    private List<IBuilderListener> listeners;
+    private final String pluginId;
+    private final List<IBuilderListener> listeners;
 
     public BuilderContext(IPluginContext context, IPluginConfig config) {
         this.context = context;
