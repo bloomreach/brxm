@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +47,7 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         @Parameter(name = "test-integer")
         int getInteger();
     }
+
     public static interface TestInfoIntegerWithDefaultValue extends ChannelInfo {
         @Parameter(name = "test-integer", defaultValue = "4")
         int getInteger();
@@ -74,15 +76,21 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
     }
 
     public static interface TestInfoDefaultValuesPresentButWrongFormat extends ChannelInfo {
-        @Parameter(name = "integer")
+        @Parameter(name = "integer", defaultValue = "aaa")
         int getInteger();
-        @Parameter(name = "boolean")
+        @Parameter(name = "boolean", defaultValue = "bbb")
         boolean getBoolean();
-        @Parameter(name = "double")
+        @Parameter(name = "double", defaultValue = "ccc")
         double getDouble();
-        @Parameter(name = "calendar")
+        @Parameter(name = "calendar", defaultValue = "ddd")
         Calendar getCalendar();
     }
+
+    public static interface TestInfoUnsupportedReturnType extends ChannelInfo {
+        @Parameter(name = "test-bigdecimal")
+        BigDecimal getBigDecimal();
+    }
+
 
     @Before
     public void setUp() throws Exception {
@@ -139,7 +147,7 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void IncorrectIntegerPropertyIsStored() throws RepositoryException {
+    public void tryToStoreIncorrectIntegerProperty() throws RepositoryException {
         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoInteger.class);
         Map<String, Object> values = new HashMap<String, Object>();
         // foo is not a correct integer
@@ -152,9 +160,19 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         // @Parameter(name = "test-integer")
         assertEquals(0, integerProperty.getLong());
     }
+    
+    @Test 
+    public void testUnsupportedReturnType() {
+        try {
+            List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoUnsupportedReturnType.class);
+            fail("BigDecimal is not a supported return type");
+        } catch (RuntimeException ignour) {
+            // expected because BigDecimal is not supported in ChannelPropertyMapper
+        }
+    }
 
     @Test
-    public void IncorrectIntegerPropertyIsStoredButDefaultValuePresent() throws RepositoryException {
+    public void tryToStoreIncorrectIntegerPropertyButDefaultValuePresent() throws RepositoryException {
         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoIntegerWithDefaultValue.class);
         Map<String, Object> values = new HashMap<String, Object>();
         // foo is not a correct integer
@@ -231,8 +249,6 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
             }
         }
 
-
-        System.out.println("!!");
     }
 
 }

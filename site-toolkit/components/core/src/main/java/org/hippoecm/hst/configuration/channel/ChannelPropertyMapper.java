@@ -315,7 +315,7 @@ public class ChannelPropertyMapper {
                 }
                 return vf.createValue((Long)propDef.getDefaultValue());
             default:
-                return null;
+                throw new RepositoryException("Unable to find valid value type for " + propDef.getDefaultValue());
         }
     }
 }
