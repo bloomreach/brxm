@@ -125,7 +125,7 @@ public interface Filter extends BaseFilter{
     
     /**
      * <b>Try to not use this method as it blows up searches. This is Lucene (inverted indexes) related</b>
-     * Set a constraint that <code>fieldAttributeName</code> does not matche *<code>value</code>* where * is a <b>any</b> pattern
+     * Set a constraint that <code>fieldAttributeName</code> does not match *<code>value</code>* where * is a <b>any</b> pattern
      * @param fieldAttributeName the name of the attribute, eg "example:author"
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
