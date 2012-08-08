@@ -99,7 +99,7 @@ public class ImageMetaData implements IClusterable {
                     break;
                 case ImageInfo.COLOR_TYPE_CMYK:
                     //Sanselan detects YCCK as CMYK so do a custom check
-                    colorModel = isCYYK(ris) ? ColorModel.YCCK : ColorModel.CMYK;
+                    colorModel = isYCCK(ris) ? ColorModel.YCCK : ColorModel.CMYK;
                     break;
                 default:
                     colorModel = ColorModel.UNKNOWN;
@@ -111,7 +111,7 @@ public class ImageMetaData implements IClusterable {
         }
     }
 
-    private boolean isCYYK(final ReusableInputStream ris) throws IOException {
+    private boolean isYCCK(final ReusableInputStream ris) throws IOException {
         try {
             JpegSegmentReader reader = new JpegSegmentReader(ris);
             byte[] appe = reader.readSegment(JpegSegmentReader.SEGMENT_APPE);
