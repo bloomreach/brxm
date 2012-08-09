@@ -24,7 +24,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 
 public interface BannerInfo {
 
-    @Parameter(name = "bannerWidth", displayName = "Banner Width", required = true)
+    @Parameter(name = "bannerWidth", displayName = "Banner Width")
     int getBannerWidth();
 
     @Parameter(name = "yesNo", displayName = "Yes or No ?")
@@ -33,11 +33,11 @@ public interface BannerInfo {
     @Parameter(name = "date", displayName = "Some Date")
     Date getDate();
 
-    @Parameter(name = "borderColor", displayName = "Border Color")
+    @Parameter(name = "borderColor", displayName = "Border Color", required = true)
     @Color
     String getBorderColor();
 
-    @Parameter(name = "someName", displayName = "Some String")
-    String getSomeName();
+    @Parameter(name = "content", displayName = "Content")
+    String getContent();
 
 }

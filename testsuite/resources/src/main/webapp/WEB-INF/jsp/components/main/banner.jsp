@@ -20,5 +20,12 @@
 
 <hst:defineObjects/>
 <div style="border: 1px solid ${borderColor};margin-top: 20px;">
-    <span>Banner: ${myName}</span>
+    <c:choose>
+        <c:when test="${not empty content}">
+            <span>Banner content: ${content}</span>
+        </c:when>
+        <c:otherwise>
+            <span>Banner: ${myName}</span>
+        </c:otherwise>
+    </c:choose>
 </div>
