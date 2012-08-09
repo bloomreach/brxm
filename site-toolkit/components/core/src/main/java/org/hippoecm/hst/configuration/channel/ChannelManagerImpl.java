@@ -327,8 +327,14 @@ public class ChannelManagerImpl implements MutableChannelManager {
     }
 
     protected SessionReference getSessionReference() throws RepositoryException {
-        // TODO rethink about handling resources in a more concise way!
-        return new SessionReference(CmsJcrSessionThreadLocal.getJcrSession());
+        SessionReference sessionReference;
+        final Session session = CmsJcrSessionThreadLocal.getJcrSession();
+        if (session == null) {
+            log.debug("Could not find a JCR session object instance when expected to have one already instantiated");
+            throw new IllegalStateException("Could not find a JCR session object instance when expected to have one already instantiated");
+        }
+
+        return new SessionReference(session);
     }
 
     public synchronized Channel getChannelByJcrPath(String jcrPath) throws ChannelException {
@@ -1034,15 +1040,13 @@ public class ChannelManagerImpl implements MutableChannelManager {
         private final Session session;
 
         SessionReference(Session session) throws RepositoryException {
-            // TODO this is a workaround for when there is no propagated JCR session. This should be improved
             if (session == null) {
-                // TODO Why not throw a runtime IllegalStateException here? See HSTTWO-2173
-                this.session = repository.login();
-                this.logout = true;
-            } else {
-                this.session = session;
-                this.logout = false;
+                // If null session object instance is passed signal that as a problem
+                throw new IllegalArgumentException("Can not instantiate a session reference with a null JCR session object instance!");
             }
+
+            this.session = session;
+            this.logout = false;
         }
 
         void release() {
