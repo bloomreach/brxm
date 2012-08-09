@@ -251,7 +251,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             try {
                 if (session.nodeExists(channelIconPath)) {
                     String url = encodeUrl("binaries" + channelIconPath);
-                    return RequestCycle.get().getResponse().encodeURL(url).toString();
+                    return requestCycle.getResponse().encodeURL(url).toString();
                 }
             } catch (RepositoryException repositoryException) {
                 log.error("Error getting the channel icon resource url.", repositoryException);
