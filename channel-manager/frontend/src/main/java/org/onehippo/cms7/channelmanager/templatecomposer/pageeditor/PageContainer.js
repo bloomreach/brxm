@@ -221,6 +221,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         });
                     }
                 });
+            } else {
+                self._complete();
             }
         });
     },
@@ -254,8 +256,12 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                             });
                         }
                     });
+                } else {
+                    self._complete();
                 }
             });
+        } else {
+            this._complete();
         }
     },
 
