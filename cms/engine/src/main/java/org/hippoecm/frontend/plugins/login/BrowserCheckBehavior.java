@@ -259,7 +259,7 @@ public class BrowserCheckBehavior extends AbstractBehavior {
 
         WebClientInfo info = (WebClientInfo) RequestCycle.get().getClientInfo();
         if (check != null && !check.isSupported(new WicketBrowserInfo(info))) {
-            component.info(new ClassResourceModel("browser.unsupported.warning", LoginPlugin.class, null).getObject());
+            component.info(new ClassResourceModel("browser.unsupported.warning", LoginPlugin.class).getObject());
         }
     }
 
