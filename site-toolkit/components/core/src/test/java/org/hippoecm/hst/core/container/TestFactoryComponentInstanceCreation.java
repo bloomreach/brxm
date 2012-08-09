@@ -15,34 +15,19 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
-import java.util.TreeMap;
 
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
-import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.container.HstComponentFactory;
-import org.hippoecm.hst.core.container.HstComponentWindow;
-import org.hippoecm.hst.core.container.HstComponentWindowFactoryImpl;
-import org.hippoecm.hst.core.container.HstComponentWindowFilter;
-import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.mock.configuration.components.MockHstComponentConfiguration;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestFactoryComponentInstanceCreation extends AbstractSpringTestCase {
