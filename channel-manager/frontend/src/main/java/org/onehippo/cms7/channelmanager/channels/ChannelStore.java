@@ -220,7 +220,11 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             String fieldValue = ReflectionUtil.getStringValue(channel, field.getName());
             channelFieldValues.put(field.getName(), fieldValue);
         }
-        channelFieldValues.put("locale", channel.getLocale().toLowerCase());
+
+        final String locale = channel.getLocale();
+        if (locale != null) {
+            channelFieldValues.put("locale", locale.toLowerCase());
+        }
         return channelFieldValues;
     }
 
@@ -241,14 +245,17 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             return null;
         }
 
-        javax.jcr.Session session = ((UserSession) RequestCycle.get().getSession()).getJcrSession();
-        try {
-            if (session.nodeExists(channelIconPath)) {
-                String url = encodeUrl("binaries" + channelIconPath);
-                return RequestCycle.get().getResponse().encodeURL(url).toString();
+        RequestCycle requestCycle = RequestCycle.get();
+        if (requestCycle != null) {
+            javax.jcr.Session session = ((UserSession) requestCycle.getSession()).getJcrSession();
+            try {
+                if (session.nodeExists(channelIconPath)) {
+                    String url = encodeUrl("binaries" + channelIconPath);
+                    return RequestCycle.get().getResponse().encodeURL(url).toString();
+                }
+            } catch (RepositoryException repositoryException) {
+                log.error("Error getting the channel icon resource url.", repositoryException);
             }
-        } catch (RepositoryException repositoryException) {
-            log.error("Error getting the channel icon resource url.", repositoryException);
         }
 
         return null;
@@ -280,10 +287,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private String getIconResourceReferenceUrl(final String resource) {
         RequestCycle requestCycle = RequestCycle.get();
-        ResourceReference iconResource = new ResourceReference(getClass(), resource);
-        iconResource.bind(requestCycle.getApplication());
-        CharSequence typeImgUrl = requestCycle.urlFor(iconResource);
-        return typeImgUrl.toString();
+        if (requestCycle != null) {
+            ResourceReference iconResource = new ResourceReference(getClass(), resource);
+            iconResource.bind(requestCycle.getApplication());
+            CharSequence typeImgUrl = requestCycle.urlFor(iconResource);
+            return typeImgUrl.toString();
+        }
+        return null;
     }
 
     String getLocalizedFieldName(String fieldName) {
@@ -293,7 +303,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
 
         // Custom channel property; translations are provided by the resource bundle of the custom ChannelInfo class
-        Properties properties = null;
+        Properties properties;
 
         for (Channel channel : getChannels()) {
             properties = getChannelResourceValues(channel);

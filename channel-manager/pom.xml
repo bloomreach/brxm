@@ -21,7 +21,10 @@
     <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
     <hippo.addon-hst-configuration-editor.version>1.10.04-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>
+
+    <!-- test related -->
     <junit.version>4.5</junit.version>
+    <mockito.version>1.8.5</mockito.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
   </properties>
@@ -63,6 +66,12 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>${mockito.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
