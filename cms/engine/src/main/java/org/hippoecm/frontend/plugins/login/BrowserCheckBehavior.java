@@ -24,6 +24,7 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -258,7 +259,7 @@ public class BrowserCheckBehavior extends AbstractBehavior {
 
         WebClientInfo info = (WebClientInfo) RequestCycle.get().getClientInfo();
         if (check != null && !check.isSupported(new WicketBrowserInfo(info))) {
-            component.info(new StringResourceModel("browser.unsupported.warning", component, null).getString());
+            component.info(new ClassResourceModel("browser.unsupported.warning", LoginPlugin.class, null).getObject());
         }
     }
 
