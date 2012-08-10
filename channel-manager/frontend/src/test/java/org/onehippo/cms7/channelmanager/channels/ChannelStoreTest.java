@@ -13,10 +13,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.wicketstuff.js.ext.data.ExtField;
 
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests {ChannelStore}.
@@ -28,9 +29,10 @@ public class ChannelStoreTest {
 
     @Before
     public void initMocks() {
-        mockedProxyService = mock(IRestProxyService.class);
-        mockedChannelService = mock(ChannelService.class);
-        when(mockedProxyService.createRestProxy(ChannelService.class)).thenReturn(mockedChannelService);
+        mockedProxyService = createNiceMock(IRestProxyService.class);
+        mockedChannelService = createNiceMock(ChannelService.class);
+        expect(mockedProxyService.createRestProxy(ChannelService.class)).andReturn(mockedChannelService);
+        replay(mockedProxyService);
     }
 
     @Test
@@ -39,11 +41,12 @@ public class ChannelStoreTest {
         channel.setType("testtype");
         channel.setLocale("nl_NL");
         channel.setHostname("host.example.com");
-        when(mockedChannelService.getChannels()).thenReturn(Collections.singletonList(channel));
+        expect(mockedChannelService.getChannels()).andReturn(Collections.singletonList(channel));
+        replay(mockedChannelService);
 
         final List<ExtField> fields = Arrays.asList(new ExtField("id"), new ExtField("locale"), new ExtField("hostname"));
         ChannelStore store = new ChannelStore("testStoreId", fields, "dummySortName", ChannelStore.SortOrder.ascending,
-                mock(LocaleResolver.class), mockedProxyService);
+                createNiceMock(LocaleResolver.class), mockedProxyService);
 
         JSONArray json = store.getData();
         assertEquals("There should be JSON data for one channel", 1, json.length());
@@ -59,11 +62,12 @@ public class ChannelStoreTest {
     @Test
     public void testChannelWithoutProperties() throws Exception {
         Channel channel = new Channel("testchannelid");
-        when(mockedChannelService.getChannels()).thenReturn(Collections.singletonList(channel));
+        expect(mockedChannelService.getChannels()).andReturn(Collections.singletonList(channel));
+        replay(mockedChannelService);
 
         final List<ExtField> dummyFields = Collections.emptyList();
         ChannelStore store = new ChannelStore("testStoreId", dummyFields, "dummySortName", ChannelStore.SortOrder.ascending,
-                mock(LocaleResolver.class), mockedProxyService);
+                createNiceMock(LocaleResolver.class), mockedProxyService);
 
         JSONArray json = store.getData();
         assertEquals("There should be JSON data for one channel", 1, json.length());

@@ -24,7 +24,7 @@
 
     <!-- test related -->
     <junit.version>4.5</junit.version>
-    <mockito.version>1.8.5</mockito.version>
+    <easymock.version>3.0</easymock.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
   </properties>
@@ -69,13 +69,12 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>${mockito.version}</version>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>${easymock.version}</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
-
   </dependencyManagement>
 
   <modules>
