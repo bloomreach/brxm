@@ -94,6 +94,10 @@ public abstract class LazyExtComponent extends ExtComponent implements IPlugin {
         this.context = context;
     }
 
+    public String getXtype() {
+        return xtype;
+    }
+
     @Override
     public void start() {
         this.context.registerService(this, LazyExtComponentRegistry.LAZY_EXT_COMPONENT_SERVICE_ID);
