@@ -549,12 +549,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
             channelPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
             if (StringUtils.isNotBlank(channelPath)) {
-                try {
-                    final Node channelNode = hstManager.loadNode(channelPath);
-                    channel = ChannelPropertyMapper.readChannel(channelNode);
-                } catch (RepositoryException re) {
-                    log.debug("Error while getting a JCR session to get a channel object instance for channel path '" + channelPath + "'", re);
-                }
+                // TODO Ard reviewed my commit to HSTTWO-2257 and the solution I made their is not correct, we will look into another way of implementing it
             }
         }
 
@@ -846,7 +841,9 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     @Override
     public Channel getChannel() {
-        return channel;
+        // TODO Change that when the final solution of loading channels for mount points is done, for now return null
+        // return channel;
+        return null;
     }
 
     @SuppressWarnings("unchecked")

@@ -877,24 +877,4 @@ public class HstManagerImpl implements HstManager {
         
     }
 
-    public Node loadNode(final String absNodePath) throws RepositoryException {
-        final Session session;
-
-        if (StringUtils.isBlank(absNodePath)) {
-            throw new IllegalArgumentException("Node absolute path can not be a null value or ''");
-        }
-
-        if (!absNodePath.startsWith("/")) {
-            throw new IllegalArgumentException("Only absolute paths are allowed while this path has been used '" + absNodePath + "'");
-        }
-
-        if (credentials != null) {
-            session = repository.login(credentials);
-        } else {
-            session = repository.login();
-        }
-
-        return session.getNode(absNodePath);
-    }
-
 }
