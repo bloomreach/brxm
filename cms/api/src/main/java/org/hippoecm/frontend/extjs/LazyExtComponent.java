@@ -61,12 +61,11 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  *     }
  *
  * }
- * Ext.reg('mylazycomponent', MyLazyComponent);
  * </pre>
  * </p>
  * <p>
- * The xtype 'mylazycomponent' is passed to the Java superclass, and used in Javascript to register the Ext component.
- * Using our component, like adding it to a panel, could be then done with:</strong>
+ * The xtype 'mylazycomponent' is passed to the Java superclass, and automatically registered with the Ext component
+ * manager. Using the lazy component, like adding it to a panel, could be then done with:</strong>
  * <pre>
  * var somePanel = new Ext.Panel({
  *     items: [ Hippo.LazyExtComponents.getConfig('mylazycomponent') ]
