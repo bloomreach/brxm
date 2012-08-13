@@ -431,7 +431,7 @@ public interface Mount {
     String getChannelPath();
 
     /**
-     * @return The {@link Channel} object instance to which this {@link Mount} belongs, or null if the {@link Channel} object instance is not initialized yest for this {@link Mount}
+     * @return The {@link Channel} object instance to which this {@link Mount} belongs, or null if this {@link Mount} does not contain a  {@link Channel}
      */
     Channel getChannel();
 
