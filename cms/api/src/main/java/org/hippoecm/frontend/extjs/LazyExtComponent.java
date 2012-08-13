@@ -110,8 +110,10 @@ public abstract class LazyExtComponent extends ExtComponent implements IPlugin {
 
     @Override
     public void buildInstantiationJs(final StringBuilder js, final String extClass, final JSONObject properties) {
-        // do not instantiate the plugin, but add its configuration properties to the lazy Ext component registry
-        js.append(String.format("%s.register(%s);", LAZY_EXT_COMPONENT_REGISTRY_CLASS, properties.toString()));
+        // do not instantiate the plugin, but register its xtype and add its configuration properties to the
+        // lazy Ext component registry
+        js.append(String.format("Ext.reg('%s', %s); %s.register(%s); ",
+                xtype, getExtClass(), LAZY_EXT_COMPONENT_REGISTRY_CLASS, properties.toString()));
     }
 
 }
