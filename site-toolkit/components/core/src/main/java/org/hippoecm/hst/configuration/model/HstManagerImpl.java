@@ -32,8 +32,6 @@ import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.MutableChannelManager;
