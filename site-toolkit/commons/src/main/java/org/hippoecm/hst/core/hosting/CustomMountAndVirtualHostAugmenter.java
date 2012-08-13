@@ -629,6 +629,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        public void setChannel(final Channel channel) throws UnsupportedOperationException {
+            throw new UnsupportedOperationException(this.getClass().getName() + " does not support setChannel");
+        }
+
+        @Override
         public String getLockedBy() {
             return null;
         }

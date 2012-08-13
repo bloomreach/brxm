@@ -847,6 +847,14 @@ public class MountService implements ContextualizableMount, MutableMount {
         this.channelInfo = channelInfo;
     }
 
+    @Override
+    public void setChannel(final Channel channel) throws UnsupportedOperationException {
+        if (channel == null) {
+            throw new IllegalArgumentException("Channel to set is not allowed to be null");
+        }
+        this.channel = channel;
+    }
+
 
     @Override
     public String toString() {

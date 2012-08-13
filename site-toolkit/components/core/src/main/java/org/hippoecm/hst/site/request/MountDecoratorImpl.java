@@ -378,6 +378,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public void setChannel(final Channel channel) throws UnsupportedOperationException {
+            throw new UnsupportedOperationException("setChannel not allowed on decorated mounts");
+        }
+
+        @Override
         public void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException {
             throw  new UnsupportedOperationException("addMount not allowed on decorated mounts");
         }

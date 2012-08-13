@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.hosting;
 
 import java.util.Calendar;
 
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.service.ServiceException;
 
@@ -34,6 +35,14 @@ public interface MutableMount extends Mount {
      */
     void setChannelInfo(ChannelInfo info);
 
+    /**
+     * Sets the {@Channel} info for this {@link Mount}. If the  {@link Mount} impl does not support {@link #setChannel(org.hippoecm.hst.configuration.channel.Channel)}, it can
+     * throw an {@link UnsupportedOperationException}
+     * @param channel the channel to set, not allowed to be <code>null</code>
+     * @throws  {@link UnsupportedOperationException} when the implementation does not support to set a {@link Channel} and {@link IllegalArgumentException} when <code>channel</code> is <code>null</code>
+     */
+    void setChannel(Channel channel) throws UnsupportedOperationException;
+    
     /**
      * 
      * @param mount the {@link MutableMount} to add

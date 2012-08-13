@@ -743,6 +743,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
+        public void setChannel(final Channel channel) throws UnsupportedOperationException {
+            throw new UnsupportedOperationException(this.getClass().getName() + " does not support setChannel");
+        }
+
+        @Override
         public String toString() {
             return "CustomMount [virtualHost=" + virtualHost.getHostName() + ", parent=" + parent.getName() + ", alias=" + alias
                     + ", identifier=" + identifier + ", name=" + name + ", namedPipeline=" + namedPipeline

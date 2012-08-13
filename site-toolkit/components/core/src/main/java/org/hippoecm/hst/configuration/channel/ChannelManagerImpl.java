@@ -241,6 +241,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
             url.append(mountPath);
         }
         channel.setUrl(url.toString());
+        mount.setChannel(channel);
     }
 
     /**
