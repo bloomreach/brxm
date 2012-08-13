@@ -73,7 +73,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String channelPath;
 
     /**
-     * The {@link Channel} object instance to which this {@link Mount} belongs
+     * The {@link Channel} to which this {@link Mount} belongs
      */
     private Channel channel;
 
