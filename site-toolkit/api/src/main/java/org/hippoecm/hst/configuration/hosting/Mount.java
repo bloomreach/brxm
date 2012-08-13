@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
@@ -428,6 +429,11 @@ public interface Mount {
      * @return the repository path to the channel configuration node and <code>null</code> if not configured
      */
     String getChannelPath();
+
+    /**
+     * @return The {@link Channel} object instance to which this {@link Mount} belongs
+     */
+    Channel getChannel();
 
     /**
      * @return the String[] of defaultSiteMapItemHandlerIds which all {@link HstSiteMapItem}'s get or <code>null</code> if non configured

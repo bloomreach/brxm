@@ -32,6 +32,8 @@ import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.MutableChannelManager;
@@ -874,4 +876,25 @@ public class HstManagerImpl implements HstManager {
         }
         
     }
+
+    public Node loadNode(final String absNodePath) throws RepositoryException {
+        final Session session;
+
+        if (StringUtils.isBlank(absNodePath)) {
+            throw new IllegalArgumentException("Node absolute path can not be a null value or ''");
+        }
+
+        if (!absNodePath.startsWith("/")) {
+            throw new IllegalArgumentException("Only absolute paths are allowed while this path has been used '" + absNodePath + "'");
+        }
+
+        if (credentials != null) {
+            session = repository.login(credentials);
+        } else {
+            session = repository.login();
+        }
+
+        return session.getNode(absNodePath);
+    }
+
 }

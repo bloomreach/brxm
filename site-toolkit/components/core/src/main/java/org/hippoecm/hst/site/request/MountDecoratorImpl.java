@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
@@ -191,6 +192,14 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public String getChannelPath() {
             return delegatee.getChannelPath();
+        }
+
+        /**
+         * @return the repository path to the channel configuration node and <code>null</code> if not configured
+         */
+        @Override
+        public Channel getChannel() {
+            return delegatee.getChannel();  //To change body of implemented methods use File | Settings | File Templates.
         }
 
         @Override

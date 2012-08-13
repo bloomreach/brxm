@@ -64,8 +64,6 @@ public class PathUtils {
      *   <li>url encode the decoded name using utf-8</li>
      *   <li>append '.html' to the last url part</li>
      * </ul>
-     * @param prefix
-     * @param uriLevels
      * @param rewrite
      * @return the encoded url
      */

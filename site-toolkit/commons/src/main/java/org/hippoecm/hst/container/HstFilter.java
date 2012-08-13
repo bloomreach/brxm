@@ -377,8 +377,7 @@ public class HstFilter implements Filter {
                             }
 
                         }
-                    }
-                    else {
+                    } else {
                         throw new MatchException("No matching Mount for '"+hostName+"' and '"+containerRequest.getRequestURI()+"'");
                     }
                 }

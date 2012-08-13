@@ -27,9 +27,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
+import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelPropertyMapper;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
@@ -38,8 +41,11 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
 
 public class MountService implements ContextualizableMount, MutableMount {
 
@@ -65,6 +71,11 @@ public class MountService implements ContextualizableMount, MutableMount {
      * The channel to which this {@link Mount} belongs
      */
     private String channelPath;
+
+    /**
+     * The {@link Channel} object instance to which this {@link Mount} belongs
+     */
+    private Channel channel;
 
     /**
      * The parent of this {@link Mount} or null when this {@link Mount} is the root
@@ -537,6 +548,14 @@ public class MountService implements ContextualizableMount, MutableMount {
 
         if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
             channelPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
+            if (StringUtils.isNotBlank(channelPath)) {
+                try {
+                    final Node channelNode = hstManager.loadNode(channelPath);
+                    channel = ChannelPropertyMapper.readChannel(channelNode);
+                } catch (RepositoryException re) {
+                    log.debug("Error while getting a JCR session to get a channel object instance for channel path '" + channelPath + "'", re);
+                }
+            }
         }
 
         // check whether there are child Mounts now for this Mount
@@ -823,6 +842,11 @@ public class MountService implements ContextualizableMount, MutableMount {
     @Override
     public String getChannelPath() {
         return channelPath;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
     }
 
     @SuppressWarnings("unchecked")
