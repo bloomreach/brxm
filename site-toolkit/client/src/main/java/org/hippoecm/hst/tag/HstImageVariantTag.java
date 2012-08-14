@@ -67,31 +67,33 @@ public class HstImageVariantTag extends BodyTagSupport {
 
     @Override
     public int doEndTag() throws JspException{
+        try {
+            if (StringUtils.isBlank(name)) {
+                log.warn("For imageVariant tag the name attribute is not allowed to be null or empty. Skip image variant");
+            } else {
 
-        if (StringUtils.isBlank(name)) {
-            log.warn("For imageVariant tag the name attribute is not allowed to be null or empty. Skip image variant");
-        } else {
-
-            List<String> replaceVariants = null;
-            if (StringUtils.isNotBlank(replaces)) {
-                replaceVariants = new ArrayList<String>();
-                if (replaces.indexOf(",") > -1) {
-                    String[] elems = replaces.split(",");
-                    for (String elem : elems) {
-                        if (StringUtils.isNotBlank(elem)) {
-                            replaceVariants.add(elem);
+                List<String> replaceVariants = null;
+                if (StringUtils.isNotBlank(replaces)) {
+                    replaceVariants = new ArrayList<String>();
+                    if (replaces.indexOf(",") > -1) {
+                        String[] elems = replaces.split(",");
+                        for (String elem : elems) {
+                            if (StringUtils.isNotBlank(elem)) {
+                                replaceVariants.add(elem);
+                            }
                         }
+                    } else {
+                        replaceVariants.add(replaces);
                     }
-                } else {
-                    replaceVariants.add(replaces);
                 }
+                ImageVariant imageVariant = new DefaultImageVariant(name, replaceVariants, fallback);
+                htmlTag.setImageVariant(imageVariant);
             }
-            ImageVariant imageVariant = new DefaultImageVariant(name, replaceVariants, fallback);
-            htmlTag.setImageVariant(imageVariant);
-        }
 
-        cleanup();
-        return EVAL_PAGE;
+            return EVAL_PAGE;
+        } finally {
+            cleanup();
+        }
     }
 
     protected void cleanup() {

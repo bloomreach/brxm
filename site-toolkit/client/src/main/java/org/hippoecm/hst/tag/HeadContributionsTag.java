@@ -76,34 +76,36 @@ public class HeadContributionsTag extends TagSupport {
     }
 
     public int doEndTag() throws JspException {
-        // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
-        HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
-
-        if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
-            hstResponse = (HstResponse) pageContext.getResponse();
-        }
-
-        List<Element> headElements = hstResponse != null ? hstResponse.getHeadElements() : null;
-
-        if (headElements == null) {
-            return SKIP_BODY;
-        }
-
-        for (Element headElement : headElements) {
-            if (shouldBeIncludedInOutput(headElement)) {
-                outputHeadElement(headElement);
-            }
-        }
-
         try {
-            pageContext.getOut().flush();
-        } catch (IOException e) {
-            cleanup();
-            throw new JspException("Cannot flush the output", e);
-        }
-        cleanup();
+            // if hstRequest is retrieved, then this servlet has been dispatched by hst component.
+            HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
 
-        return SKIP_BODY;
+            if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
+                hstResponse = (HstResponse) pageContext.getResponse();
+            }
+
+            List<Element> headElements = hstResponse != null ? hstResponse.getHeadElements() : null;
+
+            if (headElements == null) {
+                return SKIP_BODY;
+            }
+
+            for (Element headElement : headElements) {
+                if (shouldBeIncludedInOutput(headElement)) {
+                    outputHeadElement(headElement);
+                }
+            }
+
+            try {
+                pageContext.getOut().flush();
+            } catch (IOException e) {
+                throw new JspException("Cannot flush the output", e);
+            }
+
+            return SKIP_BODY;
+        } finally {
+            cleanup();
+        }
     }
 
     protected void cleanup() {

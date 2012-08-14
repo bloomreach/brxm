@@ -40,16 +40,19 @@ public class ParamTag extends TagSupport {
      */
     @Override
     public int doStartTag() throws JspException {
-        ParamContainerTag paramContainerTag = (ParamContainerTag)
-                findAncestorWithClass(this, ParamContainerTag.class);
+        try {
+            ParamContainerTag paramContainerTag = (ParamContainerTag)
+                    findAncestorWithClass(this, ParamContainerTag.class);
 
-        if (paramContainerTag == null) {
-            throw new JspException("the 'param' Tag must have a ParamContainerTag as a parent");
+            if (paramContainerTag == null) {
+                throw new JspException("the 'param' Tag must have a ParamContainerTag as a parent");
+            }
+
+            paramContainerTag.addParameter(getName(), getValue());
+            return SKIP_BODY;
+        } finally {
+            cleanup();
         }
-
-        paramContainerTag.addParameter(getName(), getValue());
-        cleanup();
-        return SKIP_BODY;
     }
 
     protected void cleanup() {

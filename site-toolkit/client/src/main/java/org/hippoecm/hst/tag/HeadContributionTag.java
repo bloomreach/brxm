@@ -49,77 +49,75 @@ public class HeadContributionTag extends BodyTagSupport {
     protected String category;
     
     public int doEndTag() throws JspException {
-        // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
-        HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
+        try {
+            // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
+            HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
 
-        if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
-            hstResponse = (HstResponse) pageContext.getResponse();
-        }
-        
-        if (hstResponse == null) {
-            cleanup();
-            return SKIP_BODY;
-        }
-        
-        if (this.keyHint != null && hstResponse.containsHeadElement(this.keyHint)) {
-            cleanup();
-            return SKIP_BODY;
-        }
-        
-        if (this.element == null) {
-            Reader reader = null;
-            
-            try {
-                String xmlText = "";
-    
-                if (bodyContent != null && bodyContent.getString() != null) {
-                    xmlText = bodyContent.getString().trim();
+            if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
+                hstResponse = (HstResponse) pageContext.getResponse();
+            }
+
+            if (hstResponse == null) {
+                return SKIP_BODY;
+            }
+
+            if (this.keyHint != null && hstResponse.containsHeadElement(this.keyHint)) {
+                return SKIP_BODY;
+            }
+
+            if (this.element == null) {
+                Reader reader = null;
+
+                try {
+                    String xmlText = "";
+
+                    if (bodyContent != null && bodyContent.getString() != null) {
+                        xmlText = bodyContent.getString().trim();
+                    }
+
+                    if (this.keyHint == null) {
+                        this.keyHint = xmlText;
+
+                        if (hstResponse.containsHeadElement(this.keyHint)) {
+                            return SKIP_BODY;
+                        }
+                    }
+
+                    DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+                    Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
+                    element = doc.getDocumentElement();
+                } catch (Exception ex) {
+                    throw new JspException(ex);
+                } finally {
+                    if (reader != null) try { reader.close(); } catch (Exception ce) { }
                 }
-                
+            }
+
+            if (element != null) {
                 if (this.keyHint == null) {
-                    this.keyHint = xmlText;
-                    
+                    this.keyHint = HeadElementUtils.toHtmlString(new HeadElementImpl(element));
+
                     if (hstResponse.containsHeadElement(this.keyHint)) {
-                        cleanup();
                         return SKIP_BODY;
                     }
                 }
-                
-                DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-                DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-                Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
-                element = doc.getDocumentElement();
-            } catch (Exception ex) {
-                cleanup();
-                throw new JspException(ex);
-            } finally {
-                if (reader != null) try { reader.close(); } catch (Exception ce) { }
-            }
-        }
-        
-        if (element != null) {
-            if (this.keyHint == null) {
-                this.keyHint = HeadElementUtils.toHtmlString(new HeadElementImpl(element));
-                
-                if (hstResponse.containsHeadElement(this.keyHint)) {
-                    cleanup();
-                    return SKIP_BODY;
-                }
-            }
-            
-            if (category != null) {
-                String existingCategoryHint = element.getAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE);
-                // if there already exists category hint in the element itself, ignore category property.
-                if (existingCategoryHint == null || "".equals(existingCategoryHint)) {
-                    element.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, category);
-                }
-            }
-            
-            hstResponse.addHeadElement(element, this.keyHint);
-        }
 
-        cleanup();
-        return EVAL_PAGE;
+                if (category != null) {
+                    String existingCategoryHint = element.getAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE);
+                    // if there already exists category hint in the element itself, ignore category property.
+                    if (existingCategoryHint == null || "".equals(existingCategoryHint)) {
+                        element.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, category);
+                    }
+                }
+
+                hstResponse.addHeadElement(element, this.keyHint);
+            }
+
+            return EVAL_PAGE;
+        } finally {
+            cleanup();
+        }
     }
 
     protected void cleanup() {

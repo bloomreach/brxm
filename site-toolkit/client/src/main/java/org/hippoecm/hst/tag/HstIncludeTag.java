@@ -55,31 +55,32 @@ public class HstIncludeTag extends TagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-
-        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
-        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
-        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
-        
-        if (hstRequest == null || hstResponse == null) {
-            return EVAL_PAGE;
-        }
-
         try {
-            JspWriter writer = pageContext.getOut();
-            writer.flush();
-            hstResponse.flushChildContent(ref);
-        } catch (IOException e) {
-            if (log.isDebugEnabled()) {
-                log.warn("Exception happened while including child content for '"+ref+"'.", e);
-            } else {
-                log.warn("Exception happened while including child content for '{}' : {}",ref, e.toString());
+            HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+            HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
+            HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+            HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
+
+            if (hstRequest == null || hstResponse == null) {
+                return EVAL_PAGE;
             }
+
+            try {
+                JspWriter writer = pageContext.getOut();
+                writer.flush();
+                hstResponse.flushChildContent(ref);
+            } catch (IOException e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Exception happened while including child content for '"+ref+"'.", e);
+                } else {
+                    log.warn("Exception happened while including child content for '{}' : {}",ref, e.toString());
+                }
+            }
+
+            return EVAL_PAGE;
+        } finally {
+            cleanup();
         }
-
-        cleanup();
-
-        return EVAL_PAGE;
     }
 
     protected void cleanup() {

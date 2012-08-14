@@ -44,47 +44,46 @@ public class SetWrapperElementTag extends BodyTagSupport {
     protected Element element;
     
     public int doEndTag() throws JspException {
-        // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
-        HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
+        try {
+            // if hstResponse is retrieved, then this servlet has been dispatched by hst component.
+            HstResponse hstResponse = (HstResponse) pageContext.getRequest().getAttribute(ContainerConstants.HST_RESPONSE);
 
-        if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
-            hstResponse = (HstResponse) pageContext.getResponse();
-        }
-        
-        if (hstResponse == null) {
-            cleanup();
-            return SKIP_BODY;
-        }
-        
-        if (this.element == null) {
-            Reader reader = null;
-            
-            try {
-                String xmlText = "";
-    
-                if (bodyContent != null && bodyContent.getString() != null) {
-                    xmlText = bodyContent.getString().trim();
-                }
-                
-                DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-                DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-                Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
-                element = doc.getDocumentElement();
-            } catch (Exception ex) {
-                cleanup();
-                throw new JspException(ex);
-            } finally {
-                if (reader != null) try { reader.close(); } catch (Exception ce) { }
+            if (hstResponse == null && pageContext.getResponse() instanceof HstResponse) {
+                hstResponse = (HstResponse) pageContext.getResponse();
             }
-        }
-        
-        if (element != null) {
-            hstResponse.setWrapperElement(element);
-        }
 
-        cleanup();
+            if (hstResponse == null) {
+                return SKIP_BODY;
+            }
 
-        return EVAL_PAGE;
+            if (this.element == null) {
+                Reader reader = null;
+
+                try {
+                    String xmlText = "";
+
+                    if (bodyContent != null && bodyContent.getString() != null) {
+                        xmlText = bodyContent.getString().trim();
+                    }
+
+                    DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+                    Document doc = docBuilder.parse(new InputSource(new StringReader(xmlText)));
+                    element = doc.getDocumentElement();
+                } catch (Exception ex) {
+                    throw new JspException(ex);
+                } finally {
+                    if (reader != null) try { reader.close(); } catch (Exception ce) { }
+                }
+            }
+
+            if (element != null) {
+                hstResponse.setWrapperElement(element);
+            }
+            return EVAL_PAGE;
+        } finally {
+            cleanup();
+        }
     }
 
     protected void cleanup() {

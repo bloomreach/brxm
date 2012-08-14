@@ -93,16 +93,18 @@ public class HstElementTag extends BodyTagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-        
-        if (bodyContent != null && bodyContent.getString() != null) {
-            String textContent = bodyContent.getString();
-            
-            if (element != null) {
-                element.appendChild(element.getOwnerDocument().createTextNode(textContent));
+        try {
+            if (bodyContent != null && bodyContent.getString() != null) {
+                String textContent = bodyContent.getString();
+
+                if (element != null) {
+                    element.appendChild(element.getOwnerDocument().createTextNode(textContent));
+                }
             }
+            return EVAL_PAGE;
+        } finally {
+            cleanup();
         }
-        cleanup();
-        return EVAL_PAGE;
     }
 
     protected void cleanup() {

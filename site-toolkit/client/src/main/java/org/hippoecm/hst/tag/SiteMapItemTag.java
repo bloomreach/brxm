@@ -67,59 +67,58 @@ public class SiteMapItemTag extends TagSupport {
      */
     @Override
     public int doStartTag() throws JspException {
-        if(skipTag){
-            cleanup();
-            return SKIP_BODY;
-        }
-        
-        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
-        
-        if(hstRequest == null) {
-            log.warn("The request is not an HstRequest. Cannot create an preferred sitemap item outside the hst request processing. Return");
-            cleanup();
-            return SKIP_BODY;
-        }
-        
-        ResolvedMount resolvedMount = hstRequest.getRequestContext().getResolvedSiteMapItem().getResolvedMount();
-        if(preferItemId != null) {
-            if(siteMapItem != null) {
-                log.warn("preferItemId attr is added, but also 'preferItemByPath' or 'siteMapItem'. This is double. Skipping preferItemId attr");
-            } else {
-                siteMapItem =  hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItemByRefId(preferItemId);
-                if(siteMapItem == null) {
-                    log.warn("Cannot find sitemap item with id '{}' for site '{}'", preferItemId, resolvedMount.getMount().getName());
+        try {
+            if(skipTag){
+                return SKIP_BODY;
+            }
+
+            HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+            HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+
+            if(hstRequest == null) {
+                log.warn("The request is not an HstRequest. Cannot create an preferred sitemap item outside the hst request processing. Return");
+                return SKIP_BODY;
+            }
+
+            ResolvedMount resolvedMount = hstRequest.getRequestContext().getResolvedSiteMapItem().getResolvedMount();
+            if(preferItemId != null) {
+                if(siteMapItem != null) {
+                    log.warn("preferItemId attr is added, but also 'preferItemByPath' or 'siteMapItem'. This is double. Skipping preferItemId attr");
+                } else {
+                    siteMapItem =  hstRequest.getRequestContext().getResolvedSiteMapItem().getHstSiteMapItem().getHstSiteMap().getSiteMapItemByRefId(preferItemId);
+                    if(siteMapItem == null) {
+                        log.warn("Cannot find sitemap item with id '{}' for site '{}'", preferItemId, resolvedMount.getMount().getName());
+                    }
                 }
             }
-        }
-        
-        if(preferPath != null) {
-            if(siteMapItem != null) {
-                log.warn("preferPath attr is added, but also 'preferItemByPath', 'siteMapItem' or 'preferItemId'. This is double. Skipping preferItemId attr");
-            } else {
-                try {
-                    ResolvedSiteMapItem resolvedItem = hstRequest.getRequestContext().getSiteMapMatcher().match(preferPath, resolvedMount);
-                    siteMapItem = resolvedItem.getHstSiteMapItem();  
-                } catch (NotFoundException e) {
-                    log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, resolvedMount.getMount().getName());
+
+            if(preferPath != null) {
+                if(siteMapItem != null) {
+                    log.warn("preferPath attr is added, but also 'preferItemByPath', 'siteMapItem' or 'preferItemId'. This is double. Skipping preferItemId attr");
+                } else {
+                    try {
+                        ResolvedSiteMapItem resolvedItem = hstRequest.getRequestContext().getSiteMapMatcher().match(preferPath, resolvedMount);
+                        siteMapItem = resolvedItem.getHstSiteMapItem();
+                    } catch (NotFoundException e) {
+                        log.warn("Cannot resolve a sitemap item for '{}' for site '{}'", preferPath, resolvedMount.getMount().getName());
+                    }
                 }
             }
-        }
-        
-        HstLinkTag hstLinkTag = (HstLinkTag)
-                findAncestorWithClass(this, HstLinkTag.class);
 
-        if (hstLinkTag == null) {
+            HstLinkTag hstLinkTag = (HstLinkTag)
+                    findAncestorWithClass(this, HstLinkTag.class);
+
+            if (hstLinkTag == null) {
+                throw new JspException("the 'SiteMapItemTag' Tag must have a HST's 'link' tag as a parent");
+            }
+
+            hstLinkTag.setPreferredSiteMapItem(siteMapItem);
+            hstLinkTag.setFallback(fallback);
+
+            return SKIP_BODY;
+        } finally {
             cleanup();
-            throw new JspException("the 'SiteMapItemTag' Tag must have a HST's 'link' tag as a parent");
         }
-
-        hstLinkTag.setPreferredSiteMapItem(siteMapItem);
-        hstLinkTag.setFallback(fallback);
-
-        cleanup();
-        
-        return SKIP_BODY;
     }
 
     protected void cleanup() {

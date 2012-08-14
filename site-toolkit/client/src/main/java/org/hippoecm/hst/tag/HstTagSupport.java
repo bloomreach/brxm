@@ -37,17 +37,28 @@ public class HstTagSupport extends TagSupport {
     
     @Override
     public int doEndTag() throws JspException {
-
-        final HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
-        final HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
-        final HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
-        final HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
-        
-        if (hstRequest == null || hstResponse == null) {
-            return EVAL_PAGE;
+        try {
+            final HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+            final HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
+            final HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+            final HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
+            
+            if (hstRequest == null || hstResponse == null) {
+                return EVAL_PAGE;
+            }
+            return doEndTag(hstRequest, hstResponse);
+        } finally {
+            cleanup();
         }
+    }
 
-        return doEndTag(hstRequest, hstResponse);
+    /**
+     * Subclasses can override cleanup to set their local instance variables to default value during this method invocation.
+     * 
+     * This {@link #cleanup()} is called right before the {@link #doEndTag()} returns
+     */
+    protected void cleanup() {
+        // nothing to clean up here. Method for subclasses to override
     }
 
     /**

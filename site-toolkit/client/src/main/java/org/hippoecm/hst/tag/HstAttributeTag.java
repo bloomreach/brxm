@@ -60,26 +60,27 @@ public class HstAttributeTag extends BodyTagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-        
-        if (value == null) {
-            if (bodyContent != null && bodyContent.getString() != null) {
-                value = bodyContent.getString().trim();
+        try {
+            if (value == null) {
+                if (bodyContent != null && bodyContent.getString() != null) {
+                    value = bodyContent.getString().trim();
+                }
             }
-        }
-        
-        if (name != null && !"".equals(name)) {
-            if (value != null) {
-                element.setAttribute(name, value);
-            } else {
-                element.removeAttribute(name);
-            }
-        } else {
-            cleanup();
-            throw new JspException("Invalid attribute name: " + name);
-        }
 
-        cleanup();
-        return EVAL_PAGE;
+            if (name != null && !"".equals(name)) {
+                if (value != null) {
+                    element.setAttribute(name, value);
+                } else {
+                    element.removeAttribute(name);
+                }
+            } else {
+                throw new JspException("Invalid attribute name: " + name);
+            }
+
+            return EVAL_PAGE;
+        } finally {
+            cleanup();
+        }
     }
 
     protected void cleanup() {

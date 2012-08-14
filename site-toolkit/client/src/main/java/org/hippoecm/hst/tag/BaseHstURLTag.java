@@ -63,43 +63,44 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
      */
     @Override
     public int doEndTag() throws JspException{
-        
-        HstURL url = getUrl();
-        
-        if (url == null) {
-            cleanup();
-            throw new IllegalStateException("internal error: url not set");
-        }
-        
-        url.setResourceID(getResourceId());
-        
-        setUrlParameters(url);
-        
-        HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
-        
-        //  properly encoding urls to allow non-cookie enabled sessions - PLUTO-252 
-        String urlString = response.encodeURL(url.toString());
+        try {
+            HstURL url = getUrl();
 
-        if(escapeXml)
-        {
-             urlString = doEscapeXml(urlString);
-        }
-        
-        if (var == null) {
-            try {               
-                JspWriter writer = pageContext.getOut();
-                writer.print(urlString);
-            } catch (IOException ioe) {
-                cleanup();
-                throw new JspException("HstURL-Tag Exception: cannot write to the output writer.");
+            if (url == null) {
+                throw new IllegalStateException("internal error: url not set");
             }
-        } 
-        else {
-            pageContext.setAttribute(var, urlString, PageContext.PAGE_SCOPE);
-        }
 
-        cleanup();
-        return EVAL_PAGE;
+            url.setResourceID(getResourceId());
+
+            setUrlParameters(url);
+
+            HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+
+            //  properly encoding urls to allow non-cookie enabled sessions - PLUTO-252
+            String urlString = response.encodeURL(url.toString());
+
+            if(escapeXml)
+            {
+                 urlString = doEscapeXml(urlString);
+            }
+
+            if (var == null) {
+                try {
+                    JspWriter writer = pageContext.getOut();
+                    writer.print(urlString);
+                } catch (IOException ioe) {
+                    cleanup();
+                    throw new JspException("HstURL-Tag Exception: cannot write to the output writer.");
+                }
+            }
+            else {
+                pageContext.setAttribute(var, urlString, PageContext.PAGE_SCOPE);
+            }
+
+            return EVAL_PAGE;
+        } finally {
+            cleanup();
+        }
     }
 
     @Override

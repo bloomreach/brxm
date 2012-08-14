@@ -78,79 +78,76 @@ public class HstFacetNavigationLinkTag extends TagSupport {
      */
     @Override
     public int doEndTag() throws JspException{
-       
-        if(this.current == null || (this.remove == null && (this.removeList == null || this.removeList.isEmpty()))) {
-            log.warn("Cannot remove a facet-value combi because 'current' or 'remove(List)' is null or empty");
-            cleanup();
-            return EVAL_PAGE;
-        }
-        
-        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
-        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
-        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
-        
-        if(hstRequest == null) {
-            log.warn("The request is not an HstRequest. Cannot create an HstLink outside the hst request processing. Return");
-            cleanup();
-            return EVAL_PAGE;
-        }
-        
-        HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
-        
-        HstLink link = reqContext.getHstLinkCreator().create(current.getNode(), reqContext,null, true, true);
-        
-        if(link == null || link.getPath() == null) {
-            log.warn("Unable to rewrite link for '{}'. Return EVAL_PAGE", current.getPath());
-            cleanup();
-            return EVAL_PAGE;
-        }
-        
-        // now strip of the facet-value combi(s) that needs to be stripped of
-        String path = link.getPath();
-        
-        List<HippoFacetSubNavigation> combinedRemovedList = new ArrayList<HippoFacetSubNavigation>();
-        if(this.removeList != null) {
-            combinedRemovedList.addAll(this.removeList);
-        }
-        if(this.remove != null) {
-            combinedRemovedList.add(this.remove);
-        }
-        
-        for(HippoFacetSubNavigation toRemove : combinedRemovedList) {
-            String removeFacetValue = "/"+toRemove.getFacetValueCombi().getKey()+"/"+toRemove.getFacetValueCombi().getValue();
-            if(path.contains(removeFacetValue)) {
-                path = path.replace(removeFacetValue, "");
-                log.debug("Removed facetvalue combi. Link from '{}' --> '{}'", path, link.getPath());
-            } else {
-                log.warn("Cannot remove '{}' from the current faceted navigation url '{}'.", removeFacetValue, path);
+        try {
+            if(this.current == null || (this.remove == null && (this.removeList == null || this.removeList.isEmpty()))) {
+                log.warn("Cannot remove a facet-value combi because 'current' or 'remove(List)' is null or empty");
+                return EVAL_PAGE;
             }
-        }
-        link.setPath(path);
-        String urlString = link.toUrlForm(reqContext, false);
-        
-        // append again the current queryString as we are context relative
-        if(hstRequest.getQueryString() != null && !"".equals(hstRequest.getQueryString())) {
-            urlString += "?"+hstRequest.getQueryString();
-        }
-        
-        if (var == null) {
-            try {               
-                JspWriter writer = pageContext.getOut();
-                writer.print(urlString);
-            } catch (IOException ioe) {
-                cleanup();
-                throw new JspException(
-                    "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
-            }
-        } 
-        else {
-            int varScope = PageContext.PAGE_SCOPE;
-            pageContext.setAttribute(var, urlString, varScope);
-        }
 
-        cleanup();
-        return EVAL_PAGE;
+            HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
+            HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
+            HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
+            HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
+
+            if(hstRequest == null) {
+                log.warn("The request is not an HstRequest. Cannot create an HstLink outside the hst request processing. Return");
+                return EVAL_PAGE;
+            }
+
+            HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
+
+            HstLink link = reqContext.getHstLinkCreator().create(current.getNode(), reqContext,null, true, true);
+
+            if(link == null || link.getPath() == null) {
+                log.warn("Unable to rewrite link for '{}'. Return EVAL_PAGE", current.getPath());
+                return EVAL_PAGE;
+            }
+
+            // now strip of the facet-value combi(s) that needs to be stripped of
+            String path = link.getPath();
+
+            List<HippoFacetSubNavigation> combinedRemovedList = new ArrayList<HippoFacetSubNavigation>();
+            if(this.removeList != null) {
+                combinedRemovedList.addAll(this.removeList);
+            }
+            if(this.remove != null) {
+                combinedRemovedList.add(this.remove);
+            }
+
+            for(HippoFacetSubNavigation toRemove : combinedRemovedList) {
+                String removeFacetValue = "/"+toRemove.getFacetValueCombi().getKey()+"/"+toRemove.getFacetValueCombi().getValue();
+                if(path.contains(removeFacetValue)) {
+                    path = path.replace(removeFacetValue, "");
+                    log.debug("Removed facetvalue combi. Link from '{}' --> '{}'", path, link.getPath());
+                } else {
+                    log.warn("Cannot remove '{}' from the current faceted navigation url '{}'.", removeFacetValue, path);
+                }
+            }
+            link.setPath(path);
+            String urlString = link.toUrlForm(reqContext, false);
+
+            // append again the current queryString as we are context relative
+            if(hstRequest.getQueryString() != null && !"".equals(hstRequest.getQueryString())) {
+                urlString += "?"+hstRequest.getQueryString();
+            }
+
+            if (var == null) {
+                try {
+                    JspWriter writer = pageContext.getOut();
+                    writer.print(urlString);
+                } catch (IOException ioe) {
+                    throw new JspException(
+                        "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
+                }
+            }
+            else {
+                int varScope = PageContext.PAGE_SCOPE;
+                pageContext.setAttribute(var, urlString, varScope);
+            }
+            return EVAL_PAGE;
+        } finally {
+            cleanup();
+        }
     }
 
     protected void cleanup() {
