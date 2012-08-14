@@ -144,7 +144,7 @@ public class TextSearchBuilder implements IClusterable {
             }
         }
 
-        querySb.append(']').append("/rep:excerpt(.)");
+        querySb.append(']').append("/rep:excerpt(.) order by @jcr:score descending");
 
         if (!valid) {
             log.debug("Cannot create a Xpath query for '{}'. Return null", value);
