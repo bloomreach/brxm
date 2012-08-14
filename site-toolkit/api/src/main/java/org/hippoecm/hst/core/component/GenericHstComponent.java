@@ -71,7 +71,7 @@ public class GenericHstComponent implements HstComponent {
         if (componentConfig.getServeResourcePath() == null) {
             String resourceID = request.getResourceID();
 
-            if (resourceID != null) {
+            if (resourceID != null && !resourceID.equals("")) {
                 if (request.getRequestContext().getContainerConfiguration().getBoolean(RESOURCE_PATH_BY_RESOURCE_ID, false)) {
                     if (resourceID.endsWith(".jsp") || resourceID.endsWith(".ftl")) {
                         response.setServeResourcePath(resourceID);
