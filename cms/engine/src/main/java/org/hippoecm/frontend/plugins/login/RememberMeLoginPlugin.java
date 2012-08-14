@@ -54,6 +54,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.hippoecm.frontend.PageExpiredErrorPage;
+import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.custom.ServerCookie;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -345,7 +346,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 userSession.login();
                 if (log.isDebugEnabled()) {
                     log.warn("Repository error while trying to access the "
-                            + WebApplicationHelper.getApplicationName("cms") + " application with user '" + username
+                            + PluginApplication.get().getPluginApplicationName() + " application with user '" + username
                             + "'", re);
                 }
 

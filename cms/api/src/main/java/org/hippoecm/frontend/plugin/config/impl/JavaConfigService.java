@@ -67,4 +67,9 @@ public class JavaConfigService implements IPluginConfigService {
         return result;
     }
 
+    @Override
+    public boolean isSaveOnExitEnabled() {
+        return true;
+    }
+
 }

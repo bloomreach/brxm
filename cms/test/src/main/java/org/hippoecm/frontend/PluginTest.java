@@ -27,11 +27,12 @@ import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.DummyPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -45,7 +46,17 @@ public abstract class PluginTest extends RepositoryTest {
 
         public PluginTestApplication() {
         }
-        
+
+        @Override
+        public String getPluginApplicationName() {
+            return "test-app";
+        }
+
+        @Override
+        public IApplicationFactory getApplicationFactory(final Session jcrSession) {
+            return new JcrApplicationFactory(new JcrNodeModel("/config"));
+        }
+
         @Override
         public HippoRepository getRepository() throws RepositoryException {
             return server;
@@ -68,7 +79,7 @@ public abstract class PluginTest extends RepositoryTest {
     }
 
 
-    protected static ValueMap CREDENTIALS = new ValueMap("username=" + RepositoryTest.SYSTEMUSER_ID + ",password=" + RepositoryTest.SYSTEMUSER_PASSWORD.toString());
+    protected static UserCredentials CREDENTIALS = new UserCredentials(RepositoryTest.SYSTEMUSER_ID, RepositoryTest.SYSTEMUSER_PASSWORD.toString());
 
     protected static String[] instantiate(String[] content, Map<String, String> parameters) {
         String[] result = new String[content.length];
@@ -128,7 +139,7 @@ public abstract class PluginTest extends RepositoryTest {
         build(session, getConfig());
         session.save();
 
-        tester = new HippoTester(new PluginTestApplication(), new JcrApplicationFactory(new JcrNodeModel("/config")));
+        tester = new HippoTester(new PluginTestApplication());
 
         home = tester.startPluginPage();
         JavaPluginConfig config = new JavaPluginConfig("dummy");

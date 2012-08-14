@@ -9,6 +9,7 @@ api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin.java -
 api/src/main/java/org/hippoecm/addon/workflow/workflow-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/Home.java -text
 api/src/main/java/org/hippoecm/frontend/IStringResourceProvider.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/PluginApplication.java -text
 api/src/main/java/org/hippoecm/frontend/PluginRequestTarget.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingBehavior.java -text
 api/src/main/java/org/hippoecm/frontend/behaviors/EventStoppingDecorator.java -text

@@ -16,21 +16,24 @@
 package org.hippoecm.frontend.session;
 
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginTest;
+import org.hippoecm.frontend.model.UserCredentials;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 
 public class UserSessionTest extends PluginTest {
+
+    private UserCredentials credentials = new UserCredentials("admin", "admin");
 
     @Test
     public void testSaveOnLogout() throws Exception {
         tester.setupRequestAndResponse();
 
         PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
-        userSession.login(new ValueMap("username=admin,password=admin"));
+        userSession.login(credentials);
 
         javax.jcr.Session jcrSession = userSession.getJcrSession();
         jcrSession.getRootNode().addNode("test", "nt:unstructured");
@@ -51,9 +54,10 @@ public class UserSessionTest extends PluginTest {
         tester.setupRequestAndResponse();
 
         session.getNode("/config/test-app").setProperty("frontend:saveonexit", false);
+        session.save();
 
         PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
-        userSession.login(new ValueMap("username=admin,password=admin"));
+        userSession.login(credentials);
 
         javax.jcr.Session jcrSession = userSession.getJcrSession();
         jcrSession.getRootNode().addNode("test", "nt:unstructured");
@@ -66,7 +70,7 @@ public class UserSessionTest extends PluginTest {
         RequestCycle.get().detach();
 
         session.refresh(false);
-        assertTrue(session.getRootNode().hasNode("test"));
+        assertFalse(session.getRootNode().hasNode("test"));
     }
 
 }

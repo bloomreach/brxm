@@ -15,13 +15,10 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.servlet.ServletContext;
 
 import org.apache.wicket.protocol.http.MockServletContext;
 import org.hippoecm.frontend.HippoTester;
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -31,6 +28,8 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class JcrConfigServiceFactoryTest extends PluginTest {
 
@@ -54,7 +53,7 @@ public class JcrConfigServiceFactoryTest extends PluginTest {
 
     @Test
     public void testFirstApplicationIsUsedAsFallback() throws Exception {
-        HippoTester second = new HippoTester(new PluginTestApplication(), new JcrApplicationFactory(new JcrNodeModel("/config"))) {
+        HippoTester second = new HippoTester(new PluginTestApplication()) {
 
             @Override
             public ServletContext newServletContext(String path) {

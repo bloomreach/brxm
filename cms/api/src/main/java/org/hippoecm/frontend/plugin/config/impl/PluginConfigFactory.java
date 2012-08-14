@@ -59,6 +59,11 @@ public class PluginConfigFactory implements IPluginConfigService {
         return pluginConfigService.listClusters(folder);
     }
 
+    @Override
+    public boolean isSaveOnExitEnabled() {
+        return pluginConfigService.isSaveOnExitEnabled();
+    }
+
     public void detach() {
         pluginConfigService.detach();
     }

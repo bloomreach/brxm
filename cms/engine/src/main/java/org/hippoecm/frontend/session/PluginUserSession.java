@@ -20,14 +20,11 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import javax.jcr.Credentials;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Request;
@@ -35,17 +32,17 @@ import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NoRepositoryAvailablePage;
+import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.model.JcrSessionModel;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.observation.FacetRootsObserver;
 import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.plugin.IPlugin;
-import org.hippoecm.frontend.util.WebApplicationHelper;
+import org.hippoecm.frontend.plugin.config.IPluginConfigService;
+import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
@@ -53,8 +50,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.frontend.util.WebApplicationHelper.PLUGIN_APPLICATION_NAME_PARAMETER;
 
 /**
  * A Wicket {@link org.apache.wicket.Session} that maintains a reference to a JCR {@link javax.jcr.Session}.  It is
@@ -65,9 +60,12 @@ import static org.hippoecm.frontend.util.WebApplicationHelper.PLUGIN_APPLICATION
 public class PluginUserSession extends UserSession {
 
     private static final long serialVersionUID = 1L;
-    private static final String FRONTEND_APPLICATION_ABSOLUTE_PATH = "/hippo:configuration/hippo:frontend/";
 
     static final Logger log = LoggerFactory.getLogger(UserSession.class);
+
+    public static final PluginUserSession get() {
+        return (PluginUserSession) UserSession.get();
+    }
 
     private static Session fallbackSession = null;
     private static final Map<UserSession, JcrSessionReference> jcrSessions = new WeakHashMap<UserSession, JcrSessionReference>();
@@ -76,6 +74,7 @@ public class PluginUserSession extends UserSession {
     private final IModel<WorkflowManager> workflowManager;
     private transient FacetRootsObserver facetRootsObserver;
     private UserCredentials credentials;
+    private Map<String, Integer> pluginComponentCounters = new HashMap<String, Integer>();
 
     public UserCredentials getUserCredentials() {
         return credentials;
@@ -213,19 +212,8 @@ public class PluginUserSession extends UserSession {
         facetRootsObserver = null;
     }
 
-    @Deprecated
-    public boolean login(ValueMap credentials, LoadableDetachableModel<Session> jcrSessionModel) {
-        return login(new UserCredentials(credentials.getString("username"), credentials.getString("password")),
-                     jcrSessionModel);
-    }
-
-    @Deprecated
-    public boolean login(ValueMap credentials) {
-        return login(credentials, null);
-    }
-
     public void login() {
-        login((UserCredentials) null, null);
+        login(null, null);
     }
 
     public void login(UserCredentials credentials) throws LoginException {
@@ -235,27 +223,13 @@ public class PluginUserSession extends UserSession {
             throw new LoginException(LoginException.CAUSE.INCORRECT_CREDENTIALS);
         }
 
-        try {
-            final Node applicationNode = getJcrSession().getNode(
-                    FRONTEND_APPLICATION_ABSOLUTE_PATH + getApplicationName("cms"));
-            if (applicationNode.hasProperty(FrontendNodeType.FRONTEND_SAVEONEXIT) && !applicationNode.getProperty(
-                    FrontendNodeType.FRONTEND_SAVEONEXIT).getBoolean()) {
-                IModel<Session> sessionModel = getJcrSessionModel();
-                if (sessionModel instanceof JcrSessionModel) {
-                    ((JcrSessionModel) sessionModel).setSaveOnExit(false);
-                }
+        IApplicationFactory factory = getApplicationFactory();
+        final IPluginConfigService application = factory.getApplication(getApplicationName());
+        if (!application.isSaveOnExitEnabled()) {
+            IModel<Session> sessionModel = getJcrSessionModel();
+            if (sessionModel instanceof JcrSessionModel) {
+                ((JcrSessionModel) sessionModel).setSaveOnExit(false);
             }
-        } catch (PathNotFoundException pne) {
-            login();
-            throw new LoginException(LoginException.CAUSE.ACCESS_DENIED, pne);
-        } catch (RepositoryException re) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while accessing repository", re);
-            } else {
-                log.warn(String.format("Error while accessing repository {}"), re.toString());
-            }
-            login();
-            throw new LoginException(LoginException.CAUSE.REPOSITORY_ERROR, re);
         }
     }
 
@@ -353,6 +327,10 @@ public class PluginUserSession extends UserSession {
         return JcrObservationManager.getInstance();
     }
 
+    public IApplicationFactory getApplicationFactory() {
+        return ((Main) Main.get()).getApplicationFactory(getJcrSession());
+    }
+
     /**
      * Retrieve the JCR root node.  Null is returned when no session is available or the root node cannot be obtained
      * from it.
@@ -409,8 +387,6 @@ public class PluginUserSession extends UserSession {
         return facetRootsObserver;
     }
 
-    private Map<String, Integer> pluginComponentCounters = new HashMap<String, Integer>();
-
     // Do not add the @Override annotation on this
     public Object getMarkupId(Component component) {
         String markupId = null;
@@ -432,11 +408,6 @@ public class PluginUserSession extends UserSession {
         return markupId + "_" + componentNum;
     }
 
-    public String getApplicationName(String defaultAppName) {
-        String applicationName = getApplicationName();
-        return StringUtils.isNotBlank(applicationName) ? applicationName : defaultAppName;
-    }
-
     public String getApplicationName() {
         String applicationName;
         Session session = getJcrSession();
@@ -445,7 +416,7 @@ public class PluginUserSession extends UserSession {
         if (userID == null || userID.equals("") || userID.equalsIgnoreCase("anonymous")) {
             applicationName = "login";
         } else {
-            applicationName = WebApplicationHelper.getConfigurationParameter((WebApplication) Application.get(), PLUGIN_APPLICATION_NAME_PARAMETER, null);
+            applicationName = PluginApplication.get().getPluginApplicationName();
         }
 
         return applicationName;

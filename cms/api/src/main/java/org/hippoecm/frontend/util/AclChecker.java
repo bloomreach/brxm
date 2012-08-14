@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,7 @@ public class AclChecker {
         }
 
         // Do the magic here
-        final String applicationName = WebApplicationHelper.getApplicationName("cms");
+        final String applicationName = PluginApplication.get().getPluginApplicationName();
         final String privileges = config.getString(applicationName + PRIVILEGES_CONFIGURATION_PARAM_POSTFIX);
         final String privilegesPath = config.getString(applicationName + PRIVILEGES_PATH_CONFIGURATION_PARAM_POSTFIX);
 

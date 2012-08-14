@@ -17,16 +17,14 @@ package org.hippoecm.frontend.util;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
+import org.hippoecm.frontend.PluginApplication;
 
 
 public class WebApplicationHelper {
 
-    public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
     public static final String HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME = "hal";
     public static final String REMEMBERME_COOKIE_BASE_NAME = "rememberme";
 
@@ -34,18 +32,10 @@ public class WebApplicationHelper {
     private WebApplicationHelper() {
     }
 
-    public static String getConfigurationParameter(String configParamName, String defaultValue) {
-        validateNotBlank(configParamName);
-
-        final String returnValue = getConfigurationParameter((WebApplication) Application.get(), configParamName, null);
-
-        return (returnValue == null) ? defaultValue : returnValue;
-    }
-
     public static String getFullyQualifiedCookieName(String cookieBaseName) {
         validateNotBlank(cookieBaseName);
 
-        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, "cms") + "." + cookieBaseName;
+        return getApplicationName() + "." + cookieBaseName;
     }
 
     public static void clearCookie(String cookieName) {
@@ -68,22 +58,8 @@ public class WebApplicationHelper {
         return (WebResponse) RequestCycle.get().getResponse();
     }
 
-    public static String getConfigurationParameter(WebApplication application, String parameterName, String defaultValue) {
-        String result = application.getInitParameter(parameterName);
-
-        if (result == null || result.equals("")) {
-            result = application.getServletContext().getInitParameter(parameterName);
-        }
-
-        if (result == null || result.equals("")) {
-            result = defaultValue;
-        }
-
-        return result;
-    }
-    
-    public static String getApplicationName(final String defaultName) {
-        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, defaultName);
+    public static String getApplicationName() {
+        return PluginApplication.get().getPluginApplicationName();
     }
 
     protected static void validateNotBlank(String value) {

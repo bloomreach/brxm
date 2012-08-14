@@ -105,6 +105,20 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
         return results;
     }
 
+    @Override
+    public boolean isSaveOnExitEnabled() {
+        try {
+            final Node applicationNode = model.getNode();
+            if (applicationNode.hasProperty(FrontendNodeType.FRONTEND_SAVEONEXIT) && !applicationNode.getProperty(
+                    FrontendNodeType.FRONTEND_SAVEONEXIT).getBoolean()) {
+                return false;
+            }
+        } catch (RepositoryException re) {
+            log.error("Could not determine whether save on exit is enabled.  Defaulting to true, save pending changes when session expires.", re);
+        }
+        return true;
+    }
+
     public IClusterConfig getDefaultCluster() {
         return getCluster(defaultKey);
     }

@@ -28,7 +28,6 @@ import org.hippoecm.frontend.behaviors.ContextMenuBehavior;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.dialog.DialogServiceFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.model.event.ObservableRegistry;
 import org.hippoecm.frontend.observation.JcrObservationManager;
@@ -38,15 +37,14 @@ import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
-import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
 import org.hippoecm.frontend.service.IController;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +63,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     private ContextMenuBehavior menuBehavior;
 
     public PluginPage() {
-        this(new JcrApplicationFactory(new JcrNodeModel("/" + HippoNodeType.CONFIGURATION_PATH + "/"
-                + HippoNodeType.FRONTEND_PATH)));
+        this(PluginUserSession.get().getApplicationFactory());
     }
 
     public PluginPage(IApplicationFactory appFactory) {
@@ -78,7 +75,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
         context.registerTracker(this, "service.root");
 
-        pluginConfigService = new PluginConfigFactory((UserSession) getSession(), appFactory);
+        pluginConfigService = new PluginConfigFactory(UserSession.get(), appFactory);
         context.registerService(pluginConfigService, IPluginConfigService.class.getName());
 
         obRegistry = new ObservableRegistry(context, null);

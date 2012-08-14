@@ -41,7 +41,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.application.IClassResolver;
 import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.IHeaderResponseDecorator;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
 import org.apache.wicket.request.IRequestCycleProcessor;
@@ -55,12 +54,14 @@ import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValueConversionException;
 import org.hippoecm.frontend.model.JcrHelper;
+import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.observation.JcrObservationManager;
+import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
+import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UnbindingHttpSessionStore;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -69,9 +70,7 @@ import org.onehippo.sso.CredentialCipher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.frontend.util.WebApplicationHelper.PLUGIN_APPLICATION_NAME_PARAMETER;
-
-public class Main extends WebApplication {
+public class Main extends PluginApplication {
 
     static final Logger log = LoggerFactory.getLogger(Main.class);
 
@@ -86,6 +85,9 @@ public class Main extends WebApplication {
     public final static String MAXUPLOAD_PARAM = "upload-limit";
     public final static String ENCRYPT_URLS = "encrypt-urls";
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
+    public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
+
+    private HippoRepository repository;
 
     @Override
     protected void init() {
@@ -289,9 +291,88 @@ public class Main extends WebApplication {
         });
 
         if (log.isInfoEnabled()) {
-            String applicationName = WebApplicationHelper.getConfigurationParameter(this, PLUGIN_APPLICATION_NAME_PARAMETER, "cms");
+            String applicationName = getPluginApplicationName();
             log.info("Hippo CMS application " + applicationName + " has started");
         }
+    }
+
+    @Override
+    public String getPluginApplicationName() {
+        return getConfigurationParameter(PLUGIN_APPLICATION_NAME_PARAMETER, "cms");
+    }
+
+    @Override
+    public String getConfigurationParameter(String parameterName, String defaultValue) {
+        String result = getInitParameter(parameterName);
+
+        if (result == null || result.equals("")) {
+            result = getServletContext().getInitParameter(parameterName);
+        }
+
+        if (result == null || result.equals("")) {
+            result = defaultValue;
+        }
+
+        return result;
+    }
+
+    @Override
+    public Class<PluginPage> getHomePage() {
+        return org.hippoecm.frontend.PluginPage.class;
+    }
+
+    @Override
+    public UserSession newSession(Request request, Response response) {
+        PluginUserSession userSession = new PluginUserSession(request);
+        userSession.login();
+        return userSession;
+    }
+
+    @Override
+    public ISessionStore newSessionStore() {
+        // in development mode, use disk page store to serialize page at the end of a request.
+        // in production, skip serialization for better performance.
+        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
+            return super.newSessionStore();
+        } else {
+            return new UnbindingHttpSessionStore(this);
+        }
+    }
+
+    public IApplicationFactory getApplicationFactory(final javax.jcr.Session jcrSession) {
+        return new JcrApplicationFactory(new JcrNodeModel("/" + HippoNodeType.CONFIGURATION_PATH + "/"
+                                                                  + HippoNodeType.FRONTEND_PATH));
+    }
+
+    @Override
+    public AjaxRequestTarget newAjaxRequestTarget(final Page page) {
+        return new PluginRequestTarget(page);
+    }
+
+    @Override
+    protected IRequestCycleProcessor newRequestCycleProcessor() {
+        return new PluginRequestCycleProcessor();
+    }
+
+    public HippoRepository getRepository() throws RepositoryException {
+        if (repository == null) {
+            String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
+            String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM,
+                    DEFAULT_REPOSITORY_DIRECTORY);
+            if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
+                repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
+            } else {
+                repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
+            }
+            String repositoryUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
+            String repositoryPassword = getConfigurationParameter(REPOSITORY_PASSWORD_PARAM, null);
+            PluginUserSession.setCredentials(new UserCredentials(repositoryUsername, repositoryPassword));
+        }
+        return repository;
+    }
+
+    public void resetConnection() {
+        repository = null;
     }
 
     @Override
@@ -319,66 +400,6 @@ public class Main extends WebApplication {
             repository.close();
             repository = null;
         }
-    }
-
-    @Override
-    public Class<PluginPage> getHomePage() {
-        return org.hippoecm.frontend.PluginPage.class;
-    }
-
-    @Override
-    public UserSession newSession(Request request, Response response) {
-        PluginUserSession userSession = new PluginUserSession(request);
-        userSession.login();
-        return userSession;
-    }
-
-    @Override
-    public ISessionStore newSessionStore() {
-        // in development mode, use disk page store to serialize page at the end of a request.
-        // in production, skip serialization for better performance.
-        if (Application.DEVELOPMENT.equals(getConfigurationType())) {
-            return super.newSessionStore();
-        } else {
-            return new UnbindingHttpSessionStore(this);
-        }
-    }
-
-    @Override
-    public AjaxRequestTarget newAjaxRequestTarget(final Page page) {
-        return new PluginRequestTarget(page);
-    }
-
-    @Override
-    protected IRequestCycleProcessor newRequestCycleProcessor() {
-        return new PluginRequestCycleProcessor();
-    }
-
-    public String getConfigurationParameter(String parameterName, String defaultValue) {
-        return WebApplicationHelper.getConfigurationParameter(this, parameterName, defaultValue);
-    }
-
-    private HippoRepository repository;
-
-    public HippoRepository getRepository() throws RepositoryException {
-        if (repository == null) {
-            String repositoryAddress = getConfigurationParameter(REPOSITORY_ADDRESS_PARAM, null);
-            String repositoryDirectory = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM,
-                    DEFAULT_REPOSITORY_DIRECTORY);
-            if (repositoryAddress != null && !repositoryAddress.trim().equals("")) {
-                repository = HippoRepositoryFactory.getHippoRepository(repositoryAddress);
-            } else {
-                repository = HippoRepositoryFactory.getHippoRepository(repositoryDirectory);
-            }
-            String repositoryUsername = getConfigurationParameter(REPOSITORY_USERNAME_PARAM, null);
-            String repositoryPassword = getConfigurationParameter(REPOSITORY_PASSWORD_PARAM, null);
-            PluginUserSession.setCredentials(new UserCredentials(repositoryUsername, repositoryPassword));
-        }
-        return repository;
-    }
-
-    public void resetConnection() {
-        repository = null;
     }
 
 }

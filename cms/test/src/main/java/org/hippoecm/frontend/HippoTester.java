@@ -36,6 +36,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.ValueFactory;
 import javax.jcr.Workspace;
@@ -324,19 +325,18 @@ public class HippoTester extends WicketTester {
         public void registerSessionCloseCallback(CloseCallback callback) {
         }
     }
-    
-    private IApplicationFactory appFactory;
 
     public HippoTester() {
-        this(null);
-    }
-
-    public HippoTester(IApplicationFactory factory) {
         this(new Main() {
             
             @Override
             public HippoRepository getRepository() throws RepositoryException {
                 return null;
+            }
+
+            @Override
+            public IApplicationFactory getApplicationFactory(final Session jcrSession) {
+                return new TestApplicationFactory();
             }
 
             @Override
@@ -351,13 +351,16 @@ public class HippoTester extends WicketTester {
                     
                 });
             }
-        }, factory);
+        });
     }
 
-    public HippoTester(Main main, IApplicationFactory appFactory) {
+    public HippoTester(Main main) {
         super(main);
+    }
 
-        this.appFactory = appFactory;
+    @Deprecated
+    public HippoTester(Main main, IApplicationFactory appFactory) {
+        this(main);
     }
 
     public Home startPluginPage() {
@@ -365,19 +368,17 @@ public class HippoTester extends WicketTester {
         // create a request cycle, but don't use it.
         // this is a workaround for mockwebapplication's retaining of these cycles. 
         RequestCycle rc = createRequestCycle();
-        if (appFactory != null) {
-            home = (Home) super.startPage(new PluginPage(appFactory));
-        } else {
-            home = (Home) super.startPage(PluginPage.class);
-        }
+        home = (Home) super.startPage(PluginPage.class);
         rc.detach();
         return home;
     }
 
     static class TestApplicationFactory implements IApplicationFactory {
+
         public IPluginConfigService getDefaultApplication() {
             return getApplication(null);
         }
+
         public IPluginConfigService getApplication(String name) {
             JavaConfigService configService = new JavaConfigService("test");
             JavaClusterConfig plugins = new JavaClusterConfig();
