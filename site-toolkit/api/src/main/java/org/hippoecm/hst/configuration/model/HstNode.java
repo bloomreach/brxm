@@ -55,7 +55,9 @@ public interface HstNode {
     HstNode getParent();
     
     /**
-     * add a child hstNode with <code>name</code>
+     * add a child hstNode with <code>name</code>. If there already exists an HstNode with name equal <code>name</code>, the
+     * existing HstNode is replaced. Since the HstNode's are used
+     * for the HST config model that does not support same name sibblings this is not a problem
      * @param name
      * @param hstNode
      */

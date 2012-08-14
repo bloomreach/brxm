@@ -378,6 +378,7 @@ public class HstManagerImpl implements HstManager {
                     // do finegrained reloading, removing and loading of previously loaded nodes that changed.
 
                     Set<String> loadNodes = new HashSet<String>();
+                    List<String> reloadNodes = new ArrayList<String>();
                     if(configChangeEventMap != null) {
                         Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.HSTCONFIGURATION_NODE);
                         if(events.size() > 0) {
@@ -419,56 +420,38 @@ public class HstManagerImpl implements HstManager {
                         } 
                         
                         // check whether there were removes and adds for the same node (in other words, a MOVE)
-                        List<String> extraNodesToLoad = new ArrayList<String>();
                         for(String path : loadNodes) { 
                             if(removedPathsForParentNode.containsKey(path)) {
-                                // found a move and add. Remove the parent and reload the parent
+                                // found a move and add. Reload the parent to account for the changed order of child nodes.
                                 HstNode node = removedPathsForParentNode.get(path);
                                 if(node.getParent() != null) {
-                                    node.getParent().removeNode(node.getValueProvider().getName());
-                                    extraNodesToLoad.add(node.getValueProvider().getPath());
+                                    // We do not remove the parent node, but because it is marked in 'extraNodesToLoad'
+                                    // it will be reloaded. When HstNode#addNode is invoked, it will replace the existing node
+                                    reloadNodes.add(node.getValueProvider().getPath());
                                 } else {
                                     // we are a root
                                     configurationRootNodes.remove(node.getValueProvider().getPath());
                                 }
                             }
                         }
-                        
-                        loadNodes.addAll(extraNodesToLoad);
+
                     }
                     
                     if( configurationRootNodes.isEmpty()) {
                         loadAllConfigurationNodes(session);
                     } else {
                         // do finegrained loading and reloading. 
-                         
+                        // First reload all nodes marked for reloading
+                        for(String path : reloadNodes) {
+                            loadConfigurationNode(session, path);
+                        }
                         //First load all added nodes.  
                         for(String path : loadNodes) {
                             if(getConfigurationNodeForPath(path) != null) {
                                 // already loaded by parent
                                 continue;
                             }
-                            String parentPath = path.substring(0,path.lastIndexOf("/"));
-                            HstNode parentNode = getConfigurationNodeForPath(parentPath);
-                            if(parentNode == null) {
-                                // there is no parent. Parent will still be added later so skip for now, OR we are a 
-                                // rootConfigurationNode
-                                if(path.split("/").length == rootPathDepth + 2) {
-                                    // this is a rootConfigurationNode. load it now. It can also already been removed
-                                    if(session.nodeExists(path)) {
-                                        HstNode hstNode = new HstNodeImpl(session.getNode(path), null, true);
-                                        configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
-                                    }
-                                } else {
-                                    // do nothing: node will be loaded by a parent
-                                }
-                            } else {
-                                // reload now the path and add it to the parent
-                                if(session.nodeExists(path)) {
-                                    HstNode node = new HstNodeImpl(session.getNode(path), parentNode, true);
-                                    parentNode.addNode(node.getValueProvider().getName(), node);
-                                }
-                            }
+                            loadConfigurationNode(session, path);
                         }
                         // now iterate through the tree, and reload the valueprovider for all HstNode's that are marked stale
                         for(HstNode node : configurationRootNodes.values()) {
@@ -593,8 +576,32 @@ public class HstManagerImpl implements HstManager {
             }
         }
 
-    } 
-       
+    }
+
+    private void loadConfigurationNode(final Session session, final String path) throws RepositoryException {
+        String parentPath = path.substring(0,path.lastIndexOf("/"));
+        HstNode parentNode = getConfigurationNodeForPath(parentPath);
+        if(parentNode == null) {
+            // there is no parent. Parent will still be added later so skip for now, OR we are a
+            // rootConfigurationNode
+            if(path.split("/").length == rootPathDepth + 2) {
+                // this is a rootConfigurationNode. load it now. It can also already been removed
+                if(session.nodeExists(path)) {
+                    HstNode hstNode = new HstNodeImpl(session.getNode(path), null, true);
+                    configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
+                }
+            } else {
+                // do nothing: node will be loaded by a parent
+            }
+        } else {
+            // reload now the path and add it to the parent
+            if(session.nodeExists(path)) {
+                HstNode node = new HstNodeImpl(session.getNode(path), parentNode, true);
+                parentNode.addNode(node.getValueProvider().getName(), node);
+            }
+        }
+    }
+
     private Map<String, HstNode> enhanceHstConfigurationNodes(Map<String, HstNode> nodes) {
         Map<String, HstNode> enhanced = new HashMap<String, HstNode>();
         for(HstNode node : nodes.values()) {

@@ -205,6 +205,7 @@ public class HstNodeImpl implements HstNode {
         if(children == null) {
             children = new LinkedHashMap<String, HstNode>();
         }
+        // if the child already exists, it is just replaced
         children.put(name, hstNode);
     }
 
