@@ -38,6 +38,11 @@ public final class SearchViewPlugin extends DocumentListingPlugin<BrowserSearchR
     }
 
     @Override
+    protected boolean isOrderable() {
+        return true;
+    }
+
+    @Override
     protected ISortableDataProvider<Node> newDataProvider() {
         return new SearchDocumentsProvider(getModel(), getTableDefinition().getComparators());
     }
