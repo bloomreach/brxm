@@ -27,6 +27,7 @@ import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.DummyPlugin;
@@ -65,7 +66,7 @@ public abstract class PluginTest extends RepositoryTest {
         @Override
         public PluginUserSession newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
             PluginUserSession userSession = (PluginUserSession) super.newSession(request, response);
-            userSession.login(CREDENTIALS, new LoadableDetachableModel<Session>() {
+            userSession.login(USER_CREDENTIALS, new LoadableDetachableModel<Session>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -78,8 +79,13 @@ public abstract class PluginTest extends RepositoryTest {
         }
     }
 
+    /**
+     * Use the USER_CREDENTIALS instead
+     */
+    @Deprecated
+    protected static ValueMap CREDENTIALS = new ValueMap("username=" + RepositoryTest.SYSTEMUSER_ID + ",password=" + RepositoryTest.SYSTEMUSER_PASSWORD.toString());
 
-    protected static UserCredentials CREDENTIALS = new UserCredentials(RepositoryTest.SYSTEMUSER_ID, RepositoryTest.SYSTEMUSER_PASSWORD.toString());
+    protected static UserCredentials USER_CREDENTIALS = new UserCredentials(RepositoryTest.SYSTEMUSER_ID, RepositoryTest.SYSTEMUSER_PASSWORD.toString());
 
     protected static String[] instantiate(String[] content, Map<String, String> parameters) {
         String[] result = new String[content.length];
