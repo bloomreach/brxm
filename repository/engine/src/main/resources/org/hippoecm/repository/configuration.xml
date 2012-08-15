@@ -27,7 +27,7 @@
         <sv:value>hipposys:deriveddefinition</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:classname" sv:type="String">
-        <sv:value>org.hippoecm.repository.DerivedDataEngine$CoreDerivedDataFunction</sv:value>
+        <sv:value>org.hippoecm.repository.deriveddata.CoreDerivedDataFunction</sv:value>
       </sv:property>
       <sv:property sv:name="hipposys:nodetype" sv:type="String">
         <sv:value>hippo:harddocument</sv:value>

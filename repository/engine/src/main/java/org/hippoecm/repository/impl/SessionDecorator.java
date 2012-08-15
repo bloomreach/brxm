@@ -55,7 +55,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
 import org.apache.jackrabbit.spi.Path;
-import org.hippoecm.repository.DerivedDataEngine;
+import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;

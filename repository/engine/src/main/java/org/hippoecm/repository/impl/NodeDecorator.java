@@ -46,7 +46,7 @@ import javax.jcr.query.RowIterator;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.DerivedDataEngine;
+import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Localized;

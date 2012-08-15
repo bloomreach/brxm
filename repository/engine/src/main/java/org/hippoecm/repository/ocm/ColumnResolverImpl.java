@@ -15,25 +15,17 @@
  */
 package org.hippoecm.repository.ocm;
 
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
-import javax.jcr.version.VersionException;
-import org.hippoecm.repository.DerivedDataEngine;
+
+import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
-import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.impl.SessionDecorator;
-import org.hippoecm.repository.ocm.JcrOID;
 
 public class ColumnResolverImpl implements ColumnResolver {
     
