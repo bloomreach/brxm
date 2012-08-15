@@ -116,9 +116,8 @@ public class CXFJaxrsService extends AbstractJaxrsService {
             controller = new ServletController(df, getJaxrsServletConfig(servletContext), servletContext, defaultBus);
             // guard against potential concurrency issue in cxf dynamic endpoint state management: HSTTWO-1663, CXF-2997
             controller.setDisableAddressUpdates(true);
-        } else {
-            BusFactory.setThreadDefaultBus(defaultBus);
         }
+        BusFactory.setThreadDefaultBus(defaultBus);
         return controller;
     }
 
