@@ -15,19 +15,18 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Configuration service for plugin clusters.  Cluster folders are located beneath
@@ -109,8 +108,9 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
     public boolean isSaveOnExitEnabled() {
         try {
             final Node applicationNode = model.getNode();
-            if (applicationNode.hasProperty(FrontendNodeType.FRONTEND_SAVEONEXIT) && !applicationNode.getProperty(
-                    FrontendNodeType.FRONTEND_SAVEONEXIT).getBoolean()) {
+            if (applicationNode.hasProperty(FrontendNodeType.FRONTEND_SAVEONEXIT) && Boolean.FALSE.equals(applicationNode.getProperty(
+                    FrontendNodeType.FRONTEND_SAVEONEXIT).getBoolean())) {
+
                 return false;
             }
         } catch (RepositoryException re) {
