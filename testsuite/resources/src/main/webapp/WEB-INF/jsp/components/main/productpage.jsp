@@ -336,6 +336,7 @@ function(Y) {
     refreshProductImage();
   };
   
+<c:if test="${not empty document.image}">
   var uploadImageForm = function(e) {
     var cfg = {
           on: { complete: onUploadImageComplete },
@@ -352,6 +353,7 @@ function(Y) {
 
     e.halt();
   };
+</c:if>
 
   var onDeleteViaComplete = function(id, o, args) {
     if (o.status >= 400) {
@@ -391,7 +393,9 @@ function(Y) {
   uploadButton.setStyle("display", "");
 </c:if>
   
+<c:if test="${not empty document.image}">
   uploadButton.on("click", uploadImageForm);
+</c:if>
 
   if (updateViaContentLink) {
 	updateViaContentLink.on("click", updateViaContent);
