@@ -175,6 +175,9 @@
           <sv:property sv:name="gallery.processor.id" sv:type="String">
             <sv:value>service.gallery.processor</sv:value>
           </sv:property>
+          <sv:property sv:name="validator.id" sv:type="String">
+            <sv:value>service.gallery.image.validation</sv:value>
+          </sv:property>
           <sv:property sv:name="fileupload.buttonWidth" sv:type="String">
             <sv:value>154px</sv:value>
           </sv:property>

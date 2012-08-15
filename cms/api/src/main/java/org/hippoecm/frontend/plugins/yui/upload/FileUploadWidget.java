@@ -15,63 +15,95 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadSettings;
 import org.hippoecm.frontend.plugins.yui.upload.multifile.MultiFileUploadComponent;
+import org.hippoecm.frontend.plugins.yui.upload.validation.DefaultUploadValidationService;
+import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
+import org.hippoecm.frontend.validation.IValidationResult;
+import org.hippoecm.frontend.validation.ValidationException;
+import org.hippoecm.frontend.validation.Violation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Widget for uploading files. This widget allows both flash and non-flash uploads based on the configuration.
- * By default the flash upload is used. For more configuration options please take a look at
- * {@link FileUploadWidgetSettings}.
+ * Widget for uploading files. This widget allows both flash and non-flash uploads based on the configuration. By
+ * default the flash upload is used. For more configuration options please take a look at {@link
+ * FileUploadWidgetSettings}.
  */
 public class FileUploadWidget extends Panel {
 
     private static final long serialVersionUID = 1L;
 
 
+    final Logger log = LoggerFactory.getLogger(FileUploadWidget.class);
+
     private static final String COMPONENT_ID = "component";
 
-    private FileUploadWidgetSettings settings;
     private Panel panel;
+    private FileUploadWidgetSettings settings;
+    private FileUploadValidationService validator;
+    private List<Violation> violations;
 
     private final static FlashVersion VALID_FLASH = new FlashVersion(9, 0, 45);
     private FlashVersion detectedFlash;
 
     public FileUploadWidget(String id, FileUploadWidgetSettings settings) {
-        super(id);
+        this(id, settings, null);
+    }
 
+    public FileUploadWidget(String id, FileUploadWidgetSettings settings, FileUploadValidationService validator) {
+        super(id);
         setOutputMarkupId(true);
+
+        if (validator == null) {
+            ValueMap params = new ValueMap();
+            params.put(DefaultUploadValidationService.EXTENSIONS_ALLOWED, settings.getFileExtensions());
+            validator = new DefaultUploadValidationService(params);
+        } else {
+            settings.setFileExtensions(validator.getAllowedExtensions());
+        }
+
+        this.violations = new LinkedList<Violation>();
         this.settings = settings;
+        this.validator = validator;
+
+        add(CSSPackageResource.getHeaderContribution(FileUploadWidget.class, "FileUploadWidget.css"));
         add(panel = new EmptyPanel(COMPONENT_ID));
     }
 
-    protected void onFileUpload(FileUpload fileUpload) {
-    }
-
+    /**
+     * Check if the client supports flash by looking up the WebAppBehavior in the page which test the client for flash
+     * on the first load and saves the version.
+     */
     @Override
     protected void onBeforeRender() {
         super.onBeforeRender();
 
-        if(settings.isFlashUploadEnabled()) {
+        if (settings.isFlashUploadEnabled()) {
             if (detectedFlash == null) {
                 Page page = getPage();
                 for (IBehavior behavior : page.getBehaviors()) {
                     if (behavior instanceof WebAppBehavior) {
-                        WebAppBehavior webapp = (WebAppBehavior) behavior;
-                        detectedFlash = webapp.getFlash();
+                        detectedFlash = ((WebAppBehavior) behavior).getFlash();
                     }
                 }
             }
@@ -85,46 +117,11 @@ public class FileUploadWidget extends Panel {
     }
 
     /**
-     * Detect if flash is installed and if the correct version of the flash plugin is found.
-     * @return <code>true</code> if flash and the correct version is detected, <code>false</code> otherwise
+     * Traverse up the component tree in search for an IAjaxIndicatorAware component is used to indicate a busy state
+     * while uploading.
+     *
+     * @return IAjaxIndicatorAware component or null of not found
      */
-    public boolean isFlashUpload() {
-        return detectedFlash != null && detectedFlash.isValid(VALID_FLASH);
-    }
-
-    protected void renderFlashUpload() {
-        AjaxMultiFileUploadSettings ajaxMultiFileUploadSettings = new AjaxMultiFileUploadSettings();
-        ajaxMultiFileUploadSettings.setFileExtensions(settings.getFileExtensions());
-        ajaxMultiFileUploadSettings.setAllowMultipleFiles(settings.getMaxNumberOfFiles() > 1);
-        ajaxMultiFileUploadSettings.setUploadAfterSelect(settings.isAutoUpload());
-        ajaxMultiFileUploadSettings.setClearAfterUpload(settings.isClearAfterUpload());
-        ajaxMultiFileUploadSettings.setClearTimeout(settings.getClearTimeout());
-        ajaxMultiFileUploadSettings.setHideBrowseDuringUpload(settings.isHideBrowseDuringUpload());
-        ajaxMultiFileUploadSettings.setAjaxIndicatorId(getAjaxIndicatorId());
-        ajaxMultiFileUploadSettings.setButtonWidth(settings.getButtonWidth());
-        replace(panel = new AjaxMultiFileUploadComponent(COMPONENT_ID, ajaxMultiFileUploadSettings) {
-
-            @Override
-            protected void onFileUpload(FileUpload fileUpload) {
-                FileUploadWidget.this.onFileUpload(fileUpload);
-            }
-
-            @Override
-            protected void onFinish(AjaxRequestTarget target) {
-                FileUploadWidget.this.onFinishAjaxUpload(target);
-            }
-
-            @Override
-            protected void onUploadSuccess() {
-            }
-        });
-    }
-
-    protected void renderJavascriptUpload() {
-        int max = settings.isAutoUpload() ? 1 : settings.getMaxNumberOfFiles();
-        replace(panel = new MultiFileUploadComponent(COMPONENT_ID, max));
-    }
-
     protected String getAjaxIndicatorId() {
         Component c = this;
         while (c != null) {
@@ -136,62 +133,120 @@ public class FileUploadWidget extends Panel {
         return null;
     }
 
+
+    protected void renderFlashUpload() {
+        AjaxMultiFileUploadSettings ajaxSettings = new AjaxMultiFileUploadSettings();
+        ajaxSettings.setFileExtensions(settings.getFileExtensions());
+        ajaxSettings.setAllowMultipleFiles(settings.getMaxNumberOfFiles() > 1);
+        ajaxSettings.setUploadAfterSelect(settings.isAutoUpload());
+        ajaxSettings.setClearAfterUpload(settings.isClearAfterUpload());
+        ajaxSettings.setClearTimeout(settings.getClearTimeout());
+        ajaxSettings.setHideBrowseDuringUpload(settings.isHideBrowseDuringUpload());
+        ajaxSettings.setAjaxIndicatorId(getAjaxIndicatorId());
+        ajaxSettings.setButtonWidth(settings.getButtonWidth());
+        replace(panel = new AjaxMultiFileUploadComponent(COMPONENT_ID, ajaxSettings) {
+
+            @Override
+            protected void onFileUpload(FileUpload fileUpload) {
+                handleFileUpload(fileUpload);
+            }
+
+            @Override
+            protected void onFinish(AjaxRequestTarget target) {
+                FileUploadWidget.this.onFinishUpload();
+                FileUploadWidget.this.onFinishAjaxUpload(target);
+            }
+
+        });
+    }
+
+    /**
+     * Detect if flash is installed and if the correct version of the flash plugin is found.
+     *
+     * @return <code>true</code> if flash and the correct version is detected, <code>false</code> otherwise
+     */
+    public boolean isFlashUpload() {
+        return detectedFlash != null && detectedFlash.isValid(VALID_FLASH);
+    }
+
+    /**
+     * Components that embed a FileUploadWidget might have their own actions for triggering the upload, this method
+     * returns the javascript call to initiate it.
+     *
+     * @return Javascript call that start the ajax upload
+     */
+    public String getStartAjaxUploadScript() {
+        return "YAHOO.hippo.Upload.upload();";
+    }
+
+    protected void renderJavascriptUpload() {
+        int max = settings.isAutoUpload() ? 1 : settings.getMaxNumberOfFiles();
+        replace(panel = new MultiFileUploadComponent(COMPONENT_ID, max));
+    }
+
     protected void onFinishAjaxUpload(AjaxRequestTarget target) {
     }
 
-    public void handleNonFlashSubmit() {
+    /**
+     * The HTML4 upload will collect the new files in the MultiFileUploadComponent, after the form
+     * has been completly submitted, onFinishHtmlUpload is called which will process
+     */
+    public void onFinishHtmlUpload() {
+        onFinishUpload();
+    }
+
+    protected final void onFinishUpload() {
         if (!isFlashUpload()) {
             Collection<FileUpload> uploads = ((MultiFileUploadComponent) panel).getUploads();
             if (uploads != null) {
                 for (FileUpload upload : uploads) {
-                    if (fileUploadIsValid(upload)) {
-                        onFileUpload(upload);
-                    }
+                    handleFileUpload(upload);
                 }
             }
         }
+        handleViolations();
     }
 
-    private boolean fileUploadIsValid(FileUpload upload) {
-        if (settings.getFileExtensions() == null || settings.getFileExtensions().length == 0) {
-            return true;
-        }
 
-        String fileName = upload.getClientFileName();
-        int dotIndex = fileName.lastIndexOf('.');
-        if (dotIndex == -1 || dotIndex == fileName.length() - 1) {
-            String msg = new StringResourceModel("extension.not.found", this, null,
-                    new Object[]{fileName, getReadableFileExtensions()}).getObject();
-            error(msg);
-            return false;
-        }
-        String uploadExt = fileName.substring(dotIndex + 1).toLowerCase();
-        for (String extension : settings.getFileExtensions()) {
-            extension = extension.toLowerCase();
-            int extDotIndex = extension.lastIndexOf('.');
-            if (extDotIndex > -1) {
-                extension = extension.substring(extDotIndex + 1);
+    private void handleViolations() {
+        if (violations.size() > 0) {
+            List<String> errors = new ArrayList<String>(violations.size());
+            for (Violation v : violations) {
+                String error = new StringResourceModel(v.getMessageKey(), this, null, v.getParameters()).getString();
+                error(error);
             }
-            if (uploadExt.equals(extension)) {
-                return true;
+            violations.clear();
+        }
+    }
+
+    protected boolean hasViolations() {
+        return violations.size() > 0;
+    }
+
+    private void handleFileUpload(FileUpload fileUpload) {
+        try {
+            validator.validate(fileUpload);
+            IValidationResult result = validator.getValidationResult();
+
+            if (result.isValid()) {
+                onFileUpload(fileUpload);
+            } else {
+                violations.addAll(result.getViolations());
             }
+            //delete uploaded file after it is processed
+            fileUpload.delete();
+
+        } catch (ValidationException e) {
+            log.error("Error while validating upload", e);
         }
-        String msg = new StringResourceModel("extension.not.allowed", this, null,
-                new Object[]{getReadableFileExtensions()}).getObject();
-        error(msg);
-        return false;
     }
 
-    private String getReadableFileExtensions() {
-        StringBuilder sb = new StringBuilder();
-        for (String extension : settings.getFileExtensions()) {
-            sb.append(extension).append(" ");
-        }
-        return sb.toString();
-    }
-
-    public String getStartAjaxUploadScript() {
-        return "YAHOO.hippo.Upload.upload();";
+    /**
+     * Hook method for subclasses to handle an upload once it has passed validation.
+     *
+     * @param fileUpload The uploaded file
+     */
+    protected void onFileUpload(FileUpload fileUpload) {
     }
 
     public String getAjaxIndicatorStopScript() {

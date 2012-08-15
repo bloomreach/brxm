@@ -1,0 +1,31 @@
+/**
+ * Dialog styles
+ */
+.hippo-dialog-container .upload-feedback-panel ul.feedbackPanel {
+    margin: 0 0 10px;
+    border: 1px solid #999;
+    background-color: #ffc;
+    height: auto;
+    max-height: 277px;
+    overflow: auto;
+}
+
+.hippo-dialog-container .upload-feedback-panel ul.feedbackPanel li {
+  display: block;
+}
+
+/**
+ * Editor styles
+ */
+
+.hippo-editor-field .upload-feedback-panel ul.feedbackPanel {
+    margin-top: 15px;
+    border: 1px solid #999;
+    background-color: #ffc;
+    color: red;
+}
+
+.hippo-editor-field .upload-feedback-panel ul.feedbackPanel li.feedbackPanelERROR {
+    float: none;
+    display: block;
+}

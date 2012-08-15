@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,10 @@
  *  limitations under the License.
  */
 package org.hippoecm.frontend.plugins.yui.upload.ajax;
+
+import java.util.LinkedList;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
@@ -33,13 +37,9 @@ import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.upload.DiskFileItemFactory;
 import org.apache.wicket.util.upload.FileItem;
 import org.apache.wicket.util.upload.FileUploadException;
-
 import org.hippoecm.frontend.plugins.yui.upload.MagicMimeTypeFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.LinkedList;
 
 public abstract class AjaxMultiFileUploadComponent extends Panel {
 
@@ -64,8 +64,6 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
                         });
                 for (FileItem fi : multipartServletWebRequest.getFiles().values()) {
                     onFileUpload(new FileUpload(fi));
-                    fi.delete();
-                    onUploadSuccess();
                 }
                 setResponse("success");
             } catch (FileUploadException e) {
@@ -121,7 +119,7 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
         });
 
         add(uploadBehavior = new UploadBehavior());
-        
+
         this.settings = settings;
     }
 
@@ -136,7 +134,5 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
     protected abstract void onFileUpload(FileUpload fileUpload);
 
     protected abstract void onFinish(AjaxRequestTarget target);
-
-    protected abstract void onUploadSuccess();
 
 }

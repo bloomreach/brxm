@@ -15,6 +15,41 @@ if (!YAHOO.hippo.Upload) {
     (function() {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
+        YAHOO.hippo.BytesToHumanReadable = function(filesize) {
+            var number_format = function(number, decimals, dec_point, thousands_sep) {
+                // http://kevin.vanzonneveld.net
+                // +   original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
+                // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+                // +     bugfix by: Michael White (http://crestidg.com)
+                // +     bugfix by: Benjamin Lupton
+                // +     bugfix by: Allan Jensen (http://www.winternet.no)
+                // +    revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
+                // *     example 1: number_format(1234.5678, 2, '.', '');
+                // *     returns 1: 1234.57
+
+                var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
+                var d = dec_point == undefined ? "," : dec_point;
+                var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
+                var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+
+                return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+            };
+            if (filesize >= 1073741824) {
+                filesize = number_format(filesize / 1073741824, 2, '.', '') + ' Gb';
+            } else {
+                if (filesize >= 1048576) {
+                    filesize = number_format(filesize / 1048576, 2, '.', '') + ' Mb';
+                } else {
+                    if (filesize >= 1024) {
+                        filesize = number_format(filesize / 1024, 0) + ' Kb';
+                    } else {
+                        filesize = number_format(filesize, 0) + ' bytes';
+                    }
+                }
+            }
+            return filesize;
+        };
+
         YAHOO.hippo.UploadImpl = function() {
             //YAHOO.widget.Uploader.SWFURL = "http://yui.yahooapis.com/2.8.1/build/uploader/assets/uploader.swf";
             this.latest = null;
@@ -87,14 +122,14 @@ if (!YAHOO.hippo.Upload) {
 
             YAHOO.widget.Uploader.SWFURL = config.flashUrl;
 
-            var root = new YAHOO.util.Element(Dom.get(id));
+            this.root = new YAHOO.util.Element(Dom.get(id));
             this.elements.uiElements = new YAHOO.util.Element(document.createElement('div'));
             Dom.setStyle(this.elements.uiElements, 'display', 'inline');
-            root.appendChild(this.elements.uiElements);
+            this.root.appendChild(this.elements.uiElements);
 
             this.elements.datatableContainer = new YAHOO.util.Element(document.createElement('div'));
             Dom.addClass(this.elements.datatableContainer, 'dataTableContainer');
-            root.appendChild(this.elements.datatableContainer);
+            this.root.appendChild(this.elements.datatableContainer);
 
             this.elements.uploaderContainer = new YAHOO.util.Element(document.createElement('div'));
             this.elements.uiElements.appendChild(this.elements.uploaderContainer);
@@ -117,12 +152,12 @@ if (!YAHOO.hippo.Upload) {
             Dom.setStyle(this.elements.uploaderOverlay, 'width', config.buttonWidth == null || config.buttonWidth == ""  ? "155px" : config.buttonWidth);
             Dom.setStyle(this.elements.uploaderOverlay, 'height', config.buttonHeight == null || config.buttonHeight == "" ? "26px" : config.buttonHeight);
 
-            this.fileList = null;
+            this.dataArr = [];
             this.numberOfUploads = 0;
 
             this.initializeUploader();
 
-            YAHOO.hippo.HippoAjax.registerDestroyFunction(root, this.destroy, this);
+            YAHOO.hippo.HippoAjax.registerDestroyFunction(this.root, this.destroy, this);
         };
 
         YAHOO.hippo.UploadWidget.prototype = {
@@ -145,7 +180,7 @@ if (!YAHOO.hippo.Upload) {
             },
 
             upload : function() {
-                if(this.fileList != null) {
+                if(this.dataArr.length > 0) {
                     if(this.config.hideBrowseDuringUpload) {
                         //Dom.setStyle(this.elements.uploaderContainer, 'display', 'none');
                     }
@@ -170,8 +205,16 @@ if (!YAHOO.hippo.Upload) {
 
             onFileSelect : function(event) {
                 if('fileList' in event && event.fileList != null) {
-	                  this.fileList = event.fileList;
-    	              this._createDatatable(this.fileList);
+                    this.dataArr = [];
+
+                    for (var fileName in event.fileList) {
+                        if(YAHOO.lang.hasOwnProperty(event.fileList, fileName)) {
+                            var file  = event.fileList[fileName];
+                            file["progress"] = -1;
+                            this.dataArr.unshift(file);
+                        }
+                    }
+                    this._createDatatable();
                 }
                 if(this.config.uploadAfterSelect === true) {
                     this.upload();
@@ -296,7 +339,11 @@ if (!YAHOO.hippo.Upload) {
                     if (this.config.fileExtensions != null && this.config.fileExtensions.length > 0) {
                         var allowedExtensions = '';
                         for (var i = 0; i < this.config.fileExtensions.length; ++i) {
-                            allowedExtensions += this.config.fileExtensions[i] + ';';
+                            var ext = this.config.fileExtensions[i];
+                            if(ext.indexOf("*.") != 0) {
+                                ext = "*." + ext;
+                            }
+                            allowedExtensions += ext + ';';
                         }
                         // Apply new set of file filters to the uploader.
                         this.uploader.setFileFilters(new Array({description:"Files", extensions:allowedExtensions}));
@@ -353,12 +400,9 @@ if (!YAHOO.hippo.Upload) {
                 return null;
             },
 
-            _createDatatable : function(entries) {
-                this.dataArr = [];
-                for(var i in entries) {
-                    var entry = entries[i];
-                    entry["progress"] = -1;
-                    this.dataArr.unshift(entry);
+          _createDatatable : function() {
+                if(this.dataArr.length == 0) {
+                    return;
                 }
 
                 var nameWidth = 305;
@@ -404,14 +448,16 @@ if (!YAHOO.hippo.Upload) {
                         selectionMode:"single",
                         width: '440px',
                         height: '236px',
-                        sortedBy: sortedBy
+                        sortedBy: sortedBy,
+                        MSG_EMPTY: ''
                     });
                 } else {
                     this.datatable = new YAHOO.widget.DataTable(
                         this.elements.datatableContainer,
                         myColumnDefs, myDataSource, {
                         selectionMode:"single",
-                        sortedBy: sortedBy
+                        sortedBy: sortedBy,
+                        MSG_EMPTY: ''
                     });
                 }
             },
@@ -433,39 +479,7 @@ if (!YAHOO.hippo.Upload) {
             },
 
             _bytesFormatter : function(elLiner, oRecord, oColumn, oData) {
-                var number_format = function(number, decimals, dec_point, thousands_sep) {
-                    // http://kevin.vanzonneveld.net
-                    // +   original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-                    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-                    // +     bugfix by: Michael White (http://crestidg.com)
-                    // +     bugfix by: Benjamin Lupton
-                    // +     bugfix by: Allan Jensen (http://www.winternet.no)
-                    // +    revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-                    // *     example 1: number_format(1234.5678, 2, '.', '');
-                    // *     returns 1: 1234.57
-
-                    var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
-                    var d = dec_point == undefined ? "," : dec_point;
-                    var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
-                    var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
-
-                    return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-                };
-                var filesize = oData;
-                if (filesize >= 1073741824) {
-                    filesize = number_format(filesize / 1073741824, 2, '.', '') + ' Gb';
-                } else {
-                    if (filesize >= 1048576) {
-                        filesize = number_format(filesize / 1048576, 2, '.', '') + ' Mb';
-                    } else {
-                        if (filesize >= 1024) {
-                            filesize = number_format(filesize / 1024, 0) + ' Kb';
-                        } else {
-                            filesize = number_format(filesize, 0) + ' bytes';
-                        }
-                    }
-                }
-                elLiner.innerHTML = filesize;
+                elLiner.innerHTML = YAHOO.hippo.BytesToHumanReadable(oData);
             },
 
             _removeFormatter : function(elLiner, oRecord, oColumn, oData) {

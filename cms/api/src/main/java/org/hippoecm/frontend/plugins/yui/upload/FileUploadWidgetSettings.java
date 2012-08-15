@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  *     <li>file.extensions = allowed upload file extensions</li>
  * </ul>
  */
-public class FileUploadWidgetSettings implements IClusterable{
+public class FileUploadWidgetSettings implements IClusterable {
 
     public static final String FILEUPLOAD_FLASH_ENABLED_SETTING = "fileupload.flashEnabled";
     public static final String FILEUPLOAD_MAX_ITEMS_SETTING = "fileupload.maxItems";
@@ -62,7 +62,7 @@ public class FileUploadWidgetSettings implements IClusterable{
     private boolean flashUploadEnabled = true;
 
     public FileUploadWidgetSettings() {
-    } 
+    }
 
     public FileUploadWidgetSettings(IPluginConfig pluginConfig) {
         parsePluginConfig(pluginConfig);
@@ -141,8 +141,9 @@ public class FileUploadWidgetSettings implements IClusterable{
     }
 
     /**
-     * If set to <code>true</code> (default) the upload plugin will use flash for file uploads, otherwise it will use a plain
-     * Javascript upload.
+     * If set to <code>true</code> (default) the upload plugin will use flash for file uploads, otherwise it will use a
+     * plain Javascript upload.
+     *
      * @param flashUploadEnabled boolean indicating if flash should be used for file uploads.
      */
     public void setFlashUploadEnabled(boolean flashUploadEnabled) {
@@ -150,10 +151,10 @@ public class FileUploadWidgetSettings implements IClusterable{
     }
 
     private void parsePluginConfig(final IPluginConfig pluginConfig) {
-        if(pluginConfig.containsKey(FILEUPLOAD_FLASH_ENABLED_SETTING)) {
+        if (pluginConfig.containsKey(FILEUPLOAD_FLASH_ENABLED_SETTING)) {
             this.flashUploadEnabled = pluginConfig.getAsBoolean(FILEUPLOAD_FLASH_ENABLED_SETTING);
         }
-        if(pluginConfig.containsKey(FILEUPLOAD_MAX_ITEMS_SETTING)) {
+        if (pluginConfig.containsKey(FILEUPLOAD_MAX_ITEMS_SETTING)) {
             this.maxNumberOfFiles = pluginConfig.getAsInteger(FILEUPLOAD_MAX_ITEMS_SETTING);
         }
         // for backwards compatibility

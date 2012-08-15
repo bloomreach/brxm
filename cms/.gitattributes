@@ -424,6 +424,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/inc/treemanager/treeman
 api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/init_tree.js svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/tree/mytree.css svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/FileUploadException.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/FileUploadWidget.css -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/FileUploadWidgetSettings.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/FileUploadWidget_de.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/MultiFileUploadDialog.properties -text
@@ -450,6 +451,12 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUp
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent_it.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/delete-small-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/image-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/DefaultUploadValidationService.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/FileUploadValidationService.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/ImageInfo.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/ImageUploadValidationPlugin.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/ImageUploadValidationService.java -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/UploadValidationPlugin.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/util/JavascriptUtil.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/util/OptionsUtil.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/yui/webapp/WebAppSettings.java -text
@@ -1626,6 +1633,7 @@ gallery/repository/src/main/resources/gallerytemplate-images_de.xml -text
 gallery/repository/src/main/resources/gallerytemplate-images_it.xml -text
 gallery/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 gallery/repository/src/main/resources/hippogallery.cnd svneol=native#text/plain
+gallery/repository/src/main/resources/image-validator.xml -text
 gotolink/pom.xml svneol=native#text/plain
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_de.properties -text
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_it.properties -text
