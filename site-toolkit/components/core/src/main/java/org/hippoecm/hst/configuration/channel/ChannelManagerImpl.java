@@ -15,30 +15,6 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.Workspace;
-import javax.jcr.nodetype.NodeType;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelException.Type;
@@ -51,18 +27,18 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.StringCodecFactory;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowException;
-import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.api.*;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.jcr.*;
+import javax.jcr.nodetype.NodeType;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.rmi.RemoteException;
+import java.util.*;
 
 public class ChannelManagerImpl implements MutableChannelManager {
 
@@ -327,15 +303,14 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
     }
 
-    protected SessionReference getSessionReference() throws RepositoryException {
-        SessionReference sessionReference;
+    protected Session getSession() throws RepositoryException {
         final Session session = CmsJcrSessionThreadLocal.getJcrSession();
         if (session == null) {
             log.debug("Could not find a JCR session object instance when expected to have one already instantiated");
             throw new IllegalStateException("Could not find a JCR session object instance when expected to have one already instantiated");
         }
 
-        return new SessionReference(session);
+        return session;
     }
 
     public synchronized Channel getChannelByJcrPath(String jcrPath) throws ChannelException {
@@ -372,17 +347,14 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public synchronized String persist(final String blueprintId, Channel channel) throws ChannelException {
-
         if (!blueprints.containsKey(blueprintId)) {
             throw new ChannelException("Blueprint id " + blueprintId + " is not valid");
         }
 
         Blueprint blueprint = blueprints.get(blueprintId);
 
-        SessionReference sessionRef = null;
         try {
-            sessionRef = getSessionReference();
-            Session session = sessionRef.getSession();
+            final Session session = getSession();
             Node configNode = session.getNode(rootPath);
             String channelId = createUniqueChannelId(channel.getName(), session);
             createChannel(configNode, blueprint, session, channelId, channel);
@@ -414,11 +386,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
             return channelId;
         } catch (RepositoryException e) {
             throw new ChannelException("Unable to save channel to the repository", e);
-        } finally {
-            if (sessionRef != null) {
-                sessionRef.release();
-            }
         }
+
     }
 
     /**
@@ -463,10 +432,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (!channels.containsKey(channel.getId())) {
             throw new ChannelException("No channel with id " + channel.getId() + " was found");
         }
-        SessionReference sessionRef = null;
+
         try {
-            sessionRef = getSessionReference();
-            Session session = sessionRef.getSession();
+            final Session session = getSession();
             Node configNode = session.getNode(rootPath);
             updateChannel(configNode, channel);
 
@@ -495,11 +463,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
             session.save();
         } catch (RepositoryException e) {
             throw new ChannelException("Unable to save channel to the repository", e);
-        } finally {
-            if (sessionRef != null) {
-                sessionRef.release();
-            }
         }
+
     }
 
     @Override
@@ -579,18 +544,11 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     @Override
     public synchronized boolean canUserModifyChannels() {
-        SessionReference sessionRef = null;
-
         try {
-            sessionRef = getSessionReference();
-            return sessionRef.getSession().hasPermission(
-                    rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/accesstest", Session.ACTION_ADD_NODE);
+            final Session session = getSession();
+            return session.hasPermission(rootPath + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/accesstest", Session.ACTION_ADD_NODE);
         } catch (RepositoryException e) {
             log.error("Repository error when determining channel manager access", e);
-        } finally {
-            if (sessionRef != null) {
-                sessionRef.release();
-            }
         }
 
         return false;
@@ -1032,32 +990,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
         public Node getConfigRootNode() {
             return configRootNode;
-        }
-    }
-
-    private class SessionReference {
-
-        private final boolean logout;
-        private final Session session;
-
-        SessionReference(Session session) throws RepositoryException {
-            if (session == null) {
-                // If null session object instance is passed signal that as a problem
-                throw new IllegalArgumentException("Can not instantiate a session reference with a null JCR session object instance!");
-            }
-
-            this.session = session;
-            this.logout = false;
-        }
-
-        void release() {
-            if (logout) {
-                session.logout();
-            }
-        }
-
-        Session getSession() {
-            return session;
         }
     }
 
