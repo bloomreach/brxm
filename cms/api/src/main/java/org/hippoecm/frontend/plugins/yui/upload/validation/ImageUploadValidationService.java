@@ -17,7 +17,12 @@
 package org.hippoecm.frontend.plugins.yui.upload.validation;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.sanselan.ImageInfo;
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.Sanselan;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -49,15 +54,19 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
         validateSizes(upload);
     }
 
-    //TODO: see if we can do with Sanselan
     private void validateSizes(final FileUpload upload) {
         String fileName = upload.getClientFileName();
+        Map params = new HashMap();
+        params.put(Sanselan.PARAM_KEY_READ_THUMBNAILS, Boolean.FALSE);
         ImageInfo info;
         try {
-            info = new ImageInfo(upload.getInputStream());
+            info = Sanselan.getImageInfo(upload.getInputStream(), fileName, params);
         } catch (IOException e) {
-            addViolation("upload.validation.ioerror", fileName);
-
+            addViolation("upload.validation.io.exception", fileName);
+            log.error("Error processing upload", e);
+            return;
+        } catch (ImageReadException e) {
+            addViolation("upload.validation.imageread.exception", fileName);
             log.error("Error processing upload", e);
             return;
         }

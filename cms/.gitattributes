@@ -453,7 +453,6 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/delete-smal
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/image-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/DefaultUploadValidationService.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/FileUploadValidationService.java -text
-api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/ImageInfo.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/ImageUploadValidationPlugin.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/ImageUploadValidationService.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/UploadValidationPlugin.java -text

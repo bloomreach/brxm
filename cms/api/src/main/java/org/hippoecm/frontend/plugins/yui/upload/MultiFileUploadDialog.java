@@ -23,7 +23,6 @@ import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
-import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
@@ -94,6 +93,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
                     String message = t.getLocalizedMessage();
                     if(t.getCause() != null) {
                         message +=  "<br/>" + t.getCause();
+                        log.error("FileUploadException caught with nested exception", t);
                     }
                     errors.add(message);
                 }
@@ -110,7 +110,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
                 super.onFinishAjaxUpload(target);
                 handleErrors();
 
-                if (hasErrorMessage()) {
+                if (hasFeedbackMessage() || MultiFileUploadDialog.this.hasFeedbackMessage()) {
                     setCancelVisible(false);
                     ajaxButton.setVisible(false);
                     removeButton(ajaxButton);
@@ -153,16 +153,21 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         add(widget);
 
         //The feedbackPanel of the AbstractDialog does not render messages when using the flashUpload. To work around
-        //this we use a local feedbackPanel in the case of a flash upload.
-        Panel fp;
-        if (widget.isFlashUpload()) {
-            fp = new FeedbackPanel("feedbackPanel");
-            fp.setEscapeModelStrings(false);
-            fp.add(new AttributeAppender("class", true, new Model<String>("hippo-modal-feedback"), " "));
-            fp.add(new AttributeAppender("class", true, new Model<String>("upload-feedback-panel"), " "));
-        } else {
-           fp = new EmptyPanel("feedbackPanel");
-        }
+        //this use a local feedbackPanel in the case of a flash upload.
+        Panel fp = new FeedbackPanel("feedbackPanel") {
+            @Override
+            public boolean isEnabled() {
+                return widget.isFlashUpload();
+            }
+
+            @Override
+            public boolean isVisible() {
+                return widget.isFlashUpload();
+            }
+        };
+        fp.setEscapeModelStrings(false);
+        fp.add(new AttributeAppender("class", true, new Model<String>("hippo-modal-feedback"), " "));
+        fp.add(new AttributeAppender("class", true, new Model<String>("upload-feedback-panel"), " "));
         add(fp);
     }
 
