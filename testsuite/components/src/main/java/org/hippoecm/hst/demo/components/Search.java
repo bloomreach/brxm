@@ -49,6 +49,10 @@ public class Search extends AbstractSearchComponent {
         int pageSize;
         try {
             pageSize = Integer.parseInt(pageSizeString);
+
+            if (pageSize <= 0) {
+                pageSize = DEFAULT_PAGE_SIZE;
+            }
         } catch (NumberFormatException e) {
             pageSize = DEFAULT_PAGE_SIZE;
         }

@@ -40,6 +40,10 @@ public class Archive extends AbstractSearchComponent {
         int pageSize;
         try {
             pageSize = Integer.parseInt(getPublicRequestParameter(request, "pageSize"));
+
+            if (pageSize <= 0) {
+                pageSize = DEFAULT_PAGE_SIZE;
+            }
         } catch (NumberFormatException e) {
             pageSize = DEFAULT_PAGE_SIZE;
         }
