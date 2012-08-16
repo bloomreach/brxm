@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -24,24 +25,35 @@ import org.slf4j.LoggerFactory;
 public class Search extends AbstractSearchComponent {
 
     public static final Logger log = LoggerFactory.getLogger(Search.class);
-    
+
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         String query = request.getParameter("query");
         response.setRenderParameter("query", query);
+
+        String pageSize = request.getParameter("pageSize");
+        response.setRenderParameter("pageSize", pageSize);
     }
-    
+
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 
         String query = getPublicRequestParameter(request, "query");
+        String pageSizeString = getPublicRequestParameter(request, "pageSize");
 
-        if (query == null) {
+        if (StringUtils.isBlank(query)) {
             return;
         }
-        
-        doSearch(request, response, query, null, null, DEFAULT_PAGE_SIZE, getSiteContentBaseBean(request));
+
+        int pageSize;
+        try {
+            pageSize = Integer.parseInt(pageSizeString);
+        } catch (NumberFormatException e) {
+            pageSize = DEFAULT_PAGE_SIZE;
+        }
+
+        doSearch(request, response, query, null, null, pageSize, getSiteContentBaseBean(request));
     }
 
 }
