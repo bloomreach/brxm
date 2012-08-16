@@ -273,6 +273,7 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>2007.2</sv:value>
     </sv:property>
+  </sv:node>
   <sv:node sv:name="hippogallery-editor-de">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
