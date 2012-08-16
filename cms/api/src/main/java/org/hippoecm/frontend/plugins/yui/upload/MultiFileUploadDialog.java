@@ -93,7 +93,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
                     String message = t.getLocalizedMessage();
                     if(t.getCause() != null) {
                         message +=  "<br/>" + t.getCause();
-                        log.error("FileUploadException caught with nested exception", t);
+                        log.error("FileUploadException caught", t);
                     }
                     errors.add(message);
                 }
