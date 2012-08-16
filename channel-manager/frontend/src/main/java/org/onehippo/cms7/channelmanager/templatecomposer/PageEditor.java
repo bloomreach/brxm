@@ -345,6 +345,7 @@ public class PageEditor extends ExtPanel {
         } else {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
                     rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN)).toString(),
+                    rc.urlFor(new ResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL)).toString(),
                     rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()));
         }
     }
