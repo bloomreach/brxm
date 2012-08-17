@@ -62,13 +62,27 @@ public class FormUtils {
 
 
     /**
+     * Returns a populated FormaMap for some form data node if that node can be found with the u_u_i_d parameter
+     * on the <code>request</code>. If no such form data node can be found, an empty {@link FormMap} will be returned
+     * @param request the {@link HttpServletRequest}
+     * @return a populated {@link FormMap} for the formdata node belonging to the UUID from request parameter u_u_i_d
+     * If there is no formdata for the UUID or no u_u_i_d parameter, just an empty {@link FormMap} object will be returned
+     * @see {@link #populate(javax.servlet.http.HttpServletRequest, FormMap)}
+     */
+    public static FormMap getFormMap(HttpServletRequest request) {
+        FormMap formMap = new FormMap();
+        populate(request, formMap);
+        return formMap;
+    }
+    
+    /**
      *
      * This method tries to repopulate an earlier posted form that was stored in the repository.
      *
      * Only when there is a request parameter containing the correct uuid, it can be re-populated.
      *
      * @param request the {@link HttpServletRequest}
-     * @param formMap the formMap object to fill
+     * @param formMap a not yet populated FormMap object (just new FormMap())
      */
     public static void populate(HttpServletRequest request, FormMap formMap) {
         if(formMap == null) {
@@ -103,7 +117,7 @@ public class FormUtils {
 
                         // sanity check (property is mandatory)
                         if(fieldNode.hasProperty(HST_FORM_FIELD_NAME)){
-                            // create field (even if we do not have values)hstt
+                            // create field (even if we do not have values)
                             String fieldName = fieldNode.getProperty(HST_FORM_FIELD_NAME).getString();
                             FormField field = new FormField(fieldName);
                             formMap.addFormField(field);
