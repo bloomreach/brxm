@@ -20,7 +20,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
 <hst:headContribution keyHint="title"><title>Faceted Navigation Result</title></hst:headContribution>
-
+YESSSSSSSSSSSSSSS
 <div id="yui-u">
         <h1>Results</h1>
         
@@ -53,8 +53,8 @@
             
              <tbody>
 	            <c:forEach var="result" items="${resultset}">
-	              <hst:link var="link" hippobean="${result}" navigationStateful="true" canonical="true" />
-	                
+	              <hst:link var="link" hippobean="${result}" navigationStateful="true"/>
+
 	                 <tr>
 	                    <td>
 		                    <c:choose>
