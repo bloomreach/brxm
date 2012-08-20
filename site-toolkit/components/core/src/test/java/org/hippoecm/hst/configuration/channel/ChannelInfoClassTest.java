@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.channel;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 
 import java.lang.annotation.Annotation;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class ChannelInfoClassTest {
         assertNotNull(propDef);
         assertEquals(true, propDef.isRequired());
         assertEquals(HstValueType.STRING, propDef.getValueType());
-            
+
     }
 
     @Test
@@ -63,6 +64,9 @@ public class ChannelInfoClassTest {
         @Parameter(name = "color")
         @Color
         String getColor();
+
+        @Parameter(name = "propertyNotShownInUI", hideInChannelManager = true)
+        String getPropertyNotShownInUI();
     }
 
     @Test
@@ -77,9 +81,12 @@ public class ChannelInfoClassTest {
         assertEquals(HstValueType.STRING, hpd.getValueType());
 
         List<Annotation> annotations = hpd.getAnnotations();
-        // only the @Color annotation should be present. The @Parameter annotation is not part of the HstPropertyDefinition#annotations
+        // The @Parameter annotation is not part of the HstPropertyDefinition#annotations
         assertEquals(1, annotations.size());
         assertEquals(Color.class, annotations.get(0).annotationType());
+
+        final HstPropertyDefinition hidePropertyInUI = getPropertyDefinition("propertyNotShownInUI", properties);
+        assertNull(hidePropertyInUI);
     }
     
     

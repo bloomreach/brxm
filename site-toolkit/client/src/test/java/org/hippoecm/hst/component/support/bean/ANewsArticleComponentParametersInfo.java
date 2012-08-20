@@ -30,5 +30,8 @@ public interface ANewsArticleComponentParametersInfo {
     
     @Parameter(name="color", customEditor=AColorPropertyEditor.class)
     Color getColor();
+
+    @Parameter(name="hiddenPropertyInChannelManagerUI", hideInChannelManager = true, defaultValue = "testValue")
+    String getHiddenPropertyInChannelManagerUI();
     
 }

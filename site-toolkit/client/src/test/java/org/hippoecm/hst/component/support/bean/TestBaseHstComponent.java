@@ -175,6 +175,8 @@ public class TestBaseHstComponent {
         
         // should return same object for the same hstRequest.
         assertTrue(paramsInfo == component.getParametersInfo(hstRequest));
+
+        assertEquals("testValue", paramsInfo.getHiddenPropertyInChannelManagerUI());
     }
     
     @Node(jcrType="test:textdocument")
