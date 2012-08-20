@@ -904,8 +904,6 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/Prop
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/PropertyValueEditor.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor.html -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ReferenceEditor.java -text svneol=unset#text/plain
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ResourceEditor.html -text svneol=unset#text/plain
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ResourceEditor.java -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ToggleHeader.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/ToggleHeader.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/group-collapsed.png -text svneol=unset#image/png
