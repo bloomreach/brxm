@@ -7,8 +7,10 @@ import javax.jcr.Value;
 import org.hippoecm.repository.ext.DerivedDataFunction;
 
 public class CoreDerivedDataFunction extends DerivedDataFunction {
-    static final long serialVersionUID = 1;
 
+    private static final long serialVersionUID = 1;
+
+    @Override
     public Map<String, Value[]> compute(Map<String, Value[]> parameters) {
         return parameters;
     }

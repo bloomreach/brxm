@@ -63,10 +63,10 @@ class PropertyMapper {
                         while (ancestor != null) {
                             if (ancestor.isNodeType("mix:referenceable")) {
                                 try {
-                                    ancestors.add(valueFactory.createValue(ancestor.getUUID()));
+                                    ancestors.add(valueFactory.createValue(ancestor.getIdentifier()));
                                 } catch (UnsupportedRepositoryOperationException ex) {
                                     // cannot happen because of check on mix:referenceable
-                                    DerivedDataEngine.logger.error("Impossible state reached");
+                                    DerivedDataEngine.log.error("Impossible state reached");
                                 }
                             }
                             try {
@@ -77,7 +77,7 @@ class PropertyMapper {
                         }
                         parameters.put(propName, ancestors.toArray(new Value[ancestors.size()]));
                     } else {
-                        DerivedDataEngine.logger.warn("Derived data definition contains unrecognized builtin reference, skipped");
+                        DerivedDataEngine.log.warn("Derived data definition contains unrecognized builtin reference, skipped");
                     }
                     break;
 
@@ -85,7 +85,7 @@ class PropertyMapper {
                     if (modified.hasProperty(reference.getRelativePath())) {
                         Property property = modified.getProperty(reference.getRelativePath());
                         if (property.getParent().isNodeType("mix:referenceable")) {
-                            dependencies.add(property.getParent().getUUID());
+                            dependencies.add(property.getParent().getIdentifier());
                         }
                         if (!property.getDefinition().isMultiple()) {
                             Value[] values = new Value[1];
@@ -108,7 +108,7 @@ class PropertyMapper {
                                                                                 lastNode);
                     if (property != null) {
                         if (property.getParent().isNodeType("mix:referenceable")) {
-                            dependencies.add(property.getParent().getUUID());
+                            dependencies.add(property.getParent().getIdentifier());
                         }
                         if (!property.getDefinition().isMultiple()) {
                             Value[] values = new Value[1];
@@ -119,13 +119,13 @@ class PropertyMapper {
                         }
                     } else {
                         if (lastNode.node.isNodeType("mix:referenceable")) {
-                            dependencies.add(lastNode.node.getUUID());
+                            dependencies.add(lastNode.node.getIdentifier());
                         }
                     }
                     break;
 
                 default:
-                    DerivedDataEngine.logger.warn("Derived data definition contains unrecognized reference, skipped");
+                    DerivedDataEngine.log.warn("Derived data definition contains unrecognized reference, skipped");
             }
         }
         return parameters;
@@ -164,7 +164,7 @@ class PropertyMapper {
                         }
                     }
                 }
-                PropertyUpdateLogger updateLogger = new PropertyUpdateLogger(propertyPath, propName, modified, DerivedDataEngine.logger);
+                PropertyUpdateLogger updateLogger = new PropertyUpdateLogger(propertyPath, propName, modified, DerivedDataEngine.log);
                 Value[] values = parameters.get(propName);
                 if (targetModifiedNode != null && targetModifiedNode.hasProperty(targetModifiedPropertyPath)) {
                     Property property = targetModifiedNode.getProperty(targetModifiedPropertyPath);
@@ -175,7 +175,7 @@ class PropertyMapper {
                 }
                 updateLogger.flush();
             } else {
-                DerivedDataEngine.logger.warn("Derived data definition contains unrecognized reference type " +
+                DerivedDataEngine.log.warn("Derived data definition contains unrecognized reference type " +
                                     reference.getType().name() + ", skipped");
             }
         }
@@ -190,7 +190,7 @@ class PropertyMapper {
                         property.setValue(values[0]);
                         pul.overwritten(values[0]);
                     } catch (AccessControlException ex) {
-                        DerivedDataEngine.logger.warn("cannot update " + modified.getPath());
+                        DerivedDataEngine.log.warn("cannot update " + modified.getPath());
                         pul.failed();
                     }
                 } else {
@@ -202,7 +202,7 @@ class PropertyMapper {
                     property.remove();
                     pul.removed();
                 } catch (AccessControlException ex) {
-                    DerivedDataEngine.logger.warn("cannot update " + modified.getPath());
+                    DerivedDataEngine.log.warn("cannot update " + modified.getPath());
                     pul.failed();
                 }
             }
@@ -225,7 +225,7 @@ class PropertyMapper {
                     property.setValue(values);
                     pul.overwritten(values);
                 } catch (AccessControlException ex) {
-                    DerivedDataEngine.logger.warn("cannot update " + modified.getPath());
+                    DerivedDataEngine.log.warn("cannot update " + modified.getPath());
                     pul.failed();
                 }
             } else {
@@ -248,7 +248,7 @@ class PropertyMapper {
                     targetModifiedNode.setProperty(targetModifiedPropertyPath, values[0]);
                     pul.created(values[0]);
                 } catch (AccessControlException ex) {
-                    DerivedDataEngine.logger.warn("cannot update " + modified.getPath());
+                    DerivedDataEngine.log.warn("cannot update " + modified.getPath());
                     pul.failed();
                 }
             } else {
@@ -262,7 +262,7 @@ class PropertyMapper {
                 targetModifiedNode.setProperty(targetModifiedPropertyPath, values);
                 pul.created(values);
             } catch (AccessControlException ex) {
-                DerivedDataEngine.logger.warn("cannot update " + modified.getPath());
+                DerivedDataEngine.log.warn("cannot update " + modified.getPath());
                 pul.failed();
             }
         }

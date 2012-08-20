@@ -22,9 +22,9 @@ import javax.jcr.Value;
 import org.slf4j.Logger;
 
 class PropertyUpdateLogger {
+
     private final Logger logger;
-    
-    StringBuffer sb = null;
+    private StringBuffer sb = null;
     
     PropertyUpdateLogger(String propertyPath, String propName, Node modified, Logger logger) throws RepositoryException {
         this.logger = logger;

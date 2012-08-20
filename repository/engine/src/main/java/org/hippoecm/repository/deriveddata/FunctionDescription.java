@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 
 class FunctionDescription {
 
-    static final Logger log = LoggerFactory.getLogger(FunctionDescription.class);
-
     private final Node function;
 
     FunctionDescription(final Node function) {
@@ -48,7 +46,7 @@ class FunctionDescription {
         Set<PropertyReference> references = new HashSet<PropertyReference>();
         for (Node propDef : new NodeIterable(function.getNode("hipposys:accessed").getNodes())) {
             if (propDef == null) {
-                DerivedDataEngine.logger.error("unable to access derived data accessed property definition");
+                DerivedDataEngine.log.error("unable to access derived data accessed property definition");
                 continue;
             }
 
@@ -62,7 +60,7 @@ class FunctionDescription {
         for (Node propDef : new NodeIterable(function.getNode(
                 HippoNodeType.HIPPO_DERIVED).getNodes())) {
             if (propDef == null) {
-                DerivedDataEngine.logger.error("unable to access derived data derived property definition");
+                DerivedDataEngine.log.error("unable to access derived data derived property definition");
                 continue;
             }
 
@@ -76,7 +74,7 @@ class FunctionDescription {
         try {
             return function.getPath();
         } catch (RepositoryException e) {
-            log.error("Unable to retrieve path for function node", e);
+            DerivedDataEngine.log.error("Unable to retrieve path for function node", e);
             return super.toString();
         }
     }

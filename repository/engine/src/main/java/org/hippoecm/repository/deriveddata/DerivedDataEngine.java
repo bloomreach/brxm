@@ -54,9 +54,11 @@ import org.slf4j.LoggerFactory;
 
 public class DerivedDataEngine {
 
-    protected static final Logger logger = LoggerFactory.getLogger(DerivedDataEngine.class);
+    static final Logger log = LoggerFactory.getLogger(DerivedDataEngine.class);
 
-    HippoSession session;
+    private static final String DERIVATIVES_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/hippo:derivatives";
+
+    private final HippoSession session;
 
     public DerivedDataEngine(HippoSession session) {
         this.session = session;
@@ -68,19 +70,19 @@ public class DerivedDataEngine {
 
     public void save(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
         long start = 0;
-        if (!session.nodeExists("/hippo:configuration/hippo:derivatives")) {
+        if (!session.nodeExists(DERIVATIVES_PATH)) {
             return;
         }
-        if (logger.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             start = System.currentTimeMillis();
         }
         try {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Derived engine active");
+            if (log.isDebugEnabled()) {
+                log.debug("Derived engine active");
             }
             Set<Node> recomputeSet = getRecomputeSet(node);
-            if (logger.isDebugEnabled()) {
-                logger.debug("Derived engine found " + recomputeSet.size() + " nodes to be evaluated in " +
+            if (log.isDebugEnabled()) {
+                log.debug("Derived engine found " + recomputeSet.size() + " nodes to be evaluated in " +
                                      (System.currentTimeMillis() - start) + " ms");
             }
 
@@ -88,18 +90,18 @@ public class DerivedDataEngine {
                 return;
             }
 
-            Node derivatesFolder = session.getRootNode().getNode("hippo:configuration/hippo:derivatives");
+            Node derivatesFolder = session.getNode(DERIVATIVES_PATH);
             for (Node modified : recomputeSet) {
-                compute(session.getValueFactory(), derivatesFolder, modified);
+                compute(derivatesFolder, modified);
             }
         } catch (NamespaceException ex) {
-            // be lenient against confiuration problems
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            // be lenient against configuration problems
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         } catch (ConstraintViolationException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
         } finally {
-            if (logger.isDebugEnabled()) {
-                logger.debug("Derived engine done in " + (System.currentTimeMillis() - start) + " ms");
+            if (log.isDebugEnabled()) {
+                log.debug("Derived engine done in " + (System.currentTimeMillis() - start) + " ms");
             }
         }
     }
@@ -107,6 +109,7 @@ public class DerivedDataEngine {
     private Set<Node> getRecomputeSet(final Node node) throws RepositoryException {
         Set<Node> recomputeSet = new TreeSet<Node>(new Comparator<Node>() {
 
+            @Override
             public int compare(Node o1, Node o2) {
                 try {
                     int comparison = o1.getPath().length() - o2.getPath().length();
@@ -116,26 +119,22 @@ public class DerivedDataEngine {
                         return comparison;
                     }
                 } catch (RepositoryException ex) {
-                    logger.error("Error while comparing nodes: " + ex.getClass().getName() + ": " + ex.getMessage(),
-                                 ex);
+                    log.error("Error while comparing nodes: " + ex.getClass().getName() + ": " + ex.getMessage(), ex);
                     return 0;
                 }
             }
 
-            public boolean equals(Object obj) {
-                return obj == this;
-            }
         });
 
         // add derived data nodes that depend on (referenceable) nodes that have been modified
         try {
             for (Node modified : new NodeIterable(session.pendingChanges(node, "mix:referenceable"))) {
                 if (modified == null) {
-                    logger.error("Unable to access node that was changed by own session");
+                    log.error("Unable to access node that was changed by own session");
                     continue;
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Derived engine found modified referenceable node " + modified.getPath() +
+                if (log.isDebugEnabled()) {
+                    log.debug("Derived engine found modified referenceable node " + modified.getPath() +
                                          " with " + modified.getReferences().getSize() + " references");
                 }
                 for (Property property : new PropertyIterable(modified.getReferences())) {
@@ -145,19 +144,19 @@ public class DerivedDataEngine {
                             recomputeSet.add(dependency);
                         }
                     } catch (AccessDeniedException ex) {
-                        logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+                        log.error(ex.getClass().getName() + ": " + ex.getMessage());
                         throw new RepositoryException(ex); // configuration problem
                     } catch (ItemNotFoundException ex) {
-                        logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+                        log.error(ex.getClass().getName() + ": " + ex.getMessage());
                         throw new RepositoryException(ex); // inconsistent state
                     }
                 }
             }
         } catch (NamespaceException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage()); // internal error jcr:uuid not accessible
+            log.error(ex.getClass().getName() + ": " + ex.getMessage()); // internal error jcr:uuid not accessible
             throw new RepositoryException("Internal error accessing jcr:uuid");
         } catch (NoSuchNodeTypeException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage()); // internal error jcr:uuid not found
+            log.error(ex.getClass().getName() + ": " + ex.getMessage()); // internal error jcr:uuid not found
             throw new RepositoryException("Internal error jcr:uuid not found");
         }
 
@@ -165,20 +164,20 @@ public class DerivedDataEngine {
         try {
             for (Node modified : new NodeIterable(session.pendingChanges(node, HippoNodeType.NT_DERIVED))) {
                 if (modified == null) {
-                    logger.error("Unable to access node that was changed by own session");
+                    log.error("Unable to access node that was changed by own session");
                     continue;
                 }
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Derived engine found " + modified.getPath() + " " + (modified.isNodeType(
+                if (log.isDebugEnabled()) {
+                    log.debug("Derived engine found " + modified.getPath() + " " + (modified.isNodeType(
                             "mix:referenceable") ? modified.getUUID() : "") + " with derived mixin");
                 }
                 recomputeSet.add(modified);
             }
         } catch (NamespaceException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getClass().getName() + ": " + ex.getMessage());
             throw new RepositoryException("Internal error " + HippoNodeType.NT_DERIVED + " not found");
         } catch (NoSuchNodeTypeException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getClass().getName() + ": " + ex.getMessage());
             throw new RepositoryException("Internal error " + HippoNodeType.NT_DERIVED + " not found");
         }
         return recomputeSet;
@@ -186,24 +185,23 @@ public class DerivedDataEngine {
 
     public void validate() throws ConstraintViolationException, RepositoryException {
         int totalCount = 0, changedCount = 0;
-        ValueFactory valueFactory = session.getValueFactory();
-        Node derivatesFolder = session.getRootNode().getNode("hippo:configuration/hippo:derivatives");
+        Node derivatesFolder = session.getNode(DERIVATIVES_PATH);
         Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM hippo:derived", Query.SQL);
         QueryResult result = query.execute();
         for (Node node : new NodeIterable(result.getNodes())) {
             ++totalCount;
-            if (compute(valueFactory, derivatesFolder, node)) {
+            if (compute(derivatesFolder, node)) {
                 ++changedCount;
                 if ((changedCount % LocalHippoRepository.batchThreshold) == 0) {
                     session.save();
                 }
             }
         }
-        logger.warn("Validated " + totalCount + " nodes, and reset " + changedCount + " nodes");
+        log.warn("Validated " + totalCount + " nodes, and reset " + changedCount + " nodes");
         session.save();
     }
 
-    private boolean compute(ValueFactory valueFactory, Node derivatesFolder, Node modified) throws ConstraintViolationException, RepositoryException {
+    private boolean compute(Node derivatesFolder, Node modified) throws ConstraintViolationException, RepositoryException {
         if (!modified.isCheckedOut()) {
             Node ancestor = modified;
             while (!ancestor.isNodeType("mix:versionable")) {
@@ -215,7 +213,7 @@ public class DerivedDataEngine {
         SortedSet<String> dependencies = new TreeSet<String>();
         for (Node functionNode : new NodeIterable(derivatesFolder.getNodes())) {
             if (functionNode == null) {
-                logger.error("unable to access all derived data functions");
+                log.error("unable to access all derived data functions");
                 continue;
             }
 
@@ -225,19 +223,20 @@ public class DerivedDataEngine {
                 continue;
             }
 
-            applyFunction(valueFactory, modified, dependencies, functionDescription);
+            applyFunction(modified, dependencies, functionDescription);
         }
 
-        return persistDependencies(valueFactory, modified, dependencies);
+        return persistDependencies(modified, dependencies);
     }
 
-    private void applyFunction(final ValueFactory valueFactory, final Node modified, final SortedSet<String> dependencies, final FunctionDescription function) throws RepositoryException {
+    private void applyFunction(final Node modified, final SortedSet<String> dependencies, final FunctionDescription function) throws RepositoryException {
         try {
-            String nodetypeName = function.getNodeTypeName();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Derived node " + modified.getPath() + " is of derived type as defined in " +
-                                     function);
+            if (log.isDebugEnabled()) {
+                log.debug("Derived node " + modified.getPath() + " is of derived type as defined in " +
+                        function);
             }
+
+            String nodetypeName = function.getNodeTypeName();
 
             /* preparation: build the map of parameters to be fed to
             * the function and instantiate the class containing the
@@ -245,10 +244,10 @@ public class DerivedDataEngine {
             */
             Class clazz = Class.forName(function.getClassName());
             DerivedDataFunction func = (DerivedDataFunction) clazz.newInstance();
-            func.setValueFactory(valueFactory);
+            func.setValueFactory(session.getValueFactory());
 
             NodeType nodetype = session.getWorkspace().getNodeTypeManager().getNodeType(nodetypeName);
-            PropertyMapper mapper = new PropertyMapper(function, modified, valueFactory, nodetype);
+            PropertyMapper mapper = new PropertyMapper(function, modified, session.getValueFactory(), nodetype);
 
             Map<String, Value[]> parameters = mapper.getParameters(dependencies);
 
@@ -259,37 +258,37 @@ public class DerivedDataEngine {
             mapper.persistValues(parameters);
 
         } catch (AccessDeniedException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getClass().getName() + ": " + ex.getMessage());
             throw new RepositoryException(ex); // should not be possible
         } catch (ItemNotFoundException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getClass().getName() + ": " + ex.getMessage());
             throw new RepositoryException(ex); // impossible
         } catch (PathNotFoundException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getClass().getName() + ": " + ex.getMessage());
             throw new RepositoryException(ex); // impossible
         } catch (ValueFormatException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getClass().getName() + ": " + ex.getMessage());
             throw new RepositoryException(ex); // impossible
         } catch (ClassNotFoundException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getClass().getName() + ": " + ex.getMessage());
             throw new RepositoryException(ex); // impossible
         } catch (InstantiationException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getClass().getName() + ": " + ex.getMessage());
             throw new RepositoryException(ex); // impossible
         } catch (IllegalAccessException ex) {
-            logger.error(ex.getClass().getName() + ": " + ex.getMessage());
+            log.error(ex.getClass().getName() + ": " + ex.getMessage());
             throw new RepositoryException(ex); // impossible
         }
     }
 
-    private boolean persistDependencies(final ValueFactory valueFactory, final Node modified, final SortedSet<String> dependencies) throws RepositoryException {
+    private boolean persistDependencies(final Node modified, final SortedSet<String> dependencies) throws RepositoryException {
         if (modified.isNodeType("mix:referenceable")) {
-            dependencies.remove(modified.getUUID());
+            dependencies.remove(modified.getIdentifier());
         }
         Value[] dependenciesValues = new Value[dependencies.size()];
         int i = 0;
         for (String dependency : dependencies) {
-            dependenciesValues[i++] = valueFactory.createValue(dependency, PropertyType.REFERENCE);
+            dependenciesValues[i++] = session.getValueFactory().createValue(dependency, PropertyType.REFERENCE);
         }
         Value[] oldDependenciesValues = null;
         if (modified.hasProperty(HippoNodeType.HIPPO_RELATED)) {
@@ -313,7 +312,7 @@ public class DerivedDataEngine {
                 }
                 modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues, PropertyType.REFERENCE);
             } catch (ItemNotFoundException ex) {
-                logger.info("write error on modified node " + modified.getPath(), ex);
+                log.info("write error on modified node " + modified.getPath(), ex);
             }
         }
         return changed;
@@ -321,7 +320,7 @@ public class DerivedDataEngine {
 
     public static void removal(Node removed) throws RepositoryException {
         if (removed.isNodeType("mix:referenceable")) {
-            final String uuid = removed.getUUID();
+            final String uuid = removed.getIdentifier();
             removed.accept(new ItemVisitor() {
                 public void visit(Property property) throws RepositoryException {
                 }
@@ -347,7 +346,7 @@ public class DerivedDataEngine {
                                         }
                                         ancestor.checkout();
                                     }
-                                    prop.setValue(values);
+                                    prop.setValue(newValues);
                                     break;
                                 }
                             }
