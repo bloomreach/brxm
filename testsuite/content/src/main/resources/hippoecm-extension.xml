@@ -874,7 +874,7 @@
       <sv:value>sitewriters</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>//hippo:configuration/hippo:domains/hippofolders/readonly/hipposys:groups</sv:value>
+      <sv:value>/hippo:configuration/hippo:domains/hippofolders/readonly/hipposys:groups</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>13100.7</sv:value>
