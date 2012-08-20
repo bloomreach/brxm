@@ -116,8 +116,7 @@ public class TabbedPanel extends WebMarkupContainer {
                         protected void respond(AjaxRequestTarget target) {
                             getContextmenu().setVisible(true);
                             target.addComponent(getComponentToUpdate());
-                            IContextMenuManager menuManager = (IContextMenuManager) findParent(
-                                    IContextMenuManager.class);
+                            IContextMenuManager menuManager = findParent(IContextMenuManager.class);
                             if (menuManager != null) {
                                 menuManager.showContextMenu(this);
                                 String x = RequestCycle.get().getRequest().getParameter(MOUSE_X_PARAM);

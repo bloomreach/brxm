@@ -72,8 +72,11 @@ public abstract class RightClickBehavior extends AbstractDefaultAjaxBehavior imp
     }
     
     public void collapse(AjaxRequestTarget target) {
-        getContextmenu().setVisible(false);
-        target.addComponent(getComponentToUpdate());
+        final MarkupContainer menu = getContextmenu();
+        if (menu.isVisible() && getComponentToUpdate().isVisible()) {
+            menu.setVisible(false);
+            target.addComponent(getComponentToUpdate());
+        }
     }
     
     public MarkupContainer getContextmenu() {

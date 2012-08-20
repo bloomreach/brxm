@@ -30,7 +30,6 @@ class MenuButton extends Panel implements IContextMenu {
     private static final long serialVersionUID = 1L;
 
     private Panel content;
-    private AbstractLink link;
 
     MenuButton(String id, String name, final MenuHierarchy menu) {
         this(id, name, menu, null);
@@ -42,6 +41,8 @@ class MenuButton extends Panel implements IContextMenu {
         add(content = new MenuList("item", null, menu));
         content.setOutputMarkupId(true);
         content.setVisible(false);
+
+        AbstractLink link;
         add(link = new DualAjaxLink("link") {
             private static final long serialVersionUID = 1L;
 
@@ -75,12 +76,14 @@ class MenuButton extends Panel implements IContextMenu {
     }
 
     protected IContextMenuManager getContextMenuManager() {
-        return (IContextMenuManager) findParent(IContextMenuManager.class);
+        return findParent(IContextMenuManager.class);
     }
 
     public void collapse(AjaxRequestTarget target) {
-        content.setVisible(false);
-        target.addComponent(MenuButton.this);
+        if (content.isVisible()) {
+            content.setVisible(false);
+            target.addComponent(MenuButton.this);
+        }
     }
 
 }
