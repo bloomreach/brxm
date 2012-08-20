@@ -893,6 +893,8 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/Look
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupDialog.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/LookupTargetTreeView.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/dialog/MultiStepDialog.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/BinaryEditor.html -text svneol=unset#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/BinaryEditor.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/EditorPlugin.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/EditorPlugin.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/editor/JcrName.java -text

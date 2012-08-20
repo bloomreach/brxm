@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.console.editor;
 
-import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -29,7 +28,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
@@ -38,11 +36,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class PropertyValueEditor extends DataView {
-    private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(PropertyValueEditor.class);
 
-    protected JcrPropertyModel propertyModel;
-    private int textAreaMaxColumns = 100;
+    private static final long serialVersionUID = 1L;
+
+    private static final Logger log = LoggerFactory.getLogger(PropertyValueEditor.class);
+
+    private JcrPropertyModel propertyModel;
 
     PropertyValueEditor(String id, JcrPropertyModel dataProvider) {
         super(id, dataProvider);
@@ -56,23 +55,15 @@ class PropertyValueEditor extends DataView {
             final JcrPropertyValueModel valueModel = (JcrPropertyValueModel) item.getModel();
 
             if (propertyModel.getProperty().getType() == PropertyType.BINARY) {
-                Node node = propertyModel.getProperty().getParent();
-                if (node.isNodeType("hippo:resource") || node.isNodeType("nt:resource")) {
-                    item.add(new ResourceEditor("value", new JcrNodeModel(node)));
-                } else {
-                    long size = propertyModel.getProperty().getLength();
-                    item.add(new Label("value", "binary data (" + size + " bytes)"));
-                }
-
+                item.add(new BinaryEditor("value", propertyModel));
             } else if (ReferenceEditor.isReference(valueModel)) {
                 item.add(new ReferenceEditor("value", propertyModel, valueModel));
-
             } else if (propertyModel.getProperty().getDefinition().isProtected()) {
                 item.add(new Label("value", valueModel));
-
             } else {
                 StringConverter stringModel = new StringConverter(valueModel);
                 String asString = stringModel.getObject();
+                final int textAreaMaxColumns = 100;
                 if (asString.contains("\n")) {
                     TextAreaWidget editor = new TextAreaWidget("value", stringModel);
                     String[] lines = StringUtils.splitByWholeSeparator(asString, "\n");
