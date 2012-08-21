@@ -334,10 +334,10 @@ public class HstFilter implements Filter {
             } else {
                 
                 ResolvedMount resolvedMount = requestContext.getResolvedMount();
-                
+
                 if (resolvedMount == null) {
-                    resolvedMount = vHosts.matchMount(hostName, containerRequest.getContextPath() , containerRequest.getPathInfo());
-                    if(resolvedMount != null) {
+                    resolvedMount = vHosts.matchMount(hostName, containerRequest.getContextPath(), containerRequest.getPathInfo());
+                    if (resolvedMount != null) {
                         requestContext.setResolvedMount(resolvedMount);
                         // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
                         String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
@@ -369,7 +369,7 @@ public class HstFilter implements Filter {
                             }
                         }
                     } else {
-                        throw new MatchException("No matching Mount for '"+hostName+"' and '"+containerRequest.getRequestURI()+"'");
+                        throw new MatchException("No matching Mount for '" + hostName + "' and '" + containerRequest.getRequestURI() + "'");
                     }
                 }
 
