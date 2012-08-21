@@ -61,5 +61,10 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
     public boolean isStandalone() {
         return delegatee.isStandalone();
     }
-    
+
+    @Override
+    public boolean isAsync() {
+        return delegatee.isAsync();
+    }
+
 }

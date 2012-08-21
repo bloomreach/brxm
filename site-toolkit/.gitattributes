@@ -343,6 +343,7 @@ client/src/main/java/org/hippoecm/hst/utils/EncodingUtils.java svneol=native#tex
 client/src/main/java/org/hippoecm/hst/utils/ParameterUtils.java -text
 client/src/main/java/org/hippoecm/hst/utils/PropertyUtils.java -text svneol=unset#text/plain
 client/src/main/resources/META-INF/hst-core.tld svneol=native#text/plain
+client/src/main/resources/META-INF/web-resources/simple-io.js -text
 client/src/site/site.xml -text
 client/src/test/java/org/hippoecm/hst/component/support/bean/AColorPropertyEditor.java -text
 client/src/test/java/org/hippoecm/hst/component/support/bean/ANewsArticleComponent.java -text

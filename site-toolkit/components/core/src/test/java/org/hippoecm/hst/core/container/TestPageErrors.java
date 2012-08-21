@@ -153,5 +153,9 @@ public class TestPageErrors {
         public boolean isStandalone() {
             return true;
         }
+        @Override
+        public boolean isAsync() {
+            return false;
+        }
     }
 }

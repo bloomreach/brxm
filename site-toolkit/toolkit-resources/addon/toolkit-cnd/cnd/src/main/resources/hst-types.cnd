@@ -44,7 +44,13 @@
 - hst:parameternameprefixes (string) multiple
 - hst:parametervalues (string) multiple
 // whether the component is rendered in standalone mode during componentRendering URLs
+// when not set, default value is true
 - hst:standalone (boolean)
+// whether the component is rendered in a separate http ajax request. Note that you can better not
+// use hst:async  = true combined with hst:standalone = false, as then, all doBeforeRenders of
+// all components will be invoked again for the async get. When not set, default async = false
+- hst:async (boolean)
+
 
 [hst:component] > hst:abstractcomponent orderable
 - hst:referencecomponent(string)

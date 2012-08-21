@@ -69,6 +69,7 @@ public interface HstNodeTypes {
     static final String COMPONENT_PROPERTY_CONTENTBASEPATH =  "hst:componentcontentbasepath";
     static final String COMPONENT_PROPERTY_PAGE_ERROR_HANDLER_CLASSNAME =  "hst:page_errorhandlerclassname";
     static final String COMPONENT_PROPERTY_STANDALONE = "hst:standalone";
+    static final String COMPONENT_PROPERTY_ASYNC = "hst:async";
     static final String COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES = "hst:parameternameprefixes";
     static final String COMPONENT_PROPERTY_ICON_PATH = "hst:iconpath";
     static final String COMPONENT_PROPERTY_LABEL = "hst:label";

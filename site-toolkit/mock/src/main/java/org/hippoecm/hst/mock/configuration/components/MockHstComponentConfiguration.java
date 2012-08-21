@@ -53,6 +53,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private String iconPath;
     private boolean inherited;
     private boolean standalone;
+    private boolean async;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
@@ -227,15 +228,24 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     public void setInherited(boolean inherited) {
         this.inherited = inherited;
     }
-  
+
     @Override
     public boolean isStandalone() {
         return standalone;
-        
+
     }
-    
+
     public void setStandalone(boolean standalone) {
         this.standalone = standalone;
+    }
+
+    @Override
+    public boolean isAsync() {
+        return async;
+    }
+
+    public void setAsync(boolean async) {
+        this.async = async;
     }
 
     public String getLabel() {

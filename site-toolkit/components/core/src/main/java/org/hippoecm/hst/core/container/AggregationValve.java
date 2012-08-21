@@ -329,7 +329,27 @@ public class AggregationValve extends AbstractValve {
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
             if (window.isVisible()) {
-                getComponentInvoker().invokeBeforeRender(requestContainerConfig, request, response);
+                if (window.getComponentInfo().isAsync() && request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() == null) {
+                    HashMap<String, String> attributes = new HashMap<String, String>();
+                    HstURLFactory urlFactory = request.getRequestContext().getURLFactory();
+                    HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE,
+                            window.getReferenceNamespace(), null,
+                            request.getRequestContext());
+                    attributes.put("url", url.toString());
+                    attributes.put("id", "async-"+((HstComponentConfiguration)window.getComponentInfo()).getCanonicalIdentifier());
+
+                    Comment comment = createCommentWithAttr(attributes, response);
+                    response.addPreamble(comment);
+                    if (!response.containsHeadElement("asnyc")) {
+                        Element script = response.createElement("script");
+                        String src = request.getRequestContext().getHstLinkCreator().create("resources/simple-io.js", request.getRequestContext().getResolvedMount().getMount()).toUrlForm(request.getRequestContext(), false);
+                        script.setAttribute("src",src);
+                        script.setAttribute("type","text/javascript");
+                        response.addHeadElement(script, "async");
+                    }
+                } else {
+                    getComponentInvoker().invokeBeforeRender(requestContainerConfig, request, response);
+                }
             }
             if (window.getResponseState().getRedirectLocation() != null) {
                 break;
@@ -404,7 +424,11 @@ public class AggregationValve extends AbstractValve {
             if (!window.isVisible()) {
                 continue;
             }
+
             HstRequest request = requestMap.get(window);
+            if (window.getComponentInfo().isAsync() && request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() == null) {
+                continue;
+            }
             HstResponse response = responseMap.get(window);
             getComponentInvoker().invokeRender(requestContainerConfig, request, response);
         }

@@ -111,6 +111,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * object Boolean here to support the copying and merging etc.
      */
     private Boolean standalone = null;
+
+    /**
+     * <code>true</code> when this {@link HstComponentConfiguration} is configured to render async : Thus, with a asynchronous ajax call. The
+     * default value is <code>false</code> when the property {@link HstNodeTypes#COMPONENT_PROPERTY_ASYNC} is not configured.
+     * The value for standalone is *not* inherited from ancestor components.
+     * When async = null, it means it is not configured. Then, we return true for {@link #isAsync()}. It is easier to work with
+     * object Boolean here to support the copying and merging etc.
+     */
+    private Boolean async = null;
     
     /**
      * Optional iconPath relative to webapp for sites. If not configured, it is <code>null</code>. It does not inherit 
@@ -228,12 +237,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 } 
             } 
         }
-       
-     
-        
+
+
+
         if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE)) {
             this.standalone = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_STANDALONE);
         }
+
+        if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_ASYNC)) {
+            this.async = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_ASYNC);
+        }
+
         if(!traverseDescendants) {
             // do not load children 
             return;
@@ -404,6 +418,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // when Boolean standalone is null, we return true by default
         return standalone == null ? true : standalone;
     }
+
+    @Override
+    public boolean isAsync() {
+        // when Boolean asyn is null, we return false by default
+        return async == null ? false : async;
+    }
     
     @Override
     public String getLabel() {
@@ -444,6 +464,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.componentFilterTag = child.componentFilterTag;
         copy.inherited = child.inherited;
         copy.standalone = child.standalone;
+        copy.async = child.async;
         copy.parameters = new LinkedHashMap<String, String>(child.parameters);
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
         // localParameters have no merging, but for copy, the localParameters are copied 
@@ -533,7 +554,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.standalone == null) {
                     this.standalone = referencedComp.standalone;
                 }
-                
+                if (this.async == null) {
+                    this.async = referencedComp.async;
+                }
+
                 // inherited variable flag not needed to take from the referencedComp so no check here for that variable!
                 
                 if (!referencedComp.parameters.isEmpty()) {
@@ -644,6 +668,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.standalone == null) {
             this.standalone = childToMerge.standalone;
+        }
+        if (this.async == null) {
+            this.async = childToMerge.async;
         }
         
         // inherited flag not needed to merge

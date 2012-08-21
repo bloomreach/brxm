@@ -60,4 +60,10 @@ public interface HstComponentInfo {
      * @return <code>true</code> when this {@link HstComponentConfiguration} is configured to be rendered standalone in case of {@link HstURL#COMPONENT_RENDERING_TYPE}
      */
     boolean isStandalone();
+
+    /**
+     * Rendering asynchronous is very useful for hst components that are uncacheable, depend on external services, or take long to render.
+     * @return <code>true</code> when this {@link HstComponentConfiguration} is configured to be rendered asynchronous.
+     */
+    boolean isAsync();
 }
