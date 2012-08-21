@@ -16,11 +16,9 @@
 
 package org.hippoecm.frontend.plugins.yui.upload.validation;
 
+import java.awt.Dimension;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.sanselan.ImageInfo;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -56,11 +54,10 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
 
     private void validateSizes(final FileUpload upload) {
         String fileName = upload.getClientFileName();
-        Map params = new HashMap();
-        params.put(Sanselan.PARAM_KEY_READ_THUMBNAILS, Boolean.FALSE);
-        ImageInfo info;
+
+        Dimension dim;
         try {
-            info = Sanselan.getImageInfo(upload.getInputStream(), fileName, params);
+            dim = Sanselan.getImageSize(upload.getInputStream(), fileName);
         } catch (IOException e) {
             addViolation("upload.validation.io.exception", fileName);
             log.error("Error processing upload", e);
@@ -72,28 +69,27 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
         }
 
         //check image dimensions
-        int imgWidth = info.getWidth(), imgHeight = info.getHeight();
-        boolean tooWide = maxWidth > 0 && imgWidth > maxWidth;
-        boolean tooHigh = maxHeight > 0 && imgHeight > maxHeight;
+        boolean tooWide = maxWidth > 0 && dim.width > maxWidth;
+        boolean tooHigh = maxHeight > 0 && dim.height > maxHeight;
 
         if (tooWide && tooHigh) {
-            addViolation("upload.validation.image.width-height", fileName, imgWidth, imgHeight, maxWidth, maxHeight);
+            addViolation("upload.validation.image.width-height", fileName, dim.width, dim.height, maxWidth, maxHeight);
             if (log.isDebugEnabled()) {
                 log.debug("Image '{}' resolution is too high ({},{}). The max allowed width is ({}, {})",
-                        new Object[]{fileName, imgWidth, imgHeight, maxWidth, maxHeight});
+                        new Object[]{fileName, dim.width, dim.height, maxWidth, maxHeight});
 
             }
         } else if (tooWide) {
-            addViolation("upload.validation.image.width", fileName, imgWidth, maxWidth);
+            addViolation("upload.validation.image.width", fileName, dim.width, maxWidth);
             if (log.isDebugEnabled()) {
                 log.debug("Image '{}' is {} pixels wide while the max allowed width is {}",
-                        new Object[]{fileName, imgWidth, maxWidth});
+                        new Object[]{fileName, dim.width, maxWidth});
             }
         } else if (tooHigh) {
-            addViolation("upload.validation.image.height", fileName, imgWidth, maxWidth);
+            addViolation("upload.validation.image.height", fileName, dim.height, maxHeight);
             if (log.isDebugEnabled()) {
                 log.debug("Image '{}' is {} pixels high while the max allowed height is {}",
-                        new Object[]{fileName, imgHeight, maxHeight});
+                        new Object[]{fileName, dim.height, maxHeight});
             }
         }
     }
