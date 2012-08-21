@@ -341,41 +341,32 @@ public class HstFilter implements Filter {
                         requestContext.setResolvedMount(resolvedMount);
                         // if we are in RENDERING_HOST mode, we always need to include the contextPath, even if showcontextpath = false.
                         String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
-                        if (renderingHost != null) { 
+                        if (renderingHost != null) {
                             requestContext.setRenderHost(renderingHost);
                             requestContext.setAttribute(ContainerConstants.REAL_HOST, HstRequestUtils.getFarthestRequestHost(req, false));
                             // check whether there is a SSO handshake already: If there is, we decorate the mount to a previewMount
                             HttpSession session = containerRequest.getSession(false);
-                            if(session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED ))) {
-                                // we are in a CMS SSO context.
+                            if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
+                                // we now know for sure the call came from a CMS context : we need to decorate the mount to a preview mount
+                                req.setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS, Boolean.TRUE);
                                 session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
-                                if(resolvedMount instanceof MutableResolvedMount) {
-                                    // we are in a CMS SSO context. We will now only decorate to a preview mount if and only if
-                                    // the resolvedMount#getMatchingIgnoredPrefix() is equal to the VirtualHosts#getCmsPreviewPrefix()
-                                    // if they are not equal, we'll just use the live mount. This way, the CMS can view the preview and live mounts 
-                                    // if the VirtualHosts#getCmsPreviewPrefix() is empty, not the live & preview can be shown: Then, we'll 
-                                    // return the preview decorated mount
-                                    if(shouldDecorateMountToPreview(vHosts, resolvedMount)) {
-                                        // we now know for sure the call came from a CMS context. 
-                                        req.setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS, Boolean.TRUE);
-                                        Mount mount = resolvedMount.getMount();
-                                        if(!(mount instanceof ContextualizableMount)) {
-                                            throw new MatchException("The matched mount for request '" + hostName + " and " +containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
-                                        }
-                                        MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
-                                        Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount)mount);
-                                        if(decoratedMount == mount) {
-                                            logger.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", mount.getMountPoint());
-                                        } else {
-                                            logger.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", mount.getMountPoint(), decoratedMount.getMountPoint());
-                                        }
-                                        ((MutableResolvedMount)resolvedMount).setMount(decoratedMount);
+                                if (resolvedMount instanceof MutableResolvedMount) {
+                                    Mount mount = resolvedMount.getMount();
+                                    if (!(mount instanceof ContextualizableMount)) {
+                                        throw new MatchException("The matched mount for request '" + hostName + " and " + containerRequest.getRequestURI() + "' is not an instanceof of a ContextualizableMount. Cannot act as preview mount. Cannot proceed request for CMS SSO environment.");
                                     }
+                                    MountDecorator mountDecorator = HstServices.getComponentManager().getComponent(MountDecorator.class.getName());
+                                    Mount decoratedMount = mountDecorator.decorateMountAsPreview((ContextualizableMount) mount);
+                                    if (decoratedMount == mount) {
+                                        logger.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO context to decorate the mount to a preview", mount.getMountPoint());
+                                    } else {
+                                        logger.debug("Matched mount pointing to site '{}' is because of CMS SSO context replaced by preview decorated mount pointing to site '{}'", mount.getMountPoint(), decoratedMount.getMountPoint());
+                                    }
+                                    ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
                                 } else {
-                                    throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " +containerRequest.getRequestURI());
+                                    throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " + containerRequest.getRequestURI());
                                 }
                             }
-
                         }
                     } else {
                         throw new MatchException("No matching Mount for '"+hostName+"' and '"+containerRequest.getRequestURI()+"'");
@@ -456,8 +447,8 @@ public class HstFilter implements Filter {
     	}
     }
 
-    // returns true if the mount should be decorated to a preview mount
-    private boolean shouldDecorateMountToPreview(VirtualHosts vHosts, ResolvedMount resolvedMount) {
+    // returns true if the request comes from cms
+    private boolean requestComesFromCms(VirtualHosts vHosts, ResolvedMount resolvedMount) {
         if(vHosts.getCmsPreviewPrefix() == null || "".equals(vHosts.getCmsPreviewPrefix())) {
             return true;
         }

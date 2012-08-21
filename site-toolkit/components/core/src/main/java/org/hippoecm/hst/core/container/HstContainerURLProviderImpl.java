@@ -531,7 +531,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         StringBuilder urlBuilder = new StringBuilder(100);
         if(contextPath != null) {
             urlBuilder.append(contextPath);
-        } else if (requestContext.getRenderHost() != null ||  requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
+        } else if (requestContext.isCmsRequest() ||  requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
             urlBuilder.append(containerURL.getContextPath());
         }
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
