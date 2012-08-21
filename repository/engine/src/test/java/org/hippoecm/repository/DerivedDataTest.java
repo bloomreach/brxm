@@ -19,7 +19,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -101,21 +104,27 @@ public class DerivedDataTest extends TestCase {
 
         Property p = session.getRootNode().getNode("test/folder2/document").getProperty("hippo:paths");
         assertTrue(p.getDefinition().isMultiple());
-        Value[] values = p.getValues();
-        assertEquals(3, values.length);
-        values[0].getString().equals(session.getRootNode().getIdentifier());
-        values[1].getString().equals(folder2.getIdentifier());
-        values[2].getString().equals(folder2.getNode("document").getIdentifier());
+        Set<String> values = new HashSet<String>();
+        for (Value value : p.getValues()) {
+            values.add(value.getString());
+        }
+        assertEquals(3, values.size());
+        assertTrue(values.contains(session.getRootNode().getIdentifier()));
+        assertTrue(values.contains(folder2.getIdentifier()));
+        assertTrue(values.contains(folder2.getNode("document").getIdentifier()));
 
         session.move(document.getPath(), folder1.getPath()+"/"+document.getName());
         session.save();
         p = session.getRootNode().getNode("test/folder1/document").getProperty("hippo:paths");
         assertTrue(p.getDefinition().isMultiple());
-        values = p.getValues();
-        assertEquals(3, values.length);
-        values[0].getString().equals(session.getRootNode().getIdentifier());
-        values[1].getString().equals(folder1.getIdentifier());
-        values[2].getString().equals(folder1.getNode("document").getIdentifier());
+        values.clear();
+        for (Value value : p.getValues()) {
+            values.add(value.getString());
+        }
+        assertEquals(3, values.size());
+        assertTrue(values.contains(session.getRootNode().getIdentifier()));
+        assertTrue(values.contains(folder1.getIdentifier()));
+        assertTrue(values.contains(folder1.getNode("document").getIdentifier()));
     }
 
     @Ignore
