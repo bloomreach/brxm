@@ -110,7 +110,7 @@
         <sv:value>3</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:nodetypes" sv:type="String">
-        <sv:value>hippo:request</sv:value>
+        <sv:value>hippo:handle</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:path" sv:type="String">
         <sv:value>/</sv:value>
