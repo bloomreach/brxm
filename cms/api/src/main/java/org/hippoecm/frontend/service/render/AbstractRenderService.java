@@ -269,6 +269,11 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         setDefaultModelObject(object);
     }
 
+    public boolean isActive() {
+        ICardView cardView = findParent(ICardView.class);
+        return cardView == null || cardView.isActive(this);
+    }
+
     // override model change methods
 
     @Override
@@ -388,7 +393,7 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
      */
     public void render(PluginRequestTarget target) {
         if (redraw) {
-            if (target != null) {
+            if (target != null && isActive()) {
                 target.addComponent(this);
             }
         }

@@ -477,6 +477,7 @@ api/src/main/java/org/hippoecm/frontend/service/ServiceContext.java svneol=nativ
 api/src/main/java/org/hippoecm/frontend/service/ServiceTracker.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/preferences/IPreference.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/service/preferences/IPreferencesStore.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/service/render/ICardView.java -text
 api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.layout.xml svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/service/render/ListViewPlugin.png -text svneol=unset#unset

@@ -55,6 +55,7 @@ import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.service.render.ICardView;
 
 public class TabbedPanel extends WebMarkupContainer {
 
@@ -411,7 +412,7 @@ public class TabbedPanel extends WebMarkupContainer {
         return iconType;
     }
 
-    private static class CardView extends ListView<TabsPlugin.Tab> {
+    private static class CardView extends ListView<TabsPlugin.Tab> implements ICardView {
 
         private Set<TabsPlugin.Tab> added = new HashSet<TabsPlugin.Tab>();
         private Set<TabsPlugin.Tab> removed = new HashSet<TabsPlugin.Tab>();
@@ -421,6 +422,19 @@ public class TabbedPanel extends WebMarkupContainer {
         public CardView(final List<TabsPlugin.Tab> tabs) {
             super("cards", tabs);
             setRenderBodyOnly(true);
+        }
+
+        @Override
+        public boolean isActive(Component component) {
+            Component container = component;
+            MarkupContainer selectedPanel = selected.getPanel(TAB_PANEL_ID);
+            while (container != null) {
+                if (container == selectedPanel) {
+                    return true;
+                }
+                container = container.getParent();
+            }
+            return false;
         }
 
         void select(TabsPlugin.Tab tabbie) {
