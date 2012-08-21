@@ -39,6 +39,7 @@ import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ContentBeanUtils;
@@ -55,6 +56,8 @@ public class BeanUtils {
 
     private final static Logger log = LoggerFactory.getLogger(BeanUtils.class);
 
+    private static final String DISPOSABLE_SESSION_KEY_PREFIX = BeanUtils.class.getName() + ";disposableSession";
+    
     /**
      * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
      * 
@@ -497,36 +500,56 @@ public class BeanUtils {
         }
         return getFacetedNavigationResultDocument(hstRequest, queryAsString, relPath, objectConverter, beanMappingClass);
     }
-    
-    
+
+
     /**
      * This method tries to get a {@link Session} from a disposable pool which is identified by <code>disposablePoolIdentifier</code>
-     * 
+     *
      * If <code>disposablePoolIdentifier</code> is empty or <code>null</code> an HstComponentException will be thrown. If it is not possible to return a 
      * {@link Session} for the <code>disposablePoolIdentifier</code>, for example because there is configured a MultipleRepositoryImpl instead of 
      * LazyMultipleRepositoryImpl, also a {@link HstComponentException} will be thrown.
-     * 
-     * 
-     * @param hstRequest the hstRequest for this HstComponent
+     *
+     *
+     * @param requestContext the hstRequest for this HstComponent
      * @param disposablePoolIdentifier the identifier for this disposable pool. It is not allowed to be empty or <code>null</code> 
+     * @return a jcr {@link Session} from a disposable pool 
      * @throws HstComponentException
      */
-    public static Session getDisposablePoolSession(HstRequest hstRequest, String disposablePoolIdentifier) throws HstComponentException {
-        Credentials cred = hstRequest.getRequestContext().getContextCredentialsProvider().getDefaultCredentials(hstRequest.getRequestContext());
-       
+    public static Session getDisposablePoolSession(HstRequestContext requestContext, String disposablePoolIdentifier) throws HstComponentException {
+        Credentials cred = requestContext.getContextCredentialsProvider().getDefaultCredentials(requestContext);
+
         String userID =  ((SimpleCredentials)cred).getUserID();
         char[] passwd = ((SimpleCredentials)cred).getPassword();
-        
+
         String disposablePoolSessionUserId = userID + ";"+disposablePoolIdentifier + ";disposable";
-        
+
+        String disposableKey = DISPOSABLE_SESSION_KEY_PREFIX + ";" + disposablePoolSessionUserId;
+        Session session = (Session)requestContext.getAttribute(disposableKey);
+        if (session != null) {
+            log.debug("There is already a disposable session for '{}' on the request context. Return that session", disposablePoolSessionUserId);
+            return session;
+        }
         SimpleCredentials disposablePoolSessionCredentials = new SimpleCredentials(disposablePoolSessionUserId, passwd);
         Repository repo = HstServices.getComponentManager().getComponent(Repository.class.getName());
         try {
-            Session session = repo.login(disposablePoolSessionCredentials);
+            session = repo.login(disposablePoolSessionCredentials);
+            requestContext.setAttribute(disposableKey, session);
             return session;
         } catch (RepositoryException e) {
             throw new HstComponentException(e);
         }
+    }
+
+    /**
+     * 
+     * @param hstRequest the current {@link HstRequest}
+     * @param disposablePoolIdentifier the identifier for this disposable pool. It is not allowed to be empty or <code>null</code>  
+     * @return a jcr {@link Session} from a disposable pool
+     * @throws HstComponentException
+     * @see {@link #getDisposablePoolSession(org.hippoecm.hst.core.request.HstRequestContext, String)}
+     */
+    public static Session getDisposablePoolSession(HstRequest hstRequest, String disposablePoolIdentifier) throws HstComponentException {
+        return getDisposablePoolSession(hstRequest.getRequestContext(), disposablePoolIdentifier);
      }
 
 }
