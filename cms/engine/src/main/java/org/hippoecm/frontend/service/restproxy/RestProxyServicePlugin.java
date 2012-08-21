@@ -107,7 +107,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public <T> T createRestProxy(final Class<T> restServiceApiClass) {
         // Check whether the site is up and running or not
         if (!siteIsAlive) {
-            log.warn("It appears that the site might be down. Pinging site one more time!");
+            log.info("It appears that the site might be down. Pinging site one more time!");
             siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
             if (!siteIsAlive) {
                 log.warn("It appears that site is still down. Please check with your administrator!");
@@ -124,7 +124,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public <T> T createSecureRestProxy(Class<T> restServiceApiClass) {
         // Check whether the site is up and running or not
         if (!siteIsAlive) {
-            log.warn("It appears that the site might be down. Pinging site one more time!");
+            log.info("It appears that the site might be down. Pinging site one more time!");
             siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
             if (!siteIsAlive) {
                 log.warn("It appears that site is still down. Please check with your administrator!");
@@ -173,7 +173,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     }
 
     protected boolean checkSiteIsAlive(int pingServiceTimeout, final String pingServiceUri) {
-        boolean siteIsAlive = false;
+        boolean siteIsAlive;
         String normalizedPingServiceUri = "";
 
         // Check whether the site is up and running or not
