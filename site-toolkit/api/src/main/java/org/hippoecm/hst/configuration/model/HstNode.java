@@ -55,11 +55,11 @@ public interface HstNode {
     HstNode getParent();
     
     /**
-     * add a child hstNode with <code>name</code>. If there already exists an HstNode with name equal <code>name</code>, the
-     * existing HstNode is replaced. Since the HstNode's are used
-     * for the HST config model that does not support same name sibblings this is not a problem
-     * @param name
-     * @param hstNode
+     * Adds or replaces a child HST node with the given name. If an HstNode with the given name already exits, it is
+     * replaced with the given HST node. Since the HstNode's are used for the HST config model that does not support
+     * same name siblings this is not a problem.
+     * @param name the name for the new HST node.
+     * @param hstNode the HST node to add or replace.
      */
     void addNode(String name, HstNode hstNode);
     

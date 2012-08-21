@@ -440,14 +440,14 @@ public class HstManagerImpl implements HstManager {
                     if( configurationRootNodes.isEmpty()) {
                         loadAllConfigurationNodes(session);
                     } else {
-                        // do finegrained loading and reloading. 
+                        // Do finegrained loading and reloading.
                         // First reload all nodes marked for reloading
-                        for(String path : reloadNodes) {
+                        for (String path : reloadNodes) {
                             loadConfigurationNode(session, path);
                         }
-                        //First load all added nodes.  
-                        for(String path : loadNodes) {
-                            if(getConfigurationNodeForPath(path) != null) {
+                        // Second, load all added nodes.
+                        for (String path : loadNodes) {
+                            if (getConfigurationNodeForPath(path) != null) {
                                 // already loaded by parent
                                 continue;
                             }
