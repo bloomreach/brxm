@@ -561,6 +561,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     @Override
     public boolean isCmsRequest() {
+        if (servletRequest == null) {
+            return false;
+        }
         return Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS));
     }
 
