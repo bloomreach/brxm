@@ -47,7 +47,7 @@
         <sv:value>3</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:nodetypes" sv:type="String">
-        <sv:value>hippolog:item</sv:value>
+        <sv:value>hippolog:folder</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:path" sv:type="String">
         <sv:value>/hippo:log</sv:value>
