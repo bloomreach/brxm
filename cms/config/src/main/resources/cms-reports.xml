@@ -14,9 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-         xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="cms-reports">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>nt:unstructured</sv:value>
@@ -52,7 +50,7 @@
         <sv:value>hippolog:item</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:path" sv:type="String">
-        <sv:value>/</sv:value>
+        <sv:value>/hippo:log</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="reporting:plugin">

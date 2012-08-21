@@ -42,8 +42,8 @@ public class JcrFrontendListener extends NodeModelWrapper<Void> {
     private String[] getMultiString(String name) throws RepositoryException {
         String[] result = null;
         Node node = getNode();
-        if (node.hasProperty(FrontendNodeType.FRONTEND_UUIDS)) {
-            Value[] values = node.getProperty(FrontendNodeType.FRONTEND_UUIDS).getValues();
+        if (node.hasProperty(name)) {
+            Value[] values = node.getProperty(name).getValues();
             result = new String[values.length];
             int i = 0;
             for (Value value : values) {
