@@ -296,6 +296,12 @@
     <url-pattern>/login/hst/security/*</url-pattern>
   </servlet-mapping>
 
+  <servlet-mapping>
+    <servlet-name>HstResourceServlet</servlet-name>
+    <url-pattern>/resources/*</url-pattern>
+  </servlet-mapping>
+
+
   <!-- The Usual Welcome File List -->
   <welcome-file-list>
     <welcome-file>index.jsp</welcome-file>
