@@ -679,14 +679,11 @@ public class HstFilter implements Filter {
      * method, short circuiting the hst request handling (thus, during request matching, not even invoking a single {@link org.hippoecm.hst.core.container.Valve})
      */
     public static void cleanupResourceLifecycleManagements() {
-        final HstRequestContext requestContext = RequestContextProvider.get();
-        if (requestContext != null) {
-            Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
-            if (repository instanceof MultipleRepository) {
-                final ResourceLifecycleManagement[] resourceLifecycleManagements = ((MultipleRepository) repository).getResourceLifecycleManagements();
-                for (ResourceLifecycleManagement resourceLifecycleManagement : resourceLifecycleManagements) {
-                    resourceLifecycleManagement.disposeAllResources();
-                }
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+        if (repository instanceof MultipleRepository) {
+            final ResourceLifecycleManagement[] resourceLifecycleManagements = ((MultipleRepository) repository).getResourceLifecycleManagements();
+            for (ResourceLifecycleManagement resourceLifecycleManagement : resourceLifecycleManagements) {
+                resourceLifecycleManagement.disposeAllResources();
             }
         }
     }
