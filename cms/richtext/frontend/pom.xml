@@ -65,7 +65,7 @@
     <dependency>
       <groupId>hippo</groupId>
       <artifactId>htmlcleaner</artifactId>
-      <version>${htmlcleaner.version}</version>
+      <version>${hippo.htmlcleaner.version}</version>
       <exclusions>
         <exclusion>
           <groupId>xml-apis</groupId>
