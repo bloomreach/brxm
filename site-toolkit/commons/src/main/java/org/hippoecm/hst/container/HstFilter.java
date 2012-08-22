@@ -43,6 +43,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
+import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
@@ -55,8 +56,10 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
+import org.hippoecm.hst.core.jcr.pool.MultipleRepository;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
@@ -68,6 +71,8 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
+
+import sun.misc.Cleaner;
 
 public class HstFilter implements Filter {
 
@@ -667,17 +672,44 @@ public class HstFilter implements Filter {
         response.sendError(errorCode);
     }
 
+    /**
+     * Cleaning up resources when the entire hst request processing got skipped but there was already a jcr session taken 
+     * from the session pool. This currently can happen when some {@link HstSiteMapItemHandler} impl calls {@link HstRequestContext#getSession}
+     * and the returns <code>null</code> from its  {@link HstSiteMapItemHandler#process(org.hippoecm.hst.core.request.ResolvedSiteMapItem, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)}
+     * method, short circuiting the hst request handling (thus, during request matching, not even invoking a single {@link org.hippoecm.hst.core.container.Valve})
+     */
+    public static void cleanupResourceLifecycleManagements() {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext != null) {
+            Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+            if (repository instanceof MultipleRepository) {
+                final ResourceLifecycleManagement[] resourceLifecycleManagements = ((MultipleRepository) repository).getResourceLifecycleManagements();
+                for (ResourceLifecycleManagement resourceLifecycleManagement : resourceLifecycleManagements) {
+                    resourceLifecycleManagement.disposeAllResources();
+                }
+            }
+        }
+    }
+    
     protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, HstManager hstSitesManager, 
             HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
     	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
     	if (processHandlers) {
         	// run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
-    		resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , req, res);
-    		if(resolvedSiteMapItem == null) {
-    			// one of the handlers has finished the request already
-    			return;
-    		}
+            try {
+                resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , req, res);
+                if(resolvedSiteMapItem == null) {
+                    // one of the handlers has finished the request/response already
+                    // call clean up of the resourceLifecycleManagements as there might have been taken a jcr session from some session
+                    // pool already
+                    cleanupResourceLifecycleManagements();
+                    return;
+                }
+            } catch (HstSiteMapItemHandlerException e) {
+                cleanupResourceLifecycleManagements();
+                throw e;
+            }
     		// sync possibly changed ResolvedSiteMapItem
     		requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
     	}
