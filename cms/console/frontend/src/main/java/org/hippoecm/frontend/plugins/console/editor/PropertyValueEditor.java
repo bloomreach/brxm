@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.model.properties.StringConverter;
+import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +61,8 @@ class PropertyValueEditor extends DataView {
                 item.add(new ReferenceEditor("value", propertyModel, valueModel));
             } else if (propertyModel.getProperty().getDefinition().isProtected()) {
                 item.add(new Label("value", valueModel));
+            } else if (propertyModel.getProperty().getType() == PropertyType.BOOLEAN) {
+                item.add(new BooleanFieldWidget("value", valueModel));
             } else {
                 StringConverter stringModel = new StringConverter(valueModel);
                 String asString = stringModel.getObject();
