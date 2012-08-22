@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,10 @@ import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.session.UserSession;
 
+import wicket.contrib.input.events.EventType;
+import wicket.contrib.input.events.InputBehavior;
+import wicket.contrib.input.events.key.KeyType;
+
 public class SaveDialogLink extends DialogLink {
 
     private static final long serialVersionUID = 1L;
@@ -44,8 +48,9 @@ public class SaveDialogLink extends DialogLink {
         });
         label.setOutputMarkupId(true);
         link.add(label);
+        link.add(new InputBehavior(new KeyType[] {KeyType.Ctrl, KeyType.s}, EventType.click));
     }
-    
+
     private boolean hasSessionChanges() {
         Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
         try {
