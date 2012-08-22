@@ -252,7 +252,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                             var jsonData = Ext.util.JSON.decode(result.responseText);
                             console.error('Discarding changes failed ' + jsonData.message);
                             Hippo.Msg.alert(self.resources['discard-changes-failed-title'], self.resources['discard-changes-failed-message'], function() {
-                            self.initComposer.call(self);
+                                self.initComposer.call(self);
                             });
                         }
                     });
@@ -303,7 +303,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         if (lockState == 'lock-acquired') {
                             if (self.pageContext.renderedVariant !== 'default') {
                                 Ext.Ajax.request({
-                                    url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/',
+                                    url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/?FORCE_CLIENT_HOST=true',
                                     method: 'POST',
                                     headers: {
                                         'FORCE_CLIENT_HOST': 'true'
