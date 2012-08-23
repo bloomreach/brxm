@@ -64,6 +64,7 @@
   <properties>
     <hippo.commons.version>1.02.00</hippo.commons.version>
     <hippo.services.version>2</hippo.services.version>
+    <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
 
     <!-- Test dependencies  -->
     <atomikos.version>3.1.4</atomikos.version>
@@ -74,6 +75,7 @@
     <commons-httpclient.version>3.0</commons-httpclient.version>
     <commons-lang.version>2.1</commons-lang.version>
     <commons-cli.version>1.0</commons-cli.version>
+    <commons-io.version>1.4</commons-io.version>
     <concurrent.version>1.3.4</concurrent.version>
     <org.datanucleus.version>2.2.2</org.datanucleus.version>
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
@@ -89,6 +91,7 @@
     <quartz.version>1.8.4</quartz.version>
     <json-lib.version>2.2.2</json-lib.version>
     <dom4j.version>1.6.1</dom4j.version>
+    <groovy.version>2.0.1</groovy.version>
     <xmlunit.version>1.3</xmlunit.version>
     <easymock.version>3.1</easymock.version>
   </properties>
@@ -239,6 +242,11 @@
         <artifactId>hippo-services-eventbus</artifactId>
         <version>${hippo.services.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms7-utilities</artifactId>
+        <version>${hippo.utilities.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>javax.jcr</groupId>
@@ -367,6 +375,11 @@
         </exclusions>
       </dependency>
       <dependency>
+        <groupId>commons-io</groupId>
+        <artifactId>commons-io</artifactId>
+        <version>${commons-io.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derby</artifactId>
         <version>${org.apache.derby.version}</version>
@@ -443,6 +456,11 @@
         <groupId>dom4j</groupId>
         <artifactId>dom4j</artifactId>
         <version>${dom4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>${groovy.version}</version>
       </dependency>
 
       <!-- Testing needs a JTA implementation -->

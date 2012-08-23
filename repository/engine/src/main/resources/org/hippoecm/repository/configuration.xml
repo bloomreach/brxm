@@ -311,5 +311,25 @@
       <sv:value>hipposys:shelf</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="hippo:update">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:update</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:queue">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:updaterfolder</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:registry">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:updaterfolder</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hippo:history">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:updaterfolder</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 </sv:node>
 

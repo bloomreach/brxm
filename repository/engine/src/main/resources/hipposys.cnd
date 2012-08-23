@@ -260,6 +260,42 @@
 
 [hipposys:restorable] mixin
 
+[hipposys:backup] mixin
+- hipposys:srcpath (string)
+
+[hipposys:updaterinfo] > nt:base
+- hipposys:path (string)
+- hipposys:query (string)
+- hipposys:language (string)
+- hipposys:script (string)
+- hipposys:class (string)
+- hipposys:revert (boolean)
+- hipposys:throttle (long)
+- hipposys:batchsize (long)
+- hipposys:dryrun (boolean)
+- hipposys:paused (boolean)
+- hipposys:cancelled (boolean)
+- hipposys:startedby (string)
+- hipposys:cancelledby (string)
+- hipposys:starttime (date)
+- hipposys:finishtime (date)
+- hipposys:updated (binary)
+- hipposys:updatedcount (long)
+- hipposys:failed (binary)
+- hipposys:failedcount (long)
+- hipposys:skipped (binary)
+- hipposys:skippedcount (long)
+- hipposys:log (binary)
+- hipposys:logtail (string)
+
+[hipposys:updaterfolder] > nt:base
++ * (hipposys:updaterinfo)
+
+[hipposys:update] > nt:base, mix:lockable
++ hippo:registry (hipposys:updaterfolder)
++ hippo:queue (hipposys:updaterfolder)
++ hippo:history (hipposys:updaterfolder)
+
 // REPOSITORY: CONFIGURATION ROOT
 
 [hipposys:configuration] > nt:base

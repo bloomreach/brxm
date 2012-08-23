@@ -105,6 +105,10 @@
       <artifactId>xpp3</artifactId>
       <version>${xpp3.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -113,6 +117,10 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms7-utilities</artifactId>
     </dependency>
 
     <dependency>
@@ -185,7 +193,7 @@
             </manifest>
             <manifestEntries>
               <Implementation-Build>${buildNumber}</Implementation-Build>
-              <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.SchedulerWorkflowModule</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.SchedulerWorkflowModule org.onehippo.repository.update.UpdaterExecutionModule</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>
