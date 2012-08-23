@@ -95,9 +95,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private static final Logger log = LoggerFactory.getLogger(InitializationProcessorImpl.class);
 
     private static final String INIT_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.INITIALIZE_PATH;
-
     private static final String SHELF_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SHELF_PATH;
-
     private static final String TEMP_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.TEMPORARY_PATH;
 
     private static final String[] INIT_ITEM_PROPERTIES = new String[] {
@@ -294,8 +292,23 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     session.refresh(false);
                 }
             }
+            processRestorables(session, dryRun);
         } catch (RepositoryException ex) {
             getLogger().error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+        }
+    }
+
+    private void processRestorables(final Session session, final boolean dryRun) throws RepositoryException {
+        final NodeIterator nodes = session.getNode(TEMP_PATH).getNodes();
+        while (nodes.hasNext()) {
+            final Node node = nodes.nextNode();
+            if (node.isNodeType(HippoNodeType.NT_BACKUP)) {
+                restoreNodes(session, node, dryRun);
+            }
+            node.remove();
+            if (!dryRun) {
+                session.save();
+            }
         }
     }
 
@@ -438,26 +451,17 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             final boolean restore = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_RESTOREAFTERRELOAD, true);
             if (contextNodeName != null) {
                 final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
-                Node backupContextNode = null;
+                boolean success;
                 if (restore) {
-                    backupContextNode = backupContextNode(session, contextNodePath);
+                    backupContextNode(session, contextNodePath);
+                    success = true;
+                } else {
+                    success = removeNodecontent(session, contextNodePath, false);
                 }
-                try {
-                    if (removeNodecontent(session, contextNodePath, false)) {
-                        initializeNodecontent(session, root, contentStream, contentResource);
-                        if (!dryRun) {
-                            session.save();
-                        }
-                        if (restore && backupContextNode != null) {
-                            restoreNodes(session, contextNodePath, backupContextNode, dryRun);
-                        }
-                    } else {
-                        getLogger().error("Cannot reload item " + node.getPath() + ": removing node failed");
-                    }
-                } finally {
-                    if (backupContextNode != null) {
-                        backupContextNode.remove();
-                    }
+                if (success) {
+                    initializeNodecontent(session, root, contentStream, contentResource);
+                } else {
+                    getLogger().error("Cannot reload item " + node.getPath() + ": removing node failed");
                 }
             } else {
                 getLogger().error("Cannot reload item " + node.getPath() + ": possibly because it is a delta.");
@@ -468,18 +472,23 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     }
 
-    private Node backupContextNode(final Session session, final String contextNodePath) throws RepositoryException {
+    private void backupContextNode(final Session session, final String contextNodePath) throws RepositoryException {
         if (session.nodeExists(contextNodePath)) {
             final Node contextNode = session.getNode(contextNodePath);
             final String tempNodePath = TEMP_PATH + "/" + contextNode.getIdentifier();
-            JcrUtils.copy(session, contextNodePath, tempNodePath);
-            return session.getNode(tempNodePath);
+            if (session.nodeExists(tempNodePath)) {
+                session.getNode(tempNodePath).remove();
+            }
+            session.move(contextNodePath, tempNodePath);
+            final Node backupNode = session.getNode(tempNodePath);
+            backupNode.addMixin(HippoNodeType.NT_BACKUP);
+            backupNode.setProperty(HippoNodeType.HIPPOSYS_SRCPATH, contextNodePath);
         }
-        return null;
     }
 
-    private void restoreNodes(final Session session, final String contextNodePath, final Node backupNode, final boolean dryRun) throws RepositoryException {
-        final Node contextNode = session.getNode(contextNodePath);
+    private void restoreNodes(final Session session, final Node backupNode, final boolean dryRun) throws RepositoryException {
+        final String srcPath = backupNode.getProperty(HippoNodeType.HIPPOSYS_SRCPATH).getString();
+        final Node contextNode = session.getNode(srcPath);
         final List<Node> restorableNodes = new ArrayList<Node>();
         contextNode.accept(new ItemVisitor() {
             @Override
@@ -505,9 +514,9 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 }
             }
         });
-        for (Node restorableNode : restorableNodes) {
+        for (final Node restorableNode : restorableNodes) {
             final String destAbsPath = restorableNode.getPath();
-            final String srcAbsPath = backupNode.getPath() + (restorableNode == contextNode ? "" : "/" + restorableNode.getPath().substring(contextNodePath.length()+1));
+            final String srcAbsPath = backupNode.getPath() + (restorableNode == contextNode ? "" : "/" + restorableNode.getPath().substring(srcPath.length()+1));
             try {
                 if (session.nodeExists(srcAbsPath)) {
                     restorableNode.remove();
@@ -523,7 +532,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 shelveNode(session, srcAbsPath, destAbsPath);
             }
         }
-
     }
 
     private void shelveNode(final Session session, final String srcAbsPath, final String restoreLocation) throws RepositoryException {
@@ -533,7 +541,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         JcrUtils.copy(session, srcAbsPath, destAbsPath);
         final Node shelvedItem = session.getNode(destAbsPath);
         shelvedItem.addMixin(HippoNodeType.NT_SHELVEDITEM);
-        shelvedItem.setProperty(HippoNodeType.HIPPOSYS_RESTORELOCATION, restoreLocation);
+        shelvedItem.setProperty(HippoNodeType.HIPPOSYS_SRCPATH, restoreLocation);
         session.save();
     }
 
@@ -603,12 +611,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final List<URL> extensions = scanForExtensions();
         final List<Node> initializeItems = new ArrayList<Node>();
         for(final URL configurationURL : extensions) {
-            try {
-                initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder));
-            } catch (RepositoryException e) {
-                getLogger().error("Loading extension " + configurationURL.getPath() + " failed", e);
-                session.refresh(false);
-            }
+            initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder));
         }
         return initializeItems;
     }
@@ -646,6 +649,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 removeTempIter.nextNode().remove();
             }
             session.save();
+        } catch (RepositoryException ex) {
+            throw new RepositoryException("Initializing extension " + configurationURL.getPath() + " failed", ex);
         }
         return initializeItems;
     }

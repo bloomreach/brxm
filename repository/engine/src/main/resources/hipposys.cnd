@@ -256,7 +256,7 @@
 + * (nt:base) multiple
 
 [hipposys:shelveditem] mixin
-- hipposys:restorelocation
+- hipposys:srcpath (string)
 
 [hipposys:restorable] mixin
 

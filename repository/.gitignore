@@ -169,7 +169,7 @@ testutils/*.tmp
 testutils/.classpath
 testutils/.project
 testutils/.settings
-testutils/hippo-repository-tools-testutils.iml
+testutils/hippo-repository-testutils.iml
 testutils/local.properties
 testutils/nbproject
 testutils/repository

@@ -176,6 +176,8 @@ public interface HippoNodeType {
 
     public static final String NT_SHELVEDITEM = "hipposys:shelveditem";
 
+    public static final String NT_BACKUP = "hipposys:backup";
+
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
     public static final String HIPPO_AUTOCREATED = "hipposysedit:autocreated";
@@ -377,6 +379,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CONTEXTNODENAME = "hippo:contextnodename";
 
-    public static final String HIPPOSYS_RESTORELOCATION = "hipposys:restorelocation";
+    public static final String HIPPOSYS_SRCPATH = "hipposys:srcpath";
 
 }
