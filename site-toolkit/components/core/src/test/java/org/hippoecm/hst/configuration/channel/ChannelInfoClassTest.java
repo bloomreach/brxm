@@ -84,9 +84,6 @@ public class ChannelInfoClassTest {
         // The @Parameter annotation is not part of the HstPropertyDefinition#annotations
         assertEquals(1, annotations.size());
         assertEquals(Color.class, annotations.get(0).annotationType());
-
-        final HstPropertyDefinition hidePropertyInUI = getPropertyDefinition("propertyNotShownInUI", properties);
-        assertNull(hidePropertyInUI);
     }
     
     

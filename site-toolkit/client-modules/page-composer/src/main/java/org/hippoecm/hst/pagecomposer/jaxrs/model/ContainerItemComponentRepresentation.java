@@ -222,13 +222,11 @@ public class ContainerItemComponentRepresentation {
             if (method.isAnnotationPresent(Parameter.class)) {
                 final Parameter propAnnotation = method.getAnnotation(Parameter.class);
                 final ContainerItemComponentPropertyRepresentation prop = new ContainerItemComponentPropertyRepresentation();
-                if (propAnnotation.hideInChannelManager()) {
-                    continue;
-                }
                 prop.setName(propAnnotation.name());
                 prop.setDefaultValue(propAnnotation.defaultValue());
                 prop.setDescription(propAnnotation.description());
                 prop.setRequired(propAnnotation.required());
+                prop.setHiddenInChannelManager(propAnnotation.hideInChannelManager());
                 if (resourceBundle != null && resourceBundle.containsKey(propAnnotation.name())) {
                     prop.setLabel(resourceBundle.getString(propAnnotation.name()));
                 } else {

@@ -60,4 +60,7 @@ interface NewstyleInterface {
     @Parameter(name = "14-dropdownvalue")
     @DropDownList(value = {"value1", "value2", "value3"})
     String getDropDownValue();
+
+    @Parameter(name = "15-hideInChannelManager", hideInChannelManager = true)
+    String getHiddenInChannelManager();
 }

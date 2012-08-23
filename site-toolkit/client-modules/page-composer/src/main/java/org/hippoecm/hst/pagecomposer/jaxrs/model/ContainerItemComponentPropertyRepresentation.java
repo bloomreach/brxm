@@ -26,6 +26,8 @@ public class ContainerItemComponentPropertyRepresentation {
     private String[] dropDownListValues;
     private String[] dropDownListDisplayValues;
 
+    private boolean hiddenInChannelManager;
+
     public ContainerItemComponentPropertyRepresentation() {
         name = "";
         value = "";
@@ -37,6 +39,7 @@ public class ContainerItemComponentPropertyRepresentation {
         docType = "";
         allowCreation = false;
         docLocation = "";
+        hiddenInChannelManager = false;
     }
 
     public String getName() {
@@ -181,6 +184,14 @@ public class ContainerItemComponentPropertyRepresentation {
 
     public void setDropDownListDisplayValues(String[] dropDownListDisplayValues) {
         this.dropDownListDisplayValues = dropDownListDisplayValues;
+    }
+
+    public boolean isHiddenInChannelManager() {
+        return hiddenInChannelManager;
+    }
+
+    public void setHiddenInChannelManager(final boolean hiddenInChannelManager) {
+        this.hiddenInChannelManager = hiddenInChannelManager;
     }
 
 }

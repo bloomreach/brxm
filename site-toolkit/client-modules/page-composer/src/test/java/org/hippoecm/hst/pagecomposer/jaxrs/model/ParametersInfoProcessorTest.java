@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,7 +38,7 @@ public class ParametersInfoProcessorTest {
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null, currentMountCanonicalContentPath);
-        assertEquals(15, properties.size());
+        assertEquals(16, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
         Collections.sort(properties, new PropertyComparator());
@@ -104,6 +105,10 @@ public class ParametersInfoProcessorTest {
 
         String[] displayValues = dropDownProperty.getDropDownListDisplayValues();
         assertEquals(3, displayValues.length);
+
+        final ContainerItemComponentPropertyRepresentation hideInChannelManagerProperty = properties.get(15);
+        assertTrue(hideInChannelManagerProperty.isHiddenInChannelManager());
+
     }
 
     private static class PropertyComparator implements Comparator<ContainerItemComponentPropertyRepresentation> {

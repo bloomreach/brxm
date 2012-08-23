@@ -29,9 +29,6 @@ public class ChannelInfoClassProcessor {
             if (method.isAnnotationPresent(Parameter.class)) {
                 // new style annotations
                 Parameter propAnnotation = method.getAnnotation(Parameter.class);
-                if (propAnnotation.hideInChannelManager()) {
-                    continue;
-                }
                 HstPropertyDefinition prop = new AnnotationHstPropertyDefinition(propAnnotation, method.getReturnType(), method.getAnnotations());
                 properties.add(prop);
             }
