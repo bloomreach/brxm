@@ -141,6 +141,8 @@
 
     Main.subscribe('initialize', surfandedit.init, surfandedit);
 
+    Main.subscribe('dynamicContentLoaded', surfandedit.createSurfAndEditLinks, surfandedit);
+
     onhostmessage(surfandedit.hideLinks, surfandedit, false, 'showoverlay');
 
     onhostmessage(surfandedit.showLinks, surfandedit, false, 'hideoverlay');
