@@ -16,6 +16,7 @@
 
 package org.onehippo.cms7.channelmanager.channels;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +46,7 @@ import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.HstValueType;
 import org.hippoecm.hst.core.parameters.ImageSetPath;
 import org.hippoecm.hst.core.parameters.JcrPath;
+import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
 import org.json.JSONArray;
@@ -157,7 +159,10 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
                     protected void populateItem(final ListItem<String> item) {
                         final String key = item.getModelObject();
                         final HstPropertyDefinitionInfo propDefInfo = getPropertyDefinition(key);
-
+                        Annotation parameterAnnotation = propDefInfo.getAnnotation(Parameter.class);
+                        if (parameterAnnotation != null && ((Parameter)parameterAnnotation).hideInChannelManager()) {
+                            return;
+                        }
                         item.add(new Label(WICKET_ID_KEY, new ChannelResourceModel(key, channel, channelStore)));
                         item.add(getWidget(context, channel, propDefInfo, key));
 

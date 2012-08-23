@@ -500,6 +500,9 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         } else {
             for (var i = 0; i < length; i++) {
                 var record = records[i];
+                if (record.get('hiddenInChannelManager')) {
+                    continue;
+                }
                 var value = record.get('value');
                 var defaultValue = record.get('defaultValue');
                 var isDefaultValue = false;
@@ -643,7 +646,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 root : 'properties',
                 fields : ['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
                     'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
-                    'dropDownListValues', 'dropDownListDisplayValues' ],
+                    'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager' ],
                 url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.locale + '/' + this.variant.id + '?FORCE_CLIENT_HOST=true'
             });
 
