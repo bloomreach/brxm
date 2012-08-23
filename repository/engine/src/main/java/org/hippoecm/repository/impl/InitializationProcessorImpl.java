@@ -433,7 +433,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             return;
         }
 
-        if (isReload(node)) {
+        if (isReloadable(node)) {
             final String contextNodeName = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTEXTNODENAME, null);
             final boolean restore = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_RESTOREAFTERRELOAD, true);
             if (contextNodeName != null) {
@@ -658,9 +658,11 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
         if (initItemNode == null || shouldReload(tempInitItemNode, initItemNode, moduleVersion, existingModuleVersion, itemVersion, existingItemVersion)) {
 
+            boolean isReload = false;
             if(initItemNode != null) {
                 getLogger().info("Item " + tempInitItemNode.getName() + " needs to be reloaded");
                 initItemNode.remove();
+                isReload = true;
             }
 
             initItemNode = initializationFolder.addNode(tempInitItemNode.getName(), HippoNodeType.NT_INITIALIZEITEM);
@@ -677,7 +679,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             final String contextNodeName = initItemNode.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) ? readContextNodeName(initItemNode) : null;
             if (contextNodeName != null) {
                 initItemNode.setProperty(HippoNodeType.HIPPO_CONTEXTNODENAME, contextNodeName);
-                if (isReload(initItemNode)) {
+                if (isReload) {
                     final String root = JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_CONTENTROOT, "/");
                     final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
                     final NodeIterator downstreamItems = getDownstreamItems(session, contextNodePath);
@@ -722,7 +724,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private boolean shouldReload(final Node temp, final Node existing, final String moduleVersion, final String existingModuleVersion, final String itemVersion, final String existingItemVersion) throws RepositoryException {
-        if (!isReload(temp)) {
+        if (!isReloadable(temp)) {
             return false;
         }
         if (itemVersion != null && !isNewerVersion(itemVersion, existingItemVersion)) {
@@ -1020,7 +1022,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
     }
 
-    private boolean isReload(Node node) throws RepositoryException {
+    private boolean isReloadable(Node node) throws RepositoryException {
         return JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_RELOADONSTARTUP, false);
     }
 
