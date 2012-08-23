@@ -331,7 +331,8 @@ public class AggregationValve extends AbstractValve {
             HstResponse response = responseMap.get(window);
 
             if (window.isVisible()) {
-                if (window.getComponentInfo().isAsync() && request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() == null) {
+                // in cms request context, we never load asynchronous
+                if (!request.getRequestContext().isCmsRequest() && window.getComponentInfo().isAsync() && request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() == null) {
                     HstURLFactory urlFactory = request.getRequestContext().getURLFactory();
                     HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE,
                             window.getReferenceNamespace(), null,
