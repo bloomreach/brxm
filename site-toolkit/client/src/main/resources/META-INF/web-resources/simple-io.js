@@ -20,7 +20,7 @@ var simpleio_xmlhttpfactories = [
     function () { return new ActiveXObject("Microsoft.XMLHTTP") }
 ];
 
-function simpleio_createxmlhttpobject() {
+function _asyncSimpleio_createxmlhttpobject() {
     var xmlhttp = false;
     for (var i = 0; i < simpleio_xmlhttpfactories.length; i++) {
         try {
@@ -37,7 +37,7 @@ function _asyncLoad() {
     var result = document.getElementsByClassName("_async");
     for (var i=0, length=result.length; i< length; i++) {
         (function(element) {
-            simpleio_sendrequest(element.id, function(req) {
+            _asyncSimpleio_sendrequest(element.id, function(req) {
                 var parent = element.parentNode;
                 var newElement = document.createElement('div');
                 newElement.innerHTML = req.response;
@@ -49,8 +49,8 @@ function _asyncLoad() {
 
 }
 
-function simpleio_sendrequest(url, callback) {
-	var req = simpleio_createxmlhttpobject();
+function _asyncSimpleio_sendrequest(url, callback) {
+	var req = _asyncSimpleio_createxmlhttpobject();
     if (!req) return;
     var method = "GET";
     req.open(method, url, true);
@@ -65,13 +65,4 @@ function simpleio_sendrequest(url, callback) {
     req.send();
 }
 
-//function simpleio_objectbyid(id) {
-//    if (document.getElementById)
-//        return document.getElementById(id);
-//    else if (document.all)
-//        return document.all[id];
-//    else if (document.layers)
-//        return document.layers[id];
-//    return null;
-//}
 
