@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Calendar;
 
+import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -116,12 +117,30 @@ public class ResourceHelper {
      */
     public static void setDefaultResourceProperties(Node node, String mimeType, InputStream inputStream) throws RepositoryException {
         try{
-            node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
-            node.setProperty(JcrConstants.JCR_DATA, getValueFactory(node).createBinary(inputStream));
-            node.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
+            setDefaultResourceProperties(node, mimeType, getValueFactory(node).createBinary(inputStream));
         } finally {
             IOUtils.closeQuietly(inputStream);
         }
+    }
+
+    /**
+     * Set the default 'hippo:resource' properties:
+     * <ul>
+     *   <li>jcr:mimeType</li>
+     *   <li>jcr:data</li>
+     *   <li>jcr:lastModified</li>
+     * </ul>
+     *
+     * @param node the {@link Node} on which to set the properties
+     * @param mimeType the mime-type of the binary data (e.g. <i>application/pdf</i>, <i>image/jpeg</i>)
+     * @param binary the binary data.
+     *
+     * @throws RepositoryException exception thrown when one of the properties or values could not be set
+     */
+    public static void setDefaultResourceProperties(final Node node, final String mimeType, final Binary binary) throws RepositoryException {
+        node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
+        node.setProperty(JcrConstants.JCR_DATA, binary);
+        node.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
     }
 
     /**

@@ -20,7 +20,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Application;
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
+import org.apache.wicket.settings.IApplicationSettings;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.validation.IValidationResult;
@@ -34,18 +37,21 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
     private static final Logger log = LoggerFactory.getLogger(DefaultUploadValidationService.class);
 
-    public static final String DEFAULT_MAX_SIZE = "2mb";
-    public static final String[] DEFAULT_EXTENSIONS_ALLOWED = new String[0];
+    protected interface Validator extends IClusterable {
+        void validate(FileUpload upload);
+    }
 
+    public static final String MAX_FILE_SIZE      = "max.file.size";
     public static final String EXTENSIONS_ALLOWED = "extensions.allowed";
-    public static final String MAX_FILE_SIZE = "max.file.size";
 
     private ValidationResult result;
-
-    private List<String> allowedExtensions = new LinkedList<String>();
+    private List<Validator> validators;
+    private List<String> allowedExtensions;
     private Bytes maxFileSize;
 
     public DefaultUploadValidationService(IValueMap params) {
+        validators = new LinkedList<Validator>();
+        allowedExtensions = new LinkedList<String>();
 
         final String[] fileExtensions;
         if (params.containsKey(EXTENSIONS_ALLOWED)) {
@@ -63,14 +69,38 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         }
 
         maxFileSize = Bytes.valueOf(params.getString(MAX_FILE_SIZE, getDefaultMaxFileSize()));
+
+        addValidator(new Validator() {
+
+            @Override
+            public void validate(FileUpload upload) {
+                validateExtension(upload);
+            }
+        });
+
+        addValidator(new Validator() {
+
+            @Override
+            public void validate(FileUpload upload) {
+                validateMaxFileSize(upload);
+            }
+        });
+    }
+
+    protected final void addValidator(Validator validator) {
+        validators.add(validator);
     }
 
     @Override
-    public void validate(final FileUpload upload) throws ValidationException {
+    public final void validate(final FileUpload upload) throws ValidationException {
         result = new ValidationResult();
 
-        validateExtension(upload);
-        validateMaxFileSize(upload);
+        for(Validator validator : validators) {
+            if (!result.isValid()) {
+                return;
+            }
+            validator.validate(upload);
+        }
     }
 
     @Override
@@ -88,30 +118,23 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         result.getViolations().add(new Violation(null, key, params));
     }
 
-
     private void validateExtension(FileUpload upload) {
         if (allowedExtensions.size() > 0) {
+
             String fileName = upload.getClientFileName();
             int lastPeriod = fileName.lastIndexOf('.');
-            if (lastPeriod == -1) {
-                if (allowedExtensions.size() > 0) {
-                    addViolation("upload.validation.extension.not.found",
-                            fileName, StringUtils.join(allowedExtensions.iterator(), ", "));
-
-                    if (log.isDebugEnabled()) {
-                        log.debug("File '{}' has no extension. Allowed extensions are {}.",
-                                new Object[]{fileName, StringUtils.join(allowedExtensions.iterator(), ", ")});
-                    }
-                }
+            if (lastPeriod == -1 || lastPeriod == fileName.length() - 1) {
+                String allowed = StringUtils.join(allowedExtensions.iterator(), ", ");
+                addViolation("file.validation.extension.unknown", fileName, allowed);
+                log.debug("File '{}' has no extension. Allowed extensions are {}.", fileName, allowed);
             } else {
                 String extension = fileName.substring(lastPeriod + 1).toLowerCase();
                 if (!allowedExtensions.contains(extension)) {
-                    addViolation("upload.validation.extension.not.allowed",
-                            fileName, extension, StringUtils.join(allowedExtensions.iterator(), ", "));
-
+                    String allowed = StringUtils.join(allowedExtensions.iterator(), ", ");
+                    addViolation("file.validation.extension.disallowed", fileName, extension, allowed);
                     if (log.isDebugEnabled()) {
                         log.debug("File '{}' has extension {} which is not allowed. Allowed extensions are {}.",
-                                new Object[]{fileName, extension, StringUtils.join(allowedExtensions.iterator(), ", ")});
+                                  new Object[] {fileName, extension, allowed});
                     }
                 }
             }
@@ -122,11 +145,12 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         Bytes fileSize = Bytes.bytes(upload.getSize());
 
         if (maxFileSize.compareTo(fileSize) == -1) {
-            addViolation("upload.validation.filesize",
+            addViolation("file.validation.size",
                     upload.getClientFileName(), fileSize.toString(), maxFileSize.toString());
 
             if (log.isDebugEnabled()) {
-                log.debug("File '{}' has size {} which is too big. The maximum size allowed is {}", new Object[]{upload.getClientFileName(), fileSize.toString(), maxFileSize.toString()});
+                log.debug("File '{}' has size {} which is too big. The maximum size allowed is {}",
+                          new Object[]{upload.getClientFileName(), fileSize.toString(), maxFileSize.toString()});
             }
         }
     }
@@ -141,8 +165,17 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         return maxFileSize;
     }
 
+    /**
+     * Check if the defaultMaximumUploadSize stored in the IApplicationSettings is set explicitly and only
+     * then used it, otherwise use DEFAULT_MAX_FILE_SIZE. This is because by default it is set to Bytes.MAX
+     * which is a bit overkill (8388608T).
+     *
+     * @return The String value of the default maximum file size for an upload
+     */
     protected String getDefaultMaxFileSize() {
-        return DEFAULT_MAX_SIZE;
+        IApplicationSettings settings = Application.get().getApplicationSettings();
+        Bytes defaultSize = settings.getDefaultMaximumUploadSize();
+        return Bytes.MAX.equals(defaultSize) ? DEFAULT_MAX_FILE_SIZE : defaultSize.toString();
     }
 
     protected String[] getDefaultExtensionsAllowed() {

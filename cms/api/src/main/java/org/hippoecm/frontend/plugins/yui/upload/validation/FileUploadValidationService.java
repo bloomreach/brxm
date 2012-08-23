@@ -24,7 +24,8 @@ import org.hippoecm.frontend.validation.ValidationException;
 public interface FileUploadValidationService extends IValidationService {
     final static String SVN_ID = "$Id$";
 
-    String DEFAULT_MAX_FILE_SIZE = "1mb";
+    String DEFAULT_MAX_FILE_SIZE = "10mb";
+    String[] DEFAULT_EXTENSIONS_ALLOWED = new String[0];
 
     void validate(FileUpload upload) throws ValidationException;
 
