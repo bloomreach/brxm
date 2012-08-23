@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Component.IVisitor;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -46,6 +47,12 @@ public abstract class PluginTest extends RepositoryTest {
     protected final class PluginTestApplication extends Main {
 
         public PluginTestApplication() {
+        }
+
+        @Override
+        public String getConfigurationType() {
+            // suppress development mode warning from test output
+            return Application.DEPLOYMENT;
         }
 
         @Override

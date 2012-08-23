@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.translation.components;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.translation.components.document.DocumentMismatchingPage;
@@ -22,6 +23,12 @@ import org.hippoecm.frontend.translation.components.document.DocumentRegularPage
 import org.hippoecm.frontend.translation.components.folder.FolderTranslationPage;
 
 public class WicketApplication extends WebApplication {
+
+    @Override
+    public String getConfigurationType() {
+        // suppress development mode warning from test output
+        return Application.DEPLOYMENT;
+    }
 
     @Override
     public Class<? extends WebPage> getHomePage() {

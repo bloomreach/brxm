@@ -16,6 +16,7 @@
  */
 package org.hippoecm.frontend.plugins.gotolink;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -102,6 +103,12 @@ public class GotolinkDocumentsShortcutPluginTest {
     }
 
     public class HippoWebApplication extends WicketTester.DummyWebApplication {
+        @Override
+        public String getConfigurationType() {
+            // suppress development mode warning from test output
+            return Application.DEPLOYMENT;
+        }
+
         @Override
         public Class getHomePage() {
             return MyHomePage.class;

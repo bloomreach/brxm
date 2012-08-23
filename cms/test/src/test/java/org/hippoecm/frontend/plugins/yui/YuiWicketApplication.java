@@ -15,10 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.yui;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.protocol.http.WebApplication;
 
 public class YuiWicketApplication extends WebApplication {
+
+    @Override
+    public String getConfigurationType() {
+        // suppress development mode warning from test output
+        return Application.DEPLOYMENT;
+    }
 
     @Override
     protected void init() {

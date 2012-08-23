@@ -48,6 +48,7 @@ import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
@@ -328,7 +329,13 @@ public class HippoTester extends WicketTester {
 
     public HippoTester() {
         this(new Main() {
-            
+
+            @Override
+            public String getConfigurationType() {
+                // suppress development mode warning from test output
+                return Application.DEPLOYMENT;
+            }
+
             @Override
             public HippoRepository getRepository() throws RepositoryException {
                 return null;
