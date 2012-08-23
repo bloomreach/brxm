@@ -603,7 +603,12 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final List<URL> extensions = scanForExtensions();
         final List<Node> initializeItems = new ArrayList<Node>();
         for(final URL configurationURL : extensions) {
-            initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder));
+            try {
+                initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder));
+            } catch (RepositoryException e) {
+                getLogger().error("Loading extension " + configurationURL.getPath() + " failed", e);
+                session.refresh(false);
+            }
         }
         return initializeItems;
     }
@@ -641,8 +646,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 removeTempIter.nextNode().remove();
             }
             session.save();
-        } catch (RepositoryException ex) {
-            throw new RepositoryException("Initializing extension " + configurationURL.getPath() + " failed", ex);
         }
         return initializeItems;
     }
