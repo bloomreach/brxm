@@ -1,7 +1,10 @@
 * text=auto !eol
 /pom.xml -text
 src/main/java/org/hippoecm/hst/servlet/ResourceServlet.java -text
+src/main/java/org/onehippo/cms7/utilities/io/CircularBufferOutputStream.java -text
+src/main/java/org/onehippo/cms7/utilities/logging/PrintStreamLogger.java -text
 src/main/java/org/onehippo/cms7/utilities/servlet/ResourceServlet.java -text
+src/test/java/org/onehippo/cms7/utilities/io/CircularBufferOutputStreamTest.java -text
 src/test/java/org/onehippo/cms7/utilities/servlet/ResourceServletTest.java -text
 src/test/resources/META-INF/test/internal.properties -text
 src/test/resources/META-INF/test/onehippo.gif -text

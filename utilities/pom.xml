@@ -33,6 +33,7 @@
   <properties>
     <commons-lang.version>2.4</commons-lang.version>
     <spring.version>3.0.4.RELEASE</spring.version>
+    <junit.version>4.10</junit.version>
   </properties>
 
   <dependencies>
@@ -44,7 +45,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>4.10</version>
+      <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
