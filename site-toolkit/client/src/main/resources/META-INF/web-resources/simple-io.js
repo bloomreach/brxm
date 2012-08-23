@@ -33,14 +33,28 @@ function simpleio_createxmlhttpobject() {
     return xmlhttp;
 }
 
-function simpleio_sendrequest(url, callback, postData) {
+function _asyncLoad() {
+    var result = document.getElementsByClassName("_async");
+    for (var i=0, length=result.length; i< length; i++) {
+        (function(element) {
+            simpleio_sendrequest(element.id, function(req) {
+                var parent = element.parentNode;
+                var newElement = document.createElement('div');
+                newElement.innerHTML = req.response;
+                parent.insertBefore(newElement, element);
+
+            });
+        })(result[i]);
+    }
+
+}
+
+function simpleio_sendrequest(url, callback) {
 	var req = simpleio_createxmlhttpobject();
     if (!req) return;
-    var method = (postData ? "POST" : "GET");
+    var method = "GET";
     req.open(method, url, true);
     req.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
-    if (postData)
-        req.setRequestHeader('Content-type','application/x-www-form-urlencoded');
     req.onreadystatechange = function () {
         if (req.readyState != 4) return;
         if (req.status != 200 && req.status != 304) {
@@ -48,17 +62,16 @@ function simpleio_sendrequest(url, callback, postData) {
         }
         callback(req);
     }
-    if (req.readyState == 4) return;
-    req.send(postData);
+    req.send();
 }
 
-function simpleio_objectbyid(id) {
-    if (document.getElementById)
-        return document.getElementById(id);
-    else if (document.all)
-        return document.all[id];
-    else if (document.layers)
-        return document.layers[id];
-    return null;
-}
+//function simpleio_objectbyid(id) {
+//    if (document.getElementById)
+//        return document.getElementById(id);
+//    else if (document.all)
+//        return document.all[id];
+//    else if (document.layers)
+//        return document.layers[id];
+//    return null;
+//}
 

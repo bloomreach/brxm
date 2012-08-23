@@ -49,7 +49,8 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
     private String serveResourcePath;
     private String forwardPathInfo;
     private Element wrapperElement;
-    private List<Comment> preambles = new ArrayList<Comment>();
+    private List<Comment> preambleComments = new ArrayList<Comment>();
+    private List<Element> preambleElements = new ArrayList<Element>();
     private boolean rendererSkipped;
 
     public HstURL createRenderURL() {
@@ -248,11 +249,19 @@ public class MockHstResponse extends MockHstResponseBase implements HstResponse 
     }
 
     public void addPreamble(Comment comment) {
-        preambles.add(comment);
+        preambleComments.add(comment);
     }
 
-    public List<Comment> getPreambles() {
-        return preambles;
+    public void addPreamble(Element element) {
+        preambleElements.add(element);
+    }
+
+    public List<Comment> getPreambleComments() {
+        return preambleComments;
+    }
+
+    public List<Element> getPreambleElements() {
+        return preambleElements;
     }
 
     public boolean isRendererSkipped() {

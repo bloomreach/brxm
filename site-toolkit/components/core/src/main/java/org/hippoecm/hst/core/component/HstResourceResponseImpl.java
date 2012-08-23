@@ -135,6 +135,11 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
         throw new UnsupportedOperationException("Resource response is not allowed to invoke addPreambleNode().");
     }
 
+    @Override
+    public void addPreamble(final Element element) {
+        throw new UnsupportedOperationException("Resource response is not allowed to invoke addPreambleNode().");
+    }
+
     public void setWrapperElement(Element element) {
         throw new UnsupportedOperationException("Resource response is not allowed to invoke setWrapperElement().");
     }

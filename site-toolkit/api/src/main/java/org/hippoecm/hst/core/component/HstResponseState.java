@@ -129,6 +129,14 @@ public interface HstResponseState
 
     public void addPreambleNode(Comment comment);
 
+    /**
+     * Preamble {@link org.w3c.dom.Node}s are written before the rest of the content of this {@link HstResponseState}. Note that
+     * from this <code>element</code> <b>only</b> the attributes and text of the <code>element</code> are printed, and *not*
+     * any descendant @link org.w3c.dom.Node}s of <code>element</code>
+     * @param element the element that is a preamble
+     */
+    public void addPreambleNode(Element element);
+
     void setWrapperElement(Element element);
     
     Element getWrapperElement();

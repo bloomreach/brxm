@@ -349,6 +349,10 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
         responseState.addPreambleNode(comment);
     }
 
+    public void addPreamble(Element element) {
+        responseState.addPreambleNode(element);
+    }
+
     public void setWrapperElement(Element element) {
         responseState.setWrapperElement(element);
     }

@@ -127,7 +127,7 @@ public interface HstResponse extends HttpServletResponse {
     void setRenderParameters(Map<String, String[]> parameters);
     
     /**
-     * Creates an element of the type specified to be used in the {@link #addProperty(String, Element)} method. 
+     * Creates an element of the type specified to be used in the {@link #addPreamble(org.w3c.dom.Element)} method.
      * 
      * @param tagName the tag name of the element
      * @return DOM element with the tagName
@@ -175,7 +175,7 @@ public interface HstResponse extends HttpServletResponse {
      * Asks if a property exists already or not.
      * This method checks all the parent component reponses have the property.
      * 
-     * @param key
+     * @param keyHint
      * @return
      */
     boolean containsHeadElement(String keyHint);
@@ -341,6 +341,15 @@ public interface HstResponse extends HttpServletResponse {
      * @param comment the comment node
      */
     void addPreamble(Comment comment);
+
+
+    /**
+     * Preamble {@link org.w3c.dom.Node}s are written before the rest of the content of this {@link HstResponseState}. Note that
+     * from this <code>element</code> <b>only</b> the element, attributes and text of the <code>element</code> are printed, and *not*
+     * any descendant @link org.w3c.dom.Node}s of <code>element</code>
+     * @param element the element that is a preamble
+     */
+    void addPreamble(Element element);
     
     /**
      * For single /subtree component rendering mode that has {@link HstComponentInfo#isStandalone()} equal to <code>false</code>, this

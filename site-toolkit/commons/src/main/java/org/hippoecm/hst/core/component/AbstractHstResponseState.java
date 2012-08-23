@@ -46,7 +46,6 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * Temporarily holds the current state of a HST response
@@ -80,7 +79,8 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     protected Map<String, List<String>> setHeaders;
     protected List<Cookie> cookies;
     protected List<KeyValue<String, Element>> headElements;
-    protected List<Comment> preambleNodes;
+    protected List<Comment> preambleComments;
+    protected List<Element> preambleElements;
     protected Element wrapperElement;
     protected boolean committed;
     protected boolean hasStatus;
@@ -614,10 +614,17 @@ public abstract class AbstractHstResponseState implements HstResponseState {
     }
 
     public void addPreambleNode(Comment comment) {
-        if (this.preambleNodes == null) {
-            this.preambleNodes = new ArrayList<Comment>();
+        if (this.preambleComments == null) {
+            this.preambleComments = new ArrayList<Comment>();
         }
-        this.preambleNodes.add(comment);
+        this.preambleComments.add(comment);
+    }
+    
+    public void addPreambleNode(Element element) {
+        if (this.preambleElements == null) {
+            this.preambleElements = new ArrayList<Element>();
+        }
+        this.preambleElements.add(element);
     }
     
     public void setWrapperElement(Element element) {
@@ -744,17 +751,9 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                     if (contentLength > -1 && contentLength < len) {
                         len = contentLength;
                     }
-                    if (preambleNodes != null) {
-                        Writer writer;
-                        if (characterEncoding != null) {
-                            writer = new OutputStreamWriter(realOutputStream, characterEncoding);
-                        } else {
-                            writer = new OutputStreamWriter(realOutputStream);
-                        }
-                        for (Node node : preambleNodes) {
-                            writer.write("<!-- "+node.getTextContent()+" -->");
-                        }
-                    }
+                    printPreambleComments(preambleComments, realOutputStream);
+                    printPreambleElements(preambleElements, realOutputStream, len);
+                    
                     if (wrapperElement == null) {
                         if (len > 0) {
                             realOutputStream.write(byteOutputBuffer.toByteArray(), 0, len);
@@ -769,11 +768,8 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                 } else if (printWriter != null) {
                     if (!closed) {
                         printWriter.flush();
-                        if (preambleNodes != null) {
-                            for (Node node : preambleNodes) {
-                                getResponseWriter().write("<!-- " + node.getTextContent() + " -->");
-                            }
-                        }
+                        printPreambleComments(preambleComments, null);
+                        printPreambleElements(preambleElements, null, 0);
                         if (wrapperElement == null) {
                             if (charOutputBuffer.getCount() > 0) {
                                 getResponseWriter().write(charOutputBuffer.getBuffer(), 0, charOutputBuffer.getCount());
@@ -789,12 +785,63 @@ public abstract class AbstractHstResponseState implements HstResponseState {
                     }
                 } else {
                     if (!closed) {
-                        if (preambleNodes != null) {
-                            for (Node node : preambleNodes) {
-                                getResponseWriter().write("<!-- " + node.getTextContent() + " -->");
-                            }
-                        }
+                        printPreambleComments(preambleComments, null);
+                        printPreambleElements(preambleElements, null, 0);
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Writes the list of preambles comments as comment into the output
+     * @param preambles the list of preamble comments to write
+     * @param outputStream when not <code>null</code> we'll write to this outputStream, otherwise to {@link }#getResponseWriter()}
+     */
+    private void printPreambleComments(final List<Comment> preambles, final OutputStream outputStream) throws IOException {
+        if (preambles != null) {
+            if (outputStream == null) {
+                for (Comment comment : preambles) {
+                    getResponseWriter().write("<!-- " + comment.getTextContent() + " -->");
+                }
+            } else {
+                Writer writer;
+                if (characterEncoding != null) {
+                    writer = new OutputStreamWriter(outputStream, characterEncoding);
+                } else {
+                    writer = new OutputStreamWriter(outputStream);
+                }
+                for (Comment comment : preambles) {
+                    writer.write("<!-- "+comment.getTextContent()+" -->");
+                }
+            }
+        }
+    }
+
+    /**
+     * Writes the list of preambles elements into the output. Note that only the Element itself and its text gets printed : Not any
+     * descendant elements *in* the Element.
+     * @param preambles the list of preamble elements to write
+     * @param outputStream when not <code>null</code> we'll write to this outputStream, otherwise to {@link }#getResponseWriter()}
+     * @param contentLength the contentLength in case we have a outputStream instead of printwriter
+     */
+    private void printPreambleElements(final List<Element> preambles, final OutputStream outputStream, final int contentLength) throws IOException {
+        if (preambles != null) {
+            if (outputStream == null) {
+                for (Element element : preambles) {
+                    WrapperElement wrapperElem = new WrapperElementImpl(element);
+                    WrapperElementUtils.writeWrapperElement(getResponseWriter(), wrapperElem, null, 0, 0);
+                }
+            } else {
+                Writer writer;
+                if (characterEncoding != null) {
+                    writer = new OutputStreamWriter(outputStream, characterEncoding);
+                } else {
+                    writer = new OutputStreamWriter(outputStream);
+                }
+                for (Element element : preambles) {
+                    WrapperElement wrapperElem = new WrapperElementImpl(element);
+                    WrapperElementUtils.writeWrapperElement(outputStream, characterEncoding, wrapperElem, byteOutputBuffer.toByteArray(), 0, contentLength);
                 }
             }
         }

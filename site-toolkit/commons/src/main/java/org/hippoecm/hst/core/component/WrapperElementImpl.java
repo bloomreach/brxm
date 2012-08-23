@@ -36,7 +36,7 @@ public class WrapperElementImpl implements WrapperElement
     private String tagName;
     private Map<String, String> attributes;
     private String textContent;
-    
+
     public WrapperElementImpl()
     {
     }

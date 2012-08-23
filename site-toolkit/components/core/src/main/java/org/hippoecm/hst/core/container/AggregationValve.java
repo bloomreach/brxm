@@ -48,6 +48,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * AggregationValve
@@ -328,24 +329,32 @@ public class AggregationValve extends AbstractValve {
             HstComponentWindow window = sortedComponentWindows[i];
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
+
             if (window.isVisible()) {
                 if (window.getComponentInfo().isAsync() && request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() == null) {
-                    HashMap<String, String> attributes = new HashMap<String, String>();
                     HstURLFactory urlFactory = request.getRequestContext().getURLFactory();
                     HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE,
                             window.getReferenceNamespace(), null,
                             request.getRequestContext());
-                    attributes.put("url", url.toString());
-                    attributes.put("id", "async-"+((HstComponentConfiguration)window.getComponentInfo()).getCanonicalIdentifier());
+                    Element hiddenDiv = response.createElement("div");
+                    hiddenDiv.setAttribute("id", url.toString());
+                    hiddenDiv.setAttribute("class", "_async");
+                    hiddenDiv.setAttribute("style", "display:none;");
+                    response.addPreamble(hiddenDiv);
 
-                    Comment comment = createCommentWithAttr(attributes, response);
-                    response.addPreamble(comment);
-                    if (!response.containsHeadElement("asnyc")) {
-                        Element script = response.createElement("script");
-                        String src = request.getRequestContext().getHstLinkCreator().create("resources/simple-io.js", request.getRequestContext().getResolvedMount().getMount()).toUrlForm(request.getRequestContext(), false);
-                        script.setAttribute("src",src);
-                        script.setAttribute("type","text/javascript");
-                        response.addHeadElement(script, "async");
+                    if (!response.containsHeadElement("async")) {
+                        Element headScript = response.createElement("script");
+                        String src = request.getRequestContext().getHstLinkCreator().create("resources/simple-io.js", request.getRequestContext().getResolvedMount().getMount(), true).toUrlForm(request.getRequestContext(), false);
+                        headScript.setAttribute("src",src);
+                        headScript.setAttribute("type","text/javascript");
+                        response.addHeadElement(headScript, "async");
+
+                        Element endBodyScript = response.createElement("script");
+                        endBodyScript.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "scripts");
+                        endBodyScript.setAttribute("type","text/javascript");
+                        endBodyScript.setTextContent("_asyncLoad()");
+                        response.addHeadElement(endBodyScript, "asyncLoad");
+
                     }
                 } else {
                     getComponentInvoker().invokeBeforeRender(requestContainerConfig, request, response);
@@ -454,6 +463,7 @@ public class AggregationValve extends AbstractValve {
         @Override public void addHeader(String name, String value) {}
         @Override public void addIntHeader(String name, int value) {}
         @Override public void addPreambleNode(Comment comment) {}
+        @Override public void addPreambleNode(Element element) {}
         @Override public void clear() {}
         @Override public boolean containsHeadElement(String keyHint) {return false;}
         @Override public boolean containsHeader(String name) {return false;}
@@ -508,6 +518,7 @@ public class AggregationValve extends AbstractValve {
         @Override public void addCookie(Cookie cookie) {}
         @Override public void addHeadElement(Element element, String keyHint) {}
         @Override public void addPreamble(Comment comment) {}
+        @Override public void addPreamble(Element element) {}
         @Override public boolean containsHeadElement(String keyHint) {return false;}
         @Override public HstURL createActionURL() {return null;}
         @Override public Comment createComment(String comment) {return null;}
