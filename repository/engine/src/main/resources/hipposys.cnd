@@ -312,4 +312,5 @@
 + hippo:queries (hipposys:queryfolder) = hipposys:queryfolder mandatory autocreated
 + hippo:security (hipposys:securityfolder) = hipposys:securityfolder
 + hippo:modules (hipposys:modulefolder) = hipposys:modulefolder
-+ hippo:shelf (hipposys:shelf) = hipposys:shelf
++ hippo:shelf (hipposys:shelf) = hipposys:shelf autocreated
++ hippo:update (hipposys:update) = hipposys:update autocreated
