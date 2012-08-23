@@ -72,8 +72,6 @@ import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.ServletConfigUtils;
 
-import sun.misc.Cleaner;
-
 public class HstFilter implements Filter {
 
     @SuppressWarnings("unused")
