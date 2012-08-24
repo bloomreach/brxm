@@ -43,6 +43,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertiesProvider;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
+import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,10 +52,8 @@ class NodeEditor extends Form<Node> {
     private static final long serialVersionUID = 1L;
     private static final NamespacePropertyComparator PROPERTY_COMPARATOR = new NamespacePropertyComparator();
 
-    static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
+    private static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
 
-    @SuppressWarnings("unused")
-    private String primaryType;
     @SuppressWarnings("unused")
     private String mixinTypes;
     @SuppressWarnings("unused")
@@ -78,7 +77,9 @@ class NodeEditor extends Form<Node> {
         add(new Label("uuid", new PropertyModel<String>(this, "uuid")));
 
         add(new ToggleHeader("toggle-header-1", "1", "Types"));
-        add(new Label("primarytype", new PropertyModel<String>(this, "primaryType")));
+        final TextFieldWidget primaryTypeWidget = new TextFieldWidget("primarytype", new PropertyModel<String>(this, "primaryType"));
+        primaryTypeWidget.setSize("40");
+        add(primaryTypeWidget);
         add(new Label("types", new PropertyModel<String>(this, "mixinTypes")));
 
         add(new ToggleHeader("toggle-header-2", "2", "Properties"));
@@ -104,13 +105,12 @@ class NodeEditor extends Form<Node> {
                 nodePath = node.getPath();
                 name = node.getName();
                 uuid = node.getIdentifier();
-                primaryType = node.getPrimaryNodeType().getName();
 
                 final Collection<String> declaredMixinTypes = getDeclaredMixinTypes(node);
                 final Collection<String> inheritedMixinTypes = getInheritedMixinTypes(node);
                 final Collection<String> allMixinTypes = new ArrayList<String>(declaredMixinTypes);
                 allMixinTypes.addAll(inheritedMixinTypes);
-                mixinTypes = joinTypes(allMixinTypes);
+                mixinTypes = createTypesString(allMixinTypes);
 
                 typesEditor.setModelObject(allMixinTypes);
                 typesEditor.setInheritedMixinTypes(inheritedMixinTypes);
@@ -130,8 +130,7 @@ class NodeEditor extends Form<Node> {
 
     private Collection<String> getDeclaredMixinTypes(final Node node) throws RepositoryException {
         final List<String> result = new ArrayList<String>();
-        final NodeType[] nodeTypes = node.getMixinNodeTypes();
-        for (NodeType nodeType : nodeTypes) {
+        for (NodeType nodeType : node.getMixinNodeTypes()) {
             result.add(nodeType.getName());
         }
         return result;
@@ -139,8 +138,7 @@ class NodeEditor extends Form<Node> {
 
     private Collection<String> getInheritedMixinTypes(final Node node) throws RepositoryException {
         final List<String> result = new ArrayList<String>();
-        final NodeType[] nodeTypes = node.getMixinNodeTypes();
-        for (NodeType nodeType : nodeTypes) {
+        for (NodeType nodeType : node.getMixinNodeTypes()) {
             for (NodeType superType : nodeType.getSupertypes()) {
                 if (superType.isMixin()) {
                     result.add(superType.getName());
@@ -155,7 +153,7 @@ class NodeEditor extends Form<Node> {
         return result;
     }
 
-    private String joinTypes(Collection<String> nodeTypes) {
+    private String createTypesString(Collection<String> nodeTypes) {
         final StringBuilder result = new StringBuilder();
         String concat = StringUtils.EMPTY;
 
@@ -166,6 +164,29 @@ class NodeEditor extends Form<Node> {
         }
 
         return result.toString();
+    }
+
+    public String getPrimaryType() {
+        final Node node = getModelObject();
+        if (node != null) {
+            try {
+                return node.getPrimaryNodeType().getName();
+            } catch (RepositoryException e) {
+                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            }
+        }
+        return null;
+    }
+
+    public void setPrimaryType(String primaryType) {
+        final Node node = getModelObject();
+        if (node != null) {
+            try {
+                node.setPrimaryType(primaryType);
+            } catch (RepositoryException e) {
+                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            }
+        }
     }
 
     private static class NamespacePropertiesEditor extends DataView<NamespacePropertiesProvider> {

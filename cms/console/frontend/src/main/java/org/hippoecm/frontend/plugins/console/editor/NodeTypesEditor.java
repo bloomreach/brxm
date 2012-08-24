@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
@@ -34,7 +35,6 @@ import org.apache.wicket.markup.html.form.CheckGroup;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,22 +105,20 @@ class NodeTypesEditor extends CheckGroup<String> {
         }
     }
 
-    // (package) privates
-
     private List<String> getAllNodeTypes() {
-        List<String> list = new ArrayList<String>();
+        final List<String> result = new ArrayList<String>();
         try {
-            UserSession session = UserSession.get();
-            NodeTypeManager ntmgr = session.getJcrSession().getWorkspace().getNodeTypeManager();
-            NodeTypeIterator iterator = ntmgr.getMixinNodeTypes();
+            final Session session = UserSession.get().getJcrSession();
+            final NodeTypeManager ntmgr = session.getWorkspace().getNodeTypeManager();
+            final NodeTypeIterator iterator = ntmgr.getMixinNodeTypes();
             while (iterator.hasNext()) {
-                list.add(iterator.nextNodeType().getName());
+                result.add(iterator.nextNodeType().getName());
             }
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
-        Collections.sort(list);
-        return list;
+        Collections.sort(result);
+        return result;
     }
 
     void setNodeModel(IModel<Node> newModel) {
