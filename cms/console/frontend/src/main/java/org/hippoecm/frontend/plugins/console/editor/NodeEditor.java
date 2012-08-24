@@ -52,7 +52,7 @@ class NodeEditor extends Form<Node> {
     private static final long serialVersionUID = 1L;
     private static final NamespacePropertyComparator PROPERTY_COMPARATOR = new NamespacePropertyComparator();
 
-    private static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
+    static final Logger log = LoggerFactory.getLogger(NodeEditor.class);
 
     @SuppressWarnings("unused")
     private String mixinTypes;
