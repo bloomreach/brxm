@@ -685,12 +685,23 @@ public class HstFilter implements Filter {
             }
         }
     }
+
+    public static void initializeResourceLifecycleManagements() {
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
+        if (repository instanceof MultipleRepository) {
+            final ResourceLifecycleManagement[] resourceLifecycleManagements = ((MultipleRepository) repository).getResourceLifecycleManagements();
+            for (ResourceLifecycleManagement resourceLifecycleManagement : resourceLifecycleManagements) {
+                resourceLifecycleManagement.setActive(true);
+            }
+        }
+    }
     
     protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, HstManager hstSitesManager, 
             HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
     	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
     	if (processHandlers) {
+            initializeResourceLifecycleManagements();
         	// run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
             try {
                 resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , req, res);
