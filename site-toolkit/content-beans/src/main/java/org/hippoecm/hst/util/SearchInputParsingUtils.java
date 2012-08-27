@@ -75,7 +75,7 @@ public final class SearchInputParsingUtils {
         if(input == null) {
             throw new IllegalArgumentException("Input is not allowed to be null");
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
           char c = input.charAt(i);
           // Some of these characters break the jcr query and others like * and ? have a very negative impact 
