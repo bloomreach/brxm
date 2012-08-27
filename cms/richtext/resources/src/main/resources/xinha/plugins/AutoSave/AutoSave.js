@@ -18,7 +18,7 @@ Xinha.Config.prototype.AutoSave =
 function AutoSave(editor) {
     this.editor = editor;
     this.lConfig = editor.config.AutoSave;
-    
+
     this.timeoutID = null; // timeout ID, editor is dirty when non-null
     this.saving = false;   // whether a save is in progress
 
@@ -91,20 +91,15 @@ AutoSave.prototype.save = function(throttled) {
     if(this.editor._editMode == 'wysiwyg') { //save Iframe html into textarea
         this.editor._textArea.value = this.editor.outwardHtml(this.editor.getHTML());
     }
-    var self = this;
     var callbackUrl = this.editor.config.callbackUrl;
-    xmlHttpReq.open('POST', callbackUrl, throttled);
-    xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xmlHttpReq.setRequestHeader('Wicket-Ajax', "true");
-    xmlHttpReq.onreadystatechange = function() {
-        if (xmlHttpReq.readyState == 4) {
-            //console.log('AJAX-UPDATE: ' + self.xmlHttpReq.responseText);
-        	if (throttled) {
-        		self.saving = false;
-        	}
+    var body = wicketSerialize(Wicket.$(this.getId()));
+    var success = function() {
+        if (throttled) {
+            this.saving = false;
         }
-    }
-    xmlHttpReq.send(wicketSerialize(Wicket.$(this.getId())));
+    }.bind(this);
+
+    wicketAjaxPost(callbackUrl, body, success);
 };
 
 AutoSave.prototype.onUpdateToolbar = function() {
@@ -125,17 +120,17 @@ AutoSave.prototype.checkChanges = function() {
         window.clearTimeout(this.timeoutID);
     }
     var self = this;
-    var editorId = this.getId(); 
+    var editorId = this.getId();
     this.timeoutID = window.setTimeout(function() {
-        YAHOO.hippo.EditorManager.saveByTextareaId(editorId);   
+        YAHOO.hippo.EditorManager.saveByTextareaId(editorId);
     }, this.lConfig.timeoutLength);
 };
 
 /**
  * Explicitly replace <p> </p> with general-purpose space (U+0020) with a <p> </p> including a non-breaking space (U+00A0)
  * to prevent the browser from not rendering these paragraphs
- * 
- * See http://issues.onehippo.com/browse/HREPTWO-1713 for more info 
+ *
+ * See http://issues.onehippo.com/browse/HREPTWO-1713 for more info
  */
 AutoSave.prototype.inwardHtml = function(html) {
     this.imgRE = new RegExp('<p> <\/p>', 'gi');
