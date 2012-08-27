@@ -79,7 +79,6 @@
                 <c:otherwise>
                   <hst:renderURL var="pagelink">
                     <hst:param name="page" value="${page}" />
-                    <hst:param name="query" value="${query}" />
                   </hst:renderURL>
                   <li><a href="${pagelink}" title="${page}">${page}</a></li>
                 </c:otherwise>

@@ -27,15 +27,6 @@ public class Search extends AbstractSearchComponent {
     public static final Logger log = LoggerFactory.getLogger(Search.class);
 
     @Override
-    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        String query = request.getParameter("query");
-        response.setRenderParameter("query", query);
-
-        String pageSize = request.getParameter("pageSize");
-        response.setRenderParameter("pageSize", pageSize);
-    }
-
-    @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 

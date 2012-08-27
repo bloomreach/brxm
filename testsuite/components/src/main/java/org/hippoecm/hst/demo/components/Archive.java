@@ -27,12 +27,6 @@ public class Archive extends AbstractSearchComponent {
     public static final Logger log = LoggerFactory.getLogger(Archive.class);
 
     @Override
-    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        String pageSize = request.getParameter("pageSize");
-        response.setRenderParameter("pageSize", pageSize);
-    }
-
-    @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
         HippoBean currentBean = this.getContentBean(request);
