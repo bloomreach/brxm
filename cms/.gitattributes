@@ -855,6 +855,7 @@ config/src/main/resources/cms-dashboard.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-dashshortcuts-changepassword.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-dashshortcuts-gotolink.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-dashshortcuts.xml -text svneol=unset#text/plain
+config/src/main/resources/cms-dev.xml -text
 config/src/main/resources/cms-editor.xml -text svneol=unset#text/plain
 config/src/main/resources/cms-facnav.xml svneol=native#text/plain
 config/src/main/resources/cms-folder-views.xml -text svneol=unset#text/plain
@@ -1850,6 +1851,33 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/Todo
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/TodoPlugin_it.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPanelPlugin.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/UpdaterPanelPlugin.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/CodeMirrorEditor.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.js -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/groovy/groovy.js -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/cobalt.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/eclipse.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/elegant.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/monokai.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/neat.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/night.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/rubyblue.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective-32.png -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective-48.png -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective.css -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev.png -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/panels/UpdaterBreadCrumbPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/panels/UpdaterBreadCrumbPanel.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/panels/UpdaterPanel.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/panels/UpdaterPanel.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/panels/UpdaterPanel.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/panels/UpdaterTemplate.groovy -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/AutoEditPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/BrowserObserver.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/EditPerspective.html -text

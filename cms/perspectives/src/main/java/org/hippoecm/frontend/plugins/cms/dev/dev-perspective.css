@@ -1,0 +1,272 @@
+/* Control panel */
+/* ================================================ */
+
+
+.hippo-panel-plugin-body h2 {
+    font-size: 20px;
+    color: #0d496f;
+    margin-top: 0px;
+    margin-bottom: 15px;
+}
+
+.hippo-panel-plugin-body h3 {
+    font-size: 12px;
+    font-weight: bold;
+    color: #0d496f;
+    margin-bottom: 5px;
+}
+
+.hippo-controlpanel-form {
+}
+
+.hippo-controlpanel-form tr td,
+.hippo-controlpanel-form table tr td {
+    padding: 4px;
+    padding-left: 0px;
+    vertical-align: top;
+}
+
+.hippo-controlpanel-form textarea {
+    width: 400px;
+    height: 200px
+}
+
+.hippo-controlpanel-form input[type="password"],
+.hippo-controlpanel-form input[type="text"] {
+    border: 1px solid #afafaf;
+    padding: 3px;
+    line-height: 16px;
+}
+
+.hippo-panel-plugin .icons-128 {
+    background-position: left center;
+    background-repeat: no-repeat;
+    border-bottom: 1px solid #AFAFAF;
+    border-top: 1px solid #AFAFAF;
+    min-height: 128px;
+    padding-bottom: 10px;
+    padding-left: 150px;
+    padding-top: 10px;
+}
+
+.hippo-controlpanel-table-default {
+    border: 1px solid #afafaf;
+    border-collapse: separate
+}
+
+.hippo-controlpanel-table-default tr th {
+    background: url("images/hippo-panels-headerback.png") repeat-x;
+    border-bottom: 1px solid #afafaf;
+    border-left: none;
+    border-right: 1px solid #afafaf;
+    font-size: 12px;
+    font-weight: bold;
+    color: black;
+    padding: 4px;
+}
+
+.hippo-controlpanel-table-default tr td {
+    vertical-align: top
+}
+
+.hippo-controlpanel-table-default tr.navigation td {
+    padding: 15px;
+}
+
+.hippo-controlpanel-table-default tr.navigation .navigatorLabel {
+    font-size: 18px;
+}
+
+.hippo-controlpanel-table-default tr.navigation td em,
+.hippo-controlpanel-table-default tr.navigation td a {
+    padding: 8px;
+    padding-left: 10px;
+    padding-right: 10px;
+    background: #f2f2f2;
+    color: #666666;
+    line-height: 13px;
+    font-weight: bold
+}
+
+.hippo-controlpanel-table-default tr.navigation td a:hover {
+    background: #afafaf;
+    color: white
+}
+
+.hippo-controlpanel-table-default tr.navigation td em {
+    color: #cccccc
+}
+
+.hippo-controlpanel-table-default tr td a {
+    color: #0467B4
+}
+
+.hippo-controlpanel-table-default tr td:hover {
+    cursor: default
+}
+
+.hippo-controlpanel-table-default tr.odd td {
+    background: #f4f4f4;
+    border-right: 1px solid #afafaf
+}
+
+.hippo-controlpanel-table-default tr.even td {
+    background: white;
+    border-right: 1px solid #afafaf
+}
+
+.hippo-controlpanel-table-nested {
+    border-collapse: separate
+}
+
+.hippo-controlpanel-table-nested tr td {
+    background: #f2f2f2;
+    border: 1px solid white;
+    border-bottom: none;
+    border-top: none;
+    padding: 4px;
+    line-height: 15px;
+}
+
+.hippo-controlpanel-table-nested span.icon-16 {
+    padding: 0px;
+    padding-left: 17px;
+    background-position: 0px 0px;
+}
+
+.hippo-controlpanel-table-nested span.icon-16 a {
+    color: #cf2d27
+}
+
+.hippo-controlpanel-table-nested span.icon-16 a:hover {
+    text-decoration: underline
+}
+
+.hippo-controlpanel-membership-item-label {
+    display: block;
+    width: 200px
+}
+
+div.hippo-controlpanel-actions-top {
+    border-bottom: 1px solid #afafaf;
+    border-top: none;
+    text-align: left;
+    padding-top: 2px;
+    margin-bottom: 5px
+}
+
+.hippo-controlpanel-actions {
+    padding: 10px;
+    border-top: 1px solid #afafaf;
+    text-align: right;
+    padding-right: 25px;
+    margin-top: 15px;
+}
+
+.hippo-controlpanel-actions input {
+    padding: 15px;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.hippo-controlpanel-actions li {
+    margin-left: 10px;
+    cursor: pointer
+}
+
+.hippo-controlpanel-options {
+    margin-top: 15px;
+    padding-bottom: 15px;
+}
+
+.hippo-controlpanel-options li {
+    list-style-type: disc;
+    margin: 5px;
+    color: #afafaf;
+    list-style-position: inside;
+    font-size: 12px;
+}
+
+.hippo-controlpanel-options li.delete {
+    margin-top: 15px;
+}
+
+.hippo-controlpanel-options li a {
+    font-size: 12px;
+    color: #0467b4
+}
+
+.hippo-controlpanel-options li a:hover {
+    text-decoration: underline;
+    font-size: 12px;
+    color: #0467b4
+}
+
+.hippo-root .hippo-controlpanel-actions a {
+    padding: 6px;
+    padding-left: 22px;
+    display: block;
+    float: left;
+    border: 1px solid #afafaf;
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.hippo-root .hippo-controlpanel-actions a:hover {
+    background-color: #fff6e0;
+    text-decoration: underline;
+    cursor: pointer
+}
+
+.hippo-controlpanel-section-title {
+    font-size: 14px;
+    color: #69889c
+}
+
+.hippo-controlpanel-table-default {
+}
+
+.groovy-basic-shell {
+    background-color: white;
+    height: 320px;
+    width:720px;
+    position: relative !important;
+}
+
+.hidden_field {
+    visibility: hidden;
+}
+
+.updater-feedback {
+    position: relative;
+    height:200px;
+    border:1px #EEEEEE solid;
+    font-size: 1.2em;
+    display: block;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.updater-tree {
+    float: left;
+    width: 150px;
+}
+
+.updater-form {
+    float: left;
+    padding-left:4%;
+    padding-right:4%;
+    width: 80%;
+}
+
+.shell-header {
+    font-size: 2.0em;
+    font-weight: bold;
+    color: #2B3D4C;
+}
+
+.shell-rule {
+    margin-bottom: 10px;
+}
+

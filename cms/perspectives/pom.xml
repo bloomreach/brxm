@@ -95,6 +95,7 @@
           <include>**/*.gif</include>
           <include>**/*.properties</include>
           <include>**/*.js</include>
+          <include>**/*.groovy</include>
         </includes>
       </resource>
     </resources>
