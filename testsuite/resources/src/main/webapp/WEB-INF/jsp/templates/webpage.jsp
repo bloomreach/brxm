@@ -23,7 +23,7 @@
 <html  xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-    <hst:headContributions categoryExcludes="jsInline,jsExternal" />
+    <hst:headContributions categoryExcludes="jsInline,jsExternal,scripts" />
   </head>
   <body>
       <div id="custom-doc" class="yui-t6">
@@ -33,5 +33,6 @@
       </div>
       <hst:headContributions categoryIncludes="jsExternal"/>
       <hst:headContributions categoryIncludes="jsInline"/>
+      <hst:headContributions categoryIncludes="scripts"/>
   </body>
 </html>
