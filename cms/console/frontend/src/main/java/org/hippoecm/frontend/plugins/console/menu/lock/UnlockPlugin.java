@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2012 Hippo.
+ *  Copyright 2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,10 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.console.menu.check;
+package org.hippoecm.frontend.plugins.console.menu.lock;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockManager;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ResourceReference;
@@ -24,33 +25,34 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CheckInOutPlugin extends RenderPlugin<Node> {
+public class UnlockPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(CheckInOutPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(UnlockPlugin.class);
 
     private final AjaxLink<Void> link;
 
-    public CheckInOutPlugin(IPluginContext context, IPluginConfig config) {
+    public UnlockPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        // set up label component
         final Label label = new Label("link-text", new Model<String>() {
             private static final long serialVersionUID = 1L;
 
             @Override
             public String getObject() {
-                if (!isVersionable()) {
+                if (!isLockable()) {
                     return "";
                 }
-                return isCheckedOut() ? "Check In" : "Check Out";
+                return isLocked() ? "Unlock" : "Not locked";
             }
         });
         label.setOutputMarkupId(true);
@@ -59,10 +61,10 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
 
             @Override
             public String getObject() {
-                if (!isVersionable()) {
+                if (!isLockable()) {
                     return "color:grey";
                 }
-                return isCheckedOut() ? "color:green" : "color:red";
+                return isLocked() ? "color:green" : "color:red";
             }
         }));
         // set up link component
@@ -71,60 +73,46 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                if (isVersionable()) {
-                    if (isCheckedOut()) {
-                        checkin();
-                    } else {
-                        checkout();
-                    }
-                }
-                target.addComponent(label);
+                unlock();
             }
         };
         link.add(label);
-        link.setEnabled(isVersionable());
+        link.setEnabled(isLockable());
         add(link);
     }
 
-    private boolean isCheckedOut() {
+    private boolean isLocked() {
         try {
             final Node node = getModelObject();
-            return node != null && node.isCheckedOut();
+            return node != null && node.isLocked();
         } catch (RepositoryException e) {
-            log.error("An error occurred determining if node is checked out.", e);
-        }
-        return false;
-    }
-
-    private boolean isVersionable() {
-        try {
-            final Node node = getModelObject();
-            return node != null && node.isNodeType("mix:versionable");
-        } catch (RepositoryException e) {
-            log.error("An error occurred determining if node is versionable.", e);
+            log.error("An error occurred determining if node is locked.", e);
             return false;
         }
     }
 
-    private void checkin() {
+    private boolean isLockable() {
         try {
-            getModelObject().checkin();
+            final Node node = getModelObject();
+            return node != null && node.isNodeType("mix:lockable");
         } catch (RepositoryException e) {
-            log.error("An error occurred trying to check in node.", e);
+            log.error("An error occurred determining if node is lockable.", e);
+            return false;
         }
     }
 
-    private void checkout() {
+    private void unlock() {
         try {
-            getModelObject().checkout();
+            final LockManager lockManager = UserSession.get().getJcrSession().getWorkspace().getLockManager();
+            lockManager.unlock(getModelObject().getPath());
         } catch (RepositoryException e) {
-            log.error("An error occurred trying to check out node.", e);
+            log.error("An error occurred trying to unlock node.", e);
         }
     }
 
     @Override
     protected void onModelChanged() {
-        link.setEnabled(isVersionable());
+        link.setEnabled(isLocked());
         redraw();
     }
 
