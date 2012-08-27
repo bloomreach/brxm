@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.swing.event.TreeModelListener;
@@ -144,8 +145,10 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
                     final Node node = nodeModel.getObject();
                     String name = node.getName() + "[" + node.getIndex() + "]";
                     children.put(name, new ExpandedNode(childNode));
+                } catch (InvalidItemStateException e) {
+                    log.debug("Reloading child failed: removed by another session");
                 } catch (RepositoryException e) {
-                    log.error("Unable to load children in tree node", e);
+                    log.error("Unable to load child in tree node", e);
                 }
             }
         }
