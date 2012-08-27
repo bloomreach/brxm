@@ -205,7 +205,7 @@ public class PluginUserSession extends UserSession {
     public void releaseJcrSession() {
         IModel<Session> sessionModel = getJcrSessionModel();
         if (sessionModel != null) {
-            getJcrSessionModel().detach();
+            sessionModel.detach();
         }
         classLoader.detach();
         workflowManager.detach();

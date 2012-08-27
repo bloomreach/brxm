@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.PluginPage;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IServiceReference;
@@ -133,7 +132,7 @@ public class PluginManager implements IClusterable {
 
         Map.Entry<Integer, RefCount> entry = internalGetReference(service);
         if (entry == null) {
-            Integer id = Integer.valueOf(nextReferenceId++);
+            Integer id = nextReferenceId++;
             referenced.put(id, new RefCount(service));
             lookupMap.put(service, id);
             if (log.isDebugEnabled()) {
