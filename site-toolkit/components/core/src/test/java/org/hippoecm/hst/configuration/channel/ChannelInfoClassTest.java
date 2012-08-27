@@ -73,7 +73,7 @@ public class ChannelInfoClassTest {
     public void additionalAnnotationsAreProvided() {
         int numberOfParameterAnnotationsOnChannelInfo = ChannelInfoClassProcessor.getProperties(ChannelInfo.class).size();
         List<HstPropertyDefinition> properties = ChannelInfoClassProcessor.getProperties(ExtendedTestInfo.class);
-        assertEquals(1 + numberOfParameterAnnotationsOnChannelInfo, properties.size());
+        assertEquals(2 + numberOfParameterAnnotationsOnChannelInfo, properties.size());
 
         
         HstPropertyDefinition hpd = getPropertyDefinition("color", properties);
@@ -81,7 +81,7 @@ public class ChannelInfoClassTest {
         assertEquals(HstValueType.STRING, hpd.getValueType());
 
         List<Annotation> annotations = hpd.getAnnotations();
-        assertEquals(2, annotations.size());
+        assertEquals(1, annotations.size());
         assertEquals(Color.class, annotations.get(0).annotationType());
     }
     
