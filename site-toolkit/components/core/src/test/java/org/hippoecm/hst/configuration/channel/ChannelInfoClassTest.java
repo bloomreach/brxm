@@ -81,8 +81,7 @@ public class ChannelInfoClassTest {
         assertEquals(HstValueType.STRING, hpd.getValueType());
 
         List<Annotation> annotations = hpd.getAnnotations();
-        // The @Parameter annotation is not part of the HstPropertyDefinition#annotations
-        assertEquals(1, annotations.size());
+        assertEquals(2, annotations.size());
         assertEquals(Color.class, annotations.get(0).annotationType());
     }
     
