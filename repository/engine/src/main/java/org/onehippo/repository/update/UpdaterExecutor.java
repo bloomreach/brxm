@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 public class UpdaterExecutor implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(UpdaterExecutor.class);
-    private static final int PROPERTY_EVENTS = Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED | Event.PROPERTY_REMOVED;
+    private static final int PROPERTY_EVENTS = Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED | Event.PROPERTY_CHANGED;
 
     private final Session session;
     private final UpdaterInfo updaterInfo;
@@ -121,6 +121,20 @@ public class UpdaterExecutor implements EventListener {
         }
     }
 
+    public synchronized void cancel() {
+        try {
+            final Node node = session.getNodeByIdentifier(updaterInfo.getIdentifier());
+            final String cancelledBy = JcrUtils.getStringProperty(node, "hipposys:cancelledby", "unknown");
+            final String message = "Cancelling execution of updater " + updaterInfo.getName();
+            info(message);
+            logEvent("cancel", cancelledBy, message);
+        } catch (RepositoryException e) {
+            error("Failed to log cancel event for " + updaterInfo.getName(), e);
+        }
+        report.finish();
+        cancelled = true;
+    }
+
     public void destroy() {
         try {
             session.getWorkspace().getObservationManager().removeEventListener(this);
@@ -141,33 +155,63 @@ public class UpdaterExecutor implements EventListener {
     }
 
     private void runPathVisitor() throws RepositoryException {
-        final String startPath = updaterInfo.getPath();
-        if (startPath == null) {
-            info("No path set. Skipping path visitor.");
-            return;
-        }
-        if (!session.nodeExists(startPath)) {
-            warn("No such start node: " + startPath);
-            return;
-        }
-        final Node startNode = session.getNode(startPath);
-        final UpdaterPathVisitor visitor = new UpdaterPathVisitor();
-        try {
-            startNode.accept(visitor);
-        } catch (UnsupportedOperationException e) {
-            warn("Cannot run updater: " + (updaterInfo.isRevert() ? "revert" : "update") + " is not implemented");
-        } catch (RepositoryException e) {
-            error("Unexpected exception while running updater path visitor", e);
+        final Node startNode = getStartNode();
+        if (startNode != null) {
+            final UpdaterPathVisitor visitor = new UpdaterPathVisitor();
+            try {
+                startNode.accept(visitor);
+            } catch (UnsupportedOperationException e) {
+                warn("Cannot run updater: " + updaterInfo.getMethod() + " is not implemented");
+            } catch (RepositoryException e) {
+                error("Unexpected exception while running updater path visitor", e);
+            }
         }
     }
 
+    private Node getStartNode() throws RepositoryException {
+        final String startPath = updaterInfo.getPath();
+        if (startPath == null) {
+            info("No path set. Skipping path visitor.");
+            return null;
+        }
+        if (!session.nodeExists(startPath)) {
+            warn("No such start node: " + startPath);
+            return null;
+        }
+        return session.getNode(startPath);
+    }
+
     private void runQueryVisitor() throws RepositoryException {
+        final NodeIterator nodes = getQueryResultIterator();
+        if (nodes != null) {
+            while (nodes.hasNext()) {
+                while (paused) {
+                    throttle(1000l);
+                }
+                if (cancelled) {
+                    info("Update cancelled");
+                    return;
+                }
+                final Node node = nodes.nextNode();
+                if (node != null) {
+                    try {
+                        executeUpdater(node);
+                    } catch (UnsupportedOperationException e) {
+                        warn("Cannot run updater: " + (updaterInfo.isRevert() ? "revert" : "update") + " is not implemented");
+                        break;
+                    }
+                    commitBatchIfNeeded();
+                }
+            }
+        }
+    }
+
+    private NodeIterator getQueryResultIterator() throws RepositoryException {
         final String query = updaterInfo.getQuery();
         if (query == null) {
             info("No query set. Skipping query visitor.");
-            return;
+            return null;
         }
-
         QueryResult results;
         try {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
@@ -175,29 +219,10 @@ public class UpdaterExecutor implements EventListener {
             results = jcrQuery.execute();
         } catch (RepositoryException e) {
             error("Executing query failed: " + e.getClass().getName() + " : " + e.getMessage());
-            return;
+            return null;
         }
 
-        NodeIterator nodes = results.getNodes();
-        while (nodes.hasNext()) {
-            while (paused) {
-                throttle(1000l);
-            }
-            if (cancelled) {
-                info("Update cancelled");
-                return;
-            }
-            final Node node = nodes.nextNode();
-            if (node != null) {
-                try {
-                    executeUpdater(node);
-                } catch (UnsupportedOperationException e) {
-                    warn("Cannot run updater: " + (updaterInfo.isRevert() ? "revert" : "update") + " is not implemented");
-                    break;
-                }
-                commitBatchIfNeeded();
-            }
-        }
+        return results.getNodes();
     }
 
     private void executeUpdater(final Node node) throws RepositoryException {
@@ -251,13 +276,8 @@ public class UpdaterExecutor implements EventListener {
     private void handleCancelEvent() {
         try {
             final Node node = session.getNodeByIdentifier(updaterInfo.getIdentifier());
-            cancelled = JcrUtils.getBooleanProperty(node, "hipposys:cancelled", false);
-            if (cancelled) {
-                report.finish();
-                final String cancelledBy = JcrUtils.getStringProperty(node, "hipposys:cancelledby", "unknown");
-                final String message = "Cancelling execution of updater " + updaterInfo.getName();
-                info(message);
-                logEvent("cancel", cancelledBy, message);
+            if (JcrUtils.getBooleanProperty(node, "hipposys:cancelled", false)) {
+                cancel();
             }
         } catch (RepositoryException e) {
             error("Failed to handle cancel event for " + updaterInfo.getName(), e);
@@ -270,10 +290,10 @@ public class UpdaterExecutor implements EventListener {
             paused = JcrUtils.getBooleanProperty(node, "hipposys:paused", false);
             String message;
             if (paused) {
-                message = "Pausing execution of updater" + updaterInfo.getName();
+                message = "Pausing execution of updater " + updaterInfo.getName();
                 logEvent("pause", null, message);
             } else {
-                message = "Resuming execution of updater" + updaterInfo.getName();
+                message = "Resuming execution of updater " + updaterInfo.getName();
                 logEvent("resume", null, message);
             }
             info(message);
@@ -290,12 +310,21 @@ public class UpdaterExecutor implements EventListener {
 
         @Override
         public void visit(Node node) throws RepositoryException {
-
+            while (paused) {
+                throttle(1000l);
+            }
+            if (cancelled) {
+                info("Update cancelled");
+                return;
+            }
             final String path = node.getPath();
-
             executeUpdater(node);
             commitBatchIfNeeded();
+            visitChildren(path);
+        }
 
+        private void visitChildren(final String path) throws RepositoryException {
+            Node node;
             try {
                 // updater might have removed the node, fetch it anew
                 node = session.getNode(path);
@@ -304,13 +333,6 @@ public class UpdaterExecutor implements EventListener {
             }
             final NodeIterator nodes = node.getNodes();
             while (nodes.hasNext()) {
-                while (paused) {
-                    throttle(1000l);
-                }
-                if (cancelled) {
-                    info("Update cancelled");
-                    return;
-                }
                 final Node child = nodes.nextNode();
                 if (child != null && !isVirtual(child)) {
                     visit(child);

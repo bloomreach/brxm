@@ -30,7 +30,7 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
     private static final String UPDATE_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/hippo:update";
     private static final String UPDATE_QUEUE_PATH = UPDATE_PATH + "/hippo:queue";
     private static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
-    private static final long TWO_MINUTES = 1000 * 60 * 2;
+    private static final long TWO_MINUTES = 60 * 2;
     private static final String DEFAULT_CLUSTER_NODE_ID = "default";
 
     private final ExecutorService updaterExecutor = Executors.newSingleThreadExecutor();
@@ -41,7 +41,7 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
         this.session = session;
         session.getWorkspace().getObservationManager().addEventListener(this, Event.NODE_ADDED, UPDATE_QUEUE_PATH, false, null, null, false);
         // check if any updaters are queued and execute them on startup
-        executeUpdaterTask();
+        runExecuteUpdatersTask();
     }
 
     @Override
@@ -56,29 +56,32 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
 
     @Override
     public void onEvent(final EventIterator events) {
-        executeUpdaterTask();
+        runExecuteUpdatersTask();
     }
 
-    private void executeUpdaterTask() {
-        updaterExecutor.execute(new UpdaterTask());
+    private void runExecuteUpdatersTask() {
+        updaterExecutor.execute(new ExecuteUpdatersTask());
     }
 
-    private final class UpdaterTask implements Runnable {
+    private final class ExecuteUpdatersTask implements Runnable {
 
         private Lock lock;
         private ScheduledExecutorService keepAliveExecutor;
+        private UpdaterExecutor updaterExecutor;
 
-        private UpdaterTask() {}
+        private ExecuteUpdatersTask() {}
 
         @Override
         public void run() {
             try {
                 if (lock()) {
-                    execute();
+                    startLockKeepAlive();
+                    executeUpdatersInQueue();
                 }
             } catch (RepositoryException e) {
                 log.error("Failed to obtain lock", e);
             } finally {
+                stopLockKeepAlive();
                 unlock();
             }
         }
@@ -90,57 +93,50 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
                 try {
                     lock = lockManager.lock(UPDATE_PATH, false, false, TWO_MINUTES, getClusterNodeId());
                     log.debug("Lock successfully obtained");
-                    scheduleKeepAlive();
                     return true;
                 } catch (LockException e) {
                     // happens when other cluster node beat us to it
                     log.debug("Failed to set lock: " + e.getMessage());
                 }
+            } else {
+                log.debug("Already locked");
             }
             return false;
         }
 
-        private void execute() {
-            NodeIterator nodes;
+        private void executeUpdatersInQueue() {
+            Node updaterNode = getNextUpdaterNodeFromQueue();
+            while (updaterNode != null) {
+                executeUpdater(updaterNode);
+                moveToHistory(updaterNode);
+                updaterNode = getNextUpdaterNodeFromQueue();
+            }
+        }
+
+        private void executeUpdater(final Node updaterNode) {
             try {
-                nodes = session.getNode(UPDATE_QUEUE_PATH).getNodes();
-                if (!nodes.hasNext()) {
-                    log.debug("Updater queue is empty. Nothing to execute");
-                    return;
-                }
+                updaterExecutor = new UpdaterExecutor(updaterNode, session);
+                updaterExecutor.execute();
             } catch (RepositoryException e) {
-                log.error("Failed to get nodes in the updater queue", e);
-                return;
-            }
-            final Node node = nodes.nextNode();
-            if (node != null) {
-                UpdaterExecutor updaterExecutor = null;
-                try {
-                    updaterExecutor = new UpdaterExecutor(node, session);
-                    updaterExecutor.execute();
-                } catch (RepositoryException e) {
-                    log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-                } catch (IllegalAccessException e) {
-                    log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-                } catch (InstantiationException e) {
-                    log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-                } catch (ClassNotFoundException e) {
-                    log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-                } catch (IllegalArgumentException e) {
-                    log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-                } catch (CompilationFailedException e) {
-                    log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-                } catch (IOException e) {
-                    log.error("Could not execute updater: log initialization failed", e);
-                } finally {
-                    if (updaterExecutor != null) {
-                        updaterExecutor.destroy();
-                    }
-                    moveToHistory(node);
+                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            } catch (IllegalAccessException e) {
+                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            } catch (InstantiationException e) {
+                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            } catch (ClassNotFoundException e) {
+                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            } catch (IllegalArgumentException e) {
+                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            } catch (CompilationFailedException e) {
+                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+            } catch (IOException e) {
+                log.error("Could not execute updater: log initialization failed", e);
+            } finally {
+                if (updaterExecutor != null) {
+                    updaterExecutor.destroy();
+                    updaterExecutor = null;
                 }
             }
-            // check for more queued updaters
-            execute();
         }
 
         private void unlock() {
@@ -152,20 +148,19 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
                     if (lock.isLockOwningSession()) {
                         lockManager.unlock(UPDATE_PATH);
                         log.debug("Lock successfully released");
+                    } else {
+                        log.debug("We don't own the lock");
                     }
+                } else {
+                    log.debug("Not locked");
                 }
             } catch (RepositoryException e) {
                 log.error("Failed to release lock", e);
-            } finally {
-                if (keepAliveExecutor != null) {
-                    keepAliveExecutor.shutdown();
-                }
             }
         }
 
         private void moveToHistory(final Node node) {
             try {
-
                 final String srcPath = node.getPath();
                 long index = session.getNode(UPDATE_HISTORY_PATH).getNodes(node.getName() + "*").getSize();
                 final String destPath = UPDATE_HISTORY_PATH + "/" + node.getName() + "-" + index;
@@ -184,7 +179,7 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
             return clusteNodeId;
         }
 
-        private void scheduleKeepAlive() {
+        private void startLockKeepAlive() {
             keepAliveExecutor = Executors.newSingleThreadScheduledExecutor();
             keepAliveExecutor.scheduleAtFixedRate(new Runnable() {
                 @Override
@@ -194,13 +189,42 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
             }, 1l, 1l, TimeUnit.MINUTES);
         }
 
+        private void stopLockKeepAlive() {
+            if (keepAliveExecutor != null) {
+                keepAliveExecutor.shutdown();
+                keepAliveExecutor = null;
+            }
+        }
+
         private void refreshLock() {
             try {
                 lock.refresh();
                 log.debug("Lock successfully refreshed");
+            } catch(LockException e) {
+                log.error("Failed to refresh lock", e);
+                updaterExecutor.cancel();
             } catch (RepositoryException e) {
                 log.error("Failed to refresh lock", e);
             }
+        }
+
+        public Node getNextUpdaterNodeFromQueue() {
+            NodeIterator nodes;
+            try {
+                nodes = session.getNode(UPDATE_QUEUE_PATH).getNodes();
+                if (!nodes.hasNext()) {
+                    log.debug("Updater queue is empty. Nothing to execute");
+                    return null;
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to get nodes in the updater queue", e);
+                return null;
+            }
+            Node result = null;
+            while (nodes.hasNext() && result == null) {
+                result = nodes.nextNode();
+            }
+            return result;
         }
     }
 

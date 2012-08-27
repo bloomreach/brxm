@@ -4,6 +4,4 @@ Specification-Vendor: Hippo
 Implementation-Title: Repository Engine
 Implementation-Vendor-Id: org.onehippo.cms7
 Implementation-Vendor: Hippo
-Hippo-Modules: org.hippoecm.repository.quartz.SchedulerModule org.hipp
- oecm.repository.quartz.SchedulerWorkflowModule
-
+Hippo-Modules: org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.SchedulerWorkflowModule org.onehippo.repository.update.UpdaterExecutionModule
