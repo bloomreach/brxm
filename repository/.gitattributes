@@ -101,6 +101,7 @@ engine/src/main/java/org/hippoecm/repository/impl/InitializationProcessorImpl.ja
 engine/src/main/java/org/hippoecm/repository/impl/ReferenceWorkspaceImpl.java -text
 engine/src/main/java/org/hippoecm/repository/impl/query/EnclosingDocument.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/HandleListener.java -text
+engine/src/main/java/org/hippoecm/repository/jackrabbit/HippoLockManager.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/HippoPropertyId.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/InternalHippoSession.java -text
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/BufferedStringValue.java svneol=native#text/plain

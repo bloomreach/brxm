@@ -36,6 +36,7 @@ import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.journal.JournalException;
+import org.apache.jackrabbit.core.lock.LockManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.query.QueryHandler;
@@ -60,16 +61,12 @@ import org.slf4j.LoggerFactory;
 public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     private static Logger log = LoggerFactory.getLogger(RepositoryImpl.class);
-
-    /**
-     * Key to a <code>string</code> descriptor. Returns the repository cluster id if
-     * and only if clustering is enabled.
-     */
-    public static final String JACKRABBIT_CLUSTER_ID = "jackrabbit.cluster.id";
     
     private Map<String, ReplicatorNode> replicatorNodes;
-
     private ReplicationJournal journal;
+    private FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> facetedEngine;
+
+    protected boolean isStarted = false;
 
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
@@ -103,7 +100,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         }
     }
 
-    private FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> facetedEngine;
 
     public FacetedNavigationEngine<FacetedNavigationEngine.Query, FacetedNavigationEngine.Context> getFacetedNavigationEngine() {
         if (facetedEngine == null) {
@@ -114,8 +110,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         }
         return facetedEngine;
     }
-
-    protected boolean isStarted = false;
 
     final boolean isStarted() {
         return isStarted;
@@ -296,6 +290,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
          */
         protected Session getRootSession() throws RepositoryException {
             return super.getSystemSession();
+        }
+
+        @Override
+        protected LockManagerImpl createLockManager() throws RepositoryException {
+            return new HippoLockManager(getSystemSession(), getFileSystem(), context.getExecutor());
         }
     }
 
