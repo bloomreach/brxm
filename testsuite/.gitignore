@@ -19,6 +19,7 @@ dependencies/cms/target
 dependencies/site/target
 dependencies/target
 /derby.log
+/jackrabbit
 linear-algebra/.project
 linear-algebra/.settings
 linear-algebra/target
