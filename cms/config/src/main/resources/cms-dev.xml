@@ -25,7 +25,7 @@
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>groovy-perspective-title</sv:value>
+      <sv:value>dev-perspective-title</sv:value>
     </sv:property>
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.dev.DevPerspective</sv:value>
