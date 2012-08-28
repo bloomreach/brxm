@@ -401,3 +401,9 @@
 .channel-manager #channel-grid-panel {
     overflow: auto;
 }
+
+.channel-manager-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+}

@@ -67,6 +67,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     TOOLBAR_HEIGHT: 28,
     variantsUuid: null,
     locale: null,
+    fullscreen: false,
 
     constructor : function(config) {
         if (config.debug) {
@@ -131,8 +132,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     initUI : function(config) {
-        Ext.apply(config, { items :
-            [
+        Ext.apply(config, {
+            items : [
                 {
                     id: 'Iframe',
                     xtype: 'iframepanel',
@@ -278,6 +279,19 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             ' ',
             variantsComboBoxLabel,
             this.variantsComboBox,
+            {
+                xtype: 'button',
+                text: this.resources['fullscreen'],
+                listeners: {
+                    click: {
+                        fn: function(button) {
+                            this.fullscreen = !this.fullscreen;
+                            this.registerResizeListener();
+                        },
+                        scope: this
+                    }
+                }
+            },
             '->',
             {
                 id: 'channel-properties-window-button',
@@ -369,7 +383,21 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     this.toolbarButtons['label'],
                     ' ',
                     variantsComboBoxLabel,
-                    this.variantsComboBox);
+                    this.variantsComboBox,
+                    {
+                        xtype: 'button',
+                        text: this.resources['fullscreen'],
+                        listeners: {
+                            click: {
+                                fn: function(button) {
+                                    this.fullscreen = !this.fullscreen;
+                                    this.registerResizeListener();
+                                },
+                                scope: this
+                            }
+                        }
+                    }
+                );
             }
             if (this.propertiesWindow) {
                 this.propertiesWindow.hide();
@@ -396,16 +424,68 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         }
     },
 
-    initComponent : function() {
-        Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.initComponent.call(this);
-        // recalculate the ExtJs layout when the YUI layout manager fires a resize event
-        this.on('afterrender', function() {
-            var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
-            YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
+    registerResizeListener: function() {
+        var yuiLayout,
+                element,
+                domNode = this.getEl().dom,
+                relayout = false,
+                rootPanel = Ext.getCmp('rootPanel');
+        if (this.fullscreen) {
+            this.getEl().addClass("channel-manager-fullscreen");
+            this.getEl().addClass("channel-manager");
+            yuiLayout = this.getEl().findParent("div.yui-layout-unit");
+            YAHOO.hippo.LayoutManager.unregisterResizeListener(yuiLayout, this, this.resizeListener);
+
+            rootPanel.remove(this, false);
+            Ext.getBody().dom.appendChild(domNode);
+
+            element = Ext.getBody();
+            this.resizeListener = function() {
+                var w = element.getWidth(), h = element.getHeight();
+                this.setSize(w, h);
+
+                // Correct the width for the border of the outer panel: 1 pixel left and right, so 2px in total.
+                // The height of the yui layout div also includes the space for the toolbar, so subtract that.
+                Ext.getCmp('Iframe').setSize(w - 2, h);
+            }.createDelegate(this);
+            YAHOO.hippo.LayoutManager.registerRootResizeListener(this, this.resizeListener);
+
+            this.resizeListener();
+        } else {
+            if (this.resizeListener) {
+                YAHOO.hippo.LayoutManager.unregisterRootResizeListener(this.resizeListener);
+
+                Ext.getBody().dom.removeChild(domNode);
+                rootPanel.insert(1, this);
+                rootPanel.getLayout().setActiveItem(1);
+                rootPanel.doLayout();
+
+                relayout = true;
+            }
+
+            element = this.getEl();
+            element.removeClass("channel-manager");
+            element.removeClass("channel-manager-fullscreen");
+            yuiLayout = element.findParent("div.yui-layout-unit");
+            this.resizeListener = function() {
                 // Correct the width for the border of the outer panel: 1 pixel left and right, so 2px in total.
                 // The height of the yui layout div also includes the space for the toolbar, so subtract that.
                 Ext.getCmp('Iframe').setSize(arguments[0].body.w - 2, arguments[0].body.h - this.TOOLBAR_HEIGHT);
-            }, true);
+            };
+            YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, this.resizeListener, true);
+
+            if (relayout) {
+                this.resizeListener(YAHOO.hippo.LayoutManager.findLayoutUnit(yuiLayout).getSizes());
+            }
+        }
+    },
+
+    initComponent : function() {
+        Hippo.ChannelManager.TemplateComposer.PageEditor.superclass.initComponent.call(this);
+
+        // recalculate the ExtJs layout when the YUI layout manager fires a resize event
+        this.on('afterrender', function() {
+            this.registerResizeListener();
         }, this, {single: true});
 
         this.on('lock', function() {
