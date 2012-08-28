@@ -21,10 +21,9 @@ import java.net.URL;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
+import javax.jcr.RepositoryException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import javax.jcr.RepositoryException;
 
 public class HippoRepositoryFactory {
 
@@ -110,6 +109,15 @@ public class HippoRepositoryFactory {
                 throw new RepositoryException("Unable to find remote repository", ex);
             } catch (MalformedURLException ex) {
                 throw new RepositoryException("Unable to locate remote repository", ex);
+            }
+        }
+
+        if (location.startsWith("http://") || location.startsWith("https://")) {
+            try {
+                defaultLocation = location;
+                return DavExHippoRepository.create(location);
+            } catch (MalformedURLException ex) {
+                throw new RepositoryException("Unable to locate webdav repository", ex);
             }
         }
 

@@ -69,6 +69,7 @@ config/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 config/src/test/resources/repository-test.cnd -text
 connector/pom.xml -text
 connector/src/main/java/org/apache/NOTICE.txt -text
+connector/src/main/java/org/hippoecm/repository/DavExHippoRepository.java -text
 connector/src/main/java/org/hippoecm/repository/ParameterCallback.java -text
 connector/src/main/java/org/hippoecm/repository/WebCredentials.java -text
 connector/src/main/java/org/hippoecm/repository/decorating/client/ClientRepository.java -text
@@ -273,6 +274,7 @@ resources/src/main/resources/META-INF/services/org.xml.sax.driver -text
 resources/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml svneol=native#text/plain
 resources/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
 servlets/pom.xml svneol=native#text/plain
+servlets/src/main/java/org/hippoecm/repository/server/remoting/davex/JcrRemotingServlet.java -text
 src/site/CMS_logo.png -text
 src/site/apt/index.apt -text
 src/site/apt/integration_testing svneol=native#text/plain
