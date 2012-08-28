@@ -9,11 +9,15 @@ cms/.project
 cms/.settings
 cms/hst-demosuite-cms.iml
 cms/target
+components/target
 content/.classpath
 content/.project
 content/.settings
 content/hst-demosuite-content.iml
 content/target
+dependencies/cms/target
+dependencies/site/target
+dependencies/target
 /derby.log
 linear-algebra/.project
 linear-algebra/.settings
@@ -21,6 +25,7 @@ linear-algebra/target
 random-numbers/.project
 random-numbers/.settings
 random-numbers/target
+resources/target
 site/.classpath
 site/.project
 site/.settings

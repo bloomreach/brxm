@@ -231,6 +231,7 @@ resources/src/main/webapp/WEB-INF/web.xml -text
 resources/src/main/webapp/css/ie6.css svneol=native#text/plain
 resources/src/main/webapp/css/inline-editing.css svneol=native#text/plain
 resources/src/main/webapp/examples/custom_form_login.jsp -text
+resources/src/main/webapp/examples/jcr-over-webdav.jsp -text
 resources/src/main/webapp/images/button_edit.gif -text
 resources/src/main/webapp/images/containerBack.gif -text
 resources/src/main/webapp/images/dropshadow.png -text svneol=unset#image/png
