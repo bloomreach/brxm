@@ -311,9 +311,6 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 return record.get('name');
             }
         }, 'buildoverlay');
-        if (!this.previewMode) {
-            frm.sendMessage({}, ('showoverlay'));
-        }
     }
 
 });

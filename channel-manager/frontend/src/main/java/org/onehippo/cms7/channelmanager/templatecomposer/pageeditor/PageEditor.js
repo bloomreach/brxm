@@ -217,6 +217,164 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         return variantsComboBox;
     },
 
+    createViewToolbar : function (toolbar) {
+        var variantsComboBoxLabel = new Ext.Toolbar.TextItem({
+            text : this.resources['variants-combo-box-label'],
+            hidden : (this.allVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
+        });
+        if (this.fullscreen) {
+            toolbar.add(
+                variantsComboBoxLabel,
+                this.variantsComboBox,
+                {
+                    xtype : 'button',
+                    text : this.resources['fullscreen'],
+                    listeners : {
+                        click : {
+                            fn : function (button) {
+                                this.fullscreen = false;
+                                var iFrame = Ext.getCmp('Iframe');
+                                iFrame.getFrame().sendMessage({}, 'partscreen');
+                                this.registerResizeListener();
+                                this.createViewToolbar(toolbar);
+                            },
+                            scope : this
+                        }
+                    }
+                });
+        } else if (this.pageContainer.canEdit) {
+            toolbar.add(
+                this.toolbarButtons['edit'],
+                this.toolbarButtons['publish'],
+                this.toolbarButtons['discard'],
+                this.toolbarButtons['unlock'],
+                this.toolbarButtons['label'],
+                ' ',
+                variantsComboBoxLabel,
+                this.variantsComboBox,
+                {
+                    xtype : 'button',
+                    text : this.resources['fullscreen'],
+                    listeners : {
+                        click : {
+                            fn : function (button) {
+                                this.fullscreen = true;
+                                var iFrame = Ext.getCmp('Iframe');
+                                iFrame.getFrame().sendMessage({}, 'fullscreen');
+                                this.registerResizeListener();
+                                this.createViewToolbar(toolbar);
+                            },
+                            scope : this
+                        }
+                    }
+                });
+        }
+    },
+
+    createEditToolbar : function (toolbar) {
+        var variantsComboBoxLabel = new Ext.Toolbar.TextItem({
+            text : this.resources['variants-combo-box-label'],
+            hidden : (this.allVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
+        });
+        var toolboxVisible = Ext.get('icon-toolbar-window').isVisible();
+        toolbar.add(
+            {
+                text : this.initialConfig.resources['close-button'],
+                iconCls : 'save-close-channel',
+                allowDepress : false,
+                width : 120,
+                listeners : {
+                    click : {
+                        fn : this.pageContainer.toggleMode,
+                        scope : this.pageContainer
+                    }
+                }
+            }, {
+                text : this.initialConfig.resources['discard-button'],
+                iconCls : 'discard-channel',
+                allowDepress : false,
+                width : 120,
+                listeners : {
+                    click : {
+                        fn : this.pageContainer.discardChanges,
+                        scope : this.pageContainer
+                    }
+                }
+            }, ' ', variantsComboBoxLabel, this.variantsComboBox, '->', {
+                id : 'channel-properties-window-button',
+                text : this.initialConfig.resources['show-channel-properties-button'],
+                mode : 'show',
+                allowDepress : false,
+                width : 120,
+                listeners : {
+                    click : {
+                        fn : function () {
+                            var propertiesWindow = Ext.getCmp('channel-properties-window');
+                            var button = Ext.getCmp('channel-properties-window-button');
+                            if (button.mode === 'show') {
+                                propertiesWindow.show({
+                                    channelId : this.channelId,
+                                    channelName : this.channelName
+                                });
+                                propertiesWindow.on('hide', function () {
+                                    button.mode = 'show';
+                                    button.setText(this.initialConfig.resources['show-channel-properties-button']);
+                                }, this, {single : true});
+                                button.mode = 'hide';
+                                button.setText(this.initialConfig.resources['close-channel-properties-button']);
+                            } else {
+                                propertiesWindow.hide();
+                                button.mode = 'show';
+                                button.setText(this.initialConfig.resources['show-channel-properties-button']);
+                            }
+                        },
+                        scope : this
+                    }
+                }
+            }, {
+                id : 'toolkit-window-button',
+                text : (toolboxVisible ? this.initialConfig.resources['close-components-button'] : this.initialConfig.resources['add-components-button']),
+                mode : (toolboxVisible ? 'hide' : 'show'),
+                allowDepress : false,
+                width : 120,
+                listeners : {
+                    click : {
+                        fn : function () {
+                            var toolkitWindow = Ext.getCmp('icon-toolbar-window');
+                            var button = Ext.getCmp('toolkit-window-button');
+                            if (button.mode === 'show') {
+                                toolkitWindow.show();
+                                button.mode = 'hide';
+                                button.setText(this.initialConfig.resources['close-components-button']);
+                            } else {
+                                toolkitWindow.hide();
+                                button.mode = 'show';
+                                button.setText(this.initialConfig.resources['add-components-button']);
+                            }
+                        },
+                        scope : this
+                    }
+                }
+            }, {
+                cls : 'toolbarMenuIcon',
+                iconCls : 'channel-gear',
+                allowDepress : false,
+                menu : {
+                    items : {
+                        text : this.initialConfig.resources['edit-hst-configuration'],
+                        listeners : {
+                            click : {
+                                fn : function () {
+                                    this.fireEvent('edit-hst-config', this.channelId, (this.initializeHstConfigEditorWithPreviewContext ? this.hstPreviewMountPoint : this.hstMountPoint));
+                                },
+                                scope : this
+                            }
+                        }
+                    }
+                }
+            });
+    },
+
     enableUI: function(pageContext) {
         Hippo.Msg.hide();
 
@@ -235,10 +393,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.toolbarButtons = this.getToolbarButtons();
 
         this.variantsComboBox = this.getVariantsComboBox(pageContext);
-        var variantsComboBoxLabel = new Ext.Toolbar.TextItem({
-            text : this.resources['variants-combo-box-label'],
-            hidden : (this.allVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
-        });
+
+        var frm = Ext.getCmp('Iframe').getFrame();
 
         if (!this.pageContainer.previewMode) {
             if (this.propertiesWindow) {
@@ -251,162 +407,32 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
             this.propertiesWindow.hide();
 
-            var toolboxVisible = Ext.get('icon-toolbar-window').isVisible();
-            toolbar.add({
-                text: this.initialConfig.resources['close-button'],
-                iconCls: 'save-close-channel',
-                allowDepress: false,
-                width: 120,
-                listeners: {
-                    click: {
-                        fn : this.pageContainer.toggleMode,
-                        scope: this.pageContainer
-                    }
-                }
-            },
-            {
-                text: this.initialConfig.resources['discard-button'],
-                iconCls: 'discard-channel',
-                allowDepress: false,
-                width: 120,
-                listeners: {
-                    click: {
-                        fn : this.pageContainer.discardChanges,
-                        scope: this.pageContainer
-                    }
-                }
-            },
-            ' ',
-            variantsComboBoxLabel,
-            this.variantsComboBox,
-            {
-                xtype: 'button',
-                text: this.resources['fullscreen'],
-                listeners: {
-                    click: {
-                        fn: function(button) {
-                            this.fullscreen = !this.fullscreen;
-                            this.registerResizeListener();
-                        },
-                        scope: this
-                    }
-                }
-            },
-            '->',
-            {
-                id: 'channel-properties-window-button',
-                text: this.initialConfig.resources['show-channel-properties-button'],
-                mode: 'show',
-                allowDepress: false,
-                width: 120,
-                listeners: {
-                    click: {
-                        fn: function() {
-                            var propertiesWindow = Ext.getCmp('channel-properties-window');
-                            var button = Ext.getCmp('channel-properties-window-button');
-                            if (button.mode === 'show') {
-                                propertiesWindow.show({
-                                    channelId: this.channelId,
-                                    channelName: this.channelName
-                                });
-                                propertiesWindow.on('hide', function() {
-                                    button.mode = 'show';
-                                    button.setText(this.initialConfig.resources['show-channel-properties-button']);
-                                }, this, {single: true});
-                                button.mode = 'hide';
-                                button.setText(this.initialConfig.resources['close-channel-properties-button']);
-                            } else {
-                                propertiesWindow.hide();
-                                button.mode = 'show';
-                                button.setText(this.initialConfig.resources['show-channel-properties-button']);
-                            }
-                        },
-                        scope: this
-                    }
-                }
-            },
-            {
-                id: 'toolkit-window-button',
-                text: (toolboxVisible ? this.initialConfig.resources['close-components-button'] : this.initialConfig.resources['add-components-button']),
-                mode: (toolboxVisible ? 'hide' : 'show'),
-                allowDepress: false,
-                width: 120,
-                listeners: {
-                    click: {
-                        fn: function() {
-                            var toolkitWindow = Ext.getCmp('icon-toolbar-window');
-                            var button = Ext.getCmp('toolkit-window-button');
-                            if (button.mode === 'show') {
-                                toolkitWindow.show();
-                                button.mode = 'hide';
-                                button.setText(this.initialConfig.resources['close-components-button']);
-                            } else {
-                                toolkitWindow.hide();
-                                button.mode = 'show';
-                                button.setText(this.initialConfig.resources['add-components-button']);
-                            }
-                        },
-                        scope: this
-                    }
-                }
-            },
-            {
-                cls: 'toolbarMenuIcon',
-                iconCls: 'channel-gear',
-                allowDepress: false,
-                menu: {
-                    items: {
-                        text: this.initialConfig.resources['edit-hst-configuration'],
-                        listeners: {
-                            click: {
-                                fn : function() {
-                                    this.fireEvent('edit-hst-config',
-                                        this.channelId,
-                                        (this.initializeHstConfigEditorWithPreviewContext ? this.hstPreviewMountPoint : this.hstMountPoint)
-                                    );
-                                },
-                                scope: this
-                            }
-                        }
-                    }
-                }
-            });
+            this.createEditToolbar(toolbar);
+
+            frm.sendMessage({}, ('showoverlay'));
+            frm.sendMessage({}, ('hidelinks'));
 
             Ext.getCmp('previousLiveNotification').hide();
         } else {
-            if (this.pageContainer.canEdit) {
-                toolbar.add(
-                    this.toolbarButtons['edit'],
-                    this.toolbarButtons['publish'],
-                    this.toolbarButtons['discard'],
-                    this.toolbarButtons['unlock'],
-                    this.toolbarButtons['label'],
-                    ' ',
-                    variantsComboBoxLabel,
-                    this.variantsComboBox,
-                    {
-                        xtype: 'button',
-                        text: this.resources['fullscreen'],
-                        listeners: {
-                            click: {
-                                fn: function(button) {
-                                    this.fullscreen = !this.fullscreen;
-                                    this.registerResizeListener();
-                                },
-                                scope: this
-                            }
-                        }
-                    }
-                );
+            this.createViewToolbar(toolbar);
+
+            frm.sendMessage({}, ('hideoverlay'));
+            if (this.fullscreen) {
+                frm.sendMessage({}, ('hidelinks'));
+            } else {
+                frm.sendMessage({}, ('showlinks'));
             }
+
             if (this.propertiesWindow) {
                 this.propertiesWindow.hide();
             }
-            if (this.pageContainer.pageContext.hasPreviewHstConfig) {
+
+            if (!this.fullscreen && this.pageContainer.pageContext.hasPreviewHstConfig) {
                 Ext.getCmp('previousLiveNotification').show();
             } else {
                 Ext.getCmp('previousLiveNotification').hide();
             }
+
             Ext.getCmp('icon-toolbar-window').hide();
         }
         toolbar.doLayout();

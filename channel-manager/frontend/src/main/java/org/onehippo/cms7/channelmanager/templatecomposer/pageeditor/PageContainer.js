@@ -278,12 +278,14 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         if (this.previewMode) {
             var iFrame = Ext.getCmp('Iframe');
             iFrame.getFrame().sendMessage({}, 'hideoverlay');
+            iFrame.getFrame().sendMessage({}, 'showlinks');
             self._complete();
         } else {
             if (hasPreviewHstConfig) {
                 var doneCallback = function() {
                     var iFrame = Ext.getCmp('Iframe');
                     iFrame.getFrame().sendMessage({}, 'showoverlay');
+                    iFrame.getFrame().sendMessage({}, 'hidelinks');
                     self._complete();
                 }.createDelegate(this);
 

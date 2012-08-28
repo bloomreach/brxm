@@ -143,8 +143,8 @@
 
     Main.subscribe('dynamicContentLoaded', surfandedit.createSurfAndEditLinks, surfandedit);
 
-    onhostmessage(surfandedit.hideLinks, surfandedit, false, 'showoverlay');
+    onhostmessage(surfandedit.hideLinks, surfandedit, false, 'hidelinks');
 
-    onhostmessage(surfandedit.showLinks, surfandedit, false, 'hideoverlay');
+    onhostmessage(surfandedit.showLinks, surfandedit, false, 'showlinks');
 
 })(jQuery);
