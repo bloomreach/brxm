@@ -53,6 +53,7 @@ public class JcrRemotingServlet extends org.apache.jackrabbit.server.remoting.da
         if (repository != null) {
             repository.closeHippoRepository();
         }
+        super.destroy();
     }
 
     /**
