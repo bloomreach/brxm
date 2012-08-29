@@ -51,10 +51,14 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflow {
 
     private static final long serialVersionUID = 1L;
+
+    static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowImpl.class);
 
     private class NodeTypeState {
 
@@ -281,7 +285,15 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 }
                 for (PropertyIterator props = draft.getProperties(); props.hasNext();) {
                     Property prop = props.nextProperty();
-                    if (!prop.getDefinition().isProtected()) {
+                    PropertyDefinition definition = prop.getDefinition();
+                    String declaringNodeTypeName = definition.getDeclaringNodeType().getName();
+                    if (!"nt:unstructured".equals(declaringNodeTypeName)) {
+                        if (!clone.isNodeType(declaringNodeTypeName)) {
+                            log.warn("draft prototype contains property '" + prop.getName() + "', which does not exist in target type.  It will not be copied.");
+                            continue;
+                        }
+                    }
+                    if (!definition.isProtected()) {
                         if (prop.isMultiple()) {
                             clone.setProperty(prop.getName(), prop.getValues(), prop.getType());
                         } else {
@@ -373,8 +385,8 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
     public EditmodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException,
             RepositoryException {
         this.rootSession = rootSession;
-        this.subject = subject;
-        this.prefix = subject.getParent().getName();
+        this.subject = rootSession.getNodeByIdentifier(subject.getIdentifier());
+        this.prefix = this.subject.getParent().getName();
 
         NamespaceRegistry nsReg = rootSession.getWorkspace().getNamespaceRegistry();
         this.uri = nsReg.getURI(prefix);
@@ -458,8 +470,6 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 } else if (!child.isNodeType(HippoNodeType.NT_REMODEL)) {
                     draftNode.remove();
                     draftNode = child;
-                } else {
-                    draftNode.remove();
                 }
             }
             if (draftNode != null && draftNode.isNodeType(HippoNodeType.NT_REMODEL)) {
@@ -476,8 +486,6 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 } else if (child.isNodeType("nt:unstructured")) {
                     prototype.remove();
                     prototype = child;
-                } else {
-                    prototype.remove();
                 }
             }
             if (prototype != null) {
