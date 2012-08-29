@@ -98,6 +98,16 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
             } finally {
                 stopLockKeepAlive();
                 unlock();
+
+                cleanupSession();
+            }
+        }
+
+        private void cleanupSession() {
+            try {
+                session.refresh(false);
+            } catch (RepositoryException e) {
+                log.warn("Unable to refresh the session", e);
             }
         }
 
