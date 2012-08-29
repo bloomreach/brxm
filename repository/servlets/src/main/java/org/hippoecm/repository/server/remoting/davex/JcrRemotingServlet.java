@@ -35,9 +35,9 @@ public class JcrRemotingServlet extends org.apache.jackrabbit.server.remoting.da
 
     private static final long serialVersionUID = 1L;
 
-    private static Logger log = LoggerFactory.getLogger(JcrRemotingServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(JcrRemotingServlet.class);
 
-    public final static String REPOSITORY_ADDRESS_PARAM = "repository-address";
+    public static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
 
     private String repositoryAddress;
     private JcrHippoRepositoryWrapper repository;
@@ -60,6 +60,7 @@ public class JcrRemotingServlet extends org.apache.jackrabbit.server.remoting.da
      * Returns the repository available from the servlet context of this
      * servlet.
      */
+    @Override
     protected Repository getRepository() {
         if (repository == null) {
             try {
@@ -134,9 +135,9 @@ class JcrHippoRepositoryWrapper implements Repository {
 
     void closeHippoRepository() {
         if (hippoRepository != null) {
-            String location = hippoRepository.getLocation();
-
-            if (location != null && (location.startsWith("rmi:") || location.startsWith("http:") || location.startsWith("https:"))) {
+            final String location = hippoRepository.getLocation();
+            boolean isRemoteRepository = location != null && (location.startsWith("rmi:") || location.startsWith("http:") || location.startsWith("https:"));
+            if (isRemoteRepository) {
                 hippoRepository.close();
             }
         }
