@@ -45,7 +45,7 @@ public interface Updater {
     /**
      * Revert the given node. This method is intended to be the reverse of the {@link #update(javax.jcr.Node)} method.
      * It allows update runs to be reverted in case a problem arises due to the update. The method should throw
-     * an {@link UnsupportedOperationException} when it is not implemented.d
+     * an {@link UnsupportedOperationException} when it is not implemented.
      *
      * @param node  the node to be reverted.
      * @return  <code>true</code> if the node was changed, <code>false</code> if not

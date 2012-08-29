@@ -22,6 +22,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.util.JcrUtils;
 
 import groovy.lang.GroovyClassLoader;
+import groovy.lang.GroovyCodeSource;
 
 /**
  * Encapsulates meta data for running an {@link Updater}
@@ -80,8 +81,9 @@ class UpdaterInfo {
         if (klass != null && !klass.isEmpty()) {
             clazz = Class.forName(klass);
         } else {
-            final GroovyClassLoader gcl = new GroovyClassLoader();
-            clazz = gcl.parseClass(script);
+            GroovyClassLoader gcl = GroovyUpdaterClassLoader.createClassLoader();
+            GroovyCodeSource gcs = new GroovyCodeSource(script, "updater", "/hippo/updaters");
+            clazz = gcl.parseClass(gcs, false);
         }
         Object o = clazz.newInstance();
         if (!(o instanceof Updater)) {

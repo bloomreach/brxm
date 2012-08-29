@@ -156,6 +156,7 @@ engine/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl
 engine/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/updater/UpdaterPath.java svneol=native#text/plain
+engine/src/main/java/org/onehippo/repository/update/GroovyUpdaterClassLoader.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionModule.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionReport.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutor.java -text
@@ -188,6 +189,7 @@ engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTe
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCacheTest.java -text svneol=unset#text/plain
 engine/src/test/java/org/hippoecm/repository/updater/UpdaterPathTest.java svneol=native#text/plain
+engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text
 engine/src/test/java/org/onehippo/repository/update/UpdaterExecutorTest.java -text
 engine/src/test/resources/domain-defaultread.xml svneol=native#text/plain
 engine/src/test/resources/domain-defaultwrite.xml svneol=native#text/plain
