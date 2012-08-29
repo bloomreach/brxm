@@ -85,6 +85,7 @@
         </sv:property>
         <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
           <sv:value>demosite:basedocument</sv:value>
+          <sv:value>hippostd:relaxed</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>http://www.hippoecm.org/hst/nt/demosite/1.0</sv:value>
@@ -520,6 +521,7 @@
         </sv:property>
         <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
           <sv:value>demosite:basedocument</sv:value>
+          <sv:value>hippostd:relaxed</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>http://www.hippoecm.org/hst/nt/demosite/1.0</sv:value>
@@ -656,6 +658,7 @@
         </sv:property>
         <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
           <sv:value>demosite:basedocument</sv:value>
+          <sv:value>hippostd:relaxed</sv:value>
         </sv:property>
         <sv:node sv:name="title">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -1119,6 +1122,7 @@
         </sv:property>
         <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
           <sv:value>demosite:basedocument</sv:value>
+          <sv:value>hippostd:relaxed</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>http://www.hippoecm.org/hst/nt/demosite/1.0</sv:value>
@@ -1448,6 +1452,7 @@
         </sv:property>
         <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
           <sv:value>demosite:basedocument</sv:value>
+          <sv:value>hippostd:relaxed</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:uri" sv:type="String">
           <sv:value>http://www.hippoecm.org/hst/nt/demosite/1.0</sv:value>
@@ -1676,6 +1681,7 @@
         </sv:property>
         <sv:property sv:name="hipposysedit:supertype" sv:type="String" sv:multiple="true">
           <sv:value>demosite:basedocument</sv:value>
+          <sv:value>hippostd:relaxed</sv:value>
         </sv:property>
         <sv:node sv:name="color">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
