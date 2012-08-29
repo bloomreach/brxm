@@ -26,6 +26,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.perspectives.common.DimmedPanel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
@@ -71,15 +72,15 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
             }
 
             rootPanel = new RootPanel(context, config, "root-panel-div");
-            final Fragment rootPanelFragment = new Fragment("channel-root", "root-panel", this);
+            final Fragment rootPanelFragment = new Fragment("channel-root", "root-fragment", this);
             rootPanelFragment.add(rootPanel);
             add(rootPanelFragment);
 
             final String channelManagerServiceId = config.getString("channel.manager.service.id", IChannelManagerService.class.getName());
             context.registerService(this, channelManagerServiceId);
         } else {
-            final Fragment dimmedRootPanelFragment= new Fragment("channel-root", "dimmed-root-panel", this);
-            dimmedRootPanelFragment.add(new DimmedRootPanel("dimmed-root-panel-div"));
+            final Fragment dimmedRootPanelFragment= new Fragment("channel-root", "dimmed-root-fragment", this);
+            dimmedRootPanelFragment.add(new DimmedPanel("dimmed-root-panel-div"));
             add(dimmedRootPanelFragment);
         }
     }
