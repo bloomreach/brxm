@@ -144,8 +144,13 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
                 } else {
                     final EffectiveNodeType ent = nodeTypeRegistry.getEffectiveNodeType(nodeTypeName);
                     if (ent.includesNodeType(documentNodeName)) {
-                        // TODO: check parent type
-                        handles.add(nodeState.getParentId());
+                        final NodeState parentState = (NodeState) getItemState(nodeState.getParentId());
+                        final Name parentNodeTypeName = parentState.getNodeTypeName();
+                        if (parentNodeTypeName != null && handleNodeName.equals(parentNodeTypeName)) {
+                            handles.add(nodeState.getParentId());
+                        } else {
+                            log.error("Skipping " + parentNodeTypeName.toString());
+                        }
                     }
                 }
             } catch (NoSuchItemStateException nsise) {

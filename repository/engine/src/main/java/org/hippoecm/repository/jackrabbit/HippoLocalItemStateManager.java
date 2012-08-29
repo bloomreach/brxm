@@ -485,6 +485,10 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     }
 
     private void reorderHandleChildNodeEntries(final NodeState state) {
+        if (accessManager == null) {
+            return;
+        }
+
         // returns a copy of the list
         List<ChildNodeEntry> cnes = state.getChildNodeEntries();
         LinkedList<ChildNodeEntry> update = new LinkedList<ChildNodeEntry>();
@@ -591,7 +595,7 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     }
 
     boolean isHandle(ItemState state) {
-        if (accessManager != null && state.isNode()) {
+        if (handleNodeName != null && state.isNode()) {
             return handleNodeName.equals(((NodeState) state).getNodeTypeName());
         }
         return false;
