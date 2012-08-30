@@ -104,6 +104,13 @@ function MultiSelector(eprefix, list_target, max, del_label) {
                 if (element.multi_selector.submitAfterSelect) {
                     element.multi_selector.form.submit();
                 } else {
+                    // Workaround for issue CMS7-6415: IE8: Extra empty files...
+                    if (YAHOO.env.ua.ie == '8') {
+                        var filename = this.multi_selector.parseFilename(this.value);
+                        if (filename == '' || filename != '' && YAHOO.lang.trim(filename) == '') {
+                            return;
+                        }
+                    }
 
                     // New file input
                     var new_element = document.createElement('input');
@@ -121,7 +128,7 @@ function MultiSelector(eprefix, list_target, max, del_label) {
                     // Hide this: we can't use display:none because Safari doesn't like it
                     this.style.position = 'absolute';
                     this.style.left = '-3000px';
-                }
+                    }
             };
             // If we've reached maximum number, disable input element
             if (this.max != -1 && this.count >= this.max) {
