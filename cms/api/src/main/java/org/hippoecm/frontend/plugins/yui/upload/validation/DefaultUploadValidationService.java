@@ -16,6 +16,7 @@
 
 package org.hippoecm.frontend.plugins.yui.upload.validation;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,6 +27,7 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.settings.IApplicationSettings;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.value.IValueMap;
+import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationResult;
@@ -48,6 +50,10 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     private List<Validator> validators;
     private List<String> allowedExtensions;
     private Bytes maxFileSize;
+
+    public DefaultUploadValidationService() {
+        this(ValueMap.EMPTY_MAP);
+    }
 
     public DefaultUploadValidationService(IValueMap params) {
         validators = new LinkedList<Validator>();
@@ -115,7 +121,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
     @Override
     public void addViolation(final String key, final Object... params) {
-        result.getViolations().add(new Violation(null, key, params));
+        result.getViolations().add(new Violation(this.getClass(), key, params, null));
     }
 
     private void validateExtension(FileUpload upload) {
@@ -161,14 +167,19 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     }
 
     @Override
+    public void setAllowedExtensions(final String[] extensions) {
+        this.allowedExtensions = Arrays.asList(extensions);
+    }
+
+    @Override
     public Bytes getMaxFileSize() {
         return maxFileSize;
     }
 
     /**
      * Check if the defaultMaximumUploadSize stored in the IApplicationSettings is set explicitly and only
-     * then used it, otherwise use DEFAULT_MAX_FILE_SIZE. This is because by default it is set to Bytes.MAX
-     * which is a bit overkill (8388608T).
+     * then used it, otherwise use DEFAULT_MAX_FILE_SIZE. This is because it is set to Bytes.MAX
+     * by default which is a bit overkill (8388608T).
      *
      * @return The String value of the default maximum file size for an upload
      */

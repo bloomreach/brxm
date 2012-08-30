@@ -8,12 +8,12 @@
     height: auto;
     max-height: 277px;
     overflow: auto;
-  padding-left: 55px;
+    padding-left: 55px;
 }
 
 .hippo-dialog-container .upload-feedback-panel ul.feedbackPanel li {
-  display: block;
-  margin: 0 0 5px;
+    display: block;
+    margin: 0 0 5px;
 }
 
 /**

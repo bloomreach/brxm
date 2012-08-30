@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,8 +28,8 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.value.ValueMap;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadComponent;
 import org.hippoecm.frontend.plugins.yui.upload.ajax.AjaxMultiFileUploadSettings;
@@ -74,10 +73,18 @@ public class FileUploadWidget extends Panel {
         super(id);
         setOutputMarkupId(true);
 
+        if (settings == null) {
+           settings = new FileUploadWidgetSettings();
+        }
+
         if (validator == null) {
-            ValueMap params = new ValueMap();
-            params.put(DefaultUploadValidationService.EXTENSIONS_ALLOWED, settings.getFileExtensions());
-            validator = new DefaultUploadValidationService(params);
+            validator = new DefaultUploadValidationService();
+        }
+
+        String[] allowedExtensions = settings.getFileExtensions();
+        if (allowedExtensions.length > 0) {
+            log.warn("The allowed extensions configured in the upload plugin are used instead of those configured in the validator service for the sake of backwards compatibility.");
+            validator.setAllowedExtensions(allowedExtensions);
         } else {
             settings.setFileExtensions(validator.getAllowedExtensions());
         }
@@ -210,17 +217,13 @@ public class FileUploadWidget extends Panel {
 
     private void handleViolations() {
         if (violations.size() > 0) {
-            List<String> errors = new ArrayList<String>(violations.size());
             for (Violation v : violations) {
-                String error = new StringResourceModel(v.getMessageKey(), this, null, v.getParameters()).getString();
-                error(error);
+                IModel<String> error = new ClassResourceModel(v.getMessageKey(), v.getResourceBundleClass(),
+                                                              v.getParameters());
+                error(error.getObject());
             }
             violations.clear();
         }
-    }
-
-    protected boolean hasViolations() {
-        return violations.size() > 0;
     }
 
     private void handleFileUpload(FileUpload fileUpload) {

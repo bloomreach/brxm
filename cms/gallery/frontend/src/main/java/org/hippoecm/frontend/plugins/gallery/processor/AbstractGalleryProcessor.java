@@ -102,7 +102,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
         log.debug("Setting JCR data of primary resource");
         ResourceHelper.setDefaultResourceProperties(resourceNode, mimeType, binary);
 
-        //TODO: this should be removed as validation has been done prior to calling makeImage()
+        //TODO: here for backwards compatibility
         validateResource(resourceNode, fileName);
 
         //TODO: do we need the InputStream here?

@@ -32,13 +32,14 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
 
     public static final int DEFAULT_MAX_WIDTH = 1920;
     public static final int DEFAULT_MAX_HEIGHT = 1280;
+    public static final String DEFAULT_MAX_FILE_SIZE = "4mb";
     public static final String[] DEFAULT_EXTENSIONS_ALLOWED = new String[] {"*.jpg", "*.jpeg", "*.gif", "*.png"};
 
     private static final String MAX_WIDTH = "max.width";
     private static final String MAX_HEIGHT = "max.height";
 
-    int maxWidth;
-    int maxHeight;
+    private int maxWidth;
+    private int maxHeight;
 
     public ImageUploadValidationService(IValueMap params) {
         super(params);
@@ -98,4 +99,9 @@ public class ImageUploadValidationService extends DefaultUploadValidationService
         return DEFAULT_EXTENSIONS_ALLOWED;
     }
 
+    @Override
+    protected String getDefaultMaxFileSize() {
+        return DEFAULT_MAX_FILE_SIZE;
+
+    }
 }

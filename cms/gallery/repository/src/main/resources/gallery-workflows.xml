@@ -64,12 +64,6 @@
       <sv:property sv:name="validator.id" sv:type="String">
         <sv:value>service.gallery.image.validation</sv:value>
       </sv:property>
-      <!--<sv:property sv:name="file.extensions" sv:type="String">
-        <sv:value>*.jpg</sv:value>
-        <sv:value>*.jpeg</sv:value>
-        <sv:value>*.gif</sv:value>
-        <sv:value>*.png</sv:value>
-      </sv:property>-->
       <sv:property sv:name="fileupload.maxItems" sv:type="String">
         <sv:value>25</sv:value>
       </sv:property>

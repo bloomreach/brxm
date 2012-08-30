@@ -21,7 +21,6 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 
 public class UploadValidationPlugin extends Plugin {
-    final static String SVN_ID = "$Id$";
 
     public UploadValidationPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);

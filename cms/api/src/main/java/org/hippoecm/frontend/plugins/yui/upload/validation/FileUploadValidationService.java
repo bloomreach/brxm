@@ -22,7 +22,6 @@ import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
 
 public interface FileUploadValidationService extends IValidationService {
-    final static String SVN_ID = "$Id$";
 
     String DEFAULT_MAX_FILE_SIZE = "10mb";
     String[] DEFAULT_EXTENSIONS_ALLOWED = new String[0];
@@ -33,6 +32,9 @@ public interface FileUploadValidationService extends IValidationService {
 
     //TODO: here for client side validation - move to config class?
     String[] getAllowedExtensions();
+
+    //TODO: here for backwards compatibility
+    void setAllowedExtensions(String[] extensions);
 
     //TODO: here for client side validation - move to config class?
     Bytes getMaxFileSize();
