@@ -184,6 +184,7 @@ engine/src/test/java/org/hippoecm/repository/OrderByNodeNameTest.java svneol=nat
 engine/src/test/java/org/hippoecm/repository/PdfExtractionAndIndexingTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/SearchOnNodeNameTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/StandardHippoAnalyzerTest.java svneol=native#text/plain
+engine/src/test/java/org/hippoecm/repository/UnlockTest.java -text
 engine/src/test/java/org/hippoecm/repository/impl/WorkflowPostActionsTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
