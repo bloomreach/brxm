@@ -19,6 +19,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 
 import groovy.lang.GroovyClassLoader;
@@ -61,19 +62,25 @@ class UpdaterInfo {
         }
         identifier = node.getIdentifier();
         name = node.getName();
-        path = JcrUtils.getStringProperty(node, "hipposys:path", null);
-        query = JcrUtils.getStringProperty(node, "hipposys:query", null);
-        language = JcrUtils.getStringProperty(node, "hipposys:language", DEFAULT_QUERY_LANGUAGE);
-        if ((path == null || path.isEmpty()) && (query == null || query.isEmpty())) {
-            throw new IllegalArgumentException("Either path or query property must be present");
+        path = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_PATH, null);
+        query = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_QUERY, null);
+        language = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_LANGUAGE, DEFAULT_QUERY_LANGUAGE);
+
+        boolean hasPath = path != null && !path.isEmpty();
+        boolean hasQuery = query != null && !query.isEmpty();
+        if (!hasPath && !hasQuery) {
+            throw new IllegalArgumentException("Either path or query property must be present, you specified neither");
         }
-        revert = JcrUtils.getBooleanProperty(node, "hipposys:revert", false);
-        throttle = JcrUtils.getLongProperty(node, "hipposys:throttle", DEFAULT_THROTTLE);
-        batchSize = JcrUtils.getLongProperty(node, "hipposys:batchsize", DEFAULT_BATCH_SIZE);
-        dryRun = JcrUtils.getBooleanProperty(node, "hipposys:dryrun", false);
-        startedBy = JcrUtils.getStringProperty(node, "hipposys:startedby", null);
-        final String script = JcrUtils.getStringProperty(node, "hipposys:script", null);
-        final String klass = JcrUtils.getStringProperty(node, "hipposys:class", null);
+        if (hasPath && hasQuery) {
+            throw new IllegalArgumentException("Either path or query property must be present, you specified both");
+        }
+        revert = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_REVERT, false);
+        throttle = JcrUtils.getLongProperty(node, HippoNodeType.HIPPOSYS_THROTTLE, DEFAULT_THROTTLE);
+        batchSize = JcrUtils.getLongProperty(node, HippoNodeType.HIPPOSYS_BATCHSIZE, DEFAULT_BATCH_SIZE);
+        dryRun = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_DRYRUN, false);
+        startedBy = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_STARTEDBY, null);
+        final String script = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_SCRIPT, null);
+        final String klass = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_CLASS, null);
         if ((script == null || script.isEmpty()) && (klass == null || klass.isEmpty())) {
             throw new IllegalArgumentException("Either script or class property must be present");
         }
@@ -81,11 +88,11 @@ class UpdaterInfo {
         if (klass != null && !klass.isEmpty()) {
             clazz = Class.forName(klass);
         } else {
-            GroovyClassLoader gcl = GroovyUpdaterClassLoader.createClassLoader();
-            GroovyCodeSource gcs = new GroovyCodeSource(script, "updater", "/hippo/updaters");
+            final GroovyClassLoader gcl = GroovyUpdaterClassLoader.createClassLoader();
+            final GroovyCodeSource gcs = new GroovyCodeSource(script, "updater", "/hippo/updaters");
             clazz = gcl.parseClass(gcs, false);
         }
-        Object o = clazz.newInstance();
+        final Object o = clazz.newInstance();
         if (!(o instanceof Updater)) {
             throw new IllegalArgumentException("Class must implement " + Updater.class.getName());
         }

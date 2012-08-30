@@ -25,6 +25,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
@@ -98,18 +99,9 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
             } finally {
                 stopLockKeepAlive();
                 unlock();
-
-                cleanupSession();
             }
         }
 
-        private void cleanupSession() {
-            try {
-                session.refresh(false);
-            } catch (RepositoryException e) {
-                log.warn("Unable to refresh the session", e);
-            }
-        }
 
         private boolean lock() throws RepositoryException {
             log.debug("Trying to obtain lock");
@@ -139,7 +131,9 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
         }
 
         private void executeUpdater(final Node updaterNode) {
+            Session session = null;
             try {
+                session = UpdaterExecutionModule.this.session.impersonate(new SimpleCredentials("system", new char[] {}));
                 updaterExecutor = new UpdaterExecutor(updaterNode, session);
                 updaterExecutor.execute();
             } catch (RepositoryException e) {
@@ -160,6 +154,9 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
                 if (updaterExecutor != null) {
                     updaterExecutor.destroy();
                     updaterExecutor = null;
+                }
+                if (session != null) {
+                    session.logout();
                 }
             }
         }
@@ -186,6 +183,9 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
 
         private void moveToHistory(final Node node) {
             try {
+                // the updater node was modified externally by the executor
+                session.refresh(false);
+
                 final String srcPath = node.getPath();
                 long index = session.getNode(UPDATE_HISTORY_PATH).getNodes(node.getName() + "*").getSize();
                 final String destPath = UPDATE_HISTORY_PATH + "/" + node.getName() + "-" + index;

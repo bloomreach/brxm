@@ -27,6 +27,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.ValueFactory;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
@@ -36,8 +37,10 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -57,7 +60,6 @@ public class UpdaterExecutor implements EventListener {
     private final UpdaterInfo updaterInfo;
     private final UpdaterExecutionReport report;
     private volatile boolean cancelled;
-    private volatile boolean paused;
 
     public UpdaterExecutor(final Node updaterNode, final Session session) throws RepositoryException, IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, IllegalArgumentException, CompilationFailedException {
         this.session = session;
@@ -124,7 +126,7 @@ public class UpdaterExecutor implements EventListener {
     public synchronized void cancel() {
         try {
             final Node node = session.getNodeByIdentifier(updaterInfo.getIdentifier());
-            final String cancelledBy = JcrUtils.getStringProperty(node, "hipposys:cancelledby", "unknown");
+            final String cancelledBy = JcrUtils.getStringProperty(node, HippoNodeType.HIPPOSYS_CANCELLEDBY, "unknown");
             final String message = "Cancelling execution of updater " + updaterInfo.getName();
             info(message);
             logEvent("cancel", cancelledBy, message);
@@ -136,10 +138,12 @@ public class UpdaterExecutor implements EventListener {
     }
 
     public void destroy() {
-        try {
-            session.getWorkspace().getObservationManager().removeEventListener(this);
-        } catch (RepositoryException e) {
-            log.error("Failed to remove self as event listener during destroy", e);
+        if (session != null) {
+            try {
+                session.getWorkspace().getObservationManager().removeEventListener(this);
+            } catch (RepositoryException e) {
+                log.error("Failed to remove self as event listener during destroy", e);
+            }
         }
     }
 
@@ -185,9 +189,6 @@ public class UpdaterExecutor implements EventListener {
         final NodeIterator nodes = getQueryResultIterator();
         if (nodes != null) {
             while (nodes.hasNext()) {
-                while (paused) {
-                    throttle(1000l);
-                }
                 if (cancelled) {
                     info("Update cancelled");
                     return;
@@ -262,10 +263,8 @@ public class UpdaterExecutor implements EventListener {
             String path = null;
             try {
                 path = events.nextEvent().getPath();
-                if (path.endsWith("hipposys:cancelled")) {
+                if (path.endsWith(HippoNodeType.HIPPOSYS_CANCELLED)) {
                     handleCancelEvent();
-                } else if (path.endsWith("hipposys:paused")) {
-                    handlePauseEvent();
                 }
             } catch (RepositoryException e) {
                 error("Failed to process event on " + path, e);
@@ -276,29 +275,11 @@ public class UpdaterExecutor implements EventListener {
     private void handleCancelEvent() {
         try {
             final Node node = session.getNodeByIdentifier(updaterInfo.getIdentifier());
-            if (JcrUtils.getBooleanProperty(node, "hipposys:cancelled", false)) {
+            if (JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_CANCELLED, false)) {
                 cancel();
             }
         } catch (RepositoryException e) {
             error("Failed to handle cancel event for " + updaterInfo.getName(), e);
-        }
-    }
-
-    private void handlePauseEvent() {
-        try {
-            final Node node = session.getNodeByIdentifier(updaterInfo.getIdentifier());
-            paused = JcrUtils.getBooleanProperty(node, "hipposys:paused", false);
-            String message;
-            if (paused) {
-                message = "Pausing execution of updater " + updaterInfo.getName();
-                logEvent("pause", null, message);
-            } else {
-                message = "Resuming execution of updater " + updaterInfo.getName();
-                logEvent("resume", null, message);
-            }
-            info(message);
-        } catch (RepositoryException e) {
-            error("Failed to handle pause event for " + updaterInfo.getName(), e);
         }
     }
 
@@ -310,9 +291,6 @@ public class UpdaterExecutor implements EventListener {
 
         @Override
         public void visit(Node node) throws RepositoryException {
-            while (paused) {
-                throttle(1000l);
-            }
             if (cancelled) {
                 info("Update cancelled");
                 return;
@@ -331,9 +309,7 @@ public class UpdaterExecutor implements EventListener {
             } catch (PathNotFoundException e) {
                 return;
             }
-            final NodeIterator nodes = node.getNodes();
-            while (nodes.hasNext()) {
-                final Node child = nodes.nextNode();
+            for (Node child : new NodeIterable(node.getNodes())) {
                 if (child != null && !isVirtual(child)) {
                     visit(child);
                 }
@@ -364,17 +340,17 @@ public class UpdaterExecutor implements EventListener {
 
     private void saveReport(final Node node) throws RepositoryException {
         try {
-            node.setProperty("hipposys:starttime", report.getStartTime());
-            node.setProperty("hipposys:updatedcount", report.getUpdateCount());
-            node.setProperty("hipposys:failedcount", report.getFailedCount());
-            node.setProperty("hipposys:skippedcount", report.getSkippedCount());
-            node.setProperty("hipposys:logtail", report.getLogTail());
+            node.setProperty(HippoNodeType.HIPPOSYS_STARTTIME, report.getStartTime());
+            node.setProperty(HippoNodeType.HIPPOSYS_UPDATEDCOUNT, report.getUpdateCount());
+            node.setProperty(HippoNodeType.HIPPOSYS_FAILEDCOUNT, report.getFailedCount());
+            node.setProperty(HippoNodeType.HIPPOSYS_SKIPPEDCOUNT, report.getSkippedCount());
+            node.setProperty(HippoNodeType.HIPPOSYS_LOGTAIL, report.getLogTail());
             if (report.isFinished()) {
-                node.setProperty("hipposys:finishtime", report.getFinishTime());
-                setBinaryProperty(node, "hipposys:updated", report.getUpdatedFile());
-                setBinaryProperty(node, "hipposys:failed", report.getFailedFile());
-                setBinaryProperty(node, "hipposys:skipped", report.getSkippedFile());
-                setBinaryProperty(node, "hipposys:log", report.getLogFile());
+                node.setProperty(HippoNodeType.HIPPOSYS_FINISHTIME, report.getFinishTime());
+                setBinaryProperty(node, HippoNodeType.HIPPOSYS_UPDATED, report.getUpdatedFile());
+                setBinaryProperty(node, HippoNodeType.HIPPOSYS_FAILED, report.getFailedFile());
+                setBinaryProperty(node, HippoNodeType.HIPPOSYS_FAILED, report.getSkippedFile());
+                setBinaryProperty(node, HippoNodeType.HIPPOSYS_LOG, report.getLogFile());
             }
             session.save();
         } catch (RepositoryException e) {
