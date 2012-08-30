@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011 Hippo.
+ *  Copyright 2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,50 +13,62 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.console.menu.t9ids;
+package org.hippoecm.frontend.plugins.console.menu.paths;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
+import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class T9idsDialog extends AbstractDialog<Node> {
-    
+public class FixHippoPathsDialog extends AbstractDialog<Node> {
+
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(T9idsDialog.class);
-    
-    public T9idsDialog(IModel<Node> model) {
+    private static final Logger log = LoggerFactory.getLogger(FixHippoPathsDialog.class);
+
+    private boolean automaticSave = true;
+
+    public FixHippoPathsDialog(IModel<Node> model) {
         super(model);
         String path = null;
         try {
             path = getModelObject().getPath();
         } catch (RepositoryException e) {
-            log.error("Failed to get path from model node", e);
+            log.error(e.getClass().getName() + ": " + e.getMessage());
         }
-        add(new Label("message", new StringResourceModel("t9ids.message", this, null, new Object[] {path})));
+        add(new CheckBox("automatic-save", new PropertyModel<Boolean>(this, "automaticSave")));
+        final String message = "The hippo:paths derived property of node " + path
+                + " and its subnodes will be recalculated. This might be needed after moving a folder or a document." +
+                " Do you want to continue?";
+        add(new Label("message", new Model<String>(message)));
         setFocusOnOk();
     }
 
     @Override
     public void onOk() {
         try {
-            getModel().getObject().accept(new GenerateNewTranslationIdsVisitor());
+            getModelObject().accept(new FixHippoPathsVisitor(automaticSave));
+            if (automaticSave) {
+                UserSession.get().getJcrSession().save();
+            }
         } catch (RepositoryException e) {
-            log.error("Failure during setting of new translation ids", e);
+            log.error("Error during fixing hippo:paths properties", e);
         }
     }
     
     @Override
     public IModel<String> getTitle() {
-        return new StringResourceModel("t9ids.title", this, null);
+        return new Model<String>("Fix hippo:paths");
     }
 
     @Override

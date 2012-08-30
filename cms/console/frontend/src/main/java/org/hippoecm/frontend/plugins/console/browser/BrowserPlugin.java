@@ -50,6 +50,7 @@ import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
+import org.hippoecm.frontend.plugins.console.menu.paths.FixHippoPathsDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.T9idsDialog;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
@@ -193,7 +194,6 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new ResourceReference(BrowserPlugin.class, "add-node.png");
                 }
             };
-            iconAddNode.setOutputMarkupId(true);
             menuContainer.add(iconAddNode);
 
             // delete node
@@ -212,7 +212,6 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new ResourceReference(BrowserPlugin.class, "delete-node.png");
                 }
             };
-            iconDeleteNode.setOutputMarkupId(true);
             menuContainer.add(iconDeleteNode);
 
             // copy node
@@ -231,7 +230,6 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new ResourceReference(BrowserPlugin.class, "copy-node.png");
                 }
             };
-            iconCopyNode.setOutputMarkupId(true);
             menuContainer.add(iconCopyNode);
 
             // move node
@@ -250,7 +248,6 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new ResourceReference(BrowserPlugin.class, "move-node.png");
                 }
             };
-            iconMoveNode.setOutputMarkupId(true);
             menuContainer.add(iconMoveNode);
 
             // rename node
@@ -269,7 +266,6 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new ResourceReference(BrowserPlugin.class, "rename-node.png");
                 }
             };
-            iconRenameNode.setOutputMarkupId(true);
             menuContainer.add(iconRenameNode);
 
             // xml export
@@ -288,7 +284,6 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new ResourceReference(BrowserPlugin.class, "xml-export.png");
                 }
             };
-            iconXmlExport.setOutputMarkupId(true);
             menuContainer.add(iconXmlExport);
             // xml import
             dialogFactory = new IDialogFactory() {
@@ -306,13 +301,12 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new ResourceReference(BrowserPlugin.class, "xml-import.png");
                 }
             };
-            iconXmlImport.setOutputMarkupId(true);
             menuContainer.add(iconXmlImport);
             // generate t9ids
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
                 @Override public Dialog createDialog() {
-                    return new T9idsDialog(new NodeModelReference(BrowserPlugin.this, model));
+                    return new T9idsDialog(model);
                 }
                 
             };
@@ -325,8 +319,24 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new ResourceReference(BrowserPlugin.class, "t9ids.png");
                 }
             };
-            iconXmlImport.setOutputMarkupId(true);
             menuContainer.add(iconT9ids);
+
+            dialogFactory = new IDialogFactory() {
+                @Override
+                public Dialog createDialog() {
+                    return new FixHippoPathsDialog(model);
+                }
+            };
+            menuContainer.add(new DialogLink("hippo-paths", new Model<String>("Fix hippo:paths"), dialogFactory, getDialogService()));
+            Image iconHippoPaths = new Image("icon-hippo-paths") {
+                private static final long serialVersionUID = 1L;
+                @Override
+                protected ResourceReference getImageResourceReference() {
+                    return new ResourceReference(BrowserPlugin.class, "t9ids.png");
+                }
+            };
+            menuContainer.add(iconHippoPaths);
+
             return menuContainer;
         }
 
