@@ -81,16 +81,11 @@ AutoSave.prototype.save = function(throttled) {
 	}
 
 	this.timeoutID = null;
-	var xmlHttpReq = null;
-    if (window.XMLHttpRequest) {    // Mozilla/Safari
-        xmlHttpReq = new XMLHttpRequest();
-    } else if (window.ActiveXObject) {     // IE
-        xmlHttpReq = new ActiveXObject("Microsoft.XMLHTTP");
-    }
 
     if(this.editor._editMode == 'wysiwyg') { //save Iframe html into textarea
         this.editor._textArea.value = this.editor.outwardHtml(this.editor.getHTML());
     }
+
     var callbackUrl = this.editor.config.callbackUrl;
     var body = wicketSerialize(Wicket.$(this.getId()));
     var success = function() {
