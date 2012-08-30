@@ -353,7 +353,7 @@ public class AggregationValve extends AbstractValve {
                         Element endBodyScript = response.createElement("script");
                         endBodyScript.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "scripts");
                         endBodyScript.setAttribute("type","text/javascript");
-                        endBodyScript.setTextContent("_asyncLoad()");
+                        endBodyScript.setTextContent("Hippo.Hst.AsyncPage.load();");
                         response.addHeadElement(endBodyScript, "asyncLoad");
 
                     }
