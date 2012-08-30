@@ -381,4 +381,47 @@ public interface HippoNodeType {
 
     public static final String HIPPOSYS_SRCPATH = "hipposys:srcpath";
 
+    public static final String HIPPOSYS_PATH = "hipposys:path";
+
+    public static final String HIPPOSYS_QUERY = "hipposys:query";
+
+    public static final String HIPPOSYS_LANGUAGE = "hipposys:language";
+
+    public static final String HIPPOSYS_SCRIPT = "hipposys:script";
+
+    public static final String HIPPOSYS_CLASS = "hipposys:class";
+
+    public static final String HIPPOSYS_REVERT = "hipposys:revert";
+
+    public static final String HIPPOSYS_THROTTLE = "hipposys:throttle";
+
+    public static final String HIPPOSYS_BATCHSIZE = "hipposys:batchsize";
+
+    public static final String HIPPOSYS_DRYRUN = "hipposys:dryrun";
+
+    public static final String HIPPOSYS_CANCELLED = "hipposys:cancelled";
+
+    public static final String HIPPOSYS_STARTEDBY = "hipposys:startedby";
+
+    public static final String HIPPOSYS_CANCELLEDBY = "hipposys:cancelledby";
+
+    public static final String HIPPOSYS_STARTTIME = "hipposys:starttime";
+
+    public static final String HIPPOSYS_FINISHTIME = "hipposys:finishtime";
+
+    public static final String HIPPOSYS_UPDATED = "hipposys:updated";
+
+    public static final String HIPPOSYS_FAILED = "hipposys:failed";
+
+    public static final String HIPPOSYS_SKIPPED = "hipposys:skipped";
+
+    public static final String HIPPOSYS_UPDATEDCOUNT = "hipposys:updatedcount";
+
+    public static final String HIPPOSYS_FAILEDCOUNT = "hipposys:failedcount";
+
+    public static final String HIPPOSYS_SKIPPEDCOUNT = "hipposys:skippedcount";
+
+    public static final String HIPPOSYS_LOG = "hipposys:log";
+
+    public static final String HIPPOSYS_LOGTAIL = "hipposys:logtail";
 }
