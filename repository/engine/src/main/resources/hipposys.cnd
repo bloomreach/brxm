@@ -273,7 +273,6 @@
 - hipposys:throttle (long)
 - hipposys:batchsize (long)
 - hipposys:dryrun (boolean)
-- hipposys:paused (boolean)
 - hipposys:cancelled (boolean)
 - hipposys:startedby (string)
 - hipposys:cancelledby (string)
