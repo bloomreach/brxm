@@ -343,12 +343,12 @@ public class AggregationValve extends AbstractValve {
                     hiddenDiv.setAttribute("style", "display:none;");
                     response.addPreamble(hiddenDiv);
 
-                    if (!response.containsHeadElement("async")) {
+                    if (!response.containsHeadElement(AggregationValve.class.getName() + ".async")) {
                         Element headScript = response.createElement("script");
                         String src = request.getRequestContext().getHstLinkCreator().create("resources/simple-io.js", request.getRequestContext().getResolvedMount().getMount(), true).toUrlForm(request.getRequestContext(), false);
                         headScript.setAttribute("src",src);
                         headScript.setAttribute("type","text/javascript");
-                        response.addHeadElement(headScript, "async");
+                        response.addHeadElement(headScript, AggregationValve.class.getName() + ".async");
 
                         Element endBodyScript = response.createElement("script");
                         endBodyScript.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "scripts");
