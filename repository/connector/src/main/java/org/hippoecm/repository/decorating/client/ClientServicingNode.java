@@ -57,6 +57,11 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
         return getIdentifier().startsWith("cafeface");
     }
 
+    @Override
+    public boolean recomputeDerivedData() throws RepositoryException {
+        return false;
+    }
+
     public String getLocalizedName() throws RepositoryException {
         try {
             return remote.getLocalizedName(Localized.getInstance(Locale.getDefault()));

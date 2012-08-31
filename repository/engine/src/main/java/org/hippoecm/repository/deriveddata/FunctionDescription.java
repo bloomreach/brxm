@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.deriveddata;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,59 +24,49 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class FunctionDescription {
 
-    private final Node function;
+    private final Node functionNode;
 
     FunctionDescription(final Node function) {
-        this.function = function;
+        this.functionNode = function;
+    }
+
+    String getName() throws RepositoryException {
+        return functionNode.getName();
     }
 
     String getClassName() throws RepositoryException {
-        return function.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
+        return functionNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
     }
 
-    String getNodeTypeName() throws RepositoryException {
-        return function.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString();
+    String getApplicableNodeType() throws RepositoryException {
+        return functionNode.getProperty(HippoNodeType.HIPPOSYS_NODETYPE).getString();
     }
 
-    Set<PropertyReference> getAccessedProperties() throws RepositoryException {
-        Set<PropertyReference> references = new HashSet<PropertyReference>();
-        for (Node propDef : new NodeIterable(function.getNode("hipposys:accessed").getNodes())) {
+    Collection<PropertyReference> getAccessedProperties() throws RepositoryException {
+        final Set<PropertyReference> references = new HashSet<PropertyReference>();
+        for (Node propDef : new NodeIterable(functionNode.getNode("hipposys:accessed").getNodes())) {
             if (propDef == null) {
                 DerivedDataEngine.log.error("unable to access derived data accessed property definition");
                 continue;
             }
-
-            references.add(new PropertyReference(propDef));
+            references.add(PropertyReference.createPropertyReference(propDef, this));
         }
         return references;
     }
 
-    Set<PropertyReference> getDerivedProperties() throws RepositoryException {
-        Set<PropertyReference> references = new HashSet<PropertyReference>();
-        for (Node propDef : new NodeIterable(function.getNode(
-                HippoNodeType.HIPPO_DERIVED).getNodes())) {
+    Collection<PropertyReference> getDerivedProperties() throws RepositoryException {
+        final Set<PropertyReference> references = new HashSet<PropertyReference>();
+        for (Node propDef : new NodeIterable(functionNode.getNode(HippoNodeType.HIPPO_DERIVED).getNodes())) {
             if (propDef == null) {
                 DerivedDataEngine.log.error("unable to access derived data derived property definition");
                 continue;
             }
-
-            references.add(new PropertyReference(propDef));
+            references.add(PropertyReference.createPropertyReference(propDef, this));
         }
         return references;
     }
 
-    @Override
-    public String toString() {
-        try {
-            return function.getPath();
-        } catch (RepositoryException e) {
-            DerivedDataEngine.log.error("Unable to retrieve path for function node", e);
-            return super.toString();
-        }
-    }
 }

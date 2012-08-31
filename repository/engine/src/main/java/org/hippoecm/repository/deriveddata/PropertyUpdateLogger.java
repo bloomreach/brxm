@@ -24,6 +24,7 @@ import org.slf4j.Logger;
 class PropertyUpdateLogger {
 
     private final Logger logger;
+    private boolean changed = false;
     private StringBuffer sb = null;
     
     PropertyUpdateLogger(String propertyPath, String propName, Node modified, Logger logger) throws RepositoryException {
@@ -40,6 +41,10 @@ class PropertyUpdateLogger {
         }
     }
 
+    boolean isChanged() {
+        return changed;
+    }
+
     public void flush() {
         if (logger.isDebugEnabled()) {
             logger.debug(new String(sb));
@@ -51,6 +56,7 @@ class PropertyUpdateLogger {
         if (logger.isDebugEnabled()) {
             sb.append(" created");
         }
+        changed = true;
     }
 
     public void created(final Value value) throws RepositoryException {
@@ -58,6 +64,7 @@ class PropertyUpdateLogger {
             sb.append(value.getString());
             sb.append(" created");
         }
+        changed = true;
     }
 
     public void overwritten(final Value value) throws RepositoryException {
@@ -65,6 +72,7 @@ class PropertyUpdateLogger {
             sb.append(value.getString());
             sb.append(" overwritten");
         }
+        changed = true;
     }
 
     public void overwritten(final Value[] values) throws RepositoryException {
@@ -72,6 +80,7 @@ class PropertyUpdateLogger {
         if (logger.isDebugEnabled()) {
             sb.append(" overwritten");
         }
+        changed = true;
     }
 
     public void unchanged(Value value) throws RepositoryException {
@@ -109,6 +118,7 @@ class PropertyUpdateLogger {
         if (logger.isDebugEnabled()) {
             sb.append(" removed");
         }
+        changed = true;
     }
 
     public void skipped() {

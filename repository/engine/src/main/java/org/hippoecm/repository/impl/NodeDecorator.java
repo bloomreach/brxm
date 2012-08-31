@@ -77,6 +77,14 @@ public class NodeDecorator extends org.hippoecm.repository.decorating.NodeDecora
         return getIdentifier().startsWith("cafeface");
     }
 
+    @Override
+    public boolean recomputeDerivedData() throws RepositoryException {
+        if(item.isNode()) {
+            return ((SessionDecorator)getSession()).computeDerivedData((Node) item);
+        }
+        return false;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,

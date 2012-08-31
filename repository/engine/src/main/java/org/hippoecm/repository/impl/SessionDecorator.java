@@ -97,6 +97,10 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
+    boolean computeDerivedData(Node node) throws RepositoryException {
+        return derivedEngine.compute(node);
+    }
+
     public void postValidation() throws ConstraintViolationException, RepositoryException {
         derivedEngine.validate();
     }

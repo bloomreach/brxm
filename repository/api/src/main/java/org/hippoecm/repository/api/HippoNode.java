@@ -143,4 +143,12 @@ public interface HippoNode extends Node {
      * @throws RepositoryException
      */
     public boolean isVirtual() throws RepositoryException;
+
+    /**
+     * Some operations may leave some nodes' derived data stale. With this method
+     * the derived data of a node is made up to date.
+     *
+     * @return whether the node was changed during the recomputation
+     */
+    public boolean recomputeDerivedData() throws RepositoryException;
 }

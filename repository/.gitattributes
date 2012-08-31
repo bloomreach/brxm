@@ -91,13 +91,15 @@ connector/src/main/java/org/hippoecm/repository/decorating/server/ServerWorkflow
 dependencies/pom.xml svneol=native#text/plain
 engine/pom.xml svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/FacetedNavigationEngineImpl.java -text
+engine/src/main/java/org/hippoecm/repository/deriveddata/BuiltinPropertyReference.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/CopyDerivedDataFunction.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/CoreDerivedDataFunction.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/FunctionDescription.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/PropertyMapper.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/PropertyReference.java -text
-engine/src/main/java/org/hippoecm/repository/deriveddata/PropertyReferenceType.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/PropertyUpdateLogger.java -text
+engine/src/main/java/org/hippoecm/repository/deriveddata/RelativePropertyReference.java -text
+engine/src/main/java/org/hippoecm/repository/deriveddata/ResolvePropertyReference.java -text
 engine/src/main/java/org/hippoecm/repository/impl/InitializationProcessorImpl.java -text
 engine/src/main/java/org/hippoecm/repository/impl/ReferenceWorkspaceImpl.java -text
 engine/src/main/java/org/hippoecm/repository/impl/query/EnclosingDocument.java -text

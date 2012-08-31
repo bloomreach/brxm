@@ -15,36 +15,45 @@
  */
 package org.hippoecm.repository.deriveddata;
 
+import java.util.Collection;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 
-class PropertyReference {
-    private final Node propDef;
+abstract class PropertyReference {
 
-    PropertyReference(final Node propDef) {
-        this.propDef = propDef;
+    protected final Node node;
+    protected final FunctionDescription function;
+
+    protected PropertyReference(final Node propertyReference, final FunctionDescription function) {
+        this.node = propertyReference;
+        this.function = function;
     }
 
-    PropertyReferenceType getType() throws RepositoryException {
-        if (propDef.isNodeType("hipposys:builtinpropertyreference")) {
-            return PropertyReferenceType.BUILTIN;
-        } else if (propDef.isNodeType("hipposys:relativepropertyreference")) {
-            return PropertyReferenceType.RELATIVE;
-        } else if (propDef.isNodeType("hipposys:resolvepropertyreference")) {
-            return PropertyReferenceType.RESOLVE;
+    protected ValueFactory getValueFactory() throws RepositoryException {
+        return node.getSession().getValueFactory();
+    }
+
+    static PropertyReference createPropertyReference(final Node node, final FunctionDescription function) throws RepositoryException {
+        if (node.isNodeType("hipposys:builtinpropertyreference")) {
+            return new BuiltinPropertyReference(node, function);
+        } else if (node.isNodeType("hipposys:relativepropertyreference")) {
+            return new RelativePropertyReference(node, function);
+        } else if (node.isNodeType("hipposys:resolvepropertyreference")) {
+            return new ResolvePropertyReference(node, function);
         }
-        return PropertyReferenceType.UNKNOWN;
+        return null;
     }
 
     String getName() throws RepositoryException {
-        return propDef.getName();
+        return node.getName();
     }
 
-    String getRelativePath() throws RepositoryException {
-        return propDef.getProperty("hipposys:relPath").getString();
-    }
+    abstract Value[] getPropertyValues(Node modified, Collection<String> dependencies) throws RepositoryException;
 
-    String getMethod() throws RepositoryException {
-        return propDef.getProperty("hipposys:method").getString();
-    }
+    abstract boolean persistPropertyValues(final Node modified, final Map<String, Value[]> parameters) throws RepositoryException;
+
 }
