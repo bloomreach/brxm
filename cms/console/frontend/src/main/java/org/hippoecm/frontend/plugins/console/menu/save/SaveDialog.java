@@ -32,6 +32,9 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.console.menu.content.ContentImportDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNode;
+import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,24 +42,13 @@ public class SaveDialog extends AbstractDialog<Node> {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(ContentImportDialog.class);
 
-    protected boolean hasPendingChanges;
-
     public SaveDialog() {
         Component message;
         try {
             HippoNode rootNode = (HippoNode) ((UserSession) Session.get()).getJcrSession().getRootNode();
             if (rootNode.getSession().hasPendingChanges()) {
-                hasPendingChanges = true;
-                StringBuffer buf;
-                buf = new StringBuffer("Pending changes:\n");
-
-                NodeIterator it = rootNode.pendingChanges();
-                if (it.hasNext()) {
-                    while (it.hasNext()) {
-                        Node node = it.nextNode();
-                        buf.append(node.getPath()).append("\n");
-                    }
-                }
+                StringBuffer buf = new StringBuffer("Pending changes:\n");
+                appendPendingChangesFromNodeToBuffer(rootNode, buf,"\n");
                 message = new MultiLineLabel("message", buf.toString());
             } else {
                 message = new Label("message", "There are no pending changes");
@@ -76,13 +68,46 @@ public class SaveDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            ((UserSession) Session.get()).getJcrSession().save();
-            ((UserSession) Session.get()).getJcrSession().refresh(false);
+            javax.jcr.Session jcrSession = ((UserSession) Session.get()).getJcrSession();
+
+            HippoNode rootNode = (HippoNode) jcrSession.getRootNode();
+            StringBuffer buffer = new StringBuffer("User made changes at: ");
+            appendPendingChangesFromNodeToBuffer(rootNode, buffer,",");
+
+            jcrSession.save();
+            //only log when the save is successful
+            logEvent("write-changes",jcrSession.getUserID(),buffer.toString());
+            jcrSession.refresh(false);
         } catch (AccessDeniedException e) {
             error(e.getClass().getName() + ": " + e.getMessage());
         } catch (RepositoryException e) {
             log.error("Error while saving content from the console", e);
             error(e.getClass().getName() + ": " + e.getMessage());
+        }
+    }
+
+
+    private void appendPendingChangesFromNodeToBuffer(final HippoNode rootNode, final StringBuffer buf,
+                                                      final String delimiter) throws RepositoryException {
+        NodeIterator it = rootNode.pendingChanges();
+        if (it.hasNext()) {
+            while (it.hasNext()) {
+                Node node = it.nextNode();
+                buf.append(node.getPath());
+                if(it.hasNext()) {
+                    buf.append(delimiter);
+                }
+            }
+        }
+    }
+
+    private void logEvent(String action, String user, String message) {
+        final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
+        if (eventBus != null) {
+            final HippoEvent event = new HippoEvent("console");
+            event.category("console").user(user).action(action);
+            event.message(message);
+            eventBus.post(event);
         }
     }
 
