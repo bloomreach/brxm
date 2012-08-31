@@ -983,13 +983,13 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/CreatePatchDialog.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/CreatePatchPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/CreatePatchPlugin.java -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/paths/FixHippoPathsDialog.html -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/paths/FixHippoPathsDialog.java -text
-console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/paths/FixHippoPathsVisitor.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/permissions/PermissionsPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/permissions/PermissionsPlugin.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/property/PropertyDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/property/PropertyDialog.java svneol=native#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/recompute/RecomputeDialog.html -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/recompute/RecomputeDialog.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/recompute/RecomputeVisitor.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/refs/ReferencesDialog.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/refs/ReferencesDialog.java svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/refs/ReferencesPlugin.html -text

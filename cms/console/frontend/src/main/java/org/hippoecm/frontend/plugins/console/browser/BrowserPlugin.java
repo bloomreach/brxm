@@ -50,7 +50,7 @@ import org.hippoecm.frontend.plugins.console.menu.copy.CopyDialog;
 import org.hippoecm.frontend.plugins.console.menu.delete.DeleteDialog;
 import org.hippoecm.frontend.plugins.console.menu.move.MoveDialog;
 import org.hippoecm.frontend.plugins.console.menu.node.NodeDialog;
-import org.hippoecm.frontend.plugins.console.menu.paths.FixHippoPathsDialog;
+import org.hippoecm.frontend.plugins.console.menu.recompute.RecomputeDialog;
 import org.hippoecm.frontend.plugins.console.menu.rename.RenameDialog;
 import org.hippoecm.frontend.plugins.console.menu.t9ids.T9idsDialog;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
@@ -324,11 +324,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             dialogFactory = new IDialogFactory() {
                 @Override
                 public Dialog createDialog() {
-                    return new FixHippoPathsDialog(model);
+                    return new RecomputeDialog(model);
                 }
             };
-            menuContainer.add(new DialogLink("hippo-paths", new Model<String>("Fix hippo:paths"), dialogFactory, getDialogService()));
-            Image iconHippoPaths = new Image("icon-hippo-paths") {
+            menuContainer.add(new DialogLink("recompute", new Model<String>("Recompute derived"), dialogFactory, getDialogService()));
+            Image iconHippoPaths = new Image("icon-recompute") {
                 private static final long serialVersionUID = 1L;
                 @Override
                 protected ResourceReference getImageResourceReference() {

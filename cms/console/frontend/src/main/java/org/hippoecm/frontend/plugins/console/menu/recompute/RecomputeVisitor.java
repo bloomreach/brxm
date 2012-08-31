@@ -13,28 +13,27 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.console.menu.paths;
+package org.hippoecm.frontend.plugins.console.menu.recompute;
 
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.version.VersionManager;
 
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.hippoecm.frontend.model.JcrHelper;
-import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.api.HippoNode;
 
 
-public class FixHippoPathsVisitor implements ItemVisitor {
+public class RecomputeVisitor implements ItemVisitor {
 
     private static final int BATCH_SIZE = 50;
 
     private int counter = 0;
     private boolean batchSave;
 
-    FixHippoPathsVisitor(boolean batchSave) {
+    RecomputeVisitor(boolean batchSave) {
         this.batchSave = batchSave;
     }
 
@@ -45,11 +44,11 @@ public class FixHippoPathsVisitor implements ItemVisitor {
     @Override
     public void visit(final Node node) throws RepositoryException {
         if (!JcrHelper.isVirtualNode(node)) {
-            final Property hippoPathsProperty = JcrUtils.getPropertyIfExists(node, "hippo:paths");
-            if (hippoPathsProperty != null) {
-                ensureCheckedOut(node);
-                fixHippoPathsProperty(hippoPathsProperty);
-                saveIfNeeded(node.getSession());
+            if (node instanceof HippoNode && node.isNodeType("hippo:derived")) {
+                if (((HippoNode) node).recomputeDerivedData()) {
+                    counter++;
+                    saveIfNeeded(node.getSession());
+                }
             }
             for (Node child : new NodeIterable(node.getNodes())) {
                 visit(child);
@@ -57,31 +56,11 @@ public class FixHippoPathsVisitor implements ItemVisitor {
         }
     }
 
-    private void fixHippoPathsProperty(Property hippoPathsProperty) throws RepositoryException {
-        hippoPathsProperty.remove();
-        counter++;
-    }
-
     private void saveIfNeeded(Session session) throws RepositoryException {
         boolean shouldSave = batchSave && counter % BATCH_SIZE == 0;
         if (shouldSave) {
             session.save();
         }
-    }
-
-    private void ensureCheckedOut(final Node node) throws RepositoryException {
-        if (!node.isCheckedOut()) {
-            Node checkoutCandidate = node;
-            while (checkoutCandidate != null && !checkoutCandidate.isNodeType("mix:versionable")) {
-                checkoutCandidate = checkoutCandidate.getParent();
-            }
-            checkout(checkoutCandidate);
-        }
-    }
-
-    private void checkout(Node node) throws RepositoryException {
-        final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-        versionManager.checkout(node.getPath());
     }
 
 }

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.console.menu.paths;
+package org.hippoecm.frontend.plugins.console.menu.recompute;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -30,15 +30,18 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FixHippoPathsDialog extends AbstractDialog<Node> {
+/**
+ * Recompute derived data
+ */
+public class RecomputeDialog extends AbstractDialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(FixHippoPathsDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(RecomputeDialog.class);
 
     private boolean automaticSave = true;
 
-    public FixHippoPathsDialog(IModel<Node> model) {
+    public RecomputeDialog(IModel<Node> model) {
         super(model);
         String path = null;
         try {
@@ -47,8 +50,8 @@ public class FixHippoPathsDialog extends AbstractDialog<Node> {
             log.error(e.getClass().getName() + ": " + e.getMessage());
         }
         add(new CheckBox("automatic-save", new PropertyModel<Boolean>(this, "automaticSave")));
-        final String message = "The hippo:paths derived property of node " + path
-                + " and its subnodes will be recalculated. This might be needed after moving a folder or a document." +
+        final String message = "The derived data properties of node " + path
+                + " and its subnodes will be recalculated. This might for instance be needed after moving a folder or a document." +
                 " Do you want to continue?";
         add(new Label("message", new Model<String>(message)));
         setFocusOnOk();
@@ -57,7 +60,7 @@ public class FixHippoPathsDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            getModelObject().accept(new FixHippoPathsVisitor(automaticSave));
+            getModelObject().accept(new RecomputeVisitor(automaticSave));
             if (automaticSave) {
                 UserSession.get().getJcrSession().save();
             }
@@ -68,7 +71,7 @@ public class FixHippoPathsDialog extends AbstractDialog<Node> {
     
     @Override
     public IModel<String> getTitle() {
-        return new Model<String>("Fix hippo:paths");
+        return new Model<String>("Recalculate derived data");
     }
 
     @Override
