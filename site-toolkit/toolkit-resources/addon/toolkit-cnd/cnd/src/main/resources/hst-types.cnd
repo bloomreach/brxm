@@ -68,7 +68,7 @@
 - hst:componentfiltertag (string)
 + * (hst:abstractcomponent)
 
-[hst:containercomponent] > hst:abstractcomponent, hipposys:restorable orderable
+[hst:containercomponent] > hst:abstractcomponent orderable
 - hst:xtype (string) mandatory
 + * (hst:containeritemcomponent)
 
