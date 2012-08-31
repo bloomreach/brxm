@@ -24,6 +24,7 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.perspectives.common.DimmedPanel;
@@ -56,11 +57,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         final SiteService siteService = restProxyService.createRestProxy(SiteService.class);
 
         // When site service is null most probably the site is down
-        if (siteService == null) {
-            siteIsUp = false;
-        } else {
-            siteIsUp = true;
-        }
+        siteIsUp = (siteService != null);
 
         add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css"));
 
@@ -80,7 +77,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
             context.registerService(this, channelManagerServiceId);
         } else {
             final Fragment dimmedRootPanelFragment= new Fragment("channel-root", "dimmed-root-fragment", this);
-            dimmedRootPanelFragment.add(new DimmedPanel("dimmed-root-panel-div"));
+            dimmedRootPanelFragment.add(new DimmedPanel("dimmed-root-panel-div", new ResourceModel("site.is.down.message")));
             add(dimmedRootPanelFragment);
         }
     }
