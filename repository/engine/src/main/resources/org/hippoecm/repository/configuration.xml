@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2009 Hippo
+  Copyright 2007-2012 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -304,11 +304,6 @@
   <sv:node sv:name="hippo:modules">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:modulefolder</sv:value>
-    </sv:property>
-  </sv:node>
-  <sv:node sv:name="hippo:shelf">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:shelf</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:update">

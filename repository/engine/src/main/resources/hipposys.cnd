@@ -252,17 +252,6 @@
 - hipposys:excluded (string) multiple
 - hipposys:location (string)
 
-[hipposys:shelf] > nt:base
-+ * (nt:base) multiple
-
-[hipposys:shelveditem] mixin
-- hipposys:srcpath (string)
-
-[hipposys:restorable] mixin
-
-[hipposys:backup] mixin
-- hipposys:srcpath (string)
-
 [hipposys:updaterinfo] > nt:base
 - hipposys:path (string)
 - hipposys:query (string)
@@ -311,5 +300,4 @@
 + hippo:queries (hipposys:queryfolder) = hipposys:queryfolder mandatory autocreated
 + hippo:security (hipposys:securityfolder) = hipposys:securityfolder
 + hippo:modules (hipposys:modulefolder) = hipposys:modulefolder
-+ hippo:shelf (hipposys:shelf) = hipposys:shelf autocreated
 + hippo:update (hipposys:update) = hipposys:update autocreated
