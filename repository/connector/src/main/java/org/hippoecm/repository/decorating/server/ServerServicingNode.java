@@ -17,7 +17,6 @@ package org.hippoecm.repository.decorating.server;
 
 import java.rmi.RemoteException;
 
-import java.util.Locale;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -48,6 +47,15 @@ public class ServerServicingNode extends ServerNode implements RemoteServicingNo
     public String getLocalizedName(Localized localized) throws RepositoryException, RemoteException {
         try {
             return node.getLocalizedName(localized);
+        } catch(RepositoryException ex) {
+            throw getRepositoryException(ex);
+        }
+    }
+
+    @Override
+    public boolean recomputeDerivedData() throws RepositoryException, RemoteException {
+        try {
+            return node.recomputeDerivedData();
         } catch(RepositoryException ex) {
             throw getRepositoryException(ex);
         }

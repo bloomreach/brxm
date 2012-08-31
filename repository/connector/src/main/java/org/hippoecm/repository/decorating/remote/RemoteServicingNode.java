@@ -19,11 +19,9 @@ import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-import java.util.Locale;
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
-
 import org.hippoecm.repository.api.Localized;
 
 public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
@@ -31,4 +29,6 @@ public interface RemoteServicingNode extends RemoteNode, Remote, Serializable {
     public RemoteNode getCanonicalNode() throws RepositoryException, RemoteException;
 
     public String getLocalizedName(Localized localized) throws RepositoryException, RemoteException;
+
+    boolean recomputeDerivedData() throws RepositoryException, RemoteException;
 }

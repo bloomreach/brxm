@@ -59,7 +59,11 @@ public class ClientServicingNode extends ClientNode implements HippoNode {
 
     @Override
     public boolean recomputeDerivedData() throws RepositoryException {
-        return false;
+        try {
+            return remote.recomputeDerivedData();
+        } catch (RemoteException ex) {
+            throw new RemoteRepositoryException(ex);
+        }
     }
 
     public String getLocalizedName() throws RepositoryException {
