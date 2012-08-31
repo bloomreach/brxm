@@ -93,7 +93,7 @@ public abstract class LazyExtComponent extends ExtComponent implements IPlugin {
         this.context = context;
     }
 
-    public String getXtype() {
+    public String getXType() {
         return xtype;
     }
 
