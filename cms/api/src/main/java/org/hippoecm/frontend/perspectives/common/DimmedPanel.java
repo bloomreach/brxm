@@ -36,7 +36,7 @@ public class DimmedPanel extends Panel {
         if (resourceModel != null) {
             add(new Label("siteStatusLabel", resourceModel));
         } else {
-            add(new Label("siteStatusLabel", new ResourceModel("site.is.down.message", "Site might be down. Please check with your systems administrator.")));
+            add(new Label("siteStatusLabel", new ResourceModel("error.status.message", "This perspective could not be loaded. Please contact your systems administrator.")));
         }
 
         add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(DimmedPanel.class, "DimmedPanel.css")));
