@@ -43,6 +43,7 @@ import javax.jcr.nodetype.NodeTypeTemplate;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.version.VersionException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -58,7 +59,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowImpl.class);
 
     private class NodeTypeState {
 
@@ -191,7 +192,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 NodeIterator nodes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPES).getNodes();
                 while (nodes.hasNext()) {
                     Node child = nodes.nextNode();
-                    if (child.isNodeType("nt:unstructured")) {
+                    if (child.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
                         draft = child;
                     } else if (prefix != null) {
                         NodeType nt = child.getPrimaryNodeType();
@@ -210,7 +211,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                     subject.addNode(HippoNodeType.HIPPO_PROTOTYPES, HippoNodeType.NT_PROTOTYPESET);
                 }
                 draft = subject.getNode(HippoNodeType.HIPPO_PROTOTYPES).addNode(HippoNodeType.HIPPO_PROTOTYPE,
-                        "nt:unstructured");
+                        JcrConstants.NT_UNSTRUCTURED);
                 if (current != null) {
                     // add dynamic mixins
                     for (NodeType mixin : current.getMixinNodeTypes()) {
@@ -264,7 +265,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 Node prototypes = subject.getNode(HippoNodeType.HIPPO_PROTOTYPES);
                 for (NodeIterator iter = prototypes.getNodes(HippoNodeType.HIPPO_PROTOTYPE); iter.hasNext();) {
                     Node prototype = iter.nextNode();
-                    if (!prototype.isNodeType("nt:unstructured")) {
+                    if (!prototype.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
                         prototype.remove();
                     } else {
                         assert (prototype.isSame(draft));
@@ -287,11 +288,9 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                     Property prop = props.nextProperty();
                     PropertyDefinition definition = prop.getDefinition();
                     String declaringNodeTypeName = definition.getDeclaringNodeType().getName();
-                    if (!"nt:unstructured".equals(declaringNodeTypeName)) {
-                        if (!clone.isNodeType(declaringNodeTypeName)) {
-                            log.warn("draft prototype contains property '" + prop.getName() + "', which does not exist in target type.  It will not be copied.");
-                            continue;
-                        }
+                    if (isValidDefiningTypeForCurrentPrototype(clone, declaringNodeTypeName)) {
+                        log.warn("draft prototype contains property '" + prop.getName() + "', which does not exist in target type.  It will not be copied.");
+                        continue;
                     }
                     if (!definition.isProtected()) {
                         if (prop.isMultiple()) {
@@ -324,6 +323,10 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 draft.remove();
                 draft = null;
             }
+        }
+
+        private boolean isValidDefiningTypeForCurrentPrototype(final Node clone, final String declaringNodeTypeName) throws RepositoryException {
+            return !JcrConstants.NT_UNSTRUCTURED.equals(declaringNodeTypeName) && !clone.isNodeType(declaringNodeTypeName);
         }
 
         void revert() throws RepositoryException {
@@ -483,13 +486,13 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 Node child = nodes.nextNode();
                 if (prototype == null) {
                     prototype = child;
-                } else if (child.isNodeType("nt:unstructured")) {
+                } else if (child.isNodeType(JcrConstants.NT_UNSTRUCTURED)) {
                     prototype.remove();
                     prototype = child;
                 }
             }
             if (prototype != null) {
-                prototype.setPrimaryType("nt:unstructured");
+                prototype.setPrimaryType(JcrConstants.NT_UNSTRUCTURED);
             }
         }
         if (target.isNodeType(HippoNodeType.NT_TRANSLATED)) {
