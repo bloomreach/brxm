@@ -30,7 +30,7 @@
               <b>${item.name}</b>
           </c:when>
           <c:otherwise>
-              <hst:link var="link" link="${item.hstLink}" fullyQualified="true" />
+              <hst:link var="link" link="${item.hstLink}" />
               <a href="${link}">
                   ${item.name}
               </a>
