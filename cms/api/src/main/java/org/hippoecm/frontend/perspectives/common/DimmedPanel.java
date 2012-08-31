@@ -17,31 +17,29 @@ package org.hippoecm.frontend.perspectives.common;
 
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.html.resources.CompressedResourceReference;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.wicketstuff.js.ext.ExtPanel;
 
-public class DimmedPanel extends ExtPanel {
+public class DimmedPanel extends Panel {
 
     private static final long serialVersionUID = 1L;
 
     public DimmedPanel(String id) {
+        this(id, null);
+    }
+
+    public DimmedPanel(String id, IModel<String> resourceModel) {
         super(id);
 
-        add(new Label("siteStatusLabel", new ResourceModel("site.is.down.message", "Site might be down. Please check with your systems administrator.")));
+        if (resourceModel != null) {
+            add(new Label("siteStatusLabel", resourceModel));
+        } else {
+            add(new Label("siteStatusLabel", new ResourceModel("site.is.down.message", "Site might be down. Please check with your systems administrator.")));
+        }
+
         add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(DimmedPanel.class, "DimmedPanel.css")));
-    }
-
-    @Override
-    protected void preRenderExtHead(StringBuilder js) {
-        super.preRenderExtHead(js);
-    }
-
-    @Override
-    protected void onRenderProperties(JSONObject properties) throws JSONException {
-        super.onRenderProperties(properties);
     }
 
 }
