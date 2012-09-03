@@ -244,7 +244,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 variantsComboBox,
                 {
                     xtype : 'button',
-                    text : this.resources['fullscreen'],
+                    text : this.resources['collapse-button'],
+                    iconCls : 'collapse',
+                    width: 120,
                     listeners : {
                         click : {
                             fn : function (button) {
@@ -271,7 +273,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 variantsComboBox,
                 {
                     xtype : 'button',
-                    text : this.resources['fullscreen'],
+                    text : this.resources['expand-button'],
+                    iconCls : 'expand',
+                    width: 120,
                     listeners : {
                         click : {
                             fn : function (button) {

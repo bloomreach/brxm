@@ -106,6 +106,14 @@
   background-image: url("templatecomposer/gear.png");
 }
 
+.channel-manager .x-btn-small .expand {
+    background-image: url("templatecomposer/expand.png");
+}
+
+.channel-manager .x-btn-small .collapse {
+    background-image: url("templatecomposer/collapse.png");
+}
+
 /* toolkit window */
 .channel-manager .icon-toolbar-window .x-window-tl, .icon-toolbar-window .x-window-tc, .icon-toolbar-window .x-window-tr,
 .channel-manager .icon-toolbar-window .x-window-ml, .icon-toolbar-window .x-window-mc, .icon-toolbar-window .x-window-mr,
