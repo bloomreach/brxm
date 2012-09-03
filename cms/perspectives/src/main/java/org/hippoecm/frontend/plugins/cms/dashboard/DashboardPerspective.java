@@ -27,15 +27,23 @@ public class DashboardPerspective extends Perspective {
 
     private static final long serialVersionUID = 1L;
 
+    private final String EDITION;
     private SystemInfoDataProvider systemDataProvider = new SystemInfoDataProvider();
 
     public DashboardPerspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
         add(new Label("version-label", systemDataProvider.getReleaseVersion()));
+        EDITION = config.getString("edition", "community").toLowerCase();
     }
 
     @Override
     public ResourceReference getIcon(IconSize type) {
         return new ResourceReference(DashboardPerspective.class, "dashboard-perspective-" + type.getSize() + ".png");
     }
+
+    @Override
+    public String getVariation() {
+        return EDITION.equalsIgnoreCase("community") ? "" : "ee";
+    }
+
 }

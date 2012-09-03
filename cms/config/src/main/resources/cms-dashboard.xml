@@ -38,6 +38,9 @@
     <sv:property sv:name="plugin.class" sv:type="String">
       <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.DashboardPerspective</sv:value>
     </sv:property>
+    <sv:property sv:name="edition" sv:type="String">
+      <sv:value>community</sv:value>
+    </sv:property>
     <sv:property sv:name="wicket.behavior" sv:type="String">
       <sv:value>service.behavior.tabs</sv:value>
       <sv:value>service.behavior.dashboard</sv:value>
