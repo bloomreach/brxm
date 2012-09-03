@@ -19,9 +19,9 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.model.IModel;
@@ -45,9 +45,9 @@ public class SaveDialog extends AbstractDialog<Node> {
     public SaveDialog() {
         Component message;
         try {
-            HippoNode rootNode = (HippoNode) ((UserSession) Session.get()).getJcrSession().getRootNode();
+            HippoNode rootNode = (HippoNode) UserSession.get().getJcrSession().getRootNode();
             if (rootNode.getSession().hasPendingChanges()) {
-                StringBuffer buf = new StringBuffer("Pending changes:\n");
+                StringBuilder buf = new StringBuilder("Pending changes:\n");
                 appendPendingChangesFromNodeToBuffer(rootNode, buf,"\n");
                 message = new MultiLineLabel("message", buf.toString());
             } else {
@@ -68,10 +68,10 @@ public class SaveDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            javax.jcr.Session jcrSession = ((UserSession) Session.get()).getJcrSession();
+            Session jcrSession = UserSession.get().getJcrSession();
 
             HippoNode rootNode = (HippoNode) jcrSession.getRootNode();
-            StringBuffer buffer = new StringBuffer("User made changes at: ");
+            StringBuilder buffer = new StringBuilder("User made changes at: ");
             appendPendingChangesFromNodeToBuffer(rootNode, buffer,",");
 
             jcrSession.save();
@@ -87,7 +87,7 @@ public class SaveDialog extends AbstractDialog<Node> {
     }
 
 
-    private void appendPendingChangesFromNodeToBuffer(final HippoNode rootNode, final StringBuffer buf,
+    private void appendPendingChangesFromNodeToBuffer(final HippoNode rootNode, final StringBuilder buf,
                                                       final String delimiter) throws RepositoryException {
         NodeIterator it = rootNode.pendingChanges();
         if (it.hasNext()) {
