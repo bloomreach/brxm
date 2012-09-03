@@ -71,9 +71,9 @@ api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceHelper.j
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/ReferringDocumentsView_de.properties -text
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/WhereUsedDialog_de.properties -text
 api/src/main/java/org/hippoecm/frontend/extjs/ExtHippoThemeBehavior.java -text
-api/src/main/java/org/hippoecm/frontend/extjs/LazyExtComponent.java -text
-api/src/main/java/org/hippoecm/frontend/extjs/LazyExtComponentRegistry.java -text
-api/src/main/java/org/hippoecm/frontend/extjs/LazyExtComponentRegistry.js -text
+api/src/main/java/org/hippoecm/frontend/extjs/ExtWidget.java -text
+api/src/main/java/org/hippoecm/frontend/extjs/ExtWidgetRegistry.java -text
+api/src/main/java/org/hippoecm/frontend/extjs/ExtWidgetRegistry.js -text
 api/src/main/java/org/hippoecm/frontend/i18n/model/NodeTranslator.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/SortedTypeChoiceRenderer.java -text
 api/src/main/java/org/hippoecm/frontend/i18n/types/TypeChoiceRenderer.java -text

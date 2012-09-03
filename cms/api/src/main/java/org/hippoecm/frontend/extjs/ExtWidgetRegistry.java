@@ -10,33 +10,33 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.wicketstuff.js.ext.ExtContainer;
 
 /**
- * Central registry for the configuration of lazy Ext components. The configuration of these lazy components
- * can be retrieved in Javascript via the xtype of the lazy component:
+ * Central registry for the configuration of Ext widgets. The configuration of these widgets
+ * can be retrieved in Javascript via the xtype of the widget:
  * <pre>
- * var config = Hippo.LazyExtComponents.getConfig('somextype')
+ * var config = Hippo.ExtWidgets.getConfig('somextype')
  * </pre>
- * @see LazyExtComponent
+ * @see ExtWidget
  */
-public class LazyExtComponentRegistry extends ExtContainer {
+public class ExtWidgetRegistry extends ExtContainer {
 
-    public static final String LAZY_EXT_COMPONENT_SERVICE_ID = LazyExtComponentRegistry.class.getName();
+    public static final String EXT_WIDGET_SERVICE_ID = ExtWidgetRegistry.class.getName();
 
     private final IPluginContext context;
     private boolean renderedHead;
 
-    public LazyExtComponentRegistry(IPluginContext context) {
-        super("lazyExtComponentRegistry");
+    public ExtWidgetRegistry(String id, IPluginContext context) {
+        super(id);
 
         this.context = context;
 
-        add(JavascriptPackageResource.getHeaderContribution(LazyExtComponentRegistry.class, "LazyExtComponentRegistry.js"));
+        add(JavascriptPackageResource.getHeaderContribution(ExtWidgetRegistry.class, "ExtWidgetRegistry.js"));
     }
 
     @Override
     protected void onBeforeRender() {
-        List<LazyExtComponent> lazyExtComponents = context.getServices(LAZY_EXT_COMPONENT_SERVICE_ID, LazyExtComponent.class);
-        for (LazyExtComponent lazyComponent : lazyExtComponents) {
-            add(lazyComponent);
+        List<ExtWidget> widgets = context.getServices(EXT_WIDGET_SERVICE_ID, ExtWidget.class);
+        for (ExtWidget widget : widgets) {
+            add(widget);
         }
         super.onBeforeRender();
     }
@@ -44,7 +44,7 @@ public class LazyExtComponentRegistry extends ExtContainer {
     /**
      * Prevent that we render the head more than once, because it is explicitly rendered before other head contributions.
      * This way we force the initialization of the component registry before the initialization of child
-     * components, so lazy component configurations can always be accessed in constructors of non-lazy Ext objects.
+     * components, so Ext widget configurations can always be accessed in constructors of normal Ext components.
      *
      * @param container the HTML container to the head to
      */
@@ -57,18 +57,18 @@ public class LazyExtComponentRegistry extends ExtContainer {
     }
 
     /**
-     * Do no include lazy Ext components in the normal Ext component hierarchy. That way the head contributions
-     * and properties of lazy Ext component are still initialized like other Ext components, but they do not become
+     * Do no include Ext widgets in the normal Ext component hierarchy. That way the head contributions
+     * and properties of Ext widgets are still initialized like other Ext components, but they do not become
      * child items of the parent Ext component.
      *
-     * @return the list of child components without any lazy Ext components.
+     * @return the list of child components without any Ext widgets.
      */
     @Override
     public List<Component> getItems() {
         List<Component> items = super.getItems();
         List<Component> filteredItems = new ArrayList<Component>();
         for (Component component : items) {
-            if (!(component instanceof LazyExtComponent)) {
+            if (!(component instanceof ExtWidget)) {
                 filteredItems.add(component);
             }
         }
