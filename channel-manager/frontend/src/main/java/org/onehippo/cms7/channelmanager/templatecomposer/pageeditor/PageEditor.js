@@ -164,7 +164,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         });
     },
 
-    getVariantsComboBox : function(pageContext) {
+    createVariantsComboBox : function() {
         var self = this;
 
         var variantsComboBox = new Ext.form.ComboBox({
@@ -205,11 +205,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         });
 
         variantsComboBox.on('afterRender', function() {
-            this.variantsComboBox.setValue(pageContext.renderedVariant);
+            variantsComboBox.setValue(this.renderedVariant);
             this.allVariantsStoreFuture.when(function() {
-                var variantRecord = this.allVariantsStore.getById(pageContext.renderedVariant);
+                var variantRecord = this.allVariantsStore.getById(this.renderedVariant);
                 if (variantRecord) {
-                    this.variantsComboBox.setValue(variantRecord.get('name'));
+                    variantsComboBox.setValue(variantRecord.get('name'));
                 }
             }.createDelegate(this));
         }, this);
@@ -217,15 +217,31 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         return variantsComboBox;
     },
 
-    createViewToolbar : function (toolbar) {
-        var variantsComboBoxLabel = new Ext.Toolbar.TextItem({
+    clearToolbar : function () {
+        var toolbar = Ext.getCmp('pageEditorToolbar');
+
+        toolbar.removeAll();
+        toolbar.doLayout();
+    },
+
+    createVariantLabel: function () {
+        return new Ext.Toolbar.TextItem({
             text : this.resources['variants-combo-box-label'],
             hidden : (this.allVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
         });
+    },
+
+    createViewToolbar : function () {
+        var toolbar = Ext.getCmp('pageEditorToolbar'),
+            variantsComboBoxLabel = this.createVariantLabel(),
+            variantsComboBox = this.createVariantsComboBox(),
+            toolbarButtons;
+
+        toolbar.removeAll();
         if (this.fullscreen) {
             toolbar.add(
                 variantsComboBoxLabel,
-                this.variantsComboBox,
+                variantsComboBox,
                 {
                     xtype : 'button',
                     text : this.resources['fullscreen'],
@@ -233,25 +249,26 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         click : {
                             fn : function (button) {
                                 this.fullscreen = false;
+                                this.createViewToolbar();
+                                this.registerResizeListener();
                                 var iFrame = Ext.getCmp('Iframe');
                                 iFrame.getFrame().sendMessage({}, 'partscreen');
-                                this.registerResizeListener();
-                                this.createViewToolbar(toolbar);
                             },
                             scope : this
                         }
                     }
                 });
         } else if (this.pageContainer.canEdit) {
+            toolbarButtons = this.getToolbarButtons();
             toolbar.add(
-                this.toolbarButtons['edit'],
-                this.toolbarButtons['publish'],
-                this.toolbarButtons['discard'],
-                this.toolbarButtons['unlock'],
-                this.toolbarButtons['label'],
+                toolbarButtons['edit'],
+                toolbarButtons['publish'],
+                toolbarButtons['discard'],
+                toolbarButtons['unlock'],
+                toolbarButtons['label'],
                 ' ',
                 variantsComboBoxLabel,
-                this.variantsComboBox,
+                variantsComboBox,
                 {
                     xtype : 'button',
                     text : this.resources['fullscreen'],
@@ -259,24 +276,28 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         click : {
                             fn : function (button) {
                                 this.fullscreen = true;
+                                this.createViewToolbar();
+                                this.registerResizeListener();
                                 var iFrame = Ext.getCmp('Iframe');
                                 iFrame.getFrame().sendMessage({}, 'fullscreen');
-                                this.registerResizeListener();
-                                this.createViewToolbar(toolbar);
                             },
                             scope : this
                         }
                     }
                 });
         }
+        if (toolbar.rendered) {
+            toolbar.doLayout();
+        }
     },
 
-    createEditToolbar : function (toolbar) {
-        var variantsComboBoxLabel = new Ext.Toolbar.TextItem({
-            text : this.resources['variants-combo-box-label'],
-            hidden : (this.allVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
-        });
-        var toolboxVisible = Ext.get('icon-toolbar-window').isVisible();
+    createEditToolbar : function () {
+        var toolbar = Ext.getCmp('pageEditorToolbar'),
+            variantsComboBoxLabel = this.createVariantLabel(),
+            variantsComboBox = this.createVariantsComboBox(),
+            toolboxVisible = Ext.get('icon-toolbar-window').isVisible();
+
+        toolbar.removeAll();
         toolbar.add(
             {
                 text : this.initialConfig.resources['close-button'],
@@ -300,7 +321,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         scope : this.pageContainer
                     }
                 }
-            }, ' ', variantsComboBoxLabel, this.variantsComboBox, '->', {
+            }, ' ',
+            variantsComboBoxLabel,
+            variantsComboBox,
+            '->',
+            {
                 id : 'channel-properties-window-button',
                 text : this.initialConfig.resources['show-channel-properties-button'],
                 mode : 'show',
@@ -331,7 +356,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         scope : this
                     }
                 }
-            }, {
+            },
+            {
                 id : 'toolkit-window-button',
                 text : (toolboxVisible ? this.initialConfig.resources['close-components-button'] : this.initialConfig.resources['add-components-button']),
                 mode : (toolboxVisible ? 'hide' : 'show'),
@@ -355,7 +381,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                         scope : this
                     }
                 }
-            }, {
+            },
+            {
                 cls : 'toolbarMenuIcon',
                 iconCls : 'channel-gear',
                 allowDepress : false,
@@ -373,48 +400,44 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     }
                 }
             });
+        if (toolbar.rendered) {
+            toolbar.doLayout();
+        }
     },
 
     enableUI: function(pageContext) {
         Hippo.Msg.hide();
 
-        var toolbar = Ext.getCmp('pageEditorToolbar');
-        toolbar.removeAll();
-
         // exception occurred during loading: hide everything
         if (pageContext === null) {
-            toolbar.doLayout();
+            this.clearToolbar();
             if (this.propertiesWindow) {
                 this.propertiesWindow.hide();
             }
             return;
         }
 
-        this.toolbarButtons = this.getToolbarButtons();
-
-        this.variantsComboBox = this.getVariantsComboBox(pageContext);
+        this.renderedVariant = pageContext.renderedVariant;
 
         var frm = Ext.getCmp('Iframe').getFrame();
-
         if (!this.pageContainer.previewMode) {
-            if (this.propertiesWindow) {
-                this.propertiesWindow.destroy();
-            }
-            this.propertiesWindow = this.createPropertiesWindow(pageContext.ids.mountId);
-
-            var toolkitGrid = Ext.getCmp('ToolkitGrid');
-            toolkitGrid.reconfigure(pageContext.stores.toolkit, toolkitGrid.getColumnModel());
-
-            this.propertiesWindow.hide();
-
-            this.createEditToolbar(toolbar);
+            this.createEditToolbar();
 
             frm.sendMessage({}, ('showoverlay'));
             frm.sendMessage({}, ('hidelinks'));
 
+            if (this.propertiesWindow) {
+                this.propertiesWindow.destroy();
+            }
+            this.propertiesWindow = this.createPropertiesWindow(pageContext.ids.mountId);
+            this.propertiesWindow.hide();
+
+            var toolkitGrid = Ext.getCmp('ToolkitGrid');
+            toolkitGrid.reconfigure(pageContext.stores.toolkit, toolkitGrid.getColumnModel());
+
             Ext.getCmp('previousLiveNotification').hide();
         } else {
-            this.createViewToolbar(toolbar);
+            this.createViewToolbar();
 
             frm.sendMessage({}, ('hideoverlay'));
             if (this.fullscreen) {
@@ -435,7 +458,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
             Ext.getCmp('icon-toolbar-window').hide();
         }
-        toolbar.doLayout();
+
+        Ext.getCmp('pageEditorToolbar').doLayout();
     },
 
     disableUI: function() {
@@ -455,15 +479,24 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 element,
                 domNode = this.getEl().dom,
                 relayout = false,
-                rootPanel = Ext.getCmp('rootPanel');
+                rootPanel = Ext.getCmp('rootPanel'),
+                iFrame,
+                src;
         if (this.fullscreen) {
+            iFrame = Ext.getCmp('Iframe');
+            src = iFrame.getFrame().getDocumentURI();
+
             this.getEl().addClass("channel-manager-fullscreen");
             this.getEl().addClass("channel-manager");
             yuiLayout = this.getEl().findParent("div.yui-layout-unit");
             YAHOO.hippo.LayoutManager.unregisterResizeListener(yuiLayout, this, this.resizeListener);
 
+            iFrame.suspendEvents();
             rootPanel.remove(this, false);
             Ext.getBody().dom.appendChild(domNode);
+            iFrame.resumeEvents();
+
+            iFrame.getFrame().setSrc(src);
 
             element = Ext.getBody();
             this.resizeListener = function() {
@@ -481,10 +514,18 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             if (this.resizeListener) {
                 YAHOO.hippo.LayoutManager.unregisterRootResizeListener(this.resizeListener);
 
+                iFrame = Ext.getCmp('Iframe');
+                src = iFrame.getFrame().getDocumentURI();
+
+                iFrame.suspendEvents();
                 Ext.getBody().dom.removeChild(domNode);
                 rootPanel.insert(1, this);
+                iFrame.resumeEvents();
+
                 rootPanel.getLayout().setActiveItem(1);
                 rootPanel.doLayout();
+
+                iFrame.getFrame().setSrc(src);
 
                 relayout = true;
             }

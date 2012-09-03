@@ -230,14 +230,12 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         return new Hippo.Future(function(success, fail) {
             this.iframeResourceCache.when(function(iframeResources) {
                 var resourceCache = iframeResources.cache;
-                var iFrameCssHeadContributions = iframeResources.css;
-                for (var i = 0, len = iFrameCssHeadContributions.length; i < len; i++) {
-                    var src = iFrameCssHeadContributions[i];
-                    var cssContent = resourceCache[src];
-                    var frmDocument = frm.getFrameDocument();
+                Ext.each(iframeResources.css, function(src) {
+                    var cssContent = resourceCache[src],
+                        frmDocument = frm.getFrameDocument();
 
                     if (Ext.isIE) {
-                        var style = frmDocument.createStyleSheet().cssText = cssContent;
+                        frmDocument.createStyleSheet().cssText = cssContent;
                     } else {
                         var headElements = frmDocument.getElementsByTagName("HEAD");
                         var head;
@@ -254,18 +252,16 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                         styleElement.appendChild(textNode);
                         head.appendChild(styleElement);
                     }
-                }
+                });
 
-                var iFrameJsHeadContributions = iframeResources.js;
-                for (var i = 0, len = iFrameJsHeadContributions.length; i < len; i++) {
-                    var src = iFrameJsHeadContributions[i];
+                Ext.each(iframeResources.js, function(src) {
                     var jsContent = resourceCache[src];
                     (function(src, responseText) {
                         window.setTimeout(function() {
                             frm.writeScript.apply(frm, [responseText, {type: "text/javascript", "title" : src}]);
                         }, 0);
                     })(src, jsContent);
-                }
+                });
 
                 // remove global jquery references and restore previous 'jQuery' and '$' objects on window scope
                 var self = this;
