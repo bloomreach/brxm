@@ -128,7 +128,10 @@ public interface HippoRepository {
      * @param interests the states for which the threshold should be inspected, or null for any state
      * @return true when it is advisable to flush the state of the session, either by calling
      * session.save() or session.refresh(false)
+     * @deprecated since 2.23.05 : This method has no replacement as it has never been possible to properly use it. It will be
+     * removed from 2.25.xx
      */
+    @Deprecated
     public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests);
 
     /**
