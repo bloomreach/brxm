@@ -220,7 +220,8 @@ public interface HstComponentWindow {
     boolean isVisible();
     
     /**
-     * @param visible sets whether this {@link HstComponentWindow} is visible or not
+     * @param visible sets whether this {@link HstComponentWindow} is visible or not. Setting this {@link HstComponentWindow} 
+     *                visibility to false, automatically sets all descendant {@link HstComponentWindow}s visibility to false as well
      */
     void setVisible(boolean visible);
 

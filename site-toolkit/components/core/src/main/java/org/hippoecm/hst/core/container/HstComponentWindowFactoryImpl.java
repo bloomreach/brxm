@@ -137,6 +137,9 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                 
                 if (childCompWindow != null) {
                     window.addChildWindow(childCompWindow);
+                    if (!window.isVisible()) {
+                        childCompWindow.setVisible(false);
+                    }
                 }
             }
         }
