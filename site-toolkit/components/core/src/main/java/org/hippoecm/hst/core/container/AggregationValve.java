@@ -332,7 +332,11 @@ public class AggregationValve extends AbstractValve {
 
             if (window.isVisible()) {
                 // in cms request context, we never load asynchronous
-                if (!request.getRequestContext().isCmsRequest() && window.getComponentInfo().isAsync() && request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() == null) {
+                if (isAsync(window, request)) {
+                    if (request.getAttribute(AggregationValve.class.getName() + ".asyncByAncestor") == Boolean.TRUE) {
+                        // we are done with this component because one of its ancestors is loaded async
+                        continue;
+                    }
                     HstURLFactory urlFactory = request.getRequestContext().getURLFactory();
                     HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE,
                             window.getReferenceNamespace(), null,
@@ -423,6 +427,33 @@ public class AggregationValve extends AbstractValve {
                 } 
             }
         }
+    }
+
+    /**
+     * returns <code>true</code> when the component window is marked as async. When the component is async
+     * due to a ancestor is async, we also set XXX is <code>true</code> on the HstRequest to indicate async due to ancestor
+     * @param window
+     * @param request
+     * @return
+     */
+    private boolean isAsync(final HstComponentWindow window, final HstRequest request) {
+        if (request.getRequestContext().isCmsRequest()) {
+            return false;
+        } 
+        if (request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() != null) {
+            return false;
+        }
+        if (window.getComponentInfo().isAsync()) {
+            return true;
+        }
+        HstComponentWindow parent = window.getParentWindow();
+        while (parent != null) {
+            if (parent.getComponentInfo().isAsync()) {
+                request.setAttribute(AggregationValve.class.getName() + ".asyncByAncestor", Boolean.TRUE);
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
