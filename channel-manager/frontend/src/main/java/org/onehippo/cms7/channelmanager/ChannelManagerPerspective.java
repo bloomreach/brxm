@@ -27,7 +27,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.perspectives.common.DimmedPanel;
+import org.hippoecm.frontend.perspectives.common.ErrorMessagePanel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
@@ -77,7 +77,7 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
             context.registerService(this, channelManagerServiceId);
         } else {
             final Fragment dimmedRootPanelFragment= new Fragment("channel-root", "dimmed-root-fragment", this);
-            dimmedRootPanelFragment.add(new DimmedPanel("dimmed-root-panel-div", new ResourceModel("site.is.down.message")));
+            dimmedRootPanelFragment.add(new ErrorMessagePanel("dimmed-root-panel-div", new ResourceModel("site.is.down.message")));
             add(dimmedRootPanelFragment);
         }
     }
