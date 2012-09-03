@@ -22,15 +22,15 @@ import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 
-public class DimmedPanel extends Panel {
+public class ErrorMessagePanel extends Panel {
 
     private static final long serialVersionUID = 1L;
 
-    public DimmedPanel(String id) {
+    public ErrorMessagePanel(String id) {
         this(id, null);
     }
 
-    public DimmedPanel(String id, IModel<String> resourceModel) {
+    public ErrorMessagePanel(String id, IModel<String> resourceModel) {
         super(id);
 
         if (resourceModel != null) {
@@ -39,7 +39,7 @@ public class DimmedPanel extends Panel {
             add(new Label("siteStatusLabel", new ResourceModel("error.status.message", "This perspective could not be loaded. Please contact your systems administrator.")));
         }
 
-        add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(DimmedPanel.class, "DimmedPanel.css")));
+        add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(ErrorMessagePanel.class, "ErrorMessagePanel.css")));
     }
 
 }
