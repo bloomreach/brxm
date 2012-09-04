@@ -25,6 +25,9 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugincluster</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>service.model</sv:value>
+    </sv:property>
     <sv:node sv:name="root">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -34,9 +37,6 @@
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.root</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.dialog" sv:type="String">
         <sv:value>service.dialog</sv:value>
@@ -144,9 +144,6 @@
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.sorter</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="tree">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -157,9 +154,6 @@
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="center">
@@ -172,9 +166,6 @@
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.center</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="menu">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -185,9 +176,6 @@
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.menu</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.dialog" sv:type="String">
         <sv:value>service.dialog</sv:value>
@@ -206,9 +194,6 @@
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.workflow.WorkflowPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="permissions">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -219,9 +204,6 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.permissions.PermissionsPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="references">
@@ -234,9 +216,6 @@
 	  <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.refs.ReferencesPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="xmlimport">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -247,9 +226,6 @@
       </sv:property>
 	  <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.content.ContentImportPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="xmlexport">
@@ -265,9 +241,6 @@
 	  <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.content.ContentExportPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="addnamespace">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -278,9 +251,6 @@
       </sv:property>
 	  <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.namespace.NamespacePlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="cndimport">
@@ -293,9 +263,6 @@
 	  <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.cnd.CndImportPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="cndexport">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -306,9 +273,6 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.cnd.CndExportPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="check">
@@ -332,9 +296,6 @@
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.patch.CreatePatchPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="applypatch">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -345,9 +306,6 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.patch.ApplyPatchPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="nodereset">
@@ -360,9 +318,6 @@
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.nodereset.NodeResetPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="checkinout">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -373,9 +328,6 @@
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.check.CheckInOutPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="unlock">
@@ -388,9 +340,6 @@
       <sv:property sv:name="plugin.class" sv:type="String">
         <sv:value>org.hippoecm.frontend.plugins.console.menu.lock.UnlockPlugin</sv:value>
       </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
-      </sv:property>
     </sv:node>
     <sv:node sv:name="logout">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -401,9 +350,6 @@
       </sv:property>
       <sv:property sv:name="wicket.id" sv:type="String">
         <sv:value>service.logout</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.model" sv:type="String">
-        <sv:value>service.model</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.dialog" sv:type="String">
         <sv:value>service.logout.dialog</sv:value>
