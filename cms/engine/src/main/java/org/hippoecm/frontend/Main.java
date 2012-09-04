@@ -53,6 +53,7 @@ import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.lang.Bytes;
 import org.apache.wicket.util.string.StringValueConversionException;
+import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -261,6 +262,7 @@ public class Main extends PluginApplication {
         if (Application.DEVELOPMENT.equals(getConfigurationType())) {
             // disable cache
             resourceSettings.getLocalizer().setEnableCache(false);
+            getRequestCycleSettings().setTimeout(Duration.minutes(10));
 
             getDebugSettings().setOutputMarkupContainerClassName(true);
         } else {
@@ -277,7 +279,7 @@ public class Main extends PluginApplication {
         }
         
         setHeaderResponseDecorator(new IHeaderResponseDecorator() {
-            
+
             @Override
             public IHeaderResponse decorate(IHeaderResponse response) {
                 boolean isIE = ((WebClientInfo) RequestCycle.get().getClientInfo()).getProperties().isBrowserInternetExplorer();
@@ -287,7 +289,7 @@ public class Main extends PluginApplication {
                 }
                 return response;
             }
-            
+
         });
 
         if (log.isInfoEnabled()) {
