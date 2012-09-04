@@ -302,11 +302,6 @@ skin/.project
 skin/.settings
 skin/hippo-cms-skin.iml
 skin/target
-sso/.classpath
-sso/.project
-sso/.settings
-sso/hippo-cms-sso.iml
-sso/target
 surf/*.iml
 surf/.project
 surf/.settings
