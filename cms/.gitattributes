@@ -2409,7 +2409,6 @@ skin/src/main/resources/skin/screen-console.css svneol=native#text/css
 skin/src/main/resources/skin/screen.css svneol=native#text/css
 skin/src/main/resources/skin/screen_ie.css -text svneol=unset#text/plain
 skin/src/main/resources/skin/xinhaInternal.css svneol=native#text/css
-sso/src/main/java/org/onehippo/sso/UrlSafeBase64.java -text
 sso/src/test/java/org/onehippo/sso/CredentialCipherTest.java -text
 surf/frontend/pom.xml -text
 surf/frontend/src/main/java/org/hippoecm/frontend/plugins/social/SocialSharingPlugin.html -text
