@@ -405,12 +405,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-sso</artifactId>
-        <version>${hippo.cms.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-surf-frontend</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
@@ -845,10 +839,6 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-sso</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
     <dependency>
@@ -881,11 +871,6 @@
                   <dependency>
                     <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-repository-api</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.onehippo.cms7</groupId>
-                    <artifactId>hippo-cms-sso</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
                   <dependency>
