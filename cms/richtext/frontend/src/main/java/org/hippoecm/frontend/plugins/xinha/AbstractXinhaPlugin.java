@@ -198,6 +198,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 configuration.setEditorStarted(true);
                 configuration.setFocusAfterLoad(true);
                 target.addComponent(AbstractXinhaPlugin.this);
+                target.focusComponent(editor);
                 load();
             }
         });
