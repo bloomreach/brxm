@@ -16,7 +16,7 @@
 if (typeof Hippo === 'undefined') {
     Hippo = {};
 }
-if (typeof Hippo.Hst == 'undefined') {
+if (typeof Hippo.Hst === 'undefined') {
     Hippo.Hst = {};
 }
 Hippo.Hst.AsyncPage = {
@@ -27,7 +27,6 @@ Hippo.Hst.AsyncPage = {
         function () { return new ActiveXObject("Msxml3.XMLHTTP") },
         function () { return new ActiveXObject("Microsoft.XMLHTTP") }
     ],
-
 
     load : function() {
         var result = document.getElementsByClassName("_async");
@@ -40,10 +39,9 @@ Hippo.Hst.AsyncPage = {
                     tmpDiv.innerHTML = xmlHttp.response;
                     while (tmpDiv.firstChild) {
                         fragment.appendChild(tmpDiv.firstChild);
-                        tmpDiv.removeChild(tmpDiv.firstChild);
                     }
-
-                    element.parentNode.replaceChild(fragment, element);
+                    var parent = element.parentNode;
+                    parent.replaceChild(fragment, element);
                 });
             }).call(this, result[i]);
         }
