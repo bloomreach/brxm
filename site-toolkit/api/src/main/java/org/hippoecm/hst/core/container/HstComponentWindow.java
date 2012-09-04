@@ -135,7 +135,7 @@ public interface HstComponentWindow {
     /**
      * The parent component window containing this component window.
      * 
-     * @return the component window containing this component window
+     * @return the component window containing this component window, or <code>null</code> when there is no parent window
      */
     HstComponentWindow getParentWindow();
     

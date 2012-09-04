@@ -452,6 +452,7 @@ public class AggregationValve extends AbstractValve {
                 request.setAttribute(AggregationValve.class.getName() + ".asyncByAncestor", Boolean.TRUE);
                 return true;
             }
+            parent = parent.getParentWindow();
         }
         return false;
     }
