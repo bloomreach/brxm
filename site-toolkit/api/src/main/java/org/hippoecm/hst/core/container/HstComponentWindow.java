@@ -127,7 +127,7 @@ public interface HstComponentWindow {
     
     /**
      * @see {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getLocalParameter(String)}
-     * @param name the name of the parameter
+     * @param paramName the name of the parameter
      * @return the configured parameter value for this <code>name</code> and <code>null</code> if not existing
      */
     String getLocalParameter(String paramName);
