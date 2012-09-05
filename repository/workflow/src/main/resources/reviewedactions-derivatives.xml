@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007-2009 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+         sv:name="reviewed-action">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:deriveddefinition</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:classname" sv:type="String">
+    <sv:value>org.hippoecm.repository.reviewedactions.DerivedDataFunction</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:nodetype" sv:type="String">
+    <sv:value>hippostd:publishableSummary</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:serialver" sv:type="Long">
+    <sv:value>1</sv:value>
+  </sv:property>
+  <sv:node sv:name="hipposys:accessed">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:propertyreferences</sv:value>
+    </sv:property>
+    <sv:node sv:name="published">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resolvepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>../{.}[{_similar},@hippostd:state='published']/hippostd:state</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="unpublished">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resolvepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>../{.}[{_similar},@hippostd:state='unpublished']/hippostd:state</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="draft">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resolvepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>../{.}[{_similar},@hippostd:state='draft']/hippostd:state</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="request">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:resolvepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>../request[@hippostdpubwf:type='publish']/type</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hipposys:derived">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:propertyreferences</sv:value>
+    </sv:property>
+    <sv:node sv:name="summary">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:stateSummary</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>
+
