@@ -81,7 +81,6 @@ public class ObservationTest extends PluginTest {
                     try {
                         writerSession.refresh(false);
                     } catch (RepositoryException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 } catch (RepositoryException ex) {
