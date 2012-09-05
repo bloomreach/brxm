@@ -80,28 +80,8 @@
       <version>${project.version}</version>
       <scope>test</scope>
       <classifier>tests</classifier>
-      <exclusions>
-        <exclusion>
-          <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-          <artifactId>hst-addon-unittestcontents</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>   
-    </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-repository</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>      
-    </dependency>
-    
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
