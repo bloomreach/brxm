@@ -17,13 +17,13 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-addon-brokenlinks</artifactId>
+    <artifactId>hippo-cms-brokenlinks</artifactId>
     <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <name>Brokenlinks common</name>
-  <description>Broken Links Add-on common plugin</description>
-  <artifactId>hippo-addon-brokenlinks-common</artifactId>
+  <name>CMS Brokenlinks common</name>
+  <description>Hippo CMS Broken Links common plugin</description>
+  <artifactId>hippo-cms-brokenlinks-common</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -32,10 +32,6 @@
       <artifactId>hippo-repository-api</artifactId>
       <version>${hippo.repository.version}</version>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
     </dependency>
   </dependencies>
 

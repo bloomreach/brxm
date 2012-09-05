@@ -18,14 +18,13 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-project</artifactId>
-    <version>15-SNAPSHOT</version>
+    <artifactId>hippo-cms</artifactId>
+    <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <name>Brokenlinks</name>
-  <description>Broken Links Add-on</description>
-  <artifactId>hippo-addon-brokenlinks</artifactId>
-  <version>2.23.05-SNAPSHOT</version>
+  <name>CMS Brokenlinks</name>
+  <description>Hippo CMS Broken Links</description>
+  <artifactId>hippo-cms-brokenlinks</artifactId>
   <packaging>pom</packaging>
 
   <modules>
@@ -34,90 +33,6 @@
     <module>common</module>
     <module>test</module>
   </modules>
-
-  <properties>
-    <hippo.commons.version>1.02.00</hippo.commons.version>
-    <hippo.services.version>2</hippo.services.version>
-    <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
-    <hippo.addon-publication-workflow.version>2.23.05-SNAPSHOT</hippo.addon-publication-workflow.version>
-    <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
-
-    <commons-lang.version>2.1</commons-lang.version>
-    <lib.log4j.version>1.2.14</lib.log4j.version>
-    <lib.httpclient.version>4.1.1</lib.httpclient.version>
-    <lib.junit.version>4.8.2</lib.junit.version>
-    <lib.mockito.version>1.9.0</lib.mockito.version>
-    <lib.xerces.version>2.9.1</lib.xerces.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-    <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
-  </properties>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms7-commons</artifactId>
-        <version>${hippo.commons.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-services</artifactId>
-        <version>${hippo.services.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${lib.junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-all</artifactId>
-        <version>${lib.mockito.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>${lib.xerces.version}</version>
-        <scope>test</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-
-  <scm>
-    <url>https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-brokenlinks/trunk</url>
-    <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-brokenlinks/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-brokenlinks/trunk</developerConnection>
-  </scm>
-
-  <repositories>
-    <repository>
-      <id>hippo</id>
-      <name>Hippo Maven 2</name>
-      <url>http://maven.onehippo.com/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <layout>default</layout>
-    </repository>
-  </repositories>
-
-  <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-http</artifactId>
-        <version>1.0-beta-7</version>
-      </extension>
-    </extensions>
-  </build>
 
 </project>
 

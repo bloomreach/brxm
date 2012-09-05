@@ -17,33 +17,33 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-addon-brokenlinks</artifactId>
+    <artifactId>hippo-cms-brokenlinks</artifactId>
     <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <name>Brokenlinks frontend</name>
-  <description>Broken Links Add-on front-end plugin</description>
-  <artifactId>hippo-addon-brokenlinks-frontend</artifactId>
+  <name>CMS Brokenlinks frontend</name>
+  <description>Hippo CMS Broken Links front-end plugin</description>
+  <artifactId>hippo-cms-brokenlinks-frontend</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-brokenlinks-common</artifactId>
+      <artifactId>hippo-cms-brokenlinks-common</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-reporting-frontend</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -54,17 +54,16 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-publication-workflow-common</artifactId>
-      <version>${hippo.addon-publication-workflow.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- Hippo ECM API dependency -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-builtin</artifactId>
       <version>${hippo.repository.version}</version>
       <scope>provided</scope>
     </dependency>
@@ -100,7 +99,6 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-      <version>${lib.junit.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

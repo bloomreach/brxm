@@ -17,20 +17,19 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-addon-brokenlinks</artifactId>
+    <artifactId>hippo-cms-brokenlinks</artifactId>
     <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <name>Brokenlinks repository</name>
-  <description>Broken Links Add-on repository plugin</description>
-  <artifactId>hippo-addon-brokenlinks-repository</artifactId>
+  <name>CMS Brokenlinks repository</name>
+  <description>Hippo CMS Broken Links repository plugin</description>
+  <artifactId>hippo-cms-brokenlinks-repository</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>${lib.httpclient.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.guava</groupId>
@@ -38,10 +37,11 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-brokenlinks-common</artifactId>
+      <artifactId>hippo-cms-brokenlinks-common</artifactId>
       <version>${project.version}</version>
     </dependency>
-   <dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${hippo.repository.version}</version>
@@ -53,17 +53,21 @@
       <version>${hippo.repository.version}</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

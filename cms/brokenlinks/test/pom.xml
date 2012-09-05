@@ -17,13 +17,13 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-addon-brokenlinks</artifactId>
+    <artifactId>hippo-cms-brokenlinks</artifactId>
     <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <name>Brokenlinks test</name>
-  <description>Broken Links Add-on test module</description>
-  <artifactId>hippo-addon-brokenlinks-test</artifactId>
+  <name>CMS Brokenlinks test</name>
+  <description>Hippo CMS Broken Links test module</description>
+  <artifactId>hippo-cms-brokenlinks-test</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -101,13 +101,13 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-brokenlinks-common</artifactId>
+      <artifactId>hippo-cms-brokenlinks-common</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-brokenlinks-repository</artifactId>
+      <artifactId>hippo-cms-brokenlinks-repository</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
