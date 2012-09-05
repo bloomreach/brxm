@@ -14,11 +14,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine"
          sv:name="default">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:workflowcategory</sv:value>
-  </sv:property>
   <sv:node sv:name="edit-model">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>

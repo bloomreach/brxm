@@ -116,7 +116,7 @@
       <sv:value>/hippo:configuration/hippo:workflows</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>501.0</sv:value>
+      <sv:value>601.0</sv:value>
     </sv:property>
   </sv:node>
   <!--Workflows configuration-->
@@ -134,6 +134,67 @@
       <sv:value>503.0</sv:value>
     </sv:property>
   </sv:node>
+
+  <!--Workflows configuration-->
+  <sv:node sv:name="cms-admin-workflows">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>admin-workflows.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>503.0</sv:value>
+    </sv:property>
+  </sv:node>
+  <!--Workflows configuration-->
+  <sv:node sv:name="cms-default-workflows">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>reviewedactions-workflows.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>503.1</sv:value>
+    </sv:property>
+  </sv:node>
+  <!--Workflows configuration-->
+  <sv:node sv:name="cms-editing-workflows">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>editing-reviewedactions-workflows.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>503.0</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="reviewedactions-translations">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentresource" sv:type="String">
+      <sv:value>translation-copy-workflows.xml</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:workflows</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>505.05</sv:value>
+    </sv:property>
+  </sv:node>
+
   <sv:node sv:name="admin-fr">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>

@@ -440,7 +440,7 @@
       <sv:value>/hippo:configuration/hippo:workflows</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>501.0</sv:value>
+      <sv:value>501.2</sv:value>
     </sv:property>
   </sv:node>
   <!-- editing workflows -->
