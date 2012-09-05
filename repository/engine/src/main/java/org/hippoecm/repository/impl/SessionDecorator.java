@@ -143,6 +143,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         return rtelements;
     }
 
+    @Override
     public XAResource getXAResource() {
         return ((XASession) session).getXAResource();
     }
@@ -153,6 +154,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         return DecoratorFactoryImpl.getSessionDecorator(newSession);
     }
 
+    @Override
     public void save() throws AccessDeniedException, ConstraintViolationException, InvalidItemStateException,
             VersionException, LockException, RepositoryException {
         if (derivedEngine != null) {
@@ -186,6 +188,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         return getInternalHippoSession().getDereferencedImportContentHandler(parentAbsPath, uuidBehavior, referenceBehavior, mergeBehavior);
     }
 
+    @Override
     public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior,
             int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException,
             ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException,
@@ -212,6 +215,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
+    @Override
     public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
         Item item = getItem(absPath);
@@ -227,6 +231,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
+    @Override
     public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException {
         try {
@@ -244,6 +249,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
+    @Override
     public void exportSystemView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException {
 
@@ -263,6 +269,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
+    @Override
     public void exportSystemView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException {
         try {
@@ -318,6 +325,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
      * node which will be a copy of srcNode
      * @returns the resulting copy
      */
+    @Override
     public Node copy(Node srcNode, String destAbsNodePath) throws PathNotFoundException, ItemExistsException,
             LockException, VersionException, RepositoryException {
         if (destAbsNodePath.startsWith(srcNode.getPath()+"/")) {
@@ -411,30 +419,21 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
+    @Override
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
                                                                             NoSuchNodeTypeException, RepositoryException {
         NodeIterator changesIter = getInternalHippoSession().pendingChanges(node, nodeType, prune);
         return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
+    @Override
     public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
                                                                           RepositoryException {
         NodeIterator changesIter = getInternalHippoSession().pendingChanges(node, nodeType, false);
         return new NodeIteratorDecorator(factory, this, changesIter);
     }
 
-    public NodeIterator pendingChanges(String nodeType, boolean prune) throws NamespaceException,
-                                                                            NoSuchNodeTypeException, RepositoryException {
-        NodeIterator changesIter = getInternalHippoSession().pendingChanges(null, nodeType, prune);
-        return new NodeIteratorDecorator(factory, this, changesIter);
-    }
-
-    public NodeIterator pendingChanges(String nodeType) throws NamespaceException, NoSuchNodeTypeException,
-                                                                          RepositoryException {
-        NodeIterator changesIter = getInternalHippoSession().pendingChanges(null, nodeType, false);
-        return new NodeIteratorDecorator(factory, this, changesIter);
-    }
-
+    @Override
     public NodeIterator pendingChanges() throws RepositoryException {
         NodeIterator changesIter = getInternalHippoSession().pendingChanges(null, null, false);
         return new NodeIteratorDecorator(factory, this, changesIter);
@@ -459,6 +458,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         }
     }
 
+    @Override
     public void registerSessionCloseCallback(CloseCallback callback) {
         getInternalHippoSession().registerSessionCloseCallback(callback);
     }

@@ -33,6 +33,9 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
+import org.xml.sax.ContentHandler;
+import org.xml.sax.SAXException;
+
 /**
  * An extension of a plain {@link javax.jcr.Session} based session.  Any session as obtained from the Hippo Repository 2 can be cased to
  * a HippoSession allowing access to the extensions to the JCR API.
@@ -106,7 +109,6 @@ public interface HippoSession extends Session {
     public NodeIterator pendingChanges() throws RepositoryException;
 
     /**
-     * <b>This call is not (yet) part of the API, but under evaluation.</b>
      * Export a dereferenced view of a node.
      *
      * @param absPath the absolute path to the subtree to be exported
@@ -120,6 +122,23 @@ public interface HippoSession extends Session {
      */
     public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException;
+
+    /**
+     * Export a dereferenced view of a node.
+     *
+     * @param absPath the absolute path to the subtree to be exported
+     * @param contentHandler The  <code>org.xml.sax.ContentHandler</code> to
+     *                       which the SAX events representing the XML serialization of the subgraph
+     *                       will be output.
+     * @param binaryAsLink whether to include binaries
+     * @param noRecurse whether to output just a single node or the whole subtree
+     * @throws IOException in case of an error writing to the output stream
+     * @throws RepositoryException a generic error while accessing the repository
+     * @throws PathNotFoundException in case the absPath parameter does not point to a valid node
+     * @see javax.jcr.Session#exportSystemView(String,OutputStream,boolean,boolean)
+     */
+    public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
+            throws PathNotFoundException, SAXException, RepositoryException;
 
     /**
      * <b>This call is not (yet) part of the API, but under evaluation.</b>
