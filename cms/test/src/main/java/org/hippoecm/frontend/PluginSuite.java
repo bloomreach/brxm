@@ -15,27 +15,39 @@
  */
 package org.hippoecm.frontend;
 
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-import org.junit.internal.runners.InitializationError;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.Suite;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.File;
 
 import javax.jcr.RepositoryException;
-import java.io.File;
+
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
+import org.junit.runner.notification.RunNotifier;
+import org.junit.runners.Suite;
+import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.RunnerBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PluginSuite extends Suite {
 
     static final Logger log = LoggerFactory.getLogger(PluginSuite.class);
-    
+
+    public static Class<?>[] getAnnotatedClasses(Class<?> klass) throws InitializationError {
+        SuiteClasses annotation= klass.getAnnotation(SuiteClasses.class);
+        if (annotation == null)
+            throw new InitializationError(String.format("class '%s' must have a SuiteClasses annotation", klass.getName()));
+        return annotation.value();
+    }
+
     /**
      * called when the @RunWith annotation is specified on a test class.
-     * Such a class is ignored; it must be explicitly added to a 
      */
     public PluginSuite(Class<?> klass) throws InitializationError {
-        super(klass);
+        super(klass, getAnnotatedClasses(klass));
+    }
+
+    public PluginSuite(Class<?> klass, RunnerBuilder builder) throws InitializationError {
+        super(klass, builder);
     }
 
     static private void clear() {

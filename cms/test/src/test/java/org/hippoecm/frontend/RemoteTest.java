@@ -24,10 +24,10 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
 import org.junit.Ignore;
-import org.junit.internal.runners.InitializationError;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
+import org.junit.runners.model.InitializationError;
 
 @Ignore
 @RunWith(RemoteTest.class)
@@ -44,7 +44,7 @@ public class RemoteTest extends Suite
 {
 
     public RemoteTest(Class<?> klass) throws InitializationError {
-        super(klass);
+        super(klass, PluginSuite.getAnnotatedClasses(klass));
     }
 
     protected RemoteTest(Class<?> klass, Class<?>[] annotatedClasses) throws InitializationError {

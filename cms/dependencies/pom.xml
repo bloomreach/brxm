@@ -130,6 +130,11 @@
       <artifactId>hippo-cms-console-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-automatic-export-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- skin -->
     <dependency>

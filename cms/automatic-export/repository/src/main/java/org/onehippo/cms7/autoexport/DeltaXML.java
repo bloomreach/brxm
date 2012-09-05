@@ -18,8 +18,6 @@ package org.onehippo.cms7.autoexport;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.jackrabbit.core.observation.EventState;
-
 import static javax.jcr.observation.Event.NODE_ADDED;
 import static javax.jcr.observation.Event.NODE_REMOVED;
 import static javax.jcr.observation.Event.PROPERTY_ADDED;
@@ -90,7 +88,7 @@ class DeltaXML {
         if (contextPath.startsWith(path) && event.getType() == NODE_REMOVED) {
             // parent node needs to be overlayed, we don't handle that
             log.warn("Change not handled by export: " 
-                    + EventState.valueOf(event.getType()) + " on " + path
+                    + ExportEvent.valueOf(event.getType()) + " on " + path
                     + ". You will need to do this manually.");
             instruction.clear();
             // parent node was removed, we need to be deleted
@@ -138,7 +136,7 @@ class DeltaXML {
             if (parentInstruction == null) {
                 // parent node needs to be overlayed, we don't handle that
                 log.warn("Change not handled by export: " 
-                        + EventState.valueOf(event.getType()) + " on " + path
+                        + ExportEvent.valueOf(event.getType()) + " on " + path
                         + ". You will need to do this manually.");
                 return false;
             }
@@ -148,7 +146,7 @@ class DeltaXML {
                     // node was not defined by our project
                     // parent node needs to be overlayed, we don't handle that
                     log.warn("Change not handled by export: " 
-                            + EventState.valueOf(event.getType()) + " on " + path
+                            + ExportEvent.valueOf(event.getType()) + " on " + path
                             + ". You will need to do this manually.");
                     return false;
                 }
@@ -157,7 +155,7 @@ class DeltaXML {
                     // all we can do is remove the node combine directive
                     // we can't remove the node itself
                     log.warn("Change not handled by export: " 
-                            + EventState.valueOf(event.getType()) + " on " + path
+                            + ExportEvent.valueOf(event.getType()) + " on " + path
                             + ". You will need to do this manually.");
                 }
                 purge(parentInstruction);
@@ -183,7 +181,7 @@ class DeltaXML {
             if (parentInstruction == null) {
                 // parent node needs to be overlayed, we don't handle that
                 log.warn("Change not handled by export: " 
-                        + EventState.valueOf(event.getType()) + " on " + path
+                        + ExportEvent.valueOf(event.getType()) + " on " + path
                         + ". You will need to do this manually.");
                 return false;
             }
@@ -191,7 +189,7 @@ class DeltaXML {
                 DeltaXMLInstruction instruction = parentInstruction.getInstruction(name, false);
                 if (instruction == null) {
                     log.warn("Change not handled by export: " 
-                            + EventState.valueOf(event.getType()) + " on " + path
+                            + ExportEvent.valueOf(event.getType()) + " on " + path
                             + ". You will need to do this manually.");
                     return false;
                 }
@@ -200,7 +198,7 @@ class DeltaXML {
                     // all we can do is remove the property override directive
                     // we can't remove the property
                     log.warn("Change not handled by export: " 
-                            + EventState.valueOf(event.getType()) + " on " + path
+                            + ExportEvent.valueOf(event.getType()) + " on " + path
                             + ". You will need to do this manually.");
                 }
                 purge(parentInstruction);

@@ -253,6 +253,11 @@ public class HippoTester extends WicketTester {
             throw new RepositoryException();
         }
 
+        public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean skipBinary,
+                boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException {
+            throw new RepositoryException();
+        }
+
         public ClassLoader getSessionClassLoader() throws RepositoryException {
             throw new RepositoryException();
         }

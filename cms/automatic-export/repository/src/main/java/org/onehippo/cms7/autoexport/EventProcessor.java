@@ -37,7 +37,6 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
-import org.apache.jackrabbit.core.observation.EventState;
 import org.dom4j.DocumentException;
 
 import static javax.jcr.observation.Event.NODE_ADDED;
@@ -218,7 +217,7 @@ public class EventProcessor implements EventListener {
         for (ExportEvent event : events) {
             String path = event.getPath();
             if (log.isDebugEnabled()) {
-                log.debug(EventState.valueOf(event.getType()) + " on " + path);
+                log.debug(ExportEvent.valueOf(event.getType()) + " on " + path);
             }
 
             Module module = getModuleForPath(path);

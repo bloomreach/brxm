@@ -20,8 +20,6 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
-import org.apache.jackrabbit.core.observation.EventState;
-
 class ExportEvent implements Event {
 
     private final int type;
@@ -104,10 +102,34 @@ class ExportEvent implements Event {
             sb.append("Event: Path: ");
             sb.append(getPath());
             sb.append(", Type: ");
-            sb.append(EventState.valueOf(getType()));
+            sb.append(valueOf(getType()));
             stringValue = sb.toString();
         }
         return stringValue;
+    }
+
+    /**
+     * Returns a String representation of <code>eventType</code>.
+     *
+     * @param eventType an event type defined by {@link Event}.
+     * @return a String representation of <code>eventType</code>.
+     */
+    public static String valueOf(int eventType) {
+        if (eventType == Event.NODE_ADDED) {
+            return "NodeAdded";
+        } else if (eventType == Event.NODE_MOVED) {
+            return "NodeMoved";
+        } else if (eventType == Event.NODE_REMOVED) {
+            return "NodeRemoved";
+        } else if (eventType == Event.PROPERTY_ADDED) {
+            return "PropertyAdded";
+        } else if (eventType == Event.PROPERTY_CHANGED) {
+            return "PropertyChanged";
+        } else if (eventType == Event.PROPERTY_REMOVED) {
+            return "PropertyRemoved";
+        } else {
+            return "UnknownEventType";
+        }
     }
 
 }
