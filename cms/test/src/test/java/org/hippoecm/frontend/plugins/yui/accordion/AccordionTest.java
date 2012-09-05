@@ -15,20 +15,17 @@
  */
 package org.hippoecm.frontend.plugins.yui.accordion;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.util.List;
+
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.hippoecm.frontend.plugins.yui.YuiPage;
 import org.hippoecm.frontend.plugins.yui.YuiTest;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionConfiguration;
-import org.hippoecm.frontend.plugins.yui.accordion.AccordionManagerBehavior;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class AccordionTest extends YuiTest {
 
@@ -64,8 +61,6 @@ public class AccordionTest extends YuiTest {
     @Test
     public void testAccordion() throws Exception {
         setUp(Page.class);
-
-//        System.out.println(page.asXml());
 
         HtmlElement firstSection = null;
         for (HtmlElement element : page.getElementsByTagName("div")) {

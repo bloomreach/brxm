@@ -2573,6 +2573,8 @@ test/src/test/java/org/hippoecm/frontend/session/UserSessionTest.java svneol=nat
 test/src/test/java/org/hippoecm/frontend/util/MappingTestBean.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/util/NodeStateUtilTest.java -text
 test/src/test/java/org/hippoecm/frontend/util/PluginConfigMapperTest.java svneol=native#text/plain
+test/src/test/resources/log4j.dtd svneol=native#text/plain
+test/src/test/resources/log4j.xml svneol=native#text/plain
 test/src/test/resources/mock.jar -text
 tools/development-content/README.txt svneol=native#text/plain
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin$Dialog$AddDocumentsWizard.properties -text svneol=unset#text/plain
