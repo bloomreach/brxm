@@ -165,29 +165,6 @@
         <load-on-startup>4</load-on-startup>
     </servlet>
 
-    <!-- JCR over WebDAV Server -->
-    <servlet>
-        <servlet-name>JCRWebdavServer</servlet-name>
-        <description>The servlet used to remote JCR calls over HTTP.</description>
-        <servlet-class>org.hippoecm.repository.server.remoting.davex.JcrRemotingServlet</servlet-class>
-        <init-param>
-            <param-name>missing-auth-mapping</param-name>
-            <param-value></param-value>
-            <description>By default, null login with null-credentials are used on the repository.</description>
-        </init-param>
-        <init-param>
-            <param-name>authenticate-header</param-name>
-            <param-value>Basic realm="Hippo Repository Webdav Server"</param-value>
-            <description>Defines the value of the 'WWW-Authenticate' header.</description>
-        </init-param>
-        <init-param>
-            <param-name>resource-path-prefix</param-name>
-            <param-value>/server</param-value>
-            <description>defines the prefix for spooling resources out of the repository.</description>
-        </init-param>
-        <load-on-startup>5</load-on-startup>
-    </servlet>
-
     <servlet-mapping>
         <servlet-name>StatusServlet</servlet-name>
         <url-pattern>/status/*</url-pattern>
@@ -201,11 +178,6 @@
     <servlet-mapping>
         <servlet-name>Repository</servlet-name>
         <url-pattern>/repository/*</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>JCRWebdavServer</servlet-name>
-        <url-pattern>/server/*</url-pattern>
     </servlet-mapping>
 
   <servlet-mapping>
