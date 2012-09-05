@@ -38,7 +38,7 @@
   </category>
   
   <category additivity="false" name="org.hippoecm.hst.security">
-    <level value="info"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   
