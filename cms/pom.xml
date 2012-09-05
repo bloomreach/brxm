@@ -68,6 +68,7 @@
     <module>translation</module>
     <module>versioning</module>
     <module>workflowmenu</module>
+    <module>workflow</module>
 
     <module>shared-dependencies</module>
     <module>dependencies</module>
