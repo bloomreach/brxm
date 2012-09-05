@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="hippo-reports" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+  xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
+
+  <sv:node sv:name="broken-links-translator" h:merge="combine">
+    <sv:node sv:name="hippostd:translations" h:merge="combine">
+      <sv:node sv:name="no-data" h:merge="combine">
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Keine broken links gefunden</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+
+      <sv:node sv:name="title" h:merge="combine">
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>de</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Broken Links</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+
+</sv:node>

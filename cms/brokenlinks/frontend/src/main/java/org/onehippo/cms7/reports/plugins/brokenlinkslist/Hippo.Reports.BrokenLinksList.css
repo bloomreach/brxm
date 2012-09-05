@@ -1,0 +1,16 @@
+.hippo-reports-document-list .x-grid3-row {
+  cursor: pointer;
+}
+
+.hippo-reports-document-list .x-action-col-icon {
+  margin-right: 2px;
+  margin-top: 2px;
+}
+
+.reports-refresh-button {
+    visibility: hidden;
+}
+
+.refresh-group {
+    visibility: hidden;
+}

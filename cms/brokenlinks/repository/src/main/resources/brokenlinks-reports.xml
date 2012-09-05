@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="hippo-reports" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+  xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
+  <sv:node sv:name="broken-links">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.onehippo.cms7.reports.layout.panel.BrokenLinksPanelPlugin</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="broken-links-plugin">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="auto.expand.column" sv:type="String">
+      <sv:value>name</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="columns" sv:type="String">
+      <sv:value>name</sv:value>
+      <sv:value>brokenlinksLinks</sv:value>
+      <sv:value>brokenlinksBrokenSince</sv:value>
+      <sv:value>brokenlinksStatus</sv:value>
+    </sv:property>
+    <sv:property sv:name="query" sv:type="String">
+      <sv:value>//element(*, brokenlinks:brokenlinks) order by @jcr:score descending</sv:value>
+    </sv:property>
+    <sv:property sv:name="height" sv:type="String">
+      <sv:value>400</sv:value>
+    </sv:property>
+    <sv:property sv:name="page.size" sv:type="Long">
+      <sv:value>10</sv:value>
+    </sv:property>
+    <sv:property sv:name="paging" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.onehippo.cms7.reports.plugins.brokenlinkslist.BrokenLinksListPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="title.color" sv:type="String">
+      <sv:value>highlighted</sv:value>
+    </sv:property>
+    <sv:property sv:name="title.size" sv:type="String">
+      <sv:value>large</sv:value>
+    </sv:property>
+    <sv:property sv:name="translator.id" sv:type="String">
+      <sv:value>service.reports.brokenlinks.translator</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.id" sv:type="String">
+      <sv:value>service.reports.brokenlinks</sv:value>
+    </sv:property>
+    <sv:property sv:name="width" sv:type="String">
+      <sv:value>1</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="broken-links-translator">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippostd:translated</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.i18n.ConfigTraversingPlugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="translator.id" sv:type="String">
+      <sv:value>service.reports.brokenlinks.translator</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippostd:translations">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:translations</sv:value>
+      </sv:property>
+      <sv:node sv:name="no-data">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:translated</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>nl</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Geen gebroken links gevonden.</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>No broken links found.</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Aucun lien cassé n'a été trouvé.</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Non che links rotti</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+      <sv:node sv:name="title">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:translated</sv:value>
+        </sv:property>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>nl</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Gebroken Links</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>en</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Broken Links</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>fr</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Liens cassés</sv:value>
+          </sv:property>
+        </sv:node>
+        <sv:node sv:name="hippo:translation">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:translation</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:language" sv:type="String">
+            <sv:value>it</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippo:message" sv:type="String">
+            <sv:value>Links rotti</sv:value>
+          </sv:property>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+</sv:node>

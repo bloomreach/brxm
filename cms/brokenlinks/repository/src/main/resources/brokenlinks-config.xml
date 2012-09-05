@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="brokenlinks">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:module</sv:value>
+  </sv:property>
+  <sv:node sv:name="hippo:moduleconfig">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:handle</sv:value>
+    </sv:property>
+    <sv:node sv:name="hippo:moduleconfig">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>brokenlinks:config</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>

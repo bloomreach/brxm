@@ -864,6 +864,24 @@ automatic-export/repository/src/test/resources/hippoecm-extension.xml -text
 automatic-export/repository/src/test/resources/initializeitemtest/delta.xml -text
 automatic-export/repository/src/test/resources/log4j.dtd -text
 automatic-export/repository/src/test/resources/log4j.xml -text
+brokenlinks/common/pom.xml svneol=native#text/plain
+brokenlinks/frontend/pom.xml svneol=native#text/plain
+brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/layout/panel/BrokenLinksPanelPlugin_nl.properties -text
+brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/layout/panel/broken-links-48.png -text svneol=unset#image/png
+brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/plugins/brokenlinkslist/BrokenLinksListColumns_de.properties -text
+brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/plugins/brokenlinkslist/BrokenLinksListPanel_de.properties -text
+brokenlinks/pom.xml svneol=native#text/plain
+brokenlinks/repository/pom.xml svneol=native#text/plain
+brokenlinks/repository/src/main/resources/brokenlinks-config.xml svneol=native#text/plain
+brokenlinks/repository/src/main/resources/brokenlinks-reports.xml svneol=native#text/plain
+brokenlinks/repository/src/main/resources/brokenlinks-reports_de.xml -text
+brokenlinks/repository/src/main/resources/brokenlinks-workflows.xml svneol=native#text/plain
+brokenlinks/repository/src/main/resources/brokenlinks.cnd -text
+brokenlinks/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
+brokenlinks/repository/src/test/java/org/onehippo/cms7/brokenlinks/LinkCheckerTest.java -text
+brokenlinks/test/pom.xml svneol=native#text/plain
+brokenlinks/test/src/test/resources/brokenlinks-test.cnd -text
+brokenlinks/test/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmDialog_de.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmDialog_fr.properties -text

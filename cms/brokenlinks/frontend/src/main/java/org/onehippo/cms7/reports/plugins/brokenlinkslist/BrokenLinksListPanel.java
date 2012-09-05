@@ -1,0 +1,193 @@
+/*
+ *  Copyright 2011 Hippo.
+ * 
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.onehippo.cms7.reports.plugins.brokenlinkslist;
+
+import java.util.Calendar;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.query.Query;
+import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.repository.api.HippoNodeType;
+
+import org.onehippo.cms7.reports.plugins.ReportPanel;
+import org.onehippo.cms7.reports.plugins.ReportUtil;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Request;
+import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.CSSPackageResource;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.session.UserSession;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wicketstuff.js.ext.data.ExtJsonStore;
+import org.wicketstuff.js.ext.util.ExtClass;
+import org.wicketstuff.js.ext.util.ExtEventListener;
+import org.wicketstuff.js.ext.util.JSONIdentifier;
+
+@ExtClass("Hippo.Reports.BrokenLinksListPanel")
+public class BrokenLinksListPanel extends ReportPanel {
+
+    private static final long serialVersionUID = 1L;
+
+    private static final String CONFIG_COLUMNS = "columns";
+    private static final String CONFIG_AUTO_EXPAND_COLUMN = "auto.expand.column";
+    private static final String TITLE_TRANSLATOR_KEY = "title";
+    private static final String NO_DATA_TRANSLATOR_KEY = "no-data";
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
+    private final Logger log = LoggerFactory.getLogger(BrokenLinksListPanel.class);
+    private final IPluginContext context;
+    private final int pageSize;
+    private final BrokenLinksListColumns columns;
+    private final ExtJsonStore<Object> store;
+    private String updateText;
+
+    public BrokenLinksListPanel(final IPluginContext context, final IPluginConfig config, final String query) {
+        super(context, config);
+
+        this.context = context;
+        pageSize = config.getInt("page.size", DEFAULT_PAGE_SIZE);
+        columns = new BrokenLinksListColumns(config.getStringArray(CONFIG_COLUMNS));
+        store = new BrokenLinksStore(query, columns, pageSize);
+        add(store);
+
+        add(CSSPackageResource.getHeaderContribution(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.css"));
+        add(JavascriptPackageResource.getHeaderContribution(BrokenLinksListPanel.class, "Hippo.Reports.BrokenLinksList.js"));
+
+        updateText = null;
+        try {
+            for (NodeIterator brokenlinksConfigs = (((UserSession)org.apache.wicket.Session.get()).getJcrSession()).getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:config]", Query.JCR_SQL2).execute().getNodes(); brokenlinksConfigs.hasNext();) {
+                Node brokenlinksConfig = brokenlinksConfigs.nextNode();
+                if (brokenlinksConfig.isNodeType(HippoNodeType.NT_DOCUMENT) && brokenlinksConfig.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+                    brokenlinksConfig = brokenlinksConfig.getParent();
+                    if (brokenlinksConfig.hasProperty("hippo:request/hipposched:triggers/default/hipposched:nextFireTime")) {
+                        Calendar schedule = brokenlinksConfig.getProperty("hippo:request/hipposched:triggers/default/hipposched:nextFireTime").getValue().getDate();
+                        if (updateText == null) {
+                            updateText = "";
+                        } else {
+                            updateText += "\n";
+                        }
+                        updateText += new StringResourceModel("update-known", this, null, new Object[] {schedule.getTime()}).getObject();
+                    }
+                }
+            }
+        } catch (RepositoryException ex) {
+        }
+        if (updateText == null) {
+            updateText = new StringResourceModel("update-unknown", this, null, "").getObject();
+        }
+       
+        
+        addEventListener("documentSelected", new ExtEventListener() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void onEvent(final AjaxRequestTarget ajaxRequestTarget, java.util.Map<java.lang.String,org.json.JSONArray> parameters) {
+                Request request = RequestCycle.get().getRequest();
+                String path = request.getParameter("path");
+                browseToDocument(path);
+            }
+        });
+    }
+
+    private Node getNode(String path) {
+        try {
+            Session session = ((UserSession) getSession()).getJcrSession();
+            return session.getNode(path);
+        } catch (RepositoryException e) {
+            log.warn("Unable to get the node " + path, e);
+        }
+        return null;
+    }
+
+    private void browseToDocument(String path) {
+        if (path == null || path.length() == 0) {
+            log.warn("No document path to browse to");
+            return;
+        }
+
+        final Node node = getNode(path);
+        if (node == null) {
+            return;
+        }
+
+        JcrNodeModel nodeModel = new JcrNodeModel(node);
+
+        @SuppressWarnings("unchecked") // IBrowseService always uses a JcrNodeModel
+        IBrowseService<JcrNodeModel> browseService = context.getService("service.browse", IBrowseService.class);
+
+        browseService.browse(nodeModel);
+    }
+
+    @Override
+    protected void preRenderExtHead(StringBuilder js) {
+        store.onRenderExtHead(js);
+        super.preRenderExtHead(js);
+    }
+
+    @Override
+    protected void onRenderProperties(JSONObject properties) throws JSONException {
+        super.onRenderProperties(properties);
+
+        properties.put("columns", getColumnsConfig());
+        properties.put("store", new JSONIdentifier(store.getJsObjectId()));
+        properties.put("pageSize", this.pageSize);
+        properties.put("paging", config.getAsBoolean("paging", true));
+        properties.put("noDataText", ReportUtil.getTranslation(this, NO_DATA_TRANSLATOR_KEY, StringUtils.EMPTY));
+        properties.put("updateText", this.updateText);
+
+        if (config.containsKey(CONFIG_AUTO_EXPAND_COLUMN)) {
+            String autoExpandColumn = config.getString(CONFIG_AUTO_EXPAND_COLUMN);
+
+            if (!columns.containsColumn(autoExpandColumn)) {
+                // prevent an auto-expand column that is not an actual column name, otherwise ExtJs stops rendering
+                log.warn("Ignoring unknown auto-expand column '{}'", autoExpandColumn);
+            } else {
+                properties.put("autoExpandColumn", autoExpandColumn);
+            }
+        }
+
+        final String title = ReportUtil.getTranslation(this, TITLE_TRANSLATOR_KEY, StringUtils.EMPTY);
+        if (StringUtils.isNotEmpty(title)) {
+            properties.put("title", title);
+        }
+    }
+
+    private JSONArray getColumnsConfig() throws JSONException {
+        JSONArray result = new JSONArray();
+
+        for (IBrokenLinkDocumentListColumn column: columns.getAllColumns()) {
+            JSONObject config = column.getExtColumnConfig();
+            if (config != null) {
+                result.put(config);
+            }
+        }
+
+        return result;
+    }
+
+}

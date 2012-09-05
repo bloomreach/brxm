@@ -1,0 +1,19 @@
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0.2'>
+<brokenlinks='http://www.onehippo.org/jcr/brokenlinks/nt/1.0'>
+
+[brokenlinks:link] > nt:base
+- brokenlinks:url (string)
+- brokenlinks:errorCode (long)
+- brokenlinks:errorMessage (string)
+- brokenlinks:brokenSince (date)
+- brokenlinks:lastTimeChecked (date)
+- brokenlinks:excerpt (string)
+
+[brokenlinks:brokenlinks] mixin
++ brokenlinks:link (brokenlinks:link) multiple
+
+[brokenlinks:config] > hippo:document
