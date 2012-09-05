@@ -49,11 +49,6 @@
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="false" name="org.hippoecm.frontend">
-    <level value="warn"/>
-    <appender-ref ref="console"/>
-  </category>
-
   <category additivity="false" name="org.apache.wicket">
     <level value="warn"/>
     <appender-ref ref="console"/>

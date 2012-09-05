@@ -357,5 +357,4 @@ workflow/src/main/resources/editing-reviewedactions-workflows.xml svneol=native#
 workflow/src/main/resources/hippostdpubwf.cnd -text
 workflow/src/main/resources/reviewedactions-derivatives.xml -text
 workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
-workflow/src/main/resources/translation-copy-workflows.xml svneol=native#text/plain
 workflow/src/test/resources/reviewedaction-test.cnd -text
