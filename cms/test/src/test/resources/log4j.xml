@@ -45,8 +45,14 @@
     <appender-ref ref="root"/>
   </category>
 
-  <!-- Suppress the un-relevant HTMLUnit warnings and errors -->
+  <!-- Suppress un-relevant HTMLUnit warnings and errors -->
   <category name="com.gargoylesoftware.htmlunit">
+    <level value="off"/>
+  </category>
+
+  <!-- Suppress json-lib warnings and errors -->
+
+  <category name="net.sf.json">
     <level value="off"/>
   </category>
 

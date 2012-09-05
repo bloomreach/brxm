@@ -18,11 +18,6 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 import java.util.Map;
 import java.util.TreeMap;
 
-import junit.framework.TestCase;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-
 import org.apache.wicket.markup.html.WebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.Link;
@@ -41,6 +36,11 @@ import org.hippoecm.frontend.plugins.yui.layout.YuiIdProcessor;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.junit.Test;
+
+import junit.framework.TestCase;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+import net.sf.json.JsonConfig;
 
 public class TestSettings extends TestCase {
 
@@ -130,7 +130,6 @@ public class TestSettings extends TestCase {
         TestPage page = (TestPage) tester.startPage(TestPage.class);
         WireframeSettings wfSettings = page.getWireframeSettings();
 
-//        System.out.println(wfSettings.toScript());
         JsonConfig jsonConfig = new JsonConfig();
         jsonConfig.registerJsonValueProcessor(YuiId.class, new YuiIdProcessor());
         JSONObject wfObject = JSONObject.fromObject(wfSettings, jsonConfig);
