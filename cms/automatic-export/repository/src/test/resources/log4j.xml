@@ -74,11 +74,11 @@
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.onehippo.cms7.autoexport">
-    <level value="debug"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
   <category additivity="false" name="org.onehippo.cms7.autoexport.test">
-    <level value="debug"/>
+    <level value="warn"/>
     <appender-ref ref="console"/>
   </category>
 
