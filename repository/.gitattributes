@@ -354,6 +354,7 @@ workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequest.
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl.java -text
 workflow/src/main/resources/META-INF/persistence.xml svneol=native#text/plain
 workflow/src/main/resources/editing-reviewedactions-workflows.xml svneol=native#text/plain
+workflow/src/main/resources/hippostdpubwf.cnd -text
 workflow/src/main/resources/reviewedactions-derivatives.xml -text
 workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/translation-copy-workflows.xml svneol=native#text/plain
