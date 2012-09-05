@@ -114,35 +114,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-engine</artifactId>
-      <version>${hippo.repository.version}</version>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-test</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-engine</artifactId>
-      <version>${hippo.repository.version}</version>
       <classifier>tests</classifier>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>   
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-repository</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>      
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-unittestcontents</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
