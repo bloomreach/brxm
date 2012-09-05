@@ -41,8 +41,9 @@ import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public abstract class PluginTest extends RepositoryTest {
+public abstract class PluginTest extends RepositoryTestCase {
 
     protected final class PluginTestApplication extends Main {
 
@@ -90,9 +91,9 @@ public abstract class PluginTest extends RepositoryTest {
      * Use the USER_CREDENTIALS instead
      */
     @Deprecated
-    protected static ValueMap CREDENTIALS = new ValueMap("username=" + RepositoryTest.SYSTEMUSER_ID + ",password=" + RepositoryTest.SYSTEMUSER_PASSWORD.toString());
+    protected static ValueMap CREDENTIALS = new ValueMap("username=" + RepositoryTestCase.SYSTEMUSER_ID + ",password=" + RepositoryTestCase.SYSTEMUSER_PASSWORD.toString());
 
-    protected static UserCredentials USER_CREDENTIALS = new UserCredentials(RepositoryTest.SYSTEMUSER_ID, RepositoryTest.SYSTEMUSER_PASSWORD.toString());
+    protected static UserCredentials USER_CREDENTIALS = new UserCredentials(RepositoryTestCase.SYSTEMUSER_ID, RepositoryTestCase.SYSTEMUSER_PASSWORD.toString());
 
     protected static String[] instantiate(String[] content, Map<String, String> parameters) {
         String[] result = new String[content.length];

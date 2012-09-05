@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 @Ignore
 @RunWith(RemoteSPITest.class)
@@ -60,7 +61,7 @@ public class RemoteSPITest extends Suite
             backgroundServer.run(true);
             Thread.sleep(3000);
             server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository/spi");
-            RepositoryTest.setRepository(server);
+            RepositoryTestCase.setRepository(server);
 
             super.run(notifier);
 

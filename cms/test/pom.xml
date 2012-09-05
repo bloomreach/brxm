@@ -68,32 +68,15 @@
     <!-- embedded repository  -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
+      <artifactId>hippo-repository-dependencies</artifactId>
+      <version>${hippo.repository.version}</version>
       <scope>compile</scope>
+      <type>pom</type>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-connector</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-engine</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-modules</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-builtin</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-config</artifactId>
+      <artifactId>hippo-repository-testutils</artifactId>
+      <version>${hippo.repository.version}</version>
       <scope>compile</scope>
     </dependency>
     <dependency>

@@ -33,13 +33,14 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class EditmodelWorkflowTest extends TestCase {
+public class EditmodelWorkflowTest extends RepositoryTestCase {
 
     @Before
     @Override

@@ -20,6 +20,7 @@ import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import javax.jcr.*;
 import javax.jcr.nodetype.PropertyDefinition;
@@ -41,8 +42,8 @@ import javax.jcr.nodetype.PropertyDefinition;
             }
         }
         </code>
+ @deprecated Use {@link RepositoryTestCase} instead
  */
-// FIXME: this is a direct fork of the TestCase in hippo-repository-engine
 public abstract class RepositoryTest
 {
 

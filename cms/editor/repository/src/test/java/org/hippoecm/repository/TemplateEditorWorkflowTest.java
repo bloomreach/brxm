@@ -31,12 +31,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class TemplateEditorWorkflowTest extends TestCase {
+public class TemplateEditorWorkflowTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {

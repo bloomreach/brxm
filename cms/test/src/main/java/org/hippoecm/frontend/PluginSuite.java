@@ -25,6 +25,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.RunnerBuilder;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +77,7 @@ public class PluginSuite extends Suite {
         HippoRepository server = null;
         try {
             server = HippoRepositoryFactory.getHippoRepository();
-            RepositoryTest.setRepository(server);
+            RepositoryTestCase.setRepository(server);
 
             super.run(notifier);
 
