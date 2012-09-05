@@ -25,6 +25,8 @@ api/src/site/findbugs-exclude.xml svneol=native#text/plain
 api/src/site/site.xml svneol=native#text/plain
 api/src/test/java/org/hippoecm/repository/api/UriEncodingTest.java -text
 builtin/pom.xml svneol=native#text/plain
+builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflow.java -text
+builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicReviewedActionsWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/CopyWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/EventLoggerWorkflow.java svneol=native#text/plain
