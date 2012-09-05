@@ -67,6 +67,16 @@
       <artifactId>hippo-cms-surf-frontend</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-workflow-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-brokenlinks-frontend</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- editor -->
     <dependency>
@@ -80,7 +90,7 @@
       <version>${project.version}</version>
     </dependency>
 
-   <dependency>
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-richtext-frontend</artifactId>
       <version>${project.version}</version>
