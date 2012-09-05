@@ -59,6 +59,7 @@
     <module>dependencies</module>
     <module>jca</module>
     <module>servlets</module>
+    <module>workflow</module>
   </modules>
 
   <properties>
