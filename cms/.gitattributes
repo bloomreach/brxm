@@ -2140,6 +2140,8 @@ richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextP
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactoryTest.java svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/xinha/json/JsonParserTest.java -text
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent.java -text
+richtext/frontend/src/test/resources/log4j.dtd svneol=native#text/plain
+richtext/frontend/src/test/resources/log4j.xml svneol=native#text/plain
 richtext/frontend/src/test/resources/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent.properties -text
 richtext/frontend/src/test/resources/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent_de.properties -text
 richtext/frontend/src/test/resources/xinhatest.cnd -text

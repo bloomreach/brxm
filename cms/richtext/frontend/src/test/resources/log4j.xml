@@ -40,12 +40,13 @@
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
 
-  <category additivity="true" name="org.hippoecm.repository.jackrabbit">
-    <level value="warn"/>
+  <category additivity="true" name="org.apache.wicket.Localizer">
+    <level value="error"/>
     <appender-ref ref="root"/>
   </category>
 
-  <category name="org.apache.jackrabbit.core.state.ItemStateReferenceCache">
+  <!-- Suppress un-relevant HTMLUnit warnings and errors -->
+  <category name="org.apache.wicket.protocol.http.WicketURLDecoder">
     <level value="error"/>
   </category>
 

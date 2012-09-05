@@ -101,6 +101,11 @@
     <appender-ref ref="root"/>
   </category>
 
+  <!-- surpress un-relevant warnings coming from DeltaXML -->
+  <category additivity="false" name="org.onehippo.cms7.autoexport.DeltaXML">
+    <level value="error"/>
+  </category>
+
   <category additivity="false" name="org.hippoecm.checker">
     <level value="warn"/>
     <appender-ref ref="console"/>
