@@ -27,11 +27,11 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.ObservationManager;
 
 import org.apache.jackrabbit.core.observation.SynchronousEventListener;
-import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * This test is a sanity check for verifying jackrabbit
  * generates the events we rely on for automatic export.
  */
-public class EventTest extends TestCase {
+public class EventTest extends RepositoryTestCase {
     
     private static final Logger log = LoggerFactory.getLogger("org.onehippo.cms7.autoexport.test");
 

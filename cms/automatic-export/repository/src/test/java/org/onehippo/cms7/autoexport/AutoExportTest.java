@@ -49,12 +49,12 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.ElementQualifier;
-import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -63,7 +63,7 @@ import org.xml.sax.SAXException;
 /**
  * Test for {@link AutoExportModule}
  */
-public class AutoExportTest extends TestCase {
+public class AutoExportTest extends RepositoryTestCase {
 
     private static final Logger log = LoggerFactory.getLogger("org.onehippo.cms7.autoexport.test");
     private static final long SLEEP_AFTER_SAVE = 3*1000 + 500;
@@ -131,7 +131,7 @@ public class AutoExportTest extends TestCase {
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        TestCase.tearDownClass(true);
+        RepositoryTestCase.tearDownClass(true);
     }
 
     @Test

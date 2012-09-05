@@ -24,12 +24,12 @@ import java.util.Collection;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 
-import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class EventPreProcessorTest extends TestCase {
+public class EventPreProcessorTest extends RepositoryTestCase {
 
     private static final String[] content = new String[] {
         "/test", "nt:unstructured",
