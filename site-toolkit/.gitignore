@@ -42,11 +42,6 @@ commons/target
 components/.classpath
 components/.project
 components/.settings
-components/caching/.classpath
-components/caching/.project
-components/caching/.settings
-components/caching/hst-caching.iml
-components/caching/target
 components/components.iml
 components/core/.classpath
 components/core/.project

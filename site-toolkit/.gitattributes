@@ -423,9 +423,6 @@ commons/src/test/java/org/hippoecm/hst/util/TestHstResponseUtils.java svneol=nat
 commons/src/test/java/org/hippoecm/hst/util/TestNodeUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestPropertyDefinitionUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestServletConfigUtils.java svneol=native#text/plain
-components/caching/pom.xml svneol=native#text/plain
-components/caching/src/main/java/org/hippoecm/hst/container/PageCachingFilter.java svneol=native#text/plain
-components/caching/src/site/site.xml -text
 components/core/pom.xml svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/CacheElementEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/HstCacheEhCacheImpl.java -text
