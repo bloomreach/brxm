@@ -60,6 +60,11 @@
     <level value="off"/>
   </category>
 
+  <!-- Suppress org.apache.jackrabbit.core.state that we are aware of during tests -->
+  <category name="org.apache.jackrabbit.core.state">
+    <level value="off"/>
+  </category>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>

@@ -28,7 +28,6 @@ import java.util.List;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.Event;
@@ -635,19 +634,9 @@ public class ObservationTest extends PluginTest {
 
         home.processEvents();
         assertEquals(0, events.size());
-        
-        NodeIterator iter = testNode.getNodes();
-        while (iter.hasNext()) {
-            System.out.println(iter.nextNode().getIdentifier());
-        }
-        
+
         testNode.orderBefore("frontendtest:childnode[2]", "frontendtest:childnode");
 
-        iter = testNode.getNodes();
-        while (iter.hasNext()) {
-            System.out.println(iter.nextNode().getIdentifier());
-        }
-        
         home.processEvents();
         assertEquals(2, events.size());
         {
