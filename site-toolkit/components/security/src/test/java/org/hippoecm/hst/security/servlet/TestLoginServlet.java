@@ -107,8 +107,8 @@ public class TestLoginServlet {
         request.setRequestURI("/site/login/form");
         
         loginServlet.doLoginForm(request, response);
-        
-        log.info("Response:\n" + response.getContentAsString() + "\n");
+
+        assertEquals("Response status was not 200 but "+response.getStatus()+"", 200, response.getStatus());
     }
     
     @Test
@@ -122,8 +122,8 @@ public class TestLoginServlet {
         request.setRequestURI("/site/login/form");
         
         loginServlet.doLoginError(request, response);
-        
-        log.info("Response:\n" + response.getContentAsString() + "\n");
+
+        assertEquals("Response status was not 200 but "+response.getStatus()+"", 200, response.getStatus());
     }
     
     @Test
