@@ -64,6 +64,12 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-testutils</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-provider</artifactId>
       <version>${project.version}</version>
     </dependency>
