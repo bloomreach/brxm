@@ -51,8 +51,12 @@
   </category>
 
   <!-- Suppress json-lib warnings and errors -->
-
   <category name="net.sf.json">
+    <level value="off"/>
+  </category>
+
+  <!-- Suppress org.hippoecm.frontend.model that we are aware of during tests -->
+  <category name="org.hippoecm.frontend.model">
     <level value="off"/>
   </category>
 
