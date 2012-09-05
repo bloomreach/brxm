@@ -1,0 +1,8 @@
+.hippo-list-details tr th.doclisting-state,
+.hippo-list-details tr td.doclisting-state { width: 51px; min-width: 51px; ;max-width: 51px; }
+
+.hippo-list-details tr th.doclisting-date,
+.hippo-list-details tr td.doclisting-date { width: 120px; min-width: 120px; max-width: 120px; }
+
+.hippo-list-details tr th.doclisting-lastmodified-by,
+.hippo-list-details tr td.doclisting-lastmodified-by { width: 120px; min-width: 120px; max-width: 120px; }
