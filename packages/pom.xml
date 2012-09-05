@@ -39,9 +39,7 @@
     <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
     <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
-    <hippo.addon-publication-workflow.version>2.23.05-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.addon-faceteddate.version>2.23.05-SNAPSHOT</hippo.addon-faceteddate.version>
-    <hippo.addon-brokenlinks.version>2.23.05-SNAPSHOT</hippo.addon-brokenlinks.version>
 
     <commons-lang.version>2.4</commons-lang.version>
 

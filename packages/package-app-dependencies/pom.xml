@@ -51,32 +51,8 @@
     <!-- Brokenlinks -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-brokenlinks-repository</artifactId>
-      <version>${hippo.addon-brokenlinks.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-brokenlinks-common</artifactId>
-      <version>${hippo.addon-brokenlinks.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-wfdropbox</artifactId>
       <version>${hippo.repository.version}</version>
-    </dependency>
-
-    <!-- Publication workflow -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-publication-workflow-common</artifactId>
-      <version>${hippo.addon-publication-workflow.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-publication-workflow-repository</artifactId>
-      <version>${hippo.addon-publication-workflow.version}</version>
-      <type>jar</type>
     </dependency>
 
     <!-- Faceted date type -->
