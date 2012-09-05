@@ -467,6 +467,11 @@ final public class UpdaterSession implements HippoSession {
         throw new UpdaterException("illegal method");
     }
 
+    @Override
+    public void exportDereferencedView(final String absPath, final ContentHandler contentHandler, final boolean binaryAsLink, final boolean noRecurse) throws PathNotFoundException, SAXException, RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
     @Deprecated
     public void importDereferencedXML(String parentAbsPath, InputStream in, int uuidBehavior, int referenceBehavior, int mergeBehavior) throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException, VersionException, InvalidSerializedDataException, LockException, RepositoryException {
         throw new UpdaterException("illegal method");
