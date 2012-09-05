@@ -46,18 +46,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-publication-workflow-common</artifactId>
-      <version>${hippo.addon-publication-workflow.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-repository-api</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <dependency>
       <groupId>commons-lang</groupId>

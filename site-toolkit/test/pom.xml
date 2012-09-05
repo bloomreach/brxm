@@ -55,12 +55,6 @@
       <type>pom</type>
     </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-publication-workflow-repository</artifactId>
-      <version>${hippo.addon-publication-workflow.version}</version>
-    </dependency>
-
     <!-- hst dependencies & initial structure -->
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>

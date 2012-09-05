@@ -89,7 +89,6 @@
 
     <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
     <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
-    <hippo.addon-publication-workflow.version>2.23.05-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
 
     <htmlcleaner.version>2.2</htmlcleaner.version>
@@ -515,13 +514,6 @@
         <artifactId>hippo-repository-builtin</artifactId>
         <version>${hippo.repository.version}</version>
          <scope>provided</scope>
-      </dependency>
-      
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-publication-workflow-common</artifactId>
-        <version>${hippo.addon-publication-workflow.version}</version>
-        <scope>provided</scope>
       </dependency>
       
       <!-- Jackrabbit ocm -->
