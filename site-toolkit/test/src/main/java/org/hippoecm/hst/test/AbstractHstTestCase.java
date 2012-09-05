@@ -23,9 +23,9 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
         }
         </code>
  */
-public abstract class AbstractHstTestCase extends TestCase {
+public abstract class AbstractHstTestCase extends RepositoryTestCase {
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractHstTestCase.class);
     protected ComponentManager abstractTestComponentManager;

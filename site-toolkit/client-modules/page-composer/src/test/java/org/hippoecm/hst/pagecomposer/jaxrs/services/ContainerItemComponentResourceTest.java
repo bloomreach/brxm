@@ -31,10 +31,10 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
-import org.hippoecm.repository.TestCase;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class ContainerItemComponentResourceTest extends TestCase {
+public class ContainerItemComponentResourceTest extends RepositoryTestCase {
     
     private static final String HST_PARAMETERVALUES = "hst:parametervalues";
     private static final String HST_PARAMETERNAMES = "hst:parameternames";

@@ -981,10 +981,10 @@ solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/compound/TestExplic
 solr-content-beans/src/test/java/org/hippoecm/hst/solr/beans/compound/TestIgnoredSuperFieldsAddress.java -text
 src/site/site.xml svneol=native#text/plain
 test/pom.xml -text
+test/src/main/java/org/hippoecm/hst/test/AbstractHstTestCase.java svneol=native#text/plain
+test/src/main/java/org/hippoecm/hst/test/JcrHippoRepository.java svneol=native#text/plain
+test/src/main/java/org/hippoecm/hst/test/basic/BasicHstTestCase.java svneol=native#text/plain
 test/src/site/site.xml -text
-test/src/test/java/org/hippoecm/hst/test/AbstractHstTestCase.java svneol=native#text/plain
-test/src/test/java/org/hippoecm/hst/test/JcrHippoRepository.java svneol=native#text/plain
-test/src/test/java/org/hippoecm/hst/test/basic/BasicHstTestCase.java svneol=native#text/plain
 toolkit-resources/addon/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/pom.xml svneol=native#text/plain
 toolkit-resources/addon/repository/src/main/resources/hippo-configuration/group-webmaster.xml -text

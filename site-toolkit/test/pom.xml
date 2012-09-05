@@ -42,9 +42,8 @@
     <!-- repository -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-engine</artifactId>
+      <artifactId>hippo-repository-testutils</artifactId>
       <version>${hippo.repository.version}</version>
-      <classifier>tests</classifier>
       <type>jar</type>
     </dependency>
 
@@ -126,6 +125,7 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>compile</scope>
     </dependency>
 
   </dependencies>

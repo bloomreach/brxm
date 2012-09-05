@@ -17,8 +17,6 @@ package org.hippoecm.hst.test.basic;
 
 import static org.junit.Assert.assertTrue;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Session;
 import org.hippoecm.hst.test.AbstractHstTestCase;
 import org.junit.Test;
