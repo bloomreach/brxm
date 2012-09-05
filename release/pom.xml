@@ -44,7 +44,6 @@
     <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
     <hippo.addon-faceteddate.version>2.23.05-SNAPSHOT</hippo.addon-faceteddate.version>
-    <hippo.addon-publication-workflow.version>2.23.05-SNAPSHOT</hippo.addon-publication-workflow.version>
     <hippo.addon-hst-configuration-editor.version>1.10.04-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>2.23.05-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-google-analytics.version>2.23.05-SNAPSHOT</hippo.addon-google-analytics.version>
@@ -168,6 +167,11 @@
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-provider</artifactId>
+        <version>${hippo.repository.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-workflow</artifactId>
         <version>${hippo.repository.version}</version>
       </dependency>
       <dependency>
@@ -422,6 +426,16 @@
         <artifactId>hippo-cms-automatic-export-repository</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-workflow-frontend</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-workflow-repository</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
 
       <!-- Hippo Addon artifacts -->
       <dependency>
@@ -433,27 +447,6 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-faceteddate-repository</artifactId>
         <version>${hippo.addon-faceteddate.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-publication-workflow-common</artifactId>
-        <version>${hippo.addon-publication-workflow.version}</version>
-        <scope>provided</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-publication-workflow-frontend</artifactId>
-        <version>${hippo.addon-publication-workflow.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-publication-workflow-repository</artifactId>
-        <version>${hippo.addon-publication-workflow.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-publication-workflow-test</artifactId>
-        <version>${hippo.addon-publication-workflow.version}</version>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -840,10 +833,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-publication-workflow-common</artifactId>
-    </dependency>
   </dependencies>
 
   <profiles>
@@ -875,11 +864,6 @@
                   <dependency>
                     <groupId>org.onehippo.cms7</groupId>
                     <artifactId>hippo-repository-builtin</artifactId>
-                    <classpath>shared</classpath>
-                  </dependency>
-                  <dependency>
-                    <groupId>org.onehippo.cms7</groupId>
-                    <artifactId>hippo-addon-publication-workflow-common</artifactId>
                     <classpath>shared</classpath>
                   </dependency>
                 </dependencies>
