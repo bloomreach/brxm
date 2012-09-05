@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2008 Hippo.
+  Copyright 2007-2012 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,18 +19,12 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms</artifactId>
+    <artifactId>hippo-cms-workflow</artifactId>
     <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <name>CMS Publication Workflow</name>
-  <description>Hippo CMS publication workflow</description>
-  <artifactId>hippo-cms-workflow</artifactId>
-  <packaging>pom</packaging>
-
-  <modules>
-    <module>repository</module>
-    <module>frontend</module>
-  </modules>
+  <name>CMS Publication Workflow configuration</name>
+  <description>Hippo CMS publication workflow configuration</description>
+  <artifactId>hippo-cms-workflow-repository</artifactId>
 
 </project>

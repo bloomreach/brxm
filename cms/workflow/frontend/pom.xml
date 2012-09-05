@@ -17,13 +17,13 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-addon-publication-workflow</artifactId>
+    <artifactId>hippo-cms-workflow</artifactId>
     <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <name>Publication Workflow frontend</name>
-  <description>Publication Workflow add-on front-end</description>
-  <artifactId>hippo-addon-publication-workflow-frontend</artifactId>
+  <name>CMS Publication Workflow frontend</name>
+  <description>Hippo CMS Publication Workflow front-end</description>
+  <artifactId>hippo-cms-workflow-frontend</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -35,12 +35,6 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-publication-workflow-common</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
       <version>${hippo.repository.version}</version>
       <scope>provided</scope>
@@ -48,38 +42,44 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-builtin</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-test</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-publication-workflow-repository</artifactId>
+      <artifactId>hippo-repository-workflow</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-workflow-repository</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-editor-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-translation-repository</artifactId>
-      <version>${hippo.cms.version}</version>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
