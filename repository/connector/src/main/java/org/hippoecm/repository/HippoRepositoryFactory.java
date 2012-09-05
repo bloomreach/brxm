@@ -112,15 +112,6 @@ public class HippoRepositoryFactory {
             }
         }
 
-        if (location.startsWith("http://") || location.startsWith("https://")) {
-            try {
-                defaultLocation = location;
-                return DavExHippoRepository.create(location);
-            } catch (MalformedURLException ex) {
-                throw new RepositoryException("Unable to locate webdav repository", ex);
-            }
-        }
-
         if (defaultRepository != null && (location.equals(defaultRepository.getLocation()) ||
                                           (defaultLocation != null && location.equals(defaultLocation)))) {
             return defaultRepository;
