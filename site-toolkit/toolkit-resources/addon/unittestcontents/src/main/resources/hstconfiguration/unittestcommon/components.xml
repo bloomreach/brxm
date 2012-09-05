@@ -44,7 +44,7 @@
             <sv:value>overview</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.components.Overview</sv:value>
+            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
         </sv:property>
     </sv:node>
     
@@ -56,7 +56,7 @@
             <sv:value>detail</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.components.Detail</sv:value>
+            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
         </sv:property>
     </sv:node>
 
@@ -68,7 +68,7 @@
             <sv:value>leftmenu</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.components.LeftMenu</sv:value>
+            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
         </sv:property>
     </sv:node>
 
@@ -80,7 +80,7 @@
             <sv:value>contact</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.components.Contact</sv:value>
+            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
         </sv:property>
     </sv:node>
     
@@ -92,7 +92,7 @@
             <sv:value>simplesearch</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.components.SimpleSearch</sv:value>
+            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
         </sv:property>
     </sv:node>
     
@@ -104,7 +104,7 @@
             <sv:value>contactspring</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.component.support.spring.SpringBridgeHstComponent</sv:value>
+            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:parameternames" sv:type="String">
             <sv:value>spring-delegated-bean</sv:value>
@@ -119,7 +119,7 @@
             <sv:value>hst:component</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.component.support.SimpleDispatcherHstComponent</sv:value>
+            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:parameternames" sv:type="String">
             <sv:value>dispatch-path</sv:value>
@@ -137,7 +137,7 @@
             <sv:value>contactspringmvc</sv:value>
         </sv:property>
         <sv:property sv:name="hst:componentclassname" sv:type="String">
-            <sv:value>org.hippoecm.hst.component.support.SimpleDispatcherHstComponent</sv:value>
+            <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
         </sv:property>
         <sv:property sv:name="hst:parameternames" sv:type="String">
             <sv:value>action-path</sv:value>
@@ -159,7 +159,7 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.components.PageableOverview</sv:value>
+                <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
             </sv:property>
             <sv:property sv:name="hst:template" sv:type="String">
                 <sv:value>overview</sv:value>
@@ -170,7 +170,7 @@
                 <sv:value>hst:component</sv:value>
             </sv:property>
             <sv:property sv:name="hst:componentclassname" sv:type="String">
-                <sv:value>org.hippoecm.hst.components.PageableOverview</sv:value>
+                <sv:value>org.hippoecm.hst.core.component.GenericHstComponent</sv:value>
             </sv:property>
             <sv:property sv:name="hst:template" sv:type="String">
                 <sv:value>overview</sv:value>
