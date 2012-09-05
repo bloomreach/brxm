@@ -911,6 +911,7 @@ mock/src/test/java/org/hippoecm/hst/mock/core/sitemenu/TestMockHstSiteMenu.java 
 mock/src/test/java/org/hippoecm/hst/mock/core/sitemenu/TestMockHstSiteMenuItem.java -text
 mock/src/test/java/org/hippoecm/hst/mock/util/MockBeanTestHelper.java -text
 mock/src/test/java/org/hippoecm/hst/mock/util/TestIteratorEnumeration.java -text
+mock/src/test/resources/log4j.xml -text
 /pom.xml -text
 rest-api/pom.xml -text
 rest-api/src/main/java/org/hippoecm/hst/rest/DocumentService.java -text
