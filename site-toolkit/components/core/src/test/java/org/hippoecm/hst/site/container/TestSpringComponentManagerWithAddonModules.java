@@ -34,6 +34,7 @@ import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.junit.Test;
+import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpSession;
@@ -294,7 +295,7 @@ public class TestSpringComponentManagerWithAddonModules {
     @Test
     public void testFailedModuleInstances() throws Exception {
         Configuration configuration = new PropertiesConfiguration();
-        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        final SpringComponentManager componentManager = new SpringComponentManager(configuration);
         componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
 
         // addon module definitions
@@ -309,7 +310,19 @@ public class TestSpringComponentManagerWithAddonModules {
         componentManager.setAddonModuleDefinitions(addonModuleDefs);
 
         componentManager.initialize();
-        componentManager.start();
+
+        /*
+         * Since we are now testing a failing module instance, this will result in SpringComponentManager
+         * logging warnings. Since we do not want these expected warnings in the unit test output, we wrap the
+         * componentManager.start(); in a callback through ExecuteOnLogLevel.error which will only for
+         * componentManager.start(); temporarily bump the log-level to ERROR
+         */
+        ExecuteOnLogLevel.error(new Runnable() {
+            @Override
+            public void run() {
+                componentManager.start();
+            }
+        }, SpringComponentManager.class.getName());
 
         // due to the failure of 'alwaysFailingOnStartBean', the module shouldn't exist at all; 
         // it should have been removed during starting.
