@@ -1,0 +1,9 @@
+<'et'='http://www.hippoecm.org/et/nt/1.0'>
+<'nt'='http://www.jcp.org/jcr/nt/1.0'>
+
+[et:example] > nt:base
+
+[et:node] > nt:base
+  - et:property (string)
+  + * (et:node)
+

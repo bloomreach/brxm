@@ -1,0 +1,2 @@
+Manifest-Version: 1.0
+Hippo-Modules: org.onehippo.cms7.autoexport.AutoExportModule

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node sv:name="hippo:moduleconfig" xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine">
+  <sv:property sv:name="autoexport:filteruuidpaths" sv:type="String" sv:multiple="true" h:merge="append">
+    <sv:value>/</sv:value>
+  </sv:property>
+</sv:node>

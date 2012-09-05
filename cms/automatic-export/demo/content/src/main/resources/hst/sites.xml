@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
+  sv:name="hst:sites">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hst:sites</sv:value>
+  </sv:property>
+  
+  <sv:node sv:name="autoexportdemo">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippo:availability</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>live</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>single</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="autoexportdemo-preview">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:site</sv:value>
+    </sv:property>
+    <sv:node sv:name="hst:content">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:facetselect</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:docbase" sv:type="String">
+        <sv:value>996bcac5-86cf-49b5-a7a3-16a74863e814</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:facets" sv:type="String">
+        <sv:value>hippo:availability</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:values" sv:type="String">
+        <sv:value>preview</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:modes" sv:type="String">
+        <sv:value>single</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  
+</sv:node>
+  
+  

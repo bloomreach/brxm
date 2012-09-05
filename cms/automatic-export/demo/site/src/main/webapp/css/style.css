@@ -1,0 +1,61 @@
+body { 
+  font-family: Verdana,Helvetica,sans-serif;
+}
+
+#content {
+  float: left;
+  width: 60%;
+  position: relative;
+}
+
+#content .overview-item {
+  position: relative;
+}
+
+#leftmenu, #right {
+  float:left;
+  width:20%;
+}
+
+ul#paging-nav {
+  margin-left:11.5em;
+}
+
+ul#paging-nav li {
+  display:inline;
+}
+
+ul#paging-nav li.active {
+  font-weight:bold;
+}
+
+ul.sitenav {
+  list-style: none;
+}
+
+div.lightgrey {
+ background-color:#D3D3D3;
+}
+
+div.grey {
+ background-color:#C0C0C0;
+}
+
+ul.hst-container {
+  padding:0;
+  margin:0;
+}
+
+ul.hst-container li {
+  list-style-type:none;
+}
+
+h1.subsite {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #000;
+  padding: 10px 0 10px;
+}
+
+@media print {
+/* print specific styling here*/
+}

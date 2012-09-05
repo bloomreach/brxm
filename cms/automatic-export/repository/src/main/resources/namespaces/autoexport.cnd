@@ -1,0 +1,9 @@
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<autoexport='http://www.onehippo.org/autoexport/1.1'>
+
+[autoexport:config] > nt:base
+- autoexport:enabled (boolean) = 'true' mandatory autocreated
+- autoexport:modules (string) multiple
+- autoexport:excluded (string) multiple
+- autoexport:filteruuidpaths (string) multiple
+- autoexport:reloadonstartuppaths (string) multiple
