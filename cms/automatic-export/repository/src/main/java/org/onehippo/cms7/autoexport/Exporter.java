@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -41,7 +40,7 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
-import org.hippoecm.repository.impl.SessionDecorator;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -157,7 +156,7 @@ final class Exporter {
         }
         ExclusionContext exclusionContext = new ExclusionContext(configuration.getExclusionContext(), subModuleExclusionPatterns);
         ContentHandler filter = new FilterContentHandler(handler, item.getContentRoot(), subContextPaths, configuration.getFilterUuidPaths(), exclusionContext);
-        ((SessionDecorator) session).exportDereferencedView(item.getContextPath(), filter, false, false);
+        ((HippoSession) session).exportDereferencedView(item.getContextPath(), filter, false, false);
     }
     
     private void exportDeltaXML(InitializeItem item, ContentHandler handler) throws SAXException, RepositoryException {
@@ -183,7 +182,7 @@ final class Exporter {
                 }
                 ExclusionContext exclusionContext = new ExclusionContext(configuration.getExclusionContext(), subModuleExclusionPatterns);
                 ContentHandler filter = new FilterContentHandler(new EmbeddedContentHandler(handler), instruction.getParentPath(), subContextPaths, configuration.getFilterUuidPaths(), exclusionContext);
-                ((SessionDecorator) session).exportDereferencedView(instruction.getContextPath(), filter, false, false);
+                ((HippoSession) session).exportDereferencedView(instruction.getContextPath(), filter, false, false);
             } else {
                 exportPropertyInstruction(instruction, handler, false);
             }
@@ -207,7 +206,7 @@ final class Exporter {
             exportPropertyInstruction(instruction, handler, true);
         }
     }
-    
+
     private void exportPropertyInstruction(DeltaXMLInstruction instruction, ContentHandler handler, boolean override) throws SAXException, RepositoryException {
         Property property = session.getProperty(instruction.getContextPath());
         AttributesImpl attr = new AttributesImpl();

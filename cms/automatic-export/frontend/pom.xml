@@ -17,28 +17,26 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-addon-automatic-export</artifactId>
-    <version>2.02.05-SNAPSHOT</version>
+    <artifactId>hippo-cms-automatic-export</artifactId>
+    <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <artifactId>hippo-addon-automatic-export-frontend</artifactId>
-  <name>Automatic Export Frontend</name>
-  <description>Automatic Export add-on Frontend</description>
+  <artifactId>hippo-cms-automatic-export-frontend</artifactId>
+  <name>CMS Automatic Export Frontend</name>
+  <description>Hippo CMS Automatic Export Frontend</description>
 
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.wicket</groupId>
-      <artifactId>wicket</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-automatic-export-repository</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
+    <!-- dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-automatic-export-repository</artifactId>
+      <version>${project.version}</version>
+    </dependency -->
   </dependencies>
 
   <build>

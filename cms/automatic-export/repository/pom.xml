@@ -17,13 +17,13 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-addon-automatic-export</artifactId>
-    <version>2.02.05-SNAPSHOT</version>
+    <artifactId>hippo-cms-automatic-export</artifactId>
+    <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <artifactId>hippo-addon-automatic-export-repository</artifactId>
-  <name>Automatic Export Repository</name>
-  <description>Automatic Export add-on Repository</description>
+  <artifactId>hippo-cms-automatic-export-repository</artifactId>
+  <name>CMS Automatic Export Repository</name>
+  <description>Hippo CMS Automatic Export Repository</description>
 
   <dependencies>
     <dependency>
@@ -42,18 +42,23 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-engine</artifactId>
     </dependency>
-     <dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-engine</artifactId>
       <classifier>tests</classifier>
+      <scope>test</scope>
+      <version>${hippo.repository.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 
@@ -72,11 +77,5 @@
       </plugin>
     </plugins>
   </build>
-  
 
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-automatic-export/tags/hippo-addon-automatic-export-repository-2.02.03</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-automatic-export/tags/hippo-addon-automatic-export-repository-2.02.03</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-automatic-export/tags/hippo-addon-automatic-export-repository-2.02.03</url>
-  </scm>
 </project>

@@ -23,12 +23,6 @@ api/workspaces
 automatic-export/.idea
 automatic-export/.project
 automatic-export/.settings
-automatic-export/demo/cms/target
-automatic-export/demo/content/target
-automatic-export/demo/foocontent/target
-automatic-export/demo/site/target
-automatic-export/demo/storage
-automatic-export/demo/target
 automatic-export/frontend/.classpath
 automatic-export/frontend/.project
 automatic-export/frontend/.settings

@@ -15,11 +15,6 @@
  */
 package org.onehippo.cms7.autoexport.plugin;
 
-import static org.onehippo.cms7.autoexport.Constants.CONFIG_NODE_PATH;
-import static org.onehippo.cms7.autoexport.Constants.CONFIG_ENABLED_PROPERTY_NAME;
-import static org.onehippo.cms7.autoexport.Constants.PROJECT_BASEDIR_PROPERTY;
-import static org.onehippo.cms7.autoexport.Constants.LOGGER_NAME;
-
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -40,6 +35,11 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_ENABLED_PROPERTY_NAME;
+import static org.onehippo.cms7.autoexport.plugin.Constants.CONFIG_NODE_PATH;
+import static org.onehippo.cms7.autoexport.plugin.Constants.LOGGER_NAME;
+import static org.onehippo.cms7.autoexport.plugin.Constants.PROJECT_BASEDIR_PROPERTY;
 
 public class AutoExportPlugin extends RenderPlugin<Node> {
 

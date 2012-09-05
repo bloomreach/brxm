@@ -17,102 +17,18 @@
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-project</artifactId>
-    <version>14</version>
+    <artifactId>hippo-cms</artifactId>
+    <version>2.23.05-SNAPSHOT</version>
   </parent>
 
-  <artifactId>hippo-addon-automatic-export</artifactId>
-  <name>Automatic Export</name>
-  <description>Automatic Export add-on</description>
-  <version>2.02.05-SNAPSHOT</version>
+  <name>CMS Automatic Export</name>
+  <description>Hippo CMS Automatic Export</description>
+  <artifactId>hippo-cms-automatic-export</artifactId>
   <packaging>pom</packaging>
 
-  <properties>
-    <hippo.repository.version>2.22.09</hippo.repository.version>
-    <hippo.cms.version>2.22.10</hippo.cms.version>
-    <dom4j.version>1.6.1</dom4j.version>
-    <junit.version>4.10</junit.version>
-    <xmlunit.version>1.3</xmlunit.version>
-    <wicket.version>1.4.19-h1</wicket.version>
-  </properties>
-
-  <repositories>
-    <repository>
-      <id>hippo-maven2</id>
-      <name>Hippo Maven 2</name>
-      <url>http://maven.onehippo.com/maven2/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-  </repositories>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>dom4j</groupId>
-        <artifactId>dom4j</artifactId>
-        <version>${dom4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-api</artifactId>
-        <version>${hippo.repository.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-utilities</artifactId>
-        <version>${hippo.repository.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-engine</artifactId>
-        <version>${hippo.repository.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-api</artifactId>
-        <version>${hippo.cms.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.wicket</groupId>
-        <artifactId>wicket</artifactId>
-        <version>${wicket.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-engine</artifactId>
-        <version>${hippo.repository.version}</version>
-        <classifier>tests</classifier>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>xmlunit</groupId>
-        <artifactId>xmlunit</artifactId>
-        <version>${xmlunit.version}</version>
-        <scope>test</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-  
   <modules>
     <module>repository</module>
     <module>frontend</module>
   </modules>
-
-  <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-automatic-export/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-automatic-export/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-automatic-export/trunk</url>
-  </scm>
 
 </project>
