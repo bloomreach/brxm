@@ -58,12 +58,10 @@ public class TestOCM extends AbstractHstTestCase{
         assertNotNull(productsPage.getHtml());
         assertNotNull(productsPage.getHtml().getContent());
         
-        System.out.println("node: " + productsPage.getNode());
-        System.out.println("path: " + productsPage.getPath());
-        System.out.println("title: " + productsPage.getTitle());
-        System.out.println("stateSummary: " + productsPage.getStateSummary());
-        System.out.println("state: " + productsPage.getState());
-        System.out.println("html: " + productsPage.getHtml().getContent());
+        assertEquals("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct", productsPage.getPath());
+        assertEquals("Products", productsPage.getTitle());
+        assertEquals("new", productsPage.getStateSummary());
+        assertEquals("unpublished", productsPage.getState());
 
         ocm = OCMUtils.createObjectContentManager(session, fallbackHippoBeans, null);
         
@@ -71,22 +69,19 @@ public class TestOCM extends AbstractHstTestCase{
         assertNotNull(productsPageDoc);
         assertNotNull(productsPageDoc.getNode());
 
-        System.out.println("productsPageDoc's node: " + productsPageDoc.getNode());
-        System.out.println("productsPageDoc's path: " + productsPageDoc.getPath());
-        System.out.println("productsPageDoc's stateSummary: " + productsPageDoc.getStateSummary());
-        System.out.println("productsPageDoc's state: " + productsPageDoc.getState());
-        
+        assertEquals("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct", productsPageDoc.getPath());
+        assertEquals("new", productsPageDoc.getStateSummary());
+        assertEquals("unpublished", productsPageDoc.getState());
+
         HippoStdFolder parentCollection = productsPageDoc.getFolder();
-        System.out.println("parentCollection: " + parentCollection);
-        System.out.println("parentCollection.path: " + parentCollection.getPath());
         assertNotNull(parentCollection);
+        assertEquals("/testcontent/documents/testproject/Products", parentCollection.getPath());
         
         List<HippoStdDocument> childDocs = parentCollection.getDocuments();
         assertNotNull(childDocs);
         assertFalse(childDocs.isEmpty());
-        System.out.println("childDocs: " + childDocs);
         for (HippoStdDocument childDoc : childDocs) {
-            System.out.println("childDoc: " + childDoc);
+            assertEquals("/testcontent/documents/testproject/Products", childDoc.getParentFolder().getPath());
         }
         
         session.logout();
@@ -101,29 +96,24 @@ public class TestOCM extends AbstractHstTestCase{
         TextPage productsPage = (TextPage) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
-        
-        System.out.println("node: " + productsPage.getNode());
-        System.out.println("path: " + productsPage.getPath());
-        System.out.println("title: " + productsPage.getTitle());
-        System.out.println("stateSummary: " + productsPage.getStateSummary());
-        System.out.println("state: " + productsPage.getState());
+
+        assertEquals("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct", productsPage.getPath());
+        assertEquals("Products", productsPage.getTitle());
+        assertEquals("new", productsPage.getStateSummary());
+        assertEquals("unpublished", productsPage.getState());
         
         // Normal JCR Node path
         HippoStdFolder coll = (HippoStdFolder) ocm.getObject("/testcontent/documents/testproject");
         assertNotNull(coll);
         assertNotNull(coll.getNode());
-        
-        System.out.println("node: " + coll.getNode());
-        System.out.println("path: " + coll.getPath());
-        
+        assertEquals("/testcontent/documents/testproject", coll.getPath());
+
         List<HippoStdFolder> childColl = coll.getFolders();
         assertNotNull(childColl);
         assertFalse(childColl.isEmpty());
-        
-        System.out.println("childColl: " + childColl);
-        
+
         for (HippoStdFolder childCollItem : childColl) {
-            System.out.println("childCollItem: " + childCollItem.getName() + ", " + childCollItem.getPath());
+            assertEquals("/testcontent/documents/testproject", childCollItem.getParentFolder().getPath());
         }
         
         HippoStdFolder productsColl = (HippoStdFolder) ocm.getObject("/testcontent/documents/testproject/Products");
@@ -131,11 +121,9 @@ public class TestOCM extends AbstractHstTestCase{
         List<HippoStdDocument> childDocs = productsColl.getDocuments();
         assertNotNull(childDocs);
         assertFalse(childDocs.isEmpty());
-        
-        System.out.println("childDocs: " + childDocs);
-        
+
         for (HippoStdDocument childDoc : childDocs) {
-            System.out.println("childDoc: " + childDoc.getName() + ", " + childDoc.getPath() + ", " + childDoc.getState() + ", " + childDoc.getStateSummary());
+            assertEquals("/testcontent/documents/testproject/Products", childDoc.getParentFolder().getPath());
         }
 
         session.logout();
@@ -150,29 +138,26 @@ public class TestOCM extends AbstractHstTestCase{
         TextPage productsPage = (TextPage) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
-        
-        System.out.println("node: " + productsPage.getNode());
-        System.out.println("path: " + productsPage.getPath());
-        System.out.println("title: " + productsPage.getTitle());
-        System.out.println("stateSummary: " + productsPage.getStateSummary());
-        System.out.println("state: " + productsPage.getState());
-        
+
+        assertEquals("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct", productsPage.getPath());
+        assertEquals("Products", productsPage.getTitle());
+        assertEquals("new", productsPage.getStateSummary());
+        assertEquals("unpublished", productsPage.getState());
+
+
         // Normal JCR Node path
         HippoStdFolder coll = (HippoStdFolder) ocm.getObject("/testcontent/documents/testproject");
         assertNotNull(coll);
         assertNotNull(coll.getNode());
-        
-        System.out.println("node: " + coll.getNode());
-        System.out.println("path: " + coll.getPath());
-        
+
+        assertEquals("/testcontent/documents/testproject", coll.getPath());
+
         List<HippoStdFolder> childColl = coll.getFolders();
         assertNotNull(childColl);
         assertFalse(childColl.isEmpty());
-        
-        System.out.println("childColl: " + childColl);
-        
+
         for (HippoStdFolder childCollItem : childColl) {
-            System.out.println("childCollItem: " + childCollItem.getName() + ", " + childCollItem.getPath());
+            assertEquals("/testcontent/documents/testproject", childCollItem.getParentFolder().getPath());
         }
         
         HippoStdFolder productsColl = (HippoStdFolder) ocm.getObject("/testcontent/documents/testproject/Products");
@@ -180,11 +165,9 @@ public class TestOCM extends AbstractHstTestCase{
         List<HippoStdDocument> childDocs = productsColl.getDocuments();
         assertNotNull(childDocs);
         assertFalse(childDocs.isEmpty());
-        
-        System.out.println("childDocs: " + childDocs);
-        
+
         for (HippoStdDocument childDoc : childDocs) {
-            System.out.println("childDoc: " + childDoc.getName() + ", " + childDoc.getPath() + ", " + childDoc.getState() + ", " + childDoc.getStateSummary());
+            assertEquals("/testcontent/documents/testproject/Products", childDoc.getParentFolder().getPath());
         }
 
         session.logout();
@@ -202,7 +185,7 @@ public class TestOCM extends AbstractHstTestCase{
         filter.setScope("/testcontent/documents/testproject//");
         Query query = qm.createQuery(filter);
         Collection result = ocm.getObjects(query);
-        System.out.println("result: " + result);
+
         assertFalse(result.isEmpty());
 
         // search document by HippoStdDocument filter
@@ -210,7 +193,6 @@ public class TestOCM extends AbstractHstTestCase{
         filter.setScope("/testcontent/documents/testproject/Products/SomeProduct//");
         query = qm.createQuery(filter);
         HippoStdDocument doc = (HippoStdDocument) ocm.getObject(query);
-        System.out.println("doc: " + doc);
         assertNotNull(doc);
         assertTrue(doc instanceof TextPage);
         
@@ -221,7 +203,6 @@ public class TestOCM extends AbstractHstTestCase{
         filter.addEqualTo("title", "Products");
         query = qm.createQuery(filter);
         TextPage page = (TextPage) ocm.getObject(query);
-        System.out.println("page: " + page);
         assertNotNull(page);
         assertTrue(page instanceof TextPage);
         
@@ -234,7 +215,7 @@ public class TestOCM extends AbstractHstTestCase{
         assertNotNull(textPages);
         assertFalse(textPages.isEmpty());
         for (TextPage textPage : textPages) {
-            System.out.println("text page containing 'CMS': " + textPage.getPath());
+            assertTrue(textPage.getPath().startsWith("/testcontent/documents/testproject/Products"));
         }
         
         session.logout();
@@ -249,13 +230,12 @@ public class TestOCM extends AbstractHstTestCase{
         TextPage productsPage = (TextPage) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPage);
         assertNotNull(productsPage.getNode());
-        
-        System.out.println("node: " + productsPage.getNode());
-        System.out.println("path: " + productsPage.getPath());
-        System.out.println("title: " + productsPage.getTitle());
-        System.out.println("stateSummary: " + productsPage.getStateSummary());
-        System.out.println("state: " + productsPage.getState());
-        
+
+        assertEquals("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct", productsPage.getPath());
+        assertEquals("Products", productsPage.getTitle());
+        assertEquals("new", productsPage.getStateSummary());
+        assertEquals("unpublished", productsPage.getState());
+
         String oldTitle = productsPage.getTitle();
         
         // Now updating...
@@ -267,13 +247,11 @@ public class TestOCM extends AbstractHstTestCase{
         TextPage productsPageUpdated = (TextPage) ocm.getObject("/testcontent/documents/testproject/Products/SomeProduct");
         assertNotNull(productsPageUpdated);
         assertNotNull(productsPageUpdated.getNode());
+        assertEquals("/testcontent/documents/testproject/Products/SomeProduct/SomeProduct", productsPageUpdated.getPath());
         assertEquals("Hey, Dude!", productsPageUpdated.getTitle());
-        
-        System.out.println("node: " + productsPageUpdated.getNode());
-        System.out.println("path: " + productsPageUpdated.getPath());
-        System.out.println("title: " + productsPageUpdated.getTitle());
-        System.out.println("stateSummary: " + productsPageUpdated.getStateSummary());
-        System.out.println("state: " + productsPageUpdated.getState());
+        assertEquals("new", productsPageUpdated.getStateSummary());
+        assertEquals("unpublished", productsPageUpdated.getState());
+
         
         // Restores the changes back...
         productsPageUpdated.setTitle(oldTitle);
