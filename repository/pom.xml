@@ -204,11 +204,15 @@
               <artifactId>jcr</artifactId>
               <version>${javax.jcr.version}</version>
             </dependency>
+            <dependency>
+              <groupId>log4j</groupId>
+              <artifactId>log4j</artifactId>
+              <version>${log4j.version}</version>
+            </dependency>
           </dependencies>
         <configuration>
           <fork>false</fork>
           <!--mappingIncludes>**/*.jdo, **/*.class</mappingIncludes-->
-          <log4jConfiguration>log4j.xml</log4jConfiguration>
           <verbose>false</verbose>
           <enhancerName>ASM</enhancerName>
           <props>jdo.properties</props>
