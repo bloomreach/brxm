@@ -28,6 +28,10 @@
     </layout>
   </appender>
 
+  <!-- The TestSlf4jLogger unit test should not really log to any output -->
+  <appender name="null" class="org.apache.log4j.varia.NullAppender">
+  </appender>
+
   <!-- ====================================================================== -->
   <!-- L O G G E R S                                                          -->
   <!-- ====================================================================== -->
@@ -43,8 +47,10 @@
   </category>
   
   <category additivity="false" name="org.hippoecm.hst.core.logging.TestSlf4jLogger">
+    <!-- Keep level on debug because TestSlf4jLogger assertion tests for this -->
     <level value="debug"/>
-    <appender-ref ref="console"/>
+    <!-- do not log to console but to null -->
+    <appender-ref ref="null"/>
   </category>
   
   <category additivity="false" name="net.sf.ehcache">

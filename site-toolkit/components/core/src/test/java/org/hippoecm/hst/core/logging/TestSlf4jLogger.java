@@ -22,6 +22,8 @@ import org.junit.Test;
 import org.slf4j.LoggerFactory;
 import org.slf4j.spi.LocationAwareLogger;
 
+import static org.junit.Assert.assertTrue;
+
 
 public class TestSlf4jLogger {
 
@@ -35,16 +37,14 @@ public class TestSlf4jLogger {
     
     @Test
     public void testUsingLogger() {
-        
-        // TODO: For now, look into the console logging to check if this working properly...
         //       Improve this later with asserting...
-        
         Logger logger = new Slf4jLogger(slf4jLogger, getClass().getName());
         logger.debug("Simulating an error (Ignore this; this is only for unit testing)");
         logger.debug("Simulating an error (Ignore this; this is only for unit testing) : {}", "arg1");
         logger.debug("Simulating an error (Ignore this; this is only for unit testing) : {}, {}", "arg1", "arg2");
         logger.debug("Simulating an error (Ignore this; this is only for unit testing) : {}, {}, {}", new Object [] { "arg1", "arg2", "arg3" });
         logger.debug("Simulating an error (Ignore this; this is only for unit testing)", new RuntimeException());
+        assertTrue("logger for org.hippoecm.hst.core.logging.TestSlf4jLogger should be on DEBUG", logger.isDebugEnabled());
     }
     
 }
