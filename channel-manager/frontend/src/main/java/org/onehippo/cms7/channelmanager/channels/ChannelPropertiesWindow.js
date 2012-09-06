@@ -23,13 +23,14 @@ Ext.namespace('Hippo.ChannelManager');
  */
 Hippo.ChannelManager.ChannelPropertiesWindow = Ext.extend(Ext.Window, {
     constructor: function(config) {
-        var self = this;
+        var self, channelPropertiesContainer;
+        self = this;
 
         this.channelId = null;
         this.resources = config.resources;
 
         // if the properties were shown once, they need to be hidden again on accessing the perspective
-        var channelPropertiesContainer = Ext.DomQuery.selectNode("div[class=\"channel-properties\"]");
+        channelPropertiesContainer = Ext.DomQuery.selectNode("div[class=\"channel-properties\"]");
         if (channelPropertiesContainer) {
             channelPropertiesContainer.setAttribute('class', 'hide-channel-properties');
         }

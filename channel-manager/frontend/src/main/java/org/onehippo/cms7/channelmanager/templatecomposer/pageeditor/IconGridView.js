@@ -51,12 +51,13 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
     },
 
     processEvent : function(name, e) {
-        var target = e.getTarget(),
-            grid   = this.grid;
+        var target, grid, row;
+        target = e.getTarget();
+        grid   = this.grid;
 
         grid.fireEvent(name, e);
 
-        var row = this.findRowIndex(target);
+        row = this.findRowIndex(target);
         if (row !== false) {
             grid.fireEvent('row' + name, grid, row, e);
         } else {
@@ -101,14 +102,14 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
     },
 
     initTemplates : function() {
-        var templates = {};
+        var templates = {}, name, template;
         Ext.applyIf(templates, {
             item    : this.itemTpl,
             master  : this.masterTpl
         });
 
-        for (var name in templates) {
-            var template = templates[name];
+        for (name in templates) {
+            template = templates[name];
 
             if (template && Ext.isFunction(template.compile) && !template.compiled) {
                 template.disableFormats = true;
@@ -129,15 +130,15 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
     },
 
     doRenderItems : function() {
+        var grid, store, stripe, colModel, rowCount, records, templates, itemTemplates, itemsBuffer, len, record, j, rowIndex, meta;
         if (!this.grid.store) {
             return;
         }
-        var grid = this.grid,
-                store = grid.store,
-                stripe = grid.stripeRows,
-                colModel = grid.colModel,
-                rowCount = store.getCount(),
-                records;
+        grid = this.grid;
+        store = grid.store;
+        stripe = grid.stripeRows;
+        colModel = grid.colModel;
+        rowCount = store.getCount();
 
         if (rowCount < 1) {
             return '';
@@ -145,12 +146,11 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
 
         records = store.getRange(0, rowCount - 1);
 
-        var templates = this.templates,
-            itemTemplate = templates.item,
-            itemsBuffer = [],
-            meta = {},
-            len  = records.length,
-            record, j, rowIndex;
+        templates = this.templates;
+        itemTemplate = templates.item;
+        itemsBuffer = [];
+        meta = {};
+        len  = records.length;
 
         //build up each items HTML
         for (j = 0; j < len; j++) {
@@ -239,9 +239,10 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
         // register scrolling handlers, maybe should move somewhere else
         var scrollLeft = this.mainBody.child('.scroll-left');
         scrollLeft.on('click', function() {
-            var innerLeft = this.toolbarBody.getLeft();
-            var outerLeft = this.mainBody.getLeft();
-            var to = this.TOOLBAR_ITEM_WIDTH;
+            var innerLeft, outerLeft, buterLeft, to;
+            innerLeft = this.toolbarBody.getLeft();
+            outerLeft = this.mainBody.getLeft();
+            to = this.TOOLBAR_ITEM_WIDTH;
             if (innerLeft + this.TOOLBAR_ITEM_WIDTH > outerLeft) {
                 to = outerLeft - innerLeft;
             }
@@ -252,9 +253,10 @@ Hippo.ChannelManager.TemplateComposer.IconGridView = Ext.extend(Ext.util.Observa
 
         var scrollRight = this.mainBody.child('.scroll-right');
         scrollRight.on('click', function() {
-            var innerRight = this.toolbarBody.getRight();
-            var outerRight = this.mainBody.getRight();
-            var to = this.TOOLBAR_ITEM_WIDTH;
+            var innerRight, outerRight, to;
+            innerRight = this.toolbarBody.getRight();
+            outerRight = this.mainBody.getRight();
+            to = this.TOOLBAR_ITEM_WIDTH;
             if (innerRight - this.TOOLBAR_ITEM_WIDTH < outerRight) {
                 to = innerRight - outerRight;
             }

@@ -54,7 +54,7 @@
     * container and <object, img, iframe> bleed-thru.
     */
     var CSS = Ext.util.CSS;
-    if(CSS){
+    if (CSS){
         CSS.getRule('.x-hide-nosize') || //already defined?
             CSS.createStyleSheet('.x-hide-nosize{height:0px!important;width:0px!important;border:none!important;zoom:1;}.x-hide-nosize * {height:0px!important;width:0px!important;border:none!important;zoom:1;}');
         CSS.refreshCache();
@@ -63,14 +63,15 @@
 });
 
 (function(){
-
-      var El = Ext.Element, A = Ext.lib.Anim, supr = El.prototype;
-      var VISIBILITY = "visibility",
-        DISPLAY = "display",
-        HIDDEN = "hidden",
-        NONE = "none";
-
-      var fx = {};
+      var El, A, supr, VISIBILITY, DISPLAY, HIDDEN, NONE, fx;
+      El = Ext.Element;
+      A = Ext.lib.Anim;
+      supr = El.prototype;
+      VISIBILITY = "visibility";
+      DISPLAY = "display";
+      HIDDEN = "hidden";
+      NONE = "none";
+      fx = {};
 
       fx.El = {
 
@@ -80,8 +81,8 @@
              * @return {Ext.Element} this
              */
            setDisplayed : function(value) {
-                var me=this;
-                me.visibilityCls ? (me[value !== false ?'removeClass':'addClass'](me.visibilityCls)) :
+                var me = this;
+                me.visibilityCls ? (me[value !== false ? 'removeClass' : 'addClass'](me.visibilityCls)) :
                     supr.setDisplayed.call(me, value);
                 return me;
             },
@@ -106,18 +107,18 @@
              * @return {Boolean} True if the element is currently visible, else false
              */
             isVisible : function(deep) {
-                var vis = this.visible ||
+                var p, vis = this.visible ||
                     (!this.isStyle(VISIBILITY, HIDDEN) &&
                         (this.visibilityCls ?
                             !this.hasClass(this.visibilityCls) :
                                 !this.isStyle(DISPLAY, NONE))
-                      );
+                            );
 
                   if (deep !== true || !vis) {
                     return vis;
                   }
 
-                  var p = this.dom.parentNode,
+                  p = this.dom.parentNode,
                       bodyRE = /^body/i;
 
                   while (p && !bodyRE.test(p.tagName)) {
@@ -203,14 +204,14 @@
             plugin = this,
             bubble = Ext.Container.prototype.bubble,
             changeVis = function(){
+                var els, cfg;
+                els = [this.collapseEl, this.actionMode].concat(plugin.elements||[]);
 
-                var els = [this.collapseEl, this.actionMode].concat(plugin.elements||[]);
-
-                Ext.each(els, function(el){
+                Ext.each(els, function(el) {
                     plugin.extend( this[el] || el );
-                },this);
+                }, this);
 
-                var cfg = {
+                cfg = {
                     visFixed  : true,
                     animCollapse : false,
                     animFloat   : false,
@@ -222,18 +223,16 @@
 
                 Ext.apply(this, cfg);
                 Ext.apply(this.initialConfig || {}, cfg);
-
             };
 
-         c.on('render', function(){
+         c.on('render', function() {
 
             // Bubble up the layout and set the new
             // visibility mode on parent containers
             // which might also cause DOM reflow when
             // hidden or collapsed.
-            if(plugin.bubble !== false && this.ownerCt){
-
-               bubble.call(this.ownerCt, function(){
+            if (plugin.bubble !== false && this.ownerCt) {
+               bubble.call(this.ownerCt, function() {
                   this.visFixed || this.on('afterlayout', changeVis, this, {single:true} );
                });
              }
@@ -248,15 +247,16 @@
       * @param {String} visibilityCls The className to apply to the Element when hidden.
       * @return this
       */
-     extend : function(el, visibilityCls){
-        el && Ext.each([].concat(el), function(e){
-
-            if(e && e.dom){
-                 if('visibilityCls' in e)return;  //already applied or defined?
+     extend : function(el, visibilityCls) {
+        el && Ext.each([].concat(el), function(e) {
+            if (e && e.dom){
+                 if ('visibilityCls' in e) {
+                     return;
+                 }  //already applied or defined?
                  Ext.apply(e, fx.El);
                  e.visibilityCls = visibilityCls || this.visibilityCls;
             }
-        },this);
+        }, this);
         return this;
      }
 
@@ -330,23 +330,25 @@
        OP = Object.prototype,
        OPString = OP.toString,
        bodyTag = /^body/i,
-       HTMLDoc = '[object HTMLDocument]';
+       HTMLDoc = '[object HTMLDocument]',
+       resolveCache,
+       overload;
 
    if(!Ext.elCache || parseInt( Ext.version.replace(/\./g,''),10) < 311 ) {
-    alert ('Ext Release '+Ext.version+' is not supported');
+        alert ('Ext Release '+Ext.version+' is not supported');
    }
 
    /**
     * @private
     */
-   Ext._documents= {};
+   Ext._documents = {};
    Ext._documents[Ext.id(document,'_doc')]=Ext.elCache;
 
    /**
     * @private
     * Resolve the Element cache for a given element/window/document context.
     */
-   var resolveCache = ELD.resolveDocumentCache = function(el, cacheId){
+   resolveCache = ELD.resolveDocumentCache = function(el, cacheId){
 
         /**
          * MUST re-assert Ext.elCache !!
@@ -371,8 +373,8 @@
              el, elc, elCache = resolveCache(dom), parent;
 
             //clear out any references if found in the El.cache(s)
-            if(dom && (elc = elCache[dom.id]) && (el = elc.el) ){
-                if(el.dom){
+            if (dom && (elc = elCache[dom.id]) && (el = elc.el) ) {
+                if (el.dom) {
                     Ext.enableNestedListenerRemoval ? Evm.purgeElement(el.dom, true) : Evm.removeAll(el.dom);
                 }
                 delete elCache[dom.id];
@@ -381,32 +383,33 @@
                 el = null;
             }
             //No removal for window, documents, or bodies
-            if(dom && !dom.navigator && !Ext.isDocument(dom) && !bodyTag.test(dom.tagName)){
+            if (dom && !dom.navigator && !Ext.isDocument(dom) && !bodyTag.test(dom.tagName)) {
                 (parent = dom.parentElement || dom.parentNode) && parent.removeChild(dom);
             }
             dom = parent = null;
     };
 
-    var overload = function(pfn, fn ){
-           var f = typeof pfn === 'function' ? pfn : function t(){};
-           var ov = f._ovl; //call signature hash
-           if(!ov){
+    overload = function(pfn, fn ) {
+        var f, bv, fnA, i, l;
+           f = typeof pfn === 'function' ? pfn : function() {};
+           ov = f._ovl; //call signature hash
+           if (!ov) {
                ov = { base: f};
                ov[f.length|| 0] = f;
-               f= function t(){  //the proxy stub
-                  var o = arguments.callee._ovl;
-                  var fn = o[arguments.length] || o.base;
+               f = function() {  //the proxy stub
+                   var o, fn;
+                   o = arguments.callee._ovl;
+                   fn = o[arguments.length] || o.base;
                   //recursion safety
                   return fn && fn != arguments.callee ? fn.apply(this,arguments): undefined;
                };
            }
-           var fnA = [].concat(fn);
-           for(var i=0,l=fnA.length; i<l; ++i){
+           fnA = [].concat(fn);
+           for (i=0, l=fnA.length; i<l; ++i) {
              //ensures no duplicate call signatures, but last in rules!
              ov[fnA[i].length] = fnA[i];
            }
-           f._ovl= ov;
-           var t = null;
+           f._ovl = ov;
            return f;
        };
 
@@ -433,29 +436,31 @@
          *
          */
         isDocument : function(el, testOrigin){
-            var elm = el ? el.dom || el : null;
-            var test = elm && ((OPString.apply(elm) == HTMLDoc) || (elm && elm.nodeType == 9));
-            if(test && testOrigin){
-                try{
+            var elm, test;
+            elm = el ? el.dom || el : null;
+            test = elm && ((OPString.apply(elm) == HTMLDoc) || (elm && elm.nodeType == 9));
+            if (test && testOrigin) {
+                try {
                     test = !!elm.location;
+                } catch(e) {
+                    return false;
                 }
-                catch(e){return false;}
             }
             return test;
         },
 
-        isWindow : function(el){
+        isWindow : function(el) {
           var elm = el ? el.dom || el : null;
           return elm ? !!elm.navigator || OPString.apply(elm) == "[object Window]" : false;
         },
 
         isIterable : function(v){
             //check for array or arguments
-            if(Ext.isArray(v) || v.callee){
+            if (Ext.isArray(v) || v.callee) {
                 return true;
             }
             //check for node list type
-            if(/NodeList|HTMLCollection/.test(OPString.call(v))){
+            if (/NodeList|HTMLCollection/.test(OPString.call(v))) {
                 return true;
             }
             //NodeList has an item and length property
@@ -463,15 +468,15 @@
             return ((typeof v.nextNode != 'undefined' || v.item) && Ext.isNumber(v.length));
 
         },
-        isElement : function(obj){
+        isElement : function(obj) {
             return obj && Ext.type(obj)== 'element';
         },
 
-        isEvent : function(obj){
+        isEvent : function(obj) {
             return OPString.apply(obj) == '[object Event]' || (Ext.isObject(obj) && !Ext.type(o.constructor) && (window.event && obj.clientX && obj.clientX == window.event.clientX));
         },
 
-        isFunction: function(obj){
+        isFunction: function(obj) {
             return !!obj && typeof obj == 'function';
         },
 
@@ -482,7 +487,7 @@
          * based on the passed eventName is used, or DIV as default.
          * @return {Boolean} True if the passed object supports the named event.
          */
-        isEventSupported : function(evName, testEl){
+        isEventSupported : function(evName, testEl) {
              var TAGNAMES = {
                   'select':'input',
                   'change':'input',
@@ -506,13 +511,14 @@
                 };
 
             return function (evName, testEl) {
+              var evName, el, isSupported, eventName, tag, key;
               evName = (evName || '').replace(onPrefix,'');
-              var el, isSupported = false;
-              var eventName = 'on' + evName;
-              var tag = (testEl ? testEl : TAGNAMES[evName]) || 'div';
-              var key = getKey(evName, tag);
+              isSupported = false;
+              eventName = 'on' + evName;
+              tag = (testEl ? testEl : TAGNAMES[evName]) || 'div';
+              key = getKey(evName, tag);
 
-              if(key in cache){
+              if (key in cache){
                 //Use a previously cached result if available
                 return cache[key];
               }
@@ -565,52 +571,55 @@
      */
 
       get : El.get = function(el, doc){         //document targeted
+          var isDoc, ex, elm, id, cache;
             if(!el ){ return null; }
-            var isDoc = Ext.isDocument(el);
+            isDoc = Ext.isDocument(el);
 
             Ext.isDocument(doc) || (doc = DOC);
 
-            var ex, elm, id, cache = resolveCache(doc);
-            if(typeof el == "string"){ // element id
+            cache = resolveCache(doc);
+            if (typeof el == "string") { // element id
                 elm = Ext.getDom(el, null, doc);
-                if(!elm) return null;
-                if(cache[el] && cache[el].el){
+                if (!elm) {
+                    return null;
+                }
+                if (cache[el] && cache[el].el) {
                     ex = cache[el].el;
                     ex.dom = elm;
-                }else{
+                } else {
                     ex = El.addToCache(new (assertClass(elm))(elm, null, doc));
                 }
                 return ex;
 
-            }else if(isDoc){
-
-                if(!Ext.isDocument(el, true)){ return false; }  //is it accessible
+            } else if (isDoc) {
+                if (!Ext.isDocument(el, true)) {
+                    return false;
+                }  //is it accessible
                 cache = resolveCache(el);
 
-                if(cache[Ext.id(el)] && cache[el.id].el){
+                if (cache[Ext.id(el)] && cache[el.id].el) {
                     return cache[el.id].el;
                 }
                 // create a bogus element object representing the document object
-                var f = function(){};
+                var f = function() {};
                 f.prototype = El.prototype;
                 var docEl = new f();
                 docEl.dom = el;
                 docEl.id = Ext.id(el,'_doc');
                 docEl._isDoc = true;
-                El.addToCache( docEl, null, cache);
+                El.addToCache(docEl, null, cache);
                 return docEl;
-
-             }else if( el instanceof El ){
+             } else if(el instanceof El ) {
 
                 // refresh dom element in case no longer valid,
                 // catch case where it hasn't been appended
 
-                if(el.dom){
+                if (el.dom) {
                     el.id = Ext.id(el.dom);
-                }else{
+                } else {
                     el.dom = el.id ? Ext.getDom(el.id, true) : null;
                 }
-                if(el.dom){
+                if (el.dom) {
 	                cache = resolveCache(el);
 	                (cache[el.id] ||
 	                       (cache[el.id] = {data : {}, events : {}}
@@ -618,35 +627,34 @@
                 }
                 return el;
 
-            }else if(el.tagName || Ext.isWindow(el)){ // dom element
+            } else if(el.tagName || Ext.isWindow(el)) { // dom element
                 cache = resolveCache(el);
                 id = Ext.id(el);
-                if(cache[id] && (ex = cache[id].el)){
+                if (cache[id] && (ex = cache[id].el)) {
                     ex.dom = el;
-                }else{
+                } else {
                     ex = El.addToCache(new (assertClass(el))(el, null, doc), null, cache);
                 }
                 return ex;
 
-            }else if(el.isComposite){
+            } else if(el.isComposite) {
                 return el;
 
-            }else if(Ext.isArray(el)){
+            } else if(Ext.isArray(el)) {
                 return Ext.get(doc,doc).select(el);
             }
            return null;
-
     },
 
      /**
       * Ext.getDom to support targeted document contexts
       */
-     getDom : function(el, strict, doc){
+     getDom : function(el, strict, doc) {
         var D = doc || DOC;
-        if(!el || !D){
+        if (!el || !D) {
             return null;
         }
-        if (el.dom){
+        if (el.dom) {
             return el.dom;
         } else {
             if (Ext.isString(el)) {
@@ -665,14 +673,13 @@
                 return el;
             }
         }
-
      },
      /**
      * Returns the current/specified document body as an {@link Ext.Element}.
      * @param {HTMLDocument} doc (optional)
      * @return Ext.Element The document's body
      */
-     getBody : function(doc){
+     getBody : function(doc) {
             var D = ELD.getDocument(doc) || DOC;
             return Ext.get(D.body || D.documentElement);
        },
@@ -684,34 +691,35 @@
    });
 
    // private method for getting and setting element data
-    El.data = function(el, key, value){
+    El.data = function(el, key, value) {
         el = El.get(el);
         if (!el) {
             return null;
         }
         var c = resolveCache(el)[el.id].data;
-        if(arguments.length == 2){
+        if (arguments.length == 2) {
             return c[key];
-        }else{
+        } else {
             return (c[key] = value);
         }
     };
 
-    El.addToCache = function(el, id, cache ){
+    El.addToCache = function(el, id, cache ) {
+        var d, C, id;
         id = id || Ext.id(el);
-        var C = cache || resolveCache(el);
+        C = cache || resolveCache(el);
         C[id] = {
             el:  el.dom ? el : Ext.get(el),
             data: {},
             events: {}
         };
-        var d = C[id].el.dom;
+        d = C[id].el.dom;
         (d.getElementById || d.navigator) && (C[id].skipGC = true);
         return C[id].el;
     };
 
     El.removeFromCache = function(el, cache){
-        if(el && el.id){
+        if (el && el.id) {
             var C = cache || resolveCache(el);
             delete C[el.id];
         }
@@ -795,7 +803,7 @@
         /**
          * Resolves the current document context of this Element
          */
-        getDocument : function(){
+        getDocument : function() {
            return this._context || (this._context = GETDOC(this));
         },
 
@@ -805,11 +813,11 @@
       * @param {Boolean} deep (optional) Perform a deep cleanse of all nested childNodes as well.
       */
 
-        remove : function(cleanse, deep){
+        remove : function(cleanse, deep) {
 
           var dom = this.dom;
           //this.isMasked() && this.unmask();
-          if(dom){
+          if (dom) {
             Ext.removeNode(dom);
             delete this._context;
             delete this.dom;
@@ -822,7 +830,7 @@
          * @param {Document} doc (optional) specific document context for the Element search
          * @return {Ext.Element} this
          */
-        appendChild: function(el, doc){
+        appendChild: function(el, doc) {
             return GET(el, doc || this.getDocument()).appendTo(this);
         },
 
@@ -832,7 +840,7 @@
          * @param {Document} doc (optional) specific document context for the Element search
          * @return {Ext.Element} this
          */
-        appendTo: function(el, doc){
+        appendTo: function(el, doc) {
             GETDOM(el, false, doc || this.getDocument()).appendChild(this.dom);
             return this;
         },
@@ -843,7 +851,7 @@
          * @param {Document} doc (optional) specific document context for the Element search
          * @return {Ext.Element} this
          */
-        insertBefore: function(el, doc){
+        insertBefore: function(el, doc) {
             (el = GETDOM(el, false, doc || this.getDocument())).parentNode.insertBefore(this.dom, el);
             return this;
         },
@@ -854,7 +862,7 @@
          * @param {Document} doc (optional) specific document context for the Element search
          * @return {Ext.Element} this
          */
-        insertAfter: function(el, doc){
+        insertAfter: function(el, doc) {
             (el = GETDOM(el, false, doc || this.getDocument())).parentNode.insertBefore(this.dom, el.nextSibling);
             return this;
         },
@@ -865,13 +873,13 @@
          * @param {Document} doc (optional) specific document context for the Element search
          * @return {Ext.Element} The new child
          */
-        insertFirst: function(el, returnDom){
+        insertFirst: function(el, returnDom) {
             el = el || {};
-            if(el.nodeType || el.dom || typeof el == 'string'){ // element
+            if (el.nodeType || el.dom || typeof el == 'string') { // element
                 el = GETDOM(el);
                 this.dom.insertBefore(el, this.dom.firstChild);
                 return !returnDom ? GET(el) : el;
-            }else{ // dh config
+            } else { // dh config
                 return this.createChild(el, this.dom.firstChild, returnDom);
             }
         },
@@ -882,7 +890,7 @@
          * @param {Document} doc (optional) specific document context for the Element search
          * @return {Ext.Element} this
          */
-        replace: function(el, doc){
+        replace: function(el, doc) {
             el = GET(el, doc || this.getDocument());
             this.insertBefore(el);
             el.remove();
@@ -895,15 +903,16 @@
          * @param {Document} doc (optional) specific document context for the Element search
          * @return {Ext.Element} this
          */
-        replaceWith: function(el, doc){
-            var me = this;
-            if(el.nodeType || el.dom || typeof el == 'string'){
+        replaceWith: function(el, doc) {
+            var me, C;
+            me = this;
+            if (el.nodeType || el.dom || typeof el == 'string') {
                 el = GETDOM(el, false, doc || me.getDocument());
                 me.dom.parentNode.insertBefore(el, me.dom);
-            }else{
+            } else {
                 el = DH.insertBefore(me.dom, el);
             }
-            var C = resolveCache(me);
+            C = resolveCache(me);
             Ext.removeNode(me.dom);
             me.id = Ext.id(me.dom = el);
 
@@ -935,7 +944,7 @@
                 p = dom.parentNode,
                 visible = data(dom, ISVISIBLE);  //use the cached value if registered
 
-            if(typeof visible != 'boolean'){
+            if (typeof visible != 'boolean') {
 
 	            //Determine the initial state based on display states
 	            visible = !me.hasClass(me.visibilityCls || El.visibilityCls) &&
@@ -946,11 +955,11 @@
             }
 
 
-            if(deep !== true || !visible){
+            if (deep !== true || !visible) {
                 return visible;
             }
-            while(p && !bodyTag.test(p.tagName)){
-                if(!Ext.fly(p, '_isVisible').isVisible()){
+            while (p && !bodyTag.test(p.tagName)) {
+                if(!Ext.fly(p, '_isVisible').isVisible()) {
                     return false;
                 }
                 p = p.parentNode;
@@ -967,13 +976,13 @@
          *         possible hideMode strings: 'display, visibility, offsets, asclass'
          * @return {Ext.Element} this
          */
-        setVisible : function(visible, animate){
+        setVisible : function(visible, animate) {
             var me = this,
                 dom = me.dom,
                 visMode = getVisMode(dom);
 
             // hideMode string override
-            if (typeof animate == 'string'){
+            if (typeof animate == 'string') {
                 switch (animate) {
                     case DISPLAY:
                         visMode = El.DISPLAY;
@@ -994,17 +1003,17 @@
             }
 
             if (!animate || !me.anim) {
-                if(visMode == El.ASCLASS ){
+                if (visMode == El.ASCLASS ) {
 
                     me[visible?'removeClass':'addClass'](me.visibilityCls || El.visibilityCls);
 
-                } else if (visMode == El.DISPLAY){
+                } else if (visMode == El.DISPLAY) {
 
                     return me.setDisplayed(visible);
 
-                } else if (visMode == El.OFFSETS){
+                } else if (visMode == El.OFFSETS) {
 
-                    if (!visible){
+                    if (!visible) {
                         me.hideModeStyles = {
                             position: me.getStyle('position'),
                             top: me.getStyle('top'),
@@ -1016,13 +1025,13 @@
                         delete me.hideModeStyles;
                     }
 
-                }else{
+                } else {
                     me.fixDisplay();
                     dom.style.visibility = visible ? "visible" : HIDDEN;
                 }
-            }else{
+            } else {
                 // closure for composites
-                if(visible){
+                if (visible) {
                     me.setOpacity(.01);
                     me.setVisible(true);
                 }
@@ -1031,7 +1040,7 @@
                         null,
                         .35,
                         'easeIn',
-                        function(){
+                        function() {
                             visible || me.setVisible(false).setOpacity(1);
                         });
             }
@@ -1052,9 +1061,8 @@
             var dom = this.dom,
                 visMode = getVisMode(dom);
 
-            if(typeof value == "boolean"){
-
-               if(visMode == El.ASCLASS){
+            if (typeof value == "boolean") {
+               if (visMode == El.ASCLASS) {
                   return this.setVisible(value);
                }
                data(this.dom, ISVISIBLE, value);
@@ -1070,16 +1078,16 @@
          * @param {String} display (optional) What to set display to when visible
          * @return {Ext.Element} this
          */
-        enableDisplayMode : function(display){
+        enableDisplayMode : function(display) {
             this.setVisibilityMode(El.DISPLAY);
-            if(!Ext.isEmpty(display)){
+            if (!Ext.isEmpty(display)) {
                 data(this.dom, ORIGINALDISPLAY, display);
             }
             return this;
         },
 
 
-        scrollIntoView : function(container, hscroll){
+        scrollIntoView : function(container, hscroll) {
                 var d = this.getDocument(),
                     c = Ext.getDom(container, null, d) || Ext.getBody(d).dom,
                     el = this.dom,
@@ -1094,17 +1102,17 @@
 		            cb = ct + ch,
 		            cr = cl + c.clientWidth;
 
-                if(el.offsetHeight > ch || t < ct){
+                if (el.offsetHeight > ch || t < ct) {
                     c.scrollTop = t;
-                }else if(b > cb){
+                } else if(b > cb) {
                     c.scrollTop = b-ch;
                 }
                 // corrects IE, other browsers will ignore
                 c.scrollTop = c.scrollTop;
-                if(hscroll !== false){
-                    if(el.offsetWidth > c.clientWidth || l < cl){
+                if (hscroll !== false) {
+                    if (el.offsetWidth > c.clientWidth || l < cl) {
                         c.scrollLeft = l;
-                    }else if(r > cr){
+                    } else if(r > cr) {
                         c.scrollLeft = r-c.clientWidth;
                     }
                     c.scrollLeft = c.scrollLeft;
@@ -1112,7 +1120,7 @@
                 return this;
         },
 
-        contains : function(el){
+        contains : function(el) {
             try {
                 return !el ? false : ELD.isAncestor(this.dom, el.dom ? el.dom : el);
             } catch(e) {
@@ -1124,7 +1132,7 @@
          * Returns the current scroll position of the element.
          * @return {Object} An object containing the scroll position in the format {left: (scrollLeft), top: (scrollTop)}
          */
-        getScroll : function(){
+        getScroll : function() {
             var d = this.dom,
             doc = this.getDocument(),
             body = doc.body,
@@ -1133,16 +1141,16 @@
             t,
             ret;
 
-            if(Ext.isDocument(d) || d == body){
-                if(Ext.isIE && ELD.docIsStrict(doc)){
+            if (Ext.isDocument(d) || d == body) {
+                if (Ext.isIE && ELD.docIsStrict(doc)) {
                     l = docElement.scrollLeft;
                     t = docElement.scrollTop;
-                }else{
+                } else {
                     l = window.pageXOffset;
                     t = window.pageYOffset;
                 }
                 ret = {left: l || (body ? body.scrollLeft : 0), top: t || (body ? body.scrollTop : 0)};
-            }else{
+            } else {
                 ret = {left: d.scrollLeft, top: d.scrollTop};
             }
             return ret;
@@ -1152,53 +1160,53 @@
          * @param {String} property The style property whose value is returned.
          * @return {String} The current value of the style property for this element.
          */
-        getStyle : function(){
-            var getStyle =
+        getStyle : function() {
+            var GS, getStyle;
+            getStyle =
              view && view.getComputedStyle ?
-                function GS(prop){
-                    var el = !this._isDoc ? this.dom : null,
-                        v,
-                        cs,
-                        out,
-                        display,
-                        wk = Ext.isWebKit,
-                        display,
-                        style;
+                function GS(prop) {
+                    var el, v, cs, out, display, wk, style;
+                    el = !this._isDoc ? this.dom : null;
+                    wk = Ext.isWebKit;
 
-                    if(!el || !el.style) return null;
+                    if (!el || !el.style) {
+                        return null;
+                    }
                     style = el.style;
                     prop = chkCache(prop);
                     cs = view.getComputedStyle(el, null);
                     out = (cs) ? cs[prop]: null;
 
                     // Fix bug caused by this: https://bugs.webkit.org/show_bug.cgi?id=13343
-                    if(wk){
-                        if(out && marginRightRe.test(prop) &&
+                    if (wk) {
+                        if (out && marginRightRe.test(prop) &&
                             style.position != 'absolute' &&
-                            out != '0px'){
+                            out != '0px') {
 		                        display = style.display;
 		                        style.display = 'inline-block';
 		                        out = view.getComputedStyle(el, null)[prop];
 		                        style.display = display;
-	                    }else if(out == 'rgba(0, 0, 0, 0)'){
+	                    } else if(out == 'rgba(0, 0, 0, 0)') {
                             //Webkit returns rgb values for transparent.
 	                        out = 'transparent';
 	                    }
                     }
                     return out || style[prop];
                 } :
-                function GS(prop){ //IE < 9
+                function GS(prop) { //IE < 9
                    var el = !this._isDoc ? this.dom : null,
                         m,
                         cs,
                         style;
-                    if(!el || !el.style) return null;
+                    if (!el || !el.style) {
+                        return null;
+                    }
                     style = el.style;
-                    if (prop == OPACITY ) {
+                    if (prop == OPACITY) {
                         if (style.filter.match) {
-                            if(m = style.filter.match(opacityRe)){
+                            if (m = style.filter.match(opacityRe)) {
                                 var fv = parseFloat(m[1]);
-                                if(!isNaN(fv)){
+                                if (!isNaN(fv)) {
                                     return fv ? fv / 100 : 0;
                                 }
                             }
@@ -1208,7 +1216,7 @@
                     prop = chkCache(prop);
                     return ((cs = el.currentStyle) ? cs[prop] : null) || el.style[prop];
                 };
-                var GS = null;
+                GS = null;
                 return getStyle;
         }(),
         /**
@@ -1217,8 +1225,10 @@
          * @param {String} value (optional) The value to apply to the given property, or null if an object was passed.
          * @return {Ext.Element} this
          */
-        setStyle : function(prop, value){
-            if(this._isDoc || Ext.isDocument(this.dom)) return this;
+        setStyle : function(prop, value) {
+            if (this._isDoc || Ext.isDocument(this.dom)) {
+                return this;
+            }
             var tmp, style;
 
             if (typeof prop != 'object') {
@@ -1227,11 +1237,11 @@
                 prop = tmp;
             }
             for (style in prop) {
-                if(prop.hasOwnProperty(style)) {
+                if (prop.hasOwnProperty(style)) {
                     value = prop[style];
-	                style == OPACITY ?
-	                    this.setOpacity(value) :
-	                    this.dom.style[chkCache(style)] = value;
+                    style == OPACITY ?
+                            this.setOpacity(value) :
+                            this.dom.style[chkCache(style)] = value;
                 }
             }
             return this;
@@ -1240,7 +1250,7 @@
         * Centers the Element in either the viewport, or another Element.
         * @param {Mixed} centerIn (optional) The element in which to center the element.
         */
-        center : function(centerIn){
+        center : function(centerIn) {
             return this.alignTo(centerIn || this.getDocument(), 'c-c');
         },
 
@@ -1251,7 +1261,7 @@
          * @param {String} msgCls (optional) A css class to apply to the msg element
          * @return {Element} The mask element
          */
-        mask : function(msg, msgCls){
+        mask : function(msg, msgCls) {
             var me = this,
                 dom = me.dom,
                 dh = Ext.DomHelper,
@@ -1259,13 +1269,13 @@
                 el,
                 mask;
 
-            if(me.getStyle("position") == "static"){
+            if (me.getStyle("position") == "static") {
                 me.addClass(XMASKEDRELATIVE);
             }
-            if((el = data(dom, 'maskMsg'))){
+            if ((el = data(dom, 'maskMsg'))) {
                 el.remove();
             }
-            if((el = data(dom, 'mask'))){
+            if ((el = data(dom, 'mask'))) {
                 el.remove();
             }
 
@@ -1274,7 +1284,7 @@
 
             me.addClass(XMASKED);
             mask.setDisplayed(true);
-            if(typeof msg == 'string'){
+            if (typeof msg == 'string') {
                 var mm = dh.append(dom, {cls : EXTELMASKMSG, cn:{tag:'div'}}, true);
                 data(dom, 'maskMsg', mm);
                 mm.dom.className = msgCls ? EXTELMASKMSG + " " + msgCls : EXTELMASKMSG;
@@ -1282,7 +1292,7 @@
                 mm.setDisplayed(true);
                 mm.center(me);
             }
-            if(Ext.isIE && !(Ext.isIE7 && Ext.isStrict) && me.getStyle('height') == 'auto'){ // ie will not expand full height automatically
+            if (Ext.isIE && !(Ext.isIE7 && Ext.isStrict) && me.getStyle('height') == 'auto') { // ie will not expand full height automatically
                 mask.setSize(undefined, me.getHeight());
             }
             return mask;
@@ -1291,13 +1301,13 @@
         /**
          * Removes a previously applied mask.
          */
-        unmask : function(){
+        unmask : function() {
             var me = this,
                 dom = me.dom,
                 mask = data(dom, 'mask'),
                 maskMsg = data(dom, 'maskMsg');
-            if(mask){
-                if(maskMsg){
+            if (mask) {
+                if (maskMsg) {
                     maskMsg.remove();
                     data(dom, 'maskMsg', undefined);
                 }
@@ -1311,7 +1321,7 @@
          * Returns true if this element is masked
          * @return {Boolean}
          */
-        isMasked : function(){
+        isMasked : function() {
             var m = data(this.dom, 'mask');
             return m && m.isVisible();
         },
@@ -1320,7 +1330,7 @@
         * Calculates the x, y to center this element on the screen
         * @return {Array} The x, y values [x, y]
         */
-        getCenterXY : function(){
+        getCenterXY : function() {
             return this.getAlignToXY(this.getDocument(), 'c-c');
         },
         /**
@@ -1333,7 +1343,7 @@
          * {width: (target width), height: (target height)} (defaults to the element's current size)
          * @return {Array} [x, y] An array containing the element's x and y coordinates
          */
-        getAnchorXY : function(anchor, local, s){
+        getAnchorXY : function(anchor, local, s) {
             //Passing a different size is useful for pre-calculating anchors,
             //especially for anchored animations that change the el size.
             anchor = (anchor || "tl").toLowerCase();
@@ -1376,7 +1386,7 @@
          * @param {Function} callback The function to call after the animation finishes
          * @return {Ext.Element} this
          */
-        anchorTo : function(el, alignment, offsets, animate, monitorScroll, callback){
+        anchorTo : function(el, alignment, offsets, animate, monitorScroll, callback) {
             var me = this,
                 dom = me.dom;
 
@@ -1399,7 +1409,7 @@
          * Returns the current scroll position of the element.
          * @return {Object} An object containing the scroll position in the format {left: (scrollLeft), top: (scrollTop)}
          */
-        getScroll : function(){
+        getScroll : function() {
             var d = this.dom,
                 doc = this.getDocument(),
                 body = doc.body,
@@ -1408,16 +1418,16 @@
                 t,
                 ret;
 
-            if(d == doc || d == body){
-                if(Ext.isIE && ELD.docIsStrict(doc)){
+            if (d == doc || d == body) {
+                if (Ext.isIE && ELD.docIsStrict(doc)) {
                     l = docElement.scrollLeft;
                     t = docElement.scrollTop;
-                }else{
+                } else {
                     l = window.pageXOffset;
                     t = window.pageYOffset;
                 }
                 ret = {left: l || (body ? body.scrollLeft : 0), top: t || (body ? body.scrollTop : 0)};
-            }else{
+            } else {
                 ret = {left: d.scrollLeft, top: d.scrollTop};
             }
             return ret;
@@ -1431,45 +1441,32 @@
          * @param {Array} offsets (optional) Offset the positioning by [x, y]
          * @return {Array} [x, y]
          */
-        getAlignToXY : function(el, p, o){
-            var doc;
+        getAlignToXY : function(el, p, o) {
+            var doc, me, d, a1, a2, x, y, w, h, r, dw, dh, p1y, p1x, p2y, p2x, swapY, swapX, docElement, docBody, scrollX, scrollY, c, p1, p2, m;
+
             el = Ext.get(el, doc = this.getDocument());
 
-            if(!el || !el.dom){
+            if (!el || !el.dom){
                 throw "Element.getAlignToXY with an element that doesn't exist";
             }
 
             o = o || [0,0];
             p = (p == "?" ? "tl-bl?" : (!/-/.test(p) && p != "" ? "tl-" + p : p || "tl-bl")).toLowerCase();
 
-            var me = this,
-                d = me.dom,
-                a1,
-                a2,
-                x,
-                y,
-                //constrain the aligned el to viewport if necessary
-                w,
-                h,
-                r,
-                dw = ELD.getViewWidth(false,doc) -10, // 10px of margin for ie
-                dh = ELD.getViewHeight(false,doc)-10, // 10px of margin for ie
-                p1y,
-                p1x,
-                p2y,
-                p2x,
-                swapY,
-                swapX,
-                docElement = doc.documentElement,
-                docBody = doc.body,
-                scrollX = (docElement.scrollLeft || docBody.scrollLeft || 0)+5,
-                scrollY = (docElement.scrollTop || docBody.scrollTop || 0)+5,
-                c = false, //constrain to viewport
-                p1 = "",
-                p2 = "",
-                m = p.match(/^([a-z]+)-([a-z]+)(\?)?$/);
+            me = this;
+            d = me.dom;
+            dw = ELD.getViewWidth(false,doc) -10; // 10px of margin for ie
+            dh = ELD.getViewHeight(false,doc)-10; // 10px of margin for ie
+            docElement = doc.documentElement;
+            docBody = doc.body;
+            scrollX = (docElement.scrollLeft || docBody.scrollLeft || 0)+5;
+            scrollY = (docElement.scrollTop || docBody.scrollTop || 0)+5;
+            c = false; //constrain to viewport
+            p1 = "";
+            p2 = "";
+            m = p.match(/^([a-z]+)-([a-z]+)(\?)?$/);
 
-            if(!m){
+            if (!m) {
                throw "Element.getAlignToXY with an invalid alignment " + p;
             }
 
@@ -1485,7 +1482,7 @@
             x = a2[0] - a1[0] + o[0];
             y = a2[1] - a1[1] + o[1];
 
-            if(c){
+            if (c) {
                w = me.getWidth();
                h = me.getHeight();
                r = el.getRegion();
@@ -1508,33 +1505,37 @@
                }
                if (y + h > dh + scrollY) {
                     y = swapY ? r.top-h : dh+scrollY-h;
-                }
-               if (y < scrollY){
+               }
+               if (y < scrollY) {
                    y = swapY ? r.bottom : scrollY;
                }
             }
 
-            return [x,y];
+            return [x, y];
         },
             // private ==>  used outside of core
-        adjustForConstraints : function(xy, parent, offsets){
+        adjustForConstraints : function(xy, parent, offsets) {
             return this.getConstrainToXY(parent || this.getDocument(), false, offsets, xy) ||  xy;
         },
 
         // private ==>  used outside of core
-        getConstrainToXY : function(el, local, offsets, proposedXY){
+        getConstrainToXY : function(el, local, offsets, proposedXY) {
             var os = {top:0, left:0, bottom:0, right: 0};
 
-            return function(el, local, offsets, proposedXY){
-                var doc = this.getDocument();
+            return function(el, local, offsets, proposedXY) {
+                var doc, vw, vh, vx, vy, s,
+                        vr, vb, xy, x, y, offset, w, h,
+                        moved;
+                doc = this.getDocument()
                 el = Ext.get(el, doc);
                 offsets = offsets ? Ext.applyIf(offsets, os) : os;
 
-                var vw, vh, vx = 0, vy = 0;
-                if(el.dom == doc.body || el.dom == doc){
+                vx = 0;
+                vy = 0;
+                if (el.dom == doc.body || el.dom == doc) {
                     vw = ELD.getViewWidth(false,doc);
                     vh = ELD.getViewHeight(false,doc);
-                }else{
+                } else {
                     vw = el.dom.clientWidth;
                     vh = el.dom.clientHeight;
                     if(!local){
@@ -1544,7 +1545,7 @@
                     }
                 }
 
-                var s = el.getScroll();
+                s = el.getScroll();
 
                 vx += offsets.left + s.left;
                 vy += offsets.top + s.top;
@@ -1552,32 +1553,33 @@
                 vw -= offsets.right;
                 vh -= offsets.bottom;
 
-                var vr = vx + vw,
-                    vb = vy + vh,
-                    xy = proposedXY || (!local ? this.getXY() : [this.getLeft(true), this.getTop(true)]);
-                    x = xy[0], y = xy[1],
-                    offset = this.getConstrainOffset(),
-                    w = this.dom.offsetWidth + offset,
-                    h = this.dom.offsetHeight + offset;
+                vr = vx + vw;
+                vb = vy + vh;
+                xy = proposedXY || (!local ? this.getXY() : [this.getLeft(true), this.getTop(true)]);
+                x = xy[0];
+                y = xy[1];
+                offset = this.getConstrainOffset();
+                w = this.dom.offsetWidth + offset;
+                h = this.dom.offsetHeight + offset;
 
                 // only move it if it needs it
-                var moved = false;
+                moved = false;
 
                 // first validate right/bottom
-                if((x + w) > vr){
+                if ((x + w) > vr) {
                     x = vr - w;
                     moved = true;
                 }
-                if((y + h) > vb){
+                if ((y + h) > vb) {
                     y = vb - h;
                     moved = true;
                 }
                 // then make sure top/left isn't negative
-                if(x < vx){
+                if (x < vx) {
                     x = vx;
                     moved = true;
                 }
-                if(y < vy){
+                if (y < vy) {
                     y = vy;
                     moved = true;
                 }
@@ -1619,7 +1621,7 @@
                 b = D.body,
                 depth = 0,
                 stopEl;
-            if(Ext.isGecko && OPString.call(p) == '[object XULElement]') {
+            if (Ext.isGecko && OPString.call(p) == '[object XULElement]') {
                 return null;
             }
             maxDepth = maxDepth || 50;
@@ -1627,8 +1629,8 @@
                 stopEl = Ext.getDom(maxDepth, null, D);
                 maxDepth = Number.MAX_VALUE;
             }
-            while(p && p.nodeType == 1 && depth < maxDepth && p != b && p != stopEl){
-                if(Ext.DomQuery.is(p, simpleSelector)){
+            while (p && p.nodeType == 1 && depth < maxDepth && p != b && p != stopEl) {
+                if (Ext.DomQuery.is(p, simpleSelector)) {
                     return returnEl ? Ext.get(p, D) : p;
                 }
                 depth++;
@@ -1640,11 +1642,11 @@
          *  Store the current overflow setting and clip overflow on the element - use <tt>{@link #unclip}</tt> to remove
          * @return {Ext.Element} this
          */
-        clip : function(){
+        clip : function() {
             var me = this,
                 dom = me.dom;
 
-            if(!data(dom, ISCLIPPED)){
+            if (!data(dom, ISCLIPPED)) {
                 data(dom, ISCLIPPED, true);
                 data(dom, ORIGINALCLIP, {
                     o: me.getStyle(OVERFLOW),
@@ -1662,34 +1664,35 @@
          *  Return clipping (overflow) to original clipping before <tt>{@link #clip}</tt> was called
          * @return {Ext.Element} this
          */
-        unclip : function(){
+        unclip : function() {
             var me = this,
                 dom = me.dom;
 
-            if(data(dom, ISCLIPPED)){
+            if (data(dom, ISCLIPPED)) {
                 data(dom, ISCLIPPED, false);
                 var o = data(dom, ORIGINALCLIP);
-                if(o.o){
+                if (o.o) {
                     me.setStyle(OVERFLOW, o.o);
                 }
-                if(o.x){
+                if (o.x) {
                     me.setStyle(OVERFLOWX, o.x);
                 }
-                if(o.y){
+                if (o.y) {
                     me.setStyle(OVERFLOWY, o.y);
                 }
             }
             return me;
         },
 
-        getViewSize : function(){
-            var doc = this.getDocument(),
-                d = this.dom,
-                isDoc = (d == doc || d == doc.body);
+        getViewSize : function() {
+            var doc, d, isDoc, extdom;
+            doc = this.getDocument();
+            d = this.dom;
+            isDoc = (d == doc || d == doc.body);
 
             // If the body, use Ext.lib.Dom
             if (isDoc) {
-                var extdom = Ext.lib.Dom;
+                extdom = Ext.lib.Dom;
                 return {
                     width : extdom.getViewWidth(),
                     height : extdom.getViewHeight()
@@ -1712,33 +1715,34 @@
         * Sizing of the document body is handled at the adapter level which handles special cases for IE and strict modes, etc.
         */
 
-        getStyleSize : function(){
-            var me = this,
-                w, h,
-                doc = this.getDocument(),
-                d = this.dom,
-                isDoc = (d == doc || d == doc.body),
-                s = d.style;
+        getStyleSize : function() {
+            var me, w, h, doc, d, isDoc, s;
+
+            me = this;
+            doc = this.getDocument();
+            d = this.dom;
+            isDoc = (d == doc || d == doc.body);
+            s = d.style;
 
             // If the body, use Ext.lib.Dom
             if (isDoc) {
-                var extdom = Ext.lib.Dom;
+                extdom = Ext.lib.Dom;
                 return {
                     width : extdom.getViewWidth(),
                     height : extdom.getViewHeight()
                 }
             }
             // Use Styles if they are set
-            if(s.width && s.width != 'auto'){
+            if (s.width && s.width != 'auto') {
                 w = parseFloat(s.width);
-                if(me.isBorderBox()){
+                if (me.isBorderBox()) {
                    w -= me.getFrameWidth('lr');
                 }
             }
             // Use Styles if they are set
-            if(s.height && s.height != 'auto'){
+            if (s.height && s.height != 'auto') {
                 h = parseFloat(s.height);
-                if(me.isBorderBox()){
+                if (me.isBorderBox()) {
                    h -= me.getFrameWidth('tb');
                 }
             }
@@ -1751,15 +1755,16 @@
         /**
          * Resolve the current document context of the passed Element
          */
-        getDocument : function(el, accessTest){
-          var dom= null;
-          try{
+        getDocument : function(el, accessTest) {
+          var dom, isDoc;
+          dom = null;
+          try {
             dom = Ext.getDom(el, null, null); //will fail if El.dom is non "same-origin" document
-          }catch(ex){}
+          } catch(ex) {}
 
-          var isDoc = Ext.isDocument(dom);
-          if(isDoc){
-            if(accessTest){
+          isDoc = Ext.isDocument(dom);
+          if (isDoc) {
+            if (accessTest) {
                 return Ext.isDocument(dom, accessTest) ? dom : null;
             }
             return dom;
@@ -1778,7 +1783,7 @@
         },
 
         getViewWidth : Ext.overload ([
-           ELD.getViewWidth || function(full){},
+           ELD.getViewWidth || function(full) {},
             function() { return this.getViewWidth(false);},
             function(full, doc) {
                 return full ? this.getDocumentWidth(doc) : this.getViewportWidth(doc);
@@ -1786,7 +1791,7 @@
          ),
 
         getViewHeight : Ext.overload ([
-            ELD.getViewHeight || function(full){},
+            ELD.getViewHeight || function(full) {},
             function() { return this.getViewHeight(false);},
             function(full, doc) {
                 return full ? this.getDocumentHeight(doc) : this.getViewportHeight(doc);
@@ -1808,7 +1813,7 @@
         getDocumentWidth: Ext.overload([
            ELD.getDocumentWidth || emptyFn,
            function(doc) {
-              if(doc=this.getDocument(doc)){
+              if(doc=this.getDocument(doc)) {
                 return Math.max(
                  !this.docIsStrict(doc) ? doc.body.scrollWidth : doc.documentElement.scrollWidth
                  , this.getViewportWidth(doc)
@@ -1820,11 +1825,11 @@
 
         getViewportHeight: Ext.overload([
            ELD.getViewportHeight || emptyFn,
-           function(doc){
-             if(doc=this.getDocument(doc)){
-                if(Ext.isIE){
+           function(doc) {
+             if (doc=this.getDocument(doc)) {
+                if (Ext.isIE) {
                     return this.docIsStrict(doc) ? doc.documentElement.clientHeight : doc.body.clientHeight;
-                }else{
+                } else {
                     return doc.defaultView.innerHeight;
                 }
              }
@@ -1835,7 +1840,7 @@
         getViewportWidth: Ext.overload([
            ELD.getViewportWidth || emptyFn,
            function(doc) {
-              if(doc=this.getDocument(doc)){
+              if (doc=this.getDocument(doc)) {
                 return !this.docIsStrict(doc) && !Ext.isOpera ? doc.body.clientWidth :
                    Ext.isIE ? doc.documentElement.clientWidth : doc.defaultView.innerWidth;
               }
@@ -1846,12 +1851,14 @@
         getXY : Ext.overload([
             ELD.getXY || emptyFn,
             function(el, doc) {
-                if(typeof el=='string'){
-	                el = Ext.getDom(el, null, doc);
-	                var D= this.getDocument(el),
-	                    bd = D ? (D.body || D.documentElement): null;
+                if (typeof el=='string') {
+                    el = Ext.getDom(el, null, doc);
+                    var D = this.getDocument(el),
+                            bd = D ? (D.body || D.documentElement) : null;
 
-	                if(!el || !bd || el == bd){ return [0, 0]; }
+                    if (!el || !bd || el == bd) {
+                        return [0, 0];
+                    }
                 }
                 return this.getXY(el);
             }
@@ -1889,14 +1896,15 @@
     El.Flyweight.prototype.isFlyweight = true;
 
     function addListener(el, ename, fn, task, wrap, scope){
+        var id, cache, es, wfn;
         el = Ext.getDom(el);
-        if(!el){ return; }
+        if (!el) { return; }
 
-        var id = Ext.id(el),
-            cache = resolveCache(el);
-            cache[id] || El.addToCache(el, id, cache);
+        id = Ext.id(el);
+        cache = resolveCache(el);
+        cache[id] || El.addToCache(el, id, cache);
 
-         var es = cache[id].events || {}, wfn;
+        es = cache[id].events || {};
 
         wfn = E.on(el, ename, wrap);
         es[ename] = es[ename] || [];
@@ -1904,66 +1912,66 @@
 
         // this is a workaround for jQuery and should somehow be removed from Ext Core in the future
         // without breaking ExtJS.
-        if(el.addEventListener && ename == "mousewheel" ){
+        if (el.addEventListener && ename == "mousewheel" ) {
             var args = ["DOMMouseScroll", wrap, false];
             el.addEventListener.apply(el, args);
             Ext.EventManager.addListener(window, 'beforeunload', function(){
                 el.removeEventListener.apply(el, args);
             });
         }
-        if(ename == "mousedown" && DOC == el){ // fix stopped mousedowns on the document
+        if (ename == "mousedown" && DOC == el) { // fix stopped mousedowns on the document
             Ext.EventManager.stoppedMouseDownEvent.addListener(wrap);
         }
     };
 
-    function createTargeted(h, o){
-        return function(){
+    function createTargeted(h, o) {
+        return function() {
             var args = Ext.toArray(arguments);
-            if(o.target == Ext.EventObject.setEvent(args[0]).target){
+            if (o.target == Ext.EventObject.setEvent(args[0]).target) {
                 h.apply(this, args);
             }
         };
     };
 
-    function createBuffered(h, o, task){
-        return function(e){
+    function createBuffered(h, o, task) {
+        return function(e) {
             // create new event object impl so new events don't wipe out properties
             task.delay(o.buffer, h, null, [new Ext.EventObjectImpl(e)]);
         };
     };
 
-    function createSingle(h, el, ename, fn, scope){
-        return function(e){
+    function createSingle(h, el, ename, fn, scope) {
+        return function(e) {
             Ext.EventManager.removeListener(el, ename, fn, scope);
             h(e);
         };
     };
 
-    function createDelayed(h, o, fn){
-        return function(e){
+    function createDelayed(h, o, fn) {
+        return function(e) {
             var task = new Ext.util.DelayedTask(h);
             (fn.tasks || (fn.tasks = [])).push(task);
             task.delay(o.delay || 10, h, null, [new Ext.EventObjectImpl(e)]);
         };
     };
 
-    function listen(element, ename, opt, fn, scope){
+    function listen(element, ename, opt, fn, scope) {
         var o = !Ext.isObject(opt) ? {} : opt,
             el = Ext.getDom(element), task;
 
         fn = fn || o.fn;
         scope = scope || o.scope;
 
-        if(!el){
+        if (!el) {
             throw "Error listening for \"" + ename + '\". Element "' + element + '" doesn\'t exist.';
         }
-        function h(e){
+        function h(e) {
             // prevent errors while unload occurring
-            if(!window.Ext){ return; }
+            if (!window.Ext){ return; }
             e = Ext.EventObject.setEvent(e);
             var t;
             if (o.delegate) {
-                if(!(t = e.getTarget(o.delegate, el))){
+                if (!(t = e.getTarget(o.delegate, el))) {
                     return;
                 }
             } else {
@@ -1984,16 +1992,16 @@
 
             fn.call(scope || el, e, t, o);
         };
-        if(o.target){
+        if (o.target) {
             h = createTargeted(h, o);
         }
-        if(o.delay){
+        if (o.delay) {
             h = createDelayed(h, o, fn);
         }
-        if(o.single){
+        if (o.single) {
             h = createSingle(h, el, ename, fn, scope);
         }
-        if(o.buffer){
+        if (o.buffer) {
             task = new Ext.util.DelayedTask(h);
             h = createBuffered(h, o, task);
         }
@@ -2003,19 +2011,19 @@
     };
 
     Ext.apply(Evm ,{
-         addListener : Evm.on = function(element, eventName, fn, scope, options){
-            if(typeof eventName == 'object'){
+         addListener : Evm.on = function(element, eventName, fn, scope, options) {
+            if (typeof eventName == 'object') {
                 var o = eventName, e, val;
-                for(e in o){
-                    if(!o.hasOwnProperty(e)) {
+                for (e in o){
+                    if (!o.hasOwnProperty(e)) {
                         continue;
                     }
                     val = o[e];
-                    if(!propRe.test(e)){
-                        if(Ext.isFunction(val)){
+                    if (!propRe.test(e)) {
+                        if (Ext.isFunction(val)) {
                             // shared options
                             listen(element, e, o, val, o.scope);
-                        }else{
+                        } else {
                             // individual options
                             listen(element, e, val);
                         }
@@ -2035,12 +2043,12 @@
          * @param {Object} scope If a scope (<b><code>this</code></b> reference) was specified when the listener was added,
          * then this must refer to the same object.
          */
-        removeListener : Evm.un = function(element, eventName, fn, scope){
-            var el = Ext.getDom(element);
-            el && Ext.get(el);
-            var elCache = el ? resolveCache(el) : {},
-                f = el && ((elCache[el.id]||{events:{}}).events)[eventName] || [],
-                wrap, i, l, k, len, fnc, evs;
+        removeListener : Evm.un = function(element, eventName, fn, scope) {
+            var el, foo, elCache, f, wrap, i, l, k, len, fnc, evs;
+            el = Ext.getDom(element);
+            foo = el && Ext.get(el);
+            elCache = el ? resolveCache(el) : {};
+            f = el && ((elCache[el.id]||{events:{}}).events)[eventName] || [];
 
             for (i = 0, len = f.length; i < len; i++) {
                 /* 0 = Original Function,
@@ -2212,7 +2220,7 @@
         EMPTYFN = function(){},
         OP = Object.prototype,
         addListener = function () {
-            var handler;
+            var handler, F;
             if (window.addEventListener) {
                 handler = function F(el, eventName, fn, capture) {
                     el.addEventListener(eventName, fn, !!capture);
@@ -2224,11 +2232,11 @@
             } else {
                 handler = function F(){};
             }
-            var F = null; //Gbg collect
+            F = null; //Gbg collect
             return handler;
         }(),
        removeListener = function() {
-            var handler;
+            var handler, F;
             if (window.removeEventListener) {
                 handler = function F(el, eventName, fn, capture) {
                     el.removeEventListener(eventName, fn, (capture));
@@ -2240,23 +2248,24 @@
             } else {
                 handler = function F(){};
             }
-            var F = null; //Gbg collect
+            F = null; //Gbg collect
             return handler;
         }();
 
   //assert multidom support: REQUIRED for Ext 3 or higher!
-  if(typeof ELD.getDocument != 'function'){
+  if (typeof ELD.getDocument != 'function') {
      alert("MIF 2.1.4 requires multidom support" );
   }
   //assert Ext 3.1.1+
-  if(!Ext.elCache || parseInt( Ext.version.replace(/\./g,''),10) < 311 ) {
-    alert ('Ext Release '+Ext.version+' is not supported');
-   }
+  if (!Ext.elCache || parseInt( Ext.version.replace(/\./g,''),10) < 311 ) {
+     alert ('Ext Release '+Ext.version+' is not supported');
+  }
 
   Ext.ns('Ext.ux.ManagedIFrame', 'Ext.ux.plugin');
 
-  var MIM, MIF = Ext.ux.ManagedIFrame, MIFC;
-  var frameEvents = ['documentloaded',
+  var MIM, MIF, MIFC, frameEvents, reSynthEvents;
+  MIF = Ext.ux.ManagedIFrame;
+  frameEvents = ['documentloaded',
                      'domready',
                      'focus',
                      'blur',
@@ -2268,7 +2277,7 @@
                      'message',
                      'reset'];
 
-    var reSynthEvents = new RegExp('^('+frameEvents.join('|')+ ')', 'i');
+  reSynthEvents = new RegExp('^('+frameEvents.join('|')+ ')', 'i');
 
     /**
      * @class Ext.ux.ManagedIFrame.Element
@@ -2482,11 +2491,11 @@
              * @param {Boolean} deep (optional) Perform a deep cleanse of all childNodes as well.
              */
             cleanse : function(forceReclean, deep){
-                if(this.isCleansed && forceReclean !== true){
+                if (this.isCleansed && forceReclean !== true){
                     return this;
                 }
                 var d = this.dom, n = d.firstChild, nx;
-                while(d && n){
+                while (d && n){
                      nx = n.nextSibling;
                      deep && Ext.fly(n).cleanse(forceReclean, deep);
                      Ext.removeNode(n);
@@ -2626,17 +2635,17 @@
                    action  : opt.url || opt.action || form.action
                 });
 
-                if(method == 'POST' || !!opt.enctype){
+                if (method == 'POST' || !!opt.enctype) {
                     formFly.set({enctype : opt.enctype || form.enctype || encoding});
                 }
 
 		        var hiddens, hd, ps;
                 // add any additional dynamic params
-		        if(opt.params && (ps = Ext.isFunction(opt.params) ? opt.params() : opt.params)){
+		        if (opt.params && (ps = Ext.isFunction(opt.params) ? opt.params() : opt.params)) {
 		            hiddens = [];
 
 		            Ext.iterate(ps = typeof ps == 'string'? Ext.urlDecode(ps, false): ps,
-                        function(n, v){
+                        function(n, v) {
 		                    Ext.fly(hd = D.createElement('input')).set({
 		                     type : 'hidden',
 		                     name : n,
@@ -2700,14 +2709,15 @@
              *            invoked.
              */
             setSrc : function(url, discardUrl, callback, scope) {
-                var src = url || this.src || this.resetUrl;
+                var src, O, s;
+                src = url || this.src || this.resetUrl;
 
-                var O = this._observable;
+                O = this._observable;
                 this._unHook();
                 Ext.isFunction(callback) && O.addListener('_docload', callback, scope||this, {single:true});
                 this.showMask();
                 (discardUrl !== true) && (this.src = src);
-                var s = this._targetURI = (Ext.isFunction(src) ? src() || '' : src);
+                s = this._targetURI = (Ext.isFunction(src) ? src() || '' : src);
                 try {
                     this._frameAction = true; // signal listening now
                     this.dom.src = s;
@@ -2736,13 +2746,13 @@
              *
              */
             setLocation : function(url, discardUrl, callback, scope) {
-
-                var src = url || this.src || this.resetUrl;
-                var O = this._observable;
+                var src, O, s;
+                src = url || this.src || this.resetUrl;
+                O = this._observable;
                 this._unHook();
                 Ext.isFunction(callback) && O.addListener('_docload', callback, scope||this, {single:true});
                 this.showMask();
-                var s = this._targetURI = (Ext.isFunction(src) ? src() || '' : src);
+                s = this._targetURI = (Ext.isFunction(src) ? src() || '' : src);
                 if (discardUrl !== true) {
                     this.src = src;
                 }
@@ -2771,14 +2781,15 @@
              *            invoked.
              */
             reset : function(src, callback, scope) {
+                var loadMaskOff, s, win, O, cb;
 
                 this._unHook();
-                var loadMaskOff = false,
-                    s = src,
-                    win = this.getWindow(),
-                    O = this._observable;
+                loadMaskOff = false;
+                s = src;
+                win = this.getWindow();
+                O = this._observable;
 
-                if(this.loadMask){
+                if (this.loadMask){
                     loadMaskOff = this.loadMask.disabled;
                     this.loadMask.disabled = false;
                  }
@@ -2786,7 +2797,7 @@
 
                 if(win){
                     this.isReset= true;
-                    var cb = callback;
+                    cb = callback;
 	                O.addListener('_docload',
 	                  function(frame) {
 	                    if(this.loadMask){
@@ -3249,8 +3260,9 @@
              * iframe.loadFunction({name:'myTrim',fn:String.prototype.trim || trim});</code></pre>
              */
             loadFunction : function(fn, useDOM, invokeIt) {
-                var name = fn.name || fn;
-                var fnSrc = fn.fn || window[fn];
+                var name, fnSrc;
+                name = fn.name || fn;
+                fnSrc = fn.fn || window[fn];
                 name && fnSrc && this.execScript(name + '=' + fnSrc, useDOM); // fn.toString coercion
                 invokeIt && this.execScript(name + '()'); // no args only
             },
@@ -3524,9 +3536,10 @@
               * Toggles visibility of the (frontal) transparent shim agent for the frame.  Used primarily for masking the frame during drag operations.
               * @param {Boolean} show Optional True to activate the shim, false to hide the shim agent.
               */
-             toggleShim : function(show){
-                var shim = this.frameShim || this.createFrameShim();
-                var cls = this.shimCls + '-on';
+             toggleShim : function(show) {
+                var shim, cls;
+                shim = this.frameShim || this.createFrameShim();
+                cls = this.shimCls + '-on';
                 !show && shim.removeClass(cls);
                 show && !shim.hasClass(cls) && shim.addClass(cls);
              },
@@ -3990,8 +4003,9 @@
          * @private //Make it state-aware
          */
         getState : function() {
-            var URI = this.getFrame() ? this.frameEl.getDocumentURI() || null : null;
-            var state = this.supr().getState.call(this);
+            var URI, state;
+            URI = this.getFrame() ? this.frameEl.getDocumentURI() || null : null;
+            state = this.supr().getState.call(this);
             state = Ext.apply(state || {},
                 {defaultSrc : Ext.isFunction(URI) ? URI() : URI,
                  autoLoad   : this.autoLoad
@@ -4211,15 +4225,15 @@
 
             /** @private */
             onRender : function(ct, position){
+                var frCfg, frDOM, frDOM, el, frame, F, mEl;
 
                 //default child frame's name to that of MIF-parent id (if not specified on frameCfg).
-                var frCfg = this.frameCfg || this.frameConfig || (this.relayTarget ? {name : this.relayTarget.id}: {}) || {};
-
+                frCfg = this.frameCfg || this.frameConfig || (this.relayTarget ? {name : this.relayTarget.id}: {}) || {};
                 //backward compatability with MIF 1.x
-                var frDOM = frCfg.autoCreate || frCfg;
+                frDOM = frCfg.autoCreate || frCfg;
                 frDOM = Ext.apply({tag  : 'iframe', id: Ext.id()}, frDOM);
 
-                var el = Ext.getDom(this.el);
+                el = Ext.getDom(this.el);
 
                 (el && el.tagName == 'iframe') ||
                   (this.autoEl = Ext.apply({
@@ -4229,13 +4243,12 @@
 
                 MIF.Component.superclass.onRender.apply(this, arguments);
 
-                if(this.unsupportedText){
+                if (this.unsupportedText) {
                     ct.child('noframes') || ct.createChild({tag: 'noframes', html : this.unsupportedText || null});
                 }
-                var frame = this.el ;
+                frame = this.el;
 
-                var F;
-                if( F = this.frameEl = (this.el ? new MIF.Element(this.el.dom, true): null)){
+                if (F = this.frameEl = (this.el ? new MIF.Element(this.el.dom, true): null)) {
 
                     Ext.apply(F,{
                         ownerCt          : this.relayTarget || this,
@@ -4247,7 +4260,7 @@
                     F.addClass('ux-mif');
                     if (this.loadMask) {
                         //resolve possible maskEl by Element name eg. 'body', 'bwrap', 'actionEl'
-                        var mEl = this.loadMask.maskEl;
+                        mEl = this.loadMask.maskEl;
                         F.loadMask = Ext.apply({
                                     disabled    : false,
                                     hideOnReady : false,
@@ -4276,6 +4289,8 @@
             afterRender  : function(container) {
                 MIF.Component.superclass.afterRender.apply(this,arguments);
 
+                var F, ownerCt, resumeEvents;
+
                 // only resize (to Parent) if the panel is NOT in a layout.
                 // parentNode should have {style:overflow:hidden;} applied.
                 if (this.fitToParent && !this.ownerCt) {
@@ -4286,14 +4301,14 @@
 
                 this.getEl().setOverflow('hidden'); //disable competing scrollers
                 this.setAutoScroll();
-                var F;
+
                /* Enable auto-Shims if the Component participates in (nested?)
                 * border layout.
                 * Setup event handlers on the SplitBars and region panels to enable the frame
                 * shims when needed
                 */
                 if(F = this.frameEl){
-                    var ownerCt = this.ownerCt;
+                    ownerCt = this.ownerCt;
                     while (ownerCt) {
                         ownerCt.on('afterlayout', function(container, layout) {
                             Ext.each(['north', 'south', 'east', 'west'],
@@ -4317,7 +4332,7 @@
                     this.getUpdater().showLoadIndicator = this.showLoadIndicator || false;
 
                     //Resume Parent containers' events callback
-                    var resumeEvents = this.relayTarget && this.ownerCt ?
+                    resumeEvents = this.relayTarget && this.ownerCt ?
                        this.ownerCt.resumeEvents.createDelegate(this.ownerCt) : null;
 
                     if (this.autoload) {
@@ -4350,7 +4365,7 @@
             /** @private */
             beforeDestroy : function() {
                 var F;
-                if(F = this.getFrame()){
+                if (F = this.getFrame()) {
                     F.remove();
                     this.frameEl = this.frameShim = null;
                 }
@@ -4559,10 +4574,12 @@
                  * @return {StyleSheet}
                  */
                 createStyleSheet : function(cssText, id) {
-                    var ss;
-                    if (!doc) return;
-                    var head = doc.getElementsByTagName("head")[0];
-                    var rules = doc.createElement("style");
+                    var ss, head, rules;
+                    if (!doc) {
+                        return;
+                    }
+                    head = doc.getElementsByTagName("head")[0];
+                    rules = doc.createElement("style");
                     rules.setAttribute("type", "text/css");
                     Ext.isString(id) && rules.setAttribute("id", id);
 
@@ -4718,7 +4735,8 @@
 			    * @return {CSSRule} The CSS rule or null if one is not found
 			    */
                 getRule : function(selector, refreshCache, mediaSelector) {
-                    var rs = this.getRules(refreshCache);
+                   var rs, select;
+                   rs = this.getRules(refreshCache);
 
 			        if(Ext.type(mediaSelector) == 'string'){
 			            mediaSelector = mediaSelector.trim() + ':';
@@ -4729,7 +4747,7 @@
 			        if(!Ext.isArray(selector)){
 			            return rs[(mediaSelector + selector).toLowerCase()];
 			        }
-			        var select;
+
 			        for(var i = 0; i < selector.length; i++){
 			            select = (mediaSelector + selector[i]).toLowerCase();
 			            if(rs[select]){
@@ -4780,8 +4798,9 @@
 	 * @singleton
      */
     Ext.ux.ManagedIFrame.Manager = function() {
-        var frames = {};
-        var implementation = {
+        var frames, implementation;
+        frames = {};
+        implementation = {
             // private DOMFrameContentLoaded handler for browsers (Gecko, Webkit, Opera) that support it.
             _DOMFrameReadyHandler : function(e) {
                 try {

@@ -18,41 +18,44 @@
  */ 
 
  
-(function(){
-      
+(function() {
+     var _XFrameMessaging, MIFEl, MIF, MM;
      /**
      * @private, frame messaging interface (for same-domain-policy frames
      *           only)
      */
-     var _XFrameMessaging = function() {
+     _XFrameMessaging = function() {
+        var tagStack, isEmpty, apply;
         // each tag gets a hash queue ($ = no tag ).
-        var tagStack = { '$' : [] };
-        var isEmpty = function(v, allowBlank) {
+        tagStack = { '$' : [] };
+        isEmpty = function(v, allowBlank) {
             return v === null || v === undefined
                     || (!allowBlank ? v === '' : false);
         };
-        var apply = function(o, c, defaults) {
-	        if (defaults) { apply(o, defaults);}
-	        if (o && c && typeof c == 'object') {
-	            for (var p in c) {
-	                o[p] = c[p];
-	            }
-	        }
-	        return o;
-	    };
+         apply = function (o, c, defaults) {
+             var p;
+             if (defaults) {
+                 apply(o, defaults);
+             }
+             if (o && c && typeof c == 'object') {
+                 for (p in c) {
+                     o[p] = c[p];
+                 }
+             }
+             return o;
+         };
 
         window.sendMessage = function(message, tag, domain) {
-            var MIF;
+            var MIF, fn, result, compTag, mstack, i;
             if (MIF = arguments.callee.manager) {
                 if (message._fromHost) {
-                    var fn, result;
                     // only raise matching-tag handlers
-                    var compTag = message.tag || tag || null;
-                    var mstack = !isEmpty(compTag) ? tagStack[String(compTag).toLowerCase()] || [] : tagStack["$"];
+                    compTag = message.tag || tag || null;
+                    mstack = !isEmpty(compTag) ? tagStack[String(compTag).toLowerCase()] || [] : tagStack["$"];
 
-                    for (var i = 0, l = mstack.length; i < l; i++) {
+                    for (i = 0, l = mstack.length; i < l; i++) {
                         if (fn = mstack[i]) {
-                            result = fn.apply(fn.__scope, arguments) === false? false: result;
+                            result = fn.apply(fn.__scope, arguments) === false ? false : result;
                             if (fn.__single) {
                                 mstack[i] = null;
                             }
@@ -77,7 +80,7 @@
 
                     try {
                         return MIF.disableMessaging !== true
-                                ? MIF._observable ? MIF._observable.fireEvent.call(MIF._observable, message.type,MIF, message) : null
+                                ? MIF._observable ? MIF._observable.fireEvent.call(MIF._observable, message.type, MIF, message) : null
                                 : null;
                     } catch (ex) {
                     } // trap for message:tag handlers not yet defined
@@ -88,14 +91,14 @@
             }
         };
         window.onhostmessage = function(fn, scope, single, tag) {
-
+            var k;
             if (typeof fn == 'function') {
                 if (!isEmpty(fn.__index)) {
                     throw "onhostmessage: duplicate handler definition"
                             + (tag ? " for tag:" + tag : '');
                 }
 
-                var k = isEmpty(tag) ? "$" : tag.toLowerCase();
+                k = isEmpty(tag) ? "$" : tag.toLowerCase();
                 tagStack[k] || (tagStack[k] = []);
                 apply(fn, {
                             __tag : k,
@@ -111,26 +114,27 @@
 
         };
         window.unhostmessage = function(fn) {
+            var k;
             if (typeof fn == 'function' && typeof fn.__index != 'undefined') {
-                var k = fn.__tag || "$";
+                k = fn.__tag || "$";
                 tagStack[k][fn.__index] = null;
             }
         };
 
-    }; 
-   
-    var MIFEl = Ext.ux.ManagedIFrame.Element;
+     };
+
+    MIFEl = Ext.ux.ManagedIFrame.Element;
     
-    Ext.override( MIFEl ,{
+    Ext.override(MIFEl, {
         
         disableMessaging :  true,
         
         _renderHook : MIFEl.prototype._renderHook.createSequence(function(){
-            
-            if(this.disableMessaging){return;}
+            var O, sm, w;
+            if (this.disableMessaging) { return; }
             
             //assert a default 'message' event
-            var O=this._observable;
+            O=this._observable;
             O && (O.events.message || (O.addEvents('message')));
             
             if (this.domWritable()) {
@@ -139,9 +143,8 @@
                             fn : _XFrameMessaging
                         }, false, true);
                         
-                var sm, w = this.getWindow();
+                w = this.getWindow();
                 w && (sm = w.sendMessage) && (sm.manager = this);
-                
             }
             
         }),
@@ -187,57 +190,57 @@
          * to document.domain). 
          * <p>Notes:  on IE8, this action is synchronous.
          */
-        postMessage : function(message, origin, target ){
+        postMessage : function(message, origin, target ) {
             var d, w = target || this.getWindow();
-            if(w && !this.disableMessaging){
-	            origin = origin ||  location.protocol + '\/\/' + location.hostname;
+            if (w && !this.disableMessaging) {
+                origin = origin || location.protocol + '\/\/' + location.hostname;
                 message = Ext.isObject(message) || Ext.isArray(message) ? Ext.encode(message) : message;
-	            w.postMessage && w.postMessage(message, origin);
+                w.postMessage && w.postMessage(message, origin);
             }
         }
         
     });
-    var MIF = Ext.ux.ManagedIFrame;
-    Ext.each(['Component', 'Panel', 'Window'], 
-	      function(K){
-           MIF[K] && Ext.override(MIF[K] ,{
-        	   
-        	   disableMessaging : true,
+
+    MIF = Ext.ux.ManagedIFrame;
+    Ext.each(['Component', 'Panel', 'Window'],
+        function (K) {
+            MIF[K] && Ext.override(MIF[K], {
+
+                disableMessaging:true,
                 /**
                  * @memberOf Ext.ux.ManagedIFrame.ComponentAdapter
-                 * @param {Mixed} message The message payload.  The payload can be any supported JS type. 
-                 * @param {String} tag Optional reference tag 
+                 * @param {Mixed} message The message payload.  The payload can be any supported JS type.
+                 * @param {String} tag Optional reference tag
                  * @param {String} origin Optional domain designation of the sender (defaults
                  * to document.domain).
                  */
-	           sendMessage : function(){
-                  this.getFrame() && this.frameEl.sendMessage.apply(this.frameEl, arguments);
-               }
-	       });
-    });
+                sendMessage:function () {
+                    this.getFrame() && this.frameEl.sendMessage.apply(this.frameEl, arguments);
+                }
+            });
+        });
     
-    var MM = MIF.Manager;
-    MM && Ext.apply(MM,{
+    MM = MIF.Manager;
+    MM && Ext.apply(MM, {
     
         /**
          * @private
          * @memberOf Ext.ux.ManagedIFrame.ComponentAdapter
          */
-        onMessage : function(e){
-            
-            var be = e.browserEvent;
+        onMessage : function(e) {
+            var be, mif;
+            be = e.browserEvent;
             //Copy the relevant message members to the Ext.event
             try {
-                var mif ;
-                if (mif = (be && be.source && be.source.frameElement) ? be.source.frameElement.ownerCt : null){
-                    if(mif){
+                if (mif = (be && be.source && be.source.frameElement) ? be.source.frameElement.ownerCt : null) {
+                    if (mif) {
                         e.stopEvent();
-                        be && Ext.apply(e,{
-			               origin      : be.origin,
-			               data        : be.data,
-			               lastEventId : be.lastEventId,
-			               source      : be.source
-			            });
+                        be && Ext.apply(e, {
+                            origin:be.origin,
+                            data:be.data,
+                            lastEventId:be.lastEventId,
+                            source:be.source
+                        });
                         mif && mif._observable.fireEvent('message', mif, e);
                     }
                 }

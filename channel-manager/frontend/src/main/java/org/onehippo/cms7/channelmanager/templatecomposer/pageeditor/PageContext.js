@@ -168,15 +168,17 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                 method: "HEAD",
                 url : url,
                 success : function(responseObject) {
-                    var pageId = responseObject.getResponseHeader('HST-Page-Id');
-                    var mountId = responseObject.getResponseHeader('HST-Mount-Id');
+                    var pageId, mountId, lockedBy, futures;
+                    pageId = responseObject.getResponseHeader('HST-Page-Id');
+                    mountId = responseObject.getResponseHeader('HST-Mount-Id');
+
                     self.renderedVariant = responseObject.getResponseHeader('HST-Render-Variant');
                     self.hasPreviewHstConfig = self._getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig'));
                     if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;
                     }
 
-                    var lockedBy = responseObject.getResponseHeader('HST-Mount-LockedBy');
+                    lockedBy = responseObject.getResponseHeader('HST-Mount-LockedBy');
                     if (lockedBy !== undefined) {
                         self.locked = self.pageContainer.cmsUser != lockedBy;
                         self.lockedBy = lockedBy;
@@ -192,7 +194,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                     console.log('hstMetaDataResponse: url:'+url+', pageId:'+pageId+', mountId:'+mountId);
 
                     if (canEdit) {
-                        var futures = [
+                        futures = [
                             self._initToolkitStore.call(self, mountId),
                             self._initPageModelStore.apply(self, [mountId, pageId])
                         ];
@@ -211,13 +213,14 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
     },
 
     _getBoolean: function(object) {
+        var str;
         if (typeof object === 'undefined' || object === null) {
             return null;
         }
         if (object === true || object === false) {
             return object;
         }
-        var str = object.toString().toLowerCase();
+        str = object.toString().toLowerCase();
         if (str === "true") {
             return true;
         } else if (str === "false") {
@@ -231,14 +234,14 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
             this.iframeResourceCache.when(function(iframeResources) {
                 var resourceCache = iframeResources.cache;
                 Ext.each(iframeResources.css, function(src) {
-                    var cssContent = resourceCache[src],
-                        frmDocument = frm.getFrameDocument();
+                    var cssContent, frmDocument, headElements, head, styleElement, textNode;
+                    cssContent = resourceCache[src];
+                    frmDocument = frm.getFrameDocument();
 
                     if (Ext.isIE) {
                         frmDocument.createStyleSheet().cssText = cssContent;
                     } else {
-                        var headElements = frmDocument.getElementsByTagName("HEAD");
-                        var head;
+                        headElements = frmDocument.getElementsByTagName("HEAD");
                         if (headElements.length == 0) {
                             head = frmDocument.createElement("HEAD");
                             frmDocument.appendChild(head);
@@ -246,9 +249,9 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                             head = headElements[0];
                         }
 
-                        var styleElement = frmDocument.createElement("STYLE");
+                        styleElement = frmDocument.createElement("STYLE");
                         styleElement.setAttribute("type", "text/css");
-                        var textNode = frmDocument.createTextNode('/* '+src+' */\n'+cssContent);
+                        textNode = frmDocument.createTextNode('/* '+src+' */\n'+cssContent);
                         styleElement.appendChild(textNode);
                         head.appendChild(styleElement);
                     }
@@ -299,11 +302,12 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
         var self = this;
         frm.sendMessage({
             getName : function(id) {
-                var idx = self.stores.pageModel.findExact('id', id);
+                var idx, record;
+                idx = self.stores.pageModel.findExact('id', id);
                 if (idx == -1) {
                     return null;
                 }
-                var record = self.stores.pageModel.getAt(idx);
+                record = self.stores.pageModel.getAt(idx);
                 return record.get('name');
             }
         }, 'buildoverlay');

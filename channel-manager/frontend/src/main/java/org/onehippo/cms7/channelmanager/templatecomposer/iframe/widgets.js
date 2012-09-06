@@ -76,13 +76,14 @@
         },
 
         render : function(parent) {
+            var parentOverlay, overlay, self = this;
             if (this.rendered) {
                 return;
             }
             this.parent = parent;
 
-            var parentOverlay = $.isFunction(parent.getOverlay) ? parent.getOverlay() : document.body;
-            var overlay = $('<div/>').addClass(this.cls.overlay.base).appendTo(parentOverlay);
+            parentOverlay = $.isFunction(parent.getOverlay) ? parent.getOverlay() : document.body;
+            overlay = $('<div/>').addClass(this.cls.overlay.base).appendTo(parentOverlay);
             if(this.cls.overlay.mark != null) {
                 overlay.addClass(this.cls.overlay.mark);
             }
@@ -96,7 +97,6 @@
             overlay.attr(HST.ATTR.ID, this.id);
             overlay.attr('id', this.overlayId);
 
-            var self = this;
             overlay.hover(function() {
                 Main.publish('mouseOverWidget', this);
                 self.onMouseOver(this);
@@ -160,15 +160,16 @@
         },
 
         _syncOverlay : function() {
-            var el = this.getOverlaySource();
-            var elOffset = el.offset();
+            var el, elOffset, overlay, border, borderWidth, data;
+            el = this.getOverlaySource();
+            elOffset = el.offset();
 
-            var overlay = this.overlay;
+            overlay = this.overlay;
 
             //test for single border and assume it all around.
             //TODO: test all borders
-            var border = overlay.css('border-left-width');
-            var borderWidth = 0;
+            border = overlay.css('border-left-width');
+            borderWidth = 0;
             if (border === 'thin') {
                 borderWidth = 1;
             } else if (border === 'medium') {
@@ -179,7 +180,7 @@
                 borderWidth = parseFloat(border.substring(0, border.length - 2));
             }
 
-            var data = {
+            data = {
                 left: elOffset.left,
                 top: elOffset.top,
                 width : el.outerWidth(),
@@ -361,16 +362,18 @@
         },
 
         ddOnStart : function(event, ui) {
-            var id = $(ui.item).attr(HST.ATTR.ID);
-            var item = this.items.get(id);
+            var id, item;
+            id = $(ui.item).attr(HST.ATTR.ID);
+            item = this.items.get(id);
             this.parent.onDragStart(ui, this);
             item.onDragStart(event, ui);
         },
 
         ddOnStop: function(event, ui) {
-            var id = $(ui.item).attr(HST.ATTR.ID);
+            var id, item;
+            id = $(ui.item).attr(HST.ATTR.ID);
             if(this.items.containsKey(id)) {
-                var item = this.items.get(id);
+                item = this.items.get(id);
                 item.onDragStop(event, ui);
             }
             this.parent.onDragStop(ui);
@@ -386,12 +389,13 @@
         },
 
         ddOnReceive : function(event, ui) {
-            var id = ui.item.attr(HST.ATTR.ID);
-            var item = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.getById(id);
-            var self = this;
+            var id, item, self, itemId;
+            id = ui.item.attr(HST.ATTR.ID);
+            item = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.getById(id);
+            self = this;
             $(this.sel.sort.items).each(function(index) {
-                var itemId = $(this).attr(HST.ATTR.ID);
-                if(itemId == id) {
+                itemId = $(this).attr(HST.ATTR.ID);
+                if (itemId == id) {
                     item.onDragStop(event, ui);
                     item.destroy();
                     self.add(item.element, index);
@@ -412,16 +416,17 @@
         },
 
         drawDropIndicator : function(ui, el) {
-            if(ui.placeholder.siblings().length == 0) {
+            var prev, next, getEl, original;
+            if (ui.placeholder.siblings().length == 0) {
                 //draw indicator inside empty container
                 this.draw.inside(this.el, el, this.direction);
             } else {
-                var prev = ui.placeholder.prev();
-                var next = ui.placeholder.next();
-                var getEl = function(_el) {
+                prev = ui.placeholder.prev();
+                next = ui.placeholder.next();
+                getEl = function(_el) {
                     return Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.getById(_el.attr(HST.ATTR.ID)).el;
                 };
-                var original = ui.item[0];
+                original = ui.item[0];
                 if(prev[0] == original || (next.length > 0 && next[0] == original)) {
                     this.draw.inside(getEl(ui.item), el, this.direction);
                 } else {
@@ -466,34 +471,35 @@
         },
 
         checkState : function() {
+            var lookup, items, self, order, container, rearrange, currentOrder;
             if (this.state.checkEmpty) {
                 this._checkEmpty();
             }
 
             if (this.state.syncOverlaysWithItemOrder) {
-                var lookup = this.items.getIndexMap();
-                var items = $(this.sel.sort.items).get();
+                lookup = this.items.getIndexMap();
+                items = $(this.sel.sort.items).get();
                 items.sort(function(a, b) {
                     a = lookup[$(a).attr(HST.ATTR.ID)];
                     b = lookup[$(b).attr(HST.ATTR.ID)];
                     return (a < b) ? -1 : (a > b) ? 1 : 0;
                 });
-                var self = this;
+                self = this;
                 $.each(items, function(idx, itm) {
                     self.overlay.append(itm);
                 });
 
             } else if (this.state.syncItemsWithOverlayOrder) {
-                var order = [];
+                order = [];
                 $(this.sel.sort.items).each(function() {
                     var id = $(this).attr(HST.ATTR.ID);
                     order.push(id);
                 });
                 this.items.updateOrder(order);
 
-                var lookup = this.items.getIndexMap();
-                var container = $(this.sel.container);
-                var items = $(this.sel.itemWrapper).get();
+                lookup = this.items.getIndexMap();
+                container = $(this.sel.container);
+                items = $(this.sel.itemWrapper).get();
                 items.sort(function(a, b) {
                     a = lookup[$(a).attr(HST.ATTR.ID)];
                     b = lookup[$(b).attr(HST.ATTR.ID)];
@@ -504,9 +510,9 @@
                 });
             }
 
-            var rearrange = null;
+            rearrange = null;
 
-            var currentOrder = this.items.keySet();
+            currentOrder = this.items.keySet();
             if (this.state.orderChanged(currentOrder)) {
                 this.state.previousOrder = currentOrder;
                 this.parent.requestSync();
@@ -545,8 +551,9 @@
         },
 
         removeItem : function(id, quite) {
+            var item;
             if(this.items.containsKey(id)) {
-                var item = this.items.remove(id);
+                item = this.items.remove(id);
                 //remove item wrapper elements
                 $(item.element).parents('.' + this.cls.item).remove();
                 if(!quite) {
@@ -695,6 +702,7 @@
     //Container items
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem.Base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget.extend({
         init : function(id, element, resources) {
+            var el, tmp;
             this._super(id, element, resources);
 
             this.scopeId = 'ContainerItem';
@@ -704,8 +712,8 @@
             this.cls.overlay.mark = 'hst-overlay-container-item';
 
             // FIXME: is this used?
-            var el = $(element);
-            var tmp = el.attr("hst:temporary");
+            el = $(element);
+            tmp = el.attr("hst:temporary");
             this.isTemporary = typeof tmp !== 'undefined';
             if(this.isTemporary) {
                 el.html(this.resources['base-container-item-temporary']);
@@ -717,13 +725,14 @@
         },
 
         onRender : function() {
+            var data, deleteButton;
             this.overlay.append($('<div/>').addClass(this.cls.overlay.inner));
 
             this.menu = $('<div/>').addClass('hst-overlay-menu');
 
-            var data = {element: this.element};
+            data = {element: this.element};
             if (!this.el.attr(HST.ATTR.INHERITED)) {
-                var deleteButton = $('<div/>').addClass('hst-overlay-menu-button');
+                deleteButton = $('<div/>').addClass('hst-overlay-menu-button');
                 deleteButton.click(function(e) {
                     e.stopPropagation();
                     sendMessage(data, 'remove');
@@ -735,9 +744,9 @@
          },
 
         selectVariant: function(variant, callback) {
+            var data = {};
             if (this.el.attr(HST.ATTR.URL)) {
                 this.el.attr(HST.ATTR.VARIANT, variant);
-                var data = {};
                 data[HST.ATTR.VARIANT] = variant;
                 $.ajax({
                     url: this.el.attr(HST.ATTR.URL),
@@ -757,8 +766,8 @@
         },
 
         getOverlayData : function(data) {
-            data.position = 'inherit';
             var parentOffset = this.parent.overlay.offset();
+            data.position = 'inherit';
             data.left -= (parentOffset.left + this.parent.parentMargin);
             data.top -= (parentOffset.top + this.parent.parentMargin);
             data.width  -= data.overlayBorder*2;
@@ -777,12 +786,13 @@
         },
 
         onClick : function() {
+            var id, variant, inherited;
             if(this.isTemporary) {
                 sendMessage({}, 'refresh');
             } else {
-                var id = this.element.getAttribute('id');
-                var variant = this.el.attr(HST.ATTR.VARIANT);
-                var inherited = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.INHERITED));
+                id = this.element.getAttribute('id');
+                variant = this.el.attr(HST.ATTR.VARIANT);
+                inherited = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.INHERITED));
                 sendMessage({elementId: id, variant: variant, inherited: inherited}, 'onclick');
             }
         },               
@@ -819,11 +829,12 @@
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.DDState.prototype = {
 
         orderChanged : function(test) {
+            var i;
             if(test.length != this.previousOrder.length) {
                 return true;
             }
 
-            for (var i=0; i<test.length; i++) {
+            for (i=0; i<test.length; i++) {
                 if(test[i] != this.previousOrder[i]) {
                     return true;
                 }
@@ -833,7 +844,6 @@
 
         reset : function() {
             this.checkEmpty = false;
-
             this.syncItemsWithOverlayOrder = false;
             this.syncOverlaysWithItemOrder = false;
         }

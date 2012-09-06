@@ -18,7 +18,8 @@
 Hippo.ChannelManager.TemplateComposer.ToolkitStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
     constructor : function(config) {
-        var proxy = new Ext.data.HttpProxy({
+        var proxy, cfg;
+        proxy = new Ext.data.HttpProxy({
             api: {
                 read     : config.composerRestMountUrl + '/' +config.mountId + './toolkit?FORCE_CLIENT_HOST=true'
                 ,create  : '#'
@@ -27,7 +28,7 @@ Hippo.ChannelManager.TemplateComposer.ToolkitStore = Ext.extend(Hippo.ChannelMan
             }
         });
 
-        var cfg = {
+        cfg = {
             id: 'ToolkitStore',
             proxy: proxy,
             prototypeRecord :  [

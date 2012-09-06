@@ -23,15 +23,15 @@
 Hippo.Msg = (function() {
     var msgQueue = [];
 
-    var blockingType = [];
+    var blockingType = [],
+    blocked = false,
+    waitTimeout;
     blockingType['alert'] = true;
     blockingType['confirm'] = true;
     blockingType['prompt'] = true;
     blockingType['show'] = false;
     blockingType['wait'] = false;
     blockingType['hide'] = false;
-    var blocked = false;
-    var waitTimeout;
 
     var func = function(type, args) {
         if (blocked) {
@@ -45,18 +45,20 @@ Hippo.Msg = (function() {
         if (blockingType[type]) {
             blocked = true;
             if (args.length >= 3) {
-                var oldCallback = args[2];
-                var scope = this;
+                var oldCallback, scope;
+                oldCallback = args[2];
+                scope = this;
                 if (args.length >= 4) {
                     scope = args[3];
                 }
                 args[2] = function() {
+                    var nextMessage;
                     if (typeof oldCallback === 'function') {
                         oldCallback.apply(scope, arguments);
                     }
                     blocked = false;
                     if (msgQueue.length > 0) {
-                        var nextMessage = msgQueue.shift();
+                        nextMessage = msgQueue.shift();
                         nextMessage();
                     }
                 }

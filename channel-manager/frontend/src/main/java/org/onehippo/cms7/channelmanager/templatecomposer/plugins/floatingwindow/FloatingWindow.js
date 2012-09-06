@@ -22,8 +22,8 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
 
     //TODO: handle horizontal position
     initComponent: function() {
-        var w = 0;
-        if (typeof( window.innerWidth ) == 'number') {
+        var w = 0, t, region, marginX, marginY;
+        if (typeof window.innerWidth  === 'number') {
             //Non-IE
             w = window.innerWidth;
         } else if (document.documentElement && document.documentElement.clientWidth) {
@@ -34,12 +34,12 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
             w = document.body.clientWidth;
         }
         //Ext.lib.Dom.getViewWidth(true);
-        var t = Ext.getBody().getScroll().top;
+        t = Ext.getBody().getScroll().top;
 
-        var region = Ext.isEmpty(this.initialConfig.initRegion) ? 'center' : this.initialConfig.initRegion;
+        region = Ext.isEmpty(this.initialConfig.initRegion) ? 'center' : this.initialConfig.initRegion;
         if (region != 'center') {
-            var marginX = Ext.isEmpty(this.initialConfig.x) ? 0 : this.initialConfig.x;
-            var marginY = Ext.isEmpty(this.initialConfig.y) ? 0 : this.initialConfig.y;
+            marginX = Ext.isEmpty(this.initialConfig.x) ? 0 : this.initialConfig.x;
+            marginY = Ext.isEmpty(this.initialConfig.y) ? 0 : this.initialConfig.y;
             if (region == 'right') {
                 this.initialConfig.x = w - (this.initialConfig.width + marginX + Ext.getScrollBarWidth());
                 this.initialConfig.y += t;
@@ -51,9 +51,11 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
         }
 
         Ext.apply(this, Ext.apply(this.initialConfig, {
-            listeners: {show: function() {
-                this.saveRelativePosition();
-            }}
+            listeners: {
+                show: function() {
+                    this.saveRelativePosition();
+                }
+            }
         }));
 
         Hippo.ux.window.FloatingWindow.superclass.initComponent.apply(this, arguments);
@@ -71,6 +73,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
      * Restore the window position to the relative stored position
      */
     restoreRelativePosition : function() {
+        var active, anim, cb;
         //Moving a selected window using animation creates a shadow artifact that drags behind the window
         //during the animation. I tried creating the animation without the el.shift helper function
         //but failed, should revisit this later.
@@ -86,16 +89,16 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
 //        }, this);
 //        a.animate();
 
-        var active = Ext.WindowMgr.getActive();
+        active = Ext.WindowMgr.getActive();
         if (active != null) {
             active.setActive(false);
         }
-        var anim = {activateTimeout: null};
+        anim = {activateTimeout: null};
 
         if (this.el.hasActiveFx()) {
             this.el.stopFx();
         }
-        var cb = function() {
+        cb = function() {
             if (this.activateTimeout != null) {
                 window.clearTimeout(this.activateTimeout);
             }
@@ -118,9 +121,10 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
      * Override and instantiate custom DD
      */
     initDraggable : function() {
+        var del;
         this.dd = new Hippo.ux.window.FloatingWindow.DD(this);
 
-        var del = this.restoreRelativePosition.createDelegate(this);
+        del = this.restoreRelativePosition.createDelegate(this);
         Ext.EventManager.on(window, 'scroll',
                 del,
                 window, {buffer: 50}

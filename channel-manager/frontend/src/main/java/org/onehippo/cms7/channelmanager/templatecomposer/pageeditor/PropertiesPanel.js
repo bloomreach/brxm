@@ -63,14 +63,16 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.removeAll();
 
         var loadVariantTabs = function() {
+            var futures, tab;
+            futures = [];
             this._initTabs();
             this._selectTabByVariant(variant);
 
-            var tab = this.getActiveTab();
+            tab = this.getActiveTab();
             this.fireEvent('variantChange', tab.componentId, tab.variant.id);
             this.silent = false;
 
-            var futures = [];
+            futures = [];
             this.items.each(function (item) {
                 futures.push(item.load());
             }, this);
@@ -127,13 +129,14 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     },
 
     _loadVariants : function (records) {
+        var i, id, record;
         this.variants = [];
-        for (var i = 0; i < records.length; i++) {
-            var id = records[i];
+        for (i = 0; i < records.length; i++) {
+            id = records[i];
             if (id == 'default') {
                 this.variants.push({ id: 'default', name: this.resources['properties-panel-variant-default']});
             } else {
-                var record = this.allVariantsStore.getById(id);
+                record = this.allVariantsStore.getById(id);
                 if (typeof record !== 'undefined') {
                     this.variants.push({ id: id, name: record.get('name')});
                 }
@@ -148,8 +151,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     },
 
     _initTabs : function () {
-        for (var i = 0; i < this.variants.length; i++) {
-            var form;
+        var i, form;
+        for (i = 0; i < this.variants.length; i++) {
             if ('plus' == this.variants[i].id) {
                 form = new Hippo.ChannelManager.TemplateComposer.PlusForm({
                     mountId : this.mountId,
@@ -203,7 +206,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     },
 
     _selectTabByVariant : function (variant) {
-        for (var i = 0; i < this.variants.length; i++) {
+        var i;
+        for (i = 0; i < this.variants.length; i++) {
             if (this.variants[i].id == variant) {
                 this.setActiveTab(i);
                 return;
@@ -240,6 +244,7 @@ Hippo.ChannelManager.TemplateComposer.PlusForm = Ext.extend(Ext.FormPanel, {
     locale : null,
 
     constructor : function (config) {
+        var variantIds = [], i;
         this.title = '<span style="font-size: 140%;">' + config.title + '</span>';
         this.mountId = config.mountId;
         this.composerRestMountUrl = config.composerRestMountUrl;
@@ -248,8 +253,7 @@ Hippo.ChannelManager.TemplateComposer.PlusForm = Ext.extend(Ext.FormPanel, {
         this.componentId = config.componentId;
         this.variantsUuid = config.variantsUuid;
 
-        var variantIds = [];
-        for (var i = 0; i < config.variants.length; i++) {
+        for (i = 0; i < config.variants.length; i++) {
             variantIds.push(config.variants[i].id);
         };
 
@@ -263,7 +267,7 @@ Hippo.ChannelManager.TemplateComposer.PlusForm = Ext.extend(Ext.FormPanel, {
     },
 
     initComponent : function () {
-        var combobox = new Ext.form.ComboBox({
+        var comboBox = new Ext.form.ComboBox({
             store : this.variantsStore,
             valueField : 'id',
             displayField : 'name',
@@ -281,13 +285,13 @@ Hippo.ChannelManager.TemplateComposer.PlusForm = Ext.extend(Ext.FormPanel, {
                 anchor : '100%'
             },
 
-            items : [ combobox ],
+            items : [ comboBox ],
 
             buttons : [
                 {
                     text : this.resources['properties-panel-button-add-variant'],
                     handler : function () {
-                        var variant = combobox.getValue();
+                        var variant = comboBox.getValue();
                         Ext.Ajax.request({
                             method : 'POST',
                             url : this.composerRestMountUrl + '/' + this.componentId + './variant/' + variant + '?FORCE_CLIENT_HOST=true',
@@ -388,9 +392,9 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     },
 
     _submitForm : function () {
+        var uncheckedValues = {}, items;
         this.fireEvent('save');
 
-        var uncheckedValues = {};
         var items = this.getForm().items;
         items.each(function(item) {
             if (item instanceof Ext.form.Checkbox) {
@@ -415,10 +419,10 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     },
 
     _createDocument : function (ev, target, options) {
-
-        var self = this;
-        var createUrl = this.composerRestMountUrl + '/' + this.mountId + './create?FORCE_CLIENT_HOST=true';
-        var createDocumentWindow = new Ext.Window({
+        var self, createUrl, createDocumentWindow;
+        self = this;
+        createUrl = this.composerRestMountUrl + '/' + this.mountId + './create?FORCE_CLIENT_HOST=true';
+        createDocumentWindow = new Ext.Window({
             title : this.resources['create-new-document-window-title'],
             height : 150,
             width : 400,
@@ -488,7 +492,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     },
 
     _loadProperties : function (store, records, options) {
-        var length = records.length;
+        var length = records.length, i, record, value, defaultValue;
         if (length == 0) {
             this.add({
                 html : "<div style='padding:5px' align='center'>" + this.resources['properties-panel-no-properties'] + "</div>",
@@ -498,130 +502,141 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             });
             this.saveButton.hide();
         } else {
-            for (var i = 0; i < length; i++) {
-                var record = records[i];
+            for (i = 0; i < length; i++) {
+                record = records[i];
                 if (record.get('hiddenInChannelManager')) {
                     continue;
                 }
-                var value = record.get('value');
-                var defaultValue = record.get('defaultValue');
-                var isDefaultValue = false;
+                value = record.get('value');
+                defaultValue = record.get('defaultValue');
                 if (!value || value.length === 0) {
                     value = defaultValue;
-                    isDefaultValue = true;
                 }
-                var propertyField;
+
                 if (record.get('type') === 'documentcombobox') {
-                    var comboStore = new Ext.data.JsonStore({
-                        root : 'data',
-                        url : this.composerRestMountUrl + '/' + this.mountId + './documents/' + record.get('docType') + '?FORCE_CLIENT_HOST=true',
-                        fields : ['path']
-                    });
-
-                    propertyField = this.add({
-                        fieldLabel : record.get('label'),
-                        xtype : 'combo',
-                        allowBlank : !record.get('required'),
-                        name : record.get('name'),
-                        value : value,
-                        defaultValue : defaultValue,
-                        store : comboStore,
-                        forceSelection : true,
-                        triggerAction : 'all',
-                        displayField : 'path',
-                        valueField : 'path'
-                    });
-
-                    if (record.get('allowCreation')) {
-                        this.add({
-                            bodyCfg : {
-                                tag : 'div',
-                                cls : 'create-document-link',
-                                html : this.resources['create-document-link-text'].format('<a href="#" id="combo' + i + '">&nbsp;', '&nbsp;</a>&nbsp;')
-                            },
-                            border : false
-
-                        });
-
-                        Ext.get("combo" + i).on("click", this._createDocument, this, {
-                            docType : record.get('docType'),
-                            docLocation : record.get('docLocation'),
-                            comboId : propertyField.id
-                        });
-                    }
+                    this.addDocumentComboBox(record, defaultValue, value);
                 } else if (record.get('type') === 'combo') {
-                    var comboBoxValues = record.get(
-                        'dropDownListValues'
-                    );
-                    var comboBoxDisplayValues = record.get(
-                        'dropDownListDisplayValues'
-                    );
-                    var data = [];
-                    for (var dataIndex=0, comboBoxValuesLength=comboBoxValues.length; dataIndex<comboBoxValuesLength; dataIndex++) {
-                        data.push([comboBoxValues[dataIndex], comboBoxDisplayValues[dataIndex]]);
-                    }
-
-                    var dropDown = this.add({
-                        xtype: 'combo',
-                        fieldLabel : record.get('label'),
-                        store : new Ext.data.ArrayStore({
-                            fields: [
-                                'id',
-                                'displayText'
-                            ],
-                            data: data
-                        }),
-                        value : value,
-                        hiddenName : record.get('name'),
-                        typeAhead: true,
-                        mode: 'local',
-                        triggerAction: 'all',
-                        selectOnFocus:true,
-                        valueField : 'id',
-                        displayField : 'displayText'
-                    });
+                    this.addComboBox(record, defaultValue, value);
                 } else {
-                    var xtype = record.get('type');
-                    var propertyFieldConfig = {
-                        fieldLabel : record.get('label'),
-                        xtype : xtype,
-                        value : value,
-                        defaultValue : defaultValue,
-                        allowBlank : !record.get('required'),
-                        name : record.get('name'),
-                        listeners : {
-                            change : function () {
-                                var value = this.getValue();
-                                if (!value || value.length === 0 || value === this.defaultValue) {
-                                    this.addClass('default-value');
-                                    this.setValue(this.defaultValue);
-                                } else {
-                                    this.removeClass('default-value');
-                                }
-                            }
-                        }
-                    };
-                    if (xtype === 'checkbox') {
-                        propertyFieldConfig.checked = (value === true || value === 'true' || value == '1' || String(value).toLowerCase() == 'on');
-                    } else if (xtype === 'linkpicker') {
-                        propertyFieldConfig.renderStripValue = /^\/?(?:[^\/]+\/)*/g;
-                        propertyFieldConfig.pickerConfig = {
-                            configuration: record.get('pickerConfiguration'),
-                            remembersLastVisited: record.get('pickerRemembersLastVisited'),
-                            initialPath: record.get('pickerInitialPath'),
-                            isRelativePath: record.get('pickerPathIsRelative'),
-                            rootPath: record.get('pickerRootPath'),
-                            selectableNodeTypes: record.get('pickerSelectableNodeTypes')
-                        }
-                    }
-                    propertyField = this.add(propertyFieldConfig);
-
-                    if (isDefaultValue) {
-                        propertyField.addClass('default-value');
-                    }
+                    this.addComponent(record, defaultValue, value);
                 }
             }
             this.saveButton.show();
+        }
+    },
+
+    addDocumentComboBox : function(record, defaultValue, value) {
+        var propertyField, comboStore = new Ext.data.JsonStore({
+            root : 'data',
+            url : this.composerRestMountUrl + '/' + this.mountId + './documents/' + record.get('docType') + '?FORCE_CLIENT_HOST=true',
+            fields : ['path']
+        });
+
+        propertyField = this.add({
+            fieldLabel : record.get('label'),
+            xtype : 'combo',
+            allowBlank : !record.get('required'),
+            name : record.get('name'),
+            value : value,
+            defaultValue : defaultValue,
+            store : comboStore,
+            forceSelection : true,
+            triggerAction : 'all',
+            displayField : 'path',
+            valueField : 'path'
+        });
+
+        if (record.get('allowCreation')) {
+            this.add({
+                bodyCfg : {
+                    tag : 'div',
+                    cls : 'create-document-link',
+                    html : this.resources['create-document-link-text'].format('<a href="#" id="combo' + i + '">&nbsp;', '&nbsp;</a>&nbsp;')
+                },
+                border : false
+
+            });
+
+            Ext.get("combo" + i).on("click", this._createDocument, this, {
+                docType : record.get('docType'),
+                docLocation : record.get('docLocation'),
+                comboId : propertyField.id
+            });
+        }
+    },
+
+    addComboBox : function(record, defaultValue, value) {
+        var comboBoxValues, comboBoxDisplayValues, dataIndex, comboBoxValuesLength, data = [];
+        comboBoxValues = record.get(
+                'dropDownListValues'
+        );
+        comboBoxDisplayValues = record.get(
+                'dropDownListDisplayValues'
+        );
+
+        for (dataIndex=0, comboBoxValuesLength=comboBoxValues.length; dataIndex<comboBoxValuesLength; dataIndex++) {
+            data.push([comboBoxValues[dataIndex], comboBoxDisplayValues[dataIndex]]);
+        }
+
+        this.add({
+            xtype: 'combo',
+            fieldLabel : record.get('label'),
+            store : new Ext.data.ArrayStore({
+                fields: [
+                    'id',
+                    'displayText'
+                ],
+                data: data
+            }),
+            value : value,
+            hiddenName : record.get('name'),
+            typeAhead: true,
+            mode: 'local',
+            triggerAction: 'all',
+            selectOnFocus:true,
+            valueField : 'id',
+            displayField : 'displayText'
+        });
+    },
+
+    addComponent : function(record, defaultValue, value) {
+        var propertyField, xtype = record.get('type'),
+        propertyFieldConfig = {
+            fieldLabel : record.get('label'),
+            xtype : xtype,
+            value : value,
+            defaultValue : defaultValue,
+            allowBlank : !record.get('required'),
+            name : record.get('name'),
+            listeners : {
+                change : function () {
+                    var value = this.getValue();
+                    if (!value || value.length === 0 || value === this.defaultValue) {
+                        this.addClass('default-value');
+                        this.setValue(this.defaultValue);
+                    } else {
+                        this.removeClass('default-value');
+                    }
+                }
+            }
+        };
+
+        if (xtype === 'checkbox') {
+            propertyFieldConfig.checked = (value === true || value === 'true' || value == '1' || String(value).toLowerCase() == 'on');
+        } else if (xtype === 'linkpicker') {
+            propertyFieldConfig.renderStripValue = /^\/?(?:[^\/]+\/)*/g;
+            propertyFieldConfig.pickerConfig = {
+                configuration: record.get('pickerConfiguration'),
+                remembersLastVisited: record.get('pickerRemembersLastVisited'),
+                initialPath: record.get('pickerInitialPath'),
+                isRelativePath: record.get('pickerPathIsRelative'),
+                rootPath: record.get('pickerRootPath'),
+                selectableNodeTypes: record.get('pickerSelectableNodeTypes')
+            }
+        }
+        propertyField = this.add(propertyFieldConfig);
+        if (value === defaultValue) {
+            propertyField.addClass('default-value');
         }
     },
 

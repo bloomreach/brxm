@@ -43,15 +43,16 @@ Hippo.ChannelManager.ChannelIconDataView = Ext.extend(Ext.DataView, {
     initComponent : function() {
 
         this.on('refreshDataView', function() {
-            var channelGroupHandles = Ext.query('.channel-group-handle');
-                var channelGroups = Ext.query('.channel-group');
+            var channelGroupHandles, channelGroups, i, len, channelGroupHandle, channelGroup;
 
-                for (var i=0, len=channelGroupHandles.length; i < len; i++) {
-                    var channelGroupHandle = Ext.get(channelGroupHandles[i]);
+            channelGroupHandles = Ext.query('.channel-group-handle');
+            channelGroups = Ext.query('.channel-group');
 
+                for (i=0, len=channelGroupHandles.length; i < len; i++) {
+                    channelGroupHandle = Ext.get(channelGroupHandles[i]);
                     channelGroupHandle.removeAllListeners();
 
-                    var channelGroup = Ext.get(channelGroups[i]);
+                    channelGroup = Ext.get(channelGroups[i]);
                     channelGroup.setVisibilityMode(Ext.Element.DISPLAY);
 
                     (function(channelGroupHandle, channelGroup) {
@@ -72,17 +73,17 @@ Hippo.ChannelManager.ChannelIconDataView = Ext.extend(Ext.DataView, {
     },
 
     collectData : function(records, startIndex) {
-        var groups = [];
+        var groups = [], i, len, data, lockedDate, groupId, dataObject, key;
 
-        for (var i= 0, len=records.length; i < len; i++) {
-            var data = this.prepareData(records[i].json, startIndex + i, records[i]);
+        for (i= 0, len=records.length; i < len; i++) {
+            data = this.prepareData(records[i].json, startIndex + i, records[i]);
 
             if (data.lockedBy.length > 0) {
-                var lockedDate = new Date(parseInt(data.lockedOn)).format(this.resources['locked-date-format']);
+                lockedDate = new Date(parseInt(data.lockedOn)).format(this.resources['locked-date-format']);
                 data.lockedLabel = this.resources['locked'].format(data.lockedBy, lockedDate);
             }
 
-            var groupId = records[i].json[this.groupByProperty];
+            groupId = records[i].json[this.groupByProperty];
             if (!groupId) {
                 groupId = 'Unknown';
             }
@@ -98,8 +99,8 @@ Hippo.ChannelManager.ChannelIconDataView = Ext.extend(Ext.DataView, {
         }
 
         // create non associative array
-        var dataObject = [];
-        for (var key in groups) {
+        dataObject = [];
+        for (key in groups) {
             if (typeof groups[key] === 'function') {
                 continue;
             }
@@ -129,11 +130,12 @@ Hippo.ChannelManager.ChannelIconDataView = Ext.extend(Ext.DataView, {
 Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
 
     constructor: function(config) {
+        var self, toolbar, channelTypeDataView, channelRegionDataView;
         this.resources = config.resources;
         this.store = config.store;
 
-        var self = this;
-        var toolbar = new Ext.Toolbar({
+        self = this;
+        toolbar = new Ext.Toolbar({
             items : [
                 {
                     text: config.resources['type'],
@@ -154,9 +156,8 @@ Hippo.ChannelManager.ChannelIconPanel = Ext.extend(Ext.Panel, {
                 }
             ]
         });
-
-        var channelTypeDataView = this.createDataView('channelType');
-        var channelRegionDataView = this.createDataView('channelRegion');
+        channelTypeDataView = this.createDataView('channelType');
+        channelRegionDataView = this.createDataView('channelRegion');
 
         Ext.apply(config, {
             id: 'channelIconPanel',

@@ -12,22 +12,22 @@ Ext.ux.ColorField = Ext.extend(Ext.form.TriggerField,  {
     allowBlank: false,
     fallback: true,
 
-    initComponent : function(){
+    initComponent : function() {
         Ext.ux.ColorField.superclass.initComponent.call(this);
         this.addEvents('select');
-        this.on('change', function(c, v){
+        this.on('change', function(c, v) {
             this.onSelect(c, v);
         }, this);
     },
 
     // private
-    onDestroy : function(){
+    onDestroy : function() {
 		Ext.destroy(this.menu);
         Ext.ux.ColorField.superclass.onDestroy.call(this);
     },
     
     // private
-    afterRender: function(){
+    afterRender: function() {
         Ext.ux.ColorField.superclass.afterRender.call(this);
         this.el.setStyle('background', this.value);
         this.detectFontColor();        
@@ -38,11 +38,11 @@ Ext.ux.ColorField = Ext.extend(Ext.form.TriggerField,  {
      * @hide
      */
     // private
-    onTriggerClick : function(){
-        if(this.disabled){
+    onTriggerClick : function() {
+        if (this.disabled) {
             return;
         }
-        if(this.menu == null){
+        if (this.menu == null) {
             this.menu = new Ext.ux.ColorMenu({
                 hideOnClick: false,
                 fallback: this.fallback
@@ -55,13 +55,13 @@ Ext.ux.ColorField = Ext.extend(Ext.form.TriggerField,  {
     },
     
     //private
-    menuEvents: function(method){
+    menuEvents: function(method) {
         this.menu[method]('select', this.onSelect, this);
         this.menu[method]('hide', this.onMenuHide, this);
         this.menu[method]('show', this.onFocus, this);
     },
     
-    onSelect: function(m, d){
+    onSelect: function(m, d) {
         this.setValue(d);
         this.fireEvent('select', this, d);
         this.el.setStyle('background', d);
@@ -71,21 +71,23 @@ Ext.ux.ColorField = Ext.extend(Ext.form.TriggerField,  {
     // private
     // Detects whether the font color should be white or black, according to the
     // current color of the background
-    detectFontColor : function(){
-        if(!this.menu || !this.menu.picker.rawValue){
-            if(!this.value)
+    detectFontColor : function () {
+        var h2d, value, avg;
+        if (!this.menu || !this.menu.picker.rawValue) {
+            if (!this.value) {
                 value = 'FFFFFF';
-            else{
-                var h2d = function(d){ return parseInt(d, 16); }
-                var value = [
+            } else {
+                h2d = function(d){ return parseInt(d, 16); }
+                value = [
                     h2d(this.value.slice(1, 3)),
                     h2d(this.value.slice(3, 5)),
                     h2d(this.value.slice(5))
                 ];
             }
-        }else
-            var value = this.menu.picker.rawValue;
-        var avg = (value[0] + value[1] + value[2]) / 3;
+        } else {
+            value = this.menu.picker.rawValue;
+        }
+        avg = (value[0] + value[1] + value[2]) / 3;
         this.el.setStyle('color', (avg > 128) ? '#000' : '#FFF');
     },    
     
@@ -100,7 +102,7 @@ Ext.ux.ColorMenu = Ext.extend(Ext.menu.Menu, {
 
    enableScrolling: false,
 
-   initComponent: function(){
+   initComponent: function() {
        
        Ext.apply(this, {
            plain: true,
@@ -116,18 +118,18 @@ Ext.ux.ColorMenu = Ext.extend(Ext.menu.Menu, {
        Ext.ux.ColorMenu.superclass.initComponent.call(this);
        this.relayEvents(this.picker, ["select"]);
        this.on('select', this.menuHide, this);
-       if(this.handler){
+       if (this.handler) {
            this.on('select', this.handler, this.scope || this);
        }
    },
 
    menuHide: function() {
-       if(this.hideOnClick){
+       if (this.hideOnClick){
            this.hide(true);
        }
    },
    
-   doLayout: function(shallow, force){
+   doLayout: function(shallow, force) {
        Ext.ux.ColorMenu.superclass.doLayout.call(this, shallow, force);
        this.getEl().setZIndex(30000);
    }
@@ -135,21 +137,21 @@ Ext.ux.ColorMenu = Ext.extend(Ext.menu.Menu, {
 });
 
 /* Preload the picker images so they're available at render time */
-Ext.ux.ColorMenu.prototype.wheelImage = (function(){
+Ext.ux.ColorMenu.prototype.wheelImage = (function() {
     var wheelImage = new Image();
     wheelImage.onload = Ext.emptyFn;
     wheelImage.src = 'resources/org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle/colorfield/images/wheel.png';
     return wheelImage;
 })();
 
-Ext.ux.ColorMenu.prototype.gradientImage = (function(){
+Ext.ux.ColorMenu.prototype.gradientImage = (function() {
     var gradientImage = new Image();
     gradientImage.onload = Ext.emptyFn;
     gradientImage.src = 'resources/org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle/colorfield/images/gradient.png';
     return gradientImage;
 })();
 
-Ext.ux.ColorPicker = function(config){
+Ext.ux.ColorPicker = function(config) {
     Ext.ux.ColorPicker.superclass.constructor.call(this, config);
     this.addEvents(
         /**
@@ -161,10 +163,11 @@ Ext.ux.ColorPicker = function(config){
         'select'
     );
     
-    if(!this.value)
+    if (!this.value) {
         this.value = this.defaultValue;
+    }
 
-    if(this.handler){
+    if (this.handler) {
         this.on("select", this.handler, this.scope, true);
     }
     
@@ -176,9 +179,11 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
     width: 200,
     // private
     onRender : function(container, position){
-        if(!this.value)
+        var el;
+        if (!this.value) {
             this.value = this.defaultValue;
-        var el = document.createElement("div");
+        }
+        el = document.createElement("div");
         el.className = this.itemCls;
         container.dom.insertBefore(el, position);
         Ext.get(el).setWidth(this.width);
@@ -190,10 +195,12 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
         this.wheel.setAttribute('height', '200');
         this.wheel.setAttribute('class', 'x-color-picker-wheel');
         
-        if(this.fallback || !this.wheel.getContext || !this.wheel.getContext('2d').getImageData){
+        if (this.fallback || !this.wheel.getContext || !this.wheel.getContext('2d').getImageData) {
             this.canvasSupported = false;
             this.itemCls = 'x-color-palette';
-            while(container.dom.firstChild){ container.dom.removeChild(container.dom.firstChild); }
+            while (container.dom.firstChild) {
+                container.dom.removeChild(container.dom.firstChild);
+            }
             Ext.ux.ColorPicker.superclass.onRender.call(this, container, position);
             return;
         }
@@ -208,44 +215,50 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
     },
     
     // private
-    afterRender : function(){
+    afterRender : function() {
+        var t, self;
         Ext.ColorPalette.superclass.afterRender.call(this);
-        if(!this.canvasSupported) return;
+        if (!this.canvasSupported) {
+            return;
+        }
         /* Fire selection events on drag */
-        var t = new Ext.dd.DragDrop(this.wheel);
-        var self = this;
-        t.onDrag = function(e, t){
+        t = new Ext.dd.DragDrop(this.wheel);
+        self = this;
+        t.onDrag = function(e, t) {
             self.select(e, this.DDM.currentTarget);
         };
     },
     
-    select : function(e, t){                                                    
-        if(!this.canvasSupported){
+    select : function(e, t) {
+        var context, coords, data;
+        if (!this.canvasSupported) {
             this.value = e;
             Ext.ux.ColorPicker.superclass.select.call(this, e);
             this.fireEvent('select', this, '#'+this.value); 
             return;
         }
-        var context = this.wheel.getContext('2d');
-        var coords = [
+        context = this.wheel.getContext('2d');
+        coords = [
             e.xy[0] - Ext.get(t).getLeft(),
             e.xy[1] - Ext.get(t).getTop()
         ];
         
-        try{
-            var data = context.getImageData(coords[0], coords[1], 1, 1);
-        }catch(e){ return; } // The user selected an area outside the <canvas>
+        try {
+            data = context.getImageData(coords[0], coords[1], 1, 1);
+        } catch(e) { return; } // The user selected an area outside the <canvas>
         
         // Disallow selecting transparent regions
-        if(data.data[3] == 0){
-            var context = this.gradient.getContext('2d');
-            var data = context.getImageData(coords[0], coords[1], 1, 1);
-            if(data.data[3] == 0) return;
+        if (data.data[3] == 0) {
+            context = this.gradient.getContext('2d');
+            data = context.getImageData(coords[0], coords[1], 1, 1);
+            if (data.data[3] == 0) {
+                return;
+            }
             
             this.rawValue = data.data;
             this.value = this.hexValue(data.data[0], data.data[1], data.data[2]);
             this.fireEvent('select', this, this.value);
-        }else{
+        } else {
             this.rawValue = data.data;
             this.value = this.hexValue(data.data[0], data.data[1], data.data[2]);
             this.drawGradient();
@@ -254,36 +267,37 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
     },
     
     // private
-    drawGradient : function(){
-        if(!this.gradient){
+    drawGradient : function() {
+        var context, center;
+        if (!this.gradient) {
             this.gradient = this.canvasdiv.dom.appendChild(document.createElement("canvas"));
             this.gradient.setAttribute('width', '200');
             this.gradient.setAttribute('height', '200');
             this.gradient.setAttribute('class', 'x-color-picker-gradient');
-            if(typeof G_vmlCanvasManager != 'undefined') 
+            if (typeof G_vmlCanvasManager != 'undefined') {
                 this.gradient = G_vmlCanvasManager.initElement(this.gradient);
+            }
             Ext.get(this.gradient).on('click', this.select, this);
         }
-        var context = this.gradient.getContext('2d');
-        var center = [97.5, 98];
+        context = this.gradient.getContext('2d');
+        center = [97.5, 98];
         
         // Clear the canvas first
-        context.clearRect(0, 0, this.gradient.width, this.gradient.height)
+        context.clearRect(0, 0, this.gradient.width, this.gradient.height);
         
         context.beginPath();
         context.fillStyle = this.value;
         context.strokeStyle = this.value;
         context.arc(center[0], center[0], 65, 0, 2*Math.PI, false);
-    	context.closePath();
-    	context.fill();
-    	
+        context.closePath();
+        context.fill();
+
         /* Draw the wheel image onto the container */
         this.gradient.getContext('2d').drawImage(this.gradientImage, 33, 32);
-        
     },
     
     // private
-    hexValue : function(r,g,b){
+    hexValue : function(r, g, b) {
         var chars = '0123456789ABCDEF';
         return '#'+(
             chars[parseInt(r/16)] + chars[parseInt(r%16)] +
@@ -292,11 +306,11 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
         );
     },
     
-    getValue: function(){
+    getValue: function() {
         return this.value;
     },
     
-    setValue: function(v){
+    setValue: function(v) {
         this.value = v;
     }
 });

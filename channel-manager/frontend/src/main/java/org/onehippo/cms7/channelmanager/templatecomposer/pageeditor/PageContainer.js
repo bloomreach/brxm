@@ -55,8 +55,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         this.pageContext = null;
 
         this.on('fatalIFrameException', function(data) {
-            var iFrame = Ext.getCmp('Iframe');
-            var frm = iFrame.getFrame();
+            var iFrame, frm;
+            iFrame = Ext.getCmp('Iframe');
+            frm = iFrame.getFrame();
             if (frm !== null && data.msg) {
                 this.on('afterIFrameDOMReady', function () {
                     frm.execScript('setErrorMessage(\''+data.msg+'\');', true);
@@ -69,16 +70,18 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     _populateIFrameResourceCache : function() {
-        var iframeResources = {
+        var iframeResources, self, resourceUrls, futures, join, i;
+        iframeResources = {
             cache: {},
             css: this.iFrameCssHeadContributions,
             js: this.iFrameJsHeadContributions
         };
-        var self = this;
+        self = this;
         // clone array with concat()
-        var resourceUrls = this.iFrameCssHeadContributions.concat().concat(this.iFrameJsHeadContributions);
-        var futures = [];
-        for (var i = 0; i < resourceUrls.length; i++) {
+        resourceUrls = this.iFrameCssHeadContributions.concat().concat(this.iFrameJsHeadContributions);
+        futures = [];
+
+        for (i = 0; i < resourceUrls.length; i++) {
             futures[i] = new Hippo.Future(function(success, failure) {
                 (function(src) {
                     Ext.Ajax.request({
@@ -96,7 +99,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 })(resourceUrls[i]);
             });
         }
-        var join = Hippo.Future.join(futures);
+        join = Hippo.Future.join(futures);
         join.set(iframeResources);
         return join;
     },
@@ -104,6 +107,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
     initComposer : function() {
+        var retry, self;
+
         if (typeof this.contextPath === 'undefined'
                 || this.contextPath.trim() === ''
                 || typeof this.renderHost === 'undefined'
@@ -115,8 +120,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
         this._lock();
 
-        var retry = this.initialHstConnectionTimeout;
-        var self = this;
+        retry = this.initialHstConnectionTimeout;
+        self = this;
         // do initial handshake with CmsSecurityValve of the composer mount and
         // go ahead with the actual host which we want to edit (for which we need to be authenticated)
         var composerMode = function(callback) {
@@ -156,14 +161,15 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             });
         };
         composerMode(function(response) {
-            var responseObj = Ext.util.JSON.decode(response.responseText);
+            var responseObj, iFrame, iFrameUrl;
+            responseObj = Ext.util.JSON.decode(response.responseText);
+            iFrame = Ext.getCmp('Iframe');
             this.canEdit = responseObj.data;
 
-            var iFrame = Ext.getCmp('Iframe');
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
 
             this._initIFrameListeners();
-            var iFrameUrl = this.contextPath;
+            iFrameUrl = this.contextPath;
             if (iFrameUrl === '/') {
                 iFrameUrl = '';
             }
@@ -184,11 +190,12 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     refreshIframe : function() {
+        var iframe, frame, window, scrollSave;
         console.log('refreshIframe');
-        var iframe = Ext.getCmp('Iframe');
-        var frame = iframe.getFrame();
-        var window = frame.getWindow();
-        var scrollSave = {x: window.pageXOffset, y: window.pageYOffset};
+        iframe = Ext.getCmp('Iframe');
+        frame = iframe.getFrame();
+        window = frame.getWindow();
+        scrollSave = {x: window.pageXOffset, y: window.pageYOffset};
 
         this._lock(function() {
             window.scrollBy(scrollSave.x, scrollSave.y);
@@ -198,9 +205,10 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     unlockMount: function () {
+        var self, mountId;
         this._lock();
-        var self = this;
-        var mountId = this.pageContext.ids.mountId;
+        self = this;
+        mountId = this.pageContext.ids.mountId;
         Hippo.Msg.confirm(self.resources['unlock-channel-title'], self.resources['unlock-channel-message'], function(btn, text) {
             if (btn == 'yes') {
                 Ext.Ajax.request({
@@ -228,11 +236,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     discardChanges : function () {
+        var self, mountId, hasPreviewHstConfig;
         this._lock();
-        var self = this;
-
-        var mountId = this.pageContext.ids.mountId;
-        var hasPreviewHstConfig = this.pageContext.hasPreviewHstConfig;
+        self = this;
+        mountId = this.pageContext.ids.mountId;
+        hasPreviewHstConfig = this.pageContext.hasPreviewHstConfig;
 
         if (hasPreviewHstConfig) {
             Hippo.Msg.confirm(self.resources['discard-changes-title'], self.resources['discard-changes-message'], function(btn, text) {
@@ -266,13 +274,14 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     toggleMode: function () {
+        var mountId, hasPreviewHstConfig;
         var self = this;
         this._lock();
 
         this.previewMode = !this.previewMode;
 
-        var mountId = this.pageContext.ids.mountId;
-        var hasPreviewHstConfig = this.pageContext.hasPreviewHstConfig;
+        mountId = this.pageContext.ids.mountId;
+        hasPreviewHstConfig = this.pageContext.hasPreviewHstConfig;
 
         console.log('hasPreviewHstConfig:' + hasPreviewHstConfig);
         if (this.previewMode) {
@@ -498,19 +507,21 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     _onRearrangeContainer: function(rearranges) {
-        var self = this;
-        var futures = [];
+        var self, futures;
+        self = this;
+        futures = [];
 
         for (var i=0; i<rearranges.length; i++) {
             (function(rearrange) {
                 futures.push(new Hippo.Future(function(onSuccess, onFailure) {
                     window.setTimeout(function() {
                         try {
-                            var recordIndex = self.pageContext.stores.pageModel.findExact('id', rearrange.id); //should probably do this through the selectionModel
-                            var record = self.pageContext.stores.pageModel.getAt(recordIndex);
+                            var recordIndex, record, writeListener;
+                            recordIndex = self.pageContext.stores.pageModel.findExact('id', rearrange.id); //should probably do this through the selectionModel
+                            record = self.pageContext.stores.pageModel.getAt(recordIndex);
                             record.set('children', rearrange.children);
                             console.log('_onRearrangeContainer ' + rearrange.id + ', children: ' + rearrange.children);
-                            var writeListener = function(store, action, result, res, rec) {
+                            writeListener = function(store, action, result, res, rec) {
                                 if (rec.id === record.id) {
                                     self.pageContext.stores.pageModel.un('write', writeListener, self);
                                     onSuccess();
@@ -552,10 +563,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     _onClick : function(data) {
-        var id = data.elementId;
-        var variant = data.variant;
-        var inherited = data.inherited;
-        var record = this.pageContext.stores.pageModel.getById(id);
+        var id, variant, inherited, record;
+        id = data.elementId;
+        variant = data.variant;
+        inherited = data.inherited;
+        record = this.pageContext.stores.pageModel.getById(id);
 
         if (!record) {
             console.warn('Handling onClick for element[id=' + id + '] with no record in component store');
@@ -574,8 +586,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     _removeByRecord: function(record) {
-        var store = this.pageContext.stores.pageModel;
-        var self = this;
+        var store, self;
+        store = this.pageContext.stores.pageModel;
+        self = this;
         Hippo.Msg.confirm(this.resources['delete-message-title'], this.resources['delete-message'].format(record.get('name')), function(btn, text) {
             if (btn == 'yes') {
                 store.on('write', self.refreshIframe, self, {single: true});
@@ -585,8 +598,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     _removeByElement : function(element) {
-        var store = this.pageContext.stores.pageModel;
-        var index = store.findExact('id', Ext.fly(element).getAttribute(HST.ATTR.ID));
+        var store, index;
+        store = this.pageContext.stores.pageModel;
+        index = store.findExact('id', Ext.fly(element).getAttribute(HST.ATTR.ID));
         this._removeByRecord(store.getAt(index))
     },
 
@@ -608,7 +622,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
      * get it to work.. So do like this instead.....
      */
     handleFrameMessages : function(frm, msg) {
-        var self = this;
+        var self, errorMsg;
+        self = this;
         try {
             if (msg.tag == 'rearrange') {
                 this._onRearrangeContainer(msg.data);
@@ -623,7 +638,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             } else if (msg.tag == 'refresh') {
                 this.refreshIframe();
             } else if (msg.tag == 'iframeexception') {
-                var errorMsg = this.resources['iframe-event-exception-message-message'];
+                errorMsg = this.resources['iframe-event-exception-message-message'];
                 if (msg.data.msg) {
                     errorMsg += msg.data.msg;
                 }

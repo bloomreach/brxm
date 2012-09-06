@@ -35,8 +35,9 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
     },
 
     initComponent: function() {
-        var me = this;
-        var config = {
+        var me, config;
+        me = this;
+        config = {
             padding: 5,
             url: me.store.url,
             defaults: {
@@ -112,18 +113,19 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
         this.addEvents('channel-created');
 
         this.on('beforeshow', function () {
+            var blueprint, contentRootCmp, contentRootCmp;
             this.getForm().reset();
             this.hideError();
 
-            var blueprint = Ext.getCmp('blueprints-panel').getSelectionModel().getSelected();
+            blueprint = Ext.getCmp('blueprints-panel').getSelectionModel().getSelected();
             Ext.getCmp('displayedBlueprintId').setValue(blueprint.id);
             Ext.getCmp('blueprintId').setValue(blueprint.id);
 
-            var contentRootCmp = Ext.getCmp('contentRoot');
+            contentRootCmp = Ext.getCmp('contentRoot');
             if (blueprint.get('hasContentPrototype')) {
                 contentRootCmp.hide();
             } else {
-                var contentRoot = blueprint.get('contentRoot');
+                contentRoot = blueprint.get('contentRoot');
                 contentRootCmp.setDefaultValue(contentRoot);
                 contentRootCmp.setValue(contentRoot);
                 contentRootCmp.show();
@@ -141,8 +143,9 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
     },
 
     submitForm: function() {
-        var form = this.getForm();
-        var panel = this;
+        var form, panel;
+        form = this.getForm();
+        panel = this;
         if (form.isValid()) {
             form.submit({
                 params: {

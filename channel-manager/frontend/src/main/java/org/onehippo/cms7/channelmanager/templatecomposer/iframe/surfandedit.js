@@ -35,14 +35,15 @@
         },
 
         createSurfAndEditLinks : function() {
-            var links = [];
+            var links, query, i, length,  element, hstMetaData, domWalker, hstMetaData, childNode;
+            links = [];
             try {
                 if (!!document.evaluate) {
                     // fast XPATH
-                    var query = document.evaluate("//comment()", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-                    for (var i = 0, length = query.snapshotLength; i < length; i++) {
-                        var element = query.snapshotItem(i);
-                        var hstMetaData = this.convertToHstMetaData(element);
+                    query = document.evaluate("//comment()", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+                    for (i = 0, length = query.snapshotLength; i < length; i++) {
+                        element = query.snapshotItem(i);
+                        hstMetaData = this.convertToHstMetaData(element);
                         if (hstMetaData !== null) {
                             links.push(hstMetaData[HST.ATTR.ID]);
                             this._createLink(element, hstMetaData)
@@ -50,21 +51,21 @@
                     }
                 } else {
                     // fallback
-                    var self = this;
-                    var domWalker = function(node) {
+                    self = this;
+                    domWalker = function(node) {
                         if (!node || typeof node.nodeType === 'undefined') {
                             return;
                         }
                         if (node.nodeType === 8) {
-                            var hstMetaData = self.convertToHstMetaData(node);
+                            hstMetaData = self.convertToHstMetaData(node);
                             if (hstMetaData !== null) {
                                 links.push(hstMetaData[HST.ATTR.ID]);
                                 self._createLink(node, hstMetaData);
                             }
                             return;
                         }
-                        for (var i=0, len=node.childNodes.length; i< len; i++) {
-                            var childNode = node.childNodes[i];
+                        for (i=0, length=node.childNodes.length; i< length; i++) {
+                            childNode = node.childNodes[i];
                             domWalker(childNode);
                         }
                     };
@@ -77,11 +78,12 @@
         },
 
         _createLink : function(commentElement, hstMetaData) {
-            var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+            var die, id, newLink;
+            die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
 
-            var id = hstMetaData[HST.ATTR.ID];
+            id = hstMetaData[HST.ATTR.ID];
 
-            var newLink = document.createElement('A');
+            newLink = document.createElement('A');
             if (commentElement.nextSibling) {
                 commentElement.parentNode.insertBefore(newLink, commentElement.nextSibling);
             } else {
@@ -114,7 +116,8 @@
         },
 
         convertToHstMetaData : function(element) {
-            var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+            var die, commentJsonObject;
+            die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
             if (element.nodeType !== 8) {
                 return null;
             }
@@ -125,7 +128,7 @@
                         || element.data.indexOf(HST.ATTR.URL) === -1) {
                     return null;
                 }
-                var commentJsonObject = JSON.parse(element.data);
+                commentJsonObject = JSON.parse(element.data);
                 if (commentJsonObject[HST.ATTR.TYPE] === HST.CMSLINK
                         && typeof commentJsonObject[HST.ATTR.ID] !== 'undefined'
                         && typeof commentJsonObject[HST.ATTR.URL] !== 'undefined') {

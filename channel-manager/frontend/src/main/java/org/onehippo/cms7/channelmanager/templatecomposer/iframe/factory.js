@@ -45,12 +45,13 @@
             },
 
             _create : function(data) {
-                var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+                var die, c;
+                die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (typeof this.registry[data.xtype] === 'undefined') {
                     die(this.resources['factory-xtype-not-found'].format(data.xtype));
                 }
                 console.log('_create xtype:'+data.xtype+', element: '+Hippo.Util.getElementPath(data.element));
-                var c = new this.registry[data.xtype](data.id, data.element, this.resources);
+                c = new this.registry[data.xtype](data.id, data.element, this.resources);
                 if (!c instanceof data.base) {
                     Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['factory-inheritance-error'].format(data.id, data.base));
                 }
@@ -59,9 +60,10 @@
             },
 
             _enhance : function(element) {
-                var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+                var die, hstContainerMetaData, id, type, base, xtype, url, refNS, inherited, variant;
+                die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
 
-                var hstContainerMetaData = this.getContainerMetaData(element);
+                hstContainerMetaData = this.getContainerMetaData(element);
                 if (hstContainerMetaData === null) {
                     if ($.trim($(element).html()) === '') {
                         console.info('Skipping empty element "{0}" with no meta data.'.format(Hippo.Util.getElementPath(element)));
@@ -76,7 +78,7 @@
                     die(this.resources['factory-no-hst-meta-data'].format(Hippo.Util.getElementPath(element)));
                 }
 
-                var id = hstContainerMetaData[HST.ATTR.ID];
+                id = hstContainerMetaData[HST.ATTR.ID];
                 if (typeof id === 'undefined') {
                     die(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID, Hippo.Util.getElementPath(element)));
                 }
@@ -84,13 +86,13 @@
                 element.id = id;
                 element.setAttribute(HST.ATTR.ID, id);
 
-                var type = hstContainerMetaData[HST.ATTR.TYPE];
+                type = hstContainerMetaData[HST.ATTR.TYPE];
                 if (typeof type === 'undefined') {
                     die(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE, Hippo.Util.getElementPath(element)));
                 }
                 element.setAttribute(HST.ATTR.TYPE,  type);
 
-                var base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget;
+                base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget;
                 if (type === HST.CONTAINER) {
                     base = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base;
                 } else if (type === HST.CONTAINERITEM) {
@@ -98,7 +100,7 @@
                 }
 
                 //Not very sexy this..
-                var xtype = hstContainerMetaData[HST.ATTR.XTYPE];
+                xtype = hstContainerMetaData[HST.ATTR.XTYPE];
                 if (typeof xtype === 'undefined' || xtype == null || xtype == '') {
                     if (type === HST.CONTAINER) {
                         xtype = 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base';
@@ -108,22 +110,22 @@
                 }
                 element.setAttribute(HST.ATTR.XTYPE, xtype);
 
-                var url = hstContainerMetaData[HST.ATTR.URL];
+                url = hstContainerMetaData[HST.ATTR.URL];
                 if (typeof url !== 'undefined') {
                     element.setAttribute(HST.ATTR.URL, url);
                 }
 
-                var refNS = hstContainerMetaData[HST.ATTR.REF_NS];
+                refNS = hstContainerMetaData[HST.ATTR.REF_NS];
                 if (typeof refNS !== 'undefined') {
                     element.setAttribute(HST.ATTR.REF_NS, refNS);
                 }
 
-                var inherited = hstContainerMetaData[HST.ATTR.INHERITED];
+                inherited = hstContainerMetaData[HST.ATTR.INHERITED];
                 if (typeof inherited !== 'undefined') {
                     element.setAttribute(HST.ATTR.INHERITED, inherited);
                 }
 
-                var variant = hstContainerMetaData[HST.ATTR.VARIANT];
+                variant = hstContainerMetaData[HST.ATTR.VARIANT];
                 if (typeof variant !== 'undefined') {
                     element.setAttribute(HST.ATTR.VARIANT, variant);
                 }
@@ -157,27 +159,27 @@
             },
 
             getContainerMetaData : function(element) {
-                var die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+                var die, childNodes, children, i, descendants, j, len, hstMetaData, tmpElement;
+                die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
                 if (element.className === HST.CLASS.ITEM) {
-                    var childNodes;
                     if (element.tagName == 'TR') {
-                        var children = element.childNodes;
+                        children = element.childNodes;
                         childNodes = [];
-                        for (var i = 0; i < children.length; i++) {
+                        for (i = 0; i < children.length; i++) {
                             if (children[i].tagName != 'TD') {
                                 continue;
                             }
-                            var descendants = children[i].childNodes;
-                            for (var j = 0; j < descendants.length; j++) {
+                            descendants = children[i].childNodes;
+                            for (j = 0; j < descendants.length; j++) {
                                 childNodes.push(descendants[j]);
                             }
                         }
                     } else {
                         childNodes = element.childNodes;
                     }
-                    for (var i=0, len=childNodes.length; i<len; i++) {
+                    for (i=0, len=childNodes.length; i<len; i++) {
                         try {
-                            var hstMetaData = this.convertToHstMetaData(childNodes[i]);
+                            hstMetaData = this.convertToHstMetaData(childNodes[i]);
                             if (hstMetaData !== null) {
                                 return hstMetaData;
                             }
@@ -186,11 +188,11 @@
                         }
                     }
                 } else if (element.className === HST.CLASS.CONTAINER) {
-                    var tmpElement = element;
+                    tmpElement = element;
                     while (tmpElement.previousSibling !== null) {
                         tmpElement = tmpElement.previousSibling;
                         try {
-                            var hstMetaData = this.convertToHstMetaData(tmpElement);
+                            hstMetaData = this.convertToHstMetaData(tmpElement);
                             if (hstMetaData !== null) {
                                 return hstMetaData;
                             }
@@ -203,6 +205,7 @@
             },
 
             convertToHstMetaData : function(element) {
+                var commentJsonObject;
                 if (element.nodeType !== 8) {
                     return null;
                 }
@@ -212,7 +215,7 @@
                         || !element.data.indexOf(HST.ATTR.XTYPE) === -1) {
                     return null;
                 }
-                var commentJsonObject = JSON.parse(element.data);
+                commentJsonObject = JSON.parse(element.data);
                 if (typeof commentJsonObject[HST.ATTR.ID] !== 'undefined'
                     && commentJsonObject[HST.ATTR.TYPE] !== 'undefined'
                     && commentJsonObject[HST.ATTR.XTYPE] !== 'undefined') {

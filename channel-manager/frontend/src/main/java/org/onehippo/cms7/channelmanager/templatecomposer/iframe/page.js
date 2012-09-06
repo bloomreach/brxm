@@ -113,11 +113,11 @@
         },
 
         createContainers : function(facade) {
+            var self = this, container;
             try {
                 //attach mouseover/mouseclick for components
-                var self = this;
                 $('.' + HST.CLASS.CONTAINER).each(function(index) {
-                    var container = self.createContainer(this, self);
+                    container = self.createContainer(this, self);
                     if (container !== null) {
                         container.updateSharedData(facade);
                     }
@@ -157,21 +157,22 @@
         },
 
         remove : function(element) {
+            var type, id, xtype, container;
             if (!element.hasAttribute(HST.ATTR.ID)) {
                 element = $(element).parents('.'+HST.CLASS.CONTAINER)[0];
             }
 
-            var type = element.getAttribute(HST.ATTR.TYPE);
-            var id = element.getAttribute(HST.ATTR.ID);
-            var xtype = element.getAttribute(HST.ATTR.XTYPE);
+            type = element.getAttribute(HST.ATTR.TYPE);
+            id = element.getAttribute(HST.ATTR.ID);
+            xtype = element.getAttribute(HST.ATTR.XTYPE);
 
             if (type == HST.CONTAINERITEM) {
-                var container = this.containers[id];
+                container = this.containers[id];
                 if(!!container && container.removeItem(id)) {
                     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.deleteObjectRef(id);
                 }
             } else if (type == HST.CONTAINER) {
-                var container = this.containers[id];
+                container = this.containers[id];
                 if (!!container) {
                     container.remove();
                     delete this.containers[id];

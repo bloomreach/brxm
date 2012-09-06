@@ -29,8 +29,9 @@ Hippo.ChannelManager.BlueprintListPanel = Ext.extend(Ext.grid.GridPanel, {
     },
 
     initComponent: function() {
-        var me = this;
-        var config = {
+        var me, config;
+        me = this;
+        config = {
             id: me.id,
             store: me.store,
             loadMask: true,

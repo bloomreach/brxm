@@ -26,13 +26,14 @@
             },
 
             publish: function(topic) {
+               var i, len, subscription;
                if (typeof subscriptions[topic] === 'undefined') {
                     return true;
                }
                console.log('publishing to topic '+topic + ', ' + subscriptions[topic].length + ' subscriptions');
 
-               for (var i = 0, len = subscriptions[topic].length; i < len; i++) {
-                   var subscription = subscriptions[topic][i];
+               for (i = 0, len = subscriptions[topic].length; i < len; i++) {
+                   subscription = subscriptions[topic][i];
                    if (subscription.callback.apply(subscription.scope, Array.prototype.slice.call(arguments, 1)) === false) {
                        return false;
                    }
@@ -49,12 +50,13 @@
             },
 
             unSubscribe: function(topic, callback, scope) {
+               var scopeParameter, i, len, subscription;
                if (typeof subscriptions[topic] === 'undefined') {
                    return false;
                }
-               var scopeParameter = scope || window;
-               for (var i=0, len = subscriptions[topic].length; i < len; i++) {
-                   var subscription = subscriptions[topic][i];
+               scopeParameter = scope || window;
+               for (i=0, len = subscriptions[topic].length; i < len; i++) {
+                   subscription = subscriptions[topic][i];
                    if (subscription.callback === callback && subscription.scope === scopeParameter) {
                        subscriptions[topic].splice(i, 1);
                        return true;

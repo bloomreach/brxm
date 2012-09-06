@@ -41,10 +41,11 @@
         },
 
         remove : function(key) {
-            var idx = $.inArray(key, this.keys);
+            var idx, v;
+            idx = $.inArray(key, this.keys);
             if (idx > -1) {
                 this.keys.removeByIndex(idx);
-                var v = this.values[key];
+                v = this.values[key];
                 delete this.values[key];
                 return v;
             } else {
@@ -53,25 +54,29 @@
         },
 
         each: function(f, scope) {
+            var len, i, key;
             scope = scope || this;
-            var len = this.keys.length;
-            for (var i = 0; i < len; ++i) {
-                var key = this.keys[i];
+            len = this.keys.length;
+            for (i = 0; i < len; ++i) {
+                key = this.keys[i];
                 f.apply(scope, [key, this.values[key]]);
             }
         },
 
         keySet : function() {
-            var keys = [], len = this.keys.length;
-            for(var i=0; i<len; ++i) {
+            var keys, len, i;
+            keys = [];
+            len = this.keys.length;
+            for (i=0; i<len; ++i) {
                 keys.push(this.keys[i]);
             }
             return keys;
         },
 
         getIndexMap : function() {
-            var map = {};
-            for(var i=0; i<this.keys.length; i++) {
+            var map, i;
+            map = {};
+            for (i=0; i<this.keys.length; i++) {
                 map[this.keys[i]] = i+1;
             }
             return map;
@@ -118,17 +123,18 @@
         },
 
         _draw : function(type, source, el, pos, direction, opts) {
+            var key, o, src, ind;
             opts = $.extend({}, this.config, opts);
 
-            var key = type + source[0].id;
-            var o = this.cache[key];
+            key = type + source[0].id;
+            o = this.cache[key];
             if(typeof o === 'undefined') {
-                var src = {
+                src = {
                     offset : source.offset(),
                     width  : source.outerWidth(),
                     height : source.outerHeight()
                 };
-                var ind = {
+                ind = {
                     direction: direction,
                     width  : src.width,
                     height : src.height,
@@ -188,13 +194,14 @@
         },
 
         between : function(prev, next, el, direction, opts) {
+            var nextPosition, bottom;
             //take prev as source
             this._draw('between', prev, el, function(data) {
 
-                var nextPosition = next.offset();
+                nextPosition = next.offset();
                 if(direction == HST.DIR.VERTICAL) {
                     data.ind.left += (data.src.width - data.ind.width) / 2;
-                    var bottom = data.ind.top + data.src.height;
+                    bottom = data.ind.top + data.src.height;
                     data.ind.top = bottom + ((nextPosition.top - bottom) / 2) - (data.ind.height/2);
                 } else if(direction == HST.DIR.HORIZONTAL) {
                     data.ind.left += data.src.width;
@@ -209,9 +216,7 @@
     });
     
     Hippo.Util.getElementPath = function(element) {
-        var path = "";
-        var nodeString = "";
-        var node = element;
+        var path = "", nodeString = "", node = element;
         while (node.parentNode != null) {
             nodeString = node.tagName;
             if (node.id) {
@@ -229,13 +234,14 @@
     };
     
     Hippo.Util.getBoolean = function(object) {
+        var str;
         if (typeof object === 'undefined' || object === null) {
             return null;
         }
         if (object === true || object === false) {
             return object;
         }
-        var str = object.toString().toLowerCase();
+        str = object.toString().toLowerCase();
         if (str === "true") {
             return true;
         } else if (str === "false") {

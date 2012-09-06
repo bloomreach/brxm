@@ -29,30 +29,33 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
         },
 
         onRender: function() {
-            var miframePanel = Ext.getCmp('Iframe');
-            var miframe = miframePanel.getFrame();
+            var miframePanel, miframe, self;
+            miframePanel = Ext.getCmp('Iframe');
+            miframe = miframePanel.getFrame();
 
             this.iFramePosition = miframePanel.getPosition();
 
             this.boxs = [];
             this.nodeOverRecord = null;
-            var self = this;
+            self = this;
 
             this.dragZone = new Ext.grid.GridDragZone(this, {
                 containerScroll: true,
                 ddGroup: 'blabla',
 
                 onInitDrag : function() {
-                    var framePanel = Ext.getCmp('Iframe');
-                    var frmDoc = framePanel.getFrameDocument();
+                    var framePanel, frmDoc;
+                    framePanel = Ext.getCmp('Iframe');
+                    frmDoc = framePanel.getFrameDocument();
                     framePanel.getFrame().sendMessage({groups: 'dropzone'}, 'highlight');
                     pageContext.stores.pageModel.each(function(record) {
-                        var type = record.get('type');
+                        var type, id, el, box;
+                        type = record.get('type')
                         if (record.get('type') === HST.CONTAINER) {
-                            var id = record.get('id');
-                            var el = frmDoc.getElementById(id + '-overlay');
+                            id = record.get('id');
+                            el = frmDoc.getElementById(id + '-overlay');
                             if (el != null && !frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
-                                var box = Ext.Element.fly(el).getBox();
+                                box = Ext.Element.fly(el).getBox();
                                 self.boxs.push({record: record, box: box});
                             }
                         }
@@ -80,13 +83,14 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                 //While over a target node, return the default drop allowed class which
                 //places a "tick" icon into the drag proxy.
                 onNodeOver : function(target, dd, e, data) {
-                    var curX = dd.lastPageX + dd.deltaX - self.iFramePosition[0];
-                    var curY = dd.lastPageY + dd.deltaY - self.iFramePosition[1];
+                    var curX, curY, i, item;
+                    curX = dd.lastPageX + dd.deltaX - self.iFramePosition[0];
+                    curY = dd.lastPageY + dd.deltaY - self.iFramePosition[1];
                     //TODO: implement dynamic fetch of toolbar height to adjust pageY
                     curY -= 77;
 
-                    for (var i = 0; i < self.boxs.length; i++) {
-                        var item = self.boxs[i], box = item.box;
+                    for (i = 0; i < self.boxs.length; i++) {
+                        item = self.boxs[i], box = item.box;
                         if (curX >= box.x && curX <= box.right && curY >= box.y && curY <= box.bottom) {
                             self.nodeOverRecord = item.record;
                             return Ext.dd.DropZone.prototype.dropAllowed;
@@ -107,19 +111,20 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                     //                    Ext.Msg.alert('Drop gesture', 'Dropped Record id ' + data.draggedRecord.id +
                     //                            ' on Record id ' + r.id);
                     if (self.nodeOverRecord !== null) {
-                        var pageContainer = pageContext.getPageContainer();
+                        var pageContainer, selections, pmRecord, parentId, pmStore, offset, at, i, record, newRecord;
+                        pageContainer = pageContext.getPageContainer();
 
-                        var selections = containerItemsGrid.getSelectionModel().getSelections();
+                        selections = containerItemsGrid.getSelectionModel().getSelections();
 
-                        var pmRecord = self.nodeOverRecord;
-                        var parentId = pmRecord.get('id');
-                        var pmStore = pmRecord.store;
+                        pmRecord = self.nodeOverRecord;
+                        parentId = pmRecord.get('id');
+                        pmStore = pmRecord.store;
 
-                        var offset = pmRecord.data.children.length + 1;
-                        var at = pmStore.indexOf(pmRecord) + offset;
-                        for (var i = 0; i < selections.length; i++) {
-                            var record = selections[i];
-                            var newRecord = {
+                        offset = pmRecord.data.children.length + 1;
+                        at = pmStore.indexOf(pmRecord) + offset;
+                        for (i = 0; i < selections.length; i++) {
+                            record = selections[i];
+                            newRecord = {
                                 parentId: parentId,
                                 //we set the id of new types to the id of their prototype, this allows use
                                 //to change the rest-api url for the create method, which should contain this

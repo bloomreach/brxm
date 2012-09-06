@@ -22,8 +22,10 @@ Hippo.ChannelManager.ExtWireframe = function(id, config) {
 YAHOO.extend(Hippo.ChannelManager.ExtWireframe, YAHOO.hippo.Wireframe, {
 
     getDimensions: function () {
-        var wireframe = this;
-        var extCmp = Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance');
+        var wireFrame, extCmp, size;
+        wireFrame = this;
+        extCmp = Ext.getCmp('Hippo.ChannelManager.HstConfigEditor.Instance');
+
         if (extCmp != null) {
             if (!this.bodyResizeListenerRegistered) {
                 this.bodyResizeListenerRegistered = true;
@@ -31,7 +33,7 @@ YAHOO.extend(Hippo.ChannelManager.ExtWireframe, YAHOO.hippo.Wireframe, {
                     wireframe.resize();
                 });
             }
-            var size = extCmp.body.getSize();
+            size = extCmp.body.getSize();
             return { w: size.width, h: size.height };
         }
         return { w: 0, h: 0 };

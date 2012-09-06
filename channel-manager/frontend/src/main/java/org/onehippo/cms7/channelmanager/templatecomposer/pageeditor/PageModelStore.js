@@ -18,9 +18,9 @@
 Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
     constructor : function(config) {
-
-        var composerRestMountUrl = config.composerRestMountUrl;
-        var PageModelProxy = Ext.extend(Ext.data.HttpProxy, {
+        var composerRestMountUrl, PageModelProxy;
+        composerRestMountUrl = config.composerRestMountUrl;
+        PageModelProxy = Ext.extend(Ext.data.HttpProxy, {
             buildUrl : function() {
                  return PageModelProxy.superclass.buildUrl.apply(this, arguments) + '?FORCE_CLIENT_HOST=true';
             }
@@ -39,17 +39,18 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                 listeners : {
                     beforewrite : {
                         fn : function(proxy, action, rs, params) {
+                            var prototypeId, parentId, id;
                             if (action == 'create') {
-                                var prototypeId = rs.get('id');
-                                var parentId = rs.get('parentId');
+                                prototypeId = rs.get('id');
+                                parentId = rs.get('parentId');
                                 proxy.setApi(action, {url: composerRestMountUrl +'/' + parentId + './create/' + prototypeId, method: 'POST'});
                             } else if (action == 'update') {
                                 //Ext appends the item ID automatically
-                                var id = rs.get('id');
+                                id = rs.get('id');
                                 proxy.setApi(action, {url: composerRestMountUrl +'/' + id + './update', method: 'POST'});
                             } else if (action == 'destroy') {
                                 //Ext appends the item ID automatically
-                                var parentId = rs.get('parentId');
+                                parentId = rs.get('parentId');
                                 proxy.setApi(action, {url: composerRestMountUrl +'/' + parentId + './delete', method: 'GET'});
                             }
                         }
@@ -59,16 +60,17 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
             listeners: {
                 write : {
                     fn: function(store, action, result, res, records) {
+                        var i, record, parentId, parentIndex, parentRecord, children;
                         if (action == 'create') {
                             records = Ext.isArray(records) ? records : [records];
-                            for (var i = 0; i < records.length; i++) {
-                                var record = records[i];
+                            for (i = 0; i < records.length; i++) {
+                                record = records[i];
                                 if (record.get('type') == HST.CONTAINERITEM) {
                                     //add id to parent children map
-                                    var parentId = record.get('parentId');
-                                    var parentIndex = store.findExact('id', parentId);
-                                    var parentRecord = store.getAt(parentIndex);
-                                    var children = parentRecord.get('children');
+                                    parentId = record.get('parentId');
+                                    parentIndex = store.findExact('id', parentId);
+                                    parentRecord = store.getAt(parentIndex);
+                                    children = parentRecord.get('children');
                                     if (!children) {
                                         children = [];
                                     }
@@ -87,19 +89,20 @@ Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelM
                 },
                 remove : {
                     fn : function(store, record, index) {
+                        var childIndex, parentRecord, children;
                         if (record.get('type') == HST.CONTAINER) {
                             //remove all children as well
                             Ext.each(record.get('children'), function(id) {
-                                var childIndex = store.findExact('id', id);
+                                childIndex = store.findExact('id', id);
                                 if (childIndex > -1) {
                                     store.removeAt(childIndex);
                                 }
                             });
                         } else {
                             //containerItem: unregister from parent
-                            var parentRecord = store.getAt(store.findExact('id', record.get('parentId')));
+                            parentRecord = store.getAt(store.findExact('id', record.get('parentId')));
                             if (typeof parentRecord !== 'undefined') {
-                                var children = parentRecord.get('children');
+                                children = parentRecord.get('children');
                                 children.remove(record.get('id'));
                                 parentRecord.set('children', children);
                             }

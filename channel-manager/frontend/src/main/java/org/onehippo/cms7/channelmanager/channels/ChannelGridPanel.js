@@ -23,6 +23,7 @@ Ext.namespace('Hippo.ChannelManager');
  */
 Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
     constructor: function(config) {
+        var columns = [], i, column, columnModel;
         this.store = config.store;
         this.columns = config.columns;
         this.resources = config.resources;
@@ -30,14 +31,14 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
         Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
 
-        var columns = [];
-        for (var i = 0; i < config.columns.length; i++) {
-            var column = config.columns[i];
+        columns = [];
+        for (i = 0; i < config.columns.length; i++) {
+            column = config.columns[i];
             if (!column.internal) {
                 columns.push(column);
             }
         }
-        var columnModel = new Ext.grid.ColumnModel({
+        columnModel = new Ext.grid.ColumnModel({
             columns: columns,
             defaults: {
                 sortable: true
@@ -101,7 +102,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
     },
 
     synchronousAjaxRequest: function(url, headers) {
-        var AJAX;
+        var AJAX, i;
         if (window.XMLHttpRequest) {
             AJAX = new XMLHttpRequest();
         } else {
@@ -109,7 +110,7 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
         }
         if (AJAX) {
             AJAX.open('GET', url, false);
-            for (var i in headers) {
+            for (i in headers) {
                 AJAX.setRequestHeader(i, headers[i]);
             }
             AJAX.send(null);
@@ -163,8 +164,9 @@ Hippo.ChannelManager.ChannelGridPanel = Ext.extend(Ext.grid.GridPanel, {
 
     // Returns the title of the currently selected channel
     getState: function() {
-        var state = Hippo.ChannelManager.ChannelGridPanel.superclass.getState.call(this);
-        var selectedRecord = this.getSelectionModel().getSelected();
+        var state, selectedRecord;
+        state = Hippo.ChannelManager.ChannelGridPanel.superclass.getState.call(this);
+        selectedRecord = this.getSelectionModel().getSelected();
         if (selectedRecord) {
             state.selected = selectedRecord.get('id');
         } else {

@@ -61,9 +61,10 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
     // public methods:
 
     pushItem: function(config) {
-        var index = this.breadcrumbStackSize;
+        var index, breadcrumbItem, i;
+        index = this.breadcrumbStackSize;
 
-        var breadcrumbItem = this.createBreadcrumbItem(config.card);
+        breadcrumbItem = this.createBreadcrumbItem(config.card);
         breadcrumbItem.setDisabled(true);
 
         // IE ignores all style attributes when a containing element (table in this case) has been disabled
@@ -83,26 +84,27 @@ Hippo.ChannelManager.BreadcrumbToolbar = Ext.extend(Ext.Toolbar, {
             }
         }, this);
 
-        for (var i=0; i<index; i++) {
+        for (i=0; i<index; i++) {
             breadcrumbItem = this.getBreadcrumbItem(i);
             breadcrumbItem.setDisabled(false);
         }
     },
 
     popItem: function() {
+        var lastBreadcrumbItem, card, newLastBreadcrumbItem;
         if (this.breadcrumbStackSize === 0) {
             return null;
         }
 
-        var lastBreadcrumbItem = this.getBreadcrumbItem(this.breadcrumbStackSize - 1);
+        lastBreadcrumbItem = this.getBreadcrumbItem(this.breadcrumbStackSize - 1);
         
-        var card = lastBreadcrumbItem.card;
+        card = lastBreadcrumbItem.card;
         card.un('titlechange', this._onTitleChange, lastBreadcrumbItem);
         
         this.remove(lastBreadcrumbItem);
         this.breadcrumbStackSize--;
         if (this.breadcrumbStackSize === 1) {
-            var newLastBreadcrumbItem = this.getBreadcrumbItem(this.breadcrumbStackSize - 1);
+            newLastBreadcrumbItem = this.getBreadcrumbItem(this.breadcrumbStackSize - 1);
             newLastBreadcrumbItem.setDisabled(true);
         }
         return lastBreadcrumbItem;
