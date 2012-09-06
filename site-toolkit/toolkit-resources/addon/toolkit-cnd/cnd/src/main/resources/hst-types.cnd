@@ -18,7 +18,6 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hst='http://www.hippoecm.org/hst/nt/2.1'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
-<hipposys='http://www.onehippo.org/jcr/hipposys/nt/1.0'>
 
 [hst:descriptive] mixin
 - hst:description (string)
