@@ -500,7 +500,7 @@ public class HstManagerImpl implements HstManager {
                             } else {
                                 // if a node was not removed, we will reload the hst:site, also for property changes
                                 String[] elems = event.path.split("/");
-                                if (elems.length == rootPathDepth + 1) {
+                                if (elems.length <= rootPathDepth + 1) {
                                     // change in hst:sites. clear all siteRootNodes
                                     siteRootNodes.clear();
                                     break;
