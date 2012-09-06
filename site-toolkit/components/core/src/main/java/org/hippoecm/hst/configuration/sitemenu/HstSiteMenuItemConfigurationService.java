@@ -58,6 +58,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
             this.externalLink = StringPool.get(siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_EXTERNALLINK));
         } else if (siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM)) {
             // siteMapItemPath can be an exact path to a sitemap item, but can also be a path to a sitemap item containing wildcards.
+            // it can also be a value of a sitemapitem refId
             this.siteMapItemPath = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
             
             if (siteMapItemPath != null && siteMapItemPath.indexOf(PARENT_PROPERTY_PLACEHOLDER) > -1 ) {
@@ -69,6 +70,11 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
             }
         } else {
            log.info("HstSiteMenuItemConfiguration cannot be used for linking because no associated HstSiteMapItem present"); 
+        }
+
+        if (siteMenuItem.getValueProvider().hasProperty("hst:refidsitemapitem")) {
+            log.warn("Propery hst:refidsitemapitem on sitemenuitem '{}' is unused and deprecated. It will be ignored. You should use '{}' property instead " +
+                    "to point to a sitemapitem refId.",siteMenuItem.getValueProvider().getPath(), HstNodeTypes.SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM);
         }
         
         this.mountAlias = siteMenuItem.getValueProvider().getString(HstNodeTypes.SITEMENUITEM_PROPERTY_MOUNTALIAS);
