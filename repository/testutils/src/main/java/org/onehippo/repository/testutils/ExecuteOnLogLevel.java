@@ -183,11 +183,13 @@ public class ExecuteOnLogLevel {
         }
 
         // do the callback with log-level set to ERROR
-        callback.run();
-
-        // Reset the log-levels to the old values
-        for (Map.Entry<String, String> entry : oldLoggerLevelMap.entrySet()) {
-            setLoggerLevel(entry.getKey(), entry.getValue());
+        try {
+            callback.run();
+        } finally {
+            // Reset the log-levels to the old values
+            for (Map.Entry<String, String> entry : oldLoggerLevelMap.entrySet()) {
+                setLoggerLevel(entry.getKey(), entry.getValue());
+            }
         }
     }
 
