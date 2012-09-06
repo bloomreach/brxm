@@ -154,7 +154,6 @@
         </dependencies>
         <configuration>
           <!--mappingIncludes>**/*.jdo, **/*.class</mappingIncludes-->
-          <log4jConfiguration>log4j.xml</log4jConfiguration>
           <verbose>true</verbose>
           <enhancerName>ASM</enhancerName>
           <props>jdo.properties</props>
