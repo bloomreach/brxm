@@ -164,6 +164,27 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         });
     },
 
+    getFullScreenButtonConfig : function(fullscreen) {
+        return {
+            xtype : 'button',
+            text : this.resources['expand-button'],
+            iconCls : 'expand',
+            width: 120,
+            listeners : {
+                click : {
+                    fn : function (button) {
+                        this.fullscreen = fullscreen;
+                        this.createViewToolbar();
+                        this.registerResizeListener();
+                        var iFrame = Ext.getCmp('Iframe');
+                        iFrame.getFrame().sendMessage({}, fullscreen ? 'fullscreen' : 'partscreen');
+                    },
+                    scope : this
+                }
+            }
+        };
+    },
+
     createVariantsComboBox : function() {
         var self = this;
 
@@ -242,24 +263,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             toolbar.add(
                 variantsComboBoxLabel,
                 variantsComboBox,
-                {
-                    xtype : 'button',
-                    text : this.resources['collapse-button'],
-                    iconCls : 'collapse',
-                    width: 120,
-                    listeners : {
-                        click : {
-                            fn : function (button) {
-                                this.fullscreen = false;
-                                this.createViewToolbar();
-                                this.registerResizeListener();
-                                var iFrame = Ext.getCmp('Iframe');
-                                iFrame.getFrame().sendMessage({}, 'partscreen');
-                            },
-                            scope : this
-                        }
-                    }
-                });
+                this.getFullScreenButtonConfig(false)
+            );
         } else if (this.pageContainer.canEdit) {
             toolbarButtons = this.getToolbarButtons();
             toolbar.add(
@@ -271,24 +276,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 ' ',
                 variantsComboBoxLabel,
                 variantsComboBox,
-                {
-                    xtype : 'button',
-                    text : this.resources['expand-button'],
-                    iconCls : 'expand',
-                    width: 120,
-                    listeners : {
-                        click : {
-                            fn : function (button) {
-                                this.fullscreen = true;
-                                this.createViewToolbar();
-                                this.registerResizeListener();
-                                var iFrame = Ext.getCmp('Iframe');
-                                iFrame.getFrame().sendMessage({}, 'fullscreen');
-                            },
-                            scope : this
-                        }
-                    }
-                });
+                this.getFullScreenButtonConfig(true)
+            );
         }
         if (toolbar.rendered) {
             toolbar.doLayout();
