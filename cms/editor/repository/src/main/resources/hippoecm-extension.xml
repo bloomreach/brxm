@@ -414,7 +414,7 @@
     </sv:property>
   </sv:node>
   <!-- namespace workflows -->
-  <sv:node sv:name="editor-workflows">
+  <sv:node sv:name="cms-editor-workflows">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -429,7 +429,7 @@
     </sv:property>
   </sv:node>
   <!-- default workflows -->
-  <sv:node sv:name="default-workflows">
+  <sv:node sv:name="default-workflows-plugins">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -444,7 +444,7 @@
     </sv:property>
   </sv:node>
   <!-- editing workflows -->
-  <sv:node sv:name="editing-workflows">
+  <sv:node sv:name="editing-workflows-plugins">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
