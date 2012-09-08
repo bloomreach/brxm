@@ -167,8 +167,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     getFullScreenButtonConfig : function(fullscreen) {
         return {
             xtype : 'button',
-            text : this.resources['expand-button'],
-            iconCls : 'expand',
+            text : this.resources[fullscreen ? 'collapse-button' : 'expand-button'],
+            iconCls : fullscreen ? 'collapse' : 'expand',
             width: 120,
             listeners : {
                 click : {
