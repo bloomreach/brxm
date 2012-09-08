@@ -87,6 +87,7 @@
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
 
+    <hippo.commons.version>1.02.01-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
     <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
     <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
@@ -487,8 +488,8 @@
       <!-- SSO for encryption/decryption -->
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-sso</artifactId>
-        <version>${hippo.cms.version}</version>
+        <artifactId>hippo-cms7-commons</artifactId>
+        <version>${hippo.commons.version}</version>
         <scope>provided</scope>
       </dependency>
     

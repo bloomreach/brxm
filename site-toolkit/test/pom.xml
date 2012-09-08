@@ -39,20 +39,24 @@
       <type>pom</type>
     </dependency>
 
+    <!-- cms repository contributions -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-gallery-repository</artifactId>
+      <version>${hippo.cms.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-cms-translation-repository</artifactId>
+      <version>${hippo.cms.version}</version>
+    </dependency>
+
     <!-- repository -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-testutils</artifactId>
       <version>${hippo.repository.version}</version>
       <type>jar</type>
-    </dependency>
-
-    <!-- cms repository contributions -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-repository-dependencies</artifactId>
-      <version>${hippo.cms.version}</version>
-      <type>pom</type>
     </dependency>
 
     <!-- hst dependencies & initial structure -->

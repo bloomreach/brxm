@@ -24,8 +24,8 @@
         <sv:value>abababab-511b-49e0-92b5-126970694fa8</sv:value>
     </sv:property>
     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>New Document</sv:value>
-        <sv:value>New Folder</sv:value>
+        <sv:value>new-document</sv:value>
+        <sv:value>new-folder</sv:value>
     </sv:property>
     <sv:node sv:name="gallery">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -69,8 +69,8 @@
             <sv:value>hippo:harddocument</sv:value>
         </sv:property>
         <sv:property sv:name="hippostd:foldertype" sv:type="String">
-            <sv:value>New Folder</sv:value>
-            <sv:value>New Document</sv:value>
+            <sv:value>new-folder</sv:value>
+            <sv:value>new-document</sv:value>
         </sv:property>
         <sv:node sv:name="unittestproject">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -83,8 +83,8 @@
                 <sv:value>hippo:harddocument</sv:value>
             </sv:property>
             <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                <sv:value>New Folder</sv:value>
-                <sv:value>New Document</sv:value>
+                <sv:value>new-folder</sv:value>
+                <sv:value>new-document</sv:value>
             </sv:property>
             <sv:node sv:name="common">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -288,8 +288,8 @@
                     <sv:value>hippo:harddocument</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                    <sv:value>New Folder</sv:value>
-                    <sv:value>New Document</sv:value>
+                    <sv:value>new-folder</sv:value>
+                    <sv:value>new-document</sv:value>
                 </sv:property>
                 <sv:node sv:name="2009">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -299,8 +299,8 @@
                         <sv:value>hippo:harddocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                        <sv:value>New Folder</sv:value>
-                        <sv:value>New Document</sv:value>
+                        <sv:value>new-folder</sv:value>
+                        <sv:value>new-document</sv:value>
                     </sv:property>
                     <sv:node sv:name="April">
                         <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -310,8 +310,8 @@
                             <sv:value>hippo:harddocument</sv:value>
                         </sv:property>
                         <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                            <sv:value>New Folder</sv:value>
-                            <sv:value>New Document</sv:value>
+                            <sv:value>new-folder</sv:value>
+                            <sv:value>new-document</sv:value>
                         </sv:property>
                         <sv:node sv:name="Day5">
                             <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -321,8 +321,8 @@
                                 <sv:value>hippo:harddocument</sv:value>
                             </sv:property>
                             <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                                <sv:value>New Folder</sv:value>
-                                <sv:value>New Document</sv:value>
+                                <sv:value>new-folder</sv:value>
+                                <sv:value>new-document</sv:value>
                             </sv:property>
                             <sv:node sv:name="Day5Article">
                                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -496,8 +496,8 @@
                             <sv:value>hippo:harddocument</sv:value>
                         </sv:property>
                         <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                            <sv:value>New Folder</sv:value>
-                            <sv:value>New Document</sv:value>
+                            <sv:value>new-folder</sv:value>
+                            <sv:value>new-document</sv:value>
                         </sv:property>
                     </sv:node>
 
@@ -510,8 +510,8 @@
                         <sv:value>hippo:harddocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                        <sv:value>New Folder</sv:value>
-                        <sv:value>New Document</sv:value>
+                        <sv:value>new-folder</sv:value>
+                        <sv:value>new-document</sv:value>
                     </sv:property>
                 </sv:node>
                 <sv:node sv:name="News1">
@@ -690,8 +690,8 @@
                 <sv:value>hippo:harddocument</sv:value>
             </sv:property>
             <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                <sv:value>New Folder</sv:value>
-                <sv:value>New Document</sv:value>
+                <sv:value>new-folder</sv:value>
+                <sv:value>new-document</sv:value>
             </sv:property>
             <sv:node sv:name="common">
                 <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -794,8 +794,8 @@
                     <sv:value>hippo:harddocument</sv:value>
                 </sv:property>
                 <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                    <sv:value>New Folder</sv:value>
-                    <sv:value>New Document</sv:value>
+                    <sv:value>new-folder</sv:value>
+                    <sv:value>new-document</sv:value>
                 </sv:property>
                 <sv:node sv:name="2008">
                     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -805,8 +805,8 @@
                         <sv:value>hippo:harddocument</sv:value>
                     </sv:property>
                     <sv:property sv:name="hippostd:foldertype" sv:type="String">
-                        <sv:value>New Folder</sv:value>
-                        <sv:value>New Document</sv:value>
+                        <sv:value>new-folder</sv:value>
+                        <sv:value>new-document</sv:value>
                     </sv:property>
                     <sv:node sv:name="SubNews1">
                       <sv:property sv:name="jcr:primaryType" sv:type="Name">
