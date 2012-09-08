@@ -16,22 +16,14 @@
 package org.onehippo.cms7.brokenlinks;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Queue;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -42,6 +34,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.params.HttpParams;
+import org.apache.http.params.SyncBasicHttpParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,17 +47,37 @@ public class LinkChecker {
 
     public LinkChecker(CheckExternalBrokenLinksConfig config) {
         ClientConnectionManager connManager = new ThreadSafeClientConnManager();
-
-        DefaultHttpClient client = new DefaultHttpClient(connManager);
-        httpClient = client;
-        HttpParams params = client.getParams();
+        HttpParams params = new SyncBasicHttpParams();
         params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, config.getSocketTimeout());
         params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, config.getConnectionTimeout());
         params.setBooleanParameter(ClientPNames.HANDLE_AUTHENTICATION, false);
+
+        HttpClient client = null;
+        try {
+            final String httpClientClassName = config.getHttpClientClassName();
+            Class<? extends HttpClient> clientClass = (Class<? extends HttpClient>) Class.forName(httpClientClassName);
+            final Constructor<? extends HttpClient> constructor = clientClass.getConstructor(
+                    ClientConnectionManager.class, HttpParams.class);
+            client = constructor.newInstance(connManager, params);
+        } catch (ClassNotFoundException e) {
+            log.error("Could not find configured http client class", e);
+        } catch (NoSuchMethodException e) {
+            log.error("Could not find constructor of signature <init>(ClientConnectionmanager, HttpParams)", e);
+        } catch (InvocationTargetException e) {
+            log.error("Could not invoke constructor of httpClient", e);
+        } catch (InstantiationException e) {
+            log.error("Could not instantiate http client", e);
+        } catch (IllegalAccessException e) {
+            log.error("Not allowed to access http client constructor", e);
+        }
+        if (client == null) {
+            client = new DefaultHttpClient(connManager, params);
+        }
+
+        httpClient = client;
         nrOfThreads = config.getNrOfHttpThreads();
         // authentication preemptive true
         // allow circular redirects true
-        client.setParams(params);
     }
 
     /**

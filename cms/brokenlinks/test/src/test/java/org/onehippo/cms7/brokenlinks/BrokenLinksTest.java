@@ -32,7 +32,6 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,9 +46,10 @@ import static org.junit.Assert.assertTrue;
 
 public class BrokenLinksTest extends TestCase {
 
+
     private static final Logger log = LoggerFactory.getLogger(BrokenLinksTest.class);
-    private static final String GOOD = "http://www.onehippo.org:80/";
-    private static final String BAD = "http://localhost:7/";
+    private static final String GOOD = TestHttpClient.OK_URL;
+    private static final String BAD = TestHttpClient.BAD_URL;
     private static final String TEXT1 = "<html><body>\n<H1>Wat is Lorem Ipsum</H1>\n<B><A HREF=\""+GOOD+"\">Lorem Ipsum</A></B> is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters nam en ze door elkaar husselde om een font-catalogus te maken. Het heeft niet alleen vijf eeuwen overleefd maar is ook, vrijwel onveranderd, overgenomen in elektronische letterzetting. Het is in de jaren '60 populair geworden met de introductie van Letraset vellen met Lorem Ipsum passages en meer recentelijk door desktop publishing software zoals Aldus PageMaker die versies van Lorem Ipsum bevatten.\n<H1>Waar komt het vandaan?</H1>\n<P>In tegenstelling tot wat algemeen aangenomen wordt is Lorem Ipsum niet zomaar willekeurige tekst. het heeft zijn wortels in een stuk klassieke <A HREF=\""+BAD+"\">latijnse</A> literatuur uit 45 v.Chr. en is dus meer dan 2000 jaar oud. Richard McClintock, een professor <A HREF=\""+BAD+"\">latijn</A> aan de Hampden-Sydney College in Virginia, heeft één van de meer obscure <A HREF=\""+BAD+"\">latijnse</A> woorden, consectetur, uit een Lorem Ipsum passage opgezocht, en heeft tijdens het zoeken naar het woord in de klassieke literatuur de onverdachte bron ontdekt. Lorem Ipsum komt uit de secties 1.10.32 en 1.10.33 van &quot;de Finibus Bonorum et Malorum&quot; (De uitersten van goed en kwaad) door Cicero, geschreven in 45 v.Chr. Dit boek is een verhandeling over de theorie der ethiek, erg populair tijdens de renaissance. De eerste regel van Lorem Ipsum, &quot;Lorem ipsum dolor sit amet..&quot;, komt uit een zin in sectie 1.10.32.</P>\n<P>Het standaard stuk van Lorum Ipsum wat sinds de 16e eeuw wordt gebruikt is hieronder, voor wie er interesse in heeft, weergegeven. Secties 1.10.32 en 1.10.33 van &quot;de Finibus Bonorum et Malorum&quot; door Cicero zijn ook weergegeven in hun exacte originele vorm, vergezeld van engelse versies van de 1914 vertaling door H. Rackham.</P><H1>Waarom gebruiken we het?</H1>\n<P>Het is al geruime tijd een bekend gegeven dat een lezer, tijdens het bekijken van de layout van een pagina, afgeleid wordt door de tekstuele inhoud. Het belangrijke punt van het gebruik van Lorem Ipsum is dat het uit een min of meer normale verdeling van letters bestaat, in tegenstelling tot &quot;Hier uw tekst, hier uw tekst&quot; wat het tot min of meer leesbaar nederlands maakt. Veel desktop publishing pakketten en web pagina editors gebruiken tegenwoordig Lorem Ipsum als hun standaard model tekst, en een zoekopdracht naar &quot;lorem ipsum&quot; ontsluit veel websites die nog in aanbouw zijn. Verscheidene versies hebben zich ontwikkeld in de loop van de jaren, soms per ongeluk soms expres (ingevoegde humor en dergelijke).</P>\n<H1>Waar kan ik het vinden?</H1>\n<P>Er zijn vele variaties van passages van Lorem Ipsum beschikbaar maar het merendeel heeft te lijden gehad van wijzigingen in een of andere vorm, door ingevoegde humor of willekeurig gekozen woorden die nog niet half geloofwaardig ogen. Als u een passage uit Lorum Ipsum gaat gebruiken dient u zich ervan te verzekeren dat er niets beschamends midden in de tekst verborgen zit. Alle Lorum Ipsum generators op Internet hebben de eigenschap voorgedefinieerde stukken te herhalen waar nodig zodat dit de eerste echte generator is op internet. Het gebruikt een woordenlijst van 200 <A HREF=\""+GOOD+"\">latijnse</A> woorden gecombineerd met een handvol zinsstructuur modellen om een Lorum Ipsum te genereren die redelijk overkomt. De gegenereerde Lorum Ipsum is daardoor altijd vrij van herhaling, ingevoegde humor of ongebruikelijke woorden etc.</P>\n</body></html>\n";
     private static final String TEXT2 = "<html><body><A HREF=\""+BAD+"one\">One</A><A HREF=\""+BAD+"two\">Two</A><A HREF=\""+BAD+"three\">Three</A><A HREF=\""+BAD+"four\">Four</A><A HREF=\""+BAD+"five\">Five</A><A HREF=\""+BAD+"six\">Six</A><A HREF=\""+BAD+"seven\">Seven</A><A HREF=\""+BAD+"eight\">Eight</A><A HREF=\""+BAD+"nine\">Nine</A><A HREF=\""+BAD+"ten\">Ten</A><A HREF=\""+BAD+"eleven\">Eleven</A><A HREF=\""+BAD+"twelve\">Twelve</A><A HREF=\""+BAD+"thirteen\">Thirteen</A><A HREF=\""+BAD+"fourteen\">Fourteen</A><A HREF=\""+BAD+"fifteen\">Fifteen</A><A HREF=\""+BAD+"sixteen\">Sixteen</A><A HREF=\""+BAD+"seventeen\">Seventeen</A></body></html>";
     private static final String TEXT3 = "<html><body>\n<H1>Wat is Lorem Ipsum</H1>\n<B><A HREF=\""+GOOD+"\">Lorem Ipsum</A></B>\n</body></html>\n";
@@ -66,38 +66,49 @@ public class BrokenLinksTest extends TestCase {
         // because it has startPath = /content/documents
         // but we need to scan for the unit tests below /test
 
-        session.getNode("/hippo:configuration/hippo:workflows/brokenlinks/checkbrokenlinks/hipposys:config").setProperty("startPath", "/test");
+        session.getNode("/hippo:configuration/hippo:workflows/brokenlinks/checkbrokenlinks/hipposys:config").setProperty(CheckExternalBrokenLinksConfig.CONFIG_START_PATH, "/test");
+        session.getNode("/hippo:configuration/hippo:workflows/brokenlinks/checkbrokenlinks/hipposys:config").setProperty(CheckExternalBrokenLinksConfig.CONFIG_HTTP_CLIENT_CLASSNAME, TestHttpClient.class.getName());
 
-        while (session.getRootNode().hasNode("test"))
+        while (session.getRootNode().hasNode("test")) {
             session.getRootNode().getNode("test").remove();
+        }
         session.getRootNode().addNode("test", "hippostd:folder").addMixin("hippo:harddocument");
         session.save();
         workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
         String[] content = new String[] {
             "/test/cfg", "hippo:handle",
-            "jcr:mixinTypes", "hippo:hardhandle",
-            "/test/cfg/cfg", "brokenlinks:config",
-            "jcr:mixinTypes", "hippo:harddocument"};
+                "jcr:mixinTypes", "hippo:hardhandle",
+                "/test/cfg/cfg", "brokenlinks:config",
+                    "jcr:mixinTypes", "hippo:harddocument"
+        };
         build(session, content);
         session.save();
         String[] config = new String[] {
             "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test", "hippostd:templatequery",
-            "hippostd:modify", "./_name",
-            "hippostd:modify", "$name",
-            "hippostd:modify", "./_node/_name",
-            "hippostd:modify", "$name",
-            "jcr:language", "xpath",
-            "jcr:statement", "/jcr:root/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/node()",
-            "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates", "hippostd:templates",
-            "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/brokenlinks:test", "hippo:handle",
-            "jcr:mixinTypes", "hippo:hardhandle",
-            "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/brokenlinks:test/brokenlinks:test", "brokenlinks:test",
-            "jcr:mixinTypes", "hippo:harddocument"
+                "hippostd:modify", "./_name",
+                "hippostd:modify", "$name",
+                "hippostd:modify", "./_node/_name",
+                "hippostd:modify", "$name",
+                "jcr:language", "xpath",
+                "jcr:statement", "/jcr:root/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/node()",
+                "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates", "hippostd:templates",
+                    "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/brokenlinks:test", "hippo:handle",
+                        "jcr:mixinTypes", "hippo:hardhandle",
+                        "/hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test/hippostd:templates/brokenlinks:test/brokenlinks:test", "brokenlinks:test",
+                            "jcr:mixinTypes", "hippo:harddocument"
         };
         build(session, config);
         session.save();
         TestWorkflowImpl.invocationCountNoArg = 0;
         TestWorkflowImpl.invocationCountDateArg = 0;
+
+        QueryResult result = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:brokenlinks]", Query.JCR_SQL2).execute();
+        int countDocuments = 0;
+        for (NodeIterator iter = result.getNodes(); iter.hasNext();) {
+            Node child = iter.nextNode();
+            ++countDocuments;
+        }
+        assertEquals(0, countDocuments);
     }
 
     @After
@@ -106,10 +117,12 @@ public class BrokenLinksTest extends TestCase {
         TestWorkflowImpl.invocationCountDateArg = 0;
         Node node;
         node = session.getRootNode();
-        if (node.hasNode("test"))
+        if (node.hasNode("test")) {
             node.getNode("test").remove();
-        if (node.hasNode("hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test"))
+        }
+        if (node.hasNode("hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test")) {
             node.getNode("hippo:configuration/hippo:queries/hippo:templates/brokenlinks:test").remove();
+        }
         session.save();
         super.tearDown();
     }
@@ -133,27 +146,6 @@ public class BrokenLinksTest extends TestCase {
     }
 
     @Test
-    public void testHttpsProtocol() throws RepositoryException, WorkflowException, RemoteException, ClassNotFoundException {
-        build(session, new String[] {
-                    "/test/doc", "hippo:handle",
-                    "jcr:mixinTypes", "hippo:hardhandle",
-                    "/test/doc/doc", "hippo:testdocument",
-                    "jcr:mixinTypes", "hippo:harddocument",
-                    "/test/doc/doc/text", "hippostd:html",
-                    "hippostd:content", "<html><body><a href=\"https://issues.onehippo.com/\">foo</a><a href=\"https://issues.onehippo.com/bad\">bar</a></body></html>"
-                });
-        session.save();
-        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
-        wf.checkLinks();
-        session.refresh(false);
-        Node node = session.getRootNode().getNode("test/doc");
-        assertTrue(node.isNodeType("brokenlinks:brokenlinks"));
-        assertTrue(node.hasNode("brokenlinks:link"));
-        assertFalse(node.hasNode("brokenlinks:link[2]"));
-        assertEquals("https://issues.onehippo.com/bad", node.getNode("brokenlinks:link").getProperty("brokenlinks:url").getString());
-    }
-
-    @Test
     public void testImageReference() throws RepositoryException, WorkflowException, RemoteException, ClassNotFoundException {
         build(session, new String[] {
                     "/test/doc", "hippo:handle",
@@ -161,7 +153,7 @@ public class BrokenLinksTest extends TestCase {
                     "/test/doc/doc", "hippo:testdocument",
                     "jcr:mixinTypes", "hippo:harddocument",
                     "/test/doc/doc/text", "hippostd:html",
-                    "hippostd:content", "<html><body><img src=\"http://issues.onehippo.com/images/icons/bug.gif\"/><img src=\"http://issues.onehippo.com/images/icons/non-existing-image-yi.gif\"/></body></html>"
+                    "hippostd:content", "<html><body><img src=\""+GOOD+"\"/><img src=\""+BAD+"\"/></body></html>"
                 });
         session.save();
         CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
@@ -171,7 +163,7 @@ public class BrokenLinksTest extends TestCase {
         assertTrue(node.isNodeType("brokenlinks:brokenlinks"));
         assertTrue(node.hasNode("brokenlinks:link"));
         assertFalse(node.hasNode("brokenlinks:link[2]"));
-        assertEquals("http://issues.onehippo.com/images/icons/non-existing-image-yi.gif", node.getNode("brokenlinks:link").getProperty("brokenlinks:url").getString());
+        assertEquals(BAD, node.getNode("brokenlinks:link").getProperty("brokenlinks:url").getString());
     }
 
     @Test
@@ -220,8 +212,9 @@ public class BrokenLinksTest extends TestCase {
                 return TEXT2;
             }
         };
-        for (int count : new int[] {10, 10})
+        for (int count : new int[]{10, 10}) {
             levels.push(count);
+        }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
         CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
         wf.checkLinks();
@@ -247,8 +240,9 @@ public class BrokenLinksTest extends TestCase {
                 return TEXT3;
             }
         };
-        for (int count : new int[] {10, 10})
+        for (int count : new int[]{10, 10}) {
             levels.push(count);
+        }
         createDocuments(session.getRootNode().getNode("test"), levels, 0, documents);
         CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
         wf.checkLinks();
@@ -312,21 +306,23 @@ public class BrokenLinksTest extends TestCase {
         subLevels.addAll(levels);
         int count = subLevels.pop();
         for (int i = 0; i < count; i++) {
-            FolderWorkflow workflow = (FolderWorkflow)workflowManager.getWorkflow("threepane", folder);
             if (subLevels.size() > 0) {
                 String subName = "folder" + i;
-                workflow.add("new-folder", "hippostd:folder", subName);
-                numof = createDocuments(folder.getNode(subName), subLevels, numof, documentText);
+                final Node childFolder = folder.addNode(subName, "hippostd:folder");
+                childFolder.addMixin("hippo:harddocument");
+                numof = createDocuments(childFolder, subLevels, numof, documentText);
             } else {
                 String subName = "document" + i;
-                workflow.add("brokenlinks:test", "brokenlinks:test", subName);
-                Node documentNode = folder.getNode(subName + "/" + subName);
+                final Node handleNode = folder.addNode(subName, "hippo:handle");
+                handleNode.addMixin("hippo:hardhandle");
+                final Node documentNode = handleNode.addNode(subName, "brokenlinks:test");
+                documentNode.addMixin("hippo:harddocument");
                 Node htmlNode = documentNode.addNode("text", "hippostd:html");
                 htmlNode.setProperty("hippostd:content", documentText.getTextForDocument(i));
-                session.save();
                 ++numof;
             }
         }
+        session.save();
         return numof;
     }
 
@@ -402,12 +398,13 @@ public class BrokenLinksTest extends TestCase {
                     log.error("precondition not met");
                 }
 
-                Thread.sleep(20 * 1000);
-
                 TestWorkflow wf = (TestWorkflow)((HippoWorkspace)session.getWorkspace()).getWorkflowManager().getWorkflow("test", session.getRootNode().getNode("test/check/check"));
-                wf.schedule(new Date(System.currentTimeMillis() + 20 * 1000));
+                wf.schedule(new Date(System.currentTimeMillis() + 500));
 
-                Thread.sleep(40 * 1000);
+                int nretries = 100;
+                while (TestWorkflowImpl.invocationCountNoArg != 1 && nretries-- > 0) {
+                    Thread.sleep(500);
+                }
 
                 if (TestWorkflowImpl.invocationCountNoArg != 1) {
                     log.error("postcondition not met");

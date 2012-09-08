@@ -17,6 +17,7 @@ package org.onehippo.cms7.brokenlinks;
 
 import java.util.Map;
 
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,24 +28,28 @@ public class CheckExternalBrokenLinksConfig {
 
     private static Logger log = LoggerFactory.getLogger(CheckExternalBrokenLinksConfig.class);
 
-    private static final String CONFIG_START_PATH = "startPath";
-    private static final String CONFIG_NR_HTTP_THREADS = "nrHttpThreads";
-    private static final String CONFIG_SOCKET_TIMEOUT = "socketTimeout";
-    private static final String CONFIG_CONNECTION_TIMEOUT = "connectionTimeout";
-    private static final String CONFIG_DOCUMENTVISITORCLASS = "documentVisitorClass";
+    public static final String CONFIG_START_PATH = "startPath";
+    public static final String CONFIG_HTTP_CLIENT_CLASSNAME = "httpClientClass";
+    public static final String CONFIG_NR_HTTP_THREADS = "nrHttpThreads";
+    public static final String CONFIG_SOCKET_TIMEOUT = "socketTimeout";
+    public static final String CONFIG_CONNECTION_TIMEOUT = "connectionTimeout";
+    public static final String CONFIG_DOCUMENTVISITORCLASS = "documentVisitorClass";
 
     private static final String DEFAULT_START_PATH = "/content/documents";
+    private static final String DEFAULT_HTTP_CLIENT_CLASSNAME = DefaultHttpClient.class.getName();
     private static final int DEFAULT_NR_HTTP_THREADS = 10;
     private static final int DEFAULT_SOCKET_TIMEOUT = 10000;
     private static final int DEFAULT_CONNECT_TIMEOUT = 10000;
 
-    private String startPath;
-    private int nrOfHttpThreads;
-    private int socketTimeout;
-    private int connectionTimeout;
+    private final String startPath;
+    private final String httpClientClassName;
+    private final int nrOfHttpThreads;
+    private final int socketTimeout;
+    private final int connectionTimeout;
 
     public CheckExternalBrokenLinksConfig(Map map) {
         startPath = getString(map, CONFIG_START_PATH, DEFAULT_START_PATH);
+        httpClientClassName = getString(map, CONFIG_HTTP_CLIENT_CLASSNAME, DEFAULT_HTTP_CLIENT_CLASSNAME);
         nrOfHttpThreads = getInteger(map, CONFIG_NR_HTTP_THREADS, DEFAULT_NR_HTTP_THREADS);
         socketTimeout = getInteger(map, CONFIG_SOCKET_TIMEOUT, DEFAULT_SOCKET_TIMEOUT);
         connectionTimeout = getInteger(map, CONFIG_CONNECTION_TIMEOUT, DEFAULT_CONNECT_TIMEOUT);
@@ -52,6 +57,10 @@ public class CheckExternalBrokenLinksConfig {
         if (className != null) {
             log.warn("Document visitor classname is not used any more. You can remove the property 'documentVisitorClass'. Ignoring configured documentVisitorClass = '{}'", className);
         }
+    }
+
+    public String getHttpClientClassName() {
+        return httpClientClassName;
     }
 
     public int getNrOfHttpThreads() {
