@@ -356,6 +356,12 @@ workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequest.
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl.java -text
 workflow/src/main/resources/META-INF/persistence.xml svneol=native#text/plain
 workflow/src/main/resources/editing-workflows.xml svneol=native#text/plain
+workflow/src/main/resources/gallery-namespace.xml -text
+workflow/src/main/resources/gallery-workflows.xml svneol=native#text/plain
+workflow/src/main/resources/gallerytemplate-files.xml -text svneol=unset#text/plain
+workflow/src/main/resources/gallerytemplate-image.xml svneol=native#text/plain
+workflow/src/main/resources/gallerytemplate-images.xml -text svneol=unset#text/plain
+workflow/src/main/resources/hippogallery.cnd svneol=native#text/plain
 workflow/src/main/resources/hippostdpubwf.cnd -text
 workflow/src/main/resources/reviewedactions-derivatives.xml -text
 workflow/src/main/resources/reviewedactions-workflows.xml svneol=native#text/plain
