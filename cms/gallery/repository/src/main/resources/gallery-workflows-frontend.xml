@@ -14,31 +14,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="gallery">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:workflowcategory</sv:value>
-  </sv:property>
-  <sv:node sv:name="image-gallery">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"  xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine" sv:name="gallery">
+  <sv:node sv:name="image-gallery" h:merge="overlay">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Workflow on gallery image folders</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippogallery:stdImageGallery</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -83,40 +63,11 @@
         <sv:value>true</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="hipposys:config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
-      </sv:property>
-      <sv:property sv:name="attic" sv:type="Path">
-        <sv:value>/content/attic</sv:value>
-      </sv:property>
-      <sv:property sv:name="modify-on-copy" sv:type="String">
-        <sv:value>./hippotranslation:id</sv:value>
-        <sv:value>$uuid</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
-  <sv:node sv:name="asset-gallery">
+  <sv:node sv:name="asset-gallery" h:merge="overlay">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:workflow</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.gallery.impl.GalleryWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Workflow on asset gallery folders</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippogallery:stdAssetGallery</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:author</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
     <sv:node sv:name="frontend:renderer">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugin</sv:value>
@@ -136,6 +87,9 @@
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
       </sv:property>
+      <sv:property sv:name="gallery.processor.id" sv:type="String">
+        <sv:value>asset.gallery.processor</sv:value>
+      </sv:property>
       <sv:property sv:name="fileupload.maxItems" sv:type="String">
         <sv:value>25</sv:value>
       </sv:property>
@@ -153,18 +107,6 @@
       </sv:property>
       <sv:property sv:name="fileupload.hideBrowseDuringUpload" sv:type="String">
         <sv:value>true</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="hipposys:config">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>nt:unstructured</sv:value>
-      </sv:property>
-      <sv:property sv:name="attic" sv:type="Path">
-        <sv:value>/content/attic</sv:value>
-      </sv:property>
-      <sv:property sv:name="modify-on-copy" sv:type="String">
-        <sv:value>./hippotranslation:id</sv:value>
-        <sv:value>$uuid</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

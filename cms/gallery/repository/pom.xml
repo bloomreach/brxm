@@ -24,50 +24,9 @@
   </parent>
 
   <name>CMS Gallery Repository</name>
-  <description>Hippo CMS Gallery configuration and workflow implementation</description>
+  <description>Hippo CMS Gallery frontend configuration</description>
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms-gallery-repository</artifactId>
   <packaging>jar</packaging>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-gallery-common</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>always</forkMode>
-          <workingDirectory>${project.build.directory}</workingDirectory>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18a org.hippoecm.repository.gallery.upgrade.GalleryUpgrader18b org.hippoecm.repository.gallery.upgrade.GalleryUpgrader19a</Hippo-Modules>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
 </project>

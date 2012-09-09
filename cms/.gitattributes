@@ -1565,8 +1565,6 @@ engine/src/test/resources/jackson-json-serialized-annotations/allinonechannelinf
 engine/src/test/resources/jackson-json-serialized-annotations/mobileinfo.json -text
 engine/src/test/resources/jackson-json-serialized-annotations/noattributesannotationchannelinfo.json -text
 engine/src/test/resources/jackson-json-serialized-annotations/websiteinfo.json -text
-gallery/common/pom.xml svneol=native#text/plain
-gallery/common/src/main/java/org/hippoecm/repository/gallery/GalleryWorkflow.java -text
 gallery/frontend/pom.xml svneol=native#text/plain
 gallery/frontend/src/main/java/META-INF/services/javax.imageio.spi.ImageWriterSpi -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/AssetGalleryPlugin.css -text
@@ -1724,28 +1722,13 @@ gallery/frontend/src/main/java/org/hippoecm/repository/gallery/impl/GalleryWorkf
 gallery/frontend/src/main/java/org/hippoecm/repository/gallery/impl/GalleryWorkflowImpl_nl.properties svneol=native#text/plain
 gallery/pom.xml svneol=native#text/plain
 gallery/repository/pom.xml svneol=native#text/plain
-gallery/repository/src/main/java/org/hippoecm/repository/gallery/impl/GalleryWorkflowImpl.java -text
-gallery/repository/src/main/java/org/hippoecm/repository/gallery/upgrade/GalleryUpgrader18a.java svneol=native#text/plain
-gallery/repository/src/main/java/org/hippoecm/repository/gallery/upgrade/GalleryUpgrader18b.java -text
-gallery/repository/src/main/java/org/hippoecm/repository/gallery/upgrade/GalleryUpgrader19a.java -text
 gallery/repository/src/main/resources/asset-processor.xml svneol=native#text/plain
-gallery/repository/src/main/resources/gallery-namespace.xml -text
-gallery/repository/src/main/resources/gallery-namespace_de.xml -text
-gallery/repository/src/main/resources/gallery-namespace_it.xml -text
 gallery/repository/src/main/resources/gallery-processor.xml svneol=native#text/plain
-gallery/repository/src/main/resources/gallery-workflows-asset-gallery-processor.xml svneol=native#text/plain
-gallery/repository/src/main/resources/gallery-workflows.xml svneol=native#text/plain
-gallery/repository/src/main/resources/gallerytemplate-files.xml -text svneol=unset#text/plain
-gallery/repository/src/main/resources/gallerytemplate-files_de.xml -text
-gallery/repository/src/main/resources/gallerytemplate-files_it.xml -text
-gallery/repository/src/main/resources/gallerytemplate-image.xml svneol=native#text/plain
-gallery/repository/src/main/resources/gallerytemplate-image_de.xml -text
-gallery/repository/src/main/resources/gallerytemplate-image_it.xml -text
-gallery/repository/src/main/resources/gallerytemplate-images.xml -text svneol=unset#text/plain
-gallery/repository/src/main/resources/gallerytemplate-images_de.xml -text
-gallery/repository/src/main/resources/gallerytemplate-images_it.xml -text
+gallery/repository/src/main/resources/gallery-workflows-frontend.xml svneol=native#text/plain
+gallery/repository/src/main/resources/gallerytemplate-files-i18n.xml -text svneol=unset#text/plain
+gallery/repository/src/main/resources/gallerytemplate-image-i18n.xml svneol=native#text/plain
+gallery/repository/src/main/resources/gallerytemplate-images-i18n.xml -text svneol=unset#text/plain
 gallery/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
-gallery/repository/src/main/resources/hippogallery.cnd svneol=native#text/plain
 gallery/repository/src/main/resources/image-validator.xml -text
 gotolink/pom.xml svneol=native#text/plain
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_de.properties -text

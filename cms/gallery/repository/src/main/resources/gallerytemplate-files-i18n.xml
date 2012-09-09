@@ -14,49 +14,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="new-file-folder">
-  <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hippostd:templatequery</sv:value>
-  </sv:property>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="combine" sv:name="new-file-folder">
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
     <sv:value>hippo:translated</sv:value>
   </sv:property>
-  <sv:property sv:name="hippostd:modify" sv:type="String">
-    <sv:value>./_name</sv:value>
-    <sv:value>$name</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:language" sv:type="String">
-    <sv:value>xpath</sv:value>
-  </sv:property>
-  <sv:property sv:name="jcr:statement" sv:type="String">
-    <sv:value>/jcr:root/hippo:configuration/hippo:queries/hippo:templates/new-file-folder/hippostd:templates/node()</sv:value>
-  </sv:property>
-  <sv:node sv:name="hippostd:templates">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippostd:templates</sv:value>
-    </sv:property>
-    <sv:node sv:name="asset gallery">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippogallery:stdAssetGallery</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-        <sv:value>hippo:harddocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>11f02d97-91d6-4a55-bd6a-c862f5210d8d</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:paths" sv:type="String">
-      </sv:property>
-      <sv:property sv:name="hippo:related___pathreference" sv:type="String">
-      </sv:property>
-      <sv:property sv:name="hippostd:foldertype" sv:type="String">
-        <sv:value>new-file-folder</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippostd:gallerytype" sv:type="String">
-        <sv:value>hippogallery:exampleAssetSet</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
+
   <sv:node sv:name="hippo:translation">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:translation</sv:value>
@@ -76,7 +38,7 @@
       <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>nuova cartella di file</sv:value>
+      <sv:value>Nouva cartella</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -90,5 +52,27 @@
       <sv:value>nieuwe bestands map</sv:value>
     </sv:property>
   </sv:node>
-</sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>de</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>Neuer Dateiordner</sv:value>
+    </sv:property>
+  </sv:node>
+  <sv:node sv:name="hippo:translation">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:translation</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:language" sv:type="String">
+      <sv:value>fr</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:message" sv:type="String">
+      <sv:value>un nouveau dossier</sv:value>
+    </sv:property>
+  </sv:node>
 
+</sv:node>
