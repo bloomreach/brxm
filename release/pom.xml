@@ -47,7 +47,6 @@
     <hippo.addon-hst-configuration-editor.version>1.10.04-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>2.23.05-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-google-analytics.version>2.23.05-SNAPSHOT</hippo.addon-google-analytics.version>
-    <hippo.addon-brokenlinks.version>2.23.05-SNAPSHOT</hippo.addon-brokenlinks.version>
     <hippo.packages.version>2.23.05-SNAPSHOT</hippo.packages.version>
     <hippo.hst.version>2.25.05-SNAPSHOT</hippo.hst.version>
 
@@ -436,6 +435,21 @@
         <artifactId>hippo-cms-workflow-repository</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-brokenlinks-frontend</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-brokenlinks-repository</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-cms-brokenlinks-common</artifactId>
+        <version>${hippo.cms.version}</version>
+      </dependency>
 
       <!-- Hippo Addon artifacts -->
       <dependency>
@@ -482,21 +496,6 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-google-analytics-hst</artifactId>
         <version>${hippo.addon-google-analytics.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-brokenlinks-frontend</artifactId>
-        <version>${hippo.addon-brokenlinks.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-brokenlinks-repository</artifactId>
-        <version>${hippo.addon-brokenlinks.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-brokenlinks-common</artifactId>
-        <version>${hippo.addon-brokenlinks.version}</version>
       </dependency>
 
 
