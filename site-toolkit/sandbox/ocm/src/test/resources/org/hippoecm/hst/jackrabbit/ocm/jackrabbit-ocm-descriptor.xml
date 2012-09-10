@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE jackrabbit-ocm PUBLIC "-//The Apache Software Foundation//DTD Repository//EN"
+    "http://jackrabbit.apache.org/dtd/jackrabbit-ocm-1.5.dtd">
 <!--
   Copyright 2008 Hippo.
  
@@ -16,7 +18,7 @@
 -->
 <jackrabbit-ocm>
   
-  <class-descriptor jcrType="testproject:textpage" jcrSuperType="hippo:document" className="org.hippoecm.hst.jackrabbit.ocm.TextPage">
+  <class-descriptor jcrType="testproject:textpage" jcrSuperTypes="hippo:document" className="org.hippoecm.hst.jackrabbit.ocm.TextPage">
     <field-descriptor fieldName="path" path="true" />
     <field-descriptor fieldName="stateSummary" jcrName="hippostd:stateSummary" />
     <field-descriptor fieldName="state" jcrName="hippostd:state" />
