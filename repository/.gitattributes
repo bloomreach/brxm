@@ -273,11 +273,6 @@ provider/src/main/java/org/hippoecm/repository/OrderBy.java svneol=native#text/p
 provider/src/main/java/org/hippoecm/repository/ParsedFacet.java svneol=native#text/plain
 provider/src/main/java/org/hippoecm/repository/dataprovider/IFilterNodeId.java svneol=native#text/plain
 resources/pom.xml svneol=native#text/plain
-resources/src/main/resources/META-INF/services/javax.xml.parsers.DocumentBuilderFactory -text
-resources/src/main/resources/META-INF/services/javax.xml.parsers.SAXParserFactory -text
-resources/src/main/resources/META-INF/services/org.apache.commons.logging.LogFactory -text
-resources/src/main/resources/META-INF/services/org.apache.xerces.xni.parser.XMLParserConfiguration -text
-resources/src/main/resources/META-INF/services/org.xml.sax.driver -text
 resources/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml svneol=native#text/plain
 resources/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
 servlets/pom.xml svneol=native#text/plain
