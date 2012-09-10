@@ -59,6 +59,7 @@ config/src/main/resources/hippostd-queries_de.xml -text
 config/src/main/resources/hippostd-workflows-threepane.xml -text svneol=unset#text/plain
 config/src/main/resources/hippostd-workflows.xml svneol=native#text/plain
 config/src/main/resources/hippostd.cnd -text
+config/src/main/resources/hippotranslation.cnd -text
 config/src/main/resources/namespace-folder.xml -text svneol=unset#text/plain
 config/src/main/resources/role-author.xml -text svneol=unset#text/plain
 config/src/main/resources/role-editor.xml -text svneol=unset#text/plain

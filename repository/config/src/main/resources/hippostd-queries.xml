@@ -37,6 +37,10 @@
     <sv:property sv:name="hippostd:modify" sv:type="String">
       <sv:value>./_name</sv:value>
       <sv:value>$name</sv:value>
+      <sv:value>./hippotranslation:locale</sv:value>
+      <sv:value>$inherited</sv:value>
+      <sv:value>./hippotranslation:id</sv:value>
+      <sv:value>$uuid</sv:value>
     </sv:property>
     <sv:node sv:name="hippo:translation">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
