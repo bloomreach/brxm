@@ -39,13 +39,6 @@
       <type>pom</type>
     </dependency>
 
-    <!-- cms repository contributions -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-translation-repository</artifactId>
-      <version>${hippo.cms.version}</version>
-    </dependency>
-
     <!-- repository -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
