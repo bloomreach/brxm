@@ -2915,7 +2915,6 @@ translation/repository/src/main/resources/cms.xml svneol=native#text/plain
 translation/repository/src/main/resources/hippostd-queries-translation.xml svneol=native#text/plain
 translation/repository/src/main/resources/hippostd-queries-translation_de.xml -text
 translation/repository/src/main/resources/hippostd-queries-translation_it.xml -text
-translation/repository/src/main/resources/hippotranslation.cnd -text
 translation/repository/src/main/resources/translate-workflows.xml svneol=native#text/plain
 translation/repository/src/main/resources/translation-hide-translations-folder.xml svneol=native#text/plain
 translation/repository/src/main/resources/translation-locale-provider_de.xml -text

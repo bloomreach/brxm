@@ -23,7 +23,6 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
-import org.onehippo.forge.jcrrunner.JcrHelper;
 import org.onehippo.forge.jcrrunner.plugins.LoggingPlugin;
 
 public class AddTranslationRunner extends LoggingPlugin {

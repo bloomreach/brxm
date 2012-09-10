@@ -14,38 +14,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="folder-translations">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="overlay"
+         sv:name="default">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>hipposys:workflowcategory</sv:value>
+    <sv:value>frontend:workflow</sv:value>
   </sv:property>
-  <sv:node sv:name="default">
+  <sv:node sv:name="frontend:renderer">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:workflow</sv:value>
+      <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.translation.impl.TranslationWorkflowImpl</sv:value>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.translation.workflow.FolderTranslationsWorkflowPlugin</sv:value>
     </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Translation workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hippotranslation:translated</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:privileges" sv:type="String">
-      <sv:value>hippo:admin</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="frontend:renderer">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.translation.workflow.FolderTranslationsWorkflowPlugin</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
 </sv:node>

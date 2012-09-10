@@ -117,6 +117,13 @@
     </dependency>
 
     <dependency>
+      <artifactId>hippo-repository-builtin</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <version>${hippo.repository.version}</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
       <artifactId>hippo-repository-connector</artifactId>
       <groupId>org.onehippo.cms7</groupId>
       <version>${hippo.repository.version}</version>

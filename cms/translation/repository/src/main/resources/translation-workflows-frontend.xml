@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
@@ -13,22 +14,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport"
-         sv:name="new-translated-folder" h:merge="combine">
-
-  <sv:node sv:name="hippo:translation">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="overlay"
+         sv:name="default">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:workflow</sv:value>
+  </sv:property>
+  <sv:node sv:name="frontend:renderer">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:translation</sv:value>
+      <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="hippo:language" sv:type="String">
-      <sv:value>de</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Neuer übersetzter Ordner</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:class" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflow</sv:value>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.translation.workflow.TranslationWorkflowPlugin</sv:value>
     </sv:property>
   </sv:node>
-
 </sv:node>

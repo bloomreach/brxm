@@ -72,24 +72,4 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <defaultGoal>package</defaultGoal>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifest>
-              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-            </manifest>
-            <manifestEntries>
-              <Hippo-Modules>org.hippoecm.repository.translation.impl.TranslationVirtualProvider</Hippo-Modules>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
 </project>
