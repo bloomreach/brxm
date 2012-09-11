@@ -129,7 +129,7 @@
     <tika.version>0.8</tika.version>
     <drewnoakes-extractor.version>2.4.0-beta-1</drewnoakes-extractor.version>
 
-    <hippo.htmlcleaner.version>1.02.07-SNAPSHOT</hippo.htmlcleaner.version>
+    <hippo.htmlcleaner.version>1.02.07</hippo.htmlcleaner.version>
     <guava.version>10.0.1</guava.version>
     <hippo.jcrdiff.version>1.01.02-SNAPSHOT</hippo.jcrdiff.version>
     <sanselan.version>0.97-incubator</sanselan.version>
