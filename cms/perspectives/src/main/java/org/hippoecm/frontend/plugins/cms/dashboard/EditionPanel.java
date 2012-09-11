@@ -18,8 +18,7 @@ package org.hippoecm.frontend.plugins.cms.dashboard;
 import org.apache.wicket.markup.html.panel.Panel;
 
 /**
- * Created with IntelliJ IDEA. User: mnour Date: 9/6/12 Time: 3:31 PM To change this template use File | Settings | File
- * Templates.
+ * A Wicket @{Panel} that is used to show the CMS edition on the @{DashboardPerspective}
  */
 public class EditionPanel extends Panel {
 
@@ -29,12 +28,12 @@ public class EditionPanel extends Panel {
      * @see org.apache.wicket.Component#Component(String)
      */
     public EditionPanel(String id) {
-        super(id);
-        edition = "";
+        this(id, null);
     }
 
     public EditionPanel(String id, String variation) {
         super(id);
+
         if (variation == null) {
             edition = "";
         } else {
