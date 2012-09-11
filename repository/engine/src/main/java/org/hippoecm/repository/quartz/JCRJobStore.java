@@ -518,7 +518,9 @@ public class JCRJobStore implements JobStore {
                 }
             }
         } catch(PathNotFoundException ex) {
-            // deliberate ignore
+            log.warn("Unable to find job node to be completed for trigger path '" + trigger.getName() + "'");
+        } catch(ItemNotFoundException ex) {
+            log.warn("Unable to find job node to be completed for trigger uuid '" + trigger.getName() + "'");
         } catch(RepositoryException ex) {
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
             throw new JobPersistenceException("error while marking job completed", ex);
