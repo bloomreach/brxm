@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.onehippo.cms7.utilities.pools.StringPool;
 
 public class LocationMapTreeItemImpl implements LocationMapTreeItem{
 

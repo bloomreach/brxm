@@ -427,7 +427,6 @@ components/core/pom.xml svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/CacheElementEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/HstCacheEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationViewUtilities.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/configuration/StringPool.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AbstractHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AnnotationHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/ChannelInfoClassProcessor.java -text

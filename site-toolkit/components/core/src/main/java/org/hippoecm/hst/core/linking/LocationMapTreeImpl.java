@@ -23,11 +23,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.util.PathUtils;
+import org.onehippo.cms7.utilities.pools.StringPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

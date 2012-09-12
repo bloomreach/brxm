@@ -18,10 +18,10 @@ package org.hippoecm.hst.configuration.sitemapitemhandler;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.service.ServiceException;
+import org.onehippo.cms7.utilities.pools.StringPool;
 
 public class HstSiteMapItemHandlerConfigurationService implements HstSiteMapItemHandlerConfiguration {
 
