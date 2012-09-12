@@ -27,17 +27,18 @@
  */
 
 
-/**
- * Xinha globals
- */
-var _editor_url = null;
-var _editor_lang = null;
-var _editor_skin = null;
-var xinha_editors = [];
-
 YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.EditorManager) {
+
+/**
+ * Xinha globals
+ */
+    window._editor_url = null;
+    window._editor_lang = null;
+    window._editor_skin = null;
+    window.xinha_editors = [];
+
     (function() {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, HippoAjax = YAHOO.hippo.HippoAjax;
 
@@ -85,7 +86,6 @@ if (!YAHOO.hippo.EditorManager) {
                 Wicket.Ajax.registerPreCallHandler(function() {
                     me.saveEditors();
                 });
-
             },
 
             /**
@@ -119,6 +119,27 @@ if (!YAHOO.hippo.EditorManager) {
                     context = this.contexts.get(form.id);
                 }
                 context.register(cfg);
+
+                if(YAHOO.env.ua.ie > 0 && Lang.isUndefined(this.ieFocusWorkaroundElement)) {
+                    var div = document.createElement('div');
+                    Dom.setStyle(div, 'position', 'absolute');
+                    document.body.appendChild(div);
+                    Dom.setXY(div, [-2000, -2000]);
+
+                    var new_element = document.createElement('input');
+                    new_element.type = "text";
+                    Dom.generateId(new_element, 'ie-workaround');
+                    div.appendChild(new_element);
+
+                    this.ieFocusWorkaroundElement = new_element;
+                }
+
+            },
+
+            unregisterContext : function(id) {
+                if (this.contexts.containsKey(id)) {
+                    this.contexts.remove(id);
+                }
             },
 
             forEachContext: function(cb, obj) {
@@ -232,6 +253,23 @@ if (!YAHOO.hippo.EditorManager) {
                 this.newEditors.put(cfg.name, editor);
             },
 
+            unregister: function(name) {
+                if (this.newEditors.containsKey((name))) {
+                    this.newEditors.remove(name);
+                }
+                if (this.editors.containsKey(name)) {
+                    this.editors.remove(name);
+                }
+                if (this.activeEditors.containsKey(name)) {
+                    var editor = this.activeEditors.remove(name);
+                }
+
+                //Context can be removed
+                if (this.editors.length == 0) {
+                    YAHOO.hippo.EditorManager.unregisterContext(this.form.id);
+                }
+            },
+
             render: function() {
                 this.newEditors.forEach(this, function(name, editor) {
                     if (document.getElementById(editor.name)) {
@@ -269,6 +307,7 @@ if (!YAHOO.hippo.EditorManager) {
                         return editor;
                     }
                 }
+                return null;
             },
 
             forEachActiveEditor : function(callback) {
@@ -340,9 +379,14 @@ if (!YAHOO.hippo.EditorManager) {
 
             getContainer : function() {
                 if (this.container == null) {
-                    this.container = Dom.getAncestorBy(Dom.get(this.name), function(element) {
-                        return Dom.hasClass(element, 'hippo-editor-field-subfield');
-                    });
+                    var test = document.getElementById(this.name);
+                    var root = Dom.get(test ? test : this.name);
+                    var check = function(el) {
+                        return Dom.hasClass(el, 'hippo-editor-field-subfield');
+                    };
+                    if(root != null) {
+                        this.container = Dom.getAncestorBy(root, check);
+                    }
                 }
                 return this.container;
             },
@@ -372,6 +416,12 @@ if (!YAHOO.hippo.EditorManager) {
 
             render : function() {
                 var container = this.getContainer();
+                if(container == null) {
+                    //error('Container element not found for editor ' + this.name);
+                    throw new Error('Container element not found for editor ' + this.name);
+                }
+                YAHOO.hippo.HippoAjax.registerDestroyFunction(container, this.destroy, this);
+
                 Dom.addClass(container, 'rte-preview-style');
 
                 var containerHeight = this.calculateHeight();
@@ -825,7 +875,7 @@ if (!YAHOO.hippo.EditorManager) {
                         document.getElementById(this.xinha._textArea.id).scrollIntoView();
                     }
                 }
-                
+
                 this.lastData = this.xinha.getInnerHTML();
             },
 
@@ -847,9 +897,21 @@ if (!YAHOO.hippo.EditorManager) {
 
             destroy : function() {
                 this.destroyTooltip();
+                if (this.xinha) {
+                    xinha_editors.remove(this.name);
+
+                    //If we are using MSIE and this Xinha is active, put focus
+                    //in a hidden field that is maintained by the EditorManager
+                    //to workaround an issue that caused the UI to lock up
+                    if (Xinha.is_ie && Xinha._currentlyActiveEditor &&
+                            Xinha._currentlyActiveEditor == this.xinha &&
+                            YAHOO.hippo.EditorManager.ieFocusWorkaroundElement) {
+                        YAHOO.hippo.EditorManager.ieFocusWorkaroundElement.focus();
             }
+                }
+                this.context.unregister(this.name);
 
-
+            }
         });
     })();
 

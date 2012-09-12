@@ -1,12 +1,14 @@
+    @SuppressWarnings("unused")
+    private final static String SVN_ID = "$Id$";
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -64,7 +66,7 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractXinhaPlugin extends RenderPlugin {
+public abstract class  AbstractXinhaPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -295,17 +297,17 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
                 }
 
             });
-            context.addOnDomLoad("YAHOO.hippo.EditorManager.render();");
+            context.addOnWinLoad("YAHOO.hippo.EditorManager.render();");
         }
     }
 
     /**
      * Construct a Javascript object literal that represents the configuration of the Xinha editor.
      * An example of the returned object is
-     * { 
+     * {
      *   name: 'XinhaPlugin1',
      *   textarea: 'xinha1',
-     *   started: false, 
+     *   started: false,
      *   focus: true,
      *   properties: [{key: 'callbackUrl', value: '...'}]},
      *   plugins: ['AutoSave', 'table'],
@@ -448,7 +450,7 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         /**
          * Only after clicking the preview area, should this editor be auto-focused. All other cases, like switching editor-tabs
          * should be handled by state on the client instead of on the server. Because of this true is only returned once.
-         * 
+         *
          * @return If the RTE should be auto-focused when created.
          */
         public boolean getFocusAfterLoad() {
@@ -518,8 +520,8 @@ public abstract class AbstractXinhaPlugin extends RenderPlugin {
         public boolean getStatusBar() {
             return statusBar;
         }
-        
-        public boolean getOnly7BitPrintablesInURLs() { 
+
+        public boolean getOnly7BitPrintablesInURLs() {
             return only7BitPrintablesInURLs;
         }
 
