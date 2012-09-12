@@ -1,5 +1,3 @@
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 /*
  *  Copyright 2008 Hippo.
  *
