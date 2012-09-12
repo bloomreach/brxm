@@ -39,12 +39,12 @@ public class BoundedLinkedList<E> extends LinkedList<E> {
 
     @Override
     public boolean addAll(Collection<? extends E> colleciton) {
-        boolean allAdded = true;
+        boolean changed = false;
 
         for (E element : colleciton) {
-            allAdded &= add(element);
+            changed |= add(element);
         }
 
-        return allAdded;
+        return changed;
     }
 }

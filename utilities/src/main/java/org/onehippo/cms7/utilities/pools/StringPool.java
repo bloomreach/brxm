@@ -17,8 +17,6 @@ package org.onehippo.cms7.utilities.pools;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A String pool utility that can be used to return an already present String object from the heap instead
@@ -27,34 +25,20 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class StringPool {
 
-    private final ConcurrentMap<String,String> stringPool = new ConcurrentHashMap<String, String>(1000);
-    private static final Lock lock = new ReentrantLock(true);
-    private static StringPool stringPoolInstance;
-
+    private static final ConcurrentMap<String,String> stringPool = new ConcurrentHashMap<String, String>(1000);
+    
     /**
      * not allowed to instantiate
      */
     private StringPool(){}
-
-    /**
-     * There should be only one instance of a @{StringPool}
-     */
-    public static StringPool instance() {
-        lock.lock();
-        if (stringPoolInstance == null) {
-            stringPoolInstance = new StringPool();
-        }
-        lock.unlock();
-        return stringPoolInstance;
-    }
-
+    
     /**
      * If <code>string</code> is already present in the pool (same hashcode and equals), then the already present String 
      * object is returned. Else, the <code>string</code> is added to the stringPool. 
-     * @param string - A string using which looking up a pooled string object
+     * @param string 
      * @return the String object from the argument or if their was already and equal object in the pool, the object that was already there.
      */
-    public String get(String string) {
+    public static String get(String string) {
         if(string == null) {
             return null;
         }
@@ -73,17 +57,7 @@ public class StringPool {
     /**
      * Clears the entire StringPool
      */
-    public void clear() {
+    public static void clear() {
         stringPool.clear();
     }
-
-    /**
-     * Make sure that the pool is cleared when about to be garbage collected
-     */
-    @Override
-    public void finalize() throws Throwable {
-        super.finalize();
-        clear();
-    }
-
 }
