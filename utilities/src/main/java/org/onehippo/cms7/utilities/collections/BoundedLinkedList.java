@@ -15,15 +15,16 @@
  */
 package org.onehippo.cms7.utilities.collections;
 
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
  * A @{LinkedList} with a bounded capacity
  */
 public class BoundedLinkedList<E> extends LinkedList<E> {
-    private final Integer maxCapacity;
+    private final long maxCapacity;
 
-    public BoundedLinkedList(Integer maxCapacity) {
+    public BoundedLinkedList(long maxCapacity) {
         this.maxCapacity = maxCapacity;
     }
 
@@ -34,5 +35,16 @@ public class BoundedLinkedList<E> extends LinkedList<E> {
         }
 
         return super.add(element);
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends E> colleciton) {
+        boolean allAdded = true;
+
+        for (E element : colleciton) {
+            allAdded &= add(element);
+        }
+
+        return allAdded;
     }
 }
