@@ -503,6 +503,8 @@ workflow/frontend/tmlog.lck
 workflow/frontend/version
 workflow/frontend/wdbp-error-log.txt
 workflow/frontend/workspaces
+workflow/repository/target
+workflow/target
 workflowmenu/*.tmp
 workflowmenu/.classpath
 workflowmenu/.project
