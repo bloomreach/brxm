@@ -24,10 +24,10 @@ Hippo.ExtWidgetRegistry = Ext.extend(Ext.util.Observable, {
      * @param cls the Ext class of the widget
      */
     register: function(config, cls) {
-        if (!Ext.isDefined(cls)) {
-            throw new Error("Mandatory argument 'cls' is missing");
-        }
         var widgetConfig = this.createWidgetConfig(config);
+        if (!Ext.isDefined(cls)) {
+            throw new Error("Mandatory argument 'cls' is missing for xtype '" + config.xtype + "'");
+        }
         Ext.reg(widgetConfig.xtype, cls);
         this.configs[widgetConfig.xtype] = widgetConfig;
     },
