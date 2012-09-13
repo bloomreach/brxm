@@ -23,7 +23,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -35,7 +34,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -96,8 +94,8 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         add(new AbstractYuiBehavior() {
 
             @Override
-            public void addHeaderContribution(IYuiContext context) {
-                context.addModule(HippoNamespace.NS, "accordionmanager");
+            public void addHeaderContribution(IYuiContext yuiContext) {
+                yuiContext.addModule(HippoNamespace.NS, "accordionmanager");
             }
         });
 
@@ -170,12 +168,27 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
         private org.apache.wicket.markup.repeater.Item<Node> previousSelected;
 
+        private AttributeAppender thumbnailStyle;
+        private AttributeAppender itemWidthStyle;
+        private AttributeAppender itemHeightStyle;
+
         public GalleryItemView(String id) {
             super(id);
 
             setOutputMarkupId(true);
 
             setItemReuseStrategy(new ReuseIfModelsEqualStrategy());
+
+            int thumbnailSize = getPluginConfig().getAsInteger("gallery.thumbnail.size", DEFAULT_THUMBNAIL_SIZE);
+            String thumbWidth = "width: " + thumbnailSize + "px;";
+            String thumbHeight = "height: " + thumbnailSize + "px;";
+            thumbnailStyle = new AttributeAppender("style", true, new Model<String>(thumbWidth + thumbHeight), " ");
+
+            int itemSize= thumbnailSize + DEFAULT_THUMBNAIL_OFFSET;
+            String itemWidth = "width: " + itemSize + "px;";
+            String itemHeight = "height: " + itemSize + "px;";
+            itemWidthStyle = new AttributeAppender("style", true, new Model<String>(itemWidth), " ");
+            itemHeightStyle = new AttributeAppender("style", true, new Model<String>(itemHeight), " ");
         }
 
         @Override
@@ -251,6 +264,8 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                                             handleSelect(listItem, target);
                                         }
                                     };
+                                    itemLink.add(itemWidthStyle);
+                                    itemLink.add(itemHeightStyle);
 
                                     Image folderIcon = new Image("folder-icon", "hippo-gallery-folder.png");
                                     folderIcon.setVisible(false);
@@ -258,22 +273,12 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                                     itemLink.add(new ImageContainer("thumbnail", new JcrNodeModel((Node) primItem),
                                             getPluginContext(), getPluginConfig()));
 
-                                    Label title = new LabelWithTitle("title", new NodeTranslator(new JcrNodeModel(node))
-                                            .getNodeName());
+                                    NodeTranslator translator = new NodeTranslator(new JcrNodeModel(node));
+                                    Label title = new LabelWithTitle("title", translator.getNodeName());
+                                    title.add(itemWidthStyle);
                                     itemLink.add(title);
-                                    listItem.add(itemLink);
 
-                                    //check thumbnail size
-                                    int thumbnailSize = getPluginConfig().getAsInteger("gallery.thumbnail.size",
-                                                                                       DEFAULT_THUMBNAIL_SIZE);
-                                    if (thumbnailSize != DEFAULT_THUMBNAIL_SIZE) {
-                                        int itemSize= thumbnailSize + DEFAULT_THUMBNAIL_OFFSET;
-                                        String w = "width: " + itemSize + "px;";
-                                        String h = "height: " + itemSize + "px;";
-                                        itemLink.add(new AttributeModifier("style", true, new Model<String>(w + h)));
-                                        listItem.add(new AttributeModifier("style", true, new Model<String>(w + h)));
-                                        title.add(new AttributeModifier("style", true, new Model<String>(w)));
-                                    }
+                                    listItem.add(itemLink);
                                 } else {
                                     log.warn("primary item of image set must be of type " + HippoNodeType.NT_RESOURCE);
                                 }
@@ -291,14 +296,22 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                             handleSelect(listItem, target);
                         }
                     };
+                    itemLink.add(itemWidthStyle);
+                    itemLink.add(itemHeightStyle);
+                    itemLink.add(new EmptyPanel("thumbnail"));
 
-                    Panel thumbnail = new EmptyPanel("thumbnail");
                     Image folderIcon = new Image("folder-icon", "hippo-gallery-folder.png");
+                    folderIcon.add(thumbnailStyle);
                     itemLink.add(folderIcon);
-                    itemLink.add(thumbnail);
-                    itemLink.add(new Label("title", new NodeTranslator(new JcrNodeModel(node)).getNodeName()));
+
+                    Label title = new Label("title", new NodeTranslator(new JcrNodeModel(node)).getNodeName());
+                    title.add(itemWidthStyle);
+                    itemLink.add(title);
+
                     listItem.add(itemLink);
                 }
+                listItem.add(itemWidthStyle);
+                listItem.add(itemHeightStyle);
 
             } catch (RepositoryException e) {
                 listItem.add(new EmptyPanel("thumbnail"));
