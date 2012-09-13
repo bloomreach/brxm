@@ -20,8 +20,6 @@ import java.io.IOException;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.request.ComponentConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The <code>GenericHstComponent</code> class provides a default implementation for
@@ -49,8 +47,6 @@ import org.slf4j.LoggerFactory;
  * @version $Id$
  */
 public class GenericHstComponent implements HstComponent {
-
-    private static final Logger log = LoggerFactory.getLogger(GenericHstComponent.class);
 
     /** Configuration key for flag whether or not to allow resource path resolving by resourceID as fallback. */
     public static final String RESOURCE_PATH_BY_RESOURCE_ID = "org.hippoecm.hst.core.component.serveResourcePathByResourceID";
@@ -82,7 +78,6 @@ public class GenericHstComponent implements HstComponent {
                     if (resourceID.endsWith(".jsp") || resourceID.endsWith(".ftl")) {
                         response.setServeResourcePath(resourceID);
                     } else {
-                        log.warn("ResourceID for serveResourcePath as fallback is valid only when it is .jsp or .ftl. Return 404.");
                         try {
                             response.sendError(HstResponse.SC_NOT_FOUND);
                         } catch (IOException e) {
