@@ -175,7 +175,7 @@
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
              <property name="initializationValves">
               <list>
-                 <bean class="org.hippoecm.hst.core.container.NoContentValve"/>
+                 <bean class="org.hippoecm.hst.core.container.NotFoundValve"/>
               </list>
              </property>
            </bean>

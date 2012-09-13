@@ -26,7 +26,9 @@ import org.slf4j.LoggerFactory;
  * NoContentValve 
  * When this valve is used, it does not make sense to also have valves that write content to the {@link HttpServletResponse}
  * since this valve sets servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT)
+ * @deprecated since 2.24.08 the NoopPipeline uses {@link NotFoundValve}
  */
+@Deprecated 
 public class NoContentValve implements Valve {
 
     private final static Logger log = LoggerFactory.getLogger(NoContentValve.class);
