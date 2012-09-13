@@ -171,6 +171,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
         private AttributeAppender thumbnailStyle;
         private AttributeAppender itemWidthStyle;
         private AttributeAppender itemHeightStyle;
+        private int thumbnailSize;
 
         public GalleryItemView(String id) {
             super(id);
@@ -179,7 +180,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
             setItemReuseStrategy(new ReuseIfModelsEqualStrategy());
 
-            int thumbnailSize = getPluginConfig().getAsInteger("gallery.thumbnail.size", DEFAULT_THUMBNAIL_SIZE);
+            thumbnailSize = getPluginConfig().getAsInteger("gallery.thumbnail.size", DEFAULT_THUMBNAIL_SIZE);
             String thumbWidth = "width: " + thumbnailSize + "px;";
             String thumbHeight = "height: " + thumbnailSize + "px;";
             thumbnailStyle = new AttributeAppender("style", true, new Model<String>(thumbWidth + thumbHeight), " ");
@@ -271,7 +272,7 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
                                     folderIcon.setVisible(false);
                                     itemLink.add(folderIcon);
                                     itemLink.add(new ImageContainer("thumbnail", new JcrNodeModel((Node) primItem),
-                                            getPluginContext(), getPluginConfig()));
+                                            getPluginContext(), getPluginConfig(), thumbnailSize));
 
                                     NodeTranslator translator = new NodeTranslator(new JcrNodeModel(node));
                                     Label title = new LabelWithTitle("title", translator.getNodeName());

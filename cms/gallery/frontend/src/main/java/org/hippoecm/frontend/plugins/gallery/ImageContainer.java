@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,11 +44,33 @@ public class ImageContainer extends Panel {
 
     public ImageContainer(String wicketId, JcrNodeModel model, IPluginContext pluginContext,
             final IPluginConfig pluginConfig) {
+
+        this(wicketId, model, pluginContext, pluginConfig, -1);
+    }
+
+    public ImageContainer(final String wicketId, final JcrNodeModel model, final IPluginContext pluginContext,
+                          final IPluginConfig pluginConfig, final int maxAxisLength) {
+
         super(wicketId, model);
 
         stream = new JcrResourceStream(model);
         width = getDimension(model, HippoGalleryNodeType.IMAGE_WIDTH, pluginConfig);
         height = getDimension(model, HippoGalleryNodeType.IMAGE_HEIGHT, pluginConfig);
+
+        if (maxAxisLength > -1) {
+            if (width > height && width > maxAxisLength) {
+                double ratio = maxAxisLength / width;
+                height = (int) Math.round(height * ratio);
+                width = maxAxisLength;
+            } else if (height > width && height > maxAxisLength) {
+                double ratio = maxAxisLength / height;
+                width = (int) Math.round(width * ratio);
+                height = maxAxisLength;
+            } else if(width > maxAxisLength) {
+                width = maxAxisLength;
+                height = maxAxisLength;
+            }
+        }
 
         Image img = new JcrImage("image", stream, width, height);
         img.add(new ImageNodeDragBehavior(new DragSettings(YuiPluginHelper.getConfig(pluginConfig)), model));
