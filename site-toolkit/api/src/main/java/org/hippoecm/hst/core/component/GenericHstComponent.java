@@ -84,7 +84,7 @@ public class GenericHstComponent implements HstComponent {
                     } else {
                         log.warn("ResourceID for serveResourcePath as fallback is valid only when it is .jsp or .ftl. Return 404.");
                         try {
-                            response.sendError(response.SC_NOT_FOUND);
+                            response.sendError(HstResponse.SC_NOT_FOUND);
                         } catch (IOException e) {
                              throw new HstComponentException("Unable to set 404 on response after invalid resource path.", e);
                         }

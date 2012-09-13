@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.component;
 
+import static org.easymock.EasyMock.eq;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import javax.servlet.ServletContext;
@@ -173,9 +175,9 @@ public class TestGenericHstComponent {
         EasyMock.replay(request);
 
         HstResponse response = EasyMock.createNiceMock(HstResponse.class);
-        response.setServeResourcePath(resourceID);
-        EasyMock.expectLastCall().andThrow(
-                new AssertionError("HstResponse.setServeResourcePath() must not be called because the resourceID is a disallowed path."));
+        response.sendError(eq(HstResponse.SC_NOT_FOUND));
+        EasyMock.expectLastCall();
+
         EasyMock.replay(response);
 
         GenericHstComponent component = new GenericHstComponent();
@@ -183,9 +185,9 @@ public class TestGenericHstComponent {
 
         try {
             component.doBeforeServeResource(request, response);
-            fail("Must fail because the resourceID is a disallowed path.");
+            EasyMock.verify(response);
         } catch (HstComponentException e) {
-            // success
+            fail("Should not get a HstComponentException");
         }
     }
 }
