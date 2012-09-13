@@ -414,7 +414,7 @@ public class HstManagerImpl implements HstManager {
                                 // PROPERTY EVENT : we mark the HstNode as stale
                                 HstNode node = getConfigurationNodeForPath(event.path);
                                 if(node != null) {
-                                    ((HstNodeImpl)node).markStale(); 
+                                    node.markStale();
                                 }
                             }
                         } 
@@ -424,14 +424,7 @@ public class HstManagerImpl implements HstManager {
                             if(removedPathsForParentNode.containsKey(path)) {
                                 // found a move and add. Reload the parent to account for the changed order of child nodes.
                                 HstNode node = removedPathsForParentNode.get(path);
-                                if(node.getParent() != null) {
-                                    // We do not remove the parent node, but because it is marked in 'extraNodesToLoad'
-                                    // it will be reloaded. When HstNode#addNode is invoked, it will replace the existing node
-                                    reloadNodes.add(node.getValueProvider().getPath());
-                                } else {
-                                    // we are a root
-                                    configurationRootNodes.remove(node.getValueProvider().getPath());
-                                }
+                                reloadNodes.add(node.getValueProvider().getPath());
                             }
                         }
 
