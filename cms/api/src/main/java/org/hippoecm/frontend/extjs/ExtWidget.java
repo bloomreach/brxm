@@ -21,7 +21,7 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  * <strong>Repository configuration:</strong>
  * <pre>
  * <?xml version="1.0" encoding="UTF-8"?>
- * <sv:node sv:name="my-lazy-component-plugin" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
+ * <sv:node sv:name="my-ext-widget" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
  *   <sv:property sv:name="jcr:primaryType" sv:type="Name">
  *     <sv:value>frontend:plugin</sv:value>
  *   </sv:property>
@@ -65,7 +65,17 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  * </p>
  * <p>
  * The xtype 'myextwidget' is passed to the Java superclass, and automatically registered with the Ext component
- * manager. Using the lazy component, like adding it to a panel, could be then done with:</strong>
+ * manager.</p>
+ * <p>
+ * An Ext widget can also be registered from Javascript alone:
+ * <strong>MyExtWidget.js</strong>:
+ * <pre>
+ * MyExtWidget = ...
+ * Hippo.ExtWidgets.register('myextwidget', MyExtWidget);
+ * </pre>
+ * </p>
+ * <p>
+ * Using the widget, like adding it to a panel, could be then done with:</strong>
  * <pre>
  * var somePanel = new Ext.Panel({
  *     items: [ Hippo.ExtWidgets.getConfig('myextwidget') ]
@@ -75,6 +85,12 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  * <pre>
  * var myWidget = Hippo.ExtWidgets.create('myextwidget');
  * </pre>
+ * It is also possible to provide additional configuration when instantiating a widget:
+ * <pre>
+ * var myWidget = Hippo.ExtWidgets.create('myextwidget', {
+ *     someproperty: 'foo'
+ * });
+ * </pre>
  * </p>
  */
 public abstract class ExtWidget extends ExtComponent implements IPlugin {
@@ -83,7 +99,7 @@ public abstract class ExtWidget extends ExtComponent implements IPlugin {
 
     /**
      * Always add the property 'xtype' to the configuration properties, so the registered component configuration of
-     * a lazy Ext object can be passed to Ext to create a new instance of the lazy component.
+     * an Ext widget can be passed to Ext to create a new instance of the Ext widget.
      */
     @SuppressWarnings("unused")
     @ExtProperty
@@ -113,10 +129,13 @@ public abstract class ExtWidget extends ExtComponent implements IPlugin {
 
     @Override
     public void buildInstantiationJs(final StringBuilder js, final String extClass, final JSONObject properties) {
-        // do not instantiate the plugin, but register its xtype and add its configuration properties to the
-        // lazy Ext component registry
-        js.append(String.format("Ext.reg('%s', %s); %s.register(%s); ",
-                xtype, extClass, EXT_WIDGET_REGISTRY_CLASS, properties.toString()));
+        // Ext widgets can be instantiated multiple times. ExtJS expects a globally unique ID per object. We therefore
+        // remove the generated Wicket ID from the widget's configuration, otherwise each instantiated object will reuse
+        // that same ID.
+        properties.remove("id");
+
+        // do not instantiate the plugin, but register its configuration properties and class in the Ext widget registry
+        js.append(String.format("%s.register(%s, %s); ", EXT_WIDGET_REGISTRY_CLASS, properties.toString(), extClass));
     }
 
 }
