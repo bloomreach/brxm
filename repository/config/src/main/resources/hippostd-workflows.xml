@@ -19,44 +19,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:workflowcategory</sv:value>
   </sv:property>
-  <sv:node sv:name="template-editor-namespaces">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Folder based workflow on namespaces folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hipposysedit:namespacefolder</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-  <sv:node sv:name="template-editor-namespace">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hipposys:workflow</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:classname" sv:type="String">
-      <sv:value>org.hippoecm.repository.standardworkflow.FolderWorkflowImpl</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:display" sv:type="String">
-      <sv:value>Folder based workflow on namespaces folder</sv:value>
-    </sv:property>
-    <sv:property sv:name="hipposys:nodetype" sv:type="String">
-      <sv:value>hipposysedit:namespace</sv:value>
-    </sv:property>
-    <sv:node sv:name="hipposys:types">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hipposys:types</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
   <sv:node sv:name="root">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:workflow</sv:value>
