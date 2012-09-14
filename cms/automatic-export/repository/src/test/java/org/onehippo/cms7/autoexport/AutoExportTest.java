@@ -15,17 +15,6 @@
  */
 package org.onehippo.cms7.autoexport;
 
-import static org.custommonkey.xmlunit.DifferenceConstants.ATTR_SEQUENCE_ID;
-import static org.custommonkey.xmlunit.DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID;
-import static org.custommonkey.xmlunit.DifferenceConstants.COMMENT_VALUE_ID;
-import static org.custommonkey.xmlunit.DifferenceConstants.TEXT_VALUE_ID;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
-import static org.hippoecm.repository.api.HippoNodeType.INITIALIZE_PATH;
-import static org.onehippo.cms7.autoexport.Constants.CONFIG_ENABLED_PROPERTY_NAME;
-import static org.onehippo.cms7.autoexport.Constants.CONFIG_NODE_PATH;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -42,8 +31,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 
-import junit.framework.Assert;
-
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
@@ -52,13 +39,24 @@ import org.custommonkey.xmlunit.ElementQualifier;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
+
+import junit.framework.Assert;
+import static org.custommonkey.xmlunit.DifferenceConstants.ATTR_SEQUENCE_ID;
+import static org.custommonkey.xmlunit.DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID;
+import static org.custommonkey.xmlunit.DifferenceConstants.COMMENT_VALUE_ID;
+import static org.custommonkey.xmlunit.DifferenceConstants.TEXT_VALUE_ID;
+import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.INITIALIZE_PATH;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.onehippo.cms7.autoexport.Constants.CONFIG_ENABLED_PROPERTY_NAME;
+import static org.onehippo.cms7.autoexport.Constants.CONFIG_NODE_PATH;
 
 /**
  * Test for {@link AutoExportModule}
@@ -380,15 +378,15 @@ public class AutoExportTest extends RepositoryTestCase {
                 Diff d = new Diff(expected.get(file), change);
                 d.overrideDifferenceListener(new IgnoreTextDifferenceListener());
                 d.overrideElementQualifier(new MyElementQualifier());
-                assertTrue("Comparing " + file, d.similar());
+                assertTrue("File " + file + " has unexpected contents, diff:\n" + d.toString(), d.similar());
             } else if (file.endsWith(".cnd")) {
                 Reader er = expected.get(file);
                 try {
-                    int changeChar, expectedChar = 0;
+                    int changeChar, expectedChar = 0, index = 0;
                     do {
                         changeChar = change.read();
                         expectedChar = er.read();
-                        assertTrue(changeChar == expectedChar);
+                        Assert.assertEquals("File " + file + " contains unexpected character at index " + index, expectedChar, changeChar);
                     } while (changeChar != -1 && expectedChar != -1);
                 } catch (IOException e) {
                     log.error("Error comparing cnd files", e);
