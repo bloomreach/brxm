@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
@@ -32,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -48,7 +51,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * AggregationValve
@@ -331,7 +333,6 @@ public class AggregationValve extends AbstractValve {
             HstResponse response = responseMap.get(window);
 
             if (window.isVisible()) {
-                // in cms request context, we never load asynchronous
                 if (isAsync(window, request)) {
                     if (request.getAttribute(AggregationValve.class.getName() + ".asyncByAncestor") == Boolean.TRUE) {
                         // we are done with this component because one of its ancestors is loaded async
@@ -343,21 +344,22 @@ public class AggregationValve extends AbstractValve {
                             request.getRequestContext());
                     Element hiddenDiv = response.createElement("div");
                     hiddenDiv.setAttribute("id", url.toString());
-                    hiddenDiv.setAttribute("class", "_async");
+                    hiddenDiv.setAttribute("class", OBFUSCATED_ASYNC_VAR);
                     hiddenDiv.setAttribute("style", "display:none;");
                     response.addPreamble(hiddenDiv);
 
                     if (!response.containsHeadElement(AggregationValve.class.getName() + ".async")) {
                         Element headScript = response.createElement("script");
-                        String src = request.getRequestContext().getHstLinkCreator().create("resources/simple-io.js", request.getRequestContext().getResolvedMount().getMount(), true).toUrlForm(request.getRequestContext(), false);
-                        headScript.setAttribute("src",src);
                         headScript.setAttribute("type","text/javascript");
+
+                        headScript.setTextContent(getIOScript());
+                       
                         response.addHeadElement(headScript, AggregationValve.class.getName() + ".async");
 
                         Element endBodyScript = response.createElement("script");
                         endBodyScript.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "scripts");
                         endBodyScript.setAttribute("type","text/javascript");
-                        endBodyScript.setTextContent("Hippo.Hst.AsyncPage.load();");
+                        endBodyScript.setTextContent(OBFUSCATED_HIPPO_HST_VAR + ".AsyncPage.load();");
                         response.addHeadElement(endBodyScript, "asyncLoad");
 
                     }
@@ -429,14 +431,17 @@ public class AggregationValve extends AbstractValve {
         }
     }
 
+
     /**
      * returns <code>true</code> when the component window is marked as async. When the component is async
-     * due to a ancestor is async, we also set XXX is <code>true</code> on the HstRequest to indicate async due to ancestor
+     * due to a ancestor is async, we also set <code>AggregationValve.class.getName() + ".asyncByAncestor"</code> is <code>true</code> on
+     * the HstRequest to indicate async due to ancestor
      * @param window
      * @param request
      * @return
      */
     private boolean isAsync(final HstComponentWindow window, final HstRequest request) {
+        // in cms request context, we never load asynchronous
         if (request.getRequestContext().isCmsRequest()) {
             return false;
         } 
@@ -604,6 +609,55 @@ public class AggregationValve extends AbstractValve {
         @Override public void setContentLength(int len) {}
         @Override public void setContentType(String type) {}
         @Override public void setLocale(Locale loc) {}
+    }
+
+    /**
+     * Some utility methods to get obfuscated inline javascript for loading async pages
+     */
+    private static final char RANDOM_CHAR1 = (char)('a' + new Random().nextInt(25));
+    private static final char RANDOM_CHAR2 =  (char) (RANDOM_CHAR1 + 1);
+    private static final char RANDOM_CHAR3 =  (char) (RANDOM_CHAR1 + 2);
+    private static final String OBFUSCATED_ASYNC_VAR = String.valueOf(RANDOM_CHAR3) + AggregationValve.class.hashCode() + "Async";
+    private static final String OBFUSCATED_HIPPO_VAR = String.valueOf(RANDOM_CHAR1) + AggregationValve.class.hashCode();
+    private static final String OBFUSCATED_HIPPO_HST_VAR = OBFUSCATED_HIPPO_VAR + "." + String.valueOf(RANDOM_CHAR2) + AggregationValve.class.hashCode();
+
+    // no need to be volatile : worst case it is created twice
+    private static String OBFUSCATED_SCRIPT = null;
+
+    private static String obfuscateNamespacedFunctions(final String ioScriptTemplate) {
+        if (OBFUSCATED_SCRIPT != null) {
+            return OBFUSCATED_SCRIPT;
+        }
+        log.debug("creating obfuscated io-script with RANDOM CHAR", OBFUSCATED_HIPPO_HST_VAR);
+        String obfuscated = ioScriptTemplate.replaceAll("Hippo.Hst", OBFUSCATED_HIPPO_HST_VAR);
+        obfuscated = obfuscated.replaceAll("Hippo", OBFUSCATED_HIPPO_VAR);
+        obfuscated = obfuscated.replaceAll("_async", OBFUSCATED_ASYNC_VAR);
+        OBFUSCATED_SCRIPT = obfuscated;
+        return OBFUSCATED_SCRIPT;
+    }
+
+    private static String getIOScript() {
+        final String ioScriptTemplate = loadScript();
+        final String obfuscateNameSpaces = obfuscateNamespacedFunctions(ioScriptTemplate);
+        return  obfuscateNameSpaces;
+    }
+
+    private static String loadScript() {
+        InputStream input = null;
+        try {
+            input = AggregationValve.class.getResourceAsStream("simple-io-template.js");
+            if (input == null) {
+                log.warn("Could not load simple-io-template.js");
+                return "";
+            }
+            String ioScriptTemplate = IOUtils.toString(input, "UTF-8");
+            return ioScriptTemplate;
+        } catch (IOException e) {
+            log.warn("Could not load simple-io-template.js");
+        } finally {
+            IOUtils.closeQuietly(input);
+        }
+        return "";
     }
 
 
