@@ -81,8 +81,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
         this.variantsUuid = config.variantsUuid;
-        this.variantAdderXType = config.variantAdderXType;
-        this.propertiesEditorXType = config.propertiesEditorXType;
         this.pageContainer = new Hippo.ChannelManager.TemplateComposer.PageContainer(config);
         this.locale = config.locale;
 
@@ -617,8 +615,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     variantsUuid: this.variantsUuid,
                     allVariantsStore : this.allVariantsStore,
                     allVariantsStoreFuture : this.allVariantsStoreFuture,
-                    variantAdderXType: this.variantAdderXType,
-                    propertiesEditorXType: this.propertiesEditorXType,
                     mountId: mountId,
                     listeners: {
                         cancel: function() {

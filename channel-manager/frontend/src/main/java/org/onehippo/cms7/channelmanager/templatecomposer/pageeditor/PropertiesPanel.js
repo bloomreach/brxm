@@ -171,7 +171,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         var i, tabComponent;
         for (i = 0; i < this.variants.length; i++) {
             if ('plus' == this.variants[i].id) {
-                tabComponent = Hippo.ExtWidgets.create(this.variantAdderXType, {
+                tabComponent = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.VariantAdder', {
                     composerRestMountUrl : this.composerRestMountUrl,
                     componentId : this.componentId,
                     skipVariantIds : Ext.pluck(this.variants, 'id'),
@@ -186,7 +186,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                     }
                 });
             } else {
-                tabComponent = Hippo.ExtWidgets.create(this.propertiesEditorXType, {
+                tabComponent = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
                     componentId : this.componentId,
                     variant: this.variants[i],
                     title: this.variants[i].name,
@@ -312,7 +312,7 @@ Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
     }
 });
 
-Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder = Ext.extend(Hippo.ChannelManager.TemplateComposer.VariantAdder, {
+Hippo.ChannelManager.TemplateComposer.PlainVariantAdder = Ext.extend(Hippo.ChannelManager.TemplateComposer.VariantAdder, {
 
     initComponent: function () {
         var comboBox = new Ext.form.ComboBox({
@@ -334,11 +334,10 @@ Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder = Ext.extend(Hippo.Ch
             }
         ];
 
-        Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder.superclass.initComponent.apply(this, arguments);
+        Hippo.ChannelManager.TemplateComposer.PlainVariantAdder.superclass.initComponent.apply(this, arguments);
     }
 
 });
-Hippo.ExtWidgets.register('Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder', Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder);
 
 Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel, {
     mountId : null,
@@ -724,17 +723,16 @@ Hippo.ChannelManager.TemplateComposer.PropertiesEditor = Ext.extend(Ext.Panel, {
 
 });
 
-Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor = Ext.extend(Hippo.ChannelManager.TemplateComposer.PropertiesEditor, {
+Hippo.ChannelManager.TemplateComposer.PlainPropertiesEditor = Ext.extend(Hippo.ChannelManager.TemplateComposer.PropertiesEditor, {
 
     constructor: function(config) {
-        Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor.superclass.constructor.call(this, Ext.apply(config, {
+        Hippo.ChannelManager.TemplateComposer.PlainPropertiesEditor.superclass.constructor.call(this, Ext.apply(config, {
             items: [ config.propertiesForm ],
             layout: 'fit'
         }));
     }
 
 });
-Hippo.ExtWidgets.register('Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor', Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor);
 
 //FIXME: don't override Ext provided code; create subclass or patch instance
 //Add * to the required fields

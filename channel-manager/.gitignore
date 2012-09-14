@@ -4,6 +4,9 @@
 /.idea
 /.project
 /.settings
+frontend-api/*.iml
+frontend-api/.project
+frontend-api/target
 frontend/*.iml
 frontend/.classpath
 frontend/.project

@@ -78,6 +78,7 @@
   </dependencyManagement>
 
   <modules>
+    <module>frontend-api</module>
     <module>frontend</module>
     <module>repository</module>
     <module>test</module>

@@ -23,10 +23,6 @@
     border-bottom: 1px solid #aac3e5;
 }
 
-.x-tot2ivn-vr-tab-strip {
-    width: 100% !important;
-}
-
 /* Right Body Panel */
 .x-tot2ivn-vr-tab-panel-bwrap {
     border-left: 1px solid #99bbe8;
@@ -36,7 +32,7 @@
 /* Menu Items */
 .x-tot2ivn-vr-tab-panel li.x-tot2ivn-vr-tab-strip-title {
     display: block;
-    width: 100% !important;
+    width: 100%;
     max-height: 48px;
     overflow: hidden;
 }

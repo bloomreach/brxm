@@ -134,14 +134,6 @@ public class PageEditor extends ExtPanel {
     private String variantsUuid;
 
     @ExtProperty
-    @SuppressWarnings("unused")
-    private String variantAdderXType = DEFAULT_VARIANT_ADDER_XTYPE;
-
-    @ExtProperty
-    @SuppressWarnings("unused")
-    private String propertiesEditorXType = DEFAULT_PROPERTIES_EDITOR_XTYPE;
-
-    @ExtProperty
     private Boolean initializeHstConfigEditorWithPreviewContext = DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT;
     
     private IPluginContext context;
@@ -166,8 +158,6 @@ public class PageEditor extends ExtPanel {
             this.previewMode = config.getAsBoolean("previewMode", DEFAULT_PREVIEW_MODE);
             variantsPath = config.getString("variantsPath");
             this.initializeHstConfigEditorWithPreviewContext = config.getAsBoolean("initializeHstConfigEditorWithPreviewContext", DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT);
-            this.variantAdderXType = config.getString("variantAdderXType", DEFAULT_VARIANT_ADDER_XTYPE);
-            this.propertiesEditorXType = config.getString("propertiesEditorXType", DEFAULT_PROPERTIES_EDITOR_XTYPE);
         }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
