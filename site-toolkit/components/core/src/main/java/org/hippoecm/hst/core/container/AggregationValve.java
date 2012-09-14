@@ -624,25 +624,24 @@ public class AggregationValve extends AbstractValve {
     private static final String OBFUSCATED_HIPPO_VAR = String.valueOf(RANDOM_CHAR1) + AggregationValve.class.hashCode();
     private static final String OBFUSCATED_HIPPO_HST_VAR = OBFUSCATED_HIPPO_VAR + "." + String.valueOf(RANDOM_CHAR2) + AggregationValve.class.hashCode();
 
-    // no need to be volatile : worst case it is created twice
-    private static String OBFUSCATED_SCRIPT = null;
-
     private static String obfuscateNamespacedFunctions(final String ioScriptTemplate) {
-        if (OBFUSCATED_SCRIPT != null) {
-            return OBFUSCATED_SCRIPT;
-        }
         log.debug("creating obfuscated io-script with RANDOM CHAR", OBFUSCATED_HIPPO_HST_VAR);
         String obfuscated = ioScriptTemplate.replaceAll("Hippo.Hst", OBFUSCATED_HIPPO_HST_VAR);
         obfuscated = obfuscated.replaceAll("Hippo", OBFUSCATED_HIPPO_VAR);
         obfuscated = obfuscated.replaceAll("_async", OBFUSCATED_ASYNC_VAR);
-        OBFUSCATED_SCRIPT = obfuscated;
-        return OBFUSCATED_SCRIPT;
+        return obfuscated;
     }
 
+    // no need to be volatile : worst case it is created twice
+    private static String obfuscatedScript = null;
+    
     private static String getIOScript() {
+        if (obfuscatedScript != null) {
+            return obfuscatedScript;
+        }
         final String ioScriptTemplate = loadScript();
-        final String obfuscateNameSpaces = obfuscateNamespacedFunctions(ioScriptTemplate);
-        return  obfuscateNameSpaces;
+        obfuscatedScript =  obfuscateNamespacedFunctions(ioScriptTemplate);
+        return obfuscatedScript; 
     }
 
     private static String loadScript() {
