@@ -14,9 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
-         xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         xmlns:h="http://www.onehippo.org/jcr/xmlimport"
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="hippostdpubwf">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:namespace</sv:value>

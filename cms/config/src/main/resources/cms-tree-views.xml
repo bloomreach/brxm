@@ -664,6 +664,17 @@
             <sv:value>/hippo:namespaces/hippostd</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="hideHippostdpubwfNamespace">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:name="display" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>/hippo:namespaces/hippostdpubwf</sv:value>
+          </sv:property>
+        </sv:node>
         <sv:node sv:name="hideSystemNamespace">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>

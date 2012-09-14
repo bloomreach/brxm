@@ -110,7 +110,7 @@
         <sv:value>3</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:nodetypes" sv:type="String">
-        <sv:value>hippo:handle</sv:value>
+        <sv:value>hippostdpubwf:request</sv:value>
       </sv:property>
       <sv:property sv:name="frontend:path" sv:type="String">
         <sv:value>/</sv:value>
@@ -142,7 +142,7 @@
       </sv:property>
       <sv:property sv:name="jcr:statement" sv:type="String">
         <!-- As per request of HREPTWO-3159 also display rejected requests -->
-        <sv:value>SELECT * FROM hippo:request</sv:value>
+        <sv:value>SELECT * FROM hippostdpubwf:request</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>

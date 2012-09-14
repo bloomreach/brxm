@@ -15,7 +15,6 @@
   limitations under the License.
 -->
 <sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
-         xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
          sv:name="new-type">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -131,6 +130,21 @@
           </sv:property>
           <sv:property sv:name="hippotranslation:locale" sv:type="String">
             <sv:value>document-type-locale</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:holder" sv:type="String">
+            <sv:value>holder</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:state" sv:type="String">
+            <sv:value>draft</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+            <sv:value>new</sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+            <sv:value></sv:value>
+          </sv:property>
+          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+            <sv:value></sv:value>
           </sv:property>
         </sv:node>
       </sv:node>

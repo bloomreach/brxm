@@ -356,6 +356,17 @@
             <sv:value>/hippo:namespaces/hippostd</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="hideHippostdpubwfNamespace">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:name="display" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+          <sv:property sv:name="path" sv:type="String">
+            <sv:value>/hippo:namespaces/hippostdpubwf</sv:value>
+          </sv:property>
+        </sv:node>
         <sv:node sv:name="hideSystemNamespace">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>frontend:pluginconfig</sv:value>
@@ -570,6 +581,17 @@
         <sv:value>resourceIconRenderer</sv:value>
       </sv:property>
     </sv:node>
+    <sv:node sv:name="reviewedActionColumns">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.list.ReviewedActionsListColumnProviderPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
+      </sv:property>
+    </sv:node>
   </sv:node>
   <sv:node sv:name="hippostd:folder">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -703,6 +725,17 @@
       </sv:property>
       <sv:property sv:name="documentTypeIconRenderer" sv:type="String">
         <sv:value>resourceIconRenderer</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="reviewedActionColumns">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.list.ReviewedActionsListColumnProviderPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
@@ -967,6 +1000,17 @@
       </sv:property>
       <sv:property sv:name="documentTypeIconRenderer" sv:type="String">
         <sv:value>resourceIconRenderer</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="reviewedActionColumns">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.plugins.reviewedactions.list.ReviewedActionsListColumnProviderPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="column.id" sv:type="String">
+        <sv:value>${cluster.id}.columns</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
