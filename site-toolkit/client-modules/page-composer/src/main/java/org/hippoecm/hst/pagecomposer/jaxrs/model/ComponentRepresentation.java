@@ -59,7 +59,7 @@ public class ComponentRepresentation {
         // still need to create the iconURL from the iconPath
         if(iconPath != null) {
             HstRequestContext requestContext = RequestContextProvider.get();
-            iconURL = requestContext.getHstLinkCreator().create(iconPath, mount, true).toUrlForm(requestContext, true);
+            iconURL = requestContext.getHstLinkCreator().create(iconPath, mount, true).toUrlForm(requestContext, false);
         }
         return this;
     }

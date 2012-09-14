@@ -161,7 +161,7 @@ public class HstLinkImpl implements HstLink {
          */
         String renderHost = null;
         if(mount != null) {
-            if(requestContext.getRenderHost() != null) {
+            if(requestContext.isCmsRequest()) {
                 // check whether the urlString is equal to the contextPath of the mount. If so,
                 // we need to append an extra / to the urlString : This is to avoid a link like 
                 // '/site' in cms preview context: It must there be '/site/'
@@ -172,27 +172,31 @@ public class HstLinkImpl implements HstLink {
             if(requestContext.getRenderHost() != null && requestMount != mount) {
                 // the link is cross-domain, so set the render host
                 renderHost =  mount.getVirtualHost().getHostName();
-            } else if(requestContext.isFullyQualifiedURLs() || fullyQualified || requestMount.getVirtualHost() != mount.getVirtualHost()
-                         || (mount.isPortInUrl() && requestMount.getPort() != mount.getPort())
-                         || (mount.getScheme() != null && !mount.getScheme().equals(requestMount.getScheme())) ) {
-                
-               String host = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();
-               
-               if(mount.isPortInUrl()) {
-                   int port = mount.getPort();
-                   if(port == 0) {
-                       // the Mount is port agnostic. Take port from current container url
-                      port = requestContext.getBaseURL().getPortNumber();
-                   }
-                   if(port == 80 || port == 443) {
-                       // do not include default ports
-                   } else {
-                       host += ":"+port;
-                   }
-               }
-               
-               
-               urlString =  host + urlString;
+            } else if (!requestContext.isCmsRequest()) {
+                // the above !requestContext.isCmsRequest() check is to avoid fully qualified links in CMS channel manager:
+                // for the cms, we never want a fully qualified URLs for links at that is managed through the 'renderHost'
+                if (requestContext.isFullyQualifiedURLs() || fullyQualified || requestMount.getVirtualHost() != mount.getVirtualHost()
+                        || (mount.isPortInUrl() && requestMount.getPort() != mount.getPort())
+                        || (mount.getScheme() != null && !mount.getScheme().equals(requestMount.getScheme()))) {
+
+                    String host = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();
+
+                    if (mount.isPortInUrl()) {
+                        int port = mount.getPort();
+                        if (port == 0) {
+                            // the Mount is port agnostic. Take port from current container url
+                            port = requestContext.getBaseURL().getPortNumber();
+                        }
+                        if (port == 80 || port == 443) {
+                            // do not include default ports
+                        } else {
+                            host += ":" + port;
+                        }
+                    }
+
+
+                    urlString = host + urlString;
+                }
             }
         }
         
