@@ -28,7 +28,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
 	 /**
      * @cfg {Number} tabWidth The initial width in pixels of each new tab title (defaults to 130).
      */
-    tabWidth : 130,	
+    tabWidth : 130,
 	/**
      * @cfg {Number} tabMarginTop The initial top margin in pixels of the tab strip. (defaults to 15).
      */
@@ -218,9 +218,14 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
 
         st = this[this.stripTarget];
 
-        this.stripWrap = st.createChild({cls:'x-tab-strip-wrap x-tot2ivn-vr-tab-strip-wrap', cn:{
+        this.stripWrap = st.createChild({
+            cls: 'x-tab-strip-wrap x-tot2ivn-vr-tab-strip-wrap',
+            width: this.tabWidth,
+            cn: {
                 style: 'margin-top: ' + this.tabMarginTop + 'px;',
-                tag:'ul', cls:'x-tab-strip x-tot2ivn-vr-tab-strip x-tab-strip-'+this.tabPosition + ' x-tot2ivn-vr-tab-strip-' + this.tabPosition
+                tag: 'ul',
+                cls: 'x-tab-strip x-tot2ivn-vr-tab-strip x-tab-strip-' + this.tabPosition + ' x-tot2ivn-vr-tab-strip-' + this.tabPosition,
+                width: this.tabWidth
             }
         });
 

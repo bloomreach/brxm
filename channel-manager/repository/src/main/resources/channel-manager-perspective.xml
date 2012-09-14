@@ -46,6 +46,33 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:pluginconfig</sv:value>
     </sv:property>
+    <sv:property sv:name="composerRestMountPath" sv:type="String">
+      <sv:value>/_rp</sv:value>
+    </sv:property>
+    <sv:property sv:name="contextPath" sv:type="String">
+      <sv:value>/site</sv:value>
+    </sv:property>
+    <sv:property sv:name="initialHstConnectionTimeout" sv:type="Long">
+      <sv:value>60000</sv:value>
+    </sv:property>
+    <sv:property sv:name="initializeHstConfigEditorWithPreviewContext" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="previewMode" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="propertiesEditorXType" sv:type="String">
+      <sv:value>Hippo.Targeting.PropertiesEditor</sv:value>
+    </sv:property>
+    <sv:property sv:name="templateComposerContextPath" sv:type="String">
+      <sv:value>/site</sv:value>
+    </sv:property>
+    <sv:property sv:name="variantAdderXType" sv:type="String">
+      <sv:value>Hippo.Targeting.VariantAdder</sv:value>
+    </sv:property>
+    <sv:property sv:name="variantsPath" sv:type="String">
+      <sv:value/>
+    </sv:property>
   </sv:node>
   <sv:node sv:name="layout.wireframe">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">

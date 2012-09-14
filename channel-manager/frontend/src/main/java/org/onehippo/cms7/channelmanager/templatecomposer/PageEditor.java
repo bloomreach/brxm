@@ -27,6 +27,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.wicket.Application;
 import org.apache.wicket.RequestCycle;
@@ -81,6 +82,11 @@ public class PageEditor extends ExtPanel {
 
     private static final String SELECT_ADMIN_GROUPS_QUERY = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND fn:name() = 'admin' AND hipposys:members='{}'";
 
+    private static final Boolean DEFAULT_PREVIEW_MODE = Boolean.TRUE;
+    private static final Boolean DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT = Boolean.TRUE;
+    private static final String DEFAULT_VARIANT_ADDER_XTYPE = "Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder";
+    private static final String DEFAULT_PROPERTIES_EDITOR_XTYPE = "Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor";
+
     @ExtProperty
     private Boolean debug = false;
 
@@ -113,7 +119,7 @@ public class PageEditor extends ExtPanel {
     private Boolean canUnlockChannels = Boolean.FALSE;
 
     @ExtProperty
-    private Boolean previewMode = Boolean.TRUE;
+    private Boolean previewMode = DEFAULT_PREVIEW_MODE;
 
     @ExtProperty
     @SuppressWarnings("unused")
@@ -128,7 +134,15 @@ public class PageEditor extends ExtPanel {
     private String variantsUuid;
 
     @ExtProperty
-    private Boolean initializeHstConfigEditorWithPreviewContext = Boolean.TRUE;
+    @SuppressWarnings("unused")
+    private String variantAdderXType = DEFAULT_VARIANT_ADDER_XTYPE;
+
+    @ExtProperty
+    @SuppressWarnings("unused")
+    private String propertiesEditorXType = DEFAULT_PROPERTIES_EDITOR_XTYPE;
+
+    @ExtProperty
+    private Boolean initializeHstConfigEditorWithPreviewContext = DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT;
     
     private IPluginContext context;
     private ExtStoreFuture<Object> channelStoreFuture;
@@ -149,19 +163,17 @@ public class PageEditor extends ExtPanel {
             this.templateComposerContextPath = config.getString("templateComposerContextPath", templateComposerContextPath);
             this.contextPath = config.getString("contextPath", contextPath);
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
-            if (config.get("previewMode") != null) {
-                this.previewMode = config.getBoolean("previewMode");
-            }
+            this.previewMode = config.getAsBoolean("previewMode", DEFAULT_PREVIEW_MODE);
             variantsPath = config.getString("variantsPath");
-            if (config.containsKey("initializeHstConfigEditorWithPreviewContext")) {
-                this.initializeHstConfigEditorWithPreviewContext = config.getBoolean("initializeHstConfigEditorWithPreviewContext");
-            }
+            this.initializeHstConfigEditorWithPreviewContext = config.getAsBoolean("initializeHstConfigEditorWithPreviewContext", DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT);
+            this.variantAdderXType = config.getString("variantAdderXType", DEFAULT_VARIANT_ADDER_XTYPE);
+            this.propertiesEditorXType = config.getString("propertiesEditorXType", DEFAULT_PROPERTIES_EDITOR_XTYPE);
         }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
         this.canUnlockChannels = isUserAdministrator(UserSession.get().getJcrSession());
-        if (variantsPath != null) {
+        if (StringUtils.isNotEmpty(variantsPath)) {
             try {
                 if (UserSession.get().getJcrSession().nodeExists(variantsPath)) {
                     this.variantsUuid = UserSession.get().getJcrSession().getNode(variantsPath).getIdentifier();

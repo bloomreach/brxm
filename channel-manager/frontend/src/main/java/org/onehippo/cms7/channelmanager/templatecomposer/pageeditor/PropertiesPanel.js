@@ -28,6 +28,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     silent : true,
     allVariantsStore: null,
     allVariantsStoreFuture : null,
+    variantAdderXType: null,
+    propertiesEditorXType: null,
 
     constructor : function (config) {
         this.composerRestMountUrl = config.composerRestMountUrl;
@@ -39,12 +41,26 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.allVariantsStore = config.allVariantsStore;
         this.allVariantsStoreFuture = config.allVariantsStoreFuture;
 
+        this.variantAdderXType = config.variantAdderXType;
+        this.propertiesEditorXType = config.propertiesEditorXType;
+
+        // also store the resources in a global variable, since pluggable subclasses need to access them too
+        Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources = config.resources;
+
         config = Ext.apply(config, { activeTab : 0 });
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.constructor.call(this, config);
     },
 
     initComponent : function () {
         Hippo.ChannelManager.TemplateComposer.PropertiesPanel.superclass.initComponent.apply(this, arguments);
+
+        this.on('beforetabchange', function(panel, newTab) {
+            if (!Ext.isDefined(newTab)) {
+                return true;
+            } else {
+                return newTab.fireEvent('beforeactivate', newTab, panel);
+            }
+        }, this);
 
         this.on('tabchange', function (panel, tab) {
             if (!this.silent && tab) {
@@ -66,6 +82,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
             var futures, tab;
             futures = [];
             this._initTabs();
+            this.adjustBodyWidth(this.tabWidth);
             this._selectTabByVariant(variant);
 
             tab = this.getActiveTab();
@@ -151,16 +168,13 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     },
 
     _initTabs : function () {
-        var i, form;
+        var i, tabComponent;
         for (i = 0; i < this.variants.length; i++) {
             if ('plus' == this.variants[i].id) {
-                form = new Hippo.ChannelManager.TemplateComposer.PlusForm({
-                    mountId : this.mountId,
+                tabComponent = Hippo.ExtWidgets.create(this.variantAdderXType, {
                     composerRestMountUrl : this.composerRestMountUrl,
-                    resources : this.resources,
-                    locale : this.locale,
                     componentId : this.componentId,
-                    variants : this.variants,
+                    skipVariantIds : Ext.pluck(this.variants, 'id'),
                     title: this.variants[i].name,
                     variantsUuid : this.variantsUuid,
                     listeners : {
@@ -172,28 +186,31 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                     }
                 });
             } else {
-                form = new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
-                    variant : this.variants[i],
-                    title: this.variants[i].name,
-                    mountId : this.mountId,
-                    composerRestMountUrl : this.composerRestMountUrl,
-                    resources : this.resources,
-                    locale : this.locale,
+                tabComponent = Hippo.ExtWidgets.create(this.propertiesEditorXType, {
                     componentId : this.componentId,
-                    listeners : {
-                        'save' : function() {
-                            this._cleanupVariants();
-                        },
-                        'delete' : function (tab, variant) {
-                            this._cleanupVariants();
-                            this.load();
-                        },
-                        scope : this
-                    }
+                    variant: this.variants[i],
+                    title: this.variants[i].name,
+                    propertiesForm: new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
+                        variant : this.variants[i],
+                        mountId : this.mountId,
+                        composerRestMountUrl : this.composerRestMountUrl,
+                        locale : this.locale,
+                        componentId : this.componentId,
+                        listeners : {
+                            'save' : function() {
+                                this._cleanupVariants();
+                            },
+                            'delete' : function (tab, variant) {
+                                this._cleanupVariants();
+                                this.load();
+                            },
+                            scope : this
+                        }
+                    })
                 });
             }
-            this.relayEvents(form, ['cancel']);
-            this.add(form);
+            this.relayEvents(tabComponent, ['cancel']);
+            this.add(tabComponent);
         }
     },
 
@@ -236,78 +253,54 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
 
 });
 
-Hippo.ChannelManager.TemplateComposer.PlusForm = Ext.extend(Ext.FormPanel, {
-    mountId : null,
+Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
+
+    autoHeight : true,
+    autoScroll : true,
+    border : false,
+    defaults : {
+        anchor : '100%'
+    },
+    labelSeparator : '',
+    labelWidth : 100,
+    padding : 10,
+
     composerRestMountUrl : null,
-    resources : null,
     componentId : null,
-    locale : null,
 
     constructor : function (config) {
-        var variantIds = [], i;
         this.title = '<span style="font-size: 140%;">' + config.title + '</span>';
-        this.mountId = config.mountId;
         this.composerRestMountUrl = config.composerRestMountUrl;
-        this.resources = config.resources;
-        this.locale = config.locale;
         this.componentId = config.componentId;
         this.variantsUuid = config.variantsUuid;
 
-        for (i = 0; i < config.variants.length; i++) {
-            variantIds.push(config.variants[i].id);
-        };
-
         this.variantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
             composerRestMountUrl: this.composerRestMountUrl,
-            skipIds: variantIds,
+            skipIds: config.skipVariantIds,
             variantsUuid: this.variantsUuid
         });
 
-        Hippo.ChannelManager.TemplateComposer.PlusForm.superclass.constructor.call(this, config);
+        Hippo.ChannelManager.TemplateComposer.VariantAdder.superclass.constructor.call(this, config);
     },
 
     initComponent : function () {
-        var comboBox = new Ext.form.ComboBox({
-            store : this.variantsStore,
-            valueField : 'id',
-            displayField : 'name',
-            triggerAction : 'all'
-        });
+        Hippo.ChannelManager.TemplateComposer.VariantAdder.superclass.initComponent.apply(this, arguments);
+        this.addEvents('beforeactive', 'save');
+    },
 
-        Ext.apply(this, {
-            autoHeight : true,
-            border : false,
-            padding : 10,
-            autoScroll : true,
-            labelWidth : 100,
-            labelSeparator : '',
-            defaults : {
-                anchor : '100%'
+    getVariantsStore: function() {
+        return this.variantsStore;
+    },
+
+    addVariant: function(variant) {
+        Ext.Ajax.request({
+            method : 'POST',
+            url : this.composerRestMountUrl + '/' + this.componentId + './variant/' + variant + '?FORCE_CLIENT_HOST=true',
+            success : function () {
+                this.fireEvent('save', this, variant);
             },
-
-            items : [ comboBox ],
-
-            buttons : [
-                {
-                    text : this.resources['properties-panel-button-add-variant'],
-                    handler : function () {
-                        var variant = comboBox.getValue();
-                        Ext.Ajax.request({
-                            method : 'POST',
-                            url : this.composerRestMountUrl + '/' + this.componentId + './variant/' + variant + '?FORCE_CLIENT_HOST=true',
-                            success : function () {
-                                this.fireEvent('save', this, variant);
-                            },
-                            scope : this
-                        });
-                    },
-                    scope : this
-                }
-            ]
+            scope : this
         });
-        Hippo.ChannelManager.TemplateComposer.PlusForm.superclass.initComponent.apply(this, arguments);
-
-        this.addEvents('save');
     },
 
     load : function () {
@@ -319,20 +312,45 @@ Hippo.ChannelManager.TemplateComposer.PlusForm = Ext.extend(Ext.FormPanel, {
     }
 });
 
+Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder = Ext.extend(Hippo.ChannelManager.TemplateComposer.VariantAdder, {
+
+    initComponent: function () {
+        var comboBox = new Ext.form.ComboBox({
+            store : this.getVariantsStore(),
+            valueField : 'id',
+            displayField : 'name',
+            triggerAction : 'all'
+        });
+
+        this.items = [ comboBox ];
+        this.buttons = [
+            {
+                text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-add-variant'],
+                handler: function() {
+                    var variant = comboBox.getValue();
+                    this.addVariant(variant);
+                },
+                scope: this
+            }
+        ];
+
+        Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder.superclass.initComponent.apply(this, arguments);
+    }
+
+});
+Hippo.ExtWidgets.register('Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder', Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder);
+
 Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel, {
     mountId : null,
     variant : null,
     composerRestMountUrl : null,
-    resources : null,
     componentId : null,
     locale : null,
 
     constructor : function (config) {
         this.variant = config.variant;
-        this.title = config.variant;
         this.mountId = config.mountId;
         this.composerRestMountUrl = config.composerRestMountUrl;
-        this.resources = config.resources;
         this.locale = config.locale;
         this.componentId = config.componentId;
 
@@ -343,7 +361,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         var buttons = [];
         if (this.variant.id != 'default') {
             buttons.push({
-                text : this.resources['properties-panel-button-delete'],
+                text : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-delete'],
                 handler : function () {
                     Ext.Ajax.request({
                         method : 'POST',
@@ -359,13 +377,13 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             buttons.push('->');
         }
         this.saveButton = new Ext.Button({
-            text : this.resources['properties-panel-button-save'],
+            text : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
             handler : this._submitForm,
             scope : this
         });
         buttons.push(this.saveButton);
         buttons.push({
-            text : this.resources['properties-panel-button-cancel'],
+            text : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-cancel'],
             scope : this,
             handler : function () {
                 this.fireEvent('cancel');
@@ -392,11 +410,10 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     },
 
     _submitForm : function () {
-        var uncheckedValues = {}, items;
+        var uncheckedValues = {};
         this.fireEvent('save');
 
-        var items = this.getForm().items;
-        items.each(function(item) {
+        this.getForm().items.each(function(item) {
             if (item instanceof Ext.form.Checkbox) {
                 if (!item.checked) {
                     uncheckedValues[item.name] = 'off';
@@ -423,7 +440,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         self = this;
         createUrl = this.composerRestMountUrl + '/' + this.mountId + './create?FORCE_CLIENT_HOST=true';
         createDocumentWindow = new Ext.Window({
-            title : this.resources['create-new-document-window-title'],
+            title : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-window-title'],
             height : 150,
             width : 400,
             modal : true,
@@ -441,13 +458,13 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                     items : [
                         {
                             xtype : 'textfield',
-                            fieldLabel : this.resources['create-new-document-field-name'],
+                            fieldLabel : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-field-name'],
                             allowBlank : false
                         },
                         {
                             xtype : 'textfield',
                             disabled : true,
-                            fieldLabel : this.resources['create-new-document-field-location'],
+                            fieldLabel : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-field-location'],
                             value : options.docLocation
                         }
                     ]
@@ -456,7 +473,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             layout : 'fit',
             buttons : [
                 {
-                    text : this.resources['create-new-document-button'],
+                    text : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-button'],
                     handler : function () {
                         var createDocForm = Ext.getCmp('createDocumentForm').getForm();
                         createDocForm.submit();
@@ -474,9 +491,12 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                                 Ext.getCmp(options.comboId).setValue(options.docLocation + "/" + options.docName);
                             },
                             failure : function () {
-                                Hippo.Msg.alert(self.resources['create-new-document-message'], self.resources['create-new-document-failed'], function () {
-                                    Hippo.ChannelManager.TemplateComposer.Instance.initComposer();
-                                });
+                                Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-message'],
+                                        Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-failed'],
+                                        function() {
+                                            Hippo.ChannelManager.TemplateComposer.Instance.initComposer();
+                                        }
+                                );
                             }
                         });
 
@@ -484,10 +504,15 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 }
             ]
         });
-        createDocumentWindow.addButton({text : this.resources['create-new-document-button-cancel']}, function () {
-            this.hide();
-        }, createDocumentWindow);
-
+        createDocumentWindow.addButton(
+                {
+                    text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-button-cancel']
+                },
+                function() {
+                    this.hide();
+                },
+                createDocumentWindow
+        );
         createDocumentWindow.show();
     },
 
@@ -495,7 +520,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         var length = records.length, i, record, value, defaultValue;
         if (length == 0) {
             this.add({
-                html : "<div style='padding:5px' align='center'>" + this.resources['properties-panel-no-properties'] + "</div>",
+                html : "<div style='padding:5px' align='center'>" + Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-no-properties'] + "</div>",
                 xtype : "panel",
                 autoWidth : true,
                 layout : 'fit'
@@ -551,7 +576,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 bodyCfg : {
                     tag : 'div',
                     cls : 'create-document-link',
-                    html : this.resources['create-document-link-text'].format('<a href="#" id="combo' + i + '">&nbsp;', '&nbsp;</a>&nbsp;')
+                    html : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-document-link-text'].format('<a href="#" id="combo' + i + '">&nbsp;', '&nbsp;</a>&nbsp;')
                 },
                 border : false
 
@@ -641,15 +666,15 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     },
 
     _loadException : function (proxy, type, actions, options, response) {
-        var errorText = this.resources['properties-panel-load-exception-text'].format(actions);
+        var errorText = Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-load-exception-text'].format(actions);
         if (type == 'response') {
-            errorText += '\n' + this.resources['properties-panel-load-exception-response'].format(response.statusText, response.status, options.url);
+            errorText += '\n' + Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-load-exception-response'].format(response.statusText, response.status, options.url);
         }
 
         this.add({
             xtype : 'label',
             text : errorText,
-            fieldLabel : this.resources['properties-panel-error-field-label']
+            fieldLabel : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-error-field-label']
         });
     },
 
@@ -678,6 +703,38 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     }
 
 });
+Ext.reg('Hippo.ChannelManager.TemplateComposer.PropertiesForm', Hippo.ChannelManager.TemplateComposer.PropertiesForm);
+
+Hippo.ChannelManager.TemplateComposer.PropertiesEditor = Ext.extend(Ext.Panel, {
+
+    componentId: null,
+    variant: null,
+    propertiesForm: null,
+
+    constructor: function(config) {
+        Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.constructor.call(this, config);
+        this.componentId = config.componentId;
+        this.variant = config.variant;
+        this.propertiesForm = config.propertiesForm;
+    },
+
+    load: function() {
+        return this.propertiesForm.load();
+    }
+
+});
+
+Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor = Ext.extend(Hippo.ChannelManager.TemplateComposer.PropertiesEditor, {
+
+    constructor: function(config) {
+        Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor.superclass.constructor.call(this, Ext.apply(config, {
+            items: [ config.propertiesForm ],
+            layout: 'fit'
+        }));
+    }
+
+});
+Hippo.ExtWidgets.register('Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor', Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor);
 
 //FIXME: don't override Ext provided code; create subclass or patch instance
 //Add * to the required fields
