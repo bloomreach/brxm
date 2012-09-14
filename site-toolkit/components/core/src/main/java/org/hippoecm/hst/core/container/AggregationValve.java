@@ -431,6 +431,24 @@ public class AggregationValve extends AbstractValve {
         }
     }
 
+    protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
+                                        final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
+                                        final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
+
+        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
+            HstComponentWindow window = sortedComponentWindows[i];
+            if (!window.isVisible()) {
+                continue;
+            }
+
+            HstRequest request = requestMap.get(window);
+            if (isAsync(window, request)) {
+                continue;
+            }
+            HstResponse response = responseMap.get(window);
+            getComponentInvoker().invokeRender(requestContainerConfig, request, response);
+        }
+    }
 
     /**
      * returns <code>true</code> when the component window is marked as async. When the component is async
@@ -448,9 +466,7 @@ public class AggregationValve extends AbstractValve {
         if (request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() != null) {
             return false;
         }
-        if (window.getComponentInfo().isAsync()) {
-            return true;
-        }
+        // check if there is already an async parent.
         HstComponentWindow parent = window.getParentWindow();
         while (parent != null) {
             if (parent.getComponentInfo().isAsync()) {
@@ -459,26 +475,13 @@ public class AggregationValve extends AbstractValve {
             }
             parent = parent.getParentWindow();
         }
-        return false;
-    }
 
-    protected void processWindowsRender(final HstContainerConfig requestContainerConfig,
-            final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
-            final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
-
-        for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
-            HstComponentWindow window = sortedComponentWindows[i];
-            if (!window.isVisible()) {
-                continue;
-            }
-
-            HstRequest request = requestMap.get(window);
-            if (window.getComponentInfo().isAsync() && request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() == null) {
-                continue;
-            }
-            HstResponse response = responseMap.get(window);
-            getComponentInvoker().invokeRender(requestContainerConfig, request, response);
+        // check whether the component itself is asyn
+        if (window.getComponentInfo().isAsync()) {
+            return true;
         }
+
+        return false;
     }
 
     // TODO replace by json marshaller
