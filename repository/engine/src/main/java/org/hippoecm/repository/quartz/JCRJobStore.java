@@ -165,12 +165,12 @@ public class JCRJobStore implements JobStore {
                 if (jobName.startsWith("/")) {
                     jobNode = session.getRootNode().getNode(jobName.substring(1));
                 } else {
-                    jobNode = session.getNodeByUUID(jobName);
+                    jobNode = session.getNodeByIdentifier(jobName);
                 }
                 if(jobNode != null) {
                     Object o = new ObjectInputStream(jobNode.getProperty("hipposched:data").getStream()).readObject();
                     JobDetail job = (JobDetail) o;
-                    job.setName(jobNode.getUUID());
+                    job.setName(jobNode.getIdentifier());
                     return job;
                 }
             }
@@ -397,8 +397,8 @@ public class JCRJobStore implements JobStore {
                         }
                         Object o = new ObjectInputStream(triggerNode.getProperty("hipposched:data").getStream()).readObject();
                         Trigger trigger = (Trigger)o;
-                        trigger.setName(triggerNode.getUUID());
-                        trigger.setJobName(triggerNode.getParent().getParent().getUUID());
+                        trigger.setName(triggerNode.getIdentifier());
+                        trigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
                         triggerNode.getProperty("hipposched:nextFireTime").remove();
                         /* If saving the trigger node fails, this is most likely due to another node in
                          * a clustered installation picking up the trigger.  This will render the nextFireTime
@@ -443,7 +443,7 @@ public class JCRJobStore implements JobStore {
                     if (triggerName.startsWith("/")) {
                         triggerNode = session.getRootNode().getNode(triggerName.substring(1));
                     } else {
-                        triggerNode = session.getNodeByUUID(triggerName);
+                        triggerNode = session.getNodeByIdentifier(triggerName);
                     }
                 } catch (PathNotFoundException ex) {
                     log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
@@ -488,12 +488,12 @@ public class JCRJobStore implements JobStore {
                 if (jobName.startsWith("/")) {
                     jobNode = session.getRootNode().getNode(jobName.substring(1));
                 } else {
-                    jobNode = session.getNodeByUUID(jobName);
+                    jobNode = session.getNodeByIdentifier(jobName);
                 }
                 if (triggerName.startsWith("/")) {
                     triggerNode = session.getRootNode().getNode(triggerName.substring(1));
                 } else {
-                    triggerNode = session.getNodeByUUID(triggerName);
+                    triggerNode = session.getNodeByIdentifier(triggerName);
                 }
     
                 Date nextFire = trigger.getFireTimeAfter(new Date());
