@@ -200,7 +200,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                             'save' : function() {
                                 this._cleanupVariants();
                             },
-                            'delete' : function (tab, variant) {
+                            'delete' : function () {
                                 this._cleanupVariants();
                                 this.load();
                             },
@@ -238,7 +238,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
             var variantIds = [];
             this.allVariantsStore.each(function(record) {
                 variantIds.push(record.get('id'));
-            })
+            });
             Ext.Ajax.request({
                 method : 'POST',
                 url : this.composerRestMountUrl + '/' + this.componentId + './variants' + '?FORCE_CLIENT_HOST=true',
@@ -249,92 +249,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                 scope : this
             });
         }
-    }
-
-});
-
-Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
-
-    autoHeight : true,
-    autoScroll : true,
-    border : false,
-    defaults : {
-        anchor : '100%'
-    },
-    labelSeparator : '',
-    labelWidth : 100,
-    padding : 10,
-
-    composerRestMountUrl : null,
-    componentId : null,
-
-    constructor : function (config) {
-        this.title = '<span style="font-size: 140%;">' + config.title + '</span>';
-        this.composerRestMountUrl = config.composerRestMountUrl;
-        this.componentId = config.componentId;
-        this.variantsUuid = config.variantsUuid;
-
-        this.variantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
-            composerRestMountUrl: this.composerRestMountUrl,
-            skipIds: config.skipVariantIds,
-            variantsUuid: this.variantsUuid
-        });
-
-        Hippo.ChannelManager.TemplateComposer.VariantAdder.superclass.constructor.call(this, config);
-    },
-
-    initComponent : function () {
-        Hippo.ChannelManager.TemplateComposer.VariantAdder.superclass.initComponent.apply(this, arguments);
-        this.addEvents('beforeactive', 'save');
-    },
-
-    getVariantsStore: function() {
-        return this.variantsStore;
-    },
-
-    addVariant: function(variant) {
-        Ext.Ajax.request({
-            method : 'POST',
-            url : this.composerRestMountUrl + '/' + this.componentId + './variant/' + variant + '?FORCE_CLIENT_HOST=true',
-            success : function () {
-                this.fireEvent('save', this, variant);
-            },
-            scope : this
-        });
-    },
-
-    load : function () {
-        return new Hippo.Future(function (success, fail) {
-            this.variantsStore.on('load', success, {single : true});
-            this.variantsStore.on('exception', fail, {single : true});
-            this.variantsStore.load();
-        }.createDelegate(this));
-    }
-});
-
-Hippo.ChannelManager.TemplateComposer.PlainVariantAdder = Ext.extend(Hippo.ChannelManager.TemplateComposer.VariantAdder, {
-
-    initComponent: function () {
-        var comboBox = new Ext.form.ComboBox({
-            store : this.getVariantsStore(),
-            valueField : 'id',
-            displayField : 'name',
-            triggerAction : 'all'
-        });
-
-        this.items = [ comboBox ];
-        this.buttons = [
-            {
-                text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-add-variant'],
-                handler: function() {
-                    var variant = comboBox.getValue();
-                    this.addVariant(variant);
-                },
-                scope: this
-            }
-        ];
-
-        Hippo.ChannelManager.TemplateComposer.PlainVariantAdder.superclass.initComponent.apply(this, arguments);
     }
 
 });
@@ -435,8 +349,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
     },
 
     _createDocument : function (ev, target, options) {
-        var self, createUrl, createDocumentWindow;
-        self = this;
+        var createUrl, createDocumentWindow;
+
         createUrl = this.composerRestMountUrl + '/' + this.mountId + './create?FORCE_CLIENT_HOST=true';
         createDocumentWindow = new Ext.Window({
             title : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-new-document-window-title'],
@@ -515,7 +429,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         createDocumentWindow.show();
     },
 
-    _loadProperties : function (store, records, options) {
+    _loadProperties : function (store, records) {
         var length = records.length, i, record, value, defaultValue;
         if (length == 0) {
             this.add({
@@ -703,36 +617,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
 });
 Ext.reg('Hippo.ChannelManager.TemplateComposer.PropertiesForm', Hippo.ChannelManager.TemplateComposer.PropertiesForm);
-
-Hippo.ChannelManager.TemplateComposer.PropertiesEditor = Ext.extend(Ext.Panel, {
-
-    componentId: null,
-    variant: null,
-    propertiesForm: null,
-
-    constructor: function(config) {
-        Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.constructor.call(this, config);
-        this.componentId = config.componentId;
-        this.variant = config.variant;
-        this.propertiesForm = config.propertiesForm;
-    },
-
-    load: function() {
-        return this.propertiesForm.load();
-    }
-
-});
-
-Hippo.ChannelManager.TemplateComposer.PlainPropertiesEditor = Ext.extend(Hippo.ChannelManager.TemplateComposer.PropertiesEditor, {
-
-    constructor: function(config) {
-        Hippo.ChannelManager.TemplateComposer.PlainPropertiesEditor.superclass.constructor.call(this, Ext.apply(config, {
-            items: [ config.propertiesForm ],
-            layout: 'fit'
-        }));
-    }
-
-});
 
 //FIXME: don't override Ext provided code; create subclass or patch instance
 //Add * to the required fields

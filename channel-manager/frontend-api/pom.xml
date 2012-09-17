@@ -20,4 +20,51 @@
     </dependency>
   </dependencies>
 
+  <build>
+    <defaultGoal>package</defaultGoal>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>${basedir}/src/main/java</directory>
+        <includes>
+          <include>**/*.js</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>net.alchim31.maven</groupId>
+        <artifactId>yuicompressor-maven-plugin</artifactId>
+        <version>1.2</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compress</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <excludes>
+            <exclude>**/*.html</exclude>
+            <exclude>**/*.css</exclude>
+            <exclude>**/*.properties</exclude>
+          </excludes>
+          <aggregations>
+            <!-- template composer API bundle -->
+            <aggregation>
+              <insertNewLine>true</insertNewLine>
+              <includes>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/PropertiesEditor.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/PlainPropertiesEditor.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/VariantAdder.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/PlainVariantAdder.js</include>
+              </includes>
+              <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/template-composer-api-all.js</output>
+            </aggregation>
+          </aggregations>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 </project>
