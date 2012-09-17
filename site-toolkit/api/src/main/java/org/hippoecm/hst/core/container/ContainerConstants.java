@@ -17,33 +17,31 @@ package org.hippoecm.hst.core.container;
 
 /**
  * HstComponent container constants
- * 
+ *
  * @version $Id$
  */
 public interface ContainerConstants {
 
     /**
-     * The key used to bind the <code>HstRequest</code> to the underlying
-     * <code>HttpServletRequest</code>.
+     * The key used to bind the <code>HstRequest</code> to the underlying <code>HttpServletRequest</code>.
      */
     String HST_REQUEST = "org.hippoecm.hst.container.request";
 
     /**
-     * The key used to bind the <code>HstResponse</code> to the underlying
-     * <code>HttpServletRequest</code>.
+     * The key used to bind the <code>HstResponse</code> to the underlying <code>HttpServletRequest</code>.
      */
     String HST_RESPONSE = "org.hippoecm.hst.container.response";
-    
+
     /**
      * The attribute name used to set the request context object into the servlet request.
      */
     String HST_REQUEST_CONTEXT = "org.hippoecm.hst.core.request.HstRequestContext";
-    
+
     /**
      * Default Addon module descriptor paths, which can be comma separated multiple path values.
      */
     String DEFAULT_ADDON_MODULE_DESCRIPTOR_PATHS = "META-INF/hst-assembly/addon/module.xml";
-    
+
     /**
      * The reference namespace for container managed resource url.
      */
@@ -53,7 +51,7 @@ public interface ContainerConstants {
      * The key used to set forward path.
      */
     String HST_FORWARD_PATH_INFO = "org.hippoecm.hst.container.forward.path_info";
-    
+
     /**
      * The key to indicate HstFilter should "reset" itself from being done, allowing multiple invokations.
      */
@@ -63,16 +61,17 @@ public interface ContainerConstants {
      * The head element attribute name prefix used as a hint for container to aggregate.
      */
     String HEAD_ELEMENT_CONTRIBUTION_HINT_ATTRIBUTE_PREFIX = "org.hippoecm.hst.container.head.element.contribution.hint.";
-    
+
     /**
-     * The category key hint for head elements. This category can be used to filter head elements during writing head elements.
+     * The category key hint for head elements. This category can be used to filter head elements during writing head
+     * elements.
      */
     String HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE = HEAD_ELEMENT_CONTRIBUTION_HINT_ATTRIBUTE_PREFIX + "category";
-    
+
     /**
      * The parameter name for custom error handler class name in the root component configuration
-     */ 
-    String CUSTOM_ERROR_HANDLER_PARAM_NAME = "org.hippoecm.hst.core.container.custom.errorhandler";  
+     */
+    String CUSTOM_ERROR_HANDLER_PARAM_NAME = "org.hippoecm.hst.core.container.custom.errorhandler";
 
     /**
      * Subject session attribute name
@@ -83,69 +82,67 @@ public interface ContainerConstants {
      * attribute that has a value when the request URI is already decoded.
      */
     String IS_REQUEST_URI_DECODED = "org.hippoecm.hst.container.HstContainerRequest.requestURI.isDecoded";
-    
+
     /**
      * attribute that has a value when the request URI is already decoded.
      */
     String VIRTUALHOSTS_REQUEST_ATTR = "org.hippoecm.hst.configuration.hosting.VirtualHost.requestAttr";
-    
+
     /**
-     * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a container that doesn't support JACC.)
+     * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a
+     * container that doesn't support JACC.)
      */
-     String SUBJECT_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject.repo.creds";
-    
+    String SUBJECT_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject.repo.creds";
+
     /**
-     * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a container that doesn't support JACC.)
+     * Subject's repository credentials session attribute name (This one can be optionally and temporarily set in a
+     * container that doesn't support JACC.)
      */
     String CMS_SSO_REPO_CREDS_ATTR_NAME = "org.hippoecm.hst.security.servlet.subject.repo.creds";
-    
+
     /**
      * Preferred local request or session attribute name
      */
     String PREFERRED_LOCALE_ATTR_NAME = "org.hippoecm.hst.container.preferred.locale";
-    
+
     /**
      * The dispatch URI scheme attribute name
      */
     String DISPATCH_URI_SCHEME = "org.hippoecm.hst.core.container.HstComponentWindow.dispatch.uri.scheme";
-    
+
     String MOUNT_ALIAS_REST = "rest";
-    
+
     String MOUNT_ALIAS_SITE = "site";
-    
+
     String MOUNT_ALIAS_GALLERY = "gallery";
-    
+
     String MOUNT_ALIAS_ASSETS = "assets";
-    
+
     /**
      * 'composer_info' attr type name
      */
     String COMPOSER_MODE_ATTR_NAME = "org.hippoecm.hst.composer_info";
-    
+
     /**
      * The parameter name used in the request to store whether or not all URLs that are created must be fully qualified
      */
     String HST_REQUEST_USE_FULLY_QUALIFIED_URLS = "org.hippoecm.hst.container.request.fqu";
 
     /**
-     * The parameter name used in the request to store whether or not a different host than the one in the request needs to be used
+     * The parameter name used in the request to store whether or not a different host than the one in the request needs
+     * to be used
      */
-    String RENDERING_HOST = "org.hippoecm.hst.container.render_host"; 
+    String RENDERING_HOST = "org.hippoecm.hst.container.render_host";
 
-    /**
-     * The parameter/attribute name used to store the real_host 
-     */
-    String REAL_HOST = "org.hippoecm.hst.container.real_host"; 
- 
     /**
      * http session attribute to indicate a single sign on session is created through the cms
      */
     String CMS_SSO_AUTHENTICATED = "org.hippoecm.hst.container.sso_cms_authenticated";
 
     /**
-     * The attribute used on the request to indicate that the request is from a CMS context that also might need to 
-     * use the credentials from the cms (jcr session) user, for example a REST call that needs to modify the HST config
-     */ 
+     * The attribute used on the request to indicate that the request is from a CMS context that also might need to use
+     * the credentials from the cms (jcr session) user, for example a REST call that needs to modify the HST config
+     */
     String CMS_HOST_CONTEXT = "org.hippoecm.hst.container.sso_cms_context";
 
 
@@ -154,10 +151,10 @@ public interface ContainerConstants {
      * variant
      */
     String RENDER_VARIANT = "org.hippoecm.hst.container.render_variant";
-    
+
     /**
-     * The attribute used on the request to indicate that the request is from a cms context : This can be a REST call, or 
-     * a request for the preview website in a cms environment (host)
-     */ 
+     * The attribute used on the request to indicate that the request is from a cms context : This can be a REST call,
+     * or a request for the preview website in a cms environment (host)
+     */
     String REQUEST_COMES_FROM_CMS = "org.hippoecm.hst.container.request_comes_from_cms";
 }

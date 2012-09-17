@@ -346,7 +346,6 @@ public class HstFilter implements Filter {
                         String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
                         if (renderingHost != null) {
                             requestContext.setRenderHost(renderingHost);
-                            requestContext.setAttribute(ContainerConstants.REAL_HOST, HstRequestUtils.getFarthestRequestHost(req, false));
                             // check whether there is a SSO handshake already: If there is, we decorate the mount to a previewMount
                             HttpSession session = containerRequest.getSession(false);
                             if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
