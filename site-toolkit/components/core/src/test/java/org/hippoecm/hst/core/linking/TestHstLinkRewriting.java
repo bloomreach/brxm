@@ -595,7 +595,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         
         public HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(String hostAndPort, String requestURI, String queryString) throws Exception {
             HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
-            HstMutableRequestContext requestContext = (HstMutableRequestContext)rcc.create(false);
+            HstMutableRequestContext requestContext = rcc.create(false);
             HstContainerURL containerUrl = createContainerUrl(hostAndPort, requestURI, queryString);
             requestContext.setBaseURL(containerUrl);
             ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);
@@ -606,10 +606,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             requestContext.setSiteMapMatcher(siteMapMatcher);
             return requestContext;
         }
-        public HstContainerURL createContainerUrl(String hostAndPort, String requestURI) throws Exception {
-            return createContainerUrl(hostAndPort, requestURI, null);
-        }
-        
+
         public HstContainerURL createContainerUrl(String hostAndPort, String requestURI, String queryString) throws Exception {
             MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request = new MockHttpServletRequest();
