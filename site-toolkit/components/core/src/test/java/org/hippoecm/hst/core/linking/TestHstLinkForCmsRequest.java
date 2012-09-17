@@ -39,7 +39,6 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -89,12 +88,6 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
         this.hstURLFactory = getComponent(HstURLFactory.class.getName());
         this.objectConverter = getObjectConverter();
         this.linkCreator = getComponent(HstLinkCreator.class.getName());
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-
     }
 
     @Test

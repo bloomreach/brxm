@@ -16,9 +16,6 @@
 package org.hippoecm.hst.core.linking;
 
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,11 +39,13 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class TestHstLinkRewriting extends AbstractBeanTestCase {
 
@@ -59,23 +58,13 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         @Before
         public void setUp() throws Exception {
             super.setUp();
-
-            // Repository repo = getComponent(Repository.class.getName());
-            // Credentials cred= getComponent(Credentials.class.getName()+".default");
             this.hstManager = getComponent(HstManager.class.getName());
             this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
             this.hstURLFactory = getComponent(HstURLFactory.class.getName());
             this.objectConverter = getObjectConverter();
             this.linkCreator = getComponent(HstLinkCreator.class.getName());;
         }
-        
-        @After
-        public void tearDown() throws Exception {
-            super.tearDown();
-            
-        }
 
-        
         @Test
         public void testSimpleHstLinkForBean() throws Exception {
             HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost","/home");
