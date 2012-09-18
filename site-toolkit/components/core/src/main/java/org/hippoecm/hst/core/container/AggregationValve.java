@@ -617,7 +617,7 @@ public class AggregationValve extends AbstractValve {
     /**
      * Some utility methods to get obfuscated inline javascript for loading async pages
      */
-    private static final char RANDOM_CHAR1 = (char)('a' + new Random().nextInt(25));
+    private static final char RANDOM_CHAR1 = (char)('a' + new Random().nextInt(10));
     private static final char RANDOM_CHAR2 =  (char) (RANDOM_CHAR1 + 1);
     private static final char RANDOM_CHAR3 =  (char) (RANDOM_CHAR1 + 2);
     private static final String OBFUSCATED_ASYNC_VAR = String.valueOf(RANDOM_CHAR3) + AggregationValve.class.hashCode() + "Async";
