@@ -84,6 +84,12 @@ public class GenericHstComponent implements HstComponent {
                              throw new HstComponentException("Unable to set 404 on response after invalid resource path.", e);
                         }
                     }
+                } else {
+                    try {
+                        response.sendError(HstResponse.SC_NOT_FOUND);
+                    } catch (IOException e) {
+                        throw new HstComponentException("Unable to set 404 on response after invalid resource path.", e);
+                    }
                 }
             }
         }
