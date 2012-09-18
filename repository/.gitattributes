@@ -119,8 +119,10 @@ engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PhysicalSysViewSAXEv
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/PropInfo.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/jackrabbit/xml/Reference.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/ocm/ConnectionFactoryImpl.java -text
+engine/src/main/java/org/hippoecm/repository/quartz/AbstractJobStore.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/AbstractSchedulerInvocationModule.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/CronSchedulerInvocationModule.java -text
+engine/src/main/java/org/hippoecm/repository/quartz/WorkflowJobDetail.java -text
 engine/src/main/java/org/hippoecm/repository/query/lucene/AuthorizedOnlyIndexReader.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetFiltersQuery.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/FacetRangeQuery.java svneol=native#text/plain

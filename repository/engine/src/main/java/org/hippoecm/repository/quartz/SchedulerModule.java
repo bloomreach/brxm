@@ -28,10 +28,9 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SchedulerModule implements DaemonModule
-{
+public class SchedulerModule implements DaemonModule {
 
-    static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
+    private static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
 
     static Session session = null;
     static JCRScheduler scheduler = null;
@@ -53,11 +52,8 @@ public class SchedulerModule implements DaemonModule
             properties.put("org.quartz.threadPool.class","org.quartz.simpl.SimpleThreadPool");
             properties.put("org.quartz.threadPool.threadCount","2");
             properties.put("org.quartz.threadPool.threadPriority","5");
-            properties.put("org.quartz.jobStore.misfireThreshold","60000");
             properties.put("org.quartz.jobStore.class",JCRJobStore.class.getName());
-            properties.put("org.quartz.jobStore.useProperties","false");
             properties.put("org.quartz.jobStore.isClustered","true");
-            properties.put("org.quartz.jobStore.clusterCheckinInterval","20000");
             schedFactory = new SchedulerFactory(session);
             schedFactory.initialize(properties);
             scheduler = (JCRScheduler) schedFactory.getScheduler();

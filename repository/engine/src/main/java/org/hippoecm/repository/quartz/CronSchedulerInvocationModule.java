@@ -17,7 +17,6 @@ package org.hippoecm.repository.quartz;
 
 import java.text.ParseException;
 
-import org.quartz.CronExpression;
 import org.quartz.CronTrigger;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
@@ -30,19 +29,15 @@ public class CronSchedulerInvocationModule extends AbstractSchedulerInvocationMo
         this.cronExpression = cronExpression;
     }
 
-    public CronSchedulerInvocationModule(CronExpression cronExpression) {
-        this.cronExpression = cronExpression.getCronExpression();
-    }
-
-    protected Trigger createTrigger(String name) {
-        CronTrigger trigger = null;
+    @Override
+    protected Trigger createTrigger(String triggerName) {
         try {
-            trigger = new CronTrigger(name, null, cronExpression);
-        } catch (ParseException impossible) {
-            throw new IllegalStateException("Failed to create cron trigger with cron expression '" + cronExpression + "'", impossible);
+            final CronTrigger trigger = new CronTrigger(triggerName, null, cronExpression);
+            trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
+            return trigger;
+        } catch (ParseException e) {
+            throw new IllegalStateException("Failed to create cron trigger with cron expression '" + cronExpression + "'", e);
         }
-        trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
-        return trigger;
     }
 
 }

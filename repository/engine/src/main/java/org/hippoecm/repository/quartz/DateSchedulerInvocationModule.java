@@ -22,15 +22,17 @@ import org.quartz.Trigger;
 
 public class DateSchedulerInvocationModule extends AbstractSchedulerInvocationModule {
 
-    Date timestamp;
+    private final Date timestamp;
 
     public DateSchedulerInvocationModule(Date timestamp) {
         this.timestamp = timestamp;
     }
 
-    protected Trigger createTrigger(String name) {
-        SimpleTrigger trigger = new SimpleTrigger(name, null, timestamp);
+    @Override
+    protected Trigger createTrigger(String triggerName) {
+        final SimpleTrigger trigger = new SimpleTrigger(triggerName, null, timestamp);
         trigger.setMisfireInstruction(SimpleTrigger.MISFIRE_INSTRUCTION_FIRE_NOW);
         return trigger;
     }
+
 }

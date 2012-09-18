@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,113 +20,262 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
+import javax.jcr.lock.Lock;
+import javax.jcr.lock.LockException;
+import javax.jcr.lock.LockManager;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
+import javax.jcr.version.VersionManager;
 
+import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.jackrabbit.util.ISO8601;
 import org.quartz.JobDetail;
 import org.quartz.JobPersistenceException;
-import org.quartz.ObjectAlreadyExistsException;
 import org.quartz.SchedulerConfigException;
-import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.core.SchedulingContext;
 import org.quartz.spi.ClassLoadHelper;
-import org.quartz.spi.JobStore;
 import org.quartz.spi.SchedulerSignaler;
 import org.quartz.spi.TriggerFiredBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JCRJobStore implements JobStore {
+public class JCRJobStore extends AbstractJobStore {
 
-    static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
+    private static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
+
+    private static final String HIPPOSCHED_DATA = "hipposched:data";
+    private static final String HIPPOSCHED_FIRETIME = "hipposched:fireTime";
+    private static final String HIPPOSCHED_NEXTFIRETIME = "hipposched:nextFireTime";
+    private static final String HIPPOSCHED_TRIGGERS = "hipposched:triggers";
+    private static final String HIPPOSCHED_TRIGGER = "hipposched:trigger";
+
+    private static final long TWO_MINUTES = 60 * 2;
 
     private boolean clustered = false;
-    private String clusteredInstanceName = null;
-    private String clusteredInstanceId = null;
 
+    @Override
     public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler signaler) throws SchedulerConfigException {
         signaler.signalSchedulingChange(1000);
     }
 
-    public void setUseProperties(boolean flag) {
-        // FIXME
-    }
-    public void setClusterCheckinInterval(long interval) {
-        // FIXME
-    }
-    public void setIsClustered(boolean flag) {
-        this.clustered = flag;
-    }
-    public void setMisfireThreshold(long threshold) {
-        // FIXME
-    }
-
-    public void schedulerStarted() throws SchedulerException {
-    }
-
-    public void shutdown() {
-    }
-
-    public boolean supportsPersistence() {
-        return true;
-    }
-
-    public long getEstimatedTimeToReleaseAndAcquireTrigger() {
-        return 0;  // FIXME
-    }
-
+    @Override
     public boolean isClustered() {
-        return this.clustered;
+        return clustered;
+    }
+
+    public void setIsClustered(boolean flag) {
+        clustered = flag;
     }
 
     /**
      * Store a job as a JCR node.  Invoked with the scheduler context of the invoking session.
      */
-    public void storeJobAndTrigger(SchedulingContext ctxt, JobDetail newJob, Trigger newTrigger)
-      throws ObjectAlreadyExistsException, JobPersistenceException {
-        if (log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        Session session = ((JCRSchedulingContext)ctxt).getSession();
+    @Override
+    public void storeJobAndTrigger(SchedulingContext ctxt, JobDetail newJob, Trigger newTrigger) throws JobPersistenceException {
+        final WorkflowJobDetail workflowJobDetail = (WorkflowJobDetail) newJob;
+        final Session session = getSession(ctxt);
         synchronized(session) {
             try {
-                Node jobNode = session.getRootNode().getNode(newJob.getName().substring(1));
-                jobNode.setProperty("hipposched:data",new ByteArrayInputStream(objectToBytes(newJob)));
-                jobNode.setProperty("hippo:document",(String) newJob.getJobDataMap().get("document"));
-                if(!jobNode.hasNode("hipposched:triggers")) {
-                    jobNode.addNode("hipposched:triggers","hipposched:triggers");
+                final Node jobRequestNode = session.getNodeByIdentifier(workflowJobDetail.getJobRequestIdentifier());
+                jobRequestNode.setProperty(HIPPOSCHED_DATA, createBinaryValueFromObject(session, newJob));
+                jobRequestNode.setProperty("hippo:document", workflowJobDetail.getSubjectIdentifier());
+                Node triggersNode;
+                if(jobRequestNode.hasNode(HIPPOSCHED_TRIGGERS)) {
+                    triggersNode = jobRequestNode.getNode(HIPPOSCHED_TRIGGERS);
+                } else {
+                    triggersNode = jobRequestNode.addNode(HIPPOSCHED_TRIGGERS,HIPPOSCHED_TRIGGERS);
                 }
-                String triggerRelPath = newTrigger.getName().substring(newJob.getName().length()+1);
-                Node triggerNode = jobNode.getNode("hipposched:triggers").addNode(triggerRelPath, "hipposched:trigger");
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(newTrigger.getNextFireTime());
-                triggerNode.setProperty("hipposched:nextFireTime", cal);
-                triggerNode.setProperty("hipposched:fireTime", cal);
-                triggerNode.setProperty("hipposched:data", new ByteArrayInputStream(objectToBytes(newTrigger)));
-                jobNode.getParent().save();
+                final String triggerName = newTrigger.getName().substring(jobRequestNode.getPath().length()+1);
+                final Node triggerNode = triggersNode.addNode(triggerName, HIPPOSCHED_TRIGGER);
+                triggerNode.addMixin("mix:lockable");
+                final Calendar fireTime = getCalendarInstance(newTrigger.getNextFireTime());
+                triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTime);
+                triggerNode.setProperty(HIPPOSCHED_FIRETIME, fireTime);
+                triggerNode.setProperty(HIPPOSCHED_DATA, createBinaryValueFromObject(session, newTrigger));
+                session.save();
             } catch (RepositoryException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                throw new JobPersistenceException("Failure storing job and trigger", ex);
+                refreshSession(session);
+                final String message = "Failed to store job and trigger";
+                log.error(message, ex);
+                throw new JobPersistenceException(message, ex);
             }
         }
     }
 
-    private byte[] objectToBytes(Object o) throws RepositoryException {
+    @Override
+    public JobDetail retrieveJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
+        final Session session = getSession(ctxt);
+        synchronized (session) {
+            try {
+                final Node jobNode = getNodeByPathOrIdentifier(session, jobName);
+                final Value jobDataValue = jobNode.getProperty(HIPPOSCHED_DATA).getValue();
+                final JobDetail job = (JobDetail) createObjectFromBinaryValue(jobDataValue);
+                job.setName(jobNode.getIdentifier());
+                return job;
+            } catch(RepositoryException ex) {
+                refreshSession(session);
+                final String message = "Failed to retrieve job";
+                log.error(message, ex);
+                throw new JobPersistenceException(message, ex);
+            } catch(IOException ex) {
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                throw new JobPersistenceException("data format while retrieving job", ex);
+            } catch(ClassNotFoundException ex) {
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                throw new JobPersistenceException("cannot recreate job", ex);
+            }
+        }
+    }
+
+    @Override
+    public Trigger acquireNextTrigger(SchedulingContext ctxt, long noLaterThan) throws JobPersistenceException {
+        final Session session = getSession(ctxt);
+        synchronized (session) {
+            try {
+                for(final Node triggerNode : getPendingTriggers(session, noLaterThan)) {
+                    if(triggerNode != null) {
+                        if (lock(session, triggerNode.getPath())) {
+                            ensureIsCheckedOut(triggerNode);
+                            Trigger trigger = (Trigger) createObjectFromBinaryValue(triggerNode.getProperty(HIPPOSCHED_DATA).getValue());
+                            trigger.setName(triggerNode.getIdentifier());
+                            trigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
+                            triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
+                            session.save();
+                            return trigger;
+                        }
+                    }
+                }
+            } catch(RepositoryException ex) {
+                refreshSession(session);
+                final String message = "Failed to acquire next trigger";
+                log.error(message, ex);
+                throw new JobPersistenceException(message, ex);
+            } catch(IOException ex) {
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                throw new JobPersistenceException("data format exception while acquiring next trigger", ex);
+            } catch(ClassNotFoundException ex) {
+                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+                throw new JobPersistenceException("cannot recreate trigger", ex);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public void releaseAcquiredTrigger(SchedulingContext ctxt, Trigger trigger) throws JobPersistenceException {
+        final Session session = getSession(ctxt);
+        synchronized (session) {
+            try {
+                final Node triggerNode = getNodeByPathOrIdentifier(session, trigger.getName());
+                triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, triggerNode.getProperty(HIPPOSCHED_FIRETIME).getValue());
+                session.save();
+                unlock(session, triggerNode.getPath());
+            } catch (PathNotFoundException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            } catch (ItemNotFoundException ex) {
+                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            } catch(RepositoryException ex) {
+                refreshSession(session);
+                final String message = "Failed to release acquired trigger";
+                log.error(message, ex);
+                throw new JobPersistenceException(message, ex);
+            }
+        }
+    }
+
+    @Override
+    public TriggerFiredBundle triggerFired(SchedulingContext ctxt, Trigger trigger) throws JobPersistenceException {
+        return new TriggerFiredBundle(retrieveJob(ctxt, trigger.getJobName(), trigger.getJobGroup()),
+                                      trigger, null, false,
+                                      trigger.getPreviousFireTime(), trigger.getPreviousFireTime(),
+                                      trigger.getPreviousFireTime(), trigger.getNextFireTime());
+    }
+
+    @Override
+    public void triggeredJobComplete(SchedulingContext ctxt, Trigger trigger, JobDetail jobDetail, int triggerInstCode) throws JobPersistenceException {
+        final Session session = getSession(ctxt);
+        synchronized (session) {
+            try {
+                final Node jobNode = getNodeByPathOrIdentifier(session, jobDetail.getName());
+                final Node triggerNode = getNodeByPathOrIdentifier(session, trigger.getName());
+    
+                final Date nextFire = trigger.getFireTimeAfter(new Date());
+                if(nextFire != null) {
+                    ensureIsCheckedOut(triggerNode);
+                    final Calendar fireTime = getCalendarInstance(nextFire);
+                    triggerNode.setProperty(HIPPOSCHED_FIRETIME, fireTime);
+                    triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTime);
+                    session.save();
+                    unlock(session, triggerNode.getPath());
+                } else {
+                    if(jobNode != null) {
+                        ensureIsCheckedOut(jobNode.getParent());
+                        jobNode.remove();
+                        session.save();
+                    }
+                }
+            } catch(PathNotFoundException ex) {
+                log.warn("Unable to find job node to be completed for trigger path '" + trigger.getName() + "'");
+            } catch(ItemNotFoundException ex) {
+                log.warn("Unable to find job node to be completed for trigger uuid '" + trigger.getName() + "'");
+            } catch(RepositoryException ex) {
+                refreshSession(session);
+                final String message = "Failed to complete triggered job";
+                log.error(message, ex);
+                throw new JobPersistenceException(message, ex);
+            }
+        }
+    }
+
+
+    private static Session getSession(SchedulingContext ctxt) {
+        Session session;
+        if(ctxt instanceof JCRSchedulingContext) {
+            session = ((JCRSchedulingContext)ctxt).getSession();
+        } else {
+            session = SchedulerModule.session;
+        }
+        return session;
+    }
+
+    private static void refreshSession(Session session) {
+        try {
+            session.refresh(false);
+        } catch (RepositoryException e) {
+            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+        }
+    }
+
+    private static void ensureIsCheckedOut(Node node) throws RepositoryException {
+        if (node.isNodeType("mix:versionable") && !node.isCheckedOut()) {
+            final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+            versionManager.checkout(node.getPath());
+        }
+    }
+
+    private static Value createBinaryValueFromObject(Session session, Object object) throws RepositoryException {
+        final ValueFactory valueFactory = session.getValueFactory();
+        return valueFactory.createValue(valueFactory.createBinary(new ByteArrayInputStream(objectToBytes(object))));
+    }
+
+    private static Object createObjectFromBinaryValue(final Value value) throws RepositoryException, IOException, ClassNotFoundException {
+        return new ObjectInputStream(value.getBinary().getStream()).readObject();
+    }
+
+    private static byte[] objectToBytes(Object o) throws RepositoryException {
         try {
             ByteArrayOutputStream store = new ByteArrayOutputStream();
             ObjectOutputStream ostream = new ObjectOutputStream(store);
@@ -138,410 +287,82 @@ public class JCRJobStore implements JobStore {
         }
     }
 
-    public void storeJob(SchedulingContext ctxt, JobDetail newJob, boolean replaceExisting)
-      throws ObjectAlreadyExistsException, JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
+    private static Node getNodeByPathOrIdentifier(Session session, String pathOrIdentifier) throws RepositoryException {
+        if (pathOrIdentifier.startsWith("/")) {
+            return session.getNode(pathOrIdentifier);
         }
+        return session.getNodeByIdentifier(pathOrIdentifier);
     }
 
-    public boolean removeJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return false;
+    private static Calendar getCalendarInstance(Date date) {
+        final Calendar result = Calendar.getInstance();
+        result.setTime(date);
+        return result;
     }
 
-    public JobDetail retrieveJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-       if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        try {
-            Session session = getSession(ctxt);
-            synchronized (session) {
-                session.refresh(false);
+    private static NodeIterable getPendingTriggers(Session session, long noLaterThan) throws RepositoryException {
+        final Calendar cal = getCalendarInstance(new Date(noLaterThan));
+        final QueryManager qMgr = session.getWorkspace().getQueryManager();
+        final Query query = qMgr.createQuery(
+                "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime <= TIMESTAMP '"
+                        + ISO8601.format(cal) + "' ORDER BY hipposched:nextFireTime", Query.SQL);
+        final QueryResult result = query.execute();
+        return new NodeIterable(result.getNodes());
+    }
 
-                Node jobNode = null;
-                if (jobName.startsWith("/")) {
-                    jobNode = session.getRootNode().getNode(jobName.substring(1));
-                } else {
-                    jobNode = session.getNodeByIdentifier(jobName);
-                }
-                if(jobNode != null) {
-                    Object o = new ObjectInputStream(jobNode.getProperty("hipposched:data").getStream()).readObject();
-                    JobDetail job = (JobDetail) o;
-                    job.setName(jobNode.getIdentifier());
-                    return job;
-                }
+    private static boolean lock(Session session, String nodePath) throws RepositoryException {
+        log.debug("Trying to obtain lock on " + nodePath);
+        final LockManager lockManager = session.getWorkspace().getLockManager();
+        if (!lockManager.isLocked(nodePath)) {
+            try {
+                ensureIsLockable(session, nodePath);
+                lockManager.lock(nodePath, false, false, TWO_MINUTES, getClusterNodeId(session));
+                log.debug("Lock successfully obtained on " + nodePath);
+                return true;
+            } catch (LockException e) {
+                // happens when other cluster node beat us to it
+                log.debug("Failed to set lock on "  + nodePath +  ": " + e.getMessage());
             }
-        } catch(RepositoryException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("error while retrieving job", ex);
-        } catch(IOException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("data format while retrieving job", ex);
-        } catch(ClassNotFoundException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("cannot recreate job", ex);
-        }
-        return null;
-    }
-
-    public void storeTrigger(SchedulingContext ctxt, Trigger newTrigger, boolean replaceExisting)
-      throws ObjectAlreadyExistsException, JobPersistenceException {
-       if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public boolean removeTrigger(SchedulingContext ctxt, String triggerName, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return false;
-    }
-
-    public boolean replaceTrigger(SchedulingContext ctxt, String triggerName, String groupName, Trigger newTrigger)
-      throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return false;
-    }
-
-    public Trigger retrieveTrigger(SchedulingContext ctxt, String triggerName, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return null;
-    }
-
-    public void storeCalendar(SchedulingContext ctxt, String name, org.quartz.Calendar calendar, boolean replaceExisting,
-                              boolean updateTriggers) throws ObjectAlreadyExistsException, JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public boolean removeCalendar(SchedulingContext ctxt, String calName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return false;
-    }
-
-    public org.quartz.Calendar retrieveCalendar(SchedulingContext ctxt, String calName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return null;
-    }
-
-    public int getNumberOfJobs(SchedulingContext ctxt) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return 0;
-    }
-
-    public int getNumberOfTriggers(SchedulingContext ctxt) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return 0;
-    }
-
-    public int getNumberOfCalendars(SchedulingContext ctxt) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return 0;
-    }
-
-    public String[] getJobNames(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return new String[0];
-    }
-
-    public String[] getTriggerNames(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return new String[0];
-    }
-
-    public String[] getJobGroupNames(SchedulingContext ctxt) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return new String[0];
-    }
-
-    public String[] getTriggerGroupNames(SchedulingContext ctxt) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return new String[0];
-    }
-
-    public String[] getCalendarNames(SchedulingContext ctxt) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return new String[0];
-    }
-
-    public Trigger[] getTriggersForJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return new Trigger[0];
-    }
-
-    public int getTriggerState(SchedulingContext ctxt, String triggerName, String triggerGroup) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return 0;
-    }
-
-    public void pauseTrigger(SchedulingContext ctxt, String triggerName, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public void pauseTriggerGroup(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public void pauseJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public void pauseJobGroup(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public void resumeTrigger(SchedulingContext ctxt, String triggerName, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public void resumeTriggerGroup(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public Set getPausedTriggerGroups(SchedulingContext ctxt) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return new HashSet();
-    }
-
-    public void resumeJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public void resumeJobGroup(SchedulingContext ctxt, String groupName) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public void pauseAll(SchedulingContext ctxt) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public void resumeAll(SchedulingContext ctxt) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-    }
-
-    public Trigger acquireNextTrigger(SchedulingContext ctxt, long noLaterThan) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("acquireNextTrigger({})",noLaterThan);
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date(noLaterThan));
-        try {
-            Session session = getSession(ctxt);
-            synchronized (session) {
-                session.refresh(false);
-                QueryManager qMgr = session.getWorkspace().getQueryManager();
-                Query query = qMgr.createQuery(
-                        "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime <= TIMESTAMP '"
-                                + ISO8601.format(cal) + "' ORDER BY hipposched:nextFireTime", Query.SQL);
-                QueryResult result = query.execute();
-                for(NodeIterator iter = result.getNodes(); iter.hasNext(); ) {
-                    Node triggerNode = iter.nextNode();
-                    if(triggerNode != null && triggerNode.hasProperty("hipposched:nextFireTime")) {
-                        if (triggerNode.isNodeType("mix:versionable") && !triggerNode.isCheckedOut()) {
-                            triggerNode.checkout();
-                        }
-                        Object o = new ObjectInputStream(triggerNode.getProperty("hipposched:data").getStream()).readObject();
-                        Trigger trigger = (Trigger)o;
-                        trigger.setName(triggerNode.getIdentifier());
-                        trigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
-                        triggerNode.getProperty("hipposched:nextFireTime").remove();
-                        /* If saving the trigger node fails, this is most likely due to another node in
-                         * a clustered installation picking up the trigger.  This will render the nextFireTime
-                         * to be already removed.  In such a case, it is proper to just proceed to the next
-                         * possible trigger in the query.
-                         */
-                        try {
-                            session.save();
-                            return (Trigger)o;
-                        } catch(RepositoryException ex) {
-                            session.refresh(false);
-                        }
-                    } else {
-                        triggerNode = null;
-                    }
-                }
-            }
-        } catch(RepositoryException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("error acquiring next trigger", ex);
-        } catch(IOException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("data format exception while acquiring next trigger", ex);
-        } catch(ClassNotFoundException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("cannot recreate trigger", ex);
-        }
-        return null;
-    }
-
-    public void releaseAcquiredTrigger(SchedulingContext ctxt, Trigger trigger) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        String triggerName = trigger.getName();
-        Node triggerNode;
-        try {
-            Session session = getSession(ctxt);
-            synchronized (session) {
-                session.refresh(false);
-                try {
-                    if (triggerName.startsWith("/")) {
-                        triggerNode = session.getRootNode().getNode(triggerName.substring(1));
-                    } else {
-                        triggerNode = session.getNodeByIdentifier(triggerName);
-                    }
-                } catch (PathNotFoundException ex) {
-                    log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                    return;
-                } catch (ItemNotFoundException ex) {
-                    log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                    return;
-                }
-                triggerNode.setProperty("hipposched:nextFireTime", triggerNode.getProperty("hipposched:fireTime").getValue());
-                triggerNode.save();
-            }
-        } catch(RepositoryException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("error releasing acquired trigger", ex);
-        }
-    }
-
-    public TriggerFiredBundle triggerFired(SchedulingContext ctxt, Trigger trigger) throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        return new TriggerFiredBundle(retrieveJob(ctxt, trigger.getJobName(), trigger.getJobGroup()),
-                                      trigger, null, false,
-                                      trigger.getPreviousFireTime(), trigger.getPreviousFireTime(),
-                                      trigger.getPreviousFireTime(), trigger.getNextFireTime());
-    }
-
-    public void triggeredJobComplete(SchedulingContext ctxt, Trigger trigger, JobDetail jobDetail, int triggerInstCode)
-      throws JobPersistenceException {
-        if(log.isDebugEnabled()) {
-            log.trace("trace");
-        }
-        try {
-            Session session = getSession(ctxt);
-            synchronized (session) {
-                session.refresh(false);
-
-                String jobName = jobDetail.getName();
-                String triggerName = trigger.getName();
-                Node jobNode;
-                Node triggerNode;
-                if (jobName.startsWith("/")) {
-                    jobNode = session.getRootNode().getNode(jobName.substring(1));
-                } else {
-                    jobNode = session.getNodeByIdentifier(jobName);
-                }
-                if (triggerName.startsWith("/")) {
-                    triggerNode = session.getRootNode().getNode(triggerName.substring(1));
-                } else {
-                    triggerNode = session.getNodeByIdentifier(triggerName);
-                }
-    
-                Date nextFire = trigger.getFireTimeAfter(new Date());
-                if(nextFire != null) {
-                    Calendar cal = Calendar.getInstance();
-                    cal.setTime(nextFire);
-                    if(triggerNode.isNodeType("mix:versionable") && !triggerNode.isCheckedOut()) {
-                        triggerNode.checkout();
-                    }
-                    triggerNode.setProperty("hipposched:nextFireTime", cal);
-                    triggerNode.setProperty("hipposched:fireTime", cal);
-                    triggerNode.save();
-                } else {
-                    if(jobNode != null) {
-                        Node handle = jobNode.getParent();
-                        if(handle.isNodeType("mix:versionable") && !handle.isCheckedOut()) {
-                            handle.checkout();
-                        }
-                        jobNode.remove();
-                        handle.save();
-                    }
-                }
-            }
-        } catch(PathNotFoundException ex) {
-            log.warn("Unable to find job node to be completed for trigger path '" + trigger.getName() + "'");
-        } catch(ItemNotFoundException ex) {
-            log.warn("Unable to find job node to be completed for trigger uuid '" + trigger.getName() + "'");
-        } catch(RepositoryException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-            throw new JobPersistenceException("error while marking job completed", ex);
-        }
-    }
-
-    public void setInstanceId(String id) {
-        clusteredInstanceId = id;
-    }
-
-    public void setInstanceName(String name) {
-        clusteredInstanceName = name;
-    }
-
-    private Session getSession(SchedulingContext ctxt) throws RepositoryException {
-        Session session;
-        if(ctxt instanceof JCRSchedulingContext) {
-            session = ((JCRSchedulingContext)ctxt).getSession();
         } else {
-            session = SchedulerModule.session;
+            log.debug("Already locked " + nodePath);
         }
-        return session;
+        return false;
+    }
+
+    private static void unlock(Session session, String nodePath) throws RepositoryException {
+        log.debug("Trying to release lock on " + nodePath);
+        try {
+            final LockManager lockManager = session.getWorkspace().getLockManager();
+            if (lockManager.isLocked(nodePath)) {
+                final Lock lock = lockManager.getLock(nodePath);
+                if (lock.isLockOwningSession()) {
+                    lockManager.unlock(nodePath);
+                    log.debug("Lock successfully released on " + nodePath);
+                } else {
+                    log.debug("We don't own the lock on " + nodePath);
+                }
+            } else {
+                log.debug("Not locked " + nodePath);
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to release lock on " + nodePath, e);
+        }
+
+    }
+
+    private static void ensureIsLockable(Session session, String nodePath) throws RepositoryException {
+        final Node node = session.getNode(nodePath);
+        if (!node.isNodeType("mix:lockable")) {
+            node.addMixin("mix:lockable");
+        }
+        session.save();
+    }
+
+    private static String getClusterNodeId(Session session) {
+        String clusteNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
+        if (clusteNodeId == null) {
+            clusteNodeId = "default";
+        }
+        return clusteNodeId;
     }
 }
