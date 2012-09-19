@@ -45,7 +45,11 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
     
     public ComponentConfigurationImpl(HstComponentConfiguration compConfig) {
         this.componentConfiguration = compConfig;
-        this.parameterNames = Collections.unmodifiableList(new ArrayList<String>(componentConfiguration.getParameters().keySet()));
+        if (componentConfiguration.getParameters() == null) {
+            this.parameterNames = Collections.emptyList();
+        } else {
+            this.parameterNames = Collections.unmodifiableList(new ArrayList<String>(componentConfiguration.getParameters().keySet()));
+        }
     }
 
     public List<String> getParameterNames() {
