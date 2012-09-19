@@ -15,8 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
+
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,44 +37,54 @@ public class ResourceServingValve extends AbstractValve {
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         ServletRequest servletRequest = context.getServletRequest();
-        ServletResponse servletResponse = context.getServletResponse();
+        HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
 
         if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() != null) {
             HstContainerURL baseURL = requestContext.getBaseURL();
             String resourceWindowRef = baseURL.getResourceWindowReferenceNamespace();
             HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), resourceWindowRef);
-            
-            if (window != null) {
-                HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RESOURCE_PHASE);
-                HstResponse response = new HstResourceResponseImpl((HttpServletResponse) servletResponse, window);
-                
-                HstComponentInvoker invoker = getComponentInvoker();
-                
-                invoker.invokeBeforeServeResource(context.getRequestContainerConfig(), request, response);
-                
-                // page error handling...
-                PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
-                if (pageErrors != null) {
-                    PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
-                    if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
-                        context.invokeNext();
-                        return;
-                    }
+
+            if (window == null) {
+                log.warn("Illegal request for resource URL found because there is no component for id '{}' for matched " +
+                        "sitemap item '{}'. Set 404 on response.", resourceWindowRef, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
+                try {
+                    servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+                } catch (IOException e) {
+                    throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
                 }
-                
-                invoker.invokeServeResource(context.getRequestContainerConfig(), request, response);
-                
-                // page error handling...
-                pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
-                if (pageErrors != null) {
-                    PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
-                    if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
-                        context.invokeNext();
-                        return;
-                    }
+                return;
+            }
+
+            HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RESOURCE_PHASE);
+            HstResponse response = new HstResourceResponseImpl(servletResponse, window);
+
+            HstComponentInvoker invoker = getComponentInvoker();
+
+            invoker.invokeBeforeServeResource(context.getRequestContainerConfig(), request, response);
+
+            // page error handling...
+            PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
+            if (pageErrors != null) {
+                PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
+                if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
+                    context.invokeNext();
+                    return;
                 }
             }
+
+            invoker.invokeServeResource(context.getRequestContainerConfig(), request, response);
+
+            // page error handling...
+            pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
+            if (pageErrors != null) {
+                PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
+                if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
+                    context.invokeNext();
+                    return;
+                }
+            }
+
         }
         
         // continue

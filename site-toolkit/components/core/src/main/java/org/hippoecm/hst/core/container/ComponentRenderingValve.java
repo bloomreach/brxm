@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -30,6 +34,18 @@ public class ComponentRenderingValve extends AbstractValve {
         if (componentRenderingWindowReferenceNamespace != null) {
 
             HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), componentRenderingWindowReferenceNamespace);
+
+            if (window == null) {
+                log.warn("Illegal request for componen rendering URL found because there is no component for id '{}' for matched " +
+                        "sitemap item '{}'. Set 404 on response.", componentRenderingWindowReferenceNamespace, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
+                try {
+                    context.getServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+                } catch (IOException e) {
+                    throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
+                }
+                return;
+            }
+
             if(window.getComponentInfo().isStandalone()) {
                 // set the current window as the root window because the backing componentInfo is standalone
                 context.setRootComponentWindow(window);
