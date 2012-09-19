@@ -72,25 +72,20 @@ public class GenericHstComponent implements HstComponent {
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
         if (componentConfig.getServeResourcePath() == null) {
             String resourceID = request.getResourceID();
-
-            if (resourceID != null && !resourceID.equals("")) {
-                if (request.getRequestContext().getContainerConfiguration().getBoolean(RESOURCE_PATH_BY_RESOURCE_ID, false)) {
-                    if (resourceID.endsWith(".jsp") || resourceID.endsWith(".ftl")) {
-                        response.setServeResourcePath(resourceID);
-                    } else {
-                        try {
+            try {
+                if (resourceID != null && !resourceID.equals("")) {
+                    if (request.getRequestContext().getContainerConfiguration().getBoolean(RESOURCE_PATH_BY_RESOURCE_ID, false)) {
+                        if (resourceID.endsWith(".jsp") || resourceID.endsWith(".ftl")) {
+                            response.setServeResourcePath(resourceID);
+                        } else {
                             response.sendError(HstResponse.SC_NOT_FOUND);
-                        } catch (IOException e) {
-                             throw new HstComponentException("Unable to set 404 on response after invalid resource path.", e);
                         }
-                    }
-                } else {
-                    try {
+                    } else {
                         response.sendError(HstResponse.SC_NOT_FOUND);
-                    } catch (IOException e) {
-                        throw new HstComponentException("Unable to set 404 on response after invalid resource path.", e);
                     }
                 }
+            } catch (IOException e) {
+                throw new HstComponentException("Unable to set 404 on response after invalid resource path.", e);
             }
         }
     }
