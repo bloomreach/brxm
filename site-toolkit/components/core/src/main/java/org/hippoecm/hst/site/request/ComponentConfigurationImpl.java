@@ -16,6 +16,8 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,14 +40,16 @@ public class ComponentConfigurationImpl implements ComponentConfiguration {
 
     private final static Logger log = LoggerFactory.getLogger(ComponentConfigurationImpl.class);
     
-    public HstComponentConfiguration componentConfiguration;
+    private final HstComponentConfiguration componentConfiguration;
+    private final List<String> parameterNames;
     
     public ComponentConfigurationImpl(HstComponentConfiguration compConfig) {
         this.componentConfiguration = compConfig;
+        this.parameterNames = Collections.unmodifiableList(new ArrayList<String>(componentConfiguration.getParameters().keySet()));
     }
 
     public List<String> getParameterNames() {
-        return new ArrayList<String>(componentConfiguration.getParameters().keySet());
+        return parameterNames;
     }
     
     public Map<String,String> getParameters(ResolvedSiteMapItem hstResolvedSiteMapItem) {
