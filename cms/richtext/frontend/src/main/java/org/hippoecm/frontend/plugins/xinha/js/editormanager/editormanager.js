@@ -567,27 +567,6 @@ if (!YAHOO.hippo.EditorManager) {
                     }
                 }
 
-                //fix for CMS7-6274: Xinha IE JS error: object doesn't support property or method 'pasteHTML'
-                //If an image is selected, createRange returns a controlRangeCollection that does not support
-                //pasteHTML, instead it's first item is used and the value of argument html is inserted right
-                // after it.
-                if (Xinha.is_ie) {
-                    Xinha.prototype.insertHTML = function(html)
-                    {
-                        this.focusEditor();
-                        var sel = this.getSelection();
-                        var range = this.createRange(sel);
-                        if (range.htmlText ) {
-                            range.pasteHTML(html);
-                        } else if (range.length > 0) {
-                            var item = range.item(0);
-                            if(item.insertAdjacentHTML) {
-                                item.insertAdjacentHTML('afterEnd', html);
-                            }
-                        }
-                    };
-                }
-
                 //Xinha registers a resize event handler on the window.. not configurable so hack it out! And send patch to Xinha
                 var func = Xinha.addDom0Event;
                 Xinha.addDom0Event = function(el, ev, fn) {
