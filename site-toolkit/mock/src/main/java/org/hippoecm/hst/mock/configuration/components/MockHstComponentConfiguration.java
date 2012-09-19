@@ -17,6 +17,7 @@ package org.hippoecm.hst.mock.configuration.components;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -54,6 +55,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private boolean inherited;
     private boolean standalone;
     private boolean async;
+    private List<String> variants;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
@@ -259,9 +261,17 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     public String getIconPath() {
         return iconPath;
     }
-
     public void setIconPath(String iconPath) {
         this.iconPath = iconPath;
+    }
+
+    public void setVariants(List<String> variants) {
+        this.variants = variants;
+    }
+
+    @Override
+    public List<String> getVariants() {
+        return variants;
     }
 
 }

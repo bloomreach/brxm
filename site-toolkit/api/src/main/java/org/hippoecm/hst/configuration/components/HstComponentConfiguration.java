@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -251,4 +252,10 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * to the site webapp 
      */
     String getIconPath();
+
+    /**
+     * @return the List of all variants for this {@link HstComponentConfiguration} plus all the variants of all its
+     * descendant {@Link HstComponentConfiguration}s. If no variants are present, and EMPTY List is returned
+     */
+    List<String> getVariants();
 }

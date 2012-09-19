@@ -132,6 +132,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * from ancestor components
      */
     private String label;
+
+    /**
+     * containing all the variants of this {@link HstComponentConfiguration} : This is including the variants of all 
+     * descendant {@link HstComponentConfiguration}s. This member can be null if no variants configured
+     */
+    private List<String> variants;
     
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -433,6 +439,15 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     @Override
     public String getIconPath() {
         return iconPath;
+    }
+    
+    @Override
+    public List<String> getVariants() {
+        if (variants == null) {
+            return Collections.emptyList();
+        }
+        // returned variants is immutable
+        return variants;
     }
 
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
