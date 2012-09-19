@@ -179,10 +179,20 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     
     /**
      * Parameters can have prefixes (variant). If there are prefixes in used, this method returns the (possibly unmodifiable)
-     * {@link Set} of prefixes / variants in use 
+     * {@link Set} of prefixes / variants in use. Only the prefixes/variants on the current component are returned, thus not 
+     * for descendant components like {@link #getVariants()} does.
      * @return the {@link Set} of available prefixes for all available parameters and if no prefixes in use, returns an Empty {@link Set}
      */
-    Set<String> getParameterPrefixes(); 
+    Set<String> getParameterPrefixes();
+
+
+    /**
+     * This method returns {@link #getParameterPrefixes()} for the entire composite tree of descendant components
+     * including the current component
+     * @return the List of all unique variants for this  {@link HstComponentConfiguration} <b>plus</b> all the variants of all its
+     * descendant {@Link HstComponentConfiguration}s. If no variants are present, and EMPTY List is returned.
+     */
+    List<String> getVariants();
     
     /**
      * see {@link #getParameter(String)}, but now only parameters directly present on the HstConfigurationItem are returned. Thus, 
@@ -253,9 +263,4 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      */
     String getIconPath();
 
-    /**
-     * @return the List of all variants for this {@link HstComponentConfiguration} plus all the variants of all its
-     * descendant {@Link HstComponentConfiguration}s. If no variants are present, and EMPTY List is returned
-     */
-    List<String> getVariants();
 }

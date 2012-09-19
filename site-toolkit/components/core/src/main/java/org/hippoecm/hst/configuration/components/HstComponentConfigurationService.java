@@ -352,6 +352,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public Set<String> getParameterPrefixes() {
         return Collections.unmodifiableSet(parameterNamePrefixSet);
     }
+
+    @Override
+    public List<String> getVariants() {
+        if (variants == null) {
+            return Collections.emptyList();
+        }
+        // returned variants is immutable
+        return variants;
+    }
+
  
 	public String getLocalParameter(String name) {
 		return this.localParameters.get(name);
@@ -439,15 +449,6 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     @Override
     public String getIconPath() {
         return iconPath;
-    }
-    
-    @Override
-    public List<String> getVariants() {
-        if (variants == null) {
-            return Collections.emptyList();
-        }
-        // returned variants is immutable
-        return variants;
     }
 
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
@@ -823,6 +824,29 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.inheritParameters();
         }
+    }
+
+    /**
+     * get all the unique variants for this component + its descendants and set this to
+     * variants instance variable if not empty
+     */
+    protected void populateVariants() {
+        // first traverse the children
+        Set<String> variantsSet = new HashSet<String>();
+        for (HstComponentConfigurationService child : orderedListConfigs) {
+            child.populateVariants();
+            variantsSet.addAll(child.getParameterPrefixes());
+            variantsSet.addAll(child.getVariants());
+        }
+        // add parameter prefixes of component itself (not child)
+        if (!getParameterPrefixes().isEmpty()) {
+            variantsSet.addAll(getParameterPrefixes());
+        }
+        if (!variantsSet.isEmpty()) {
+            // set variants to unmodifiable list
+            this.variants = Collections.unmodifiableList(new ArrayList<String>(variantsSet));
+        }
+        
     }
 
     protected void autocreateReferenceNames() {

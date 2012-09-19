@@ -130,6 +130,11 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         for (HstComponentConfiguration child : childComponents) {
             ((HstComponentConfigurationService) child).inheritParameters();
         }
+
+        for (HstComponentConfiguration child : childComponents) {
+            ((HstComponentConfigurationService) child).populateVariants();
+        }
+
     }
 
     public HstComponentConfiguration getComponentConfiguration(String id) {
