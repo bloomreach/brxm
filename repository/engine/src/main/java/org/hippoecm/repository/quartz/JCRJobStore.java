@@ -209,7 +209,6 @@ public class JCRJobStore extends AbstractJobStore {
         final Session session = getSession(ctxt);
         synchronized (session) {
             try {
-                final Node jobNode = getNodeByPathOrIdentifier(session, jobDetail.getName());
                 final Node triggerNode = getNodeByPathOrIdentifier(session, trigger.getName());
     
                 final Date nextFire = trigger.getFireTimeAfter(new Date());
@@ -221,6 +220,7 @@ public class JCRJobStore extends AbstractJobStore {
                     session.save();
                     unlock(session, triggerNode.getPath());
                 } else {
+                    final Node jobNode = getNodeByPathOrIdentifier(session, jobDetail.getName());
                     if(jobNode != null) {
                         ensureIsCheckedOut(jobNode.getParent());
                         jobNode.remove();
