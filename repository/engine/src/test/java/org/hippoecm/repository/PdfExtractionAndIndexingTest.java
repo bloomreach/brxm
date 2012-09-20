@@ -62,7 +62,8 @@ public class PdfExtractionAndIndexingTest extends TestCase {
         session.save();
     }
 
-    
+
+
     @Test
     public void testHippoTextBinary() throws Exception {
         
@@ -94,7 +95,49 @@ public class PdfExtractionAndIndexingTest extends TestCase {
         assertTrue(nodes.nextNode().getName().equals("docWithoutHippoText"));
         
     }
- 
+
+
+    @Test
+    public void testEmptyHippoTextBinary() throws Exception {
+        // We first create a real PDF document, containing some words. We should be able to find the pdf
+        // document with those words.
+        createDocumentWithPdfAndHippoTextBinary("docWithHippoTextBinary", false);
+
+        FreeTextSearchTest.flushIndex(testPath.getSession().getRepository());
+
+        // we search on 'UNIQUE_WORD_IN_UNNITTEST_PDF',
+        {
+            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+UNIQUE_WORD_IN_UNNITTEST_PDF+"')] order by @jcr:score descending";
+            QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+            NodeIterator nodes = queryResult.getNodes();
+
+            assertTrue(nodes.getSize() == 1L);
+            assertTrue(nodes.nextNode().getName().equals("docWithHippoTextBinary"));
+        }
+        // since the hippo:text is really used, we should find the unique text in the pdf
+
+        // NOW, we store the same pdf again, this time with an EMPTY hippo text binary as well. Then,
+        // we should *not* find the document
+
+        createDocumentWithPdfAndHippoTextBinary("docWithHippoEMPTYTextBinary", true);
+
+        FreeTextSearchTest.flushIndex(testPath.getSession().getRepository());
+
+        // since the hippo:text is set to empty binary, we should NOT find the unique text in the pdf. Thus, we should
+        // still only find "docWithHippoTextBinary"
+
+        // we search on 'UNIQUE_WORD_IN_UNNITTEST_PDF',
+        {
+            String xpath = "//element(*,"+NT_SEARCHDOCUMENT+")[jcr:contains(.,'"+UNIQUE_WORD_IN_UNNITTEST_PDF+"')] order by @jcr:score descending";
+            QueryResult queryResult = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath").execute();
+            NodeIterator nodes = queryResult.getNodes();
+
+            assertTrue(nodes.getSize() == 1L);
+            assertTrue(nodes.nextNode().getName().equals("docWithHippoTextBinary"));
+        }
+    }
+
+
     /*
      * We store a dummy text 'The quick brown fox jumps over the lazy +UNIQUE_WORD' as default binary. We also index an extracted pdf text version
      * in hippo:text. When includeHippoText = true, we expect that not 'The quick brown fox jumps over the lazy' is indexed, but
@@ -143,7 +186,7 @@ public class PdfExtractionAndIndexingTest extends TestCase {
                     extracted.append(writer.toCharArray());
                     // make sure to store it as UTF-8
                     InputStream extractedStream = IOUtils.toInputStream(extracted.toString() , "UTF-8"); 
-                    resource.setProperty("hippo:text", new BinaryImpl(extractedStream));
+                    resource.setProperty("hippo:text", resource.getSession().getValueFactory().createBinary(extractedStream));
                 } finally {
                     try {
                         if (pdDocument != null) {
@@ -157,15 +200,80 @@ public class PdfExtractionAndIndexingTest extends TestCase {
                 // it may happen that PDFParser throws a runtime
                 // exception when parsing certain pdf documents
                 
-                // we set empty extracted text:
-                InputStream extractedStream = IOUtils.toInputStream("" , "UTF-8"); 
-                resource.setProperty("hippo:text", new BinaryImpl(extractedStream));
+                // we set empty text:
+                final ByteArrayInputStream emptyByteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+                resource.setProperty("hippo:text", resource.getSession().getValueFactory().createBinary(emptyByteArrayInputStream));
                 
             } finally {
                 pdf.close();
             }
         }
         testPath.save();
+    }
+
+    private void createDocumentWithPdfAndHippoTextBinary(String name, boolean setHippoBinaryEmpty) throws Exception {
+
+        Node handle = testPath.addNode(name, HippoNodeType.NT_HANDLE);
+        Node document = handle.addNode(name, NT_SEARCHDOCUMENT);
+
+        Node compound =  document.addNode("substructure", NT_COMPOUNDSTRUCTURE);
+        Node resource = compound.addNode("hippo:testresource", "hippo:resource");
+
+        {
+            resource.setProperty("jcr:encoding", "UTF-8");
+            resource.setProperty("jcr:mimeType", "text/plain");
+            ByteArrayOutputStream data = new ByteArrayOutputStream();
+            OutputStreamWriter writer = new OutputStreamWriter(data, "UTF-8");
+            writer.write("The quick brown fox jumps over the lazy "+UNIQUE_WORD_IN_PLAIN_TEXT);
+            writer.close();
+            resource.setProperty("jcr:data", new BinaryImpl(new ByteArrayInputStream(data.toByteArray())));
+            resource.setProperty("jcr:lastModified", Calendar.getInstance());
+        }
+
+        if(setHippoBinaryEmpty) {
+           final ByteArrayInputStream emptyByteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+           resource.setProperty("hippo:text", resource.getSession().getValueFactory().createBinary(emptyByteArrayInputStream));
+        } else  {
+            InputStream pdf = this.getClass().getResourceAsStream(UNITTEST_PDF_FILE_NAME);
+            try {
+                PDFParser parser = new PDFParser(new BufferedInputStream(pdf));
+                PDDocument pdDocument = null;
+                try {
+                    parser.parse();
+                    pdDocument = parser.getPDDocument();
+                    CharArrayWriter writer = new CharArrayWriter();
+
+                    PDFTextStripper stripper = new PDFTextStripper();
+                    stripper.setLineSeparator("\n");
+                    stripper.writeText(pdDocument, writer);
+
+                    StringBuilder extracted = new StringBuilder();
+                    extracted.append(writer.toCharArray());
+                    // make sure to store it as UTF-8
+                    InputStream extractedStream = IOUtils.toInputStream(extracted.toString() , "UTF-8");
+                    resource.setProperty("hippo:text", resource.getSession().getValueFactory().createBinary(extractedStream));
+                } finally {
+                    try {
+                        if (pdDocument != null) {
+                            pdDocument.close();
+                        }
+                    } catch (IOException e) {
+                        // ignore
+                    }
+                }
+            } catch (Exception e) {
+                // it may happen that PDFParser throws a runtime
+                // exception when parsing certain pdf documents
+
+                // we set empty text:
+                final ByteArrayInputStream emptyByteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+                resource.setProperty("hippo:text", resource.getSession().getValueFactory().createBinary(emptyByteArrayInputStream));
+
+            } finally {
+                pdf.close();
+            }
+        }
+        testPath.getSession().save();
     }
     
 }
