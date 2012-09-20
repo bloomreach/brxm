@@ -71,9 +71,9 @@ if (!YAHOO.hippo.EditorManager) {
                 }
 
                 // set Xinha globals
-                _editor_url = editorUrl;
-                _editor_lang = editorLang;
-                _editor_skin = editorSkin;
+                window._editor_url = editorUrl;
+                window._editor_lang = editorLang;
+                window._editor_skin = editorSkin;
 
                 //and load XinhaLoader.js
                 // Internal method that is used to load Xinha plugins et al
@@ -847,12 +847,6 @@ if (!YAHOO.hippo.EditorManager) {
                 if (this.config.focus) {
                     this.xinha.activateEditor();
                     this.xinha.focusEditor();
-                    // CMS7-6450: need to scroll after focus when there is more than 1 editor
-                    if (this.xinha._iframe) {
-                        document.getElementById(this.xinha._iframe.id).scrollIntoView();
-                    } else if (this.xinha._textArea) {
-                        document.getElementById(this.xinha._textArea.id).scrollIntoView();
-                    }
                 }
 
                 this.lastData = this.xinha.getInnerHTML();
