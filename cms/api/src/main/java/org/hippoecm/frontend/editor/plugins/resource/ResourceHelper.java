@@ -152,20 +152,39 @@ public class ResourceHelper {
      */
     public static void handlePdfAndSetHippoTextProperty(Node node, InputStream inputStream) {
         ByteArrayInputStream byteInputStream = null;
+        String nodePath = null;
         try {
+            nodePath = node.getPath();
             String content = ParseUtils.getStringContent(inputStream, getTikaConfig(), MIME_TYPE_PDF);
             byteInputStream = new ByteArrayInputStream(content.getBytes());
             node.setProperty(HippoNodeType.HIPPO_TEXT, getValueFactory(node).createBinary(byteInputStream));
         } catch (IOException e) {
+            setEmptyHippoTextBinary(node);
             log.warn("An exception has occurred while trying to create inputstream based on " +
-                        "extracted text: {} ",e);
+                        "extracted text for node '"+nodePath+"' ",e);
         } catch (RepositoryException e) {
-            log.warn("An exception occurred while trying to set property with extracted text: {}: ",e);
+            setEmptyHippoTextBinary(node);
+            log.warn("An exception occurred while trying to set property with extracted text for node '"+nodePath+"' ",e);
         } catch (TikaException e) {
-            log.warn("An exception occurred while trying to set Tika configuration: {}: ",e);
+            setEmptyHippoTextBinary(node);
+            log.warn("An exception occurred while trying to set Tika configuration for node '"+nodePath+"' ",e);
+        } catch (Throwable e) {
+            setEmptyHippoTextBinary(node);
+            log.warn("An exception occurred while trying to set property with extracted text for node '"+nodePath+"' ",e);
         } finally {
             IOUtils.closeQuietly(byteInputStream);
             IOUtils.closeQuietly(inputStream);
+        }
+    }
+
+    private static void setEmptyHippoTextBinary(final Node node) {
+        String nodePath = null;
+        try {
+            nodePath = node.getPath();
+            final ByteArrayInputStream emptyByteArrayInputStream = new ByteArrayInputStream(new byte[0]);
+            node.setProperty(HippoNodeType.HIPPO_TEXT, getValueFactory(node).createBinary(emptyByteArrayInputStream));
+        } catch (RepositoryException e) {
+            log.error("Unable to store empty hippo:text binary for node '"+nodePath+"'", e);
         }
     }
 
