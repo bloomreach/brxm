@@ -13,12 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.quartz;
+package org.hippoecm.repository.quartz.workflow;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.ext.WorkflowInvocation;
+import org.hippoecm.repository.quartz.JCRJobDetail;
 import org.quartz.JobDataMap;
 
 public class WorkflowJobDetail extends JCRJobDetail {

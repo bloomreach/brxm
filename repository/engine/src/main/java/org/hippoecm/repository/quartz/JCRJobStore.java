@@ -37,6 +37,7 @@ import javax.jcr.version.VersionManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.jackrabbit.util.ISO8601;
+import org.hippoecm.repository.quartz.workflow.WorkflowJobDetail;
 import org.hippoecm.repository.util.JcrUtils;
 import org.quartz.JobDetail;
 import org.quartz.JobPersistenceException;

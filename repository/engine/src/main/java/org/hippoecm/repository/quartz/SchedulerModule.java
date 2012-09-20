@@ -62,7 +62,7 @@ public class SchedulerModule implements DaemonModule {
         instance = this;
     }
 
-    static Scheduler getScheduler(Session session) {
+    public static Scheduler getScheduler(Session session) {
         return new JCRScheduler(instance.scheduler, session);
     }
 

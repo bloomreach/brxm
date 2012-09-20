@@ -199,7 +199,7 @@
             </manifest>
             <manifestEntries>
               <Implementation-Build>${buildNumber}</Implementation-Build>
-              <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.SchedulerWorkflowModule org.onehippo.repository.update.UpdaterExecutionModule</Hippo-Modules>
+              <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.workflow.SchedulerWorkflowModule org.onehippo.repository.update.UpdaterExecutionModule</Hippo-Modules>
             </manifestEntries>
           </archive>
         </configuration>

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.quartz;
+package org.hippoecm.repository.quartz.workflow;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -21,6 +21,7 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowInvocation;
+import org.hippoecm.repository.quartz.JCRScheduler;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

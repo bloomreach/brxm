@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.quartz;
+package org.hippoecm.repository.quartz.workflow;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -21,6 +21,8 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.ext.WorkflowInvocation;
 import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
+import org.hippoecm.repository.quartz.SchedulerModule;
+import org.hippoecm.repository.quartz.workflow.WorkflowJobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -37,7 +39,7 @@ public abstract class AbstractSchedulerInvocationModule implements WorkflowInvoc
     public Object submit(WorkflowManager manager, WorkflowInvocation invocation) {
         try {
             if(log.isDebugEnabled()) {
-                log.debug("Storing scheduled workflow {}", invocation.toString());
+                log.debug("Storing scheduled workflow for document {}", invocation.getSubject().getPath());
             }
 
             final Node handle = invocation.getSubject().getParent();

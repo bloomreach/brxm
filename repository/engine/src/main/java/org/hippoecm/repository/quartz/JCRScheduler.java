@@ -36,7 +36,7 @@ public class JCRScheduler extends StdScheduler implements Scheduler {
         this(sched.qs, new JCRSchedulingContext(sched.ctx, session));
     }
 
-    JCRSchedulingContext getSchedulingContext() {
+    public JCRSchedulingContext getSchedulingContext() {
         return ctx;
     }
 
