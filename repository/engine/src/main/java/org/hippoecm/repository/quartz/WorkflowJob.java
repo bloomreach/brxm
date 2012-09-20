@@ -22,8 +22,6 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.WorkflowInvocation;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
@@ -33,29 +31,30 @@ public class WorkflowJob implements Job {
     private static final char[] IMPERSONATED_PASSWORD = new char[0];
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
-        Session impersonated = null;
+        Session workflowSession = null;
         try {
-            JobDetail jobDetail = context.getJobDetail();
-            JobDataMap jobDataMap = jobDetail.getJobDataMap();
-            WorkflowInvocation invocation = (WorkflowInvocation)jobDataMap.get("invocation");
-            JCRScheduler scheduler = (JCRScheduler)context.getScheduler();
-            Session session = ((JCRSchedulingContext)scheduler.ctx).getSession();
-
-            synchronized(session) {
-                impersonated = session.impersonate(new SimpleCredentials(IMPERSONATED_USER, IMPERSONATED_PASSWORD));
+            final JCRScheduler scheduler = (JCRScheduler) context.getScheduler();
+            final Session schedulerSession = scheduler.getSchedulingContext().getSession();
+            synchronized(schedulerSession) {
+                workflowSession = schedulerSession.impersonate(new SimpleCredentials(IMPERSONATED_USER, IMPERSONATED_PASSWORD));
             }
-            String uuid = (String) jobDataMap.get("document");
-            invocation.setSubject(impersonated.getNodeByIdentifier(uuid));
-            invocation.invoke(impersonated);
-            impersonated.save();
+
+            final WorkflowJobDetail jobDetail = (WorkflowJobDetail) context.getJobDetail();
+            final WorkflowInvocation invocation = jobDetail.getInvocation();
+            final String subjectIdentifier = jobDetail.getSubjectIdentifier();
+
+            invocation.setSubject(workflowSession.getNodeByIdentifier(subjectIdentifier));
+            invocation.invoke(workflowSession);
+
+            workflowSession.save();
 
         } catch (WorkflowException ex) {
             throw new JobExecutionException(ex.getClass().getName() + ": " + ex.getMessage());
         } catch (RepositoryException ex) {
             throw new JobExecutionException(ex.getClass().getName() + ": " + ex.getMessage());
         } finally {
-            if (impersonated != null) {
-                impersonated.logout();
+            if (workflowSession != null) {
+                workflowSession.logout();
             }
         }
     }

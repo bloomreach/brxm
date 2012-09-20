@@ -20,32 +20,31 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.ext.WorkflowInvocation;
 import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 
-public class WorkflowJobDetail extends JobDetail {
+public class WorkflowJobDetail extends JCRJobDetail {
+
+    private static final String HIPPO_DOCUMENT = "hippo:document";
 
     private static final String DOCUMENT_KEY = "document";
     private static final String INVOCATION_KEY = "invocation";
 
-    private final String jobRequestPath;
-    private final String jobRequestIdentifier;
-
-    public WorkflowJobDetail(Node request, WorkflowInvocation invocation) throws RepositoryException {
-        super(request.getIdentifier(), WorkflowJob.class);
-        jobRequestPath = request.getPath();
-        jobRequestIdentifier = request.getIdentifier();
+    public WorkflowJobDetail(Node jobNode, WorkflowInvocation invocation) throws RepositoryException {
+        super(jobNode, WorkflowJob.class);
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(INVOCATION_KEY, invocation);
         jobDataMap.put(DOCUMENT_KEY, invocation.getSubject().getIdentifier());
         setJobDataMap(jobDataMap);
     }
 
-    public String getJobRequestPath() {
-        return jobRequestPath;
+    public WorkflowJobDetail(Node jobNode, JobDataMap jobDataMap) throws RepositoryException {
+        super(jobNode, WorkflowJob.class);
+        setJobDataMap(jobDataMap);
     }
 
-    public String getJobRequestIdentifier() {
-        return jobRequestIdentifier;
+    @Override
+    public void persist(final Node node) throws RepositoryException {
+        super.persist(node);
+        node.setProperty(HIPPO_DOCUMENT, getSubjectIdentifier());
     }
 
     public String getSubjectIdentifier() {

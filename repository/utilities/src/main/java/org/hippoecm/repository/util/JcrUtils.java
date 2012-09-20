@@ -15,6 +15,10 @@
  */
 package org.hippoecm.repository.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
 
@@ -26,6 +30,9 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 
@@ -436,4 +443,22 @@ public class JcrUtils {
             copy(child, child.getName(), destNode);
         }
     }
+
+    public static Value createBinaryValueFromObject(Session session, Object object) throws RepositoryException {
+        final ValueFactory valueFactory = session.getValueFactory();
+        return valueFactory.createValue(valueFactory.createBinary(new ByteArrayInputStream(objectToBytes(object))));
+    }
+
+    private static byte[] objectToBytes(Object o) throws RepositoryException {
+        try {
+            ByteArrayOutputStream store = new ByteArrayOutputStream();
+            ObjectOutputStream ostream = new ObjectOutputStream(store);
+            ostream.writeObject(o);
+            ostream.flush();
+            return store.toByteArray();
+        } catch (IOException ex) {
+            throw new ValueFormatException(ex);
+        }
+    }
+
 }

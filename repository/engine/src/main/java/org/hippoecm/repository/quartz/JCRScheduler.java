@@ -19,21 +19,25 @@ import javax.jcr.Session;
 
 import org.quartz.Scheduler;
 import org.quartz.core.QuartzScheduler;
-import org.quartz.core.SchedulingContext;
 import org.quartz.impl.StdScheduler;
 
 public class JCRScheduler extends StdScheduler implements Scheduler {
 
     private QuartzScheduler qs;
-    SchedulingContext ctx;
+    private JCRSchedulingContext ctx;
 
-    public JCRScheduler(QuartzScheduler qs, SchedulingContext schedCtxt) {
+    public JCRScheduler(QuartzScheduler qs, JCRSchedulingContext schedCtxt) {
         super(qs, schedCtxt);
         this.qs = qs;
         this.ctx = schedCtxt;
     }
 
     public JCRScheduler(JCRScheduler sched, Session session) {
-        super(sched.qs, new JCRSchedulingContext(sched.ctx, session));
+        this(sched.qs, new JCRSchedulingContext(sched.ctx, session));
     }
+
+    JCRSchedulingContext getSchedulingContext() {
+        return ctx;
+    }
+
 }

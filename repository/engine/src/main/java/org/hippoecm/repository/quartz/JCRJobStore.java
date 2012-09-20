@@ -15,11 +15,8 @@
  */
 package org.hippoecm.repository.quartz;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -29,8 +26,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import javax.jcr.ValueFactory;
-import javax.jcr.ValueFormatException;
 import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
@@ -39,8 +34,10 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionManager;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.jackrabbit.util.ISO8601;
+import org.hippoecm.repository.util.JcrUtils;
 import org.quartz.JobDetail;
 import org.quartz.JobPersistenceException;
 import org.quartz.SchedulerConfigException;
@@ -85,27 +82,28 @@ public class JCRJobStore extends AbstractJobStore {
      */
     @Override
     public void storeJobAndTrigger(SchedulingContext ctxt, JobDetail newJob, Trigger newTrigger) throws JobPersistenceException {
-        final WorkflowJobDetail workflowJobDetail = (WorkflowJobDetail) newJob;
+        final JCRJobDetail jobDetail = (JCRJobDetail) newJob;
         final Session session = getSession(ctxt);
         synchronized(session) {
             try {
-                final Node jobRequestNode = session.getNodeByIdentifier(workflowJobDetail.getJobRequestIdentifier());
-                jobRequestNode.setProperty(HIPPOSCHED_DATA, createBinaryValueFromObject(session, newJob));
-                jobRequestNode.setProperty("hippo:document", workflowJobDetail.getSubjectIdentifier());
-                Node triggersNode;
-                if(jobRequestNode.hasNode(HIPPOSCHED_TRIGGERS)) {
-                    triggersNode = jobRequestNode.getNode(HIPPOSCHED_TRIGGERS);
+                final Node jobNode = session.getNodeByIdentifier(jobDetail.getIdentifier());
+                jobDetail.persist(jobNode);
+
+                final Node triggersNode;
+                if(jobNode.hasNode(HIPPOSCHED_TRIGGERS)) {
+                    triggersNode = jobNode.getNode(HIPPOSCHED_TRIGGERS);
                 } else {
-                    triggersNode = jobRequestNode.addNode(HIPPOSCHED_TRIGGERS,HIPPOSCHED_TRIGGERS);
+                    triggersNode = jobNode.addNode(HIPPOSCHED_TRIGGERS, HIPPOSCHED_TRIGGERS);
                 }
-                final String triggerName = newTrigger.getName().substring(jobRequestNode.getPath().length()+1);
-                final Node triggerNode = triggersNode.addNode(triggerName, HIPPOSCHED_TRIGGER);
+
+                final Node triggerNode = triggersNode.addNode(newTrigger.getName(), HIPPOSCHED_TRIGGER);
                 triggerNode.addMixin("mix:lockable");
+
                 final Calendar fireTime = getCalendarInstance(newTrigger.getNextFireTime());
                 triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTime);
                 triggerNode.setProperty(HIPPOSCHED_FIRETIME, fireTime);
-                triggerNode.setProperty(HIPPOSCHED_DATA, createBinaryValueFromObject(session, newTrigger));
-                session.save();
+                triggerNode.setProperty(HIPPOSCHED_DATA, JcrUtils.createBinaryValueFromObject(session, newTrigger));
+
             } catch (RepositoryException ex) {
                 refreshSession(session);
                 final String message = "Failed to store job and trigger";
@@ -116,15 +114,18 @@ public class JCRJobStore extends AbstractJobStore {
     }
 
     @Override
-    public JobDetail retrieveJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
+    public JobDetail retrieveJob(SchedulingContext ctxt, String jobIdentifier, String groupName) throws JobPersistenceException {
         final Session session = getSession(ctxt);
         synchronized (session) {
             try {
-                final Node jobNode = getNodeByPathOrIdentifier(session, jobName);
+                final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
                 final Value jobDataValue = jobNode.getProperty(HIPPOSCHED_DATA).getValue();
-                final JobDetail job = (JobDetail) createObjectFromBinaryValue(jobDataValue);
-                job.setName(jobNode.getIdentifier());
-                return job;
+                JobDetail jobDetail = (JobDetail) createObjectFromBinaryValue(jobDataValue);
+                if (!(jobDetail instanceof JCRJobDetail)) {
+                    // Pre 7.8 backwards compatibility
+                    jobDetail = new WorkflowJobDetail(jobNode, jobDetail.getJobDataMap());
+                }
+                return jobDetail;
             } catch(RepositoryException ex) {
                 refreshSession(session);
                 final String message = "Failed to retrieve job";
@@ -145,7 +146,7 @@ public class JCRJobStore extends AbstractJobStore {
         final Session session = getSession(ctxt);
         synchronized (session) {
             try {
-                for(final Node triggerNode : getPendingTriggers(session, noLaterThan)) {
+                for(Node triggerNode : getPendingTriggers(session, noLaterThan)) {
                     if(triggerNode != null) {
                         if (lock(session, triggerNode.getPath())) {
                             ensureIsCheckedOut(triggerNode);
@@ -179,7 +180,8 @@ public class JCRJobStore extends AbstractJobStore {
         final Session session = getSession(ctxt);
         synchronized (session) {
             try {
-                final Node triggerNode = getNodeByPathOrIdentifier(session, trigger.getName());
+                final String triggerIdentifier = trigger.getName();
+                final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
                 triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, triggerNode.getProperty(HIPPOSCHED_FIRETIME).getValue());
                 session.save();
                 unlock(session, triggerNode.getPath());
@@ -187,7 +189,7 @@ public class JCRJobStore extends AbstractJobStore {
                 log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
             } catch (ItemNotFoundException ex) {
                 log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } catch(RepositoryException ex) {
+            } catch (RepositoryException ex) {
                 refreshSession(session);
                 final String message = "Failed to release acquired trigger";
                 log.error(message, ex);
@@ -209,7 +211,8 @@ public class JCRJobStore extends AbstractJobStore {
         final Session session = getSession(ctxt);
         synchronized (session) {
             try {
-                final Node triggerNode = getNodeByPathOrIdentifier(session, trigger.getName());
+                final String triggerIdentifier = trigger.getName();
+                final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
     
                 final Date nextFire = trigger.getFireTimeAfter(new Date());
                 if(nextFire != null) {
@@ -220,18 +223,15 @@ public class JCRJobStore extends AbstractJobStore {
                     session.save();
                     unlock(session, triggerNode.getPath());
                 } else {
-                    final Node jobNode = getNodeByPathOrIdentifier(session, jobDetail.getName());
-                    if(jobNode != null) {
-                        ensureIsCheckedOut(jobNode.getParent());
-                        jobNode.remove();
-                        session.save();
-                    }
+                    final String jobIdentifier = ((JCRJobDetail) jobDetail).getIdentifier();
+                    final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
+                    ensureIsCheckedOut(jobNode.getParent());
+                    jobNode.remove();
+                    session.save();
                 }
-            } catch(PathNotFoundException ex) {
-                log.warn("Unable to find job node to be completed for trigger path '" + trigger.getName() + "'");
-            } catch(ItemNotFoundException ex) {
+            } catch (ItemNotFoundException ex) {
                 log.warn("Unable to find job node to be completed for trigger uuid '" + trigger.getName() + "'");
-            } catch(RepositoryException ex) {
+            } catch (RepositoryException ex) {
                 refreshSession(session);
                 final String message = "Failed to complete triggered job";
                 log.error(message, ex);
@@ -240,15 +240,11 @@ public class JCRJobStore extends AbstractJobStore {
         }
     }
 
-
-    private static Session getSession(SchedulingContext ctxt) {
-        Session session;
-        if(ctxt instanceof JCRSchedulingContext) {
-            session = ((JCRSchedulingContext)ctxt).getSession();
-        } else {
-            session = SchedulerModule.session;
+    private Session getSession(SchedulingContext ctxt) {
+        if (ctxt instanceof JCRSchedulingContext) {
+            return ((JCRSchedulingContext) ctxt).getSession();
         }
-        return session;
+        return SchedulerModule.getSession();
     }
 
     private static void refreshSession(Session session) {
@@ -266,32 +262,13 @@ public class JCRJobStore extends AbstractJobStore {
         }
     }
 
-    private static Value createBinaryValueFromObject(Session session, Object object) throws RepositoryException {
-        final ValueFactory valueFactory = session.getValueFactory();
-        return valueFactory.createValue(valueFactory.createBinary(new ByteArrayInputStream(objectToBytes(object))));
-    }
-
     private static Object createObjectFromBinaryValue(final Value value) throws RepositoryException, IOException, ClassNotFoundException {
-        return new ObjectInputStream(value.getBinary().getStream()).readObject();
-    }
-
-    private static byte[] objectToBytes(Object o) throws RepositoryException {
+        ObjectInputStream ois = new ObjectInputStream(value.getBinary().getStream());
         try {
-            ByteArrayOutputStream store = new ByteArrayOutputStream();
-            ObjectOutputStream ostream = new ObjectOutputStream(store);
-            ostream.writeObject(o);
-            ostream.flush();
-            return store.toByteArray();
-        } catch (IOException ex) {
-            throw new ValueFormatException(ex);
+            return ois.readObject();
+        } finally {
+            IOUtils.closeQuietly(ois);
         }
-    }
-
-    private static Node getNodeByPathOrIdentifier(Session session, String pathOrIdentifier) throws RepositoryException {
-        if (pathOrIdentifier.startsWith("/")) {
-            return session.getNode(pathOrIdentifier);
-        }
-        return session.getNodeByIdentifier(pathOrIdentifier);
     }
 
     private static Calendar getCalendarInstance(Date date) {
@@ -365,4 +342,5 @@ public class JCRJobStore extends AbstractJobStore {
         }
         return clusteNodeId;
     }
+
 }

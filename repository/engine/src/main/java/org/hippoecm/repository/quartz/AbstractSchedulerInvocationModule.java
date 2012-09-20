@@ -37,18 +37,18 @@ public abstract class AbstractSchedulerInvocationModule implements WorkflowInvoc
     public Object submit(WorkflowManager manager, WorkflowInvocation invocation) {
         try {
             if(log.isDebugEnabled()) {
-                log.debug("Storing scheduled workflow {}",invocation.toString());
+                log.debug("Storing scheduled workflow {}", invocation.toString());
             }
-            final Scheduler scheduler = SchedulerModule.getScheduler(invocation.getSubject().getSession());
+
             final Node handle = invocation.getSubject().getParent();
             if(handle.isNodeType("mix:versionable") && !handle.isCheckedOut()) {
                 handle.checkout();
             }
-            final Node jobRequestNode = handle.addNode("hippo:request", "hipposched:job");
-            jobRequestNode.addMixin("mix:referenceable");
+            final Node requestNode = handle.addNode("hippo:request", "hipposched:job");
+            requestNode.addMixin("mix:referenceable");
 
-            final String triggerName = jobRequestNode.getPath() + "/default";
-            scheduler.scheduleJob(new WorkflowJobDetail(jobRequestNode, invocation), createTrigger(triggerName));
+            final Scheduler scheduler = SchedulerModule.getScheduler(invocation.getSubject().getSession());
+            scheduler.scheduleJob(new WorkflowJobDetail(requestNode, invocation), createTrigger("default"));
         } catch (RepositoryException ex) {
             log.error("failure storing scheduled workflow", ex);
         } catch (SchedulerException ex) {

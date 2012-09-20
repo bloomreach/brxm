@@ -25,6 +25,7 @@ import org.quartz.SchedulerException;
 import org.quartz.core.QuartzScheduler;
 import org.quartz.core.QuartzSchedulerResources;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.simpl.SimpleThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,39 +33,41 @@ public class SchedulerModule implements DaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
 
-    static Session session = null;
-    static JCRScheduler scheduler = null;
-    static SchedulerFactory schedFactory = null;
-
-    public SchedulerModule() {
-        log.debug("<init>");
+    private static final Properties SCHEDULER_FACTORY_PROPERTIES = new Properties();
+    static {
+        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "Hippo JCR Quartz Job Scheduler");
+        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_SCHED_INSTANCE_ID, "AUTO");
+        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
+        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_THREAD_POOL_CLASS, SimpleThreadPool.class.getName());
+        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_THREAD_POOL_THREADCOUNT, "2");
+        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_THREAD_POOL_THREADPRIORITY, "5");
+        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_JOB_STORE_CLASS, JCRJobStore.class.getName());
+        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_JOB_STORE_ISCLUSTERED,  "true");
     }
 
+    private static SchedulerModule instance;
+
+    private Session session;
+    private JCRScheduler scheduler = null;
+
     public void initialize(Session session) {
-        log.debug("initializing");
-        SchedulerModule.session = session;
-        Properties properties = new Properties();
+        this.session = session;
         try {
-            properties.put("org.quartz.scheduler.instanceName","Hippo JCR Quartz Job Scheduler");
-            properties.put("org.quartz.scheduler.instanceName","HJCRQJS");
-            properties.put("org.quartz.scheduler.instanceId","AUTO");
-            properties.put("org.quartz.scheduler.skipUpdateCheck", "true");
-            properties.put("org.quartz.threadPool.class","org.quartz.simpl.SimpleThreadPool");
-            properties.put("org.quartz.threadPool.threadCount","2");
-            properties.put("org.quartz.threadPool.threadPriority","5");
-            properties.put("org.quartz.jobStore.class",JCRJobStore.class.getName());
-            properties.put("org.quartz.jobStore.isClustered","true");
-            schedFactory = new SchedulerFactory(session);
-            schedFactory.initialize(properties);
+            final JcrSchedulerFactory schedFactory = new JcrSchedulerFactory(SCHEDULER_FACTORY_PROPERTIES);
             scheduler = (JCRScheduler) schedFactory.getScheduler();
             scheduler.start();
         } catch (SchedulerException ex) {
             log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
+        instance = this;
     }
 
-    static JCRScheduler getScheduler(Session session) {
-        return new JCRScheduler(scheduler, session);
+    static Scheduler getScheduler(Session session) {
+        return new JCRScheduler(instance.scheduler, session);
+    }
+
+    static Session getSession() {
+        return instance.session;
     }
 
     public void shutdown() {
@@ -74,38 +77,22 @@ public class SchedulerModule implements DaemonModule {
         session.logout();
     }
 
-    public static class SchedulerFactory extends StdSchedulerFactory {
-        private Properties props;
-        private Session session;
+    private class JcrSchedulerFactory extends StdSchedulerFactory {
 
-        public SchedulerFactory(Session session) throws SchedulerException {
-            this.session = session;
-        }
+        private static final String PROP_JOB_STORE_ISCLUSTERED = "org.quartz.jobStore.isClustered";
+        private static final String PROP_THREAD_POOL_THREADCOUNT = "org.quartz.threadPool.threadCount";
+        private static final String PROP_THREAD_POOL_THREADPRIORITY = "org.quartz.threadPool.threadPriority";
 
-        public SchedulerFactory(Properties props, Session session) throws SchedulerException {
-            super(props);
-            this.props = new Properties(props);
-            this.session = session;
-        }
-
-        public SchedulerFactory(SchedulerFactory factory, Session session) throws SchedulerException {
-            super(factory.props);
-            this.session = session;
+        public JcrSchedulerFactory(Properties properties) throws SchedulerException {
+            super(properties);
         }
 
         @Override
-        public void initialize(Properties props) throws SchedulerException {
-            this.props = new Properties(props);
-            super.initialize(props);
-        }
-
-        @Override
-        protected Scheduler instantiate(QuartzSchedulerResources rsrcs, QuartzScheduler qs) {
+        protected Scheduler instantiate(QuartzSchedulerResources rcs, QuartzScheduler qs) {
             JCRSchedulingContext schedCtxt = new JCRSchedulingContext(session);
-            schedCtxt.setInstanceId(rsrcs.getInstanceId());
-            schedCtxt.setSession(session);
-            Scheduler scheduler = new JCRScheduler(qs, schedCtxt);
-            return scheduler;
+            schedCtxt.setInstanceId(rcs.getInstanceId());
+            return new JCRScheduler(qs, schedCtxt);
         }
     }
+
 }

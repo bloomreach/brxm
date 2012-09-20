@@ -23,22 +23,12 @@ public class JCRSchedulingContext extends SchedulingContext {
 
     private Session session;
 
-    public JCRSchedulingContext() {
-        super();
-    }
-
     public JCRSchedulingContext(Session session) {
-        super();
         this.session = session;
     }
 
     public JCRSchedulingContext(SchedulingContext upstream, Session session) {
-        super();
         setInstanceId(upstream.getInstanceId());
-        this.session = session;
-    }
-
-    public void setSession(Session session) {
         this.session = session;
     }
 
