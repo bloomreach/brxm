@@ -34,10 +34,17 @@ public class TestHstComponentMetadataReader {
         assertNotNull(metadata);
         assertFalse(metadata.hasMethodAnnotatedBy(Persistable.class.getName(), "doBeforeRender"));
         assertTrue(metadata.hasMethodAnnotatedBy(Persistable.class.getName(), "doAction"));
+        // Note: annotation of the parent class is not read
         assertFalse(metadata.hasMethodAnnotatedBy(Persistable.class.getName(), "doBeforeServeResource"));
     }
 
-    public static class DetailComponent extends GenericHstComponent {
+    public static class BaseComponent extends GenericHstComponent {
+        @Persistable
+        public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+    }
+
+    public static class DetailComponent extends BaseComponent {
         @Persistable
         public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         }
