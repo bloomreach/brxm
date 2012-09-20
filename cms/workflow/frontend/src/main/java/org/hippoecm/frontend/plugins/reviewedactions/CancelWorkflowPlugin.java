@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,6 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     private String state = "unknown";
     private Date schedule = null;
-    private boolean cancelable = true;
 
     WorkflowAction cancelAction;
 
@@ -86,33 +86,40 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         schedule = null;
         if (model != null) {
             try {
-                Node node = model.getNode();
-                if (node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
-                    //FIXME: Instead of looking for clues in the serialized-object string, we need to add this information
-                    //thipposched:trigger
-                    String data = node.getProperty("hipposched:data").getString();
-                    if(data.contains("depublish")) {
-                        state = "depublish";
-                    } else if(data.contains("publish")) {
-                        state = "publish";
-                    } else {
-                        state = "unknown";
+                final Node jobNode = model.getNode();
+                if (jobNode.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
+                    state = JcrUtils.getStringProperty(jobNode, "hipposched:methodName", null);
+                    if (state == null) {
+                        state = deprecatedStateLookupMethod(jobNode);
                     }
                 } else {
                     state = "unknown";
                 }
-                if(node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
-                    schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
-                } else if (node.hasProperty("hippostdpubwf:reqdate")) {
-                    schedule = new Date(node.getProperty("hippostdpubwf:reqdate").getLong());
+                if(jobNode.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
+                    schedule = jobNode.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+                } else if (jobNode.hasProperty("hippostdpubwf:reqdate")) {
+                    schedule = new Date(jobNode.getProperty("hippostdpubwf:reqdate").getLong());
                 }
                 Map<String, Serializable> hints = ((WorkflowDescriptor)model.getObject()).hints();
-                if (hints.containsKey("cancelRequest") && !((Boolean)hints.get("cancelRequest")).booleanValue()) {
+                if (hints.containsKey("cancelRequest") && !(Boolean) hints.get("cancelRequest")) {
                     cancelAction.setVisible(false);
                 }
             } catch (RepositoryException ex) {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage());
             }
+        }
+    }
+
+    @Deprecated
+    private String deprecatedStateLookupMethod(Node jobNode) throws RepositoryException {
+        // Pre 7.8 backwards compatibility
+        String data = jobNode.getProperty("hipposched:data").getString();
+        if(data.contains("depublish")) {
+            return "depublish";
+        } else if(data.contains("publish")) {
+            return "publish";
+        } else {
+            return "unknown";
         }
     }
 }
