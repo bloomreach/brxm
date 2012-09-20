@@ -17,8 +17,10 @@ package org.hippoecm.repository.quartz;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -105,6 +107,7 @@ public class JCRJobStore extends AbstractJobStore {
                 triggerNode.setProperty(HIPPOSCHED_FIRETIME, fireTime);
                 triggerNode.setProperty(HIPPOSCHED_DATA, JcrUtils.createBinaryValueFromObject(session, newTrigger));
 
+                session.save();
             } catch (RepositoryException ex) {
                 refreshSession(session);
                 final String message = "Failed to store job and trigger";
@@ -143,6 +146,39 @@ public class JCRJobStore extends AbstractJobStore {
     }
 
     @Override
+    public Trigger[] getTriggersForJob(final SchedulingContext ctxt, final String jobIdentifier, final String groupName) throws JobPersistenceException {
+        final Session session = getSession(ctxt);
+        synchronized (session) {
+            try {
+                final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
+                final Node triggersNode = JcrUtils.getNodeIfExists(jobNode, HIPPOSCHED_TRIGGERS);
+                if (triggersNode != null) {
+                    final List<Trigger> triggers = new ArrayList<Trigger>();
+                    for (Node triggerNode : new NodeIterable(triggersNode.getNodes())) {
+                        if (triggerNode != null) {
+                            try {
+                                triggers.add(createTriggerFromNode(triggerNode));
+                            } catch (RepositoryException e) {
+                                throw new JobPersistenceException("Failed to create trigger", e);
+                            } catch (ClassNotFoundException e) {
+                                throw new JobPersistenceException("Failed to create trigger", e);
+                            } catch (IOException e) {
+                                throw new JobPersistenceException("Failed to create trigger", e);
+                            }
+                        }
+                    }
+                    return triggers.toArray(new Trigger[triggers.size()]);
+                }
+            } catch (ItemNotFoundException e) {
+                throw new JobPersistenceException("No such job: " + jobIdentifier);
+            } catch (RepositoryException e) {
+                throw new JobPersistenceException("Failed to get triggers for job", e);
+            }
+        }
+        return new Trigger[0];
+    }
+
+    @Override
     public Trigger acquireNextTrigger(SchedulingContext ctxt, long noLaterThan) throws JobPersistenceException {
         final Session session = getSession(ctxt);
         synchronized (session) {
@@ -151,9 +187,7 @@ public class JCRJobStore extends AbstractJobStore {
                     if(triggerNode != null) {
                         if (lock(session, triggerNode.getPath())) {
                             ensureIsCheckedOut(triggerNode);
-                            Trigger trigger = (Trigger) createObjectFromBinaryValue(triggerNode.getProperty(HIPPOSCHED_DATA).getValue());
-                            trigger.setName(triggerNode.getIdentifier());
-                            trigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
+                            final Trigger trigger = createTriggerFromNode(triggerNode);
                             triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
                             session.save();
                             return trigger;
@@ -174,6 +208,13 @@ public class JCRJobStore extends AbstractJobStore {
             }
         }
         return null;
+    }
+
+    private Trigger createTriggerFromNode(final Node triggerNode) throws RepositoryException, ClassNotFoundException, IOException {
+        final Trigger trigger = (Trigger) createObjectFromBinaryValue(triggerNode.getProperty(HIPPOSCHED_DATA).getValue());
+        trigger.setName(triggerNode.getIdentifier());
+        trigger.setJobName(triggerNode.getParent().getParent().getIdentifier());
+        return trigger;
     }
 
     @Override
@@ -218,9 +259,9 @@ public class JCRJobStore extends AbstractJobStore {
                 final Date nextFire = trigger.getFireTimeAfter(new Date());
                 if(nextFire != null) {
                     ensureIsCheckedOut(triggerNode);
-                    final Calendar fireTime = getCalendarInstance(nextFire);
-                    triggerNode.setProperty(HIPPOSCHED_FIRETIME, fireTime);
-                    triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTime);
+                    final Calendar nextFireTime = getCalendarInstance(nextFire);
+                    triggerNode.setProperty(HIPPOSCHED_FIRETIME, nextFireTime);
+                    triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, nextFireTime);
                     session.save();
                     unlock(session, triggerNode.getPath());
                 } else {
@@ -241,7 +282,7 @@ public class JCRJobStore extends AbstractJobStore {
         }
     }
 
-    private Session getSession(SchedulingContext ctxt) {
+    private static Session getSession(SchedulingContext ctxt) {
         if (ctxt instanceof JCRSchedulingContext) {
             return ((JCRSchedulingContext) ctxt).getSession();
         }

@@ -137,11 +137,6 @@ public abstract class AbstractJobStore implements JobStore {
     }
 
     @Override
-    public Trigger[] getTriggersForJob(SchedulingContext ctxt, String jobName, String groupName) throws JobPersistenceException {
-        return new Trigger[0];
-    }
-
-    @Override
     public int getTriggerState(SchedulingContext ctxt, String triggerName, String triggerGroup) throws JobPersistenceException {
         return 0;
     }

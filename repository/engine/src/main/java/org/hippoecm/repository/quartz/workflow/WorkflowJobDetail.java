@@ -24,7 +24,7 @@ import org.quartz.JobDataMap;
 
 public class WorkflowJobDetail extends JCRJobDetail {
 
-    private static final String HIPPO_DOCUMENT = "hippo:document";
+    private static final String HIPPOSCHED_METHOD_NAME = "hipposched:methodName";
 
     private static final String DOCUMENT_KEY = "document";
     private static final String INVOCATION_KEY = "invocation";
@@ -45,7 +45,7 @@ public class WorkflowJobDetail extends JCRJobDetail {
     @Override
     public void persist(final Node node) throws RepositoryException {
         super.persist(node);
-        node.setProperty(HIPPO_DOCUMENT, getSubjectIdentifier());
+        node.setProperty(HIPPOSCHED_METHOD_NAME, getInvocation().getMethodName());
     }
 
     public String getSubjectIdentifier() {

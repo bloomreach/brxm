@@ -812,8 +812,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 if(uuid != null && !"".equals(uuid)) {
                     this.workflowSubjectNode = rootSession.getNodeByIdentifier(uuid);
                 }
-            } catch(ItemNotFoundException ex) {
-            }
+            } catch (ItemNotFoundException ignore) {}
             this.category = workflowNode.getParent().getName();
             this.methodName = method.getName();
             this.parameterTypes = method.getParameterTypes();
@@ -853,8 +852,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 output.writeObject(method.getName());
                 Class[] parameterTypes = method.getParameterTypes();
                 output.writeInt(parameterTypes.length);
-                for(int i=0; i<parameterTypes.length; i++) {
-                    output.writeObject(parameterTypes[i]);
+                for (final Class parameterType : parameterTypes) {
+                    output.writeObject(parameterType);
                 }
                 output.writeObject(arguments);
             } catch(RepositoryException ex) {
@@ -863,10 +862,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
             }
         }
 
+        @Override
         public Node getSubject() {
             return workflowSubjectNode;
         }
 
+        @Override
         public void setSubject(Node node) {
             try {
                 workflowManager = ((HippoWorkspace)node.getSession().getWorkspace()).getWorkflowManager(); 
@@ -877,6 +878,12 @@ public class WorkflowManagerImpl implements WorkflowManager {
             workflowSubject = null;
         }
 
+        @Override
+        public String getMethodName() {
+            return methodName;
+        }
+
+        @Override
         public Object invoke(Session session) throws RepositoryException, WorkflowException {
             workflowSubjectNode = session.getNodeByUUID(workflowSubjectNode.getUUID());
             Workflow workflow = workflowManager.getWorkflow(category, workflowSubjectNode);

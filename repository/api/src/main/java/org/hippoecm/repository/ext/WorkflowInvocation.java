@@ -23,33 +23,15 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.api.WorkflowException;
 
-/**
- * 
- * @author berry
- */
-public interface WorkflowInvocation extends Externalizable {
-    /**
-     * 
-     */
 
-    /**
-     * 
-     * @param session
-     * @return
-     * @throws javax.jcr.RepositoryException
-     * @throws org.hippoecm.repository.api.WorkflowException
-     */
+public interface WorkflowInvocation extends Externalizable {
+
     public Object invoke(Session session) throws RepositoryException, WorkflowException;
 
-    /**
-     * 
-     * @return
-     */
     public Node getSubject();
 
-    /**
-     * 
-     * @param node
-     */
     public void setSubject(Node node);
+
+    public String getMethodName();
+
 }

@@ -32,4 +32,7 @@
 [hipposched:job] > hippo:request, mix:versionable
 + hipposched:triggers (hipposched:triggers) = hipposched:triggers
 - hipposched:data (binary) mandatory
-- hippo:document (string) mandatory
+- hippo:document (string) // deprecated
+
+[hipposched:workflowjob] > hipposched:job
+- hipposched:methodName (string) mandatory

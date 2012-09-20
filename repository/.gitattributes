@@ -196,6 +196,7 @@ engine/src/test/java/org/hippoecm/repository/UnlockTest.java -text
 engine/src/test/java/org/hippoecm/repository/impl/WorkflowPostActionsTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTest.java -text
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
+engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCacheTest.java -text svneol=unset#text/plain
 engine/src/test/java/org/hippoecm/repository/updater/UpdaterPathTest.java svneol=native#text/plain
 engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text

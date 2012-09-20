@@ -21,7 +21,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.util.JcrUtils;
 import org.quartz.JobDetail;
 
-public abstract class JCRJobDetail extends JobDetail {
+public class JCRJobDetail extends JobDetail {
 
     private static final String HIPPOSCHED_DATA = "hipposched:data";
 
