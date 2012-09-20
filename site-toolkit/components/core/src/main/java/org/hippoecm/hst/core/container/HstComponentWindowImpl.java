@@ -19,16 +19,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.LinkedHashMap;
 
 import org.apache.commons.collections.IteratorUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     protected String name;
     protected String referenceNamespace;
     protected HstComponent component;
+    protected HstComponentMetadata componentMetadata;
     protected String componentName;
     protected String renderPath;
     protected String namedRenderer;
@@ -62,16 +64,21 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     protected HstResponseState responseState;
     
-    public HstComponentWindowImpl(HstComponentConfiguration hstComponentConfiguration, String componentName, HstComponent component, HstComponentWindow parentWindow, String referenceNamespace) {
+    public HstComponentWindowImpl(HstComponentConfiguration hstComponentConfiguration, String componentName, HstComponent component, HstComponentMetadata componentMetadata, HstComponentWindow parentWindow, String referenceNamespace) {
         this.hstComponentConfiguration = hstComponentConfiguration;
         this.componentName = componentName;
         this.component = component;
+        this.componentMetadata = componentMetadata;
         this.parentWindow = parentWindow;
         this.referenceNamespace = referenceNamespace;
     }
     
     public HstComponent getComponent() {
         return this.component;
+    }
+    
+    public HstComponentMetadata getComponentMetadata() {
+        return componentMetadata;
     }
     
     public String getComponentName() {

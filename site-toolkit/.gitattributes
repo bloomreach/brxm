@@ -114,6 +114,7 @@ api/src/main/java/org/hippoecm/hst/core/component/HeadElement.java svneol=native
 api/src/main/java/org/hippoecm/hst/core/component/HstComponent.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstComponentException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstComponentFatalException.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/component/HstComponentMetadata.java -text
 api/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoProxyFactory.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstParameterValueConversionException.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/HstParameterValueConverter.java -text svneol=unset#text/plain
@@ -452,6 +453,7 @@ components/core/src/main/java/org/hippoecm/hst/configuration/sitemapitemhandler/
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenuConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenuItemConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenusConfigurationService.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/component/HstComponentMetadataReader.java -text
 components/core/src/main/java/org/hippoecm/hst/core/component/HstRequestImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/component/HstResourceResponseImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/component/HstResponseImpl.java svneol=native#text/plain
@@ -487,6 +489,7 @@ components/core/src/main/java/org/hippoecm/hst/core/container/JaxrsRestServiceVa
 components/core/src/main/java/org/hippoecm/hst/core/container/LocalizationValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/NoContentValve.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/NotFoundValve.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/PersistableSessionAroundAdvice.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ResourceServingValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/SecurityValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/SiteMenusResolvingValve.java svneol=native#text/plain
@@ -564,6 +567,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-container.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml -text svneol=unset#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml svneol=native#text/plain
+components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-jcr.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-jmx.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml svneol=native#text/plain
@@ -589,6 +593,7 @@ components/core/src/test/java/org/hippoecm/hst/configuration/channel/ChannelUtil
 components/core/src/test/java/org/hippoecm/hst/core/beans/AbstractBeanTestCase.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/beans/NewsBean.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/beans/TextBean.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/component/TestHstComponentMetadataReader.java -text
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstRequest.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstResponse.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestComponentWindowFilter.java -text svneol=unset#text/plain

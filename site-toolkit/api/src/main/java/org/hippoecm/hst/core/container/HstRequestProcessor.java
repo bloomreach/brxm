@@ -39,4 +39,11 @@ public interface HstRequestProcessor {
      * @throws ContainerException
      */
     void processRequest(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, String namedPipeline) throws ContainerException;
+
+    /**
+     * Returns the current request container config object used in the current request processing context.
+     * @return
+     */
+    HstContainerConfig getCurrentHstContainerConfig();
+
 }

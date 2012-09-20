@@ -20,5 +20,6 @@
 
   <import resource="classpath:/org/hippoecm/hst/core/TestConfigurations.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
-  
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml" />
+
 </beans>

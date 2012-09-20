@@ -26,6 +26,7 @@
 
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
+  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml" />
 
   <bean id="javax.servlet.ServletContext"
         class="org.springframework.mock.web.MockServletContext">

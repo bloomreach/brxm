@@ -31,5 +31,6 @@
     <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml" />
     <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml" />
     <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
+    <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml" />
 
 </beans>

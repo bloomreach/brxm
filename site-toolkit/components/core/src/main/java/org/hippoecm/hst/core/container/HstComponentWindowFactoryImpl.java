@@ -20,9 +20,11 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstComponentFatalException;
+import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 /**
@@ -67,10 +69,13 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
         String referenceNamespace = referenceNamespaceBuilder.toString();
 
         HstComponent component = null;
+        HstComponentMetadata componentMetadata = null;
         HstComponentException componentFactoryException = null;
 
         try {
-            component = compFactory.getComponentInstance(requestContainerConfig, compConfig, requestContext.getResolvedMount().getMount());
+            Mount mount = requestContext.getResolvedMount().getMount();
+            component = compFactory.getComponentInstance(requestContainerConfig, compConfig, mount);
+            componentMetadata = compFactory.getComponentMetadata(requestContainerConfig, compConfig, mount);
         } catch (HstComponentFatalException e) {
             throw e;
         } catch (HstComponentException e) {
@@ -90,6 +95,7 @@ public class HstComponentWindowFactoryImpl implements HstComponentWindowFactory 
                 compConfig,
                 componentName,
                 component,
+                componentMetadata,
                 parentWindow,
                 referenceNamespace);
 

@@ -84,17 +84,17 @@ public class TestHstRequest extends AbstractSpringTestCase {
         Map<String, Object> props = new HashMap<String, Object>();
         props.put("name", "news");
         props.put("referenceName", "news");
-        HstComponentWindow rootWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, "");
+        HstComponentWindow rootWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "");
         
         props = new HashMap<String, Object>();
         props.put("name", "head");
         props.put("referenceName", "h");
-        HstComponentWindow headWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, "h");
+        HstComponentWindow headWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "h");
         
         props = new HashMap<String, Object>();
         props.put("body", "body");
         props.put("referenceName", "b");
-        HstComponentWindow bodyWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, "b");
+        HstComponentWindow bodyWindow = new HstComponentWindowImpl(createHstComponentConfigurationProxy(props), null, null, null, null, "b");
         
         HstRequest hstRequestForRootWindow = new HstRequestImpl(this.servletRequest, this.requestContext, rootWindow, HstRequest.RENDER_PHASE);
         HstRequest hstRequestForHeadWindow = new HstRequestImpl(this.servletRequest, this.requestContext, headWindow, HstRequest.RENDER_PHASE);

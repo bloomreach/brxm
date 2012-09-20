@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentMetadata;
 
 /**
  * The HstComponent registry interface
@@ -52,6 +53,18 @@ public interface HstComponentRegistry {
      * @return the HstComponent registered with the key pair.
      */
     HstComponent getComponent(HstContainerConfig requestContainerConfig, String componentId);
+    
+    /**
+     * Returns the metadata of the registered HstComponent. The key is the pair of container configuration and component ID.
+     * <P>
+     * If the component metadata is not found, then it will return null.
+     * </P>
+     * 
+     * @param requestContainerConfig the container configuration
+     * @param componentId the component ID
+     * @return the metadata of the HstComponent registered with the key pair.
+     */
+    HstComponentMetadata getComponentMetadata(HstContainerConfig requestContainerConfig, String componentId);
     
     /**
      * Unregisters all the HstComponents.

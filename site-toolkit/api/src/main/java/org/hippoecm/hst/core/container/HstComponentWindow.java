@@ -22,6 +22,7 @@ import java.util.Map;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseState;
 
@@ -67,6 +68,13 @@ public interface HstComponentWindow {
      * @return the actual HstComponent instance
      */
     HstComponent getComponent();
+    
+    /**
+     * The metadata of the actual HstComponent class.
+     * 
+     * @return the metadata of the actual HstComponent class.
+     */
+    HstComponentMetadata getComponentMetadata();
     
     /**
      * Whether it has component exceptions or not

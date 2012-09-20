@@ -21,6 +21,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.site.request.ComponentConfigurationImpl;
 
@@ -53,14 +54,7 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
     }
     
     public HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException {
-        
-        //String componentId = compConfig.getId() + compConfig.hashCode();
-        StringBuilder componentIdBuilder = new StringBuilder();
-        // account for the Mount info in the componentId since one and the same HstComponentConfiguration instance
-        // can be shared by multiple mounts
-        componentIdBuilder.append("mount:").append(mount.hashCode()).append('\uFFFF').append(mount.getIdentifier()).append('\uFFFF');
-        componentIdBuilder.append("compId:").append(compConfig.getId()).append('\uFFFF').append(compConfig.hashCode());
-        String componentId = componentIdBuilder.toString();
+        String componentId = getComponentId(compConfig, mount);
         HstComponent component = this.componentRegistry.getComponent(requestContainerConfig, componentId);
         
         if (component == null) {
@@ -112,6 +106,11 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
         
     }
     
+    public HstComponentMetadata getComponentMetadata(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException {
+        String componentId = getComponentId(compConfig, mount);
+        return componentRegistry.getComponentMetadata(requestContainerConfig, componentId);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T getObjectInstance(HstContainerConfig requestContainerConfig, String className) throws HstComponentException {
         T object = null;
@@ -141,4 +140,13 @@ public class HstComponentFactoryImpl implements HstComponentFactory {
         return object;
     }
     
+    private String getComponentId(HstComponentConfiguration compConfig, Mount mount) {
+        //String componentId = compConfig.getId() + compConfig.hashCode();
+        StringBuilder componentIdBuilder = new StringBuilder();
+        // account for the Mount info in the componentId since one and the same HstComponentConfiguration instance
+        // can be shared by multiple mounts
+        componentIdBuilder.append("mount:").append(mount.hashCode()).append('\uFFFF').append(mount.getIdentifier()).append('\uFFFF');
+        componentIdBuilder.append("compId:").append(compConfig.getId()).append('\uFFFF').append(compConfig.hashCode());
+        return componentIdBuilder.toString();
+    }
 }

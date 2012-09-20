@@ -30,7 +30,9 @@ import org.slf4j.LoggerFactory;
 public class HstRequestProcessorImpl implements HstRequestProcessor {
     
     protected final static Logger log = LoggerFactory.getLogger(HstRequestProcessorImpl.class);
-    
+
+    private static ThreadLocal<HstContainerConfig> tlCurrentRequestContainerConfig = new ThreadLocal<HstContainerConfig>();
+
     protected Pipelines pipelines;
     
     public HstRequestProcessorImpl(Pipelines pipelines) {
@@ -62,6 +64,8 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         }
         
         try {
+            tlCurrentRequestContainerConfig.set(requestContainerConfig);
+
             if (processorClassLoader != containerClassLoader) {
                 Thread.currentThread().setContextClassLoader(processorClassLoader);
             }
@@ -74,10 +78,17 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
             throw new ContainerException(e);
         } finally {
             pipeline.cleanup(requestContainerConfig, requestContext, servletRequest, servletResponse);
-      
+
+            tlCurrentRequestContainerConfig.remove();
+
             if (processorClassLoader != containerClassLoader) {
                 Thread.currentThread().setContextClassLoader(containerClassLoader);
             }
         }
     }
+
+    public HstContainerConfig getCurrentHstContainerConfig() {
+        return tlCurrentRequestContainerConfig.get();
+    }
+
 }

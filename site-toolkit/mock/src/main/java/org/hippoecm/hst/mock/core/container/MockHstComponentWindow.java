@@ -28,6 +28,7 @@ import java.util.Set;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstComponentMetadata;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.mock.util.IteratorEnumeration;
@@ -38,6 +39,7 @@ public class MockHstComponentWindow implements HstComponentWindow {
     private String referenceName;
     private String referenceNamespace;
     private HstComponent component;
+    private HstComponentMetadata componentMetadata;
     private String renderPath;
     private String namedRenderer;
     private String serveResourcePath;
@@ -92,6 +94,14 @@ public class MockHstComponentWindow implements HstComponentWindow {
     
     public void setComponent(HstComponent component) {
         this.component = component;
+    }
+
+    public HstComponentMetadata getComponentMetadata() {
+        return componentMetadata;
+    }
+
+    public void setComponentMetadata(HstComponentMetadata componentMetadata) {
+        this.componentMetadata = componentMetadata;
     }
 
     public String getComponentName() {

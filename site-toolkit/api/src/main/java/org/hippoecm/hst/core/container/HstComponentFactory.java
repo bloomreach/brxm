@@ -19,6 +19,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponent;
 import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstComponentMetadata;
 
 /**
  * The factory interface which is responsible for creating HstComponent instances.
@@ -37,6 +38,17 @@ public interface HstComponentFactory {
      * @throws HstComponentException
      */
     HstComponent getComponentInstance(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException;
+    
+    /**
+     * Returns the metadata of the HstComponent from the HstComponent context.
+     * 
+     * @param requestContainerConfig the HstContainer configuration
+     * @param compConfig the HstComponent configuration
+     * @param mount the Mount to create the component instance for
+     * @return the metadata of the HstComponent
+     * @throws HstComponentException
+     */
+    HstComponentMetadata getComponentMetadata(HstContainerConfig requestContainerConfig, HstComponentConfiguration compConfig, Mount mount) throws HstComponentException;
     
     /**
      * Returns arbitrary object instance from the HstComponent context.

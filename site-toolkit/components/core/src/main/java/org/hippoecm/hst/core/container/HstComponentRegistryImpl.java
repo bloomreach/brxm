@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.component.HstComponentMetadata;
+import org.hippoecm.hst.core.component.HstComponentMetadataReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,8 +46,19 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
         return null;
     }
 
+    public HstComponentMetadata getComponentMetadata(HstContainerConfig requestContainerConfig, String componentId) {
+        HstComponentHolder holder = getServletConfigComponentsMap(requestContainerConfig, true).get(componentId);
+        
+        if (holder != null) {
+            return holder.getComponentMetadata();
+        }
+        return null;
+    }
+
     public void registerComponent(HstContainerConfig requestContainerConfig, String componentId, HstComponent component) {
-        getServletConfigComponentsMap(requestContainerConfig, true).put(componentId, new HstComponentHolder(component));
+        HstComponentMetadata componentMetadata = HstComponentMetadataReader.getHstComponentMetadata(getClass().getClassLoader(), component.getClass().getName());
+        HstComponentHolder componentHolder = new HstComponentHolder(component, componentMetadata);
+        getServletConfigComponentsMap(requestContainerConfig, true).put(componentId, componentHolder);
     }
 
     public void unregisterComponent(HstContainerConfig requestContainerConfig, String componentId) {
@@ -112,19 +125,24 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
         
         return this.servletConfigComponentsMap.get(requestContainerConfig);
     }
-    
+
     private static class HstComponentHolder {
-        
+
         private HstComponent component;
-        
-        private HstComponentHolder(final HstComponent component) {
+        private HstComponentMetadata componentMetadata;
+
+        private HstComponentHolder(final HstComponent component, final HstComponentMetadata componentMetadata) {
             this.component = component;
+            this.componentMetadata = componentMetadata;
         }
-        
+
         public HstComponent getComponent() {
             return component;
         }
-    
+
+        public HstComponentMetadata getComponentMetadata() {
+            return componentMetadata;
+        }
     }
     
 }
