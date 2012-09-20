@@ -84,7 +84,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
     private String pageErrorHandlerClassName;
 
-    private ArrayList<String> usedChildReferenceNames = new ArrayList<String>();
+    private List<String> usedChildReferenceNames = new ArrayList<String>();
     private int autocreatedCounter = 0;
 
     private Map<String, String> parameters = new LinkedHashMap<String, String>();
@@ -136,8 +136,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     /**
      * containing all the variants of this {@link HstComponentConfiguration} : This is including the variants of all 
      * descendant {@link HstComponentConfiguration}s. This member can be null if no variants configured
+     * Default empty List.
      */
-    private List<String> variants;
+    private List<String> variants = Collections.emptyList();
     
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -345,30 +346,26 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public Map<String, String> getParameters() {
-        return Collections.unmodifiableMap(this.parameters);
+        return parameters;
     }
     
     @Override
     public Set<String> getParameterPrefixes() {
-        return Collections.unmodifiableSet(parameterNamePrefixSet);
+        return parameterNamePrefixSet;
     }
 
     @Override
     public List<String> getVariants() {
-        if (variants == null) {
-            return Collections.emptyList();
-        }
-        // returned variants is immutable
         return variants;
     }
 
  
 	public String getLocalParameter(String name) {
-		return this.localParameters.get(name);
+		return localParameters.get(name);
 	}
 
 	public Map<String, String> getLocalParameters() {
-		return Collections.unmodifiableMap(this.localParameters);
+		return localParameters;
 	}
 
     public String getId() {
@@ -402,7 +399,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     public Map<String, HstComponentConfiguration> getChildren() {
-        return Collections.unmodifiableMap(this.componentConfigurations);
+        return componentConfigurations;
     }
 
     public HstComponentConfiguration getChildByName(String name) {
@@ -847,6 +844,46 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.variants = Collections.unmodifiableList(new ArrayList<String>(variantsSet));
         }
         
+    }
+
+    protected void makeCollectionsImmutableAndOptimize() {
+
+        for (HstComponentConfigurationService child : orderedListConfigs) {
+            // optimize the entire tree of components
+            child.makeCollectionsImmutableAndOptimize();
+        }
+
+        if (parameters.isEmpty()) {
+            parameters = Collections.emptyMap();
+        } else {
+            parameters = Collections.unmodifiableMap(parameters);
+        }
+        if (localParameters.isEmpty()) {
+            localParameters = Collections.emptyMap();
+        } else {
+            localParameters = Collections.unmodifiableMap(localParameters);
+        }
+        if (componentConfigurations.isEmpty()) {
+            componentConfigurations = Collections.emptyMap();
+        } else {
+            componentConfigurations = Collections.unmodifiableMap(componentConfigurations);
+        }
+        if (parameterNamePrefixSet.isEmpty()) {
+            parameterNamePrefixSet = Collections.emptySet();
+        } else {
+            parameterNamePrefixSet = Collections.unmodifiableSet(parameterNamePrefixSet);
+        }
+
+        if (childConfByName.isEmpty()) {
+            childConfByName = Collections.emptyMap();
+        }
+        if (orderedListConfigs.isEmpty()) {
+            orderedListConfigs = Collections.emptyList();
+        }
+
+        if (usedChildReferenceNames.isEmpty()) {
+            usedChildReferenceNames = Collections.emptyList();
+        }
     }
 
     protected void autocreateReferenceNames() {

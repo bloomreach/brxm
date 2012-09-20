@@ -135,6 +135,10 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             ((HstComponentConfigurationService) child).populateVariants();
         }
 
+        for (HstComponentConfiguration child : childComponents) {
+            ((HstComponentConfigurationService) child).makeCollectionsImmutableAndOptimize();
+        }
+
     }
 
     public HstComponentConfiguration getComponentConfiguration(String id) {
