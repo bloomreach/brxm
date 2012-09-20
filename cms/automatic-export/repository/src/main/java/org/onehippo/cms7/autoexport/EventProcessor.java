@@ -34,10 +34,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
 import org.dom4j.DocumentException;
-import org.hippoecm.repository.api.SynchronousEventListener;
 
 import static javax.jcr.observation.Event.NODE_ADDED;
 import static javax.jcr.observation.Event.NODE_REMOVED;
@@ -53,7 +53,7 @@ import static org.onehippo.cms7.autoexport.Constants.CONFIG_ENABLED_PROPERTY_NAM
 import static org.onehippo.cms7.autoexport.Constants.CONFIG_NODE_PATH;
 import static org.onehippo.cms7.autoexport.Constants.NODETYPES_PATH;
 
-public class EventProcessor implements SynchronousEventListener {
+public class EventProcessor implements EventListener {
 
     private static final List<String> ignored = new ArrayList<String>(20);
     private static final int EVENT_TYPES = NODE_ADDED | NODE_REMOVED | PROPERTY_ADDED | PROPERTY_CHANGED | PROPERTY_REMOVED;
@@ -78,6 +78,7 @@ public class EventProcessor implements SynchronousEventListener {
         ignored.add("/jcr:system/jcr:nodeTypes/rep:");
         ignored.add("/jcr:system/jcr:nodeTypes/hipposysedit:");
         ignored.add("/jcr:system/jcr:nodeTypes/hippofacnav:");
+        ignored.add("/hippo:configuration/hippo:update");
     }
     
     private final InitializeItemRegistry registry;

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +28,15 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
+import javax.jcr.observation.EventIterator;
+import javax.jcr.observation.EventListener;
 
 import org.apache.jackrabbit.core.NamespaceRegistryImpl;
+import org.apache.jackrabbit.spi.Event;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
@@ -71,12 +76,16 @@ public class AutoExportTest extends RepositoryTestCase {
 
     static {
         // Where are we?
-        TEST_HOME = System.getProperty("user.dir") + "/../src/test/resources/autoexporttest";
-        PROJECT_BASE = System.getProperty("user.dir") + "/autoexporttest";
+        final String resource = AutoExportTest.class.getResource("/autoexporttest/simple/hippoecm-extension.xml").getFile();
+        int idx = resource.indexOf("/target/test-classes/autoexporttest/simple/hippoecm-extension.xml");
+        String moduleHome = resource.substring(0, idx);
 
+        TEST_HOME = moduleHome + "/src/test/resources/autoexporttest";
+        PROJECT_BASE = moduleHome + "/target/autoexporttest";
     }
     // /export-test
     private Node testRoot;
+
 
     @Before
     @Override
@@ -90,10 +99,12 @@ public class AutoExportTest extends RepositoryTestCase {
             delete(projectBase);
         }
         System.setProperty("project.basedir", PROJECT_BASE);
+
         // startup the repository
         super.setUp(true);
+
         // remove imported nodes
-        Node root = super.session.getNode("/");
+        Node root = session.getNode("/");
         for (NodeIterator iter = root.getNodes("et:*"); iter.hasNext();) {
             Node node = iter.nextNode();
             log.debug("removing node " + node.getPath());
@@ -104,7 +115,7 @@ public class AutoExportTest extends RepositoryTestCase {
             log.debug("removing node " + node.getPath());
             node.remove();
         }
-        NodeTypeManager manager = super.session.getWorkspace().getNodeTypeManager();
+        NodeTypeManager manager = session.getWorkspace().getNodeTypeManager();
         try {
             manager.unregisterNodeType("et:example");
         } catch (NoSuchNodeTypeException e) {
@@ -113,18 +124,10 @@ public class AutoExportTest extends RepositoryTestCase {
             manager.unregisterNodeType("et:example2");
         } catch (NoSuchNodeTypeException e) {
         }
-//        NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
-        // unregistering namespace is not supported by jackrabbit...
-//            try { registry.unregisterNamespace("etx"); } catch (NamespaceException e) {}
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
-        testRoot = session.getRootNode();
-    }
 
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
+        session.save();
+        testRoot = session.getRootNode();
+
     }
 
     @AfterClass
@@ -137,11 +140,11 @@ public class AutoExportTest extends RepositoryTestCase {
         String[] content = { "/et:simple", "et:node" };
         build(session, content);
         session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        waitForAutoExport();
         compare("simple");
         assertTrue(hasInitializeItemNode("et-simple"));
     }
-    
+
     @Test
     public void testAddDeepNode() throws Exception {
         String[] content = {
@@ -151,7 +154,7 @@ public class AutoExportTest extends RepositoryTestCase {
         };
         build(session, content);
         session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        waitForAutoExport();
         compare("deep");
         assertTrue(hasInitializeItemNode("et-foo"));
         assertTrue(hasInitializeItemNode("et-foo-et-foo-et-foo"));
@@ -162,20 +165,20 @@ public class AutoExportTest extends RepositoryTestCase {
         // case: add and remove a child node
         Node node0 = testRoot.addNode("et:simple", "et:node");
         Node node1 = node0.addNode("et:simple", "et:node");
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.save();
+        waitForAutoExport();
         node1.remove();
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.save();
+        waitForAutoExport();
         compare("simple");
         // case: add and remove a context node
         // (should add and remove content resource instruction)
         Node node2 = testRoot.addNode("et:simple2", "et:node");
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.save();
+        waitForAutoExport();
         node2.remove();
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.save();
+        waitForAutoExport();
         // result should be the same
         compare("simple");
         assertTrue(!hasInitializeItemNode("et-simple2"));
@@ -185,12 +188,12 @@ public class AutoExportTest extends RepositoryTestCase {
     public void testMoveNode() throws Exception {
         // create /export-test/et:tobemoved and persist 
         testRoot.addNode("et:tobemoved", "et:node");
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.save();
+        waitForAutoExport();
         // move
-        super.session.move("/et:tobemoved", "/et:simple");
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.move("/et:tobemoved", "/et:simple");
+        session.save();
+        waitForAutoExport();
         compare("simple");
         assertTrue(!hasInitializeItemNode("et-tobemoved"));
     }
@@ -200,12 +203,12 @@ public class AutoExportTest extends RepositoryTestCase {
         Node node = testRoot.addNode("et:bar", "et:node");
         Node sub = node.addNode("et:foo", "et:node");
         sub.addNode("et:foo", "et:node");
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.save();
+        waitForAutoExport();
         // move
-        super.session.move("/et:bar", "/et:foo");
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.move("/et:bar", "/et:foo");
+        session.save();
+        waitForAutoExport();
         compare("deep");
     }
     
@@ -226,37 +229,29 @@ public class AutoExportTest extends RepositoryTestCase {
 //        Thread.sleep(SLEEP_AFTER_SAVE);
 //        compare("deep");
 //    }
-    
-    /*
-     * Because unregistering namespaces is not supported by jackrabbit
-     * we cannot clean up and this test only works on a clean repository
-     */
+
     @Test
     public void testAddNamespace() throws Exception {
         NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
         registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.1");
         // we need to add and remove a node here in order for the jcr event listener to be called
         Node node = testRoot.addNode("et:simple", "et:node");
-        super.session.save();
+        session.save();
         node.remove();
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.save();
+        waitForAutoExport();
         compare("namespace");
         assertTrue(hasInitializeItemNode("etx"));
     }
-    
-    /*
-     * Because unregistering namespaces is not supported by jackrabbit
-     * we cannot clean up and this test only works on a clean repository
-     */
+
     @Test
     public void testAddandUpdateNamespace() throws Exception {
         NamespaceRegistry registry = super.session.getWorkspace().getNamespaceRegistry();
         registry.registerNamespace("etx", "http://hippoecm.org/etx/nt/1.0");
         // we need to add and remove a node here in order for the jcr event listener to be called
         Node node = testRoot.addNode("et:simple", "et:node");
-        super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        session.save();
+        waitForAutoExport();
         
         // if we register a namespace that is an updated version of
         // a previously registered namespace then the instruction
@@ -271,7 +266,7 @@ public class AutoExportTest extends RepositoryTestCase {
         // just to trigger an event
         node.remove();
         super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        waitForAutoExport();
         compare("namespace");
         assertTrue(hasInitializeItemNode("etx"));
     }
@@ -283,7 +278,7 @@ public class AutoExportTest extends RepositoryTestCase {
         template.setName("et:example");
         ntm.registerNodeType(template, false);
         super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        waitForAutoExport();
         compare("nodetype");
     }
     
@@ -294,14 +289,14 @@ public class AutoExportTest extends RepositoryTestCase {
         template.setName("et:example");
         ntm.registerNodeType(template, false);
         super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        waitForAutoExport();
         // adding a nodetype in the same namespace should result
         // in the cnd for this namespace to be updated
         NodeTypeTemplate template2 = ntm.createNodeTypeTemplate();
         template2.setName("et:example2");
         ntm.registerNodeType(template2, false);
         super.session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        waitForAutoExport();
         compare("nodetypes");
     }
     
@@ -316,7 +311,7 @@ public class AutoExportTest extends RepositoryTestCase {
         node.setProperty("baz", "baz");
         node.setProperty("quz", "quz");
         session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        waitForAutoExport();
         compare("basicdelta");
     }
 
@@ -328,7 +323,7 @@ public class AutoExportTest extends RepositoryTestCase {
         enableExport();
         node.addNode("et:bar").addNode("et:baz");
         session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        waitForAutoExport();
         compare("nesteddelta");
     }
 
@@ -343,8 +338,23 @@ public class AutoExportTest extends RepositoryTestCase {
         };
         build(session, content);
         session.save();
-        Thread.sleep(SLEEP_AFTER_SAVE);
+        waitForAutoExport();
         compare("filteruuids");
+    }
+
+    private void waitForAutoExport() throws RepositoryException {
+        final Object monitor = new Object();
+        session.getWorkspace().getObservationManager().addEventListener(new EventListener() {
+            @Override
+            public void onEvent(final EventIterator events) {
+                monitor.notify();
+            }
+        }, Event.NODE_ADDED | Event.NODE_REMOVED, "/hippo:configuration/hippo:initialize", true, null, null, true);
+        try {
+            synchronized (monitor) {
+                monitor.wait(SLEEP_AFTER_SAVE);
+            }
+        } catch (InterruptedException ignore) {}
     }
 
     private void compare(String testCase) throws Exception {

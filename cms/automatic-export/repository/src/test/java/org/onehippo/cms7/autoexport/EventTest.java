@@ -26,10 +26,9 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.ObservationManager;
 
-import org.apache.jackrabbit.core.observation.SynchronousEventListener;
+import org.hippoecm.repository.api.SynchronousEventListener;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
