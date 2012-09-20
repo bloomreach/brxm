@@ -23,6 +23,7 @@ import javax.jcr.Session;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.content.annotations.Persistable;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowCallbackHandler;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManager;
@@ -35,6 +36,7 @@ import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.demo.beans.BaseBean;
 import org.hippoecm.hst.demo.beans.CommentBean;
 import org.hippoecm.hst.util.ContentBeanUtils;
@@ -108,8 +110,10 @@ public class Detail extends BaseHstComponent {
 
     }
 
+    @Persistable
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+        HstRequestContext requestContext = request.getRequestContext();
         String type = request.getParameter("type");
 
         if ("add".equals(type)) {
@@ -122,13 +126,10 @@ public class Detail extends BaseHstComponent {
             }
             String commentToUuidOfHandle = ((HippoDocumentBean) commentTo).getCanonicalHandleUUID();
             if (title != null && !"".equals(title.trim()) && comment != null) {
-                Session persistableSession = null;
                 WorkflowPersistenceManager wpm = null;
 
                 try {
-                    // retrieves writable session. NOTE: this session should be logged out manually!
-                    persistableSession = getPersistableSession(request);
-                    wpm = getWorkflowPersistenceManager(persistableSession);
+                    wpm = getWorkflowPersistenceManager(requestContext.getSession());
                     wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                         public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                             FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
@@ -164,7 +165,7 @@ public class Detail extends BaseHstComponent {
 
                     // update now
                     wpm.update(commentBean);
-
+                    wpm.save();
 
                 } catch (Exception e) {
                     log.warn("Failed to create a comment: ", e);
@@ -176,20 +177,19 @@ public class Detail extends BaseHstComponent {
                             log.warn("Failed to refresh: ", e);
                         }
                     }
-                } finally {
-                    if (persistableSession != null) {
-                        persistableSession.logout();
-                    }
                 }
             }
         } else if ("remove".equals(type)) {
         }
     }
 
+    @Persistable
     @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
 
         super.doBeforeServeResource(request, response);
+
+        HstRequestContext requestContext = request.getRequestContext();
 
         boolean succeeded = true;
         String errorMessage = "";
@@ -203,13 +203,10 @@ public class Detail extends BaseHstComponent {
 
         if (saveDocument || requestPublication) {
             String documentPath = this.getContentBean(request).getPath();
-            Session persistableSession = null;
             WorkflowPersistenceManager cpm = null;
 
             try {
-                // retrieves writable session. NOTE: this session should be logged out manually!
-                persistableSession = getPersistableSession(request);
-                cpm = getWorkflowPersistenceManager(persistableSession);
+                cpm = getWorkflowPersistenceManager(requestContext.getSession());
                 cpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
                     public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
                         if (requestPublication) {
@@ -233,6 +230,7 @@ public class Detail extends BaseHstComponent {
 
                 // update now
                 cpm.update(page);
+                cpm.save();
             } catch (Exception e) {
                 log.warn("Failed to create a comment: ", e);
 
@@ -242,10 +240,6 @@ public class Detail extends BaseHstComponent {
                     } catch (ObjectBeanPersistenceException e1) {
                         log.warn("Failed to refresh: ", e);
                     }
-                }
-            } finally {
-                if (persistableSession != null) {
-                    persistableSession.logout();
                 }
             }
         }
