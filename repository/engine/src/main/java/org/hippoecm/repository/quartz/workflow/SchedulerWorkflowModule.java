@@ -22,31 +22,22 @@ import org.hippoecm.repository.ext.WorkflowInvocationHandlerModule;
 import org.hippoecm.repository.ext.WorkflowInvocationHandlerModuleFactory;
 import org.hippoecm.repository.ext.WorkflowManagerModule;
 import org.hippoecm.repository.ext.WorkflowManagerRegister;
-import org.hippoecm.repository.quartz.SchedulerModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SchedulerWorkflowModule implements WorkflowManagerModule {
 
-    static final Logger log = LoggerFactory.getLogger(SchedulerWorkflowModule.class);
-
     @Override
     public void register(WorkflowManagerRegister register) {
-        if (SchedulerModule.isEnabled()) {
-            register.bind(Date.class, new WorkflowInvocationHandlerModuleFactory<Date>() {
-                @Override
-                public WorkflowInvocationHandlerModule createInvocationHandler(Date date) {
-                    return new DateSchedulerInvocationModule(date);
-                }
-            });
-            register.bind(CronExpression.class, new WorkflowInvocationHandlerModuleFactory<CronExpression>() {
-                @Override
-                public WorkflowInvocationHandlerModule createInvocationHandler(CronExpression cronExpression) {
-                    return new CronSchedulerInvocationModule(cronExpression.toString());
-                }
-            });
-        } else {
-            log.info("Hippo scheduler was disabled, scheduling workflow actions will not be possible");
-        }
+        register.bind(Date.class, new WorkflowInvocationHandlerModuleFactory<Date>() {
+            @Override
+            public WorkflowInvocationHandlerModule createInvocationHandler(Date date) {
+                return new DateSchedulerInvocationModule(date);
+            }
+        });
+        register.bind(CronExpression.class, new WorkflowInvocationHandlerModuleFactory<CronExpression>() {
+            @Override
+            public WorkflowInvocationHandlerModule createInvocationHandler(CronExpression cronExpression) {
+                return new CronSchedulerInvocationModule(cronExpression.toString());
+            }
+        });
     }
 }

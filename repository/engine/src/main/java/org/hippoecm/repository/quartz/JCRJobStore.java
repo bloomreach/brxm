@@ -85,6 +85,9 @@ public class JCRJobStore extends AbstractJobStore {
      */
     @Override
     public void storeJobAndTrigger(SchedulingContext ctxt, JobDetail newJob, Trigger newTrigger) throws JobPersistenceException {
+        if (newJob instanceof JCRJobDetail) {
+            throw new JobPersistenceException("JobDetail must be of type JCRJobDetail");
+        }
         final JCRJobDetail jobDetail = (JCRJobDetail) newJob;
         final Session session = getSession(ctxt);
         synchronized(session) {
@@ -250,6 +253,9 @@ public class JCRJobStore extends AbstractJobStore {
 
     @Override
     public void triggeredJobComplete(SchedulingContext ctxt, Trigger trigger, JobDetail jobDetail, int triggerInstCode) throws JobPersistenceException {
+        if (jobDetail instanceof JCRJobDetail) {
+            throw new JobPersistenceException("JobDetail must be of type JCRJobDetail");
+        }
         final Session session = getSession(ctxt);
         synchronized (session) {
             try {

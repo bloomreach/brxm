@@ -51,32 +51,32 @@ public class SchedulerModule implements DaemonModule {
     private JCRScheduler scheduler = null;
 
     public static boolean isEnabled() {
-        final String enabled = System.getProperty("hippo.scheduler.enabled");
-        return enabled == null ? true : Boolean.parseBoolean(enabled);
+        return !Boolean.getBoolean("hippo.scheduler.disabled");
     }
 
     public void initialize(Session session) {
         this.session = session;
-        if (isEnabled()) {
-            try {
-                final JcrSchedulerFactory schedFactory = new JcrSchedulerFactory(SCHEDULER_FACTORY_PROPERTIES);
-                scheduler = (JCRScheduler) schedFactory.getScheduler();
+        try {
+            final JcrSchedulerFactory schedFactory = new JcrSchedulerFactory(SCHEDULER_FACTORY_PROPERTIES);
+            scheduler = (JCRScheduler) schedFactory.getScheduler();
+            if (isEnabled()) {
                 scheduler.start();
-            } catch (SchedulerException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+            } else {
+                log.info("Hippo scheduler was disabled by hippo.scheduler.disabled property, " +
+                        "scheduled actions will not be executed by this cluster node");
             }
-        } else {
-            log.info("Hippo scheduler was disabled by hippo.scheduler.enabled property, scheduled actions will not be executed");
+        } catch (SchedulerException ex) {
+            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
         }
         instance = this;
     }
 
     public static Scheduler getScheduler(Session session) {
-        if (instance.scheduler != null) {
-            return new JCRScheduler(instance.scheduler, session);
-        } else {
-            throw new NullPointerException("The scheduler module has been disabled, no scheduler is available");
+        if (instance == null) {
+            log.warn("SchedulerModule has not yet been initialized, cannot service request for scheduler");
+            return null;
         }
+        return new JCRScheduler(instance.scheduler, session);
     }
 
     static Session getSession() {

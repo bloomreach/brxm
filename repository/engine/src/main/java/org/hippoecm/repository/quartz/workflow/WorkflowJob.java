@@ -35,7 +35,7 @@ public class WorkflowJob implements Job {
         Session workflowSession = null;
         try {
             final JCRScheduler scheduler = (JCRScheduler) context.getScheduler();
-            final Session schedulerSession = scheduler.getSchedulingContext().getSession();
+            final Session schedulerSession = scheduler.getJCRSchedulingContext().getSession();
             synchronized(schedulerSession) {
                 workflowSession = schedulerSession.impersonate(new SimpleCredentials(IMPERSONATED_USER, IMPERSONATED_PASSWORD));
             }
@@ -49,10 +49,10 @@ public class WorkflowJob implements Job {
 
             workflowSession.save();
 
-        } catch (WorkflowException ex) {
-            throw new JobExecutionException(ex.getClass().getName() + ": " + ex.getMessage());
-        } catch (RepositoryException ex) {
-            throw new JobExecutionException(ex.getClass().getName() + ": " + ex.getMessage());
+        } catch (WorkflowException e) {
+            throw new JobExecutionException("Failed to execute workflow job", e);
+        } catch (RepositoryException e) {
+            throw new JobExecutionException("Failed to execute workflow job", e);
         } finally {
             if (workflowSession != null) {
                 workflowSession.logout();

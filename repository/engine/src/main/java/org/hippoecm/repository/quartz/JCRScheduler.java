@@ -18,6 +18,8 @@ package org.hippoecm.repository.quartz;
 import javax.jcr.Session;
 
 import org.quartz.Scheduler;
+import org.quartz.SchedulerContext;
+import org.quartz.SchedulerException;
 import org.quartz.core.QuartzScheduler;
 import org.quartz.impl.StdScheduler;
 
@@ -36,8 +38,7 @@ public class JCRScheduler extends StdScheduler implements Scheduler {
         this(sched.qs, new JCRSchedulingContext(sched.ctx, session));
     }
 
-    public JCRSchedulingContext getSchedulingContext() {
+    public JCRSchedulingContext getJCRSchedulingContext() {
         return ctx;
     }
-
 }
