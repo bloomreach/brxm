@@ -85,6 +85,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private static final Logger log = LoggerFactory.getLogger(TemplateBuilder.class);
 
+    /** Prefix to append to duplicated field names or paths */
+    private static final char SUFFIX_WHEN_DUPLICATE = '_';
+
     class BuilderFieldDescriptor implements IFieldDescriptor, IDetachable {
         private static final long serialVersionUID = 6935814333088957137L;
 
@@ -358,17 +361,54 @@ public class TemplateBuilder implements IDetachable, IObservable {
         private IObserver observer;
 
         public void addField(IFieldDescriptor descriptor) throws TypeException {
-            for (IFieldDescriptor field : getFields().values()) {
+
+            String oldDescriptorName = descriptor.getName();
+            String oldDescriptorPath = descriptor.getPath();
+            String newDescriptorName = null;
+            String newDescriptorPath = null;
+
+            Iterator<IFieldDescriptor> fieldsIterator = getFields().values().iterator();
+            while (fieldsIterator.hasNext()) {
+                IFieldDescriptor field = fieldsIterator.next();
+                boolean checkAgainAgainstAllFields = false;
+
+                // Check duplicate paths
                 if (!"*".equals(field.getPath())) {
                     if (field.getPath().equals(descriptor.getPath())) {
-                        throw new TypeException("Path " + descriptor.getPath() + " already exists, not adding field");
+                        descriptor.setPath(newDescriptorPath = descriptor.getPath() + SUFFIX_WHEN_DUPLICATE);
+                        checkAgainAgainstAllFields = true;
                     }
                 } else if ("*".equals(descriptor.getPath())) {
                     if (field.getTypeDescriptor().getType().equals(descriptor.getTypeDescriptor().getType())) {
+                        // TODO Is there anything to do here?
                         throw new TypeException("Path " + descriptor.getPath() + " already exists, not adding field");
                     }
                 }
+
+                // Check duplicate names
+                if (field.getName() != null && field.getName().equals(descriptor.getName())) {
+                    if (descriptor instanceof JavaFieldDescriptor) {
+                        ((JavaFieldDescriptor) descriptor)
+                                .setName(newDescriptorName = descriptor.getName() + SUFFIX_WHEN_DUPLICATE);
+                        checkAgainAgainstAllFields = true;
+                    } else {
+                        // TODO Can this case actually happen?
+                        throw new TypeException(
+                                "Name " + descriptor.getName() + " already exists, not adding field");
+                    }
+                }
+
+                if (checkAgainAgainstAllFields) {
+                    // Reset the iterator, because the new path or name can also be duplicated
+                    fieldsIterator = getFields().values().iterator();
+                }
             }
+
+            if (newDescriptorPath != null || newDescriptorName != null) {
+                log.info("Path '{}' or name '{} 'already exists, changed path to '{}' and name to '{}'",
+                        new String[]{oldDescriptorPath, oldDescriptorName, newDescriptorPath, newDescriptorName});
+            }
+
             typeDescriptor.addField(descriptor);
             processFieldAdded(descriptor);
             updatePrototype();
@@ -544,7 +584,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                             doUpdate = true;
                         }
                     }
-                    
+
                 }
             }
             if (doUpdate) {
