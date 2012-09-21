@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.console.menu.save;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
@@ -60,4 +61,9 @@ public class SaveDialogLink extends DialogLink {
         }
     }
 
+    @Override
+    protected void onComponentTag(final ComponentTag tag) {
+        super.onComponentTag(tag);
+        tag.put("class", hasSessionChanges() ? "hippo-console-menu-actions-save session-changes" : "hippo-console-menu-actions-save");
+    }
 }

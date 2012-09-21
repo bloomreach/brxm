@@ -74,6 +74,9 @@
 
 .hippo-console-tree-add .hippo-console-tree-add-delete{margin-right: 57px;}
 .hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a, .hippo-console-save a, .hippo-console-tree-add a {padding: 2px; color: white; border: 1px solid white; font-weight: bold; font-size: 11px; display: block; float: left; background: #4587d6}
+li.hippo-console-menu-actions-save.session-changes a {
+    background-color: red;
+}
 .hippo-console-tree-sorter li span em{padding:2px; border-color: #cccccc; background: #f2f2f2}
 .hippo-console-tree-sorter a:hover, .hippo-console-save a:hover, .hippo-console-tree-add a:hover{color: white; background: #32629b;}
 .hippo-console-tree-add{clear: left;}

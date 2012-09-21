@@ -140,7 +140,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
     public void render(PluginRequestTarget target) {
         super.render(target);
         if (target != null) {
-            target.addComponent(saveDialogLink.get("dialog-link:dialog-link-text-extended"));
+            target.addComponent(saveDialogLink);
         }
     }
 
