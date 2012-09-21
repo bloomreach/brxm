@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@ package org.hippoecm.frontend.editor.workflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -53,9 +54,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ISettingsService;
-import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -69,6 +70,11 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.io.FilenameUtils.EXTENSION_SEPARATOR_STR;
+import static org.apache.commons.io.FilenameUtils.getBaseName;
+import static org.apache.commons.io.FilenameUtils.getExtension;
+import static org.apache.commons.io.FilenameUtils.isExtension;
+
 public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
@@ -77,12 +83,17 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     private IModel caption = new StringResourceModel("unknown", this, null);
 
-    private WorkflowAction editAction;
-    private WorkflowAction deleteAction;
-    private WorkflowAction renameAction;
-    private WorkflowAction copyAction;
-    private WorkflowAction moveAction;
-    private WorkflowAction whereUsedAction;
+    private StdWorkflow editAction;
+    private StdWorkflow deleteAction;
+    private StdWorkflow renameAction;
+    private StdWorkflow copyAction;
+    private StdWorkflow moveAction;
+    private StdWorkflow whereUsedAction;
+
+    private static final List<String> KNOWN_IMAGE_EXTENSIONS = Arrays.asList(
+            "jpg", "jpeg", "gif", "png"
+    );
+    private static final String NUMBER_EXPRESSION = "[0-9]*";
 
     public DefaultWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -159,7 +170,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 if ("".equals(nodeName)) {
                     throw new IllegalArgumentException("You need to enter a name");
                 }
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowManager manager = obtainUserSession().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                     ((DefaultWorkflow) wf).rename(nodeName);
@@ -184,23 +195,75 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             protected Dialog createRequestDialog() {
                 destination = new NodeModelWrapper(getFolder()) {
                 };
-                CopyNameHelper copyNameHelper = new CopyNameHelper(getNodeNameCodec(), new StringResourceModel(
-                        "copyof", DefaultWorkflowPlugin.this, null).getString());
                 try {
-                    name = copyNameHelper.getCopyName(((HippoNode) ((WorkflowDescriptorModel) getDefaultModel())
-                            .getNode()).getLocalizedName(), destination.getNodeModel().getNode());
+                    HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    String nodeName = node.getLocalizedName().toLowerCase();
+
+                    if (isExtension(nodeName, KNOWN_IMAGE_EXTENSIONS)) {
+                        createNewNodeNameForImage(nodeName);
+                    } else {
+                        String copyof = new StringResourceModel("copyof", DefaultWorkflowPlugin.this, null).getString();
+                        CopyNameHelper copyNameHelper = new CopyNameHelper(getNodeNameCodec(), copyof);
+                        name = copyNameHelper.getCopyName(nodeName, destination.getNodeModel().getNode());
+                    }
                 } catch (RepositoryException ex) {
                     return new ExceptionDialog(ex);
                 }
                 return new WorkflowAction.DestinationDialog(
                         new StringResourceModel("copy-title", DefaultWorkflowPlugin.this, null),
                         new StringResourceModel("copy-name", DefaultWorkflowPlugin.this, null),
-                        new PropertyModel(this, "name"),
-                        destination) {
+                        new PropertyModel(this, "name"), destination) {
                     {
                         setOkEnabled(true);
                     }
                 };
+            }
+
+            /**
+             * Creates a new node name, based on the given nodeName. It will add a suffix (-1) at the end of the base
+             * name (node name without the extension) of the node name. If this new name already exists, it will
+             * increment the suffix (-2, -3,...) until a unique name has been found.
+             *
+             * @param nodeName The node name
+             * @throws RepositoryException Thrown when it cannot retrieve the node from the repository
+             */
+            private void createNewNodeNameForImage(final String nodeName) throws RepositoryException {
+                name = nodeName;
+                Node gallery = destination.getNodeModel().getNode();
+                if (gallery.hasNode(name)) {
+                    name = addOrIncrementNodeNameSuffixForImage(name);
+                    createNewNodeNameForImage(name);
+                }
+            }
+
+            /**
+             * Adds a suffix (-1) at the end of the base name. If it is has an existing suffix (-n) it will increment
+             * this suffix to n+1.
+             *
+             * <p>Returns test-1.jpg when the input is test.jpg. <br/>
+             * Returns test-2.jpg when the input is test-1.jpg. <br/>
+             * Returns test-c-1.jpg when the input is test-c.jpg.
+             * </p>
+             *
+             * @param nodeName The node name.
+             * @return A node name with a '-1' as suffix attached to the base name or a node name which already has
+             * such a suffix (-n) with an incremented (n+1) number of this suffix.
+             */
+            private String addOrIncrementNodeNameSuffixForImage(final String nodeName) {
+                final String baseName = getBaseName(nodeName);
+                final String extension = getExtension(nodeName);
+
+                int separatorIndex = baseName.lastIndexOf("-");
+                if (separatorIndex != -1 && separatorIndex != baseName.length() - 1) {
+                    String copyNumberAsString = baseName.substring(separatorIndex + 1);
+                    if (copyNumberAsString.matches(NUMBER_EXPRESSION)) {
+                        int copyNumber = Integer.parseInt(copyNumberAsString);
+                        copyNumber++;
+                        return baseName.substring(0, separatorIndex + 1) + copyNumber + EXTENSION_SEPARATOR_STR +
+                                extension;
+                    }
+                }
+                return baseName + "-1" + EXTENSION_SEPARATOR_STR + extension;
             }
 
             @Override
@@ -227,15 +290,15 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-        
+
         add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
             public NodeModelWrapper destination = null;
-            
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "move-16.png");
             }
-            
+
             @Override
             protected Dialog createRequestDialog() {
                 destination = new NodeModelWrapper(getFolder()) {
@@ -243,7 +306,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
                         DefaultWorkflowPlugin.this, null), null, null, destination);
             }
-            
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 JcrNodeModel folderModel = new JcrNodeModel("/");
@@ -268,9 +331,9 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             protected Dialog createRequestDialog() {
                 final IModel<String> docName = getDocumentName();
                 IModel<String> message = new StringResourceModel("delete-message", DefaultWorkflowPlugin.this, null,
-                        new Object[] { docName});
+                        new Object[]{docName});
                 IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null,
-                        new Object[] { docName });
+                        new Object[]{docName});
                 return new DeleteDialog(title, message, this, getEditorManager());
             }
 
@@ -333,9 +396,10 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     private void browseTo(JcrNodeModel nodeModel) throws RepositoryException {
         //refresh session before IBrowseService.browse is called
-        ((UserSession) org.apache.wicket.Session.get()).getJcrSession().refresh(false);
+        obtainUserSession().getJcrSession().refresh(false);
 
-        IBrowseService service = getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class);
+        IBrowseService service = getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID),
+                IBrowseService.class);
         if (service != null) {
             service.browse(nodeModel);
         } else {
@@ -365,51 +429,47 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
         super.onModelChanged();
         WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
         if (model != null) {
-            try {
-                Node documentNode = model.getNode();
-                if (documentNode != null) {
-                    caption = new NodeTranslator(new JcrNodeModel(documentNode)).getNodeName();
-                }
-                WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) model.getObject();
-                if (workflowDescriptor != null) {
-                    WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
-                    Workflow workflow = manager.getWorkflow(workflowDescriptor);
-                    Map<String, Serializable> info = workflow.hints();
-                    if (info != null) {
-                        if (info.containsKey("edit") && info.get("edit") instanceof Boolean
-                                && !((Boolean) info.get("edit")).booleanValue()) {
-                            editAction.setVisible(false);
-                        }
-                        if (info.containsKey("delete") && info.get("delete") instanceof Boolean
-                                && !((Boolean) info.get("delete")).booleanValue()) {
-                            deleteAction.setVisible(false);
-                        }
-                        if (info.containsKey("rename") && info.get("rename") instanceof Boolean
-                                && !((Boolean) info.get("rename")).booleanValue()) {
-                            renameAction.setVisible(false);
-                        }
-                        if (info.containsKey("move") && info.get("move") instanceof Boolean
-                                && !((Boolean) info.get("move")).booleanValue()) {
-                            moveAction.setVisible(false);
-                        }
-                        if (info.containsKey("copy") && info.get("copy") instanceof Boolean
-                                && !((Boolean) info.get("copy")).booleanValue()) {
-                            copyAction.setVisible(false);
-                        }
-                        if (info.containsKey("status") && info.get("status") instanceof Boolean
-                                && !((Boolean) info.get("status")).booleanValue()) {
-                            whereUsedAction.setVisible(false);
-                        }
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            } catch (RemoteException e) {
-                log.error(e.getMessage());
-            } catch (WorkflowException e) {
-                log.error(e.getMessage());
+            Map<String, Serializable> info = obtainWorkflowHints(model);
+            if (info != null) {
+                updateWorkflowVisibilities(info);
             }
         }
+    }
+
+    private Map<String, Serializable> obtainWorkflowHints(WorkflowDescriptorModel model) {
+        Map<String, Serializable> info = null;
+        try {
+            Node documentNode = model.getNode();
+            if (documentNode != null) {
+                caption = new NodeTranslator(new JcrNodeModel(documentNode)).getNodeName();
+            }
+            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) model.getObject();
+            if (workflowDescriptor != null) {
+                WorkflowManager manager = obtainUserSession().getWorkflowManager();
+                Workflow workflow = manager.getWorkflow(workflowDescriptor);
+                info = workflow.hints();
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        } catch (RemoteException e) {
+            log.error(e.getMessage());
+        } catch (WorkflowException e) {
+            log.error(e.getMessage());
+        }
+        return info;
+    }
+
+    private static UserSession obtainUserSession() {
+        return ((UserSession) Session.get());
+    }
+
+    private void updateWorkflowVisibilities(Map<String, Serializable> workflowHints) {
+        editAction.setVisible(Boolean.TRUE.equals(workflowHints.get("edit")));
+        deleteAction.setVisible(Boolean.TRUE.equals(workflowHints.get("delete")));
+        renameAction.setVisible(Boolean.TRUE.equals(workflowHints.get("rename")));
+        moveAction.setVisible(Boolean.TRUE.equals(workflowHints.get("move")));
+        copyAction.setVisible(Boolean.TRUE.equals(workflowHints.get("copy")));
+        whereUsedAction.setVisible(Boolean.TRUE.equals(workflowHints.get("status")));
     }
 
     public class RenameDocumentDialog extends WorkflowAction.WorkflowDialog {
