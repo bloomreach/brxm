@@ -85,7 +85,7 @@ public class JCRJobStore extends AbstractJobStore {
      */
     @Override
     public void storeJobAndTrigger(SchedulingContext ctxt, JobDetail newJob, Trigger newTrigger) throws JobPersistenceException {
-        if (newJob instanceof JCRJobDetail) {
+        if (!(newJob instanceof JCRJobDetail)) {
             throw new JobPersistenceException("JobDetail must be of type JCRJobDetail");
         }
         final JCRJobDetail jobDetail = (JCRJobDetail) newJob;
@@ -133,17 +133,15 @@ public class JCRJobStore extends AbstractJobStore {
                     jobDetail = new WorkflowJobDetail(jobNode, jobDetail.getJobDataMap());
                 }
                 return jobDetail;
-            } catch(RepositoryException ex) {
+            } catch(RepositoryException e) {
                 refreshSession(session);
                 final String message = "Failed to retrieve job";
-                log.error(message, ex);
-                throw new JobPersistenceException(message, ex);
-            } catch(IOException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                throw new JobPersistenceException("data format while retrieving job", ex);
-            } catch(ClassNotFoundException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                throw new JobPersistenceException("cannot recreate job", ex);
+                log.error(message, e);
+                throw new JobPersistenceException(message, e);
+            } catch(IOException e) {
+                throw new JobPersistenceException("Failed to read object while retrieving job", e);
+            } catch(ClassNotFoundException e) {
+                throw new JobPersistenceException("Failed to recreate job", e);
             }
         }
     }
@@ -253,7 +251,7 @@ public class JCRJobStore extends AbstractJobStore {
 
     @Override
     public void triggeredJobComplete(SchedulingContext ctxt, Trigger trigger, JobDetail jobDetail, int triggerInstCode) throws JobPersistenceException {
-        if (jobDetail instanceof JCRJobDetail) {
+        if (!(jobDetail instanceof JCRJobDetail)) {
             throw new JobPersistenceException("JobDetail must be of type JCRJobDetail");
         }
         final Session session = getSession(ctxt);
