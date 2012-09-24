@@ -35,6 +35,7 @@ public class DialogLink extends Panel {
     public DialogLink(String id, IModel linktext, final DialogAction action) {
         super(id, linktext);
 
+        setOutputMarkupId(true);
         link = new AjaxLink("dialog-link") {
             private static final long serialVersionUID = 1L;
 
