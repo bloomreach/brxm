@@ -70,20 +70,8 @@ public class AutoExportTest extends RepositoryTestCase {
     private static final Logger log = LoggerFactory.getLogger("org.onehippo.cms7.autoexport.test");
     private static final long TEN_SECONDS = 10*1000;
     
-    private static final String TEST_HOME;
-    private static final String PROJECT_BASE;
-
-    static {
-        // Where are we?
-        final String resource = AutoExportTest.class.getResource("/autoexporttest/simple/hippoecm-extension.xml").getFile();
-        int idx = resource.indexOf("/target/test-classes/autoexporttest/simple/hippoecm-extension.xml");
-        String moduleHome = resource.substring(0, idx);
-
-        TEST_HOME = moduleHome + "/target/test-classes/autoexporttest";
-        PROJECT_BASE = moduleHome + "/target/autoexporttest";
-
-        assertTrue(new File(TEST_HOME).exists());
-    }
+    private String testHome;
+    private String projectBase;
 
     // /export-test
     private Node testRoot;
@@ -92,15 +80,28 @@ public class AutoExportTest extends RepositoryTestCase {
     @Before
     @Override
     public void setUp() throws Exception {
+        // Where are we?
+        final String resource = AutoExportTest.class.getResource("/autoexporttest/simple/hippoecm-extension.xml").getFile();
+        int idx = resource.indexOf("/target/test-classes/autoexporttest/simple/hippoecm-extension.xml");
+        String moduleHome = resource.substring(0, idx);
+
+        System.out.println("resource: " + resource);
+        System.out.println("moduleHome: " + moduleHome);
+
+        testHome = moduleHome + "/target/test-classes/autoexporttest";
+        projectBase = moduleHome + "/target/autoexporttest";
+
+        assertTrue(new File(testHome).exists());
+
         // remove results from previous invocation
         // if we do this on teardown we can't inspect
         // results manually
-        File projectBase = new File(PROJECT_BASE);
-        if (projectBase.exists()) {
-            log.debug("deleting project base dir: " + projectBase.getPath());
-            FileUtils.deleteDirectory(projectBase);
+        File projectBaseDir = new File(this.projectBase);
+        if (projectBaseDir.exists()) {
+            log.debug("deleting project base dir: " + projectBaseDir.getPath());
+            FileUtils.deleteDirectory(projectBaseDir);
         }
-        System.setProperty("project.basedir", PROJECT_BASE);
+        System.setProperty("project.basedir", this.projectBase);
 
         // startup the repository
         super.setUp(true);
@@ -361,9 +362,9 @@ public class AutoExportTest extends RepositoryTestCase {
 
     private void checkExportedFiles(String testCase) throws Exception {
         Map<String, Reader> changes = new HashMap<String, Reader>();
-        createReadersForExportedFiles(new File(PROJECT_BASE + "/content/src/main/resources"), new File(PROJECT_BASE + "/content/src/main/resources"), changes);
+        createReadersForExportedFiles(new File(projectBase + "/content/src/main/resources"), new File(projectBase + "/content/src/main/resources"), changes);
         Map<String, Reader> expected = new HashMap<String, Reader>();
-        createReadersForExportedFiles(new File(TEST_HOME, testCase), new File(TEST_HOME, testCase), expected);
+        createReadersForExportedFiles(new File(testHome, testCase), new File(testHome, testCase), expected);
         assertEquals(expected, changes);
     }
 
