@@ -201,6 +201,7 @@ engine/src/test/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineC
 engine/src/test/java/org/hippoecm/repository/updater/UpdaterPathTest.java svneol=native#text/plain
 engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text
 engine/src/test/java/org/onehippo/repository/update/UpdaterExecutorTest.java -text
+engine/src/test/resources/InvalidJobDetail.ser -text
 engine/src/test/resources/domain-defaultread.xml svneol=native#text/plain
 engine/src/test/resources/domain-defaultwrite.xml svneol=native#text/plain
 engine/src/test/resources/export/expected.xml -text

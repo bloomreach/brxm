@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -34,7 +34,6 @@ import javax.jcr.lock.LockManager;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.VersionManager;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
@@ -64,8 +63,6 @@ public class JCRJobStore extends AbstractJobStore {
 
     private static final long TWO_MINUTES = 60 * 2;
 
-    private boolean clustered = false;
-
     @Override
     public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler signaler) throws SchedulerConfigException {
         signaler.signalSchedulingChange(1000);
@@ -73,16 +70,9 @@ public class JCRJobStore extends AbstractJobStore {
 
     @Override
     public boolean isClustered() {
-        return clustered;
+        return true;
     }
 
-    public void setIsClustered(boolean flag) {
-        clustered = flag;
-    }
-
-    /**
-     * Store a job as a JCR node.  Invoked with the scheduler context of the invoking session.
-     */
     @Override
     public void storeJobAndTrigger(SchedulingContext ctxt, JobDetail newJob, Trigger newTrigger) throws JobPersistenceException {
         if (!(newJob instanceof JCRJobDetail)) {
@@ -111,11 +101,9 @@ public class JCRJobStore extends AbstractJobStore {
                 triggerNode.setProperty(HIPPOSCHED_DATA, JcrUtils.createBinaryValueFromObject(session, newTrigger));
 
                 session.save();
-            } catch (RepositoryException ex) {
+            } catch (RepositoryException e) {
                 refreshSession(session);
-                final String message = "Failed to store job and trigger";
-                log.error(message, ex);
-                throw new JobPersistenceException(message, ex);
+                throw new JobPersistenceException("Failed to store job and trigger", e);
             }
         }
     }
@@ -124,26 +112,32 @@ public class JCRJobStore extends AbstractJobStore {
     public JobDetail retrieveJob(SchedulingContext ctxt, String jobIdentifier, String groupName) throws JobPersistenceException {
         final Session session = getSession(ctxt);
         synchronized (session) {
+            String jobPath = null;
             try {
                 final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
-                final Value jobDataValue = jobNode.getProperty(HIPPOSCHED_DATA).getValue();
-                JobDetail jobDetail = (JobDetail) createObjectFromBinaryValue(jobDataValue);
-                if (!(jobDetail instanceof JCRJobDetail)) {
-                    // Pre 7.8 backwards compatibility
-                    jobDetail = new WorkflowJobDetail(jobNode, jobDetail.getJobDataMap());
-                }
-                return jobDetail;
-            } catch(RepositoryException e) {
+                jobPath = jobNode.getPath();
+                return loadJob(jobNode);
+            } catch (ItemNotFoundException e) {
+                throw new JobPersistenceException("No such job: " + jobIdentifier);
+            } catch (RepositoryException e) {
                 refreshSession(session);
-                final String message = "Failed to retrieve job";
-                log.error(message, e);
-                throw new JobPersistenceException(message, e);
-            } catch(IOException e) {
-                throw new JobPersistenceException("Failed to read object while retrieving job", e);
-            } catch(ClassNotFoundException e) {
-                throw new JobPersistenceException("Failed to recreate job", e);
+                throw new JobPersistenceException("Failed to retrieve job at " + jobPath, e);
+            } catch (IOException e) {
+                throw new JobPersistenceException("Failed to read job from repository at " + jobPath, e);
+            } catch (ClassNotFoundException e) {
+                throw new JobPersistenceException("Failed to recreate job at " + jobPath, e);
             }
         }
+    }
+
+    private JobDetail loadJob(Node jobNode) throws RepositoryException, ClassNotFoundException, IOException {
+        final Value jobDataValue = jobNode.getProperty(HIPPOSCHED_DATA).getValue();
+        JobDetail jobDetail = (JobDetail) createObjectFromBinaryValue(jobDataValue);
+        if (!(jobDetail instanceof JCRJobDetail)) {
+            // Pre 7.8 backwards compatibility
+            jobDetail = new WorkflowJobDetail(jobNode, jobDetail.getJobDataMap());
+        }
+        return jobDetail;
     }
 
     @Override
@@ -171,7 +165,7 @@ public class JCRJobStore extends AbstractJobStore {
                     return triggers.toArray(new Trigger[triggers.size()]);
                 }
             } catch (ItemNotFoundException e) {
-                throw new JobPersistenceException("No such job: " + jobIdentifier);
+                throw new JobPersistenceException("No such job " + jobIdentifier);
             } catch (RepositoryException e) {
                 throw new JobPersistenceException("Failed to get triggers for job", e);
             }
@@ -186,8 +180,16 @@ public class JCRJobStore extends AbstractJobStore {
             try {
                 for(Node triggerNode : getPendingTriggers(session, noLaterThan)) {
                     if(triggerNode != null) {
+                        final Node jobNode = triggerNode.getParent().getParent();
+                        try {
+                            // make sure we can load the job
+                            loadJob(jobNode);
+                        } catch (ClassNotFoundException e) {
+                            log.info("Cannot execute job " + jobNode.getPath() + " on this cluster node. Skipping");
+                            continue;
+                        }
                         if (lock(session, triggerNode.getPath())) {
-                            ensureIsCheckedOut(triggerNode);
+                            JcrUtils.ensureIsCheckedOut(triggerNode, false);
                             final Trigger trigger = createTriggerFromNode(triggerNode);
                             triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
                             session.save();
@@ -195,17 +197,13 @@ public class JCRJobStore extends AbstractJobStore {
                         }
                     }
                 }
-            } catch(RepositoryException ex) {
+            } catch (RepositoryException e) {
                 refreshSession(session);
-                final String message = "Failed to acquire next trigger";
-                log.error(message, ex);
-                throw new JobPersistenceException(message, ex);
-            } catch(IOException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                throw new JobPersistenceException("data format exception while acquiring next trigger", ex);
-            } catch(ClassNotFoundException ex) {
-                log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
-                throw new JobPersistenceException("cannot recreate trigger", ex);
+                log.error("Failed to acquire next trigger", e);
+            } catch (IOException e) {
+                log.error("Failed to read trigger from repository", e);
+            } catch (ClassNotFoundException e) {
+                log.error("Failed to recreate trigger", e);
             }
         }
         return null;
@@ -225,28 +223,34 @@ public class JCRJobStore extends AbstractJobStore {
             try {
                 final String triggerIdentifier = trigger.getName();
                 final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
-                triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, triggerNode.getProperty(HIPPOSCHED_FIRETIME).getValue());
+                final Property fireTimeProperty = JcrUtils.getPropertyIfExists(triggerNode, HIPPOSCHED_FIRETIME);
+                if (fireTimeProperty != null) {
+                    triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTimeProperty.getValue());
+                }
                 session.save();
                 unlock(session, triggerNode.getPath());
-            } catch (PathNotFoundException ex) {
-                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } catch (ItemNotFoundException ex) {
-                log.warn(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-            } catch (RepositoryException ex) {
+            } catch (ItemNotFoundException e) {
+                log.warn("Trigger no longer exists: " + trigger.getName(), e);
+            } catch (RepositoryException e) {
                 refreshSession(session);
                 final String message = "Failed to release acquired trigger";
-                log.error(message, ex);
-                throw new JobPersistenceException(message, ex);
+                log.error(message, e);
+                throw new JobPersistenceException(message, e);
             }
         }
     }
 
     @Override
-    public TriggerFiredBundle triggerFired(SchedulingContext ctxt, Trigger trigger) throws JobPersistenceException {
-        return new TriggerFiredBundle(retrieveJob(ctxt, trigger.getJobName(), trigger.getJobGroup()),
-                                      trigger, null, false,
-                                      trigger.getPreviousFireTime(), trigger.getPreviousFireTime(),
-                                      trigger.getPreviousFireTime(), trigger.getNextFireTime());
+    public TriggerFiredBundle triggerFired(SchedulingContext ctxt, Trigger trigger) {
+        try {
+            return new TriggerFiredBundle(retrieveJob(ctxt, trigger.getJobName(), trigger.getJobGroup()),
+                    trigger, null, false,
+                    trigger.getPreviousFireTime(), trigger.getPreviousFireTime(),
+                    trigger.getPreviousFireTime(), trigger.getNextFireTime());
+        } catch (JobPersistenceException e) {
+            log.error("Failed to verify job", e);
+            return null;
+        }
     }
 
     @Override
@@ -262,7 +266,6 @@ public class JCRJobStore extends AbstractJobStore {
     
                 final Date nextFire = trigger.getFireTimeAfter(new Date());
                 if(nextFire != null) {
-                    ensureIsCheckedOut(triggerNode);
                     final Calendar nextFireTime = getCalendarInstance(nextFire);
                     triggerNode.setProperty(HIPPOSCHED_FIRETIME, nextFireTime);
                     triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, nextFireTime);
@@ -271,15 +274,15 @@ public class JCRJobStore extends AbstractJobStore {
                 } else {
                     final String jobIdentifier = ((JCRJobDetail) jobDetail).getIdentifier();
                     final Node jobNode = session.getNodeByIdentifier(jobIdentifier);
-                    ensureIsCheckedOut(jobNode.getParent());
+                    JcrUtils.ensureIsCheckedOut(jobNode.getParent(), false);
                     jobNode.remove();
                     session.save();
                 }
             } catch (ItemNotFoundException ex) {
-                log.warn("Unable to find job node to be completed for trigger uuid '" + trigger.getName() + "'");
+                log.warn("Trigger no longer exists: " + trigger.getName());
             } catch (RepositoryException ex) {
                 refreshSession(session);
-                final String message = "Failed to complete triggered job";
+                final String message = "Failed to finalize job: " + ((JCRJobDetail) jobDetail).getIdentifier();
                 log.error(message, ex);
                 throw new JobPersistenceException(message, ex);
             }
@@ -297,14 +300,7 @@ public class JCRJobStore extends AbstractJobStore {
         try {
             session.refresh(false);
         } catch (RepositoryException e) {
-            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
-        }
-    }
-
-    private static void ensureIsCheckedOut(Node node) throws RepositoryException {
-        if (node.isNodeType("mix:versionable") && !node.isCheckedOut()) {
-            final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
-            versionManager.checkout(node.getPath());
+            log.error("Failed to refresh session", e);
         }
     }
 
@@ -323,14 +319,19 @@ public class JCRJobStore extends AbstractJobStore {
         return result;
     }
 
-    private static NodeIterable getPendingTriggers(Session session, long noLaterThan) throws RepositoryException {
-        final Calendar cal = getCalendarInstance(new Date(noLaterThan));
-        final QueryManager qMgr = session.getWorkspace().getQueryManager();
-        final Query query = qMgr.createQuery(
-                "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime <= TIMESTAMP '"
-                        + ISO8601.format(cal) + "' ORDER BY hipposched:nextFireTime", Query.SQL);
-        final QueryResult result = query.execute();
-        return new NodeIterable(result.getNodes());
+    private static NodeIterable getPendingTriggers(Session session, long noLaterThan) {
+        try {
+            final Calendar cal = getCalendarInstance(new Date(noLaterThan));
+            final QueryManager qMgr = session.getWorkspace().getQueryManager();
+            final Query query = qMgr.createQuery(
+                    "SELECT * FROM hipposched:trigger WHERE hipposched:nextFireTime <= TIMESTAMP '"
+                            + ISO8601.format(cal) + "' ORDER BY hipposched:nextFireTime", Query.SQL);
+            final QueryResult result = query.execute();
+            return new NodeIterable(result.getNodes());
+        } catch (RepositoryException e) {
+            log.error("Failed to query for pending triggers", e);
+            return JcrUtils.emptyNodeIterable();
+        }
     }
 
     private static boolean lock(Session session, String nodePath) throws RepositoryException {

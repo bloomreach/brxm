@@ -15,11 +15,15 @@
  */
 package org.hippoecm.repository.quartz;
 
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
 
+import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.quartz.Job;
@@ -32,6 +36,7 @@ import org.quartz.core.SchedulingContext;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 public class JCRJobStoreTest extends RepositoryTestCase {
@@ -77,6 +82,15 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         store.releaseAcquiredTrigger(context, trigger);
         assertTrue(jobNode.hasProperty("hipposched:triggers/trigger/hipposched:nextFireTime"));
         assertFalse(jobNode.getNode("hipposched:triggers/trigger").isLocked());
+    }
+
+    @Test
+    public void testAcquireNextTriggerForInvalidJob() throws Exception {
+        createAndStoreInvalidJobAndTrigger();
+        final JCRJobStore store = new JCRJobStore();
+        final SchedulingContext context = new JCRSchedulingContext(session);
+        final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
+        assertNull(trigger);
     }
 
     @Test
@@ -131,6 +145,22 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         trigger.setNextFireTime(new Date());
         store.storeJobAndTrigger(context, jobDetail, trigger);
         return jobNode;
+    }
+
+    private void createAndStoreInvalidJobAndTrigger() throws RepositoryException, IOException {
+        final Node jobNode = session.getNode("/test").addNode("job", "hipposched:job");
+        final Binary invalidJobDetail = session.getValueFactory().createBinary(getClass().getResource("/InvalidJobDetail.ser").openStream());
+        jobNode.setProperty("hipposched:data", invalidJobDetail);
+        final Node triggersNode = jobNode.addNode("hipposched:triggers", "hipposched:triggers");
+        final Node triggerNode = triggersNode.addNode("trigger", "hipposched:trigger");
+        final SimpleTrigger trigger = new SimpleTrigger("test", new Date());
+        trigger.setNextFireTime(new Date());
+        final Calendar nextFireTime = Calendar.getInstance();
+        nextFireTime.setTime(new Date());
+        triggerNode.setProperty("hipposched:nextFireTime", nextFireTime);
+        triggerNode.setProperty("hipposched:fireTime", nextFireTime);
+        triggerNode.setProperty("hipposched:data", JcrUtils.createBinaryValueFromObject(session, trigger));
+        session.save();
     }
 
 }

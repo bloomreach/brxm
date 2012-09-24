@@ -42,13 +42,13 @@ public class SchedulerModule implements DaemonModule {
         SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_THREAD_POOL_THREADCOUNT, "2");
         SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_THREAD_POOL_THREADPRIORITY, "5");
         SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_JOB_STORE_CLASS, JCRJobStore.class.getName());
-        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_JOB_STORE_ISCLUSTERED,  "true");
     }
 
     private static SchedulerModule instance;
 
     private Session session;
     private JCRScheduler scheduler = null;
+
 
     public static boolean isEnabled() {
         return !Boolean.getBoolean("hippo.scheduler.disabled");
@@ -65,8 +65,8 @@ public class SchedulerModule implements DaemonModule {
                 log.info("Hippo scheduler was disabled by hippo.scheduler.disabled property, " +
                         "scheduled actions will not be executed by this cluster node");
             }
-        } catch (SchedulerException ex) {
-            log.error(ex.getClass().getName()+": "+ex.getMessage(), ex);
+        } catch (SchedulerException e) {
+            log.error("Failed to initialize quartz scheduler", e);
         }
         instance = this;
     }
@@ -92,7 +92,6 @@ public class SchedulerModule implements DaemonModule {
 
     private class JcrSchedulerFactory extends StdSchedulerFactory {
 
-        private static final String PROP_JOB_STORE_ISCLUSTERED = "org.quartz.jobStore.isClustered";
         private static final String PROP_THREAD_POOL_THREADCOUNT = "org.quartz.threadPool.threadCount";
         private static final String PROP_THREAD_POOL_THREADPRIORITY = "org.quartz.threadPool.threadPriority";
 

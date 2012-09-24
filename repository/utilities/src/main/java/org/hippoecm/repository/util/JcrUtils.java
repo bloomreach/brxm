@@ -35,7 +35,9 @@ import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.version.VersionManager;
 
+import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.hippoecm.repository.api.HippoNode;
 
 /**
@@ -398,6 +400,14 @@ public class JcrUtils {
         }
     }
 
+    /**
+     * Copies node at <code>srcAbsPath</code> to <code>destAbsPath</code> as session operation.
+     *
+     * @param session to use
+     * @param srcAbsPath  the absolute path of the source node
+     * @param destAbsPath  the absolute path of the resulting copy
+     * @throws RepositoryException
+     */
     public static void copy(Session session, String srcAbsPath, String destAbsPath) throws RepositoryException {
         if (destAbsPath.equals("/")) {
             throw new IllegalArgumentException("Root cannot be the destination of a copy");
@@ -414,6 +424,80 @@ public class JcrUtils {
         final Node destParentNode = session.getNode(parentDestAbsPath);
 
         copy(srcNode, destNodeName, destParentNode);
+    }
+
+    /**
+     * Serialize the given <code>object</code> into a binary JCR value.
+     *
+     * @param session to use
+     * @param object to serialize
+     * @return  a binary value containing the serialized object
+     * @throws RepositoryException
+     */
+    public static Value createBinaryValueFromObject(Session session, Object object) throws RepositoryException {
+        final ValueFactory valueFactory = session.getValueFactory();
+        return valueFactory.createValue(valueFactory.createBinary(new ByteArrayInputStream(objectToBytes(object))));
+    }
+
+    /**
+     * @return  an empty {@link NodeIterable}
+     */
+    public static NodeIterable emptyNodeIterable() {
+        return new NodeIterable(new NodeIterator() {
+            @Override
+            public Node nextNode() {
+                return null;
+            }
+
+            @Override
+            public void skip(final long skipNum) {
+            }
+
+            @Override
+            public long getSize() {
+                return 0;
+            }
+
+            @Override
+            public long getPosition() {
+                return 0;
+            }
+
+            @Override
+            public boolean hasNext() {
+                return false;
+            }
+
+            @Override
+            public Object next() {
+                return null;
+            }
+
+            @Override
+            public void remove() {
+            }
+        });
+    }
+
+    /**
+     * Make sure the node is in checked out state.
+     * If the node is not in checked out state and is of type <code>mix:versionable</code>
+     * this method checks out the node. If it is not <code>mix:versionable</code> and
+     * <code>traverseAncestors</code> is <code>true</code> it checks out the versionable ancestor.
+     *
+     * @param node the node to check
+     * @param traverseAncestors whether to check out the versionable ancestor that causes this node to be checked in
+     * @throws RepositoryException
+     */
+    public static void ensureIsCheckedOut(Node node, boolean traverseAncestors) throws RepositoryException {
+        if (!node.isCheckedOut()) {
+            if (node.isNodeType("mix:versionable")) {
+                final VersionManager versionManager = node.getSession().getWorkspace().getVersionManager();
+                versionManager.checkout(node.getPath());
+            } else if (traverseAncestors) {
+                ensureIsCheckedOut(node.getParent(), true);
+            }
+        }
     }
 
     private static void copy(final Node srcNode, final String destNodeName, final Node destParentNode) throws RepositoryException {
@@ -442,11 +526,6 @@ public class JcrUtils {
             final Node child = nodes.nextNode();
             copy(child, child.getName(), destNode);
         }
-    }
-
-    public static Value createBinaryValueFromObject(Session session, Object object) throws RepositoryException {
-        final ValueFactory valueFactory = session.getValueFactory();
-        return valueFactory.createValue(valueFactory.createBinary(new ByteArrayInputStream(objectToBytes(object))));
     }
 
     private static byte[] objectToBytes(Object o) throws RepositoryException {
