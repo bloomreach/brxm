@@ -103,30 +103,23 @@ public class ImageUtils {
      * @param mimeType the MIME type to fix
      *
      * @return the fixed MIME type
+     * @deprecated Use ResourceHelper.sanitizeMimeType instead
      */
+    @Deprecated
     public static String fixMimeType(String mimeType) {
-        if (mimeType.equals(ResourceHelper.MIME_IMAGE_PJPEG)) {
-            // IE uploads JPEG files with the non-standard MIME type image/pjpeg for which ImageIO
-            // doesn't have an ImageReader. Simply replacing the MIME type with image/jpeg solves this.
-            // For more info see http://www.iana.org/assignments/media-types/image/ and
-            // http://groups.google.com/group/comp.infosystems.www.authoring.images/msg/7706603e4bd1d9d4?hl=en
-            return ResourceHelper.MIME_IMAGE_JPEG;
-        } else {
-            // nothing to fix
-            return mimeType;
-        }
+        return ResourceHelper.sanitizeMimeType(mimeType);
     }
 
     /**
      * Returns an image reader for a MIME type.
      *
-     * @param mimeType MIME type
+     * @param aMimeType MIME type
      * @return an image reader for the given MIME type, or <code>null</code> if no image reader could be created
      * for the given MIME type.
      */
-    public static ImageReader getImageReader(String mimeType) {
-        String fixedMimeType = ImageUtils.fixMimeType(mimeType);
-        Iterator<ImageReader> readers = ImageIO.getImageReadersByMIMEType(fixedMimeType);
+    public static ImageReader getImageReader(String aMimeType) {
+        String mimeType = ResourceHelper.sanitizeMimeType(aMimeType);
+        Iterator<ImageReader> readers = ImageIO.getImageReadersByMIMEType(mimeType);
         if (readers == null || !readers.hasNext()) {
             return null;
         }
@@ -136,13 +129,13 @@ public class ImageUtils {
     /**
      * Returns an image writer for a MIME type.
      *
-     * @param mimeType MIME type
+     * @param aMimeType MIME type
      * @return an image writer for the given MIME type, or <code>null</code> if no image writer could be created
      * for the given MIME type.
      */
-    public static ImageWriter getImageWriter(String mimeType) {
-        String fixedMimeType = ImageUtils.fixMimeType(mimeType);
-        Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(fixedMimeType);
+    public static ImageWriter getImageWriter(String aMimeType) {
+        String mimeType = ResourceHelper.sanitizeMimeType(aMimeType);
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mimeType);
         if (writers == null || !writers.hasNext()) {
             return null;
         }

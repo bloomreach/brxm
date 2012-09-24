@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,13 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload;
 
-import eu.medsea.mimeutil.MimeType;
-import eu.medsea.mimeutil.MimeUtil;
-import org.apache.wicket.util.upload.DiskFileItem;
-import org.apache.wicket.util.upload.FileItem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +22,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
+
+import org.apache.wicket.util.upload.DiskFileItem;
+import org.apache.wicket.util.upload.FileItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import eu.medsea.mimeutil.MimeType;
+import eu.medsea.mimeutil.MimeUtil;
 
 public class MagicMimeTypeFileItem implements FileItem {
 
@@ -51,9 +52,9 @@ public class MagicMimeTypeFileItem implements FileItem {
     }
 
     /**
-     * Microsoft and OpenOffice files aren't correctly detected based on Magic bytes, so fall back on extensions
-     * detection for these mimetypes. Also, do a second detection run based on extesion for
-     * mimetype=application/octen-stream
+     * Microsoft and OpenOffice files aren't correctly detected based on Magic bytes, so fall back on extension
+     * detection for these mimetypes. Also, do a second detection run based on extension for
+     * mimetype=application/octet-stream
      *
      * .odt, .ods and .odp are detected as application/zip
      * .xsl and .ppt are detected as application/msword

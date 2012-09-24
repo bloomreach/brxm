@@ -42,23 +42,61 @@ import org.slf4j.LoggerFactory;
  */
 public class ResourceHelper {
 
-    public static final String MIME_IMAGE_PJPEG = "image/pjpeg";
-    public static final String MIME_IMAGE_JPEG = "image/jpeg";
-    public static final String MIME_TYPE_PDF = "application/pdf";
+    public static final String MIME_TYPE_JPEG           = "image/jpeg";
+    public static final String MIME_TYPE_PJPEG          = "image/pjpeg";
+    public static final String MIME_TYPE_CITRIX_JPEG    = "image/x-citrix-pjpeg";
+
+    public static final String MIME_TYPE_GIF            = "image/gif";
+    public static final String MIME_TYPE_CITRIX_GIF     = "image/x-citrix-gif";
+
+    public static final String MIME_TYPE_PNG            = "image/png";
+    public static final String MIME_TYPE_X_PNG          = "image/x-png";
+
+    public static final String MIME_TYPE_PDF            = "application/pdf";
 
     static final Logger log = LoggerFactory.getLogger(ResourceHelper.class);
 
     private ResourceHelper() {
     }
 
+    /**
+     * Mimetypes can be a tricky thing as browsers and/or environments tend to alter them without good reason. This
+     * method will try to fix any of the quirks concerning mimetypes that are found out there.
+     *
+     * @param mimeType  The mimetype that needs to be sanitized.
+     * @return A standard compliant mimetype in lowercase
+     */
+    public static String sanitizeMimeType(final String mimeType) {
+        // IE uploads JPEG files with the non-standard MIME type image/pjpeg for which ImageIO
+        // doesn't have an ImageReader. Simply replacing the MIME type with image/jpeg solves this.
+        // For more info see http://www.iana.org/assignments/media-types/image/ and
+        // http://groups.google.com/group/comp.infosystems.www.authoring.images/msg/7706603e4bd1d9d4?hl=en
+        if (MIME_TYPE_PJPEG.equalsIgnoreCase(mimeType)) {
+            return MIME_TYPE_JPEG;
+        }
+
+        // Citrix environments change the mimetype of jpeg and gif files.
+        if (MIME_TYPE_CITRIX_JPEG.equalsIgnoreCase(mimeType)) {
+            return MIME_TYPE_JPEG;
+        } else if (MIME_TYPE_CITRIX_GIF.equalsIgnoreCase(mimeType)) {
+            return MIME_TYPE_GIF;
+        }
+
+        // Before it was accepted as a standard mimetype, PNG images where marked as image/x-png which is still the
+        // case for IE8
+        if (MIME_TYPE_X_PNG.equalsIgnoreCase(mimeType)) {
+            return MIME_TYPE_PNG;
+        }
+
+        return mimeType.toLowerCase();
+    }
+
     public static void validateResource(Node resource, String filename) throws ResourceException, RepositoryException {
         try {
-            String mimeType = (resource.hasProperty(JcrConstants.JCR_MIMETYPE) ? resource.getProperty(JcrConstants.JCR_MIMETYPE).getString()
-                    : "");
-            mimeType = mimeType.toLowerCase();
-            if (mimeType.equals(MIME_IMAGE_PJPEG)) {
-                mimeType = MIME_IMAGE_JPEG;
-            }
+            String mimeType = (resource.hasProperty(JcrConstants.JCR_MIMETYPE) ?
+                    resource.getProperty(JcrConstants.JCR_MIMETYPE).getString() : "");
+            mimeType = sanitizeMimeType(mimeType);
+
             if (mimeType.startsWith("image/")) {
                 ImageInfo imageInfo = new ImageInfo();
                 imageInfo.setInput(resource.getProperty(JcrConstants.JCR_DATA).getBinary().getStream());
@@ -67,10 +105,8 @@ public class ResourceHelper {
                     if (imageInfoMimeType == null) {
                         throw new ResourceException("impermissible image type content");
                     } else {
-                        if (imageInfoMimeType.equals(MIME_IMAGE_PJPEG)) {
-                            imageInfoMimeType = MIME_IMAGE_JPEG;
-                        }
-                        if (!imageInfoMimeType.equalsIgnoreCase(mimeType)) {
+                        imageInfoMimeType = sanitizeMimeType(imageInfoMimeType);
+                        if (!imageInfoMimeType.equals(mimeType)) {
                             throw new ResourceException("mismatch image mime type");
                         }
                     }

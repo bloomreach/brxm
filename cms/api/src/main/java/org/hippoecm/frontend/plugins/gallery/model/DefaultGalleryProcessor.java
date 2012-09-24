@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -90,13 +90,7 @@ public class DefaultGalleryProcessor implements GalleryProcessor {
             throw new IllegalArgumentException("We cannot create a thumbnail for a NULL input stream");
         }
 
-        //IE uploads jpeg files with the non-standard mimetype image/pjpeg for which ImageIO
-        //doesn't have an ImageReader. Simply replacing the mimetype with image/jpeg solves this.
-        //For more info see http://www.iana.org/assignments/media-types/image/ and
-        //http://groups.google.com/group/comp.infosystems.www.authoring.images/msg/7706603e4bd1d9d4?hl=en
-        if (mimeType.equals(ResourceHelper.MIME_IMAGE_PJPEG)) {
-            mimeType = ResourceHelper.MIME_IMAGE_JPEG;
-        }
+        mimeType = ResourceHelper.sanitizeMimeType(mimeType);
 
         ImageReader reader = null;
         ImageWriter writer = null;

@@ -47,14 +47,7 @@ public class ImageMetaData implements IClusterable {
     private String fileName;
 
     public ImageMetaData(String mimeType, String fileName) {
-        if (mimeType.equals(ResourceHelper.MIME_IMAGE_PJPEG)) {
-            // IE uploads JPEG files with the non-standard MIME type image/pjpeg for which ImageIO
-            // doesn't have an ImageReader. Simply replacing the MIME type with image/jpeg solves this.
-            // For more info see http://www.iana.org/assignments/media-types/image/ and
-            // http://groups.google.com/group/comp.infosystems.www.authoring.images/msg/7706603e4bd1d9d4?hl=en
-            mimeType = ResourceHelper.MIME_IMAGE_JPEG;
-        }
-        this.mimeType = mimeType;
+        this.mimeType = ResourceHelper.sanitizeMimeType(mimeType);
         this.fileName = fileName;
     }
 
@@ -125,7 +118,7 @@ public class ImageMetaData implements IClusterable {
     }
 
     public boolean isJpeg() {
-        return ResourceHelper.MIME_IMAGE_JPEG.equalsIgnoreCase(mimeType);
+        return ResourceHelper.MIME_TYPE_JPEG.equals(mimeType);
     }
 
     public ColorModel getColorModel() {
