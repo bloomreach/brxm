@@ -395,13 +395,11 @@ if (!YAHOO.hippo.EditorManager) {
             },
 
             info : function(msg) {
-                YAHOO.log('Xinha[' + this.name + '] ' + msg, "info", "EditorManager");
                 info('Xinha[' + this.name + '] ' + msg);
             },
 
             error : function(msg) {
-                YAHOO.log('Xinha[' + this.name + '] ' + msg, "error", "EditorManager");
-                //console.error('Xinha[' + this.name + '] ' + msg);
+                error('Xinha[' + this.name + '] ' + msg);
             }
 
         };
@@ -427,8 +425,13 @@ if (!YAHOO.hippo.EditorManager) {
 
                 Dom.addClass(container, 'rte-preview-style');
 
-                var containerHeight = this.calculateHeight();
+                var containerHeight = this.config.height > -1 ? this.config.height : this.calculateHeight();
                 Dom.setStyle(container, 'height', containerHeight + 'px');
+
+                if (this.config.width > -1) {
+                    Dom.setStyle(container, 'width', this.config.width + 'px');
+                }
+
                 //FIXME: Xinha doesn't like margins on the container, remove it the ugly way
                 Dom.setStyle(container, 'margin-bottom', 0);
 
@@ -570,7 +573,6 @@ if (!YAHOO.hippo.EditorManager) {
                     }
                 }
 
-
                 //Xinha registers a resize event handler on the window.. not configurable so hack it out! And send patch to Xinha
                 var func = Xinha.addDom0Event;
                 Xinha.addDom0Event = function(el, ev, fn) {
@@ -656,7 +658,6 @@ if (!YAHOO.hippo.EditorManager) {
 
                 Dom.setStyle(this.name, 'visibility', 'hidden');
                 Xinha.startEditors([this.xinha]);
-
             },
 
             setSize : function(w, h) {
@@ -829,14 +830,15 @@ if (!YAHOO.hippo.EditorManager) {
                     return;
                 }
 
-                var w,h;
                 if (Dom.hasClass(c, 'rte-preview-style')) {
                     Dom.removeClass(c, 'rte-preview-style');
                 }
+                var w,h;
                 var pr = Dom.getRegion(c);
                 var marges = YAHOO.hippo.Dom.getMargin(c);
-                w = pr.width - marges.w;
-                h = pr.height - marges.h;
+
+                w = this.config.width == -1 ? pr.width - marges.w : this.config.width;
+                h = this.config.height == -1 ? pr.height - marges.h : this.config.height;
 
                 this.setSize(w, h);
 

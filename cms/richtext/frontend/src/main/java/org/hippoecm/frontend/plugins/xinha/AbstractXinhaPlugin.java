@@ -355,6 +355,10 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
         sb.append("statusBar: ").append(configuration.getStatusBar());
         sb.append(", ");
         sb.append("only7BitPrintablesInURLs: ").append(configuration.getOnly7BitPrintablesInURLs());
+        sb.append(", ");
+        sb.append("width: ").append(configuration.getWidth());
+        sb.append(", ");
+        sb.append("height: ").append(configuration.getHeight());
         sb.append(" }");
         return sb.toString();
     }
@@ -397,6 +401,9 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
         private final boolean statusBar;
         private final boolean only7BitPrintablesInURLs;
 
+        private int width;
+        private int height;
+
         public Configuration(IPluginConfig config) {
             addProperty("xinhaParamToken", XINHA_PARAM_PREFIX);
 
@@ -408,6 +415,8 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
             showLoading = config.getAsBoolean(XINHA_SHOW_LOADING, false);
             statusBar = config.getAsBoolean(XINHA_STATUS_BAR, false);
             only7BitPrintablesInURLs = config.getAsBoolean(XINHA_ONLY7BIT_PRINTABLE_URLS, false);
+            width = config.getAsInteger("width", -1);
+            height = config.getAsInteger("height", -1);
 
             toolbarItems = new ArrayList<String>();
             String[] values = config.getStringArray(XINHA_TOOLBAR);
@@ -521,6 +530,14 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
 
         public boolean getOnly7BitPrintablesInURLs() {
             return only7BitPrintablesInURLs;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
         }
 
         public void addPluginConfiguration(PluginConfiguration config) {
