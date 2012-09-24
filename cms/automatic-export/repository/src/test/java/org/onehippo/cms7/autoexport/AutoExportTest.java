@@ -45,6 +45,7 @@ import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.ElementQualifier;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
@@ -53,6 +54,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 import junit.framework.Assert;
+import static junit.framework.Assert.fail;
 import static org.custommonkey.xmlunit.DifferenceConstants.ATTR_SEQUENCE_ID;
 import static org.custommonkey.xmlunit.DifferenceConstants.CHILD_NODELIST_SEQUENCE_ID;
 import static org.custommonkey.xmlunit.DifferenceConstants.COMMENT_VALUE_ID;
@@ -67,6 +69,7 @@ import static org.onehippo.cms7.autoexport.Constants.CONFIG_NODE_PATH;
 /**
  * Test for {@link AutoExportModule}
  */
+@Ignore
 public class AutoExportTest extends RepositoryTestCase {
 
     private static final Logger log = LoggerFactory.getLogger("org.onehippo.cms7.autoexport.test");
@@ -345,17 +348,8 @@ public class AutoExportTest extends RepositoryTestCase {
     }
 
     private void waitForAutoExport() throws RepositoryException {
-        final Object monitor = new Object();
-        session.getWorkspace().getObservationManager().addEventListener(new EventListener() {
-            @Override
-            public void onEvent(final EventIterator events) {
-                monitor.notify();
-            }
-        }, Event.NODE_ADDED | Event.NODE_REMOVED, "/hippo:configuration/hippo:initialize", true, null, null, true);
         try {
-            synchronized (monitor) {
-                monitor.wait(TEN_SECONDS);
-            }
+            Thread.sleep(TEN_SECONDS);
         } catch (InterruptedException ignore) {}
     }
 
