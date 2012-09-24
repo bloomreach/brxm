@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 
 import java.io.InputStream;
 
+import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -134,6 +135,24 @@ public class ImageMetaDataTest {
         } catch(ImageMetadataException e) {
             fail("ImageMetadataException should not have been thrown");
         }
+    }
+
+    @Test
+    public void testObscureMimeTypes() throws Exception {
+        ImageMetaData meta;
+
+        meta = new ImageMetaData(ResourceHelper.MIME_TYPE_CITRIX_GIF, TEST_RGB_GIF);
+        assertEquals(GIF_MIME_TYPE, meta.getMimeType());
+
+        meta = new ImageMetaData(ResourceHelper.MIME_TYPE_CITRIX_JPEG, TEST_RGB_JPG);
+        assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
+
+        meta = new ImageMetaData(ResourceHelper.MIME_TYPE_PJPEG, TEST_RGB_JPG);
+        assertEquals(JPEG_MIME_TYPE, meta.getMimeType());
+
+        meta = new ImageMetaData(ResourceHelper.MIME_TYPE_X_PNG, TEST_RGB_PNG);
+        assertEquals(PNG_MIME_TYPE, meta.getMimeType());
+
     }
 
 }
