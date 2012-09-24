@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,11 +87,8 @@ public class AutoExportTest extends RepositoryTestCase {
         int idx = resource.indexOf("/target/test-classes/autoexporttest/simple/hippoecm-extension.xml");
         String moduleHome = resource.substring(0, idx);
 
-        System.out.println("resource: " + resource);
-        System.out.println("moduleHome: " + moduleHome);
-
-        testHome = moduleHome + "/target/test-classes/autoexporttest";
-        projectBase = moduleHome + "/target/autoexporttest";
+        testHome = URLDecoder.decode(moduleHome + "/target/test-classes/autoexporttest", "UTF-8");
+        projectBase = URLDecoder.decode(moduleHome + "/target/autoexporttest", "UTF-8");
 
         assertTrue(new File(testHome).exists());
 
