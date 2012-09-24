@@ -107,6 +107,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>xpp3</groupId>
       <artifactId>xpp3</artifactId>
       <version>${xpp3.version}</version>
