@@ -242,6 +242,12 @@ public class VirtualHostService implements MutableVirtualHost {
                     attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect mount or port mount for mount node '"+mountNode.getValueProvider().getPath()+"'" ,e);
+                    // if we are in fine grained reloading mode, we will try next request a full blown reload (reload all HstNode instances)
+                    // as something went wrong.
+                    if (hstManager.isFineGrainedReloading()) {
+                        hstManager.setFineGrainedReloading(false);
+                        hstManager.setFullBlownReloadNeeded(true);
+                    }
                 }
             } else {
                 log.error("Expected a node of type '{}' at '{}' but was of type '"+mountNode.getNodeTypeName()+"'", HstNodeTypes.NODETYPE_HST_MOUNT, mountNode.getValueProvider().getPath());
@@ -255,6 +261,12 @@ public class VirtualHostService implements MutableVirtualHost {
                     attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
+                    // if we are in fine grained reloading mode, we will try next request a full blown reload (reload all HstNode instances)
+                    // as something went wrong.
+                    if (hstManager.isFineGrainedReloading()) {
+                        hstManager.setFineGrainedReloading(false);
+                        hstManager.setFullBlownReloadNeeded(true);
+                    }
                 }
                 
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
@@ -263,6 +275,12 @@ public class VirtualHostService implements MutableVirtualHost {
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect port mount for node '"+child.getValueProvider().getPath()+"'" ,e);
+                    // if we are in fine grained reloading mode, we will try next request a full blown reload (reload all HstNode instances)
+                    // as something went wrong.
+                    if (hstManager.isFineGrainedReloading()) {
+                        hstManager.setFineGrainedReloading(false);
+                        hstManager.setFullBlownReloadNeeded(true);
+                    }
                 }
             } 
         }

@@ -123,8 +123,9 @@ public class HstManagerImpl implements HstManager {
      * The map of all site nodes where the key is the path
      */
     private Map<String, HstSiteRootNode> siteRootNodes = new HashMap<String, HstSiteRootNode>();
-    
+
     /**
+
      * Request path suffix delimiter
      */
     private String pathSuffixDelimiter = "./";
@@ -134,9 +135,18 @@ public class HstManagerImpl implements HstManager {
      * has been created
      */
     List<HstConfigurationAugmenter> hstConfigurationAugmenters = new ArrayList<HstConfigurationAugmenter>();
-    
 
+    // this member is only accessed in synchronized blocks so does not need to be volatile
     private boolean clearAll = false;
+
+    // flag to indicate that fineGrainedReloading is used.
+    // this member is only accessed in synchronized blocks so does not need to be volatile
+    private boolean fineGrainedReloading = false;
+
+    // flag to indicate that a full blown reload is needed
+    // this member is only accessed in synchronized blocks so does not need to be volatile
+    private boolean fullBlownReloadNeeded = false;
+
     private Map<HstEvent.ConfigurationType, Set<HstEvent>> configChangeEventMap;
     private MutableChannelManager channelManager;
 
@@ -227,7 +237,7 @@ public class HstManagerImpl implements HstManager {
     }
     
     public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException {
- 
+
         VirtualHosts currentHosts = virtualHosts;
         if (currentHosts == null) {
             synchronized(this) {
@@ -238,6 +248,15 @@ public class HstManagerImpl implements HstManager {
                     }
                 }
                 currentHosts = virtualHosts;
+
+                if (fullBlownReloadNeeded) {
+                    log.warn("Due to incorrect loading of the HST model during previous request, now a full blown" +
+                            "reload is done. If the incorrect loading was the result of broken hst configuration, please fix this because " +
+                            "it is expensive to do a fullblown reload.");
+                    fullBlownReloadNeeded = false;
+                    fineGrainedReloading = false;
+                    invalidateAll();
+                }
             }
         }
         
@@ -248,7 +267,8 @@ public class HstManagerImpl implements HstManager {
         log.info("Start building in memory hst configuration model");
         long start = System.currentTimeMillis();
         
-        if (clearAll) { 
+        if (clearAll) {
+            virtualHostsNode = null;
             configChangeEventMap = null;
             commonCatalog = null;
             configurationRootNodes.clear();
@@ -274,7 +294,8 @@ public class HstManagerImpl implements HstManager {
                     virtualHostsNode = new HstNodeImpl(virtualHostsJcrNode, null, true);
                 } else {
                     // do finegrained reloading, removing and loading of previously loaded nodes that changed.
-                    
+
+                    fineGrainedReloading = true;
 
                     Set<String> loadNodes = new HashSet<String>();
                     int pathLengthHstHostNode = (rootPath + "/hst:hosts").length();
@@ -292,6 +313,7 @@ public class HstManagerImpl implements HstManager {
                                         virtualHosts = null;
                                         events.clear();
                                         virtualHostsNode = null;
+                                        fullBlownReloadNeeded = true;
                                         log.warn("The node '{}' has been removed. Cannot reload model.", rootPath + "/hst:hosts");
                                         return;
                                     } 
@@ -303,6 +325,7 @@ public class HstManagerImpl implements HstManager {
                                     loadNodes.add(event.path);
                                 } else if(event.jcrEventType == Event.NODE_MOVED) {
                                     log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
+                                    fullBlownReloadNeeded = true;
                                 } 
                             } else {
                                 // PROPERTY EVENT : we mark the HstNode as stale
@@ -316,7 +339,7 @@ public class HstManagerImpl implements HstManager {
                                 }
                                  
                                 if(node != null) {
-                                    ((HstNodeImpl)node).markStale(); 
+                                    node.markStale();
                                 }
                             }
                         }
@@ -409,6 +432,7 @@ public class HstManagerImpl implements HstManager {
                                     loadNodes.add(event.path);
                                 } else if(event.jcrEventType == Event.NODE_MOVED) {
                                     log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
+                                    fullBlownReloadNeeded = true;
                                 } 
                             } else {
                                 // PROPERTY EVENT : we mark the HstNode as stale
@@ -490,6 +514,7 @@ public class HstManagerImpl implements HstManager {
      
                             } else if (event.jcrEventType == Event.NODE_MOVED) {
                                 log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
+                                fullBlownReloadNeeded = true;
                             } else {
                                 // if a node was not removed, we will reload the hst:site, also for property changes
                                 String[] elems = event.path.split("/");
@@ -523,10 +548,12 @@ public class HstManagerImpl implements HstManager {
                                     siteRootNodes.put(hstRootSiteNode.getValueProvider().getPath(), hstRootSiteNode);
                                 } else {
                                     log.error("We can only load nodes of site '{}' here. This should not be happening.", HstNodeTypes.NODETYPE_HST_SITE);
+                                    fullBlownReloadNeeded = true;
                                 }
                             }
                         } else {
                             log.error("It is not possible to load '{}' because is not a site root node", path);
+                            fullBlownReloadNeeded = true;
                         }
                     }
                 }
@@ -547,7 +574,6 @@ public class HstManagerImpl implements HstManager {
             }
 
             this.channelManager.load(virtualHosts, session);
-
         } catch (PathNotFoundException e) {
             throw new IllegalStateException("Exception during loading configuration nodes. The HST model cannot be loaded. ",e);
         } catch (RepositoryException e) {
@@ -821,7 +847,19 @@ public class HstManagerImpl implements HstManager {
     public HstNode getCommonCatalog(){
         return commonCatalog;
     }
-    
+
+    public synchronized boolean isFineGrainedReloading() {
+        return fineGrainedReloading;
+    }
+
+    public synchronized void setFineGrainedReloading(final boolean fineGrainedReloading) {
+        this.fineGrainedReloading = fineGrainedReloading;
+    }
+
+    public synchronized void setFullBlownReloadNeeded(final boolean fullBlownReloadNeeded) {
+        this.fullBlownReloadNeeded = fullBlownReloadNeeded;
+    }
+
     /**
      * @return the hstComponentsConfigurationInstanceCache. This {@link Map} is never <code>null</code> 
      */
