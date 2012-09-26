@@ -250,7 +250,7 @@ public class HstManagerImpl implements HstManager {
                 currentHosts = virtualHosts;
 
                 if (fullBlownReloadNeeded) {
-                    log.warn("Due to incorrect loading of the HST model during previous request, during next request a full blown" +
+                    log.warn("Due to incorrect loading of the HST model during previous request, during next request a full blown " +
                             "reload will be done. If the incorrect loading was the result of broken hst configuration, please fix this because " +
                             "it is expensive to do a full blown reload.");
                     fullBlownReloadNeeded = false;
@@ -263,7 +263,7 @@ public class HstManagerImpl implements HstManager {
         return currentHosts;
     }
 
-    protected void buildSites() throws RepositoryNotAvailableException {
+    private void buildSites() throws RepositoryNotAvailableException {
         log.info("Start building in memory hst configuration model");
         long start = System.currentTimeMillis();
         
