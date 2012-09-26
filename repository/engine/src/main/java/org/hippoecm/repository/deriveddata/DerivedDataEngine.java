@@ -251,11 +251,11 @@ public class DerivedDataEngine {
             func.setValueFactory(session.getValueFactory());
             return func;
         } catch (ClassNotFoundException e) {
-            throw new RepositoryException(e.getMessage(), e);
+            throw new RepositoryException("No such function", e);
         } catch (InstantiationException e) {
-            throw new RepositoryException(e.getMessage(), e);
+            throw new RepositoryException("Can't create function", e);
         } catch (IllegalAccessException e) {
-            throw new RepositoryException(e.getMessage(), e);
+            throw new RepositoryException("Can't access function", e);
         }
     }
 
@@ -276,27 +276,20 @@ public class DerivedDataEngine {
         final boolean changed = Arrays.equals(oldDependenciesValues, dependenciesValues);
 
         if (changed) {
-            try {
-                if (!modified.isCheckedOut()) {
-                    modified.checkout(); // FIXME: is this node always versionable?
-                }
-                modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues, PropertyType.REFERENCE);
-            } catch (ItemNotFoundException ex) {
-                log.info("write error on modified node " + modified.getPath(), ex);
-            }
+            JcrUtils.ensureIsCheckedOut(modified, false);
+            modified.setProperty(HippoNodeType.HIPPO_RELATED, dependenciesValues, PropertyType.REFERENCE);
         }
         return changed;
     }
 
     public static void removal(Node removed) throws RepositoryException {
         if (removed.isNodeType("mix:referenceable")) {
-            final String uuid = removed.getIdentifier();
-            for (PropertyIterator iter = removed.getReferences(); iter.hasNext(); ) {
-                Property prop = iter.nextProperty();
-                if (prop.getDefinition().getName().equals(HippoNodeType.HIPPO_RELATED)) {
-                    Value[] values = prop.getValues();
+            final String removedId= removed.getIdentifier();
+            for (Property refProp : new PropertyIterable(removed.getReferences())) {
+                if (refProp.getName().equals(HippoNodeType.HIPPO_RELATED)) {
+                    final Value[] values = refProp.getValues();
                     for (int i = 0; i < values.length; i++) {
-                        if (values[i].getString().equals(uuid)) {
+                        if (values[i].getString().equals(removedId)) {
                             Value[] newValues = new Value[values.length - 1];
                             if (i > 0) {
                                 System.arraycopy(values, 0, newValues, 0, i);
@@ -304,14 +297,8 @@ public class DerivedDataEngine {
                             if (values.length - i > 1) {
                                 System.arraycopy(values, i + 1, newValues, i, values.length - i - 1);
                             }
-                            Node ancestor = prop.getParent();
-                            if (!ancestor.isCheckedOut()) {
-                                while (!ancestor.isNodeType("mix:versionable")) {
-                                    ancestor = ancestor.getParent();
-                                }
-                                ancestor.checkout();
-                            }
-                            prop.setValue(newValues);
+                            JcrUtils.ensureIsCheckedOut(refProp.getParent(), true);
+                            refProp.setValue(newValues);
                             break;
                         }
                     }

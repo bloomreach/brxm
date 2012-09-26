@@ -50,7 +50,7 @@ public class SchedulerModule implements DaemonModule {
     private JCRScheduler scheduler = null;
 
 
-    public static boolean isEnabled() {
+    private static boolean isEnabled() {
         return !Boolean.getBoolean("hippo.scheduler.disabled");
     }
 
