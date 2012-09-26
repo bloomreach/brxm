@@ -55,6 +55,7 @@ if (!YAHOO.hippo.EditorManager) {
          */
         YAHOO.hippo.EditorManagerImpl = function() {
             this.initialized = false;
+            this.preCalled = false;
             this.contexts = new YAHOO.hippo.HashMap();
         };
 
@@ -82,10 +83,18 @@ if (!YAHOO.hippo.EditorManager) {
                 }, this);
 
                 //Save open editors when a WicketAjax callback is executed
-                var me = this;
-                Wicket.Ajax.registerPreCallHandler(function() {
-                    me.saveEditors();
-                });
+                var preCall = function() {
+                    if (!this.preCalled) {
+                        this.preCalled = true;
+                        this.saveEditors();
+                    }
+                }.bind(this);
+                Wicket.Ajax.registerPreCallHandler(preCall);
+
+                var postCall = function() {
+                    this.preCalled = false;
+                }.bind(this);
+                Wicket.Ajax.registerPostCallHandler(postCall);
             },
 
             /**
@@ -864,10 +873,15 @@ if (!YAHOO.hippo.EditorManager) {
                     try {
                         var data = this.xinha.getInnerHTML();
                         if (data != this.lastData) {
-                            this.xinha.plugins['AutoSave'].instance.save(throttled);
-                            this.lastData = data;
+                            var success = function() {
+                                info('Content saved.');
+                                this.lastData = data;
+                            }.bind(this);
+                            var failure = function() {
+                                error('failed to save');
+                            }.bind(this);
 
-                            info('Content saved.');
+                            this.xinha.plugins['AutoSave'].instance.save(throttled, success, failure);
                         }
                     } catch(e) {
                         error('Error retrieving innerHTML from xinha, skipping save');
