@@ -80,6 +80,7 @@ import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
+import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -722,13 +723,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private InputStream getResourceStream(final Node item, String resourcePath) throws RepositoryException, IOException {
         InputStream resourceStream = null;
         if (resourcePath.startsWith("file:")) {
-            if (resourcePath.startsWith("file://")) {
-                resourcePath = resourcePath.substring(6);
-            } else if (resourcePath.startsWith("file:/")) {
-                resourcePath = resourcePath.substring(5);
-            } else if (resourcePath.startsWith("file:")) {
-                resourcePath = "/" + resourcePath.substring(5);
-            }
+            resourcePath = RepoUtils.stripFileProtocol(resourcePath);
             File localFile = new File(resourcePath);
             try {
                 resourceStream = new BufferedInputStream(new FileInputStream(localFile));

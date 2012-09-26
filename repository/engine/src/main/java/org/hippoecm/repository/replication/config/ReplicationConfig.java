@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.ConfigurationParser;
 import org.hippoecm.repository.replication.ReplicationJournal;
+import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -151,14 +152,8 @@ public class ReplicationConfig {
             return new BufferedInputStream(is);
         }
 
-        // parse file name
-        if (configName.startsWith("file://")) {
-            configName = configName.substring(6);
-        } else if (configName.startsWith("file:/")) {
-            configName = configName.substring(5);
-        } else if (configName.startsWith("file:")) {
-            configName = "/" + configName.substring(5);
-        }
+        configName = RepoUtils.stripFileProtocol(configName);
+
         log.info("Using file replication config: file:/{}", configName);
 
         // get the buffered inputstream

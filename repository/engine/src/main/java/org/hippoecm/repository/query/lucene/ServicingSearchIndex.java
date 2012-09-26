@@ -82,6 +82,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
+import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -287,7 +288,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
         InputStream configInputStream = null;
         if (configName.startsWith("file:/")) {
-            File config = new File(configName.substring(5));
+            configName = RepoUtils.stripFileProtocol(configName);
+            File config = new File(configName);
             log.info("Using indexing configuration: " + configName);
             if (!config.exists()) {
                 log.warn("File does not exist: " + this.getIndexingConfiguration());

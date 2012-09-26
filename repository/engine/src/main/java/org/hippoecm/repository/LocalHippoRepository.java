@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import javax.jcr.observation.EventListenerIterator;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.version.VersionException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
@@ -62,11 +63,11 @@ import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.updater.UpdaterEngine;
+import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LocalHippoRepository extends HippoRepositoryImpl {
-    /** SVN id placeholder */
 
     /** System property for overriding the repository path */
     public static final String SYSTEM_PATH_PROPERTY = "repo.path";
@@ -168,22 +169,19 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if (repoPath != null) {
             return repoPath;
         }
-        String path = System.getProperty(LocalHippoRepository.SYSTEM_PATH_PROPERTY);
 
-        if (path == null || "".equals(path)) {
-            path = getWorkingDirectory();
-        } else if (path.charAt(0) == '.') {
+        final String pathProp = System.getProperty(SYSTEM_PATH_PROPERTY);
+
+        if (pathProp == null || pathProp.isEmpty()) {
+            repoPath = getWorkingDirectory();
+        } else if (pathProp.charAt(0) == '.') {
             // relative path
-            path = getWorkingDirectory() + System.getProperty("file.separator") + path;
-        } else if (path.startsWith("file://")) {
-            path = path.substring(6);
-        } else if (path.startsWith("file:/")) {
-            path = path.substring(5);
-        } else if (path.startsWith("file:")) {
-            path = "/" + path.substring(5);
+            repoPath = getWorkingDirectory() + System.getProperty("file.separator") + pathProp;
+        } else {
+            repoPath = RepoUtils.stripFileProtocol(pathProp);
         }
-        log.info("Using repository path: " + path);
-        repoPath = path;
+
+        log.info("Using repository path: " + repoPath);
         return repoPath;
     }
 
@@ -194,43 +192,31 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
      * @throws RepositoryException
      */
     private static InputStream getRepositoryConfigAsStream() throws RepositoryException {
-        // get config from system prop
-        String configName = System.getProperty(SYSTEM_CONFIG_PROPERTY);
+        String configPath = System.getProperty(SYSTEM_CONFIG_PROPERTY);
 
-        // if not set try to use the servletconfig
-        if (configName == null || "".equals(configName)) {
-            configName = System.getProperty(SYSTEM_SERVLETCONFIG_PROPERTY);
+        if (configPath == null || "".equals(configPath)) {
+            configPath = System.getProperty(SYSTEM_SERVLETCONFIG_PROPERTY);
         }
 
-        // if still not set use default
-        if (configName == null || "".equals(configName)) {
+        if (configPath == null || "".equals(configPath)) {
             log.info("Using default repository config: " + DEFAULT_REPOSITORY_CONFIG);
             return LocalHippoRepository.class.getResourceAsStream(DEFAULT_REPOSITORY_CONFIG);
         }
 
-        // resource
-        if (!configName.startsWith("file:")) {
-            log.info("Using resource repository config: " + configName);
-            return LocalHippoRepository.class.getResourceAsStream(configName);
+        if (!configPath.startsWith("file:")) {
+            log.info("Using resource repository config: " + configPath);
+            return LocalHippoRepository.class.getResourceAsStream(configPath);
         }
 
-        // parse file name
-        if (configName.startsWith("file://")) {
-            configName = configName.substring(6);
-        } else if (configName.startsWith("file:/")) {
-            configName = configName.substring(5);
-        } else if (configName.startsWith("file:")) {
-            configName = "/" + configName.substring(5);
-        }
-        log.info("Using file repository config: file:/" + configName);
+        configPath = RepoUtils.stripFileProtocol(configPath);
 
-        // get the bufferedinputstream
-        File configFile = new File(configName);
+        log.info("Using file repository config: file:/" + configPath);
+
+        File configFile = new File(configPath);
         try {
-            FileInputStream fis = new FileInputStream(configFile);
-            return new BufferedInputStream(fis);
+            return new BufferedInputStream(new FileInputStream(configFile));
         } catch (FileNotFoundException e) {
-            throw new RepositoryException("Repository config not found: file:/" + configName);
+            throw new RepositoryException("Repository config not found: file:/" + configPath);
         }
     }
 
@@ -248,20 +234,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         protected FileSystem getFileSystem() {
             return super.getFileSystem();
-        }
-    }
-
-    static private void delete(File path) {
-        if(path.exists()) {
-            if(path.isDirectory()) {
-                File[] files = path.listFiles();
-                for (int i = 0; i < files.length; i++) {
-                    delete(files[i]);
-                }
-            }
-            if (!path.delete()) {
-                log.warn("Unable to delete path: {}", path);
-            }
         }
     }
 
@@ -286,9 +258,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     }
 
     private void initializeReindex() {
-        File basedir = new File(getRepositoryPath());
-        delete(new File(basedir, "repository/index"));
-        delete(new File(basedir, "workspaces/default/index"));
+        final File basedir = new File(getRepositoryPath());
+        try {
+            FileUtils.deleteDirectory(new File(basedir, "repository/index"));
+            FileUtils.deleteDirectory(new File(basedir, "workspaces/default/index"));
+        } catch (IOException e) {
+            log.warn("Unable to delete index", e);
+        }
     }
 
     private void initializeStartup() throws RepositoryException {
