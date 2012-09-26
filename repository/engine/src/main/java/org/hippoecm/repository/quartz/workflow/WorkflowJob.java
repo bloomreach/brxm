@@ -25,8 +25,12 @@ import org.hippoecm.repository.quartz.JCRScheduler;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WorkflowJob implements Job {
+
+    private static final Logger log = LoggerFactory.getLogger(WorkflowJob.class);
 
     private static final String IMPERSONATED_USER = "workflowuser";
     private static final char[] IMPERSONATED_PASSWORD = new char[0];
@@ -45,6 +49,11 @@ public class WorkflowJob implements Job {
             final String subjectIdentifier = jobDetail.getSubjectIdentifier();
 
             invocation.setSubject(workflowSession.getNodeByIdentifier(subjectIdentifier));
+
+            if (log.isDebugEnabled()) {
+                log.debug("Running workflow job " + jobDetail.getName() + " on subject " + subjectIdentifier);
+            }
+
             invocation.invoke(workflowSession);
 
             workflowSession.save();
