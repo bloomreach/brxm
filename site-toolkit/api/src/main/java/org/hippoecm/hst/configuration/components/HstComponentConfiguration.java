@@ -167,7 +167,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     
     /**
      * Returns the map of all parameters. Also see {@link #getParameter(String)}.
-     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid
+     * Implementations should return an unmodifiable map, for example {@link java.util.Collections#unmodifiableMap} to avoid
      * client code changing configuration
      * 
      * Parameters are inherited from ancestor configurations. Parameters that are configured in an ancestor override parameters
@@ -202,7 +202,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     Map<String, String> getLocalParameters();
     
     /**
-     * Implementations should return an unmodifiable linked map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
+     * Implementations should return an unmodifiable linked map, for example {@link java.util.Collections#unmodifiableMap} to avoid
      * client code changing configuration
      * @return all <code>HstComponentConfiguration</code> children in order they were added, and an empty Map if no children present
      */
