@@ -90,26 +90,34 @@ AutoSave.prototype.save = function(throttled, success, failure) {
     var url = this.editor.config.callbackUrl;
 
     var xmlHttpReq = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    var onReadyStateChangeHandler = function() {
-        if (xmlHttpReq.readyState == 4) {
-            if (throttled) {
-                this.saving = false;
+    var afterCallbackHandler = function() {
+        if (throttled) {
+            this.saving = false;
+        }
+        if(xmlHttpReq.status == 200) {
+            if (success) {
+                success();
             }
-            if(xmlHttpReq.status == 200) {
-                if (success) {
-                    success();
-                }
-            } else if(failure) {
-                failure();
-            }
+        } else if(failure) {
+            failure();
         }
     }.bind(this);
 
     xmlHttpReq.open('POST', url, throttled);
     xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xmlHttpReq.setRequestHeader('Wicket-Ajax', "true");
-    xmlHttpReq.onreadystatechange = onReadyStateChangeHandler;
+    if (throttled) {
+        xmlHttpReq.onreadystatechange = function() {
+            if (xmlHttpReq.readyState == 4) {
+                afterCallbackHandler();
+            }
+        };
+    }
     xmlHttpReq.send(body);
+
+    if (!throttled) {
+        afterCallbackHandler();
+    }
 };
 
 AutoSave.prototype.onUpdateToolbar = function() {

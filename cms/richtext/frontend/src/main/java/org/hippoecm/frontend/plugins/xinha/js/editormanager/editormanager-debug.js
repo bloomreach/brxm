@@ -55,7 +55,6 @@ if (!YAHOO.hippo.EditorManager) {
          */
         YAHOO.hippo.EditorManagerImpl = function() {
             this.initialized = false;
-            this.preCalled = false;
             this.contexts = new YAHOO.hippo.HashMap();
         };
 
@@ -84,17 +83,9 @@ if (!YAHOO.hippo.EditorManager) {
 
                 //Save open editors when a WicketAjax callback is executed
                 var preCall = function() {
-                    if (!this.preCalled) {
-                        this.preCalled = true;
-                        this.saveEditors();
-                    }
+                    this.saveEditors();
                 }.bind(this);
                 Wicket.Ajax.registerPreCallHandler(preCall);
-
-                var postCall = function() {
-                    this.preCalled = false;
-                }.bind(this);
-                Wicket.Ajax.registerPostCallHandler(postCall);
             },
 
             /**
