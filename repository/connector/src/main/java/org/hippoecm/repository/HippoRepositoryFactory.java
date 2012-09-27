@@ -25,6 +25,8 @@ import javax.jcr.RepositoryException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.hippoecm.repository.util.RepoUtils;
+
 public class HippoRepositoryFactory {
 
     private static String defaultLocation = null; // FIXME: should become: "java:comp/env/jcr/repository";
@@ -91,9 +93,7 @@ public class HippoRepositoryFactory {
     public static HippoRepository getHippoRepository(String location) throws RepositoryException {
         HippoRepository repository = null;
 
-        if (location.startsWith("file:")) {
-            location = location.substring("file:".length());
-        }
+        location = RepoUtils.stripFileProtocol(location);
 
         if (location.startsWith("rmi://")) {
             try {

@@ -45,6 +45,11 @@
       <artifactId>hippo-repository-api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-utilities</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- test -->
     <dependency>
