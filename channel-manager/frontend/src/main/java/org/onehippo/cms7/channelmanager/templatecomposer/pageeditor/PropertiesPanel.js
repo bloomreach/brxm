@@ -214,6 +214,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                         composerRestMountUrl : this.composerRestMountUrl,
                         locale : this.locale,
                         componentId : this.componentId,
+                        bubbleEvents: ['cancel'],
                         listeners : {
                             'save' : function() {
                                 this._cleanupVariants();
