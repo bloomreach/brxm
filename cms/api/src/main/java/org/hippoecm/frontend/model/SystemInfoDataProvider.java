@@ -129,7 +129,9 @@ public class SystemInfoDataProvider implements IDataProvider {
     public String getReleaseVersion() {
         try {
             final Manifest manifest = getWebAppManifest();
-            return manifest.getMainAttributes().getValue("Hippo-Release-Version");
+            if (manifest != null) {
+                return manifest.getMainAttributes().getValue("Hippo-Release-Version");
+            }
         } catch(IOException iOException) {
             log.debug("Error occurred getting the hippo cms release version from the webapp-manifest.", iOException);
         }
