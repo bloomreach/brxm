@@ -37,7 +37,7 @@ Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
         this.componentId = config.componentId;
         this.variantsUuid = config.variantsUuid;
 
-        this.variantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
+        this.globalVariantsStore = new Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore({
             composerRestMountUrl: this.composerRestMountUrl,
             skipIds: config.skipVariantIds,
             variantsUuid: this.variantsUuid
@@ -51,8 +51,8 @@ Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
         this.addEvents('beforeactive', 'save');
     },
 
-    getVariantsStore: function() {
-        return this.variantsStore;
+    getGlobalVariantsStore: function() {
+        return this.globalVariantsStore;
     },
 
     addVariant: function(variant) {
@@ -68,9 +68,9 @@ Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
 
     load : function () {
         return new Hippo.Future(function (success, fail) {
-            this.variantsStore.on('load', success, {single : true});
-            this.variantsStore.on('exception', fail, {single : true});
-            this.variantsStore.load();
+            this.globalVariantsStore.on('load', success, {single : true});
+            this.globalVariantsStore.on('exception', fail, {single : true});
+            this.globalVariantsStore.load();
         }.createDelegate(this));
     }
 });

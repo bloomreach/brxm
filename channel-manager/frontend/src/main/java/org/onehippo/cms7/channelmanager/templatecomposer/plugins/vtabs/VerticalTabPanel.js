@@ -19,6 +19,9 @@
 
 Ext.ns('Ext.ux.tot2ivn');
 Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
+
+    TAB_HORIZONTAL_MARGIN_AND_PADDING: 12,
+
     /** Vertical Tab Panel cfg */
 	/**
      * @cfg {Boolean} border
@@ -224,8 +227,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
             cn: {
                 style: 'margin-top: ' + this.tabMarginTop + 'px;',
                 tag: 'ul',
-                cls: 'x-tab-strip x-tot2ivn-vr-tab-strip x-tab-strip-' + this.tabPosition + ' x-tot2ivn-vr-tab-strip-' + this.tabPosition,
-                width: this.tabWidth
+                cls: 'x-tab-strip x-tot2ivn-vr-tab-strip x-tab-strip-' + this.tabPosition + ' x-tot2ivn-vr-tab-strip-' + this.tabPosition
             }
         });
 
@@ -243,10 +245,16 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
          */
         if (!this.itemTpl) {
             tt = new Ext.Template(
-                 '<li class="{cls} x-tot2ivn-vr-tab-strip-title" id="{id}"><a class="x-tab-strip-close"></a>',
-                 '<a class="x-tab-right" href="#"><em class="x-tab-left">',
-                 '<span class="x-tab-strip-inner"><span class="x-tab-strip-text x-tot2ivn-vr-tab-strip-text {iconCls}">{text}</span></span>',
-                 '</em></a></li>'
+                    '<li class="{cls} x-tot2ivn-vr-tab-strip-title" id="{id}">',
+                      '<a class="x-tab-strip-close"></a>',
+                      '<a class="x-tab-right" href="#" style="width: ' + (this.tabWidth - this.TAB_HORIZONTAL_MARGIN_AND_PADDING) + 'px"">',
+                        '<em class="x-tab-left">',
+                          '<span class="x-tab-strip-inner">',
+                            '<span class="x-tab-strip-text x-tot2ivn-vr-tab-strip-text {iconCls}">{text}</span>',
+                          '</span>',
+                         '</em>',
+                       '</a>',
+                    '</li>'
             );
             tt.disableFormats = true;
             tt.compile();

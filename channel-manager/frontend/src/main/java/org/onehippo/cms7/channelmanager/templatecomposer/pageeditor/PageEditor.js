@@ -16,14 +16,14 @@
 "use strict";
 Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-Hippo.ChannelManager.TemplateComposer.VariantsStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
+Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
     constructor : function(config) {
         this.skipIds = config.skipIds || [];
 
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read: config.composerRestMountUrl + '/' + config.variantsUuid + './variants/?FORCE_CLIENT_HOST=true',
+                read: config.composerRestMountUrl + '/' + config.variantsUuid + './globalvariants/?FORCE_CLIENT_HOST=true',
                 create: '#',
                 update: '#',
                 destroy: '#'
@@ -36,7 +36,7 @@ Hippo.ChannelManager.TemplateComposer.VariantsStore = Ext.extend(Hippo.ChannelMa
         });
 
         Ext.apply(config, {
-            id: 'VariantsStore',
+            id: 'GlobalVariantsStore',
             proxy: proxy,
             prototypeRecord :  [
                 {name: 'id' },
@@ -48,7 +48,7 @@ Hippo.ChannelManager.TemplateComposer.VariantsStore = Ext.extend(Hippo.ChannelMa
             }
         });
 
-        Hippo.ChannelManager.TemplateComposer.VariantsStore.superclass.constructor.call(this, config);
+        Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore.superclass.constructor.call(this, config);
     },
 
     filterSkippedIds: function(store) {
@@ -86,32 +86,32 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         this.canUnlockChannels = config.canUnlockChannels;
 
-        this.allVariantsStore = null;
-        this.allVariantsStoreFuture = null;
+        this.globalVariantsStore = null;
+        this.globalVariantsStoreFuture = null;
         if (typeof(this.variantsUuid) !== 'undefined' && this.variantsUuid !== null) {
-            this.allVariantsStore = new Hippo.ChannelManager.TemplateComposer.VariantsStore({
+            this.globalVariantsStore = new Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore({
                 composerRestMountUrl: this.composerRestMountUrl,
                 variantsUuid: this.variantsUuid
             });
-            this.allVariantsStoreFuture = new Hippo.Future(function (success, fail) {
-                this.allVariantsStore.on('load', function() {
-                    success(this.allVariantsStore);
+            this.globalVariantsStoreFuture = new Hippo.Future(function (success, fail) {
+                this.globalVariantsStore.on('load', function() {
+                    success(this.globalVariantsStore);
                 }, {single : true});
-                this.allVariantsStore.on('exception', fail, {single : true});
-                this.allVariantsStore.load();
+                this.globalVariantsStore.on('exception', fail, {single : true});
+                this.globalVariantsStore.load();
             }.createDelegate(this));
         } else {
-            this.allVariantsStore = new Ext.data.ArrayStore({
+            this.globalVariantsStore = new Ext.data.ArrayStore({
                 fields : [
                     'id', 'name', 'avatar'
                 ]
             });
-            this.allVariantsStoreFuture = new Hippo.Future(function (success, fail) {
-                this.allVariantsStore.on('load', function() {
-                    success(this.allVariantsStore);
+            this.globalVariantsStoreFuture = new Hippo.Future(function (success, fail) {
+                this.globalVariantsStore.on('load', function() {
+                    success(this.globalVariantsStore);
                 }, {single : true});
-                this.allVariantsStore.on('exception', fail, {single : true});
-                this.allVariantsStore.loadData([['default', 'Default', 'default']]);
+                this.globalVariantsStore.on('exception', fail, {single : true});
+                this.globalVariantsStore.loadData([['default', 'Default', 'default']]);
             }.createDelegate(this));
         }
 
@@ -191,7 +191,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         var self = this;
 
         var variantsComboBox = new Ext.form.ComboBox({
-            store: this.allVariantsStore,
+            store: this.globalVariantsStore,
             displayField: 'name',
             typeAhead: true,
             mode: 'local',
@@ -202,7 +202,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             width:135,
             autoSelect: true,
             disabled: !this.pageContainer.previewMode,
-            hidden: (this.allVariantsStore instanceof Ext.data.ArrayStore), // hide when only default is available
+            hidden: (this.globalVariantsStore instanceof Ext.data.ArrayStore), // hide when only default is available
             listeners: {
                 scope: this,
                 select : function(combo, record, index) {
@@ -229,8 +229,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         variantsComboBox.on('afterRender', function() {
             variantsComboBox.setValue(this.renderedVariant);
-            this.allVariantsStoreFuture.when(function() {
-                var variantRecord = this.allVariantsStore.getById(this.renderedVariant);
+            this.globalVariantsStoreFuture.when(function() {
+                var variantRecord = this.globalVariantsStore.getById(this.renderedVariant);
                 if (variantRecord) {
                     variantsComboBox.setValue(variantRecord.get('name'));
                 }
@@ -250,7 +250,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     createVariantLabel: function () {
         return new Ext.Toolbar.TextItem({
             text : this.resources['variants-combo-box-label'],
-            hidden : (this.allVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
+            hidden : (this.globalVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
         });
     },
 
@@ -613,8 +613,8 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     locale: this.locale,
                     composerRestMountUrl: this.composerRestMountUrl,
                     variantsUuid: this.variantsUuid,
-                    allVariantsStore : this.allVariantsStore,
-                    allVariantsStoreFuture : this.allVariantsStoreFuture,
+                    globalVariantsStore : this.globalVariantsStore,
+                    globalVariantsStoreFuture : this.globalVariantsStoreFuture,
                     mountId: mountId,
                     listeners: {
                         cancel: function() {

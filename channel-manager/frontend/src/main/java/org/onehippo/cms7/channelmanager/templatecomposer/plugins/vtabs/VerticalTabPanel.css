@@ -1,5 +1,10 @@
 /* VrTabPanel CSS for Blue theme */
 
+/* Custom sprit for vertical tabs */
+.x-tot2ivn-vr-tab-strip .x-tab-right, .x-tot2ivn-vr-tab-strip .x-tab-left, .x-tot2ivn-vr-tab-strip .x-tab-strip-inner {
+    background-image: url(vtabs-sprite.gif);
+}
+
 /* Left Panel background */
 .x-tot2ivn-vr-tab-panel {
     background: #cedff5;
@@ -9,6 +14,8 @@
 /* Left Panel */
 .x-tot2ivn-vr-tab-panel-header {
     float: left;
+    background: url(vtabs-border-right.png) right repeat-y;
+    height: 5000px;
 }
 
 .x-tot2ivn-vr-tab-panel .x-tot2ivn-vr-tab-strip-spacer {
@@ -20,12 +27,12 @@
 }
 
 .x-tot2ivn-vr-tab-strip-wrap {
-    border-bottom: 1px solid #aac3e5;
+    background: url(vtabs-border-bottom.png) repeat-x left bottom;
+    padding-bottom: 1px;
 }
 
 /* Right Body Panel */
 .x-tot2ivn-vr-tab-panel-bwrap {
-    border-left: 1px solid #99bbe8;
     background: #fff;
 }
 
@@ -37,10 +44,24 @@
     overflow: hidden;
 }
 
-.x-tab-strip span.x-tot2ivn-vr-tab-strip-text,
-/* Active Items. Adjust tab padding in here !! */
-.x-tab-strip-active .x-tab-right span.x-tot2ivn-vr-tab-strip-text {
+.x-tab-strip span.x-tot2ivn-vr-tab-strip-text {
     padding-top: 6px !important;
     padding-bottom: 6px !important;
     white-space: pre-wrap;
+    color: #3f3f3f;
+}
+
+/* Last menu item */
+.x-tot2ivn-vr-tab-panel li.x-tot2ivn-vr-tab-last {
+    border-bottom: 1px solid #b3b3b3;
+}
+
+/* Active menu item */
+.x-tot2ivn-vr-tab-panel .x-tab-strip-active span.x-tot2ivn-vr-tab-strip-text {
+    font-weight: normal !important;
+    color: #000;
+}
+
+.x-tot2ivn-vr-tab-panel .x-tab-strip-active .x-tab-right {
+    margin-bottom: 0;
 }

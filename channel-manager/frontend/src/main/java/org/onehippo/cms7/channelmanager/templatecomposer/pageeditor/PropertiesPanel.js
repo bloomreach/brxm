@@ -26,8 +26,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     locale : null,
     componentId : null,
     silent : true,
-    allVariantsStore: null,
-    allVariantsStoreFuture : null,
+    globalVariantsStore: null,
+    globalVariantsStoreFuture : null,
     variantAdderXType: null,
     propertiesEditorXType: null,
 
@@ -38,8 +38,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.resources = config.resources;
         this.locale = config.locale;
 
-        this.allVariantsStore = config.allVariantsStore;
-        this.allVariantsStoreFuture = config.allVariantsStoreFuture;
+        this.globalVariantsStore = config.globalVariantsStore;
+        this.globalVariantsStoreFuture = config.globalVariantsStoreFuture;
 
         this.variantAdderXType = config.variantAdderXType;
         this.propertiesEditorXType = config.propertiesEditorXType;
@@ -107,11 +107,11 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
             loadVariantTabs();
         } else {
             this._showTabs();
-            this.allVariantsStoreFuture.when(function() {
-                this._loadVariantStore().when(function () {
+            this.globalVariantsStoreFuture.when(function() {
+                this._loadVariants().when(function() {
                     this._showTabs();
                     loadVariantTabs();
-                }.createDelegate(this)).otherwise(function () {
+                }.createDelegate(this)).otherwise(function() {
                     this.endUpdate();
                     this.silent = false;
                 }.createDelegate(this));
@@ -122,15 +122,18 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         }
     },
 
-    _loadVariantStore : function () {
+    _loadVariants: function () {
         return new Hippo.Future(function (success, fail) {
             if (this.componentId) {
                 Ext.Ajax.request({
                     url : this.composerRestMountUrl + '/' + this.componentId + './variants/?FORCE_CLIENT_HOST=true',
                     success : function (result) {
                         var jsonData = Ext.util.JSON.decode(result.responseText);
-                        this._loadVariants(jsonData.data);
-                        success();
+                        this._loadComponentVariants(jsonData.data).when(function() {
+                            success();
+                        }.createDelegate(this)).otherwise(function() {
+                            fail();
+                        }.createDelegate(this));
                     },
                     failure : function (result) {
                         this._loadException(result.response);
@@ -145,20 +148,35 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         }.createDelegate(this));
     },
 
-    _loadVariants : function (records) {
+    _loadComponentVariants: function(variants) {
+        return new Hippo.Future(function (success, fail) {
+            Ext.Ajax.request({
+                url : this.composerRestMountUrl + '/' + this.variantsUuid + './componentvariants?FORCE_CLIENT_HOST=true',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                params: Ext.util.JSON.encode(variants),
+                success : function (result) {
+                    var jsonData = Ext.util.JSON.decode(result.responseText);
+                    this._initVariants(jsonData.data);
+                    success();
+                },
+                failure : function (result) {
+                    this._loadException(result.response);
+                    fail();
+                },
+                scope : this
+            });
+        }.createDelegate(this));
+    },
+
+    _initVariants: function(records) {
         var i, id, record;
         this.variants = [];
-        for (i = 0; i < records.length; i++) {
-            id = records[i];
-            if (id == 'default') {
-                this.variants.push({ id: 'default', name: this.resources['properties-panel-variant-default']});
-            } else {
-                record = this.allVariantsStore.getById(id);
-                if (typeof record !== 'undefined') {
-                    this.variants.push({ id: id, name: record.get('name')});
-                }
-            }
-        }
+        Ext.each(records, function(record) {
+            this.variants.push(record);
+        }, this);
         this.variants.push({id: 'plus', name: this.resources['properties-panel-variant-plus']});
     },
 
@@ -234,9 +252,9 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     },
 
     _cleanupVariants: function() {
-        if (this.allVariantsStore) {
+        if (this.globalVariantsStore) {
             var variantIds = [];
-            this.allVariantsStore.each(function(record) {
+            this.globalVariantsStore.each(function(record) {
                 variantIds.push(record.get('id'));
             });
             Ext.Ajax.request({

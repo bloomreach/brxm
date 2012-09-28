@@ -20,7 +20,7 @@ Hippo.ChannelManager.TemplateComposer.PlainVariantAdder = Ext.extend(Hippo.Chann
 
     initComponent: function () {
         var comboBox = new Ext.form.ComboBox({
-            store : this.getVariantsStore(),
+            store : this.getGlobalVariantsStore(),
             valueField : 'id',
             displayField : 'name',
             triggerAction : 'all'

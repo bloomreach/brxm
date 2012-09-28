@@ -170,6 +170,9 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/vtabs-border-bottom.png -text svneol=unset#image/png
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/vtabs-border-right.png -text svneol=unset#image/png
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/vtabs-sprite.gif -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/templatecomposerglobal.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.html -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/widgets/DropDownListWidget.java -text
