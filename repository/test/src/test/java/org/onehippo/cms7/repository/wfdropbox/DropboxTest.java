@@ -17,23 +17,21 @@ package org.onehippo.cms7.repository.wfdropbox;
 
 import java.util.Calendar;
 import java.util.Date;
+
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-
-import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.util.Utilities;
-import org.onehippo.cms7.test.TestWorkflow;
-import org.onehippo.cms7.test.TestWorkflowImpl;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.test.TestWorkflowImpl;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class DropboxTest extends TestCase {
+public class DropboxTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {

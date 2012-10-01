@@ -1,15 +1,15 @@
 package org.hippoecm.repository.jackrabbit.xml;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayOutputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class DereferencedExportTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class DereferencedExportTest extends RepositoryTestCase {
     
     private final static String[] content = {
         "/test", "nt:unstructured",

@@ -25,9 +25,12 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class HippoQueryTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class HippoQueryTest extends RepositoryTestCase {
 
     private QueryManager qmgr;
 

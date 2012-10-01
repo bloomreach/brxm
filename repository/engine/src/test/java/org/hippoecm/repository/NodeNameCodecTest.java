@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,8 +25,12 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class NodeNameCodecTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class NodeNameCodecTest extends RepositoryTestCase {
 
     private static final String TEST_PATH = "testnodes";
     private Node testPath;

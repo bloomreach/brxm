@@ -15,23 +15,23 @@
  */
 package org.hippoecm.repository.decorating;
 
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-
-import org.hippoecm.repository.util.Utilities;
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-public class FacetedReferenceTest extends org.hippoecm.repository.TestCase {
+public class FacetedReferenceTest extends RepositoryTestCase {
 
     private static String[] content1 = new String[] {
         "/test",                                                             "nt:unstructured",

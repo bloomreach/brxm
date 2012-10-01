@@ -24,20 +24,18 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.Modules;
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class UpdaterTest extends TestCase {
+public class UpdaterTest extends RepositoryTestCase {
 
     private final String[] content = {
         "/test", "nt:unstructured",

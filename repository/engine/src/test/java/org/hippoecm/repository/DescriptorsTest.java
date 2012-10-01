@@ -20,11 +20,13 @@ import java.util.TreeSet;
 
 import javax.jcr.Repository;
 
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import org.junit.Test;
 
-public class DescriptorsTest extends TestCase {
+public class DescriptorsTest extends RepositoryTestCase {
 
     public void setUp() throws Exception {
         super.setUp();

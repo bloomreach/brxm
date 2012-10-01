@@ -24,11 +24,12 @@ import javax.transaction.UserTransaction;
 import com.atomikos.icatch.jta.UserTransactionManager;
 
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-public class TransactionTest extends TestCase {
+public class TransactionTest extends RepositoryTestCase {
 
     /**
      * Handle atomikos setup and create transaction test node

@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,10 +30,14 @@ import javax.jcr.nodetype.PropertyDefinition;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HippoNodeTypeSanityTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
+public class HippoNodeTypeSanityTest extends RepositoryTestCase {
 
     private static final String PREFIX = "hippo:";
 

@@ -271,8 +271,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         Modules.setModules(new Modules(Thread.currentThread().getContextClassLoader()));
 
-        jackrabbitRepository = new LocalRepositoryImpl(RepositoryConfig.create(getRepositoryConfigAsStream(),
-                getRepositoryPath()));
+        final RepositoryConfig repConfig = RepositoryConfig.create(getRepositoryConfigAsStream(), getRepositoryPath());
+        jackrabbitRepository = new LocalRepositoryImpl(repConfig);
         repository = jackrabbitRepository;
 
         String result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);

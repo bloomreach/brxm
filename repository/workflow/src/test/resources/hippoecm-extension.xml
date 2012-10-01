@@ -30,5 +30,16 @@
       <sv:value>10000.0</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="test-repository-test">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
+      <sv:value>repository-test.cnd</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>904.0</sv:value>
+    </sv:property>
+  </sv:node>
 </sv:node>
 

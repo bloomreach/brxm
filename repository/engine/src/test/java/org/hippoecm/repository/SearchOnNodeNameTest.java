@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,8 +24,11 @@ import javax.jcr.query.QueryResult;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class SearchOnNodeNameTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class SearchOnNodeNameTest extends RepositoryTestCase {
    
     private static final String TEST_PATH = "test";
     private Node testPath;

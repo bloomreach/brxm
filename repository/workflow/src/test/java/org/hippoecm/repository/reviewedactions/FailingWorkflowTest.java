@@ -15,22 +15,22 @@
  */
 package org.hippoecm.repository.reviewedactions;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class FailingWorkflowTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class FailingWorkflowTest extends RepositoryTestCase {
 
     private String[] content = {
         "/test", "nt:unstructured",

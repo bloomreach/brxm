@@ -5,10 +5,11 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertFalse;
 
-public class UnlockTest extends TestCase {
+public class UnlockTest extends RepositoryTestCase {
 
     @Test
     public void testAdminCanUnlockNodeWithoutLockOwnership() throws Exception {

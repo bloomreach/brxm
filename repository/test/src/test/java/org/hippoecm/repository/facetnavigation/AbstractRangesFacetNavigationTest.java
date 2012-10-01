@@ -26,10 +26,10 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.query.lucene.HippoDateTools;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public abstract class AbstractRangesFacetNavigationTest extends TestCase {
+public abstract class AbstractRangesFacetNavigationTest extends RepositoryTestCase {
    
     /*
      * as we are having expectations about dates, our expectations might be wrong during the 'switch' of a day. Hence, this method returns

@@ -34,13 +34,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class FacetedAuthorizationTest extends TestCase {
+public class FacetedAuthorizationTest extends RepositoryTestCase {
 
     Node hipDocDomain;
     Node readDomain;

@@ -26,12 +26,11 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.query.lucene.HippoDateTools;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public abstract class AbstractDateFacetNavigationTest extends TestCase {
+public abstract class AbstractDateFacetNavigationTest extends RepositoryTestCase {
    
 
     static final Calendar start = Calendar.getInstance();
@@ -71,19 +70,6 @@ public abstract class AbstractDateFacetNavigationTest extends TestCase {
     static {
         twoyearearlier.set(2007, 11, 23, 10, 46);
     }
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-    
 
     void commonStart() throws RepositoryException {
         session.getRootNode().addNode("test");

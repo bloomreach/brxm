@@ -20,9 +20,10 @@ import javax.jcr.Node;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 @Ignore
-public class FacetSelectPerformanceTest extends TestCase {
+public class FacetSelectPerformanceTest extends RepositoryTestCase {
 
     String[] content = new String[] {
         "/test",              "nt:unstructured",

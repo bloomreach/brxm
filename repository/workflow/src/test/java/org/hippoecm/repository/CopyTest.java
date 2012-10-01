@@ -29,8 +29,9 @@ import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class CopyTest extends TestCase {
+public class CopyTest extends RepositoryTestCase {
 
     private String[] content = {
             "/test/destination", "hippostd:folder",

@@ -15,10 +15,6 @@
  */
 package org.hippoecm.repository.sample;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 
 import javax.jcr.Node;
@@ -29,8 +25,8 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
 
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.TestCase;
+import com.atomikos.icatch.jta.UserTransactionManager;
+
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
@@ -38,10 +34,13 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import com.atomikos.icatch.jta.UserTransactionManager;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
-public class SampleWorkflowTest extends TestCase {
+public class SampleWorkflowTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {

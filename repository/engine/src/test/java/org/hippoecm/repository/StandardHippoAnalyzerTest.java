@@ -20,13 +20,14 @@ import javax.jcr.NodeIterator;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeType;
-
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class StandardHippoAnalyzerTest extends TestCase {
+public class StandardHippoAnalyzerTest extends RepositoryTestCase {
     
     public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";

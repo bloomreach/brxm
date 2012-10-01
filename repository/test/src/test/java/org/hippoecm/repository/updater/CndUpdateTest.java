@@ -30,7 +30,6 @@ import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.Modules;
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
@@ -42,12 +41,13 @@ import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.standardworkflow.RepositoryWorkflow;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class CndUpdateTest extends TestCase {
+public class CndUpdateTest extends RepositoryTestCase {
 
     private String cnd1 =
             "<testUpdateModel='http://localhost/testUpdateModel/nt/1.0'>\n"

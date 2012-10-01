@@ -54,8 +54,8 @@ public class ItemDecorator extends AbstractDecorator implements Item {
     }
 
     /**
-     * Returns the underlying <code>item</code> of the <code>item</code>
-     * that decorates it. Unwrapping <code>null</code> returns <code>null</code>.
+     * Returns the underlying <code>item</code> of the {@code item}
+     * that decorates it. Unwrapping {@code null} returns {@code null}.
      *
      * @param item decorates the underlying item.
      * @return the underlying item.

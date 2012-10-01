@@ -63,6 +63,7 @@ import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
+import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
@@ -516,9 +517,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             initializeNodecontent(session, "/hippo:configuration/hippo:temporary", configurationURL.openStream(), configurationURL.getPath());
             final Node tempInitFolderNode = session.getNode("/hippo:configuration/hippo:temporary/hippo:initialize");
             final String moduleVersion = getModuleVersion(configurationURL);
-            final NodeIterator tempIter = tempInitFolderNode.getNodes();
-            while (tempIter.hasNext()) {
-                initializeItems.addAll(initializeInitializeItem(session, tempIter.nextNode(), initializationFolder, moduleVersion, configurationURL));
+            for (final Node tempInitItemNode : new NodeIterable(tempInitFolderNode.getNodes())) {
+                initializeItems.addAll(initializeInitializeItem(session, tempInitItemNode, initializationFolder, moduleVersion, configurationURL));
 
             }
             if(tempInitFolderNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
@@ -549,6 +549,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private List<Node> initializeInitializeItem(final Session session, final Node tempInitItemNode, final Node initializationFolder, final String moduleVersion, final URL configurationURL) throws RepositoryException {
+
+        getLogger().info("Initializing item: " + tempInitItemNode.getName());
 
         final List<Node> initializeItems = new ArrayList<Node>();
         Node initItemNode = JcrUtils.getNodeIfExists(initializationFolder, tempInitItemNode.getName());
@@ -606,9 +608,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private boolean isExtension(final URL configurationURL) {
-        return "hippoecm-extension.xml".equals(configurationURL.getFile().contains("/")
-                ? configurationURL.getFile().substring(configurationURL.getFile().lastIndexOf("/")+1)
-                : configurationURL.getFile());
+        return configurationURL.getFile().endsWith("hippoecm-extension.xml");
     }
 
     private List<URL> scanForExtensions() throws IOException {

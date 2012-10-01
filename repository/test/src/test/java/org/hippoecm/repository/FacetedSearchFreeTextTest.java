@@ -23,11 +23,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class FacetedSearchFreeTextTest extends TestCase {
+public class FacetedSearchFreeTextTest extends RepositoryTestCase {
 
     private static String[] content = new String[] {
         "/test",           "nt:unstructured",

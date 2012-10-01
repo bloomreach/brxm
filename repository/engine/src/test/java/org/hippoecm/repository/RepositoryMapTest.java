@@ -19,13 +19,13 @@ import java.util.Map;
 
 import javax.jcr.Node;
 
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
-public class RepositoryMapTest extends TestCase {
+public class RepositoryMapTest extends RepositoryTestCase {
 
     private Node root;
 

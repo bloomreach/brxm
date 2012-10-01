@@ -15,36 +15,19 @@
  */
 package org.hippoecm.repository;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.PrintStream;
-import java.util.Calendar;
-import javax.jcr.Binary;
-
 import javax.jcr.ImportUUIDBehavior;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
-import org.hippoecm.repository.util.Utilities;
-
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class HREPTWO4837Test extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class HREPTWO4837Test extends RepositoryTestCase {
 
     @Before
     @Override

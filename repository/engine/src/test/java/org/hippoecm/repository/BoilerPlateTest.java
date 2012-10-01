@@ -15,17 +15,19 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.*;
 import javax.jcr.RepositoryException;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * An example class to show how to write unit tests for the repository.
  */
-public class BoilerPlateTest extends TestCase {
+public class BoilerPlateTest extends RepositoryTestCase {
 
     @Override
     @Before

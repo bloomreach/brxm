@@ -55,6 +55,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -62,7 +63,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class FolderWorkflowTest extends TestCase {
+public class FolderWorkflowTest extends RepositoryTestCase {
 
     private static final String CONTENT_ON_COPY = "new-content";
 
@@ -92,8 +93,6 @@ public class FolderWorkflowTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp(true);
         root = session.getRootNode();
-        if(root.hasNode("test"))
-            root.getNode("test").remove();
         root = root.addNode("test");
         session.save();
 
@@ -124,9 +123,6 @@ public class FolderWorkflowTest extends TestCase {
         folderWorkflowConfig.setProperty("modify-on-copy", embeddedModifyOnCopy);
         folderWorkflowConfig = session.getNode("/hippo:configuration/hippo:workflows/internal/folder/hipposys:config");
         folderWorkflowConfig.setProperty("modify-on-copy", internalModifyOnCopy);
-        root = session.getRootNode();
-        if(root.hasNode("test"))
-            root.getNode("test").remove();
         super.tearDown();
     }
 

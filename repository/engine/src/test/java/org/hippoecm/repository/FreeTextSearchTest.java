@@ -34,11 +34,12 @@ import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class FreeTextSearchTest extends TestCase {
+public class FreeTextSearchTest extends RepositoryTestCase {
     public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";
     public static final String NT_HTML = "hippo:testhtml";

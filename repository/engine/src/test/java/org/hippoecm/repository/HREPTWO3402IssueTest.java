@@ -22,13 +22,14 @@ import javax.jcr.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * An example class to show how to write unit tests for the repository.
  */
-public class HREPTWO3402IssueTest extends TestCase {
+public class HREPTWO3402IssueTest extends RepositoryTestCase {
 
     private static final Logger log = LoggerFactory.getLogger(HREPTWO3402IssueTest.class);
 

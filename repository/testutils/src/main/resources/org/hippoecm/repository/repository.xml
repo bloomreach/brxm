@@ -19,7 +19,9 @@
   "http://jackrabbit.apache.org/dtd/repository-2.0.dtd">
 <Repository>
 
-  <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem"/>
+  <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+    <param name="path" value="${rep.home}/repository"/>
+  </FileSystem>
 
   <Security appName="Jackrabbit">
     <SecurityManager class="org.hippoecm.repository.security.SecurityManager"/>
@@ -30,15 +32,17 @@
   <Workspaces rootPath="${rep.home}/workspaces" defaultWorkspace="default"/>
 
   <Workspace name="${wsp.name}">
+    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+      <param name="path" value="${wsp.home}"/>
+    </FileSystem>
 
-    <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem"/>
-
-    <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemBundlePersistenceManager">
-      <param name="persistent" value="false"/>
+    <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.H2PersistenceManager">
+      <param name="url" value="jdbc:h2:file:${wsp.home}/db"/>
+      <param name="schemaObjectPrefix" value="${wsp.name}_"/>
+      <param name="minBlobSize" value="4194304"/>
     </PersistenceManager>
 
     <SearchIndex class="org.hippoecm.repository.FacetedNavigationEngineImpl">
-      <param name="directoryManagerClass" value="org.apache.jackrabbit.core.query.lucene.directory.RAMDirectoryManager"/>
       <param name="indexingConfiguration" value="indexing_configuration.xml"/>
       <param name="indexingConfigurationClass" value="org.hippoecm.repository.query.lucene.ServicingIndexingConfigurationImpl"/>
       <param name="path" value="${wsp.home}/index"/>
@@ -50,8 +54,8 @@
       <param name="maxFieldLength" value="10000"/>
       <param name="bufferSize" value="1000"/>
       <param name="cacheSize" value="1000"/>
-      <param name="forceConsistencyCheck" value="false"/>
-      <param name="enableConsistencyCheck" value="false"/>
+      <param name="forceConsistencyCheck" value="true"/>
+      <param name="enableConsistencyCheck" value="true"/>
       <param name="autoRepair" value="true"/>
       <param name="analyzer" value="org.hippoecm.repository.query.lucene.StandardHippoAnalyzer"/>
       <param name="queryClass" value="org.apache.jackrabbit.core.query.QueryImpl"/>
@@ -60,9 +64,10 @@
       <param name="extractorPoolSize" value="0"/>
       <param name="extractorTimeout" value="100"/>
       <param name="extractorBackLogSize" value="100"/>
-      <param name="textFilterClasses" value="org.apache.jackrabbit.extractor.PlainTextExtractor,org.apache.jackrabbit.extractor.MsWordTextExtractor,org.apache.jackrabbit.extractor.MsExcelTextExtractor,org.apache.jackrabbit.extractor.PdfTextExtractor,org.apache.jackrabbit.extractor.OpenOfficeTextExtractor,org.apache.jackrabbit.extractor.RTFTextExtractor,org.apache.jackrabbit.extractor.HTMLTextExtractor,org.apache.jackrabbit.extractor.XMLTextExtractor"/>
+      <param name="textFilterClasses" value="org.apache.jackrabbit.extractor.PlainTextExtractor,org.apache.jackrabbit.extractor.MsWordTextExtractor,org.apache.jackrabbit.extractor.MsExcelTextExtractor,org.apache.jackrabbit.extractor.MsPowerPointTextExtractor,org.apache.jackrabbit.extractor.PdfTextExtractor,org.apache.jackrabbit.extractor.OpenOfficeTextExtractor,org.apache.jackrabbit.extractor.RTFTextExtractor,org.apache.jackrabbit.extractor.HTMLTextExtractor,org.apache.jackrabbit.extractor.XMLTextExtractor"/>
       <param name="excerptProviderClass" value="org.apache.jackrabbit.core.query.lucene.DefaultHTMLExcerpt"/>
       <param name="supportHighlighting" value="true"/>
+      <param name="onWorkspaceInconsistency" value="log"/>
       <!-- optional cache parameters for faceted engine. The default size when not configured is 1000 for both parameters -->
       <!-- param name="bitSetCacheSize" value="1000"/>
       <param name="facetValueCountMapCacheSize" value="1000"/-->
@@ -72,10 +77,14 @@
   </Workspace>
 
   <Versioning rootPath="${rep.home}/version">
-    <FileSystem class="org.apache.jackrabbit.core.fs.mem.MemoryFileSystem"/>
+    <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
+      <param name="path" value="${rep.home}/version"/>
+    </FileSystem>
 
-    <PersistenceManager class="org.apache.jackrabbit.core.persistence.mem.InMemBundlePersistenceManager">
-      <param name="persistent" value="false"/>
+    <PersistenceManager class="org.apache.jackrabbit.core.persistence.pool.H2PersistenceManager">
+      <param name="url" value="jdbc:h2:file:${rep.home}/version/db"/>
+      <param name="schemaObjectPrefix" value="version_"/>
+      <param name="minBlobSize" value="4194304"/>
     </PersistenceManager>
 
     <ISMLocking class="org.apache.jackrabbit.core.state.FineGrainedISMLocking"/>

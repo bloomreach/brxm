@@ -25,16 +25,15 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
 import org.apache.jackrabbit.core.observation.SynchronousEventListener;
-
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 /**
  * An example class to show how to write unit tests for the repository.
  */
-public class HREPTWO2655IssueTest extends TestCase {
+public class HREPTWO2655IssueTest extends RepositoryTestCase {
 
     private Session session2;
 

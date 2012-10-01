@@ -15,18 +15,14 @@
  */
 package org.hippoecm.repository.decorating;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import javax.jcr.Node;
-
-import org.hippoecm.repository.TestCase;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class MirrorCombiFacetSelectTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class MirrorCombiFacetSelectTest extends RepositoryTestCase {
 
     private static String[] content1 = new String[] {
         "/test",                                                             "nt:unstructured",

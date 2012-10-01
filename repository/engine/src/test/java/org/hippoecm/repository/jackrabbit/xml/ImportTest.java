@@ -23,27 +23,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Calendar;
-import javax.jcr.Binary;
 
+import javax.jcr.Binary;
 import javax.jcr.ImportUUIDBehavior;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-import org.hippoecm.repository.TestCase;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class ImportTest extends TestCase {
+public class ImportTest extends RepositoryTestCase {
 
     byte[] data;
 

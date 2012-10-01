@@ -23,15 +23,16 @@ import javax.jcr.NodeIterator;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
 
-public class PendingChangesTest extends TestCase {
+public class PendingChangesTest extends RepositoryTestCase {
 
     private HippoNode root;
 

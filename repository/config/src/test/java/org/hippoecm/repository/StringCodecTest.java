@@ -17,19 +17,21 @@ package org.hippoecm.repository;
 
 import java.util.Map;
 import java.util.TreeMap;
-import org.hippoecm.repository.api.StringCodec;
-import org.hippoecm.repository.api.StringCodecFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import org.hippoecm.repository.api.StringCodec;
+import org.hippoecm.repository.api.StringCodecFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class StringCodecTest extends TestCase {
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+public class StringCodecTest extends RepositoryTestCase {
 
     Node root, node;
     StringCodecFactory factory;

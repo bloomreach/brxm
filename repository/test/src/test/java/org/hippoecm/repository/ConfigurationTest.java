@@ -24,13 +24,14 @@ import org.hippoecm.repository.impl.InitializationProcessorImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.helpers.NOPLogger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class ConfigurationTest extends TestCase {
+public class ConfigurationTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {

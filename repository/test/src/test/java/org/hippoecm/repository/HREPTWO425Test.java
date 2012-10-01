@@ -15,16 +15,16 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertTrue;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class HREPTWO425Test extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class HREPTWO425Test extends RepositoryTestCase {
 
     @Test
     public void testIssue() throws RepositoryException {

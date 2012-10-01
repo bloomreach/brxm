@@ -15,10 +15,7 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertTrue;
-
 import javax.jcr.Node;
-import javax.jcr.Session;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -26,8 +23,11 @@ import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class CopyNodeTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class CopyNodeTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {

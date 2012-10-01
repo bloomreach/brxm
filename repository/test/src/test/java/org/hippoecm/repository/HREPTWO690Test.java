@@ -18,11 +18,16 @@ package org.hippoecm.repository;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.TestCase;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class HREPTWO690Test extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class HREPTWO690Test extends RepositoryTestCase {
 
     private String[] content1 = {
         "/test", "nt:unstructured",

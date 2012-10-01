@@ -24,6 +24,8 @@ import javax.transaction.NotSupportedException;
 import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
+import com.atomikos.icatch.jta.UserTransactionManager;
+
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
@@ -32,15 +34,17 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-
-import com.atomikos.icatch.jta.UserTransactionManager;
-import org.hippoecm.repository.TestCase;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class SampleRemoteWorkflowTest {
 
@@ -49,13 +53,13 @@ public class SampleRemoteWorkflowTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-        TestCase.clear();
+        RepositoryTestCase.clear();
         System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
     }
     
     @AfterClass
     public static void tearDownClass() throws Exception {
-        TestCase.clear();
+        RepositoryTestCase.clear();
         HippoRepositoryFactory.setDefaultRepository((String)null);
         System.clearProperty("com.atomikos.icatch.file");
     }

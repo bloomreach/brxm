@@ -17,16 +17,19 @@ package org.hippoecm.repository.sample;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import org.hippoecm.repository.TestCase;
-
-import org.junit.*;
-import static org.junit.Assert.*;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class SamplePersistencyTest extends TestCase {
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class SamplePersistencyTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {

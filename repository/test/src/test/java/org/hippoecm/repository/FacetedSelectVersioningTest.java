@@ -16,9 +16,11 @@
 package org.hippoecm.repository;
 
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertNotNull;
 
-public class FacetedSelectVersioningTest extends TestCase {
+public class FacetedSelectVersioningTest extends RepositoryTestCase {
 
     String[] content1 = new String[] {
         "/test", "nt:unstructured",

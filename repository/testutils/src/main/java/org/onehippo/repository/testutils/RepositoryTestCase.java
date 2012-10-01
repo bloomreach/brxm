@@ -16,6 +16,11 @@
 package org.onehippo.repository.testutils;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.jar.JarInputStream;
+import java.util.zip.ZipEntry;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -24,6 +29,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.nodetype.PropertyDefinition;
 
+import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -75,41 +81,15 @@ public abstract class RepositoryTestCase {
     public RepositoryTestCase() {
     }
 
-    static private void delete(File path) {
-        if (path.exists()) {
-            if (path.isDirectory()) {
-                File[] files = path.listFiles();
-                for (final File file : files) {
-                    delete(file);
-                }
-            }
-            path.delete();
-        }
-    }
-
-    public static void clear() {
-        if (background != null) {
-            background.close();
-            background = null;
-        }
-        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
-        for (final String file : files) {
-            delete(new File(file));
-        }
-    }
-
-    static public void setRepository(HippoRepository repository) {
-        external = repository;
-    }
-
     @BeforeClass
     public static void setUpClass() throws Exception {
         setUpClass(false);
     }
 
     protected static void setUpClass(boolean clearRepository) throws Exception {
-        if (clearRepository)
+        if (clearRepository) {
             clear();
+        }
     }
 
     @AfterClass
@@ -118,8 +98,9 @@ public abstract class RepositoryTestCase {
     }
 
     public static void tearDownClass(boolean clearRepository) throws Exception {
-        if (clearRepository)
+        if (clearRepository) {
             clear();
+        }
     }
 
     @Before
@@ -148,10 +129,9 @@ public abstract class RepositoryTestCase {
             }
         }
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        while (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
+        while (session.nodeExists("/test")) {
+            session.getNode("/test").remove();
             session.save();
-            session.refresh(false);
         }
     }
 
@@ -163,8 +143,8 @@ public abstract class RepositoryTestCase {
     public void tearDown(boolean clearRepository) throws Exception {
         if (session != null) {
             session.refresh(false);
-            while (session.getRootNode().hasNode("test")) {
-                session.getRootNode().getNode("test").remove();
+            while (session.nodeExists("/test")) {
+                session.getNode("/test").remove();
                 session.save();
             }
             session.logout();
@@ -180,6 +160,66 @@ public abstract class RepositoryTestCase {
             clear();
         }
     }
+
+    public static void clear() {
+        if (background != null) {
+            background.close();
+            background = null;
+        }
+        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
+        for (final String file : files) {
+            FileUtils.deleteQuietly(new File(file));
+        }
+    }
+
+    public static void setRepository(HippoRepository repository) {
+        external = repository;
+    }
+
+    protected static void prepareFixture() {
+        File fixtureDump = new File("../src/test/fixtures/dump.zip");
+        if (fixtureDump.exists()) {
+            FileInputStream fixtureStream = null;
+            try {
+                fixtureStream = new FileInputStream(fixtureDump);
+                JarInputStream istream = new JarInputStream(fixtureStream);
+                ZipEntry ze;
+                do {
+                    ze = istream.getNextEntry();
+                    if (ze != null) {
+                        if (ze.isDirectory()) {
+                            String name = ze.getName();
+                            File file = new File(name);
+                            file.mkdir();
+                        } else {
+                            FileOutputStream ostream = new FileOutputStream(ze.getName());
+                            byte[] buffer = new byte[1024];
+                            int len;
+                            do {
+                                len = istream.read(buffer);
+                                if (len >= 0) {
+                                    ostream.write(buffer, 0, len);
+                                }
+                            } while (len >= 0);
+                            ostream.close();
+                        }
+                    }
+                } while (ze != null);
+                istream.close();
+                fixtureStream.close();
+            } catch (IOException ex) {
+                log.error("Error while loading fixture: " + ex.getClass().getName() + ": " + ex.getMessage());
+                try {
+                    if (fixtureStream != null) {
+                        fixtureStream.close();
+                    }
+                } catch (IOException e) {
+                    clear();
+                }
+            }
+        }
+    }
+
 
     protected void build(Session session, String[] contents) throws RepositoryException {
         Node node = null;
@@ -259,8 +299,10 @@ public abstract class RepositoryTestCase {
     }
 
     protected Node traverse(Session session, String path) throws RepositoryException {
-        if (path.startsWith("/"))
+        if (path.startsWith("/")) {
             path = path.substring(1);
+        }
         return ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getNode(session.getRootNode(), path);
     }
+
 }

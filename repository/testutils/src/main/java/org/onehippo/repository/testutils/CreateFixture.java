@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository;
+package org.onehippo.repository.testutils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,6 +36,9 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
+
+import org.hippoecm.repository.HippoRepository;
+import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
@@ -46,42 +49,32 @@ import static org.junit.Assert.*;
 
 public class CreateFixture {
 
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
-    }
-
-    @Test
     public void checkFixture() throws Exception {
         ByteArrayOutputStream fixtureDump;
         ByteArrayOutputStream setupDump;
         {
-            TestCase testCase = new TestCase() { };
-            testCase.setUpClass(true);
-            testCase.fixture();
+            RepositoryTestCase testCase = new RepositoryTestCase() { };
+            RepositoryTestCase.setUpClass(true);
+            RepositoryTestCase.prepareFixture();
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             Session session = repository.login("admin", "admin".toCharArray());
             fixtureDump = new ByteArrayOutputStream();
             dump(new PrintStream(fixtureDump), session.getRootNode());
             repository.close();
-            testCase.tearDownClass(true);
+            RepositoryTestCase.tearDownClass(true);
         } {
-            TestCase testCase = new TestCase() { };
-            testCase.setUpClass(true);
+            RepositoryTestCase testCase = new RepositoryTestCase() { };
+            RepositoryTestCase.setUpClass(true);
             HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
             Session session = repository.login("admin", "admin".toCharArray());
             setupDump = new ByteArrayOutputStream();
             dump(new PrintStream(setupDump), session.getRootNode());
             repository.close();
-            testCase.tearDownClass(true);
+            RepositoryTestCase.tearDownClass(true);
         }
         assertEquals("Fixture has become out of date", setupDump.toString("UTF-8"), fixtureDump.toString("UTF-8"));
     }
 
-    @Ignore
     public void createFixture() throws RepositoryException, IOException {
         HippoRepository repository = HippoRepositoryFactory.getHippoRepository();
         repository.close();

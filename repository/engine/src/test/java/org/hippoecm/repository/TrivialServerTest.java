@@ -15,24 +15,23 @@
  */
 package org.hippoecm.repository;
 
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.RepositoryException;
-
-import org.hippoecm.repository.api.NodeNameCodec;
-
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
-public class TrivialServerTest extends TestCase {
+public class TrivialServerTest extends RepositoryTestCase {
 
     private Node root;
 
@@ -45,12 +44,6 @@ public class TrivialServerTest extends TestCase {
             root = root.getNode("test");
         else
             root = root.addNode("test");
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test

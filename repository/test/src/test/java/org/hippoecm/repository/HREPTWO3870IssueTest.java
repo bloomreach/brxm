@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,8 +30,11 @@ import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.fail;
 
 /**
  * Add a facetsearch, remove the facetsearch and re-add the facetsearch.
@@ -41,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * - the test should be renamed to HREPTWO3870Test
  * - https://issues.onehippo.com/browse/HREPTWO-3870 should be closed.
  */
-public class HREPTWO3870IssueTest extends TestCase {
+public class HREPTWO3870IssueTest extends RepositoryTestCase {
 
     private final Logger log = LoggerFactory.getLogger(HREPTWO3870IssueTest.class);
 

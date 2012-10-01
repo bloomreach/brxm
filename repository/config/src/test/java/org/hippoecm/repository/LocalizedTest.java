@@ -22,14 +22,14 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Localized;
-
-import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class LocalizedTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public class LocalizedTest extends RepositoryTestCase {
 
     private String[] content = new String[] {
         "/test",                                   "nt:unstructured",

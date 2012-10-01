@@ -23,10 +23,11 @@ import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 
-public class SessionTest extends TestCase {
+public class SessionTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {

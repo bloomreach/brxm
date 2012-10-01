@@ -28,13 +28,13 @@ import javax.jcr.query.QueryResult;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TotalSizeTest extends TestCase {
+public class TotalSizeTest extends RepositoryTestCase {
 
     @Before
     @Override

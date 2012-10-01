@@ -23,7 +23,6 @@ import java.util.UUID;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -34,12 +33,13 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class TranslationWorkflowTest extends TestCase {
+public class TranslationWorkflowTest extends RepositoryTestCase {
     private static final String INVALID_ID = "invalid id - to be overwritten by folderworkflow";
 
     

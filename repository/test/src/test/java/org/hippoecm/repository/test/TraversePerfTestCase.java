@@ -28,16 +28,17 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNode;
-
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.Ignore;
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class TraversePerfTestCase extends TestCase {
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class TraversePerfTestCase extends RepositoryTestCase {
     private String[] content = {
         "/test", "nt:unstructured",
         "/test/aap", "nt:unstructured",

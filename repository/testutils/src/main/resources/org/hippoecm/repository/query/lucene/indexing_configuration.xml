@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-    Copyright 2007 Hippo
+    Copyright 2007-2012 Hippo
 
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 -->
 <!DOCTYPE configuration SYSTEM "http://jackrabbit.apache.org/dtd/indexing-configuration-1.0.dtd">
 <configuration>
-  
-    <excludefromnodescope>
-        <nodetype>hippo:paths</nodetype>
-        <nodetype>hippo:docbase</nodetype>
-    </excludefromnodescope>
-    
+
+  <excludefromnodescope>
+    <nodetype>hippo:paths</nodetype>
+    <nodetype>hippo:docbase</nodetype>
+  </excludefromnodescope>
+
 </configuration>

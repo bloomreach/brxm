@@ -30,6 +30,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,7 +39,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class FacetSelectTest extends TestCase {
+public class FacetSelectTest extends RepositoryTestCase {
 
     String[] content = new String[] {
         "/test",              "nt:unstructured",

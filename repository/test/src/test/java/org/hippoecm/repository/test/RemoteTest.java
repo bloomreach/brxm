@@ -15,23 +15,19 @@
  */
 package org.hippoecm.repository.test;
 
-import java.io.File;
-
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
-import org.hippoecm.repository.TestCase;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 /**
  * Run tests remotely (over RMI).  These tests should not start/stop and/or clean up the repository.
@@ -78,12 +74,12 @@ public class RemoteTest extends Suite
         HippoRepositoryServer backgroundServer = null;
         HippoRepository server = null;
         try {
-            TestCase.clear();
+            RepositoryTestCase.clear();
             backgroundServer = new HippoRepositoryServer();
             backgroundServer.run(true);
             Thread.sleep(3000);
             server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
-            TestCase.setRepository(server);
+            RepositoryTestCase.setRepository(server);
             HippoRepositoryFactory.setDefaultRepository((String)null);
 
             super.run(notifier);
@@ -110,8 +106,8 @@ public class RemoteTest extends Suite
             if (backgroundServer != null) {
                 backgroundServer.close();
             }
-            TestCase.clear();
-            TestCase.setRepository(null);
+            RepositoryTestCase.clear();
+            RepositoryTestCase.setRepository(null);
             HippoRepositoryFactory.setDefaultRepository((String)null);
         }
     }

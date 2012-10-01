@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -27,9 +24,13 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class ImpersonateTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
+public class ImpersonateTest extends RepositoryTestCase {
 
     private static final String TEST_USER_ID = "testuser";
     private static final String TEST_USER_PASS = "password";

@@ -16,19 +16,22 @@
 package org.hippoecm.repository.facetnavigation;
 
 import java.util.Calendar;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import org.hippoecm.repository.TestCase;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class FreeTextSearchTest extends TestCase {
+public class FreeTextSearchTest extends RepositoryTestCase {
     private Calendar start = Calendar.getInstance();
     private Calendar onehourearlier = Calendar.getInstance();
     private Calendar onedayearlier = Calendar.getInstance();

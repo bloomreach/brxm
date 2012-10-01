@@ -21,16 +21,16 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.WorkflowException;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
-public class RepositoryLoggerTest extends TestCase {
+public class RepositoryLoggerTest extends RepositoryTestCase {
 
     @After
     public void tearDown() throws Exception {

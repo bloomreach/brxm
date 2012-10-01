@@ -4,12 +4,13 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import org.hippoecm.repository.TestCase;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class MirrorPerfTestCase extends TestCase {
+public class MirrorPerfTestCase extends RepositoryTestCase {
     private String[] content = {
         "/test", "nt:unstructured",
         "/test/root", "hippostd:folder",

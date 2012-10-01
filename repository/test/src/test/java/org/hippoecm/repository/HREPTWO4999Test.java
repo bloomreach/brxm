@@ -16,13 +16,17 @@
 package org.hippoecm.repository;
 
 import java.security.AccessControlException;
+
 import javax.jcr.RepositoryException;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.fail;
 
-public class HREPTWO4999Test extends TestCase {
+public class HREPTWO4999Test extends RepositoryTestCase {
 
     @Override
     @Before

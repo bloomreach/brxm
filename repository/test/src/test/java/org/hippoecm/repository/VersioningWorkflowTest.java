@@ -15,18 +15,30 @@
  */
 package org.hippoecm.repository;
 
-import org.hippoecm.repository.api.*;
-import org.hippoecm.repository.standardworkflow.VersionWorkflow;
-import org.junit.Test;
+import java.rmi.RemoteException;
+import java.util.Calendar;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import java.rmi.RemoteException;
-import java.util.*;
 
-import static org.junit.Assert.*;
+import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.MappingException;
+import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class VersioningWorkflowTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
+public class VersioningWorkflowTest extends RepositoryTestCase {
 
 
     @Test

@@ -26,12 +26,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 /**
  * Concurrent modification tests to test for regressions of data corruption due
  * to http://issues.apache.org/jira/browse/JCR-2129.
  */
-public class ConcurrentLinkModificationTest extends TestCase {
+public class ConcurrentLinkModificationTest extends RepositoryTestCase {
     private final class LinkModifierThread extends Thread {
         private final Session threadSession;
         private final String uuid;

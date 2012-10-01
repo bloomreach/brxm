@@ -29,16 +29,15 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.junit.Test;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Ignore;
-
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
-
-public class ReferringDocumentsTest extends TestCase
+public class ReferringDocumentsTest extends RepositoryTestCase
 {
 
     static final Logger log = LoggerFactory.getLogger(ReferringDocumentsTest.class);

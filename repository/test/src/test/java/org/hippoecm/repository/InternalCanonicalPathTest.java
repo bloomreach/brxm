@@ -30,11 +30,12 @@ import org.apache.jackrabbit.core.id.ItemId;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class InternalCanonicalPathTest extends TestCase {
+public class InternalCanonicalPathTest extends RepositoryTestCase {
 
     public void setUp() throws Exception {
         super.setUp();

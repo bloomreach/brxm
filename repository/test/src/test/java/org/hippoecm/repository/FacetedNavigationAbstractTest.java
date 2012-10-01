@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -33,8 +31,11 @@ import javax.jcr.version.VersionException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public abstract class FacetedNavigationAbstractTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+
+public abstract class FacetedNavigationAbstractTest extends RepositoryTestCase {
 
     static class Document {
         int docid;

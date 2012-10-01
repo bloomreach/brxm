@@ -17,26 +17,19 @@ package org.hippoecm.repository;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.jackrabbit.core.RepositoryImpl;
-import org.apache.jackrabbit.core.config.RepositoryConfig;
-
 import org.hippoecm.repository.api.HippoNodeType;
-
-import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class RefreshFacetSearchTest extends TestCase{
+public class RefreshFacetSearchTest extends RepositoryTestCase {
 
     @Test
     public void testRefreshAfterAddingNodes() throws RepositoryException {

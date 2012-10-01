@@ -19,14 +19,14 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class UpdaterExecutorTest extends TestCase {
+public class UpdaterExecutorTest extends RepositoryTestCase {
 
     private final String[] content = {
             "/test", "nt:unstructured",

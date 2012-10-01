@@ -20,11 +20,13 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class FacetedNavigationNamespaceTest extends TestCase {
+public class FacetedNavigationNamespaceTest extends RepositoryTestCase {
 
     private static final long PROP_COUNT = 2;
     private static final long NODE_COUNT = 3;

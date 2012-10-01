@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.facetnavigation;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -40,14 +37,17 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class FacetedNavigationConcurrencyTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
 
     private final Calendar globalCal = Calendar.getInstance();
     

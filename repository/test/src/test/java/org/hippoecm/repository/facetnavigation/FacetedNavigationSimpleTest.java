@@ -15,11 +15,6 @@
  */
 package org.hippoecm.repository.facetnavigation;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.util.Calendar;
 
@@ -28,15 +23,20 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class FacetedNavigationSimpleTest extends TestCase {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class FacetedNavigationSimpleTest extends RepositoryTestCase {
 
     private final Calendar globalCal = Calendar.getInstance();
 

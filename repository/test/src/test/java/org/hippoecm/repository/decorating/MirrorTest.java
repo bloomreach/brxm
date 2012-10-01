@@ -17,16 +17,17 @@ package org.hippoecm.repository.decorating;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.hippoecm.repository.TestCase;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-public class MirrorTest extends TestCase {
+public class MirrorTest extends RepositoryTestCase {
 
     private static String[] contents1 = new String[] {
         "/test", "nt:unstructured",

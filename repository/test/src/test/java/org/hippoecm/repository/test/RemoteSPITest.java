@@ -23,11 +23,11 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
-import org.hippoecm.repository.TestCase;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Suite;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
 @RunWith(RemoteSPITest.class)
 @Suite.SuiteClasses({
@@ -70,12 +70,12 @@ public class RemoteSPITest extends Suite
         HippoRepositoryServer backgroundServer = null;
         HippoRepository server = null;
         try {
-            TestCase.clear();
+            RepositoryTestCase.clear();
             backgroundServer = new HippoRepositoryServer();
             backgroundServer.run(true);
             Thread.sleep(3000);
             server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository/spi");
-            TestCase.setRepository(server);
+            RepositoryTestCase.setRepository(server);
 
             super.run(notifier);
 

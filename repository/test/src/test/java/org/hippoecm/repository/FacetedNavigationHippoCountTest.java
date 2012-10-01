@@ -15,11 +15,12 @@
  */
 package org.hippoecm.repository;
 
+import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
+
 import static org.junit.Assert.assertTrue;
 
-import org.junit.Test;
-
-public class FacetedNavigationHippoCountTest extends TestCase
+public class FacetedNavigationHippoCountTest extends RepositoryTestCase
 {
 
     private static String[] contents1 = new String[] {

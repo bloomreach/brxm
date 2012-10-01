@@ -24,10 +24,11 @@ import org.apache.jackrabbit.core.RepositoryImpl;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HREPTWO1104Test extends TestCase {
+public class HREPTWO1104Test extends RepositoryTestCase {
 
     private static final Logger log = LoggerFactory.getLogger(HREPTWO1104Test.class);
 

@@ -15,8 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,8 +36,11 @@ import org.apache.pdfbox.util.PDFTextStripper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class PdfExtractionAndIndexingTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class PdfExtractionAndIndexingTest extends RepositoryTestCase {
    
     public static final String NT_SEARCHDOCUMENT = "hippo:testsearchdocument";
     public static final String NT_COMPOUNDSTRUCTURE = "hippo:testcompoundstructure";

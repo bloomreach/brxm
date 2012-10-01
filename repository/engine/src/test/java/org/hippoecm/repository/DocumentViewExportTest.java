@@ -5,8 +5,9 @@ import java.io.ByteArrayOutputStream;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class DocumentViewExportTest extends TestCase {
+public class DocumentViewExportTest extends RepositoryTestCase {
     
     String[] content = new String[] {
         "/test",              "nt:unstructured",

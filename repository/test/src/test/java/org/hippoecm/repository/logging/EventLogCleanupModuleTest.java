@@ -19,19 +19,19 @@ import javax.jcr.NodeIterator;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
 
 import static junit.framework.Assert.assertEquals;
 
-public class EventLogCleanupModuleTest extends TestCase {
+public class EventLogCleanupModuleTest extends RepositoryTestCase {
 
     private boolean jobExecuted;
     private final Object monitor = new Object();

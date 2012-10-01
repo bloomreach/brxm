@@ -46,8 +46,9 @@ import org.hippoecm.repository.api.ISO9075Helper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class ExportCndTest extends TestCase {
+public class ExportCndTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {

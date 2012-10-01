@@ -22,10 +22,11 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-public class HREPTWO456Test extends TestCase {
+public class HREPTWO456Test extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {

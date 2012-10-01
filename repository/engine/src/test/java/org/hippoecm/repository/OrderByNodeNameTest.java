@@ -15,11 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -28,8 +23,11 @@ import javax.jcr.query.QueryResult;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 
-public class OrderByNodeNameTest extends TestCase {
+import static org.junit.Assert.assertTrue;
+
+public class OrderByNodeNameTest extends RepositoryTestCase {
 
     private Node testPath;
 
