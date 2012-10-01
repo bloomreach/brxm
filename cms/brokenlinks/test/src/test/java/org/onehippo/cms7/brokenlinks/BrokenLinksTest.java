@@ -26,7 +26,6 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
-import org.hippoecm.repository.TestCase;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowDescriptor;
@@ -37,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.test.TestWorkflow;
 import org.onehippo.cms7.test.TestWorkflowImpl;
+import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +44,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class BrokenLinksTest extends TestCase {
+public class BrokenLinksTest extends RepositoryTestCase {
 
 
     private static final Logger log = LoggerFactory.getLogger(BrokenLinksTest.class);

@@ -8,3 +8,9 @@
 
 [brokenlinks:test] > hippo:document
 + * (hippostd:html) = hippostd:html
+
+[hippo:ntunstructured] > nt:unstructured
+
+[hippo:testdocument] > hippo:document
++ * (nt:base) = hippo:ntunstructured multiple
+- *
