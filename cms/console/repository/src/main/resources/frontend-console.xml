@@ -124,25 +124,10 @@
         <sv:value>service.layout.left</sv:value>
       </sv:property>
       <sv:property sv:name="wicket.extensions" sv:type="String">
-        <sv:value>extension.sorter</sv:value>
         <sv:value>extension.tree</sv:value>
-      </sv:property>
-      <sv:property sv:name="extension.sorter" sv:type="String">
-        <sv:value>service.sorter</sv:value>
       </sv:property>
       <sv:property sv:name="extension.tree" sv:type="String">
         <sv:value>service.tree</sv:value>
-      </sv:property>
-    </sv:node>
-    <sv:node sv:name="sorter">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:plugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.hippoecm.frontend.plugins.console.menu.SortMenuPlugin</sv:value>
-      </sv:property>
-      <sv:property sv:name="wicket.id" sv:type="String">
-        <sv:value>service.sorter</sv:value>
       </sv:property>
     </sv:node>
     <sv:node sv:name="tree">
@@ -376,11 +361,7 @@
           <sv:value>navigator-wrapper</sv:value>
         </sv:property>
         <sv:property sv:name="units" sv:type="String">
-          <sv:value>top</sv:value>
           <sv:value>center</sv:value>
-        </sv:property>
-        <sv:property sv:name="top" sv:type="String">
-          <sv:value>id=navigator-top,height=24</sv:value>
         </sv:property>
         <sv:property sv:name="center" sv:type="String">
           <sv:value>id=navigator-center,body=navigator-center-body,scroll=true</sv:value>

@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,6 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.swing.tree.TreeNode;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -58,8 +57,8 @@ public class FolderTreeNode extends JcrTreeNode {
     }
 
     @Override
-    protected List<TreeNode> loadChildren() throws RepositoryException {
-        List<TreeNode> result = new ArrayList<TreeNode>();
+    protected List<IJcrTreeNode> loadChildren() throws RepositoryException {
+        List<IJcrTreeNode> result = new ArrayList<IJcrTreeNode>();
         List<Node> subNodes = subNodes(nodeModel.getObject());
         for (Node subNode : subNodes) {
             FolderTreeNode subfolder = new FolderTreeNode(new JcrNodeModel(subNode), this);

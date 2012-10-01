@@ -15,15 +15,21 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-    <ul class="hippo-console-menu-advanced">   
+    <ul class="hippo-console-menu-advanced">
         <li wicket:id="view"><span wicket:id="item" /></li>
     </ul>
     <ul class="hippo-console-tree-add">
+        <!--<li wicket:id="node-actions" />-->
         <li wicket:id="node-dialog" />
-        <li class="hippo-console-tree-add-delete" wicket:id="delete-dialog" />
+        <li wicket:id="delete-dialog" />
+        <li wicket:id="delete-multiple-dialog" />
+        <li wicket:id="open-dialog" />
         <li wicket:id="copy-dialog" />
         <li wicket:id="move-dialog" />
         <li wicket:id="rename-dialog" />
+        <li wicket:id="sorter-panel" class="hippo-console-tree-sorter"/>
+        <li wicket:id="help-dialog" />
+
         <li class="hippo-console-tree-add-property" wicket:id="property-dialog" />
         <!-- <li wicket:id="t9ids-dialog" /> -->
     </ul>

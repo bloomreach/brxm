@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008 Hippo.
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,6 +41,7 @@ import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.model.tree.JcrTreeNodeComparator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
@@ -59,14 +60,10 @@ import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetBehavior;
 import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.JcrTree;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BrowserPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(BrowserPlugin.class);
 
     protected JcrTree tree;
     private TreeWidgetBehavior treeBehavior;
@@ -77,7 +74,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
     public BrowserPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        this.rootNode = new JcrTreeNode(new JcrNodeModel("/"), null);
+        this.rootNode = new JcrTreeNode(new JcrNodeModel("/"), null, new JcrTreeNodeComparator());
+
         treeModel = new JcrTreeModel(rootNode);
         context.registerService(treeModel, IObserver.class.getName());
         tree = newTree(treeModel);
@@ -88,10 +86,9 @@ public class BrowserPlugin extends RenderPlugin<Node> {
     }
 
     protected JcrTree newTree(JcrTreeModel treeModel) {
-        JcrTree tree = new BrowserTree(treeModel);
-
-        tree.add(treeBehavior = new TreeWidgetBehavior(new TreeWidgetSettings()));
-        return tree;
+        JcrTree newTree = new BrowserTree(treeModel);
+        newTree.add(treeBehavior = new TreeWidgetBehavior(new TreeWidgetSettings()));
+        return newTree;
     }
 
     protected void onSelect(final IJcrTreeNode treeNodeModel, AjaxRequestTarget target) {
@@ -112,13 +109,13 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         JcrNodeModel model = (JcrNodeModel) getDefaultModel();
         TreePath treePath = treeModel.lookup(model);
         ITreeState treeState = tree.getTreeState();
-        for (Object node : (Object[]) treePath.getPath()) {
+        for (Object node : treePath.getPath()) {
             TreeNode treeNode = (TreeNode) node;
             if (!treeState.isNodeExpanded(treeNode)) {
                 treeState.expandNode(treeNode);
             }
         }
-        treeState.selectNode((TreeNode) treePath.getLastPathComponent(), true);
+        treeState.selectNode(treePath.getLastPathComponent(), true);
     }
 
     private class BrowserTree extends JcrTree {
@@ -146,6 +143,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 final WebMarkupContainer menu = createContextMenu("contextMenu", (JcrNodeModel) treeNode.getNodeModel());
                 item.add(menu);
                 item.add(new RightClickBehavior(menu, item) {
+                    private static final long serialVersionUID = 1L;
+
                     @Override
                     protected void respond(AjaxRequestTarget target) {
                         getContextmenu().setVisible(true);
@@ -308,7 +307,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                 @Override public Dialog createDialog() {
                     return new T9idsDialog(model);
                 }
-                
+
             };
             menuContainer.add(new DialogLink("t9ids", new Model<String>("New translation ids"), dialogFactory, getDialogService()));
             // generate t9ids icon
@@ -322,6 +321,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             menuContainer.add(iconT9ids);
 
             dialogFactory = new IDialogFactory() {
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 public Dialog createDialog() {
                     return new RecomputeDialog(model);

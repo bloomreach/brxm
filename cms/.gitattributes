@@ -125,6 +125,7 @@ api/src/main/java/org/hippoecm/frontend/model/properties/StringConverter.java -t
 api/src/main/java/org/hippoecm/frontend/model/tree/IJcrTreeModel.java -text
 api/src/main/java/org/hippoecm/frontend/model/tree/IJcrTreeNode.java -text
 api/src/main/java/org/hippoecm/frontend/model/tree/ILabelTreeNode.java -text
+api/src/main/java/org/hippoecm/frontend/model/tree/JcrTreeNodeComparator.java -text
 api/src/main/java/org/hippoecm/frontend/model/tree/ObservableTreeModel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/observation/IFacetRootsObserver.java -text
 api/src/main/java/org/hippoecm/frontend/plugin/IClusterControl.java -text svneol=unset#text/plain
@@ -986,7 +987,11 @@ config/src/main/resources/threepane-workflows-frontend.xml svneol=native#text/pl
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/LeftPlugin.html -text svneol=unset#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/RootPlugin.java svneol=native#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/Shortcuts.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/TopPlugin.html -text svneol=unset#text/plain
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/behavior/PathHistoryBehavior.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/behavior/js/init.js -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/behavior/js/pathhistory/pathhistory.js -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin$BrowserTree.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.html svneol=native#text/plain
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/browser/BrowserPlugin.java svneol=native#text/plain
@@ -1073,6 +1078,8 @@ console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/nodere
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/nodereset/NodeResetDialog.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/nodereset/NodeResetPlugin.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/nodereset/NodeResetPlugin.java -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/open/OpenDialog.html -text
+console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/open/OpenDialog.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/ApplyPatchDialog.html -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/ApplyPatchDialog.java -text
 console/frontend/src/main/java/org/hippoecm/frontend/plugins/console/menu/patch/ApplyPatchPlugin.html -text

@@ -25,20 +25,19 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
+import org.hippoecm.frontend.plugins.console.Shortcuts;
 import org.hippoecm.frontend.session.UserSession;
-
-import wicket.contrib.input.events.EventType;
-import wicket.contrib.input.events.InputBehavior;
-import wicket.contrib.input.events.key.KeyType;
 
 public class SaveDialogLink extends DialogLink {
 
     private static final long serialVersionUID = 1L;
 
-    public SaveDialogLink(String id, IModel linktext, final IDialogFactory dialogFactory, final IDialogService dialogService) {
-        super(id, linktext, dialogFactory, dialogService);
+    public SaveDialogLink(String id, IModel<String> linkText, final IDialogFactory dialogFactory, final IDialogService dialogService) {
+        super(id, linkText, dialogFactory, dialogService, Shortcuts.CTRL_S);
+
         Label label = new Label("dialog-link-text-extended", new AbstractReadOnlyModel<String>() {
             private static final long serialVersionUID = 1L;
+
             @Override
             public String getObject() {
                 if (hasSessionChanges()) {
@@ -49,7 +48,6 @@ public class SaveDialogLink extends DialogLink {
         });
         label.setOutputMarkupId(true);
         link.add(label);
-        link.add(new InputBehavior(new KeyType[] {KeyType.Ctrl, KeyType.s}, EventType.click));
     }
 
     private boolean hasSessionChanges() {

@@ -21,10 +21,6 @@
 .hippo-console-tree-add {position: absolute; top: 38px; left: 5px;}
 .hippo-console-tree-add a{cursor: pointer}
 .hippo-console-tree-actions {width: 333px; height: 18px; position: absolute; top: 72px; background: white; left: 21px; border-bottom: 1px solid #666666; padding: 3px;}
-.hippo-console-tree-sorter {height: 21px; background: white; padding :2px;}
-.hippo-console-tree-sorter li{float: right}
-
-.navigator-center { border-top: 1px solid #666;}
 
 .hippo-console-breadcrumbs{margin-top: 30px;}
 
@@ -52,14 +48,14 @@
 .hippo-console .wicket-tree *{font-family: monospace}
 .hippo-console .wicket-tree div.row-selected span {font-weight: normal}
 
-.hippo-tree .wicket-tree span.plus, 
+.hippo-tree .wicket-tree span.plus,
 .hippo-tree .wicket-tree span.minus {background-image: url("images/tree-console-icons.png"); width: 14px;}
 
-.hippo-tree .wicket-tree span.junction, 
-.hippo-tree .wicket-tree span.junction-last, 
-.hippo-tree .wicket-tree span.corner, 
+.hippo-tree .wicket-tree span.junction,
+.hippo-tree .wicket-tree span.junction-last,
+.hippo-tree .wicket-tree span.corner,
 .hippo-tree .wicket-tree span.indent-line,
-.hippo-tree .wicket-tree span.indent-blank {background-image: url("images/tree-console-icons.png"); width: 18px;} 
+.hippo-tree .wicket-tree span.indent-blank {background-image: url("images/tree-console-icons.png"); width: 18px;}
 
 .hippo-console-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
 .hippo-console-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0; padding-bottom: 0}
@@ -68,38 +64,65 @@
 .hippo-console-menu-advanced li{float: left; margin-left: 10px; font-size: 11px;}
 .hippo-console-menu-advanced li a:hover{text-decoration: underline}
 
-.hippo-console-tree-add-property{margin-left: 16px;}
+.hippo-console-tree-add-property{margin-left: 12px;}
 
-.hippo-console-tree-add li{float: left; margin-right: 5px;}
+.hippo-console-tree-add li{float: left; margin-right: 7px;}
+ul.hippo-console-tree-add li.hippo-console-tree-sorter  { margin-right: 0;}
 
 .hippo-console-tree-add .hippo-console-tree-add-delete{margin-right: 57px;}
-.hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a, .hippo-console-save a, .hippo-console-tree-add a {padding: 2px; color: white; border: 1px solid white; font-weight: bold; font-size: 11px; display: block; float: left; background: #4587d6}
-li.hippo-console-menu-actions-save.session-changes a {
-    background-color: red;
+.hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a, .hippo-console-save a, .hippo-console-tree-add a {padding: 2px; color: white; border: 1px solid white; font-weight: bold; font-size: 11px; display: block; float: left; background: #4587d6; border-radius: 2px;}
+
+.hippo-console-tree-add a,
+.hippo-console-tree-sorter span, .hippo-console-tree-sorter a {
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
+
+li.hippo-console-menu-actions-save.session-changes a { background-color: red; }
 .hippo-console-tree-sorter li span em{padding:2px; border-color: #cccccc; background: #f2f2f2}
-.hippo-console-tree-sorter a:hover, .hippo-console-save a:hover, .hippo-console-tree-add a:hover{color: white; background: #32629b;}
+.hippo-console-tree-sorter a:hover, .hippo-console-save a:hover, .hippo-console-tree-add a:hover{color: white; background: #1F3F63; }
 .hippo-console-tree-add{clear: left;}
-.hippo-console-tree-add  li span {display: block; float: left; padding: 2px; }
-.hippo-console-tree-add  li span em{font-weight: bold; color: white; font-style: normal} 
+.hippo-console-tree-add  li span {display: block; float: left; padding: 2px; font-family: 'trebuchet ms', helvetica, sans-serif; font-size: 11px;}
 .hippo-console-tree-add-delete a:hover{background: red;}
 
-.hippo-console-tree .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container, 
+.hippo-console-tree .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
 .hippo-console-tree .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
-  background: transparent; 
+  background: transparent;
 }
 
+.hippo-console-tree-add li.hippo-console-tree-sorter span,
+.hippo-console-tree-add li.hippo-console-tree-sorter a {
+  padding: 4px;
+  float: left;
+  border-radius: 2px;
+  border: 1px solid #fff;
+  font-family: 'trebuchet ms', helvetica, sans-serif;
+  font-size: 11px;
+}
+
+.hippo-console-tree-add li.hippo-console-tree-sorter a {
+  margin-right: 7px;
+}
 .hippo-console-tree .hippo-tree-dropdown-icon:hover {background-position: 0 0;}
- 
-.hippo-console-tree-sorter li span em, .hippo-console-tree-sorter a{padding-left: 25px; padding-right: 25px;}
 
 .hippo-console-tree-dropdown {visibility: hidden;}
 
-
 /* Disabled sorter button */
-.hippo-console-tree-sorter li span em{ background: #abd5ff; border: 1px solid #fff;}
+.hippo-console-tree-sorter span {
+  margin-right: 7px;
+  background-color: #999;
+  color: #e3e3e3;
+}
+.hippo-console-tree-sorter span em {
+  font-style: normal;
+  text-shadow: none;
+}
+
 /* Enabled sorter button */
 .hippo-console-tree-sorter a {background: #4587D6; }
+
+.hippo-console-tree-sorter span, .hippo-console-tree-sorter a {
+  text-transform: capitalize;
+}
 
 .hippo-console tr td.hippo-global-align-bottom{vertical-align: bottom}
 .hippo-console-menu button{text-align: center; font-size: 12px; font-weight: bold;}
@@ -164,9 +187,9 @@ li.hippo-console-menu-actions-save.session-changes a {
 .hippo-projectexport-tree .wicket-tree a:hover{color: #32629b}
 .hippo-projectexport-tree .hippo-tree .wicket-tree span.indent-blank{background: transparent}
 .hippo-projectexport-tree .hippo-tree div.wicket-tree div.row, .hippo-tree div.wicket-tree div.row-selected{padding-top: 0; padding-bottom: 0}
-.hippo-projectexport-tree .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container, 
+.hippo-projectexport-tree .hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
 .hippo-projectexport-tree .hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
-  background: transparent; 
+  background: transparent;
 }
 .hippo-projectexport-tree .hippo-tree-dropdown-icon:hover {background-position: 0 0;}
 

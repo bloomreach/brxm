@@ -9,6 +9,7 @@ import org.hippoecm.frontend.model.event.IObservationContext;
 
 public class NodeModelReference implements IModelReference {
 
+    private static final long serialVersionUID = 1L;
     private final Component component;
     private final JcrNodeModel model;
 
@@ -29,21 +30,21 @@ public class NodeModelReference implements IModelReference {
 
     @Override
     public void detach() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // noop
     }
 
     @Override
     public void setObservationContext(final IObservationContext<? extends IObservable> context) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // noop
     }
 
     @Override
     public void startObservation() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // noop
     }
 
     @Override
     public void stopObservation() {
-        //To change body of implemented methods use File | Settings | File Templates.
+        // noop
     }
 }
