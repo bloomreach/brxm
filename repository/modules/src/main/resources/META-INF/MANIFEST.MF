@@ -15,4 +15,5 @@ Hippo-Modules: org.hippoecm.repository.jackrabbit.ViewVirtualProvider
  tory.jackrabbit.SubtypedDataProvider org.hippoecm.repository.logging.
  RepositoryLogger org.hippoecm.repository.logging.EventLogCleanupModul
  e org.hippoecm.repository.translation.impl.TranslationVirtualProvider
+  org.hippoecm.repository.events.BroadcastModule
 

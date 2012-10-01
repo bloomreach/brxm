@@ -17,6 +17,7 @@ package org.hippoecm.repository;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.annotation.Annotation;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -62,6 +63,7 @@ import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.repository.events.Persisted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,10 +152,21 @@ public class RepositoryServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
-        hippoEventBus = new GuavaHippoEventBus();
+        hippoEventBus = new GuavaHippoEventBus() {
+            @Override
+            protected boolean acceptMethod(final Object listener, final Annotation[] annotations, final Class<?> parameterType) {
+                for (Annotation annotation : annotations) {
+                    if (annotation.annotationType() == Persisted.class) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        };
         HippoServiceRegistry.registerService(hippoEventBus, HippoEventBus.class);
+
         listener = new AuditLogger();
-        hippoEventBus.register(listener);
+        HippoServiceRegistry.registerService(listener, HippoEventBus.class);
 
         parseInitParameters(config);
         System.setProperty(SYSTEM_SERVLETCONFIG_PROPERTY, repositoryConfig);

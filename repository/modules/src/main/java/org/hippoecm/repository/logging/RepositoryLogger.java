@@ -27,6 +27,7 @@ import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.eventbus.Subscribe;
+import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,11 +74,7 @@ public class RepositoryLogger implements DaemonModule {
             session.save();
         }
 
-        final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-        if (eventBus != null) {
-            eventBus.register(this);
-        }
-
+        HippoServiceRegistry.registerService(this, HippoEventBus.class);
     }
 
     @Subscribe
@@ -93,15 +90,16 @@ public class RepositoryLogger implements DaemonModule {
             return;
         }
 
-        long timestamp = event.timestamp();
-        String userName = event.user();
-        String returnValue = event.result();
-        String methodName = (String) event.get("methodName");
-        String className = (String) event.get("className");
-        String documentPath = (String) event.get("documentPath");
-        String handleUuid = (String) event.get("handleUuid");
-        String returnType = (String) event.get("returnType");
-        List<String> arguments = (List<String>) event.get("arguments");
+        HippoWorkflowEvent workflowEvent = new HippoWorkflowEvent(event);
+        long timestamp = workflowEvent.timestamp();
+        String userName = workflowEvent.user();
+        String returnValue = workflowEvent.result();
+        String methodName = workflowEvent.methodName();
+        String className = workflowEvent.className();
+        String documentPath = workflowEvent.documentPath();
+        String handleUuid = workflowEvent.handleUuid();
+        String returnType = workflowEvent.returnType();
+        List<String> arguments = workflowEvent.arguments();
 
         try {
             char[] randomChars = generateRandomCharArray(HIERARCHY_DEPTH);

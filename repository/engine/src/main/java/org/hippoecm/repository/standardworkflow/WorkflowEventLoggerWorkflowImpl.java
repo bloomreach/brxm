@@ -29,9 +29,9 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,15 +97,16 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
         return null;
     }
 
+
     private void postEvent(String who, String className, String methodName, String documentPath, String handleUuid, String returnType, String returnValue, String[] arguments) {
         HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
         if (eventBus != null) {
-            HippoEvent event = new HippoEvent("repository");
-            event.user(who).category("workflow").action(className + "." + methodName).result(returnValue);
-            event.set("className", className).set("methodName", methodName).set("handleUuid", handleUuid);
-            event.set("returnType", returnType).set("returnValue", returnValue).set("documentPath", documentPath);
+            HippoWorkflowEvent event = new HippoWorkflowEvent();
+            event.user(who).action(className + "." + methodName).result(returnValue);
+            event.className(className).methodName(methodName).handleUuid(handleUuid);
+            event.returnType(returnType).returnValue(returnValue).documentPath(documentPath);
             if (arguments != null) {
-                event.set("arguments", Arrays.asList(arguments));
+                event.arguments(Arrays.asList(arguments));
             }
             eventBus.post(event);
         }

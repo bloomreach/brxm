@@ -219,13 +219,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_FACETS = "hippo:facets";
 
-    /**
-     * Deprecated name for field descriptor nodes.  Use field name as node name instead.
-     * @deprecated 
-     */
-    @Deprecated
-    public static final String HIPPO_FIELD = "hipposysedit:field";
-
     public static final String HIPPO_GROUPS = "hipposys:groups";
 
     public static final String HIPPO_GROUPSPATH = "hipposys:groupspath";
@@ -255,13 +248,6 @@ public interface HippoNodeType {
     public static final String HIPPO_MODES = "hippo:modes";
 
     public static final String HIPPO_MULTIPLE = "hipposysedit:multiple";
-
-    /**
-     * Deprecated property for field name.  Use node name instead.
-     * @deprecated 
-     */
-    @Deprecated
-    public static final String HIPPO_NAME = "hipposysedit:name";
 
     public static final String HIPPO_NAMESPACE = "hippo:namespace";
 
