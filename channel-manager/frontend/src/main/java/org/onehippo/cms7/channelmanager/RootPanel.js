@@ -30,6 +30,7 @@ Hippo.ChannelManager.RootPanel = Ext.extend(Ext.Panel, {
         this.selectedChannelId = null;
 
         this.toolbar = new Hippo.ChannelManager.BreadcrumbToolbar({
+            autoWidth: true,
             id: 'breadcrumbToolbar',
             breadcrumbIconUrl: config.breadcrumbIconUrl,
             layoutConfig: {
