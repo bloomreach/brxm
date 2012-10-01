@@ -20,7 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Event for Hippo.  Can be used in a fluent style to build.
+ * Event for Hippo.  A bag of properties with a number of pre-defined keys.
+ * Can be used in a fluent style to build; sub-classes are encouraged to follow the same pattern.
+ * The event can be sealed when no further changes need to be made.  It is immutable after sealing, so it
+ * is safe to access concurrently.
  * <p>
  * When creating a subclass, it is possible to keep the fluent style by extending as
  * <code>
@@ -28,9 +31,9 @@ import java.util.Map;
  *
  *     }
  * </code>
- * </p>
+ * Note that subclasses should not introduce any fields of their own.
  */
-public class HippoEvent<E extends HippoEvent<E>> {
+public class HippoEvent<E extends HippoEvent<E>> implements Cloneable {
 
     private static final String ACTION = "action";
     private static final String APPLICATION = "application";
@@ -46,6 +49,17 @@ public class HippoEvent<E extends HippoEvent<E>> {
     public HippoEvent(String application) {
         put(APPLICATION, application);
         put(TIMESTAMP, System.currentTimeMillis());
+    }
+
+    /**
+     * Copy constructor
+     *
+     * @param event the to-be-copied event
+     */
+    public HippoEvent(HippoEvent<?> event) {
+        for (Map.Entry<String, Object> entry : event.getValues().entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
     }
 
     public void sealEvent() {
@@ -136,5 +150,18 @@ public class HippoEvent<E extends HippoEvent<E>> {
 
     public Map<String, Object> getValues() {
         return Collections.unmodifiableMap(this.attributes);
+    }
+
+    @Override
+    public E clone() {
+        try {
+            final E clone;
+            clone = (E) super.clone();
+            clone.sealed = false;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            // not possible by Object definition
+            throw new IllegalStateException(e);
+        }
     }
 }
