@@ -17,18 +17,24 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.lock.LockException;
 
 import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.lock.LockInfo;
 import org.apache.jackrabbit.core.lock.LockManagerImpl;
 import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.spi.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class HippoLockManager extends LockManagerImpl {
+
+    private static final Logger log = LoggerFactory.getLogger(HippoLockManager.class);
 
     /**
      * Create a new instance of this class.
@@ -52,5 +58,23 @@ public class HippoLockManager extends LockManagerImpl {
             }
         }
         super.checkUnlock(info, session);
+    }
+
+    @Override
+    public void externalLock(final NodeId nodeId, final boolean isDeep, final String lockOwner) throws RepositoryException {
+        try {
+            super.externalLock(nodeId, isDeep, lockOwner);
+        } catch (ItemNotFoundException e) {
+            log.debug("Node {} on which lock occurred could not be found", nodeId);
+        }
+    }
+
+    @Override
+    public void externalUnlock(final NodeId nodeId) throws RepositoryException {
+        try {
+            super.externalUnlock(nodeId);
+        } catch (ItemNotFoundException e) {
+            log.debug("Node {} on which lock occurred could not be found", nodeId);
+        }
     }
 }
