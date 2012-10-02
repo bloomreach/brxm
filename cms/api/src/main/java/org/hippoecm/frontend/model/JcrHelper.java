@@ -169,17 +169,7 @@ public class JcrHelper {
         if (node == null || !(node instanceof HippoNode)) {
             return false;
         }
-        try {
-            HippoNode hippoNode = (HippoNode) node;
-            Node canonical = hippoNode.getCanonicalNode();
-            if (canonical == null) {
-                return true;
-            }
-            return !canonical.isSame(hippoNode);
-        } catch (ItemNotFoundException e) {
-            log.debug("Canonical node no longer exists");
-            return true;
-        }
+        return ((HippoNode) node).isVirtual();
     }
 
     /**
