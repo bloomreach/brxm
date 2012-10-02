@@ -15,30 +15,6 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
-import java.io.Serializable;
-import java.util.AbstractList;
-import java.util.AbstractMap;
-import java.util.AbstractSet;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.nodetype.ItemDefinition;
-import javax.jcr.nodetype.NodeDefinition;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.PropertyDefinition;
-
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -79,13 +55,37 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.nodetype.ItemDefinition;
+import javax.jcr.nodetype.NodeDefinition;
+import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
+import java.io.Serializable;
+import java.util.AbstractList;
+import java.util.AbstractMap;
+import java.util.AbstractSet;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
 public class TemplateBuilder implements IDetachable, IObservable {
 
     private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(TemplateBuilder.class);
 
-    /** Prefix to append to duplicated field names or paths */
+    /** Suffix to append to duplicated field names or paths */
     private static final char SUFFIX_WHEN_DUPLICATE = '_';
 
     class BuilderFieldDescriptor implements IFieldDescriptor, IDetachable {
@@ -99,7 +99,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
         @Override
         public boolean equals(Object obj) {
-            return ((obj instanceof BuilderFieldDescriptor) && delegate.equals(((BuilderFieldDescriptor) obj).delegate));
+            return obj instanceof BuilderFieldDescriptor && delegate.equals(((BuilderFieldDescriptor) obj).delegate);
         }
 
         @Override
@@ -107,58 +107,72 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return 991 ^ delegate.hashCode();
         }
 
+        @Override
         public Set<String> getExcluded() {
             return delegate.getExcluded();
         }
 
+        @Override
         public String getName() {
             return delegate.getName();
         }
 
+        @Override
         public String getPath() {
             return delegate.getPath();
         }
 
+        @Override
         public ITypeDescriptor getTypeDescriptor() {
             return delegate.getTypeDescriptor();
         }
 
+        @Override
         public boolean isAutoCreated() {
             return delegate.isAutoCreated();
         }
 
+        @Override
         public void setAutoCreated(boolean autocreated) {
             delegate.setAutoCreated(autocreated);
         }
 
+        @Override
         public boolean isMandatory() {
             return delegate.isMandatory();
         }
 
+        @Override
         public boolean isMultiple() {
             return delegate.isMultiple();
         }
 
+        @Override
         public boolean isOrdered() {
             return delegate.isOrdered();
         }
 
+        @Override
         public boolean isPrimary() {
             return delegate.isPrimary();
         }
 
+        @Override
         public boolean isProtected() {
             return delegate.isProtected();
         }
 
+        @Override
         public void setExcluded(Set<String> set) {
             delegate.setExcluded(set);
         }
 
+        @Override
         public void setMandatory(boolean mandatory) {
             delegate.setMandatory(mandatory);
         }
 
+        @Override
         public void setMultiple(boolean multiple) {
             delegate.setMultiple(multiple);
             try {
@@ -170,17 +184,17 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
         }
 
+        @Override
         public void setOrdered(boolean isOrdered) {
             delegate.setOrdered(isOrdered);
         }
 
+        @Override
         public void setPath(String path) throws TypeException {
             if (!"*".equals(path)) {
                 for (IFieldDescriptor sibling : typeDescriptor.getFields().values()) {
-                    if (!sibling.getName().equals(delegate.getName())) {
-                        if (sibling.getPath().equals(path)) {
-                            throw new TypeException("A field with path " + path + " already exists");
-                        }
+                    if (!sibling.getName().equals(delegate.getName()) && sibling.getPath().equals(path)) {
+                        throw new TypeException("A field with path " + path + " already exists");
                     }
                 }
                 if (path.contains("-")) {
@@ -200,7 +214,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 log.error("Failed to find prototype when updating the path", ex);
             }
 
-            Set<String> fieldNames = new HashSet<String>();
+            Collection<String> fieldNames = new HashSet<String>();
             for (ITypeDescriptor subType : typeDescriptor.getSubTypes()) {
                 fieldNames.addAll(subType.getFields().keySet());
             }
@@ -210,8 +224,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
             boolean updateFieldName = false;
             if (!typeDescriptor.getFields().containsKey(newName)
                     && !fieldNames.contains(newName)
-                    && (currentTypeDescriptor == null || (!currentTypeDescriptor.getFields().containsKey(name) && !currentTypeDescriptor
-                    .getFields().containsKey(newName)))) {
+                    && (currentTypeDescriptor == null ||
+                    !currentTypeDescriptor.getFields().containsKey(name) && !currentTypeDescriptor
+                            .getFields().containsKey(newName))) {
                 JavaFieldDescriptor javaFieldDescriptor = new JavaFieldDescriptor(delegate);
                 typeDescriptor.removeField(name);
                 javaFieldDescriptor.setName(newName);
@@ -234,7 +249,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         plugin.put("field", newName);
                     }
                     position = i;
-                    JavaPluginConfig newPlugin = new JavaPluginConfig(newName);
+                    IPluginConfig newPlugin = new JavaPluginConfig(newName);
                     newPlugin.putAll(plugins.get(position));
                     newPlugins.add(newPlugin);
                 } else {
@@ -250,14 +265,17 @@ public class TemplateBuilder implements IDetachable, IObservable {
             }
         }
 
+        @Override
         public void addValidator(String validator) {
             delegate.addValidator(validator);
         }
 
+        @Override
         public Set<String> getValidators() {
             return delegate.getValidators();
         }
 
+        @Override
         public void removeValidator(String validator) {
             delegate.removeValidator(validator);
         }
@@ -265,18 +283,22 @@ public class TemplateBuilder implements IDetachable, IObservable {
         private IObservationContext obContext;
         private IObserver observer;
 
+        @Override
         public void setObservationContext(IObservationContext context) {
-            this.obContext = context;
+            obContext = context;
         }
 
+        @Override
         public void startObservation() {
             obContext.registerObserver(observer = new IObserver<IFieldDescriptor>() {
                 private static final long serialVersionUID = -510095692858775942L;
 
+                @Override
                 public IFieldDescriptor getObservable() {
                     return delegate;
                 }
 
+                @Override
                 public void onEvent(Iterator<? extends IEvent<IFieldDescriptor>> events) {
                     obContext.notifyObservers(new EventCollection(events));
                 }
@@ -284,11 +306,13 @@ public class TemplateBuilder implements IDetachable, IObservable {
             });
         }
 
+        @Override
         public void stopObservation() {
             obContext.unregisterObserver(observer);
             observer = null;
         }
 
+        @Override
         public void detach() {
             if (delegate instanceof IDetachable) {
                 ((IDetachable) delegate).detach();
@@ -306,36 +330,42 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
 
         @Override
-        public Set<Map.Entry<String, IFieldDescriptor>> entrySet() {
-            return new AbstractSet<Map.Entry<String, IFieldDescriptor>>() {
+        public Set<Entry<String, IFieldDescriptor>> entrySet() {
+            return new AbstractSet<Entry<String, IFieldDescriptor>>() {
 
                 @Override
-                public Iterator<Map.Entry<String, IFieldDescriptor>> iterator() {
-                    final Iterator<Map.Entry<String, IFieldDescriptor>> upstream = delegate.entrySet().iterator();
-                    return new Iterator<Map.Entry<String, IFieldDescriptor>>() {
+                public Iterator<Entry<String, IFieldDescriptor>> iterator() {
+                    final Iterator<Entry<String, IFieldDescriptor>> upstream = delegate.entrySet().iterator();
+                    return new Iterator<Entry<String, IFieldDescriptor>>() {
 
+                        @Override
                         public boolean hasNext() {
                             return upstream.hasNext();
                         }
 
-                        public Map.Entry<String, IFieldDescriptor> next() {
-                            final Map.Entry<String, IFieldDescriptor> upstreamEntry = upstream.next();
-                            return new Map.Entry<String, IFieldDescriptor>() {
+                        @Override
+                        public Entry<String, IFieldDescriptor> next() {
+                            final Entry<String, IFieldDescriptor> upstreamEntry = upstream.next();
+                            return new Entry<String, IFieldDescriptor>() {
 
+                                @Override
                                 public String getKey() {
                                     return upstreamEntry.getKey();
                                 }
 
+                                @Override
                                 public IFieldDescriptor getValue() {
                                     return wrap(upstreamEntry.getValue());
                                 }
 
+                                @Override
                                 public IFieldDescriptor setValue(IFieldDescriptor value) {
                                     throw new UnsupportedOperationException();
                                 }
                             };
                         }
 
+                        @Override
                         public void remove() {
                             upstream.remove();
                         }
@@ -360,6 +390,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         private IObservationContext obContext;
         private IObserver observer;
 
+        @Override
         public void addField(IFieldDescriptor descriptor) throws TypeException {
 
             String oldDescriptorName = descriptor.getName();
@@ -375,24 +406,22 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 // Check duplicate paths
                 if (!"*".equals(field.getPath())) {
                     if (field.getPath().equals(descriptor.getPath())) {
-                        descriptor.setPath(newDescriptorPath = descriptor.getPath() + SUFFIX_WHEN_DUPLICATE);
+                        newDescriptorPath = descriptor.getPath() + SUFFIX_WHEN_DUPLICATE;
+                        descriptor.setPath(newDescriptorPath);
                         checkAgainAgainstAllFields = true;
                     }
-                } else if ("*".equals(descriptor.getPath())) {
-                    if (field.getTypeDescriptor().getType().equals(descriptor.getTypeDescriptor().getType())) {
-                        // TODO Is there anything to do here?
-                        throw new TypeException("Path " + descriptor.getPath() + " already exists, not adding field");
-                    }
+                } else if ("*".equals(descriptor.getPath()) &&
+                        field.getTypeDescriptor().getType().equals(descriptor.getTypeDescriptor().getType())) {
+                    throw new TypeException("Path " + descriptor.getPath() + " already exists, not adding field");
                 }
 
                 // Check duplicate names
                 if (field.getName() != null && field.getName().equals(descriptor.getName())) {
                     if (descriptor instanceof JavaFieldDescriptor) {
-                        ((JavaFieldDescriptor) descriptor)
-                                .setName(newDescriptorName = descriptor.getName() + SUFFIX_WHEN_DUPLICATE);
+                        newDescriptorName = descriptor.getName() + SUFFIX_WHEN_DUPLICATE;
+                        ((JavaFieldDescriptor) descriptor).setName(newDescriptorName);
                         checkAgainAgainstAllFields = true;
                     } else {
-                        // TODO Can this case actually happen?
                         throw new TypeException(
                                 "Name " + descriptor.getName() + " already exists, not adding field");
                     }
@@ -414,67 +443,83 @@ public class TemplateBuilder implements IDetachable, IObservable {
             updatePrototype();
         }
 
+        @Override
         public Map<String, IFieldDescriptor> getDeclaredFields() {
             return new FieldMap(typeDescriptor.getDeclaredFields());
         }
 
+        @Override
         public IFieldDescriptor getField(String key) {
             return wrap(typeDescriptor.getField(key));
         }
 
+        @Override
         public Map<String, IFieldDescriptor> getFields() {
             return new FieldMap(typeDescriptor.getFields());
         }
 
+        @Override
         public String getName() {
             return typeDescriptor.getName();
         }
 
+        @Override
         public List<String> getSuperTypes() {
             return typeDescriptor.getSuperTypes();
         }
 
+        @Override
         public List<ITypeDescriptor> getSubTypes() {
             return typeDescriptor.getSubTypes();
         }
 
+        @Override
         public String getType() {
             return typeDescriptor.getType();
         }
 
+        @Override
         public boolean isMixin() {
             return typeDescriptor.isMixin();
         }
 
+        @Override
         public boolean isNode() {
             return typeDescriptor.isNode();
         }
 
+        @Override
         public boolean isType(String typeName) {
             return typeDescriptor.isType(typeName);
         }
 
+        @Override
         public void removeField(String name) throws TypeException {
             typeDescriptor.removeField(name);
             updatePrototype();
         }
 
+        @Override
         public void setIsMixin(boolean isMixin) {
             typeDescriptor.setIsMixin(isMixin);
         }
 
+        @Override
         public void setIsNode(boolean isNode) {
             typeDescriptor.setIsNode(isNode);
         }
 
-        public void setObservationContext(final IObservationContext context) {
+        @Override
+        public void setObservationContext(IObservationContext context) {
             obContext = context;
         }
 
+        @Override
         public void setPrimary(String name) {
             typeDescriptor.setPrimary(name);
         }
 
+        @Override
         public void setSuperTypes(List<String> superTypes) {
             List<String> currentTypes = typeDescriptor.getSuperTypes();
             typeDescriptor.setSuperTypes(superTypes);
@@ -486,22 +531,27 @@ public class TemplateBuilder implements IDetachable, IObservable {
             updatePrototype();
         }
 
+        @Override
         public boolean isValidationCascaded() {
             return typeDescriptor.isValidationCascaded();
         }
 
+        @Override
         public void setIsValidationCascaded(boolean isCascaded) {
             typeDescriptor.setIsValidationCascaded(isCascaded);
         }
 
+        @Override
         public void startObservation() {
             obContext.registerObserver(observer = new IObserver<ITypeDescriptor>() {
                 private static final long serialVersionUID = 1L;
 
+                @Override
                 public ITypeDescriptor getObservable() {
                     return typeDescriptor;
                 }
 
+                @Override
                 public void onEvent(Iterator<? extends IEvent<ITypeDescriptor>> events) {
                     obContext.notifyObservers(new EventCollection(events));
                 }
@@ -509,6 +559,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             });
         }
 
+        @Override
         public void stopObservation() {
             obContext.unregisterObserver(observer);
             observer = null;
@@ -551,13 +602,13 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
 
         void replaceAll(List<IPluginConfig> configs) {
-            Set<String> names = new TreeSet<String>();
+            Collection<String> names = new TreeSet<String>();
             for (IPluginConfig plugin : configs) {
                 names.add(plugin.getName());
             }
 
             boolean doUpdate = false;
-            List<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
+            Iterable<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
             for (IPluginConfig plugin : plugins) {
                 if (!names.contains(plugin.getName())) {
                     String field = plugin.getString("field");
@@ -579,7 +630,8 @@ public class TemplateBuilder implements IDetachable, IObservable {
                                     typeDescriptor.setSuperTypes(superTypes);
                                 }
                             } catch (RepositoryException e) {
-                                log.error("Unable to check whether removed mixin " + mixin + " is part of the JCR primary node type", e);
+                                log.error("Unable to check whether removed mixin " + mixin +
+                                        " is part of the JCR primary node type", e);
                             }
                             doUpdate = true;
                         }
@@ -594,6 +646,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             clusterConfig.setPlugins(configs);
         }
 
+        @Override
         public void detach() {
             for (IPluginConfig config : clusterConfig.getPlugins()) {
                 if (config instanceof IDetachable) {
@@ -604,19 +657,21 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     }
 
-    private class BuilderClusterDecorator extends AbstractPluginDecorator implements IClusterConfig {
+    private final class BuilderClusterDecorator extends AbstractPluginDecorator implements IClusterConfig {
         private static final long serialVersionUID = 1L;
 
         private IObserver<IClusterConfig> observer;
 
-        private BuilderClusterDecorator(IClusterConfig upstream) {
+        private BuilderClusterDecorator(IPluginConfig upstream) {
             super(upstream);
         }
 
+        @Override
         public List<IPluginConfig> getPlugins() {
             return Collections.unmodifiableList(TemplateBuilder.this.getPlugins());
         }
 
+        @Override
         public void setPlugins(List<IPluginConfig> plugins) {
             TemplateBuilder.this.getPlugins().replaceAll(plugins);
         }
@@ -626,14 +681,17 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return object;
         }
 
+        @Override
         public List<String> getProperties() {
             return ((IClusterConfig) upstream).getProperties();
         }
 
+        @Override
         public List<String> getReferences() {
             return ((IClusterConfig) upstream).getReferences();
         }
 
+        @Override
         public List<String> getServices() {
             return ((IClusterConfig) upstream).getServices();
         }
@@ -651,17 +709,20 @@ public class TemplateBuilder implements IDetachable, IObservable {
             obContext.registerObserver(observer = new IObserver<IClusterConfig>() {
                 private static final long serialVersionUID = 1L;
 
+                @Override
                 public IClusterConfig getObservable() {
                     return (IClusterConfig) upstream;
                 }
 
+                @Override
                 public void onEvent(Iterator<? extends IEvent<IClusterConfig>> events) {
                     EventCollection<IEvent<IClusterConfig>> collection = new EventCollection<IEvent<IClusterConfig>>();
                     while (events.hasNext()) {
                         IEvent<IClusterConfig> event = events.next();
                         if (event instanceof ClusterConfigEvent) {
                             ClusterConfigEvent cce = (ClusterConfigEvent) event;
-                            collection.add(new ClusterConfigEvent(BuilderClusterDecorator.this, wrapConfig(cce.getPlugin()), cce.getType()));
+                            collection.add(new ClusterConfigEvent(BuilderClusterDecorator.this,
+                                    wrapConfig(cce.getPlugin()), cce.getType()));
                         }
                     }
                     if (collection.size() > 0) {
@@ -680,19 +741,18 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
     }
 
-    private String type;
-    private boolean readonly;
-    private IPluginContext context;
-    private IModel selectedExtPtModel;
-    private IModel<String> pluginModel;
+    private final String type;
+    private final boolean readonly;
+    private final IPluginContext context;
+    private final IModel selectedExtPtModel;
+    private final IModel<String> pluginModel;
 
-    private IStore<IClusterConfig> jcrTemplateStore;
-    private BuiltinTemplateStore builtinTemplateStore;
+    private final IStore<IClusterConfig> jcrTemplateStore;
 
-    private JcrTypeStore jcrTypeStore;
-    private ITypeLocator typeLocator;
+    private final JcrTypeStore jcrTypeStore;
+    private final ITypeLocator typeLocator;
 
-    private JcrPrototypeStore prototypeStore;
+    private final JcrPrototypeStore prototypeStore;
 
     private ITypeDescriptor currentTypeDescriptor;
     private ITypeDescriptor typeDescriptor;
@@ -706,32 +766,28 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     private BuilderPluginList plugins;
 
-    public TemplateBuilder(final String type, boolean readonly, IPluginContext context, IModel extPtModel, IModel<String> pluginModel)
+    public TemplateBuilder(String type, boolean readonly, IPluginContext context, IModel extPtModel,
+                           IModel<String> pluginModel)
             throws BuilderException {
         this.type = type;
         this.readonly = readonly;
         this.context = context;
-        this.selectedExtPtModel = extPtModel;
+        selectedExtPtModel = extPtModel;
         this.pluginModel = pluginModel;
 
         jcrTypeStore = new JcrTypeStore();
-        String prefix;
-        if (type.indexOf(':') > 0) {
-            prefix = type.substring(0, type.indexOf(':'));
-        } else {
-            prefix = "system";
-        }
+        String prefix = type.indexOf(':') > 0 ? type.substring(0, type.indexOf(':')) : "system";
         IStore draftStore = new JcrDraftStore(jcrTypeStore, prefix);
         BuiltinTypeStore builtinTypeStore = new BuiltinTypeStore();
         typeLocator = new TypeLocator(new IStore[]{draftStore, jcrTypeStore, builtinTypeStore});
         builtinTypeStore.setTypeLocator(typeLocator);
         jcrTypeStore.setTypeLocator(typeLocator);
 
-        this.jcrTemplateStore = new JcrTemplateStore(typeLocator);
-        this.builtinTemplateStore = new BuiltinTemplateStore(typeLocator);
+        jcrTemplateStore = new JcrTemplateStore(typeLocator);
+        BuiltinTemplateStore builtinTemplateStore = new BuiltinTemplateStore(typeLocator);
         builtinTemplateStore.setTemplateLocator(new TemplateLocator(new IStore[]{jcrTemplateStore}));
 
-        this.prototypeStore = new JcrPrototypeStore();
+        prototypeStore = new JcrPrototypeStore();
 
         try {
             typeDescriptor = jcrTypeStore.getDraftType(type);
@@ -763,7 +819,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 clusterConfig = iter.next();
                 initPluginCache();
             } else {
-                if (!readonly) {
+                if (readonly) {
+                    throw new BuilderException("No template found to display type");
+                } else {
                     iter = builtinTemplateStore.find(criteria);
                     if (iter.hasNext()) {
                         try {
@@ -774,12 +832,12 @@ public class TemplateBuilder implements IDetachable, IObservable {
                             throw new BuilderException("Failed to save generated template", ex);
                         }
                     }
-                } else {
-                    throw new BuilderException("No template found to display type");
                 }
             }
         } catch (StoreException ex) {
-            if (!readonly) {
+            if (readonly) {
+                throw new BuilderException("Could not load type descriptor", ex);
+            } else {
                 try {
                     ITypeDescriptor builtin = builtinTypeStore.load(type);
                     String id = jcrTypeStore.save(builtin);
@@ -790,8 +848,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 } catch (StoreException ex2) {
                     throw new BuilderException("Could not convert builtin type descriptor to editable copy", ex2);
                 }
-            } else {
-                throw new BuilderException("Could not load type descriptor", ex);
             }
         }
 
@@ -859,7 +915,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
             JcrNodeModel nodeModel = getPrototype();
             try {
-                nodeModel.getNode().save();
+                nodeModel.getNode().getSession().save();
             } catch (RepositoryException ex) {
                 log.error(ex.getMessage());
             }
@@ -874,16 +930,16 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
             Node prototype = (Node) prototypeModel.getObject();
             if (prototype != null && typeDescriptor != null) {
-                Set<String> currentTypes = new HashSet<String>();
+                Collection<String> currentTypes = new HashSet<String>();
                 if (prototype.hasProperty(JcrConstants.JCR_MIXINTYPES)) {
-                    final Value[] currentNodeTypes = prototype.getProperty(JcrConstants.JCR_MIXINTYPES).getValues();
+                    Value[] currentNodeTypes = prototype.getProperty(JcrConstants.JCR_MIXINTYPES).getValues();
                     for (Value nt : currentNodeTypes) {
                         currentTypes.add(nt.getString());
                     }
                 }
-                final List<String> superTypes = typeDescriptor.getSuperTypes();
+                List<String> superTypes = typeDescriptor.getSuperTypes();
                 for (String superType : superTypes) {
-                    final NodeType nodeType = getJcrNodeType(superType);
+                    NodeType nodeType = getJcrNodeType(superType);
                     if (!nodeType.isMixin()) {
                         continue;
                     }
@@ -919,11 +975,12 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
     }
 
-    private NodeType getJcrNodeType(final String superType) throws RepositoryException {
+    private static NodeType getJcrNodeType(String superType) throws RepositoryException {
         return UserSession.get().getJcrSession().getWorkspace().getNodeTypeManager().getNodeType(superType);
     }
 
-    private void updateItem(Node prototype, String oldPath, IFieldDescriptor newField) throws RepositoryException {
+    private static void updateItem(Node prototype, String oldPath, IFieldDescriptor newField)
+            throws RepositoryException {
         if (newField != null) {
             ITypeDescriptor fieldType = newField.getTypeDescriptor();
             ItemDefinition itemDefinition = null;
@@ -936,8 +993,9 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 multiple = ((PropertyDefinition) itemDefinition).isMultiple();
             }
             if (itemDefinition != null &&
-                    ((!fieldType.isNode() && multiple != newField.isMultiple()) ||
-                    (!newField.getPath().equals(oldPath) && !newField.getPath().equals("*") && !oldPath.equals("*")))) {
+                    (!fieldType.isNode() && multiple != newField.isMultiple() ||
+                            !newField.getPath().equals(oldPath) && !newField.getPath().equals("*") &&
+                                    !oldPath.equals("*"))) {
                 if (fieldType.isNode()) {
                     Node child = prototype.getNode(oldPath);
                     child.getSession().move(child.getPath(), prototype.getPath() + "/" + newField.getPath());
@@ -962,7 +1020,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     }
                 }
             } else if ((oldPath.equals("*") || newField.getPath().equals("*"))
-                    && !(oldPath.equals(newField.getPath()))) {
+                    && !oldPath.equals(newField.getPath())) {
                 log.warn("Wildcard fields are not supported");
             }
         } else {
@@ -986,7 +1044,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
             String pluginName = TypeHelper.getFieldName(fieldDescriptor.getPath(), fieldDescriptor.getTypeDescriptor()
                     .getName());
-            JavaPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
+            IPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
             if (fieldType.isNode()) {
                 pluginConfig.put("plugin.class", NodeFieldPlugin.class.getName());
             } else {
@@ -1008,7 +1066,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             mixinName = mixinName.substring(mixinName.indexOf(':') + 1);
             String pluginName = TypeHelper.getFieldName("mix:" + mixinName, null);
 
-            JavaPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
+            IPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
             pluginConfig.put("plugin.class", MixinLoaderPlugin.class.getName());
             pluginConfig.put("wicket.id", getSelectedExtensionPoint());
             pluginConfig.put("mixin", mixinTypeName);
@@ -1024,10 +1082,12 @@ public class TemplateBuilder implements IDetachable, IObservable {
             context.registerService(clusterObserver = new IObserver<IClusterConfig>() {
                 private static final long serialVersionUID = 1L;
 
+                @Override
                 public IClusterConfig getObservable() {
                     return clusterConfig;
                 }
 
+                @Override
                 public void onEvent(Iterator<? extends IEvent<IClusterConfig>> events) {
                     while (events.hasNext()) {
                         IEvent event = events.next();
@@ -1062,10 +1122,10 @@ public class TemplateBuilder implements IDetachable, IObservable {
     }
 
     private void initPluginCache() {
-        this.pluginCache = new TreeMap<String, IPluginConfig>();
+        pluginCache = new TreeMap<String, IPluginConfig>();
         List<IPluginConfig> plugins = clusterConfig.getPlugins();
         for (IPluginConfig plugin : plugins) {
-            JavaPluginConfig cache = new JavaPluginConfig();
+            IPluginConfig cache = new JavaPluginConfig();
             cache.put("wicket.id", plugin.get("wicket.id"));
             pluginCache.put(plugin.getName(), cache);
         }
@@ -1095,6 +1155,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     // IDetachable
 
+    @Override
     public void detach() {
         prototypeStore.detach();
         typeLocator.detach();
@@ -1105,7 +1166,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
         detach(currentTypeDescriptor);
     }
 
-    private void detach(Object object) {
+    private static void detach(Object object) {
         if (object instanceof IDetachable) {
             ((IDetachable) object).detach();
         }
@@ -1113,13 +1174,16 @@ public class TemplateBuilder implements IDetachable, IObservable {
 
     // IObservable
 
+    @Override
     public void setObservationContext(IObservationContext context) {
-        this.obContext = context;
+        obContext = context;
     }
 
+    @Override
     public void startObservation() {
     }
 
+    @Override
     public void stopObservation() {
     }
 
@@ -1128,6 +1192,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             EventCollection<IEvent<IObservable>> collection = new EventCollection<IEvent<IObservable>>();
             collection.add(new IEvent() {
 
+                @Override
                 public IObservable getSource() {
                     return TemplateBuilder.this;
                 }
@@ -1140,5 +1205,4 @@ public class TemplateBuilder implements IDetachable, IObservable {
     private String getSelectedExtensionPoint() {
         return (String) selectedExtPtModel.getObject();
     }
-
 }
