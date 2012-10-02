@@ -63,8 +63,8 @@
   </modules>
 
   <properties>
-    <hippo.commons.version>1.02.00</hippo.commons.version>
-    <hippo.services.version>2</hippo.services.version>
+    <hippo.commons.version>1.02.01-SNAPSHOT</hippo.commons.version>
+    <hippo.services.version>3-SNAPSHOT</hippo.services.version>
     <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
 
     <!-- Test dependencies  -->
