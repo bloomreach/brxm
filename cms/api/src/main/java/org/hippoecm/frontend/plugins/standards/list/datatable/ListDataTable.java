@@ -18,7 +18,6 @@ package org.hippoecm.frontend.plugins.standards.list.datatable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -160,7 +159,7 @@ public class ListDataTable<T> extends DataTable<T> {
     }
 
     public void render(PluginRequestTarget target) {
-        if (target != null) {
+        if (target != null && dirty.size() > 0) {
             int count = getRowsPerPage();
             int offset = getCurrentPage() * getRowsPerPage();
             if (offset + count > provider.size()) {
