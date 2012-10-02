@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -119,7 +120,15 @@ public class ServicingNodeIndexer extends NodeIndexer {
             this.fieldName = fieldName;
         }
     }
-    
+
+    @Override
+    protected void throwRepositoryException(final Exception e) throws RepositoryException {
+        if (e instanceof NoSuchItemStateException) {
+            throw new ItemNotFoundException(e);
+        }
+        super.throwRepositoryException(e);
+    }
+
     @Override
     public Document createDoc() throws RepositoryException {
         // index the jackrabbit way

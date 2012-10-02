@@ -29,6 +29,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.InvalidQueryException;
@@ -41,18 +42,14 @@ import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.query.ExecutableQuery;
-import org.apache.jackrabbit.core.query.QueryHandler;
 import org.apache.jackrabbit.core.query.lucene.AbstractQueryImpl;
-import org.apache.jackrabbit.core.query.lucene.CachingMultiIndexReader;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.FilterMultiColumnQueryHits;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
-import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexSearcher;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
 import org.apache.jackrabbit.core.query.lucene.MultiColumnQuery;
 import org.apache.jackrabbit.core.query.lucene.MultiColumnQueryHits;
-import org.apache.jackrabbit.core.query.lucene.MultiIndex;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.Ordering;
 import org.apache.jackrabbit.core.query.lucene.QueryImpl;
@@ -62,6 +59,7 @@ import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateManager;
+import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
@@ -72,10 +70,8 @@ import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
-import org.apache.lucene.index.FilterIndexReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.QueryWrapperFilter;
 import org.apache.lucene.search.Sort;
@@ -524,9 +520,25 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                             doc.add(f);
                         }
                     }
+                } catch (NoSuchItemStateException e) {
+                    final String message = "Unable to add index fields for child states of " + state.getId() + " because an item could not be found. " +
+                            "Probably because it was removed again.";
+                    if (log.isDebugEnabled()) {
+                        log.debug(message, e);
+                    } else {
+                        log.warn(message + " (full stack trace on debug level)");
+                    }
                 } catch (ItemStateException e) {
                     log.warn("ItemStateException while indexing descendants of a hippo:document for "
                             + "node with UUID: " + state.getNodeId().toString(), e);
+                } catch (ItemNotFoundException e) {
+                    final String message = "Unable to add index fields for child states of " + state.getId() + " because an item could not be found. " +
+                            "Probably because it was removed again.";
+                    if (log.isDebugEnabled()) {
+                        log.debug(message, e);
+                    } else {
+                        log.warn(message + " (full stack trace on debug level)");
+                    }
                 } catch (RepositoryException e) {
                     log.warn("RepositoryException while indexing descendants of a hippo:document for "
                             + "node with UUID: " + state.getNodeId().toString(), e);
