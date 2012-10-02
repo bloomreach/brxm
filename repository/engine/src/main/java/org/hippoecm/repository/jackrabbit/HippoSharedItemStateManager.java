@@ -127,7 +127,9 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             try {
                 final NodeState nodeState;
                 if (state.isNode()) {
-                    nodeState = (NodeState) state;
+                    // REPO-492 node states originating from an external update are incomplete:
+                    // they lack the node type name that is needed to identify them as handles
+                    nodeState = (NodeState) getItemState(state.getId());
                 } else {
                     if (changes.isModified(state.getParentId())) {
                         continue;
