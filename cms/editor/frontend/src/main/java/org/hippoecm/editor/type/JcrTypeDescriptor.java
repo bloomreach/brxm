@@ -358,12 +358,7 @@ public class JcrTypeDescriptor extends JcrObject implements ITypeDescriptor {
             if (!fieldNode.isNodeType(HippoNodeType.NT_FIELD)) {
                 continue;
             }
-            String name;
-            if (fieldNode.hasProperty(HippoNodeType.HIPPO_NAME)) {
-                name = fieldNode.getProperty(HippoNodeType.HIPPO_NAME).getString();
-            } else {
-                name = fieldNode.getName();
-            }
+            String name = fieldNode.getName();
             if (name.equals(field)) {
                 return fieldNode;
             }
