@@ -1,0 +1,32 @@
+<?xml version="1.0" ?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/j2ee/dtd/web-jsptaglibrary_1_2.dtd">
+<taglib xmlns="http://java.sun.com/xml/ns/javaee" version="2.1"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd">
+
+  <tlib-version>1.0</tlib-version>
+  <jsp-version>1.2</jsp-version>
+  <short-name>google-analytics-tags</short-name>
+  <uri>http://www.onehippo.org/jsp/google-analytics</uri>
+  <description>Hippo Google Analytics Tag Library</description>
+    
+  <tag>
+    <name>accountId</name>
+    <tag-class>org.onehippo.cms7.hst.ga.tags.GoogleAnalyticsAccountIdTag</tag-class>
+    <body-content>empty</body-content>
+  </tag>
+  
+  <tag>
+    <name>trackDocument</name>
+    <tag-class>org.onehippo.cms7.hst.ga.tags.GoogleAnalyticsTrackDocumentTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>hippoDocumentBean</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>org.hippoecm.hst.content.beans.standard.HippoDocumentBean</type>
+      <description>A HippoDocumentBean object.</description>
+    </attribute>
+  </tag>
+
+</taglib>
