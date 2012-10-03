@@ -21,6 +21,8 @@ client-modules/cms-rest/.classpath
 client-modules/cms-rest/.project
 client-modules/cms-rest/.settings
 client-modules/cms-rest/target
+client-modules/google-analytics/*.iml
+client-modules/google-analytics/target
 client-modules/page-composer/.classpath
 client-modules/page-composer/.project
 client-modules/page-composer/.settings
