@@ -76,6 +76,7 @@
 
     <module>automatic-export</module>
     <module>brokenlinks</module>
+    <module>google-analytics</module>
     <module>upgrade</module>
     <module>tools</module>
   </modules>

@@ -1740,6 +1740,24 @@ gallery/repository/src/main/resources/gallerytemplate-image-i18n.xml svneol=nati
 gallery/repository/src/main/resources/gallerytemplate-images-i18n.xml -text svneol=unset#text/plain
 gallery/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 gallery/repository/src/main/resources/image-validator.xml -text
+google-analytics/frontend/pom.xml -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/GoogleAnalyticsConfigurationPlugin.java -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/IGoogleAnalyticsConfigurationService.java -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin.html -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin.java -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin.properties -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin_de.properties -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin_fr.properties -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin_it.properties -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin_nl.properties -text
+google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/empty.gif -text
+google-analytics/pom.xml -text
+google-analytics/repository/pom.xml -text
+google-analytics/repository/src/main/resources/google-analytics-configuration-domainrule.xml -text
+google-analytics/repository/src/main/resources/google-analytics-configuration-service.xml -text
+google-analytics/repository/src/main/resources/google-analytics-configuration.xml -text
+google-analytics/repository/src/main/resources/hippoecm-extension.xml -text
+google-analytics/repository/src/main/resources/hippogoogleanalytics.cnd -text
 gotolink/pom.xml svneol=native#text/plain
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_de.properties -text
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_it.properties -text
