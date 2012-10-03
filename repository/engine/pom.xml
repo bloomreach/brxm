@@ -184,10 +184,6 @@
     <defaultGoal>install</defaultGoal>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
@@ -203,7 +199,6 @@
              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
             <manifestEntries>
-              <Implementation-Build>${buildNumber}</Implementation-Build>
               <Hippo-Modules>org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.workflow.SchedulerWorkflowModule org.onehippo.repository.update.UpdaterExecutionModule</Hippo-Modules>
             </manifestEntries>
           </archive>
