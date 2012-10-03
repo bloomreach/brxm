@@ -68,7 +68,7 @@
     <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
 
     <!-- Test dependencies  -->
-    <atomikos.version>3.1.4</atomikos.version>
+    <atomikos.version>3.8.0</atomikos.version>
     <junit.version>4.4</junit.version>
     
     <!-- Project Dependencies -->

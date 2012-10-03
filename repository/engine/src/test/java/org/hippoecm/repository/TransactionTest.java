@@ -35,7 +35,6 @@ public class TransactionTest extends RepositoryTestCase {
      * Handle atomikos setup and create transaction test node
      */
     public void setUp() throws Exception {
-        System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties"); // FIXME
         super.setUp();
         Node root = session.getRootNode();
         root.addNode("transactiontest");

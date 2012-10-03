@@ -54,14 +54,12 @@ public class SampleRemoteWorkflowTest {
     @BeforeClass
     public static void setUpClass() throws Exception {
         RepositoryTestCase.clear();
-        System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
     }
     
     @AfterClass
     public static void tearDownClass() throws Exception {
         RepositoryTestCase.clear();
         HippoRepositoryFactory.setDefaultRepository((String)null);
-        System.clearProperty("com.atomikos.icatch.file");
     }
 
     @Before

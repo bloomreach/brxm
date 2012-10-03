@@ -44,7 +44,6 @@ public class SampleWorkflowTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {
-        System.setProperty("com.atomikos.icatch.file", "../src/test/resources/jta.properties");
         super.setUp();
     }
 
