@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2007-2009 Hippo
+
+  Licensed under the Apache License, Version 2.0 (the  "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS"
+  BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="date">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hipposys:deriveddefinition</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:classname" sv:type="String">
+    <sv:value>org.hippoecm.faceteddate.DerivedDataFunction</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:nodetype" sv:type="String">
+    <sv:value>hippostd:date</sv:value>
+  </sv:property>
+  <sv:property sv:name="hipposys:serialver" sv:type="Long">
+    <sv:value>1</sv:value>
+  </sv:property>
+  <sv:node sv:name="hipposys:accessed">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:propertyreferences</sv:value>
+    </sv:property>
+    <sv:node sv:name="date">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:date</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="hipposys:derived">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hipposys:propertyreferences</sv:value>
+    </sv:property>
+    <sv:node sv:name="year">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:year</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="month">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:month</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="weekofyear">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:weekofyear</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="dayofweek">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:dayofweek</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="dayofmonth">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:dayofmonth</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="dayofyear">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:dayofyear</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="hourofday">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:hourofday</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="minute">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:minute</sv:value>
+      </sv:property>
+    </sv:node>
+    <sv:node sv:name="second">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hipposys:relativepropertyreference</sv:value>
+      </sv:property>
+      <sv:property sv:name="hipposys:relPath" sv:type="String">
+        <sv:value>hippostd:second</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+</sv:node>
+

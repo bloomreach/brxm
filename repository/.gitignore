@@ -216,4 +216,7 @@ wfdropbox/.settings
 wfdropbox/hippo-addon-wfdropbox.iml
 wfdropbox/hippo-repository-tools-documentation.iml
 wfdropbox/target
+workflow/*.iml
+workflow/*.log
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/.FullReviewedActionsWorkflowImpl.java.swp
+workflow/target

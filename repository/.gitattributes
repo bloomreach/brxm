@@ -349,6 +349,7 @@ utilities/src/main/java/org/hippoecm/repository/util/Utilities.java -text
 wfdropbox/pom.xml svneol=native#text/plain
 wfdropbox/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 wfdropbox/src/main/resources/wfdropbox.cnd -text
+workflow/src/main/java/org/hippoecm/faceteddate/DerivedDataFunction.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/BasicReviewedActionsWorkflowImpl.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/DerivedDataFunction.java -text
@@ -359,6 +360,7 @@ workflow/src/main/java/org/hippoecm/repository/reviewedactions/PublishableDocume
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequest.java -text
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/ScheduledRequestWorkflowImpl.java -text
 workflow/src/main/resources/META-INF/persistence.xml svneol=native#text/plain
+workflow/src/main/resources/date-derivatives.xml -text
 workflow/src/main/resources/editing-workflows.xml svneol=native#text/plain
 workflow/src/main/resources/gallery-namespace.xml -text
 workflow/src/main/resources/gallery-workflows.xml svneol=native#text/plain
