@@ -1174,6 +1174,13 @@ editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeLocator.java svneo
 editor/frontend/src/main/java/org/hippoecm/editor/type/JcrTypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/PlainJcrTypeStore.java -text
 editor/frontend/src/main/java/org/hippoecm/editor/type/PseudoTypeDescriptor.java svneol=native#text/plain
+editor/frontend/src/main/java/org/hippoecm/faceteddate/editor/DatePickerPlugin.html -text
+editor/frontend/src/main/java/org/hippoecm/faceteddate/editor/DatePickerPlugin.java -text
+editor/frontend/src/main/java/org/hippoecm/faceteddate/editor/DatePickerPlugin.properties -text
+editor/frontend/src/main/java/org/hippoecm/faceteddate/editor/DatePickerPlugin_de.properties -text
+editor/frontend/src/main/java/org/hippoecm/faceteddate/editor/DatePickerPlugin_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/faceteddate/editor/DatePickerPlugin_it.properties -text
+editor/frontend/src/main/java/org/hippoecm/faceteddate/editor/DatePickerPlugin_nl.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/BuilderException.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/ExtensionPointLocator.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/builder/FieldEditor.html -text svneol=unset#text/plain

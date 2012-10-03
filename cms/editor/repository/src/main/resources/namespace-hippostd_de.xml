@@ -125,4 +125,145 @@
     </sv:node>
   </sv:node>
 
+  <sv:node sv:name="date" h:merge="combine">
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>de</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Faceted Datum</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>de</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Montag</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:dayofweek</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>1</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>de</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Dienstag</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:dayofweek</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>2</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>de</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Mittwoch</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:dayofweek</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>3</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>de</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Donnerstag</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:dayofweek</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>4</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>de</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Freitag</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:dayofweek</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>5</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>de</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Samstag</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:dayofweek</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>6</sv:value>
+      </sv:property>
+    </sv:node>
+
+    <sv:node sv:name="hippo:translation">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippo:translation</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:language" sv:type="String">
+        <sv:value>de</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:message" sv:type="String">
+        <sv:value>Sonntag</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:property" sv:type="String">
+        <sv:value>hippostd:dayofweek</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippo:value" sv:type="String">
+        <sv:value>7</sv:value>
+      </sv:property>
+    </sv:node>
+
+  </sv:node>
+
 </sv:node>

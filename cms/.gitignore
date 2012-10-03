@@ -123,6 +123,7 @@ editor/common/tm.out.1
 editor/common/tm.out.lck
 editor/common/tmlog.lck
 editor/common/wdbp-error-log.txt
+editor/datanucleus.log
 editor/frontend/*.tmp
 editor/frontend/.classpath
 editor/frontend/.project
