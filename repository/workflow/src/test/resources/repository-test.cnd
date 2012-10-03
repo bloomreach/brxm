@@ -20,6 +20,7 @@
 <mix='http://www.jcp.org/jcr/mix/1.0'>
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <test='http://www.onehippo.org/jcr/hippo/test/nt/1.0'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 
 [hippo:ntunstructured] > nt:unstructured
 
@@ -82,4 +83,11 @@
 + * (hippo:testcompoundstructure) = hippo:testcompoundstructure multiple
 - * 
 
+[hippo:datedocument1] > hippo:document
++ hippo:d (hippostd:date) = hippostd:date
 
+[hippo:datedocument2] > hippo:document
+- hippo:d1 (date) mandatory
+- hippo:d2 (date)
++ hippo:d1fields (hippostd:datefields) = hippostd:datefields mandatory autocreated
++ hippo:d2fields (hippostd:datefields) = hippostd:datefields
