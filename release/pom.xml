@@ -43,7 +43,6 @@
     <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
     <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
-    <hippo.addon-faceteddate.version>2.23.05-SNAPSHOT</hippo.addon-faceteddate.version>
     <hippo.addon-hst-configuration-editor.version>1.10.04-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>2.23.05-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.packages.version>2.23.05-SNAPSHOT</hippo.packages.version>
@@ -456,16 +455,6 @@
       </dependency>
  
       <!-- Hippo Addon artifacts -->
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-faceteddate-frontend</artifactId>
-        <version>${hippo.addon-faceteddate.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-addon-faceteddate-repository</artifactId>
-        <version>${hippo.addon-faceteddate.version}</version>
-      </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-hst-configuration-editor-frontend</artifactId>
