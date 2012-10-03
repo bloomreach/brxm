@@ -13,7 +13,7 @@ How to test and build Hippo Repository
 
 3. Build 
      
-    (1) Build with testing
+    (1) Build with short running test but no integration tests
     
       $ mvn clean install
     
@@ -21,7 +21,11 @@ How to test and build Hippo Repository
     
       $ mvn clean install -DskipTests
     
-    (3) Build with Hippo Snapshot Repository Flag
+    (3) Build with integration tests
+
+      $ mvn clean install -Dintegration
+
+    (4) Build with Hippo Snapshot Repository Flag
       - Note: Mostly you do not need this when you check out and build a released version!
               Needed only when you build the TRUNK having snapshot dependencies!
       - Note: Please beware that the `-Dhippo.snapshots' option is effective only when you define
