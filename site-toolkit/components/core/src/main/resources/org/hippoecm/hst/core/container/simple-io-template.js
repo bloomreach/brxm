@@ -30,25 +30,28 @@ Hippo.Hst.AsyncPage = {
         var self, xmlHttpRequest;
         try {
             xmlHttpRequest = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+            xmlHttpRequest.open("GET", url, true);
+            xmlHttpRequest.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
+            self = this;
+            xmlHttpRequest.onreadystatechange = function () {
+                if (xmlHttpRequest.readyState !== 4) {
+                    return;
+                }
+                if (xmlHttpRequest.status !== 200 && xmlHttpRequest.status !== 304) {
+                    return;
+                }
+                callback.call(self, xmlHttpRequest);
+            };
+
+            xmlHttpRequest.send();
         } catch (e) {
-            if (window.console) {
-                console.error();
+            if (typeof window.console !== 'undefined') {
+                if (typeof console.error !== 'undefined') {
+                    console.error(e.name + ": " + e.message);
+                } else if (typeof console.log !== 'undefined') {
+                    console.log(e.name + ": " + e.message);
+                }
             }
         }
-
-        xmlHttpRequest.open("GET", url, true);
-        xmlHttpRequest.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
-        self = this;
-        xmlHttpRequest.onreadystatechange = function () {
-            if (xmlHttpRequest.readyState !== 4) {
-                return;
-            }
-            if (xmlHttpRequest.status !== 200 && xmlHttpRequest.status !== 304) {
-                return;
-            }
-            callback.call(self, xmlHttpRequest);
-        };
-
-        xmlHttpRequest.send();
     }
 };
