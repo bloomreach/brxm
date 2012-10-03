@@ -70,25 +70,10 @@
       <type>pom</type>
     </dependency>
 
-    <!-- Broken links addon -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-wfdropbox</artifactId>
       <version>${hippo.repository.version}</version>
-    </dependency>
-
-    <!-- Faceted date type -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-faceteddate-repository</artifactId>
-      <version>${hippo.addon-faceteddate.version}</version>
-      <type>jar</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-faceteddate-frontend</artifactId>
-      <version>${hippo.addon-faceteddate.version}</version>
-      <type>jar</type>
     </dependency>
 
     <!-- Repository, which explicitly comes without upgrade module to allow
