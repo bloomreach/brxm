@@ -49,7 +49,7 @@ public class UpdaterRenameTest extends RepositoryTestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
         NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
         build(session, content);
         session.save();

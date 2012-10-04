@@ -58,18 +58,6 @@ public class HREPTWO3870IssueTest extends RepositoryTestCase {
             + "  </sv:property>" + "  <sv:property sv:name=\"hippo:queryname\" sv:type=\"String\">"
             + "    <sv:value>tagsquery</sv:value>" + "  </sv:property>" + "</sv:node>";
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp(true);
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void removeAndAddFacetsearch() throws RepositoryException, IOException {
         // create test node

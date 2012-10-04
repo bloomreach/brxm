@@ -31,6 +31,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -40,6 +41,11 @@ import static org.junit.Assert.assertNotNull;
 
 public class VersioningWorkflowTest extends RepositoryTestCase {
 
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp(true);
+    }
 
     @Test
     public void testSimpleVersioning() throws WorkflowException, MappingException, RepositoryException, RemoteException {

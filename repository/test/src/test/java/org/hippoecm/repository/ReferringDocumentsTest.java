@@ -65,7 +65,7 @@ public class ReferringDocumentsTest extends RepositoryTestCase
 
     @Override
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
         Node test = session.getRootNode().addNode("test", "nt:unstructured");
 
         saveCounter = 0;
