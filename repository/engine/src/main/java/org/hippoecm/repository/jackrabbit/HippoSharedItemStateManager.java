@@ -26,6 +26,7 @@ import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
+import org.apache.jackrabbit.core.cluster.ClusterException;
 import org.apache.jackrabbit.core.cluster.Update;
 import org.apache.jackrabbit.core.cluster.UpdateEventChannel;
 import org.apache.jackrabbit.core.cluster.UpdateEventListener;
@@ -284,7 +285,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         }
 
         @Override
-        public void updateCreated(final Update update) {
+        public void updateCreated(final Update update) throws ClusterException {
             if (upstream != null) {
                 upstream.updateCreated(update);
             }
