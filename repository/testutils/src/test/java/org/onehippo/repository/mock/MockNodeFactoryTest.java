@@ -16,8 +16,12 @@
 package org.onehippo.repository.mock;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -142,6 +146,27 @@ public class MockNodeFactoryTest {
         assertFalse(secondChildProperty.isMultiple());
         assertEquals("/child2/childProperty", secondChildProperty.getPath());
         assertEquals("value2", secondChildProperty.getString());
+    }
+
+    @Test
+    public void nodeIteratorReturnsAllChildren() throws JAXBException, IOException, RepositoryException {
+        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-children.xml");
+
+        NodeIterator iterator = root.getNodes();
+
+        List<String> expectedNodeNames = new ArrayList<String>(2);
+        expectedNodeNames.addAll(Arrays.asList("child1", "child2"));
+
+        for (int i = 0; i < 2; i++) {
+            assertTrue(iterator.hasNext());
+
+            Node node = iterator.nextNode();
+            assertTrue(expectedNodeNames.contains(node.getName()));
+
+            expectedNodeNames.remove(node.getName());
+        }
+
+        assertFalse(iterator.hasNext());
     }
 
 }

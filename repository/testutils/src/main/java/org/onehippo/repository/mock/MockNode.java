@@ -190,6 +190,11 @@ public class MockNode extends MockItem implements Node {
     }
 
     @Override
+    public NodeIterator getNodes() {
+        return new MockNodeIterator(children.values());
+    }
+
+    @Override
     public String toString() {
         return "MockNode[path=" + getPath() + "]";
     }
@@ -258,11 +263,6 @@ public class MockNode extends MockItem implements Node {
 
     @Override
     public Property setProperty(final String name, final Node value)  {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public NodeIterator getNodes() {
         throw new UnsupportedOperationException();
     }
 

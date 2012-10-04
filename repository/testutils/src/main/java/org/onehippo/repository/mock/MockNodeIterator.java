@@ -17,17 +17,17 @@ package org.onehippo.repository.mock;
 
 import java.util.Collection;
 
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 
-public class MockPropertyIterator extends MockItemIterator<MockProperty> implements PropertyIterator {
+public class MockNodeIterator extends MockItemIterator<MockNode> implements NodeIterator {
 
-    public MockPropertyIterator(Collection<MockProperty> collection) {
+    public MockNodeIterator(Collection<MockNode> collection) {
         super(collection);
     }
 
     @Override
-    public Property nextProperty() {
+    public Node nextNode() {
         return next();
     }
 
