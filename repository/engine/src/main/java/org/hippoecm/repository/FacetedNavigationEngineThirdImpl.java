@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,18 @@
  */
 package org.hippoecm.repository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @deprecated  use {@link FacetedNavigationEngineImpl} instead
  */
 @Deprecated
 public class FacetedNavigationEngineThirdImpl extends FacetedNavigationEngineImpl {
+
+    private static Logger log = LoggerFactory.getLogger(FacetedNavigationEngineThirdImpl.class);
+
+    public FacetedNavigationEngineThirdImpl() {
+        log.warn("You are using a deprecated SearchIndex. Please use " + FacetedNavigationEngine.class.getName() + " instead.");
+    }
 }
