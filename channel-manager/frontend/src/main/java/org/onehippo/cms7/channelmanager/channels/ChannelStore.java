@@ -185,10 +185,6 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private void populateChannelTypeAndRegion(final Channel channel, final JSONObject object) throws JSONException {
         String type = channel.getType();
-        if (StringUtils.isEmpty(type)) {
-            type = DEFAULT_TYPE;
-            channel.setType(DEFAULT_TYPE);
-        }
         object.put("channelType", type);
 
         final Map<String, String> channelFieldValues = getChannelFieldValues(channel);
@@ -430,6 +426,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         List<Channel> channelsList = channelService.getChannels();
         channels = new HashMap<String, Channel>(channelsList.size());
         for (Channel channel : channelsList) {
+            if (StringUtils.isEmpty(channel.getType())) {
+                channel.setType(DEFAULT_TYPE);
+            }
             channels.put(channel.getId(), channel);
         }
     }
