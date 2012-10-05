@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
@@ -31,9 +28,6 @@ import static org.junit.Assert.assertTrue;
 public class SearchOnNodeNameTest extends RepositoryTestCase {
    
     private static final String TEST_PATH = "test";
-    private Node testPath;
-
-    private List<String> names;
 
     @Override
     @Before
@@ -42,17 +36,11 @@ public class SearchOnNodeNameTest extends RepositoryTestCase {
         if (session.getRootNode().hasNode(TEST_PATH)) {
             session.getRootNode().getNode(TEST_PATH).remove();
         }
-        testPath = session.getRootNode().addNode(TEST_PATH);
+        Node testNode = session.getRootNode().addNode(TEST_PATH);
         session.save();
-        names = new ArrayList<String>();
-        names.add("foobarlux");
-        names.add("fooluxbar");
-        names.add("barfoolux");
-        names.add("barluxfoo");
-        names.add("luxbarfoo");
-        names.add("luxfoo bar");
+        String[] names = {"foobarlux", "fooluxbar", "barfoolux", "barluxfoo", "luxbarfoo", "luxfoo bar"};
         for (String name : names) {
-            testPath.addNode(name);
+            testNode.addNode(name);
         }
         session.save();
     }
