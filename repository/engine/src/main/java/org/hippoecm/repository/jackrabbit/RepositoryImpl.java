@@ -16,6 +16,8 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -209,9 +211,28 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         return new HippoWorkspaceInfo(wspConfig);
     }
 
+    // FIXME: need access to jackrabbit's system search manager (protected final)
+    private SearchManager getSystemSearchManager(String wspName)
+            throws RepositoryException {
+        try {
+            Method m = org.apache.jackrabbit.core.RepositoryImpl.class.getDeclaredMethod("getSystemSearchManager",
+                                                                                         String.class);
+            m.setAccessible(true);
+            return (SearchManager) m.invoke(this, wspName);
+        } catch (NoSuchMethodException e) {
+            log.error("Could not get system search manager from jackrabbit; getSystemSearchManager method is gone", e);
+        } catch (InvocationTargetException e) {
+            log.error("Could not get system search manager from jackrabbit; unable to invoke getSystemSearchManager", e);
+        } catch (IllegalAccessException e) {
+            log.error("Could not get system search manager from jackrabbit; not allowed access", e);
+        }
+        return null;
+    }
+
     protected class HippoWorkspaceInfo extends org.apache.jackrabbit.core.RepositoryImpl.WorkspaceInfo {
 
         ReplicationJournalProducer listener;
+        private SearchManager searchMgr;
 
         protected HippoWorkspaceInfo(WorkspaceConfig config) {
             super(config);
@@ -279,7 +300,23 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
         @Override
         protected SearchManager getSearchManager() throws RepositoryException {
-            return super.getSearchManager();
+            if (!isInitialized()) {
+                throw new IllegalStateException("workspace '" + getName()
+                                                        + "' not initialized");
+            }
+
+            synchronized (this) {
+                if (searchMgr == null && getConfig().isSearchEnabled()) {
+                    // search manager is lazily instantiated in order to avoid
+                    // 'chicken & egg' bootstrap problems
+                    searchMgr = new HippoSearchManager(
+                        context, HippoWorkspaceInfo.this.getConfig(), HippoWorkspaceInfo.this.getItemStateProvider(),
+                              HippoWorkspaceInfo.this.getPersistenceManager(), context.getRootNodeId(),
+                              getSystemSearchManager(HippoWorkspaceInfo.this.getName()),
+                              org.apache.jackrabbit.core.RepositoryImpl.SYSTEM_ROOT_NODE_ID);
+                }
+                return searchMgr;
+             }
         }
 
         /**
