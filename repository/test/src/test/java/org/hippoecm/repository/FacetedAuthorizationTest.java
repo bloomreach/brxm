@@ -844,6 +844,18 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testQuerySQL2() throws RepositoryException {
+        QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+        // XPath doesn't like the query from the root
+        Query query = queryManager.createQuery("SELECT * FROM [hippo:ntunstructured]", Query.JCR_SQL2);
+        NodeIterator iter = query.execute().getNodes();
+        assertEquals(10L, iter.getSize());
+
+        // The getTotalSize method is not implemented for QOM-based queries, so it will return -1
+        //assertEquals(12L, ((HippoNodeIterator) iter).getTotalSize());
+    }
+
+    @Test
     public void testQueryWithNodenameFilter() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         testData.getNode("readdoc0").addNode("readable", "hippo:ntunstructured");
