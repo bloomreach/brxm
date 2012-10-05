@@ -56,6 +56,10 @@ public abstract class MockItem implements Item {
         return parent;
     }
 
+    MockNode getMockParent() {
+        return parent;
+    }
+
     @Override
     public String getPath() {
         StringBuilder pathBuilder = new StringBuilder();
@@ -141,8 +145,4 @@ public abstract class MockItem implements Item {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
 }

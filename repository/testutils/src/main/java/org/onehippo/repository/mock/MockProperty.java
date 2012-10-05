@@ -114,6 +114,12 @@ public class MockProperty extends MockItem implements Property {
         return type;
     }
 
+    @Override
+    public void remove() throws RepositoryException {
+        String name = getName();
+        getMockParent().removeProperty(name);
+    }
+
     // REMAINING METHODS ARE NOT IMPLEMENTED
 
     @Override

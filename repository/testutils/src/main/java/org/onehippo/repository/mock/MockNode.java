@@ -91,6 +91,18 @@ public class MockNode extends MockItem implements Node {
         return true;
     }
 
+    void removeProperty(String name) {
+        MockProperty removed = properties.remove(name);
+        if (removed != null) {
+            removed.setParent(null);
+        }
+    }
+
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException();
+    }
+
     @Override
     public boolean hasProperties() {
         return !properties.isEmpty();
