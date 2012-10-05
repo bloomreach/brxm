@@ -421,6 +421,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         if (channelService == null) {
             log.error("Could not get channelservice REST service!");
+            channels = Collections.emptyMap();
+            return;
         }
 
         List<Channel> channelsList = channelService.getChannels();
