@@ -36,6 +36,11 @@ import static org.junit.Assert.assertTrue;
 
 public class MockNodeFactoryTest {
 
+    @Test(expected = IOException.class)
+    public void resourceDoesNotExist() throws RepositoryException, JAXBException, IOException {
+        MockNodeFactory.fromXml("/no/such/resource.xml");
+    }
+
     @Test
     public void emptyNode() throws JAXBException, IOException, RepositoryException {
         MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-empty-node.xml");

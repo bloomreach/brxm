@@ -41,6 +41,9 @@ public class MockNodeFactory {
      */
     public static MockNode fromXml(String resourceName) throws IOException, JAXBException, RepositoryException {
         final InputStream inputStream = MockNodeFactory.class.getResourceAsStream(resourceName);
+        if (inputStream == null) {
+            throw new IOException("Resource not found: '" + resourceName + "'");
+        }
         try {
             XmlNode xmlNode = parseXml(inputStream);
             return createMockNode(xmlNode);
