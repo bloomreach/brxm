@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,21 +15,20 @@
  */
 package org.hippoecm.repository.query.lucene;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
@@ -48,7 +47,6 @@ import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.Parser;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -56,42 +54,22 @@ import org.slf4j.LoggerFactory;
 
 public class ServicingNodeIndexer extends NodeIndexer {
 
-    /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);
 
     /**
-     * Set of exclude nodescope fieldNames
+     * List where the binaries are stored before being actually indexed: when there is a hippo:text binary in the documentBinaries, we
+     * then skip the other binaries indexing: the hippo:text is there as the extracted version of the real binary
      */
-    private Set<String> excludeFieldNamesFromNodeScope;
+    private List<BinaryValue> binaryValues = null;
 
-    /**
-     * boolean indicating all excluded names have been added
-     */
-    private boolean addedAllExcludeFieldNames = false;
+    private String hippoTextPropertyName;
 
-    /**
-     * Set of exclude properties for index single term
-     */
-    private Set<String> excludePropertiesSingleIndexTerm;
-
-    /**
-     * boolean indicating all excluded properties have been added
-     */
-    private boolean addedAllExcludePropertiesSingleIndexTerm = false;
-
-    /**
-     * The indexing configuration or <code>null</code> if none is available.
-     */
-    protected ServicingIndexingConfiguration servicingIndexingConfig;
-    
-    /**
-     * List where the binaries are stored before being actually indexed: when there is a hippo:text binary in the documentBinaries, we 
-     * then skip the other binaries indexing: the hippo:text is there as the extracted version of the real binary 
-     * 
-     */
-    private List<BinaryValue> documentBinaries = null;
+    private BinaryValue hippoTextValue;
 
     private QueryHandlerContext queryHandlerContext;
+
+    protected ServicingIndexingConfiguration servicingIndexingConfig;
+
 
     public ServicingNodeIndexer(NodeState node, QueryHandlerContext context, NamespaceMappings mappings, Parser parser) {
         super(node, context.getItemStateManager(), mappings, context.getExecutor(), parser);
@@ -103,21 +81,63 @@ public class ServicingNodeIndexer extends NodeIndexer {
         this.servicingIndexingConfig = config;
     }
 
-    
     @Override
-    protected void addBinaryValue(Document doc, String fieldName, InternalValue internalValue) {
-        if(documentBinaries == null) {
-            documentBinaries = new ArrayList<BinaryValue>();
+    public Document createDoc() throws RepositoryException {
+        Document doc = super.createDoc();
+
+        addBinaries(doc);
+
+        indexNodeName(doc);
+
+        for (final Name propName : node.getPropertyNames()) {
+            PropertyId id = new PropertyId(node.getNodeId(), propName);
+            if (isHippoPath(propName)) {
+                addHippoPath(doc, id);
+            } else if (isFacet(propName)) {
+                addFacetValues(doc, id, propName);
+            }
         }
-        documentBinaries.add(new BinaryValue(fieldName, internalValue));
+        return doc;
     }
 
-    private class BinaryValue {
-        private Object internalValue;
-        private String fieldName;
-        public BinaryValue(String fieldName, Object internalValue) {
-            this.internalValue = internalValue;
-            this.fieldName = fieldName;
+    private void addFacetValues(final Document doc, final PropertyId id, final Name propName) throws RepositoryException {
+        try {
+            PropertyState propState = (PropertyState) stateProvider.getItemState(id);
+            InternalValue[] values = propState.getValues();
+            for (final InternalValue value : values) {
+                addFacetValue(doc, value, resolver.getJCRName(propName), propName);
+            }
+        } catch (ItemStateException e) {
+            throwRepositoryException(e);
+        }
+    }
+
+    @Override
+    protected void addBinaryValue(Document doc, String fieldName, InternalValue internalValue) {
+        // we override the way binaries are handled in {@link #createDoc}
+        if (hippoTextValue == null) {
+            final BinaryValue binaryValue = new BinaryValue(fieldName, internalValue);
+            if (binaryValue.isHippoTextValue()) {
+                hippoTextValue = binaryValue;
+                binaryValues = null;
+            } else {
+                if(binaryValues == null) {
+                    binaryValues = new ArrayList<BinaryValue>();
+                }
+                binaryValues.add(binaryValue);
+            }
+        }
+    }
+
+    @Override
+    protected void addStringValue(Document doc, String fieldName, String internalValue, boolean tokenized,
+                                  boolean includeInNodeIndex, float boost, boolean useInExcerpt) {
+        if (isExcludedFromNodeScope(fieldName)) {
+            super.addStringValue(doc, fieldName, internalValue, false, false, boost, false);
+        } else if (isExcludedSingleIndexTerm(fieldName)) {
+            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, false);
+        } else {
+            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, useInExcerpt);
         }
     }
 
@@ -127,170 +147,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
             throw new ItemNotFoundException(e);
         }
         super.throwRepositoryException(e);
-    }
-
-    @Override
-    public Document createDoc() throws RepositoryException {
-        // index the jackrabbit way
-        Document doc = super.createDoc();
-        
-        /*
-         * check the documentBinaries list: if it is not null, we still need to index the binaries, as we temporarily store them.
-         * If the documentBinaries list size is bigger than 1, we need to inspect whether there is a hippo:text binary: in that case,
-         * we index only the hippo:text binary, as this is the 'extracted' version of the real binary
-         */  
-        
-        if(this.documentBinaries != null && !documentBinaries.isEmpty()) {
-            try {
-                String hippoTextName = resolver.getJCRName(servicingIndexingConfig.getHippoTextPropertyName());
-                if (documentBinaries.size() > 1) {
-                    boolean hippoTextFieldPresent = false;
-                    // inspect whether there is a hippo:text version
-                    for (BinaryValue binVal : documentBinaries) {
-                        if (hippoTextName.equals(binVal.fieldName)) {
-                            hippoTextFieldPresent = true;
-                        }
-                    }
-                    if (hippoTextFieldPresent) {
-                        log.debug("The '{}' property is present and thus will be used to index this binary.",
-                                HippoNodeType.HIPPO_TEXT);
-                        for (BinaryValue binval : documentBinaries) {
-                            if (hippoTextName.equals(binval.fieldName)) {
-                                try {
-                                    InternalValue type = getValue(NameConstants.JCR_MIMETYPE);
-                                    if (type != null) {
-                                        Metadata metadata = new Metadata();
-                                        metadata.set(Metadata.CONTENT_TYPE, type.getString());
-                                        InternalValue encoding = getValue(NameConstants.JCR_ENCODING);
-                                        if (encoding != null) {
-                                            metadata.set(Metadata.CONTENT_ENCODING, encoding.getString());
-                                        }
-                                        doc.add(createFulltextField((InternalValue)binval.internalValue, metadata));
-                                    }
-                                } catch (ItemStateException e) {
-                                    log.warn("Exception during indexing hippo:text binary property", e);
-                                }
-                            }
-                        }
-                    } else {
-                        for (BinaryValue val : documentBinaries) {
-                            super.addBinaryValue(doc, val.fieldName, (InternalValue) val.internalValue);
-                        }
-                    }
-
-                } else {
-                    BinaryValue binVal = documentBinaries.get(0);
-                    if (hippoTextName.equals(binVal.fieldName)) {
-                        log.debug("The '{}' property is present and thus will be used to index this binary.",
-                                HippoNodeType.HIPPO_TEXT);
-                        try {
-                            InternalValue type = getValue(NameConstants.JCR_MIMETYPE);
-                            if (type != null) {
-                                Metadata metadata = new Metadata();
-                                metadata.set(Metadata.CONTENT_TYPE, type.getString());
-                                InternalValue encoding = getValue(NameConstants.JCR_ENCODING);
-                                if (encoding != null) {
-                                    metadata.set(Metadata.CONTENT_ENCODING, encoding.getString());
-                                }
-                                doc.add(createFulltextField((InternalValue)binVal.internalValue, metadata));
-                            }
-                        } catch (ItemStateException e) {
-                            log.warn("Exception during indexing hippo:text binary property", e);
-                        }
-                    } else {
-                        // fallback to original Jackrabbit binary indexing
-                        super.addBinaryValue(doc, binVal.fieldName, (InternalValue) binVal.internalValue);
-                    }
-                }
-            } catch (NamespaceException e) {
-                // will never happen
-                log.error("Error trying to create lucene internal field for " + HippoNodeType.HIPPO_TEXT + "", e);
-            }
-        }
-        
-        
-        // plus index our facet specifics & hippo extra's 
-        try {
-            if (node.getParentId() != null) { // skip root node
-                NodeState parent = (NodeState) stateProvider.getItemState(node.getParentId());
-                ChildNodeEntry child = parent.getChildNodeEntry(node.getNodeId());
-                if (child == null) {
-                    throw new RepositoryException("Missing child node entry " + "for node with id: " + node.getNodeId());
-                }
-                String nodename = child.getName().getLocalName();
-                if (child.getName().getNamespaceURI() != null && !"".equals(child.getName().getNamespaceURI())) {
-                    String prefix = queryHandlerContext.getNamespaceRegistry().getPrefix(child.getName().getNamespaceURI());
-                    nodename = prefix + ":" + nodename;
-                }
-                // index the nodename to sort on
-                doc.add(new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, nodename, Field.Store.NO,
-                        Field.Index.NO_NORMS, Field.TermVector.NO));
-
-                /**
-                 * index the nodename to search on. We index this as hippo:_localname, a pseudo property which does not really exist but
-                 * only meant to search on
-                 */
-                indexNodeName(doc, child.getName().getLocalName());
-
-            }
-        } catch (ItemStateException e) {
-            throwRepositoryException(e);
-        }
-        
-        Set props = node.getPropertyNames();
-        for (Iterator it = props.iterator(); it.hasNext();) {
-            Name propName = (Name) it.next();
-            PropertyId id = new PropertyId(node.getNodeId(), propName);
-            try {
-                PropertyState propState = (PropertyState) stateProvider.getItemState(id);
-                InternalValue[] values = propState.getValues();
-                if (isHippoPath(propName)) {
-                    indexPath(doc, values, propState.getName());
-                } else if (isFacet(propName)) {
-                    for (int i = 0; i < values.length; i++) {
-                        addFacetValue(doc, values[i], resolver.getJCRName(propState.getName()), propState.getName());
-                    }
-                }
-            } catch (NoSuchItemStateException e) {
-                throwRepositoryException(e);
-            } catch (ItemStateException e) {
-                throwRepositoryException(e);
-            }
-        }
-        return doc;
-    }
-
-    private void indexNodeName(Document doc, String localName) {
-        // simple String
-        String hippo_ns_prefix = null;
-        try {
-            hippo_ns_prefix = this.mappings.getPrefix(this.servicingIndexingConfig.getHippoNamespaceURI());
-        } catch (NamespaceException e) {
-            //log.warn("Cannot get 'hippo' lucene prefix. ", e.getMessage());
-            return;
-        }
-        String fieldName = hippo_ns_prefix + ":" + FieldNames.FULLTEXT_PREFIX + "_localname";
-        Field localNameField;
-        if (supportHighlighting) {
-            localNameField = new Field(fieldName, localName, Field.Store.YES, Field.Index.TOKENIZED,
-                    Field.TermVector.WITH_OFFSETS);
-        } else {
-            localNameField = new Field(fieldName, localName, Field.Store.NO, Field.Index.TOKENIZED,
-                    Field.TermVector.NO);
-        }
-        localNameField.setBoost(5);
-        doc.add(localNameField);
-
-        // also create fulltext index of this value
-        Field localNameFullTextField;
-        if (supportHighlighting) {
-            localNameFullTextField = new Field(FieldNames.FULLTEXT, localName, Field.Store.YES, Field.Index.TOKENIZED,
-                    Field.TermVector.WITH_OFFSETS);
-        } else {
-            localNameFullTextField = new Field(FieldNames.FULLTEXT, localName, Field.Store.NO, Field.Index.TOKENIZED,
-                    Field.TermVector.NO);
-        }
-        doc.add(localNameFullTextField);
     }
 
     // below: When the QName is configured to be a facet, also index like one
@@ -349,63 +205,134 @@ public class ServicingNodeIndexer extends NodeIndexer {
         }
     }
 
-    @Override
-    protected void addStringValue(Document doc, String fieldName, String internalValue, boolean tokenized,
-            boolean includeInNodeIndex, float boost, boolean useInExcerpt) {
-        if (!addedAllExcludeFieldNames) {
-            // init only when not all excluded nodenames have been resolved before
-            synchronized (this) {
-                int excCount = 0;
-                excludeFieldNamesFromNodeScope = new HashSet<String>();
-                for (Name n : servicingIndexingConfig.getExcludedFromNodeScope()) {
-                    try {
-                        excludeFieldNamesFromNodeScope.add(resolver.getJCRName(n));
-                    } catch (NamespaceException e) {
-                        excCount++;
-                        log.debug("Cannot (yet) add name " + n + " to the exlude set from nodescope. Most likely the namespace still has to be registered.",
-                                   e.getMessage());
-                    }
-                }
-                if (excCount == 0) {
-                    addedAllExcludeFieldNames = true;
-                }
-            }
-        }
-        if (!addedAllExcludePropertiesSingleIndexTerm) {
-            // init only when not all excluded properties have been resolved before
-            synchronized (this) {
-                int excCount = 0;
-                excludePropertiesSingleIndexTerm = new HashSet<String>();
-                for (Name n : servicingIndexingConfig.getExcludePropertiesSingleIndexTerm()) {
-                    try {
-                        excludePropertiesSingleIndexTerm.add(resolver.getJCRName(n));
-                    } catch (NamespaceException e) {
-                        excCount++;
-                        log.debug("Cannot (yet) add name "  + n  + " to the exlude set for properties not to index a single term from. Most likely the namespace still has to be registered.",
-                                   e.getMessage());
-                    }
-                }
-                if (excCount == 0) {
-                    addedAllExcludePropertiesSingleIndexTerm = true;
-                }
-            }
-        }
+    private void indexNodeTypeNameFacet(Document doc, String fieldName, Name internalValue) {
+        try {
+            String value = mappings.getPrefix(internalValue.getNamespaceURI()) + ":" + internalValue.getLocalName();
+            doc.add(new Field(fieldName, value, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO));
+        } catch (NamespaceException ignore) {}
+    }
 
-        if (excludeFieldNamesFromNodeScope.contains(fieldName)) {
-            log.debug("Do not nodescope/tokenize fieldName : {}", fieldName);
-            super.addStringValue(doc, fieldName, internalValue, false, false, boost, false);
-        } else if (excludePropertiesSingleIndexTerm.contains(fieldName)) {
-            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, false);
-        } else {
-            super.addStringValue(doc, fieldName, internalValue, tokenized, includeInNodeIndex, boost, useInExcerpt);
+    protected boolean isFacet(Name propertyName) {
+        return servicingIndexingConfig != null && servicingIndexingConfig.isFacet(propertyName);
+    }
+
+    protected boolean isHippoPath(Name propertyName) {
+        return servicingIndexingConfig != null && servicingIndexingConfig.isHippoPath(propertyName);
+    }
+
+    protected NamePathResolver getResolver() {
+        return resolver;
+    }
+
+    private void addBinaries(final Document doc) throws RepositoryException {
+        if (hippoTextValue != null) {
+            addHippoTextValue(doc, hippoTextValue);
+        } else if (binaryValues != null) {
+            for (BinaryValue binaryValue : binaryValues) {
+                super.addBinaryValue(doc, binaryValue.fieldName, binaryValue.internalValue);
+            }
         }
     }
 
+    private void addHippoTextValue(final Document doc, final BinaryValue hippoTextBinaryValue) throws RepositoryException {
+        log.debug("The '{}' property is present and thus will be used to index this binary", HippoNodeType.HIPPO_TEXT);
+        try {
+            final String hippoText = IOUtils.toString(hippoTextBinaryValue.internalValue.getStream());
+            doc.add(createFulltextField(hippoText, supportHighlighting, supportHighlighting));
+        } catch (IOException e) {
+            log.warn("Exception during indexing hippo:text binary property", e);
+        }
+    }
+
+    private String getHippoTextPropertyName() {
+        if (hippoTextPropertyName == null) {
+            if (servicingIndexingConfig == null) {
+                hippoTextPropertyName = HippoNodeType.HIPPO_TEXT;
+            } else {
+                try {
+                    hippoTextPropertyName = resolver.getJCRName(servicingIndexingConfig.getHippoTextPropertyName());
+                } catch (NamespaceException e) {
+                    log.error("Error resolving hippo text property name", e);
+                    hippoTextPropertyName = HippoNodeType.HIPPO_TEXT;
+                }
+            }
+        }
+        return hippoTextPropertyName;
+    }
+
+    private boolean isExcludedFromNodeScope(String fieldName) {
+        return servicingIndexingConfig != null && servicingIndexingConfig.getExcludedFromNodeScope().contains(fieldName);
+    }
+
+    private boolean isExcludedSingleIndexTerm(String fieldName) {
+        return servicingIndexingConfig != null && servicingIndexingConfig.getExcludedSingleIndexTerms().contains(fieldName);
+    }
+
+    private void indexNodeName(Document doc) throws RepositoryException {
+        if (!isRootNode()) {
+            try {
+                NodeState parent = (NodeState) stateProvider.getItemState(node.getParentId());
+                ChildNodeEntry child = parent.getChildNodeEntry(node.getNodeId());
+                if (child == null) {
+                    throw new RepositoryException("Missing child node entry for node with id: " + node.getNodeId());
+                }
+
+                String nodeName = child.getName().getLocalName();
+                String prefix = queryHandlerContext.getNamespaceRegistry().getPrefix(child.getName().getNamespaceURI());
+                if (prefix != null && !prefix.isEmpty()) {
+                    nodeName = prefix + ":" + nodeName;
+                }
+
+                // index the full node name for sorting
+                final Field field = new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, nodeName, Field.Store.NO,
+                        Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
+                doc.add(field);
+
+                // index the local name for searching
+                indexNodeLocalName(doc, child.getName().getLocalName());
+
+            } catch (ItemStateException e) {
+                throwRepositoryException(e);
+            }
+        }
+    }
+
+    private boolean isRootNode() {
+        return node.getParentId() == null;
+    }
+
+    private void indexNodeLocalName(Document doc, final String localName) {
+        String hippoNsPrefix;
+        try {
+            hippoNsPrefix = this.mappings.getPrefix(this.servicingIndexingConfig.getHippoNamespaceURI());
+        } catch (NamespaceException e) {
+            return;
+        }
+        String fieldName = hippoNsPrefix + ":" + FieldNames.FULLTEXT_PREFIX + "_localname";
+
+        Field localNameField;
+        Field localNameFullTextField;
+        if (supportHighlighting) {
+            localNameField = new Field(fieldName, localName, Field.Store.YES, Field.Index.ANALYZED,
+                    Field.TermVector.WITH_OFFSETS);
+            localNameFullTextField = new Field(FieldNames.FULLTEXT, localName, Field.Store.YES, Field.Index.ANALYZED,
+                    Field.TermVector.WITH_OFFSETS);
+        } else {
+            localNameField = new Field(fieldName, localName, Field.Store.NO, Field.Index.ANALYZED,
+                    Field.TermVector.NO);
+            localNameFullTextField = new Field(FieldNames.FULLTEXT, localName, Field.Store.NO, Field.Index.ANALYZED,
+                    Field.TermVector.NO);
+        }
+        localNameField.setBoost(5);
+        doc.add(localNameField);
+        doc.add(localNameFullTextField);
+    }
+
     private void indexFacet(Document doc, String fieldName, String value, Field.TermVector termVector) {
-        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NO_NORMS,
+        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS,
                 Field.TermVector.NO));
         String internalFacetName = ServicingNameFormat.getInternalFacetName(fieldName);
-        doc.add(new Field(internalFacetName, value, Field.Store.NO, Field.Index.NO_NORMS, termVector));
+        doc.add(new Field(internalFacetName, value, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS, termVector));
     }
 
     private void indexFacet(Document doc, String fieldName, String value) {
@@ -413,7 +340,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
     }
 
     private void indexDateFacet(Document doc, String fieldName, Calendar calendar) {
-        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NO_NORMS,
+        doc.add(new Field(ServicingFieldNames.FACET_PROPERTIES_SET, fieldName, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS,
                 Field.TermVector.NO));
         
         Map<String, String> resolutions = new HashMap<String, String>();
@@ -445,7 +372,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         String internalFacetName = ServicingNameFormat.getInternalFacetName(fieldName);
         
         String dateToString = String.valueOf(calendar.getTimeInMillis());
-        doc.add(new Field(internalFacetName, dateToString, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
+        doc.add(new Field(internalFacetName, dateToString, Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO));
 
         for (Entry<String, String> keyValue : resolutions.entrySet()) {
             String compoundFieldName = fieldName + ServicingFieldNames.DATE_RESOLUTION_DELIMITER + keyValue.getKey();
@@ -472,7 +399,6 @@ public class ServicingNodeIndexer extends NodeIndexer {
         for (int i = 1; i <= 3; i++) {
             String ngram = fieldName + ServicingFieldNames.STRING_DELIMITER + i
                     + ServicingFieldNames.STRING_CHAR_POSTFIX;
-            ;
             if (value.length() > i) {
                 indexFacet(doc, ngram, value.substring(0, i).toLowerCase());
             } else {
@@ -489,67 +415,39 @@ public class ServicingNodeIndexer extends NodeIndexer {
         indexFacet(doc, compoundFieldName, DoubleField.doubleToString(value), Field.TermVector.YES);
     }
 
-    protected void indexNodeTypeNameFacet(Document doc, String fieldName, Object internalValue) {
+    private void addHippoPath(Document doc, PropertyId id) throws RepositoryException {
         try {
-            Name qualiName = (Name) internalValue;
-            String normValue = mappings.getPrefix(qualiName.getNamespaceURI()) + ":" + qualiName.getLocalName();
-            doc.add(new Field(fieldName, normValue, Field.Store.NO, Field.Index.NO_NORMS, Field.TermVector.NO));
-        } catch (NamespaceException e) {
-            // will never happen
-        }
-    }
+            PropertyState propState = (PropertyState) stateProvider.getItemState(id);
+            InternalValue[] values = propState.getValues();
 
-    private void indexPath(Document doc, InternalValue[] values, Name name) {
-
-        // index each level of the path for searching
-        for (int i = 0; i < values.length; i++) {
-            InternalValue value = values[i];
-            if (value.getType() == PropertyType.STRING) {
-                doc.add(new Field(ServicingFieldNames.HIPPO_PATH, value.toString(), Field.Store.NO,
-                        Field.Index.NO_NORMS, Field.TermVector.NO));
+            // index each level of the path for searching
+            for (InternalValue value : values) {
+                doc.add(new Field(ServicingFieldNames.HIPPO_PATH, value.getString(), Field.Store.NO,
+                        Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO));
             }
-        }
 
-        // make lexical sorting on depth possible. Max depth = 999;
-        String depth = String.valueOf(values.length);
-        depth = "000".substring(depth.length()).concat(depth);
-        doc.add(new Field(ServicingFieldNames.HIPPO_DEPTH, depth, Field.Store.NO, Field.Index.NO_NORMS,
-                Field.TermVector.NO));
-    }
-
-    /**
-     * Returns <code>true</code> if the property with the given name should be
-     * indexed.
-     *
-     * @param propertyName name of a property.
-     * @return <code>true</code> if the property is a facet;
-     *         <code>false</code> otherwise.
-     */
-    protected boolean isFacet(Name propertyName) {
-        if (servicingIndexingConfig == null) {
-            return false;
-        } else {
-            return servicingIndexingConfig.isFacet(propertyName);
+            // make lexical sorting on depth possible. Max depth = 999;
+            String depth = String.format("%03d", values.length);
+            doc.add(new Field(ServicingFieldNames.HIPPO_DEPTH, depth, Field.Store.NO,
+                    Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO));
+        } catch (ItemStateException e) {
+            throwRepositoryException(e);
         }
     }
 
-    /**
-     * Returns <code>true</code> if the property with the given name should be
-     * indexed as hippo path.
-     *
-     * @param propertyName name of a property.
-     * @return <code>true</code> if the property is a hippo path;
-     *         <code>false</code> otherwise.
-     */
-    protected boolean isHippoPath(Name propertyName) {
-        if (servicingIndexingConfig == null) {
-            return false;
-        } else {
-            return servicingIndexingConfig.isHippoPath(propertyName);
+    private class BinaryValue {
+
+        private InternalValue internalValue;
+        private String fieldName;
+
+        private BinaryValue(String fieldName, InternalValue internalValue) {
+            this.internalValue = internalValue;
+            this.fieldName = fieldName;
+        }
+
+        private boolean isHippoTextValue() {
+            return getHippoTextPropertyName().equals(fieldName);
         }
     }
 
-    protected NamePathResolver getResolver() {
-        return resolver;
-    }
 }

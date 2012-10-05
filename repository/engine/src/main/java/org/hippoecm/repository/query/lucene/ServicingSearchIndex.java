@@ -411,17 +411,17 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      *         hippo:document below a hippo:handle
      */
     private boolean isDocumentVariant(NodeState node) throws ItemStateException {
-        if (this.getIndexingConfig() instanceof ServicingIndexingConfiguration) {
-            ServicingIndexingConfiguration sIndexConfig = (ServicingIndexingConfiguration) this.getIndexingConfig();
-
-            ItemStateManager ism = getContext().getItemStateManager();
+        if (getIndexingConfig() != null) {
 
             if (node.getParentId() == null) {
                 return false;
             }
+
+            ItemStateManager ism = getContext().getItemStateManager();
+
             NodeState parent = (NodeState) ism.getItemState(node.getParentId());
-            if (parent != null && parent.getNodeTypeName().equals(sIndexConfig.getHippoHandleName())
-                    && !node.getNodeTypeName().equals(sIndexConfig.getHippoRequestName())) {
+            if (parent != null && parent.getNodeTypeName().equals(getIndexingConfig().getHippoHandleName())
+                    && !node.getNodeTypeName().equals(getIndexingConfig().getHippoRequestName())) {
                 return true;
             }
 

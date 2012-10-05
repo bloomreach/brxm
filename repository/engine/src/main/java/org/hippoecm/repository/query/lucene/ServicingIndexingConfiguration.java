@@ -76,13 +76,13 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      * Returns the set of all nodescope exluded property names
      *
      */
-    public Set<Name> getExcludedFromNodeScope();
+    Set<String> getExcludedFromNodeScope();
 
     /**
      * Returns the set of all properties which should not be indexed as a single term
      *
      */
-    public Set<Name> getExcludePropertiesSingleIndexTerm();
+    Set<String> getExcludedSingleIndexTerms();
 
     /**
      * Evaluate if the name argument type is of a nodetype which should be aggregates as a child aggregate.
@@ -92,7 +92,7 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
      * @param childType the node type of the child node
      * @return true whether to index all properties in the parent node
      */
-    public boolean isChildAggregate(Name childType);
+    boolean isChildAggregate(Name childType);
 
     /**
      * @return  the hippo namespace URI 
