@@ -16,20 +16,16 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -37,19 +33,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,12 +57,7 @@ import org.slf4j.LoggerFactory;
 @Path("/hst:containeritemcomponent/")
 public class ContainerItemComponentResource extends AbstractConfigResource {
     
-    public static final String DEFAULT_PARAMETER_PREFIX = "default";
-    
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
-    private static final String HST_PARAMETERVALUES = "hst:parametervalues";
-    private static final String HST_PARAMETERNAMES = "hst:parameternames";
-    private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
     private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
 
     @GET
@@ -76,13 +66,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     public ContainerItemComponentRepresentation getParameters(@Context HttpServletRequest servletRequest,
                                           @PathParam("locale") String localeString,
                                           @PathParam("prefix") String prefix) {
-
         try {
-            
-            if (prefix == null || prefix.equals(DEFAULT_PARAMETER_PREFIX)) {
-                prefix = "";
-            }
-            
             HstRequestContext requestContext = getRequestContext(servletRequest);
             Locale locale = null;
             if (localeString != null) {
@@ -120,15 +104,32 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                             @PathParam("prefix") String prefix,
                             MultivaluedMap<String, String> params) {
         try {
-            return doSetParameters(getRequestConfigNode(getRequestContext(servletRequest)), prefix, params);
+            final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+            doSetParameters(containerItem, prefix, params);
+            return ok("Parameters for '" + prefix + "' saved successfully.", null);
         } catch (IllegalStateException e) {
             return error(e.getMessage());
         } catch (IllegalArgumentException e) {
             return error(e.getMessage());
         } catch (RepositoryException e) {
-            log.error("Unable to set the parameters of the component", e);
+            log.error("Unable to set the parameters of component", e);
             throw new WebApplicationException(e);
         }
+    }
+
+    void doSetParameters(Node componentNode, String prefix, MultivaluedMap<String, String> parameters) throws RepositoryException {
+        HstComponentParameters componentParameters = new HstComponentParameters(componentNode);
+        componentParameters.removePrefix(prefix);
+        for (String parameterName : parameters.keySet()) {
+            // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
+            // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
+            // has been replaced by a request header.
+            if(!"FORCE_CLIENT_HOST".equals(parameterName)) {
+                String parameterValue = parameters.getFirst(parameterName);
+                componentParameters.setValue(prefix, parameterName, parameterValue);
+            }
+        }
+        componentParameters.save();
     }
 
    /**
@@ -141,13 +142,19 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/variants") 
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVariants(@Context HttpServletRequest servletRequest) {
+        final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
         try {
-            Set<String> variants = getVariants(getRequestConfigNode(getRequestContext(servletRequest)));
+            Set<String> variants = doGetVariants(containerItem);
             return ok("Available variants: ", variants);
         } catch (RepositoryException e) {
             log.error("Unable to get the parameters of the component", e);
             throw new WebApplicationException(e);
         }
+    }
+
+    static Set<String> doGetVariants(final Node containerItem) throws RepositoryException {
+        HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+        return componentParameters.getPrefixes();
     }
 
     /**
@@ -162,8 +169,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response cleanupVariants(@Context HttpServletRequest servletRequest, String[] variantsToKeep) {
+        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
         try {
-            Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
             Set<String> removedVariants = doCleanupVariants(containerItem, variantsToKeep);
             return ok("Removed variants:", removedVariants);
         } catch (RepositoryException e) {
@@ -182,20 +189,20 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * @throws RepositoryException when some repository exception happened
      */
     private Set<String> doCleanupVariants(final Node containerItem, final String[] variantsToKeep) throws RepositoryException {
-        Set<String> keepVariants = new HashSet<String>();
+        final Set<String> keepVariants = new HashSet<String>();
         keepVariants.addAll(Arrays.asList(variantsToKeep));
-        keepVariants.add(DEFAULT_PARAMETER_PREFIX);
 
-        Set<String> allVariants = getVariants(containerItem);
+        final HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+        final Set<String> removed = new HashSet<String>();
 
-        Set<String> removed = new HashSet<String>();
-
-        for (String variant : allVariants) {
-            if (StringUtils.isNotEmpty(variant) && !keepVariants.contains(variant)) {
-                log.debug("Removing configuration for variant {} of container item {}", variant, containerItem.getIdentifier());
-                doSetParameters(containerItem, variant, null);
+        for (String variant : componentParameters.getPrefixes()) {
+            if (!keepVariants.contains(variant) && componentParameters.removePrefix(variant)) {
+                log.debug("Removed configuration for variant {} of container item {}", variant, containerItem.getIdentifier());
                 removed.add(variant);
             }
+        }
+        if (!removed.isEmpty()) {
+            componentParameters.save();
         }
 
         return removed;
@@ -213,22 +220,22 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * we return {@link AbstractConfigResource#created(String)}
      * </p>
      * @param servletRequest the current servlet request
-     * @param variantid the variant to create
+     * @param variantId the variant to create
      * @return If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created,
      * we return {@link AbstractConfigResource#created(String)}
      */
     @POST
-    @Path("/variant/{variantid}") 
+    @Path("/variant/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createVariant(@Context HttpServletRequest servletRequest, @PathParam("variantid") String variantid) {
+    public Response createVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variantId) {
         Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
         try {
-            Set<String> variants = getVariants(containerItem);
-            if (variants.contains(variantid)) {
-                return conflict("Cannot create variant '"+variantid+"' as the variant exists already");
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+            if (componentParameters.hasPrefix(variantId)) {
+                return conflict("Cannot create variant '" + variantId + "' because it already exists");
             }
-            
-            return doCreateVariant(containerItem, variantid);
+            doCreateVariant(containerItem, componentParameters, variantId);
+            return created("Variant '"+ variantId + "' created successfully");
         } catch (IllegalStateException e) {
             log.warn("Could not create variant ", e);
             return error(e.getMessage());
@@ -240,234 +247,105 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             throw new WebApplicationException(e);
         }
     }
-    
+
     @POST
-    @Path("/variant/delete/{variantid}") 
+    @Path("/variant/rename/{oldVariantId}/{newVariantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteVariant(@Context HttpServletRequest servletRequest, @PathParam("variantid") String variantid) {
+    public Response renameVariant(@Context HttpServletRequest servletRequest, @PathParam("oldVariantId") String oldVariantId, @PathParam("newVariantId") String newVariantId) {
         Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
         try {
-            Set<String> variants = getVariants(containerItem);
-            if (!variants.contains(variantid)) {
-                return conflict("Cannot delete variant '"+variantid+"' because does not exist");
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+            if (!componentParameters.hasPrefix(oldVariantId)) {
+                return conflict("Cannot rename variant '" + oldVariantId + "' because it does not exist");
             }
-            return doDeleteVariant(containerItem, variantid);
+            doRenameVariant(componentParameters, oldVariantId, newVariantId);
+            return ok("Renamed variant '" + oldVariantId + "' to '" + newVariantId + "'");
         } catch (IllegalStateException e) {
-            log.warn("Could not delete variant ", e);
+            log.warn("Could not rename variant '" + oldVariantId + "' to '" + newVariantId + "'", e);
             return error(e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.warn("Could not delete variant ", e);
+            log.warn("Could not rename variant '" + oldVariantId + "' to '" + newVariantId + "'", e);
             return error(e.getMessage());
         } catch (RepositoryException e) {
-            log.error("Unable to create new variant " + e, e);
+            log.error("Could not rename variant '" + oldVariantId + "' to '" + newVariantId + "'", e);
+            throw new WebApplicationException(e);
+        }
+    }
+
+    @POST
+    @Path("/variant/delete/{variantId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variantId) {
+        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+        try {
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+            if (!componentParameters.hasPrefix(variantId)) {
+                return conflict("Cannot delete variant '" + variantId + "' because it does not exist");
+            }
+            doDeleteVariant(componentParameters, variantId);
+            return ok("Variant '" + variantId + "' deleted successfully");
+        } catch (IllegalStateException e) {
+            log.warn("Could not delete variant '" + variantId + "'", e);
+            return error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("Could not delete variant '" + variantId + "'", e);
+            return error(e.getMessage());
+        } catch (RepositoryException e) {
+            log.error("Unable to create new variant '" + variantId + "'", e);
             throw new WebApplicationException(e);
         }
     }
 
     /**
-     * Sets the parameters for some prefix. If the prefix is <code>null</code>, then 'default' prefix is assumed.
-     * 
-     * If <code>params</code> is <code>null</code> it means that the <code>prefix</code> (only if NOT null) will have <b>all</b> its params 
-     * removed
-     * <p>
-     * If the <code>prefix</code> is <code>null</code> or equals to {@link #DEFAULT_PARAMETER_PREFIX}, then only the
-     * parameters that are part of <code>params</code> will be set. Already existing default parameters will be untouched. If the
-     * <code>prefix</code> is not empty, then all existing parameters for the <code>prefix</code> are removed and reset to
-     * <code>params</code>
-     * </p>
-     * @param node the current container item node
-     * @param prefix the variant/prefix to set the parameters for
-     * @param params the params to set, or, if <code>null</code>, indicates that the prefix needs to be removed
-     * @return the ext result of the action
-     * @throws IllegalStateException when the parameters cannot be stored
-     * @throws IllegalArgumentException when the input is invalid
-     * @throws RepositoryException when some repository exception happened
-     */
-    Response doSetParameters(Node node, String prefix, MultivaluedMap<String, String> params)
-            throws IllegalStateException, IllegalArgumentException, RepositoryException {
-        if (prefix == null || prefix.isEmpty()) {
-            if(params == null) {
-                throw new IllegalArgumentException("Not both prefix and params can be null");
-            }
-            prefix = DEFAULT_PARAMETER_PREFIX;
-        }
-        // first fill all the already stored parameters of the jcr Node in hstParameters
-        // the KEY = the prefix, and the value a Map of paramatername/parametervalue entries
-        Map<String, Map<String, String>> hstParameters;
-        try {
-            hstParameters = getHstParameters(node, false);
-        } catch (IllegalStateException e) {
-            return error(e.getMessage());
-        }
-        // now get the map of parameters for the current 'prefix' as those are the ones we will change
-        Map<String, String> prefixedParameters = hstParameters.get(prefix);
-        if (prefixedParameters == null) {
-            prefixedParameters = new HashMap<String, String>();
-            hstParameters.put(prefix, prefixedParameters);
-        }
-        
-        if(params == null) {
-            // remove the prefix if it is not DEFAULT
-            if (DEFAULT_PARAMETER_PREFIX.equals(prefix)) {
-                throw new IllegalArgumentException("Not allowed to remove the 'default' prefix");
-            }
-            hstParameters.remove(prefix);
-        } else {
-            if (!DEFAULT_PARAMETER_PREFIX.equals(prefix)) {
-                // because not default prefix, we first remove the existing parameters
-                prefixedParameters.clear();
-            }
-            // add / replace parameters for which there are values
-            for (String param : params.keySet()) {
-                // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
-                // this check can be removed once in all code, the FORCE_CLIENT_HOST parameter from the queryString
-                // has been replaced by a request header.
-                if(!"FORCE_CLIENT_HOST".equals(param)) {
-                   prefixedParameters.put(param, params.getFirst(param));
-                }
-            }
-        }
-        List<String> prefixes = new ArrayList<String>();
-        List<String> names = new ArrayList<String>();
-        List<String> values = new ArrayList<String>();
-        boolean addPrefixes = false;
-        for (Entry<String, Map<String, String>> e : hstParameters.entrySet()) {
-            String paramPrefix = e.getKey().equals(DEFAULT_PARAMETER_PREFIX) ? "" : e.getKey();
-            for (Entry<String, String> f : e.getValue().entrySet()) {
-                String name = f.getKey();
-                String value = f.getValue();
-                if (!paramPrefix.isEmpty()) {
-                    // only add the HST_PARAMETERNAMEPREFIXES property 
-                    // if there are actually prefixed name/value pairs
-                    addPrefixes = true;
-                }
-                prefixes.add(paramPrefix);
-                names.add(name);
-                values.add(value);
-            } 
-        }
-        if (addPrefixes) {
-            node.setProperty(HST_PARAMETERNAMEPREFIXES, prefixes.toArray(new String[prefixes.size()]));
-        } else if (node.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
-            node.getProperty(HST_PARAMETERNAMEPREFIXES).remove();
-        }
-        if (names.size() == 0) {
-            if (node.hasProperty(HST_PARAMETERNAMES)) {
-                node.getProperty(HST_PARAMETERNAMES).remove();
-            }
-            assert values.size() == 0;
-            if (node.hasProperty(HST_PARAMETERVALUES)) {
-                node.getProperty(HST_PARAMETERVALUES).remove();
-            }
-        } else {
-            node.setProperty(HST_PARAMETERNAMES, names.toArray(new String[names.size()]));
-            node.setProperty(HST_PARAMETERVALUES, values.toArray(new String[values.size()]));
-        }
-
-        node.getSession().save();
-
-        return ok("Properties saved successfully.", null);
-    }
-
-    static Map<String, Map<String, String>> getHstParameters(Node node, boolean defaultParametersOnly) throws RepositoryException, IllegalStateException {
-        Map<String, Map<String, String>> hstParameters = new HashMap<String, Map<String, String>>();
-        if (node.hasProperty(HST_PARAMETERNAMES) && node.hasProperty(HST_PARAMETERVALUES)) {
-            if (node.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
-                Value[] paramPrefixes = node.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
-                Value[] paramNames = node.getProperty(HST_PARAMETERNAMES).getValues();
-                Value[] paramValues = node.getProperty(HST_PARAMETERVALUES).getValues();
-                if (!(paramPrefixes.length == paramNames.length && paramPrefixes.length == paramValues.length)) {
-                    log.warn("Parameter names, values and prefixes are are not all of equal length for '{}'", node.getPath());
-                    throw new IllegalStateException(HST_PARAMETERNAMEPREFIXES + ", " + HST_PARAMETERNAMES + " and " 
-                            + HST_PARAMETERVALUES + " properties do not have the same number of values");
-                    
-                }
-                for (int i = 0; i < paramNames.length; i++) {
-                    String paramPrefix = paramPrefixes[i].getString().isEmpty() ? DEFAULT_PARAMETER_PREFIX : paramPrefixes[i].getString();
-                    if (defaultParametersOnly && !DEFAULT_PARAMETER_PREFIX.equals(paramPrefix)) {
-                        // we are looking only for default parameters: Skip others
-                        continue;
-                    }
-                    Map<String, String> prefixedParameters = hstParameters.get(paramPrefix);
-                    if (prefixedParameters == null) {
-                        prefixedParameters = new HashMap<String, String>();
-                        hstParameters.put(paramPrefix, prefixedParameters);
-                    }
-                    prefixedParameters.put(paramNames[i].getString(), paramValues[i].getString());
-                }
-            } else {
-                Map<String, String> parameters = new HashMap<String, String>();
-                Value[] paramNames = node.getProperty(HST_PARAMETERNAMES).getValues();
-                Value[] paramValues = node.getProperty(HST_PARAMETERVALUES).getValues();
-                if (paramNames.length != paramValues.length) {
-                    log.warn("Parameter names and values are not of equal length for '{}'", node.getPath());
-                    throw new IllegalStateException(HST_PARAMETERNAMES + " and " + HST_PARAMETERVALUES 
-                            + " properties do not have the same number of values");
-                }
-                for (int i = 0; i < paramNames.length; i++) {
-                    parameters.put(paramNames[i].getString(), paramValues[i].getString());
-                }
-                hstParameters.put(DEFAULT_PARAMETER_PREFIX, parameters);
-            }
-        }
-        return hstParameters;
-    }
-    
-    /**
-     * tries to create a new variant for id <code>variantid</code>. The new variant will consists of all the explicitly 
-     * configured 'default' parameters and values <b>MERGED</b> with all default annotated parameters (and their values) that are not explicitly configured as
-     * 'default' parameter. 
+     * Creates a new variant. The new variant will consists of all the explicitly configured 'default' parameters and
+     * values <b>MERGED</b> with all default annotated parameters (and their values) that are not explicitly configured
+     * as 'default' parameter.
+     *
      * @param containerItem the node of the current container item
-     * @param variantid the id of the variant to create
-     * @return {@link AbstractConfigResource#created(String)} when the variant with id <code>variantid</code> could be created
-     * @throws IllegalStateException when the parameters cannot be stored
-     * @throws IllegalArgumentException when the input is invalid
-     * @throws RepositoryException when some repository exception happened
+     * @param componentParameters the component parameters of the current container item
+     * @param variantId the id of the variant to create
+     *
+     * @throws RepositoryException when something went wrong in the repository
      */
-    Response doCreateVariant(Node containerItem, String variantid) throws IllegalStateException, IllegalArgumentException, RepositoryException {
+    void doCreateVariant(Node containerItem, HstComponentParameters componentParameters, String variantId) throws RepositoryException {
         Map<String, String> annotatedParameters = getAnnotatedDefaultValues(containerItem);
-        Map<String, String> configuredDefaultValues = getConfiguredDefaultValues(containerItem);
-        
-        MultivaluedMap<String, String> paramsForNewVariant = new MetadataMap<String, String>();
-        for(String key : annotatedParameters.keySet()) {
-            if (configuredDefaultValues.containsKey(key)) {
-                paramsForNewVariant.add(key, configuredDefaultValues.get(key));
-            } else {
-                paramsForNewVariant.add(key, annotatedParameters.get(key));
-            }
+
+        for(String parameterName : annotatedParameters.keySet()) {
+            String value = componentParameters.hasDefaultParameter(parameterName) ? componentParameters.getDefaultValue(parameterName) : annotatedParameters.get(parameterName);
+            componentParameters.setValue(variantId, parameterName, value);
         }
-        doSetParameters(containerItem, variantid, paramsForNewVariant);
-        return created("Variant '"+variantid+"' created sucessfully");
+        componentParameters.save();
     }
-    
-    Response doDeleteVariant(Node containerItem, String variantid) throws IllegalStateException, IllegalArgumentException, RepositoryException {
-        doSetParameters(containerItem, variantid, null);
-        return ok("Variant '"+variantid+"' deleted succesfully");
-    }
-    
-    
-    static Set<String> getVariants(Node containerItem) throws RepositoryException {
-        Map<String, Map<String, String>> hstParameters = getHstParameters(containerItem, false);
-        return hstParameters.keySet();
-    }
-    
-    
+
     /**
-     * @param node the current container item node
-     * @return the Map<String,String> of all configured parameternames & values, without taking annotated  defaults 
-     * or names into account. If no default configured values are present, an Empty map is returned
-     * @throws IllegalStateException when the parameters cannot be stored
-     * @throws RepositoryException when some repository exception happened
+     * Renames a variant.
+     *
+     * @param componentParameters the component parameters of the current container item
+     * @param oldVariantId the old variant
+     * @param newVariantId the new variant
+     * @throws IllegalArgumentException when either the old or new variant is the 'default' variant.
+     * @throws RepositoryException when something went wrong in the repository
      */
-    static Map<String, String> getConfiguredDefaultValues(Node node) throws IllegalStateException, RepositoryException {
-        Map<String, Map<String, String>> hstParameters = getHstParameters(node, true);
-        Map<String, String> defaultConfiguredParameters = hstParameters.get(DEFAULT_PARAMETER_PREFIX);
-        if (defaultConfiguredParameters == null) {
-            return Collections.emptyMap();
-        }
-        return defaultConfiguredParameters;
+    void doRenameVariant(HstComponentParameters componentParameters, String oldVariantId, String newVariantId) throws IllegalArgumentException, RepositoryException {
+        componentParameters.renamePrefix(oldVariantId, newVariantId);
+        componentParameters.save();
     }
-    
+
+    /**
+     * Deletes all parameters of a variant.
+     *
+     * @param componentParameters the component parameters of the current container item
+     * @param variantId the variant to remove
+     * @throws IllegalArgumentException when the variant is the 'default' variant
+     * @throws RepositoryException
+     */
+    void doDeleteVariant(HstComponentParameters componentParameters, String variantId) throws IllegalArgumentException, RepositoryException {
+        if (!componentParameters.removePrefix(variantId)) {
+            throw new IllegalStateException("Variant '" + variantId + "' could not be removed");
+        }
+        componentParameters.save();
+    }
+
     /**
      * Returns the {@link Map} of annotated parameter name as key and annotated default value as value. Parameters with
      * empty default value are also represented in the returned map.
