@@ -83,7 +83,7 @@
 
   <properties>
     <hippo.commons.version>1.02.00</hippo.commons.version>
-    <hippo.services.version>2</hippo.services.version>
+    <hippo.services.version>3-SNAPSHOT</hippo.services.version>
     <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
 
     <!-- Test dependencies  -->
