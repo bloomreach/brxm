@@ -20,6 +20,7 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -58,9 +59,12 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     protected static final String REQUEST_INFO_SEPARATOR = "|";
 
     protected static final String DEFAULT_HST_URL_NAMESPACE_PREFIX = "_hn:";
+    private static final Pattern PATH_PATTERN = Pattern.compile("/");
+    private static final Pattern QUERY_PATTERN = Pattern.compile("\\?");
+    private static final Pattern HASH_PATTERN = Pattern.compile("#");
 
     protected String urlNamespacePrefix = DEFAULT_HST_URL_NAMESPACE_PREFIX;
-    protected String urlNamespacePrefixedPath = "/" + urlNamespacePrefix;
+    protected String urlNamespacePrefixedPath = '/' + urlNamespacePrefix;
     protected String parameterNameComponentSeparator = ":";
     
     protected HstNavigationalStateCodec navigationalStateCodec;
@@ -80,7 +84,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     
     public void setUrlNamespacePrefix(String urlNamespacePrefix) {
         this.urlNamespacePrefix = urlNamespacePrefix;
-        this.urlNamespacePrefixedPath = "/" + urlNamespacePrefix;
+        this.urlNamespacePrefixedPath = '/' + urlNamespacePrefix;
     }
     
     public String getUrlNamespacePrefix() {
@@ -170,7 +174,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         url.setPortNumber(baseContainerURL.getPortNumber());
         pathInfo = PathUtils.normalizePath(pathInfo);
         if (pathInfo != null) {
-        	pathInfo = "/" + pathInfo;
+        	pathInfo = '/' + pathInfo;
         }
         url.setRequestPath(baseContainerURL.getResolvedMountPath()+pathInfo);
         url.setCharacterEncoding(baseContainerURL.getCharacterEncoding());
@@ -203,17 +207,17 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         // leading / to the pathInfo, because then for the homepage, which has a empty pathInfo before the subPath, we would
         // get a wrong URL like /mountPath/./subPath : It must be /mountPath./subPath instead. Thus, hence this check
         boolean includeLeadingSlash = true;
-        if(pathInfo != null && mount != null && pathInfo.startsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
+        if(pathInfo != null && pathInfo.startsWith(mount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter())) {
             includeLeadingSlash = false;
         }
         
         pathInfo = PathUtils.normalizePath(pathInfo);
         if (pathInfo != null) {
             if(includeLeadingSlash) {
-                pathInfo = "/" + pathInfo;
+                pathInfo = '/' + pathInfo;
             }
             if(includeTrailingSlash) {
-                pathInfo = pathInfo + "/";
+                pathInfo = pathInfo + '/';
             }
         }
 
@@ -226,7 +230,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     }
     
     public HstContainerURL createURL(HstContainerURL baseContainerURL, HstURL hstUrl) {
-        HstContainerURLImpl containerURL = null;
+        HstContainerURLImpl containerURL;
         
         try {
             containerURL = (HstContainerURLImpl) ((HstContainerURLImpl) baseContainerURL).clone();
@@ -354,21 +358,41 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         if(containerURL.getPathInfo().startsWith(pathSuffixDelimiter)) {
             includeSlash = false;
         }
-        String[] unEncodedPaths = containerURL.getPathInfo().split("/");
+        String[] unEncodedPaths = PATH_PATTERN.split(containerURL.getPathInfo());
         for(String path : unEncodedPaths) {
-            if(!"".equals(path)) {
-                if(includeSlash) {
-                    url.append("/");
+            if (!"".equals(path)) {
+                if (includeSlash) {
+                    url.append('/');
                 } else {
                     // apparently due to pathSuffixDelimiter the first / was skipped. From now include it
                     includeSlash = true;
                 }
-                url.append(URLEncoder.encode(path, characterEncoding));
+                // check if we have an anchor link and encode everything behind it, but leave first part as it is:
+                if (path.indexOf('#') != -1) {
+                    String[] hashParts = HASH_PATTERN.split(path);
+                    // check if preceded with query
+                    if (hashParts[0].indexOf('?') != -1) {
+                        String[] parameterParts = QUERY_PATTERN.split(hashParts[0]);
+                        url.append(URLEncoder.encode(parameterParts[0], characterEncoding))
+                                .append('?').append(parameterParts[1])
+                                .append('#').append(URLEncoder.encode(hashParts[1], characterEncoding));
+                    }
+                    else{
+                        url.append(URLEncoder.encode(hashParts[0], characterEncoding)).append('#').append(URLEncoder.encode(hashParts[1], characterEncoding));
+                    }
+                }
+                // check query parameters:
+                else if (path.indexOf('?') != -1) {
+                    String[] parameterParts = QUERY_PATTERN.split(path);
+                    url.append(URLEncoder.encode(parameterParts[0], characterEncoding)).append('?').append(parameterParts[1]);
+                } else {
+                    url.append(URLEncoder.encode(path, characterEncoding));
+                }
             }
         }
         if(pathSuffixDelimiter != null && containerURL.getPathInfo().endsWith(pathSuffixDelimiter) && pathSuffixDelimiter.endsWith("/")) {
             // the trailing slash is removed above, but for ./ we need to append the slash again
-            url.append("/");
+            url.append('/');
         }
         
         boolean firstParamDone = (url.indexOf("?") >= 0);
@@ -382,7 +406,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 for (String value : entry.getValue()) {
                     url.append(firstParamDone ? "&" : "?")
                     .append(name)
-                    .append("=")
+                    .append('=')
                     .append(URLEncoder.encode(value, characterEncoding));
                     
                     firstParamDone = true;
@@ -545,17 +569,17 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             try {
                 containerURL.setResourceWindowReferenceNamespace(null);
                 ((HstContainerURLImpl) containerURL).setPathInfo(resourcePath);
-                ((HstContainerURLImpl) containerURL).setParameters(null);
+                containerURL.setParameters(null);
                 path = buildHstURLPath(containerURL, requestContext);
             } finally {
                 containerURL.setResourceWindowReferenceNamespace(resourceWindowReferenceNamespace);
                 ((HstContainerURLImpl) containerURL).setPathInfo(oldPathInfo);
-                ((HstContainerURLImpl) containerURL).setParameters(oldParamMap);
+                containerURL.setParameters(oldParamMap);
             }
         } else {
             // if there is a matchingIgnoredPrefix on the ResolvedMount, we include it here again after the contextpath
             if(!StringUtils.isEmpty(requestContext.getResolvedMount().getMatchingIgnoredPrefix())) {
-                urlBuilder.append("/").append(requestContext.getResolvedMount().getMatchingIgnoredPrefix());
+                urlBuilder.append('/').append(requestContext.getResolvedMount().getMatchingIgnoredPrefix());
             }
 
             urlBuilder.append(containerURL.getResolvedMountPath());

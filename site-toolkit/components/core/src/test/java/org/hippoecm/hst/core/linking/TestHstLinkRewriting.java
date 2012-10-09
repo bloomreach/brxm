@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.linking;
 
 
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,7 +63,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             this.siteMapMatcher = getComponent(HstSiteMapMatcher.class.getName());
             this.hstURLFactory = getComponent(HstURLFactory.class.getName());
             this.objectConverter = getObjectConverter();
-            this.linkCreator = getComponent(HstLinkCreator.class.getName());;
+            this.linkCreator = getComponent(HstLinkCreator.class.getName());
         }
 
         @Test
@@ -576,7 +577,53 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
              
             }   
         }
-        
+
+    @Test
+    public void testHashCodeLink() throws Exception{
+        // @see: https://issues.onehippo.com/browse/HSTTWO-2167
+        // hash only link:
+        String url = "/home#chapter1";
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        HstLink link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        String result = link.toUrlForm(requestContext, false);
+        assertEquals("/site"+ url, result);
+        // encoding test
+        url = "/ho me#chapter1";
+        link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        result = link.toUrlForm(requestContext, false);
+        assertEquals("/site/ho+me#chapter1", result);
+        // query parameters
+        url = "/home?hint=one&delay=two";
+        link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        result = link.toUrlForm(requestContext, false);
+        assertEquals("/site" + url, result);
+        // query parameters with hash:
+        url = "/home?hint=one&delay=two#chapter1";
+        link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        result = link.toUrlForm(requestContext, false);
+        assertEquals("/site" + url, result);
+        //encoded  query parameters with hash:
+        url = "/ho me?hint=one&delay=two#chapter1";
+        link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        result = link.toUrlForm(requestContext, false);
+        assertEquals("/site/ho+me?hint=one&delay=two#chapter1" , result);
+        // invalid hash/query
+        url = "/home#chapter1?hint=one&delay=two";
+        link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        result = link.toUrlForm(requestContext, false);
+        assertEquals("/site/home#chapter1" + URLEncoder.encode("?hint=one&delay=two", "UTF-8"), result);
+        // invalid hash/query
+        url = "/home?hint=one#chapter1&delay=two";
+        link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        result = link.toUrlForm(requestContext, false);
+        assertEquals("/site/home?hint=one#chapter1" + URLEncoder.encode("&delay=two", "UTF-8"), result);
+        // encoded  url with invalid hash
+        url = "/ho me?hint=one#chapter1&delay=two";
+        link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        result = link.toUrlForm(requestContext, false);
+        assertEquals("/site/ho+me?hint=one#chapter1" + URLEncoder.encode("&delay=two", "UTF-8"), result);
+
+    }
         
         public HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(String hostAndPort, String requestURI) throws Exception {
             return getRequestContextWithResolvedSiteMapItemAndContainerURL(hostAndPort, requestURI, null);

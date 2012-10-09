@@ -102,17 +102,11 @@ public class HstLinkImpl implements HstLink {
 
 
     public String toUrlForm(HstRequestContext requestContext, boolean fullyQualified) {
-        String characterEncoding = requestContext.getBaseURL().getCharacterEncoding();
-        if (characterEncoding == null) {
-            characterEncoding = "UTF-8";
-        }
        
         if(path == null) {
             log.warn("Unable to rewrite link. Return EVAL_PAGE");
             return null;
         }
-        
-        String urlString = null;
 
         Mount requestMount = requestContext.getResolvedMount().getMount();
         
@@ -123,7 +117,8 @@ public class HstLinkImpl implements HstLink {
                 explicitContextPath = mount.onlyForContextPath();
             }
         }
-        
+
+        String urlString;
         if (this.containerResource) {
             HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE , null, requestContext, explicitContextPath);
             hstUrl.setResourceID(path);
@@ -207,7 +202,7 @@ public class HstLinkImpl implements HstLink {
             } else {
                 urlString += "?";
             }
-            urlString += ContainerConstants.RENDERING_HOST + "=" + renderHost;
+            urlString += ContainerConstants.RENDERING_HOST + '=' + renderHost;
         }
         
         return urlString;
