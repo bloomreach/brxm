@@ -21,7 +21,7 @@
     var Main = (function() {
         var subscriptions = {};
         return {
-            die: function(msg) {
+            exception: function(msg) {
                 sendMessage({msg: msg}, "iframeexception");
             },
 

@@ -191,7 +191,7 @@
          * <p>Notes:  on IE8, this action is synchronous.
          */
         postMessage : function(message, origin, target ) {
-            var d, w = target || this.getWindow();
+            var w = target || this.getWindow();
             if (w && !this.disableMessaging) {
                 origin = origin || location.protocol + '\/\/' + location.hostname;
                 message = Ext.isObject(message) || Ext.isArray(message) ? Ext.encode(message) : message;

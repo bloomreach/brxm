@@ -45,23 +45,23 @@
             },
 
             _create : function(data) {
-                var die, c;
-                die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+                var exception, c;
+                exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
                 if (typeof this.registry[data.xtype] === 'undefined') {
-                    die(this.resources['factory-xtype-not-found'].format(data.xtype));
+                    exception(this.resources['factory-xtype-not-found'].format(data.xtype));
                 }
                 console.log('_create xtype:'+data.xtype+', element: '+Hippo.Util.getElementPath(data.element));
                 c = new this.registry[data.xtype](data.id, data.element, this.resources);
                 if (!c instanceof data.base) {
-                    Hippo.ChannelManager.TemplateComposer.IFrame.Main.die(this.resources['factory-inheritance-error'].format(data.id, data.base));
+                    Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception(this.resources['factory-inheritance-error'].format(data.id, data.base));
                 }
                 this.objects[c.id] = c;
                 return c;
             },
 
             _enhance : function(element) {
-                var die, hstContainerMetaData, id, type, base, xtype, url, refNS, inherited, variant;
-                die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+                var exception, hstContainerMetaData, id, type, base, xtype, url, refNS, inherited, variant;
+                exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
 
                 hstContainerMetaData = this.getContainerMetaData(element);
                 if (hstContainerMetaData === null) {
@@ -75,12 +75,12 @@
                 }
 
                 if (typeof hstContainerMetaData === 'undefined' || hstContainerMetaData === null) {
-                    die(this.resources['factory-no-hst-meta-data'].format(Hippo.Util.getElementPath(element)));
+                    exception(this.resources['factory-no-hst-meta-data'].format(Hippo.Util.getElementPath(element)));
                 }
 
                 id = hstContainerMetaData[HST.ATTR.ID];
                 if (typeof id === 'undefined') {
-                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID, Hippo.Util.getElementPath(element)));
+                    exception(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID, Hippo.Util.getElementPath(element)));
                 }
 
                 element.id = id;
@@ -88,7 +88,7 @@
 
                 type = hstContainerMetaData[HST.ATTR.TYPE];
                 if (typeof type === 'undefined') {
-                    die(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE, Hippo.Util.getElementPath(element)));
+                    exception(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE, Hippo.Util.getElementPath(element)));
                 }
                 element.setAttribute(HST.ATTR.TYPE,  type);
 
@@ -159,8 +159,8 @@
             },
 
             getContainerMetaData : function(element) {
-                var die, childNodes, children, i, descendants, j, len, hstMetaData, tmpElement;
-                die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+                var exception, childNodes, children, i, descendants, j, len, hstMetaData, tmpElement;
+                exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
                 if (element.className === HST.CLASS.ITEM) {
                     if (element.tagName == 'TR') {
                         children = element.childNodes;
@@ -184,7 +184,7 @@
                                 return hstMetaData;
                             }
                         } catch (exception) {
-                            die(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, Hippo.Util.getElementPath(element)) + ' ' + exception);
+                            exception(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, Hippo.Util.getElementPath(element)) + ' ' + exception);
                         }
                     }
                 } else if (element.className === HST.CLASS.CONTAINER) {
@@ -197,7 +197,7 @@
                                 return hstMetaData;
                             }
                         } catch (exception) {
-                            die(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + exception);
+                            exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + exception);
                         }
                     }
                 }

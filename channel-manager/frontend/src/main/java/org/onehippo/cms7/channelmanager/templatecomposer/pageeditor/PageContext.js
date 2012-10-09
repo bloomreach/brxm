@@ -298,8 +298,9 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
     },
 
     _buildOverlay : function(frm) {
+        var self;
+        self = this;
         console.log('_buildOverlay');
-        var self = this;
         frm.sendMessage({
             getName : function(id) {
                 var idx, record;

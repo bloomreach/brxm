@@ -35,7 +35,7 @@
         },
 
         createSurfAndEditLinks : function() {
-            var links, query, i, length,  element, hstMetaData, domWalker, hstMetaData, childNode;
+            var self, links, query, i, length,  element, hstMetaData, domWalker, hstMetaData, childNode;
             links = [];
             try {
                 if (!!document.evaluate) {
@@ -78,8 +78,8 @@
         },
 
         _createLink : function(commentElement, hstMetaData) {
-            var die, id, newLink;
-            die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+            var exception, id, newLink;
+            exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
 
             id = hstMetaData[HST.ATTR.ID];
 
@@ -116,8 +116,8 @@
         },
 
         convertToHstMetaData : function(element) {
-            var die, commentJsonObject;
-            die = Hippo.ChannelManager.TemplateComposer.IFrame.Main.die;
+            var exception, commentJsonObject;
+            exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
             if (element.nodeType !== 8) {
                 return null;
             }
@@ -134,8 +134,8 @@
                         && typeof commentJsonObject[HST.ATTR.URL] !== 'undefined') {
                     return commentJsonObject;
                 }
-            } catch(exception) {
-                die(this.resources['factory-error-parsing-hst-data'].format(element.data) +' '+ exception);
+            } catch(e) {
+                exception(this.resources['factory-error-parsing-hst-data'].format(element.data) +' '+ e);
             }
             return null;
         }

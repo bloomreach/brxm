@@ -107,7 +107,7 @@
         retrieve : function(id) {
             var o = Factory.getById.call(Factory, id);
             if (o == null) {
-                Main.die(this.resources['manager-object-not-found'].format(id));
+                Main.exception(this.resources['manager-object-not-found'].format(id));
             }
             return o;
         },

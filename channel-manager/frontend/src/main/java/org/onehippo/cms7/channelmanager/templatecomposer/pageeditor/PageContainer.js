@@ -275,8 +275,8 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
     },
 
     toggleMode: function () {
-        var mountId, hasPreviewHstConfig;
-        var self = this;
+        var self, mountId, hasPreviewHstConfig;
+        self = this;
         this._lock();
 
         this.previewMode = !this.previewMode;
