@@ -46,6 +46,12 @@
       <type>pom</type>
       <scope>test</scope>
       <version>${hippo.repository.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.onehippo.cms7</groupId>
+          <artifactId>hippo-repository-resources</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
