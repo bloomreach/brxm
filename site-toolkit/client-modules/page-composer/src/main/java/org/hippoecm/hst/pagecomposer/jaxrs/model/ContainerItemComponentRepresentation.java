@@ -40,6 +40,7 @@ import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -145,25 +146,8 @@ public class ContainerItemComponentRepresentation {
      */
     public ContainerItemComponentRepresentation represents(Node node, Locale locale, String prefix, String currentMountCanonicalContentPath) throws RepositoryException, ClassNotFoundException {
         properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
-        Map<String, String> hstParameters = null;
-        //Get the parameter names and values from the component node.
-        if (node.hasProperty(HST_PARAMETERNAMES) && node.hasProperty(HST_PARAMETERVALUES)) {
-            hstParameters = new HashMap<String, String>();
-            Value[] paramNames = node.getProperty(HST_PARAMETERNAMES).getValues();
-            Value[] paramValues = node.getProperty(HST_PARAMETERVALUES).getValues();
-            if (node.hasProperty(HST_PARAMETERNAMEPREFIXES)) {
-                Value[] paramPrefixes = node.getProperty(HST_PARAMETERNAMEPREFIXES).getValues();
-                for (int i = 0; i < paramNames.length; i++) {
-                    if (paramPrefixes[i].getString().equals(prefix)) {
-                        hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
-                    }
-                }
-            } else if (prefix == null || prefix.isEmpty()) {
-                for (int i = 0; i < paramNames.length; i++) {
-                    hstParameters.put(paramNames[i].getString(), paramValues[i].getString());
-                }
-            }
-        }
+
+        HstComponentParameters componentParameters = new HstComponentParameters(node);
 
         //Get the properties via annotation on the component class
         String componentClassName = null;
@@ -177,9 +161,9 @@ public class ContainerItemComponentRepresentation {
                 ParametersInfo parametersInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
                 properties = getProperties(parametersInfo, locale, currentMountCanonicalContentPath);
             }
-            if (hstParameters != null) {
+            if (componentParameters.hasPrefix(prefix)) {
                 for (ContainerItemComponentPropertyRepresentation prop : properties) {
-                    String value = hstParameters.get(prop.getName());
+                    String value = componentParameters.getValue(prefix, prop.getName());
                     if (value != null && !value.isEmpty()) {
                         prop.setValue(value);
                     }

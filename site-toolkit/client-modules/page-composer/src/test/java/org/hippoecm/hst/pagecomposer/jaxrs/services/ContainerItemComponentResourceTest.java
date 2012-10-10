@@ -44,26 +44,39 @@ public class ContainerItemComponentResourceTest {
     private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
 
     @Test
-    public void testGetParameters() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
+    public void testGetParametersForEmptyPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
 
         List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "", "").getProperties();
         assertEquals(2, result.size());
-        assertEquals("parameterOne", result.get(0).getName());
-        assertEquals("bar", result.get(0).getValue());
-        assertEquals("", result.get(0).getDefaultValue());
-        assertEquals("parameterTwo", result.get(1).getName());
-        assertEquals("", result.get(1).getValue());
-        assertEquals("test", result.get(1).getDefaultValue());
+        assertNameValueDefault(result.get(0), "parameterOne", "bar", "");
+        assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
+    }
 
-        result = new ContainerItemComponentResource().doGetParameters(node, null, "prefix", "").getProperties();
+    @Test
+    public void testGetParametersForDefaultPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
+        MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
+
+        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "default", "").getProperties();
         assertEquals(2, result.size());
-        assertEquals("parameterOne", result.get(0).getName());
-        assertEquals("baz", result.get(0).getValue());
-        assertEquals("", result.get(0).getDefaultValue());
-        assertEquals("parameterTwo", result.get(1).getName());
-        assertEquals("", result.get(1).getValue());
-        assertEquals("test", result.get(1).getDefaultValue());
+        assertNameValueDefault(result.get(0), "parameterOne", "bar", "");
+        assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
+    }
+
+    @Test
+    public void testGetParametersForPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
+        MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
+
+        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "prefix", "").getProperties();
+        assertEquals(2, result.size());
+        assertNameValueDefault(result.get(0), "parameterOne", "baz", "");
+        assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
+    }
+
+    private static void assertNameValueDefault(ContainerItemComponentPropertyRepresentation property, String name, String value, String defaultValue) {
+        assertEquals("Wrong name", name, property.getName());
+        assertEquals("Wrong value", value, property.getValue());
+        assertEquals("Wrong default value", defaultValue, property.getDefaultValue());
     }
 
     @Test
