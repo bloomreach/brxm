@@ -21,11 +21,15 @@ import javax.swing.tree.TreePath;
 
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.ajax.AbstractDefaultAjaxBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
+import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.Model;
@@ -61,15 +65,17 @@ import org.hippoecm.frontend.plugins.yui.widget.tree.TreeWidgetSettings;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.widgets.JcrTree;
 
+import wicket.contrib.input.events.InputBehavior;
+
 public class BrowserPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
-    protected JcrTree tree;
+    protected final JcrTree tree;
     private TreeWidgetBehavior treeBehavior;
 
-    protected JcrTreeModel treeModel;
-    protected IJcrTreeNode rootNode;
+    protected final JcrTreeModel treeModel;
+    protected final IJcrTreeNode rootNode;
 
     public BrowserPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -85,9 +91,102 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         onModelChanged();
     }
 
-    protected JcrTree newTree(JcrTreeModel treeModel) {
-        JcrTree newTree = new BrowserTree(treeModel);
+    protected JcrTree newTree(final JcrTreeModel treeModel) {
+        final JcrTree newTree = new BrowserTree(treeModel);
         newTree.add(treeBehavior = new TreeWidgetBehavior(new TreeWidgetSettings()));
+
+        newTree.add(JavascriptPackageResource.getHeaderContribution(
+                new CompressedResourceReference(InputBehavior.class, "shortcuts.js")));
+        newTree.add(JavascriptPackageResource.getHeaderContribution(BrowserPlugin.class, "navigation.js"));
+        newTree.add(new AbstractDefaultAjaxBehavior() {
+
+            @Override
+            protected void respond(final AjaxRequestTarget target) {
+                final TreePath treePath = treeModel.lookup((JcrNodeModel) getDefaultModel());
+                final ITreeState treeState = tree.getTreeState();
+
+                TreeNode node = (TreeNode) treePath.getLastPathComponent();
+
+                RequestCycle rc = RequestCycle.get();
+                String key = rc.getRequest().getParameter("key");
+                if ("Up".equals(key)) {
+                    final IJcrTreeNode parent = (IJcrTreeNode) node.getParent();
+                    if (parent != null) {
+                        final int nodeIndex = parent.getIndex(node);
+                        TreeNode newSelection;
+                        if (nodeIndex > 0) {
+                            newSelection = parent.getChildAt(nodeIndex - 1);
+                            while (treeState.isNodeExpanded(newSelection) && (newSelection.getChildCount() > 0)) {
+                                TreeNode candidate = newSelection.getChildAt(newSelection.getChildCount() - 1);
+                                if (candidate.equals(node)) {
+                                    break;
+                                } else {
+                                    newSelection = candidate;
+                                }
+                            }
+                        } else {
+                            newSelection = parent;
+                        }
+
+                        if (newSelection instanceof IJcrTreeNode) {
+                            boolean expanded = treeState.isNodeExpanded(newSelection);
+                            setDefaultModel(((IJcrTreeNode) newSelection).getNodeModel());
+                            if (!expanded) {
+                                treeState.collapseNode(newSelection);
+                            }
+                        } else {
+                            treeState.selectNode(newSelection, true);
+                        }
+                    }
+                } else if ("Down".equals(key)) {
+                    TreeNode newSelection = null;
+                    if (treeState.isNodeExpanded(node) && node.getChildCount() > 0) {
+                        newSelection = node.getChildAt(0);
+                    } else {
+                        do {
+                            final IJcrTreeNode parent = (IJcrTreeNode) node.getParent();
+                            if (parent == null) {
+                                break;
+                            }
+                            final int nodeIndex = parent.getIndex(node);
+                            if (nodeIndex < (parent.getChildCount() - 1)) {
+                                newSelection = parent.getChildAt(nodeIndex + 1);
+                                break;
+                            } else {
+                                node = parent;
+                            }
+                        } while (newSelection == null);
+                    }
+
+                    if (newSelection != null) {
+                        if (newSelection instanceof IJcrTreeNode) {
+                            boolean expanded = treeState.isNodeExpanded(newSelection);
+                            setDefaultModel(((IJcrTreeNode) newSelection).getNodeModel());
+                            if (!expanded) {
+                                treeState.collapseNode(newSelection);
+                            }
+                        } else {
+                            treeState.selectNode(newSelection, true);
+                        }
+                    }
+                } else if ("Left".equals(key)) {
+                    if (treeState.isNodeExpanded(node)) {
+                        treeState.collapseNode(node);
+                    }
+                } else if ("Right".equals(key)) {
+                    if (!treeState.isNodeExpanded(node)) {
+                        treeState.expandNode(node);
+                    }
+                }
+            }
+
+            @Override
+            public void renderHead(final IHeaderResponse response) {
+                super.renderHead(response);
+                response.renderOnLoadJavascript(
+                        "initHippoTree('" + newTree.getMarkupId() + "', '" + getCallbackUrl() + "');");
+            }
+        });
         return newTree;
     }
 
@@ -134,13 +233,14 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         }
 
         @Override
-        protected void populateTreeItem(WebMarkupContainer item, int level){
+        protected void populateTreeItem(WebMarkupContainer item, int level) {
             super.populateTreeItem(item, level);
 
             Object object = item.getDefaultModelObject();
             if (object instanceof IJcrTreeNode) {
                 IJcrTreeNode treeNode = (IJcrTreeNode) object;
-                final WebMarkupContainer menu = createContextMenu("contextMenu", (JcrNodeModel) treeNode.getNodeModel());
+                final WebMarkupContainer menu = createContextMenu("contextMenu",
+                                                                  (JcrNodeModel) treeNode.getNodeModel());
                 item.add(menu);
                 item.add(new RightClickBehavior(menu, item) {
                     private static final long serialVersionUID = 1L;
@@ -180,14 +280,17 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             // add node
             IDialogFactory dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
+
                 public AbstractDialog<Node> createDialog() {
                     return new NodeDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("add-node", new Model<String>("Add node"), dialogFactory, getDialogService()));
+            menuContainer.add(
+                    new DialogLink("add-node", new Model<String>("Add node"), dialogFactory, getDialogService()));
             // add node icon
             Image iconAddNode = new Image("icon-add-node") {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected ResourceReference getImageResourceReference() {
                     return new ResourceReference(BrowserPlugin.class, "add-node.png");
@@ -198,14 +301,17 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             // delete node
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
+
                 public AbstractDialog<Node> createDialog() {
                     return new DeleteDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("delete-node", new Model<String>("Delete node"), dialogFactory, getDialogService()));
+            menuContainer.add(
+                    new DialogLink("delete-node", new Model<String>("Delete node"), dialogFactory, getDialogService()));
             // delete node icon
             Image iconDeleteNode = new Image("icon-delete-node") {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected ResourceReference getImageResourceReference() {
                     return new ResourceReference(BrowserPlugin.class, "delete-node.png");
@@ -216,14 +322,17 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             // copy node
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
+
                 public AbstractDialog<Node> createDialog() {
                     return new CopyDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("copy-node", new Model<String>("Copy node"), dialogFactory, getDialogService()));
+            menuContainer.add(
+                    new DialogLink("copy-node", new Model<String>("Copy node"), dialogFactory, getDialogService()));
             // copy node icon
             Image iconCopyNode = new Image("icon-copy-node") {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected ResourceReference getImageResourceReference() {
                     return new ResourceReference(BrowserPlugin.class, "copy-node.png");
@@ -234,14 +343,17 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             // move node
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
+
                 public AbstractDialog<Node> createDialog() {
                     return new MoveDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("move-node", new Model<String>("Move node"), dialogFactory, getDialogService()));
+            menuContainer.add(
+                    new DialogLink("move-node", new Model<String>("Move node"), dialogFactory, getDialogService()));
             // copy node icon
             Image iconMoveNode = new Image("icon-move-node") {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected ResourceReference getImageResourceReference() {
                     return new ResourceReference(BrowserPlugin.class, "move-node.png");
@@ -252,14 +364,17 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             // rename node
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
+
                 public AbstractDialog<Node> createDialog() {
                     return new RenameDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("rename-node", new Model<String>("Rename node"), dialogFactory, getDialogService()));
+            menuContainer.add(
+                    new DialogLink("rename-node", new Model<String>("Rename node"), dialogFactory, getDialogService()));
             // copy node icon
             Image iconRenameNode = new Image("icon-rename-node") {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected ResourceReference getImageResourceReference() {
                     return new ResourceReference(BrowserPlugin.class, "rename-node.png");
@@ -270,14 +385,17 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             // xml export
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
+
                 public IDialogService.Dialog createDialog() {
                     return new ContentExportDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("xml-export", new Model<String>("XML Export"), dialogFactory, getDialogService()));
+            menuContainer.add(
+                    new DialogLink("xml-export", new Model<String>("XML Export"), dialogFactory, getDialogService()));
             // xml export icon
             Image iconXmlExport = new Image("icon-xml-export") {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected ResourceReference getImageResourceReference() {
                     return new ResourceReference(BrowserPlugin.class, "xml-export.png");
@@ -287,14 +405,17 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             // xml import
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
+
                 public IDialogService.Dialog createDialog() {
                     return new ContentImportDialog(new NodeModelReference(BrowserPlugin.this, model));
                 }
             };
-            menuContainer.add(new DialogLink("xml-import", new Model<String>("XML Import"), dialogFactory, getDialogService()));
+            menuContainer.add(
+                    new DialogLink("xml-import", new Model<String>("XML Import"), dialogFactory, getDialogService()));
             // xml import icon
             Image iconXmlImport = new Image("icon-xml-import") {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected ResourceReference getImageResourceReference() {
                     return new ResourceReference(BrowserPlugin.class, "xml-import.png");
@@ -304,15 +425,19 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             // generate t9ids
             dialogFactory = new IDialogFactory() {
                 private static final long serialVersionUID = 1L;
-                @Override public Dialog createDialog() {
+
+                @Override
+                public Dialog createDialog() {
                     return new T9idsDialog(model);
                 }
 
             };
-            menuContainer.add(new DialogLink("t9ids", new Model<String>("New translation ids"), dialogFactory, getDialogService()));
+            menuContainer.add(new DialogLink("t9ids", new Model<String>("New translation ids"), dialogFactory,
+                                             getDialogService()));
             // generate t9ids icon
             Image iconT9ids = new Image("icon-t9ids") {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected ResourceReference getImageResourceReference() {
                     return new ResourceReference(BrowserPlugin.class, "t9ids.png");
@@ -328,9 +453,11 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     return new RecomputeDialog(model);
                 }
             };
-            menuContainer.add(new DialogLink("recompute", new Model<String>("Recompute derived"), dialogFactory, getDialogService()));
+            menuContainer.add(new DialogLink("recompute", new Model<String>("Recompute derived"), dialogFactory,
+                                             getDialogService()));
             Image iconHippoPaths = new Image("icon-recompute") {
                 private static final long serialVersionUID = 1L;
+
                 @Override
                 protected ResourceReference getImageResourceReference() {
                     return new ResourceReference(BrowserPlugin.class, "t9ids.png");
