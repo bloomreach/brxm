@@ -16,7 +16,6 @@
 
 package org.hippoecm.frontend.plugins.yui.upload.validation;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -59,19 +58,10 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
         validators = new LinkedList<Validator>();
         allowedExtensions = new LinkedList<String>();
 
-        final String[] fileExtensions;
         if (params.containsKey(EXTENSIONS_ALLOWED)) {
-            fileExtensions = params.getStringArray(EXTENSIONS_ALLOWED);
+            setAllowedExtensions(params.getStringArray(EXTENSIONS_ALLOWED));
         } else {
-            fileExtensions = getDefaultExtensionsAllowed();
-        }
-
-        for (String extension : fileExtensions) {
-            int pIndex = extension.indexOf("*.");
-            if (pIndex > -1) {
-                extension = extension.substring(pIndex + 2);
-            }
-            allowedExtensions.add(extension.toLowerCase());
+            setAllowedExtensions(getDefaultExtensionsAllowed());
         }
 
         maxFileSize = Bytes.valueOf(params.getString(MAX_FILE_SIZE, getDefaultMaxFileSize()));
@@ -168,7 +158,14 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
     @Override
     public void setAllowedExtensions(final String[] extensions) {
-        this.allowedExtensions = Arrays.asList(extensions);
+        allowedExtensions.clear();
+        for (String extension : extensions) {
+            int pIndex = extension.indexOf("*.");
+            if (pIndex > -1) {
+                extension = extension.substring(pIndex + 2);
+            }
+            allowedExtensions.add(extension.toLowerCase());
+        }
     }
 
     @Override
