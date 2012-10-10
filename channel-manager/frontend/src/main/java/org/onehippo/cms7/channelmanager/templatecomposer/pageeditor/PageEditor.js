@@ -88,7 +88,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         this.globalVariantsStore = null;
         this.globalVariantsStoreFuture = null;
-        if (typeof(this.variantsUuid) !== 'undefined' && this.variantsUuid !== null) {
+        if (Ext.isDefined(this.variantsUuid)) {
             this.globalVariantsStore = new Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore({
                 composerRestMountUrl: this.composerRestMountUrl,
                 variantsUuid: this.variantsUuid
@@ -584,11 +584,14 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     createPropertiesWindow : function(mountId) {
-        var window1 = new Hippo.ux.window.FloatingWindow({
+        var width, window;
+
+        width = Ext.isDefined(this.variantsUuid) ? 470 : 400;
+        window = new Hippo.ux.window.FloatingWindow({
             id: 'componentPropertiesWindow',
             title: this.resources['properties-window-default-title'],
             x:10, y: 120,
-            width: 400,
+            width: width,
             height: 350,
             layout: 'fit',
             closable: true,
@@ -618,7 +621,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     mountId: mountId,
                     listeners: {
                         cancel: function() {
-                            window1.hide();
+                            window.hide();
                         },
                         variantChange: function(id, variantId) {
                             if (id != null) {
@@ -630,7 +633,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 })
             ]
         });
-        return window1;
+        return window;
     },
 
     showProperties : function(record, variant) {

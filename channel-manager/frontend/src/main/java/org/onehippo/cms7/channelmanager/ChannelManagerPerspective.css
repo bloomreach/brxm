@@ -297,10 +297,6 @@
     margin-bottom: 5px;
 }
 
-.channel-manager .x-slider-horz .x-slider-thumb {
-    background-image: url(images/slider-thumb.png);
-}
-
 .channel-manager .channel-group-handle {
     cursor: pointer;
     padding-left: 20px;
@@ -414,4 +410,9 @@
     position: fixed;
     top: 0;
     left: 0;
+}
+
+.channel-manager .component-properties-editor > .x-panel-bwrap > .x-panel-body > .x-box-inner {
+    overflow-x: hidden;
+    overflow-y: auto;
 }

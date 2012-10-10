@@ -158,7 +158,9 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
 		if (this.border) {
 			this.style = 'border: 1px solid #99BBE8; ' + this.style;
 		}
-		
+        // Render left border of body using a 1-pixel background image with left offset = tabWidth - 1
+        this.style = 'background-position: ' + (this.tabWidth - 1) + 'px 0; ' + this.style;
+
         this.addEvents(
             /**
              * @event beforetabchange

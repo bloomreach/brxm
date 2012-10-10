@@ -7,15 +7,13 @@
 
 /* Left Panel background */
 .x-tot2ivn-vr-tab-panel {
-    background: #cedff5;
+    background: #cedff5 url(vtabs-border-right.png) repeat-y;
     border-color: #99bbe8 !important;
 }
 
 /* Left Panel */
 .x-tot2ivn-vr-tab-panel-header {
     float: left;
-    background: url(vtabs-border-right.png) right repeat-y;
-    height: 5000px;
 }
 
 .x-tot2ivn-vr-tab-panel .x-tot2ivn-vr-tab-strip-spacer {
@@ -34,6 +32,9 @@
 /* Right Body Panel */
 .x-tot2ivn-vr-tab-panel-bwrap {
     background: #fff;
+    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* Menu Items */

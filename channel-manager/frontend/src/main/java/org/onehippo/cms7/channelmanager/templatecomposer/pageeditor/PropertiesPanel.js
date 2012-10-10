@@ -205,6 +205,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                 });
             } else {
                 tabComponent = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
+                    cls: 'component-properties-editor',
                     componentId : this.componentId,
                     variant: this.variants[i],
                     title: this.variants[i].name,
@@ -215,6 +216,12 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                         locale : this.locale,
                         componentId : this.componentId,
                         bubbleEvents: ['cancel'],
+                        margins: {
+                            top: 0,
+                            right: 10,
+                            bottom: 0,
+                            left: 0
+                        },
                         listeners : {
                             'save' : function() {
                                 this._cleanupVariants();
@@ -273,6 +280,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
 });
 
 Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel, {
+
     mountId : null,
     variant : null,
     composerRestMountUrl : null,
