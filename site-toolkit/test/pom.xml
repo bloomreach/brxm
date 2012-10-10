@@ -29,10 +29,6 @@
   <artifactId>hst-test</artifactId>
   <packaging>jar</packaging>
 
-  <properties>
-    <hippo.services.version>3-SNAPSHOT</hippo.services.version>
-  </properties>
-
   <dependencies>
 
     <!-- repository -->
