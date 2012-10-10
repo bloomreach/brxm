@@ -211,24 +211,6 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         return new HippoWorkspaceInfo(wspConfig);
     }
 
-    // FIXME: need access to jackrabbit's system search manager (protected final)
-    private SearchManager getSystemSearchManager(String wspName)
-            throws RepositoryException {
-        try {
-            Method m = org.apache.jackrabbit.core.RepositoryImpl.class.getDeclaredMethod("getSystemSearchManager",
-                                                                                         String.class);
-            m.setAccessible(true);
-            return (SearchManager) m.invoke(this, wspName);
-        } catch (NoSuchMethodException e) {
-            log.error("Could not get system search manager from jackrabbit; getSystemSearchManager method is gone", e);
-        } catch (InvocationTargetException e) {
-            log.error("Could not get system search manager from jackrabbit; unable to invoke getSystemSearchManager", e);
-        } catch (IllegalAccessException e) {
-            log.error("Could not get system search manager from jackrabbit; not allowed access", e);
-        }
-        return null;
-    }
-
     protected class HippoWorkspaceInfo extends org.apache.jackrabbit.core.RepositoryImpl.WorkspaceInfo {
 
         ReplicationJournalProducer listener;
