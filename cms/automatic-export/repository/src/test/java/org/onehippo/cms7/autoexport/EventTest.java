@@ -108,7 +108,9 @@ public class EventTest extends RepositoryTestCase {
         try {
             listener = addListener();
             build(session, add);
+            log.debug("Saving ..");
             session.save();
+            log.debug("Saved");
             Collection<Event> events = listener.getEvents();
             assertEquals(6, events.size());
             assertTrue(events.contains(new ExportEvent(Event.NODE_ADDED, "/test/quux")));
