@@ -74,7 +74,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
     public IJcrTreeNode getChild(String name) throws RepositoryException {
         if (getNodeModel().getObject().hasNode(name)) {
             JcrNodeModel childModel = new JcrNodeModel(getNodeModel().getObject().getNode(name));
-            return new JcrTreeNode(childModel, this);
+            return new JcrTreeNode(childModel, this, comparator);
         }
         return null;
     }
