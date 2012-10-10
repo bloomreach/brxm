@@ -22,6 +22,7 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -62,6 +63,19 @@ public class SaveDialogLink extends DialogLink {
     @Override
     protected void onComponentTag(final ComponentTag tag) {
         super.onComponentTag(tag);
-        tag.put("class", hasSessionChanges() ? "hippo-console-menu-actions-save session-changes" : "hippo-console-menu-actions-save");
+        tag.put("class", getCssClass());
     }
+
+    private String getCssClass() {
+        return hasSessionChanges() ? "hippo-console-menu-actions-save session-changes" : "hippo-console-menu-actions-save";
+    }
+
+
+    // Since the click is executed on the link, redrawing it will confuse browsers.
+    // Instead, use javascript to update the class attribute.
+    public void update(final PluginRequestTarget target) {
+        target.addComponent(link.get("dialog-link-text-extended"));
+        target.appendJavascript("Wicket.$('" + getMarkupId() + "').setAttribute('class', '" + getCssClass() + "');");
+    }
+
 }

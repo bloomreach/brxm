@@ -51,7 +51,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
 
     static final Logger log = LoggerFactory.getLogger(MenuPlugin.class);
 
-    private DialogLink saveDialogLink;
+    private SaveDialogLink saveDialogLink;
     private NodeSortPanel sorter;
 
     public MenuPlugin(IPluginContext context, IPluginConfig config) {
@@ -180,7 +180,7 @@ public class MenuPlugin extends ListViewPlugin<Node> {
     public void render(PluginRequestTarget target) {
         super.render(target);
         if (target != null) {
-            target.addComponent(saveDialogLink);
+            saveDialogLink.update(target);
             if (sorter.isDirty()) {
                 target.addComponent(sorter);
             }
