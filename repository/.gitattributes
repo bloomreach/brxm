@@ -334,6 +334,7 @@ testutils/pom.xml -text
 testutils/src/main/java/org/onehippo/repository/testutils/ExecuteOnLogLevel.java -text
 testutils/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml -text
 testutils/src/main/resources/org/hippoecm/repository/repository.xml -text
+testutils/src/test/java/org/onehippo/repository/mock/MockSessionTest.java -text
 testutils/src/test/java/org/onehippo/repository/testutils/ExecuteOnLogLevelTest.java -text
 upgrade/pom.xml svneol=native#text/plain
 upgrade/src/main/java/org/hippoecm/repository/upgrade/Upgrader12c.java svneol=native#text/plain
