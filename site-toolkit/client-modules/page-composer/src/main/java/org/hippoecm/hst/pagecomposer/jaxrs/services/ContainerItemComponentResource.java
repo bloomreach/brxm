@@ -33,7 +33,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -98,15 +97,16 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
 
     @POST
-    @Path("/parameters/{prefix}")
+    @Path("/parameters/{variant}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setParameters(@Context HttpServletRequest servletRequest,
-                            @PathParam("prefix") String prefix,
+                            @PathParam("variant") String variant,
                             MultivaluedMap<String, String> params) {
         try {
             final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
-            doSetParameters(containerItem, prefix, params);
-            return ok("Parameters for '" + prefix + "' saved successfully.", null);
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+            doSetParameters(componentParameters, variant, params);
+            return ok("Parameters for '" + variant + "' saved successfully.", null);
         } catch (IllegalStateException e) {
             return error(e.getMessage());
         } catch (IllegalArgumentException e) {
@@ -117,8 +117,30 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         }
     }
 
-    void doSetParameters(Node componentNode, String prefix, MultivaluedMap<String, String> parameters) throws RepositoryException {
-        HstComponentParameters componentParameters = new HstComponentParameters(componentNode);
+    @POST
+    @Path("/parameters/{oldVariant}/{newVariant}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response setParametersAndRenameVariant(@Context HttpServletRequest servletRequest,
+                                  @PathParam("oldVariant") String oldVariant,
+                                  @PathParam("newVariant") String newVariant,
+                                  MultivaluedMap<String, String> params) {
+        try {
+            final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+            componentParameters.removePrefix(oldVariant);
+            doSetParameters(componentParameters, newVariant, params);
+            return ok("Parameters renamed from '" + oldVariant + "' to '" + newVariant + "' and saved successfully.", null);
+        } catch (IllegalStateException e) {
+            return error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return error(e.getMessage());
+        } catch (RepositoryException e) {
+            log.error("Unable to set the parameters of component", e);
+            throw new WebApplicationException(e);
+        }
+    }
+
+    void doSetParameters(HstComponentParameters componentParameters, String prefix, MultivaluedMap<String, String> parameters) throws RepositoryException {
         componentParameters.removePrefix(prefix);
         for (String parameterName : parameters.keySet()) {
             // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store

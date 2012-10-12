@@ -90,7 +90,8 @@ public class ContainerItemComponentResourceTest {
         params.add("parameterOne", "bar");
         params.add("someNonAnnotatedParameter", "lux");
 
-        new ContainerItemComponentResource().doSetParameters(node, null, params);
+        HstComponentParameters componentParameters = new HstComponentParameters(node);
+        new ContainerItemComponentResource().doSetParameters(componentParameters, null, params);
 
         assertTrue(node.hasProperty(HST_PARAMETERNAMES));
         assertTrue(node.hasProperty(HST_PARAMETERVALUES));
@@ -123,7 +124,7 @@ public class ContainerItemComponentResourceTest {
         assertTrue(variants.contains("default"));
         assertTrue(variants.contains("newvar"));
 
-        HstComponentParameters componentParameters = new HstComponentParameters(node);
+        componentParameters = new HstComponentParameters(node);
         assertTrue(componentParameters.hasParameter("newvar", "parameterOne"));
         assertEquals("bar", componentParameters.getValue("newvar", "parameterOne"));
         assertTrue(componentParameters.hasParameter("newvar", "parameterTwo"));
