@@ -32,7 +32,7 @@ Hippo.ChannelManager.TemplateComposer.PlainVariantAdder = Ext.extend(Hippo.Chann
                 text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-add-variant'],
                 handler: function() {
                     var variant = comboBox.getValue();
-                    this.addVariant(variant);
+                    this.saveVariant(variant);
                 },
                 scope: this
             }

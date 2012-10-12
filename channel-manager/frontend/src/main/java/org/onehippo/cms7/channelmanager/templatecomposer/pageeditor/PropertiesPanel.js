@@ -186,58 +186,70 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     },
 
     _initTabs : function () {
-        var i, tabComponent;
+        var propertiesEditorCount, i, tabComponent, propertiesForm;
+        propertiesEditorCount = this.variants.length - 1;
         for (i = 0; i < this.variants.length; i++) {
             if ('plus' == this.variants[i].id) {
-                tabComponent = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.VariantAdder', {
-                    composerRestMountUrl : this.composerRestMountUrl,
-                    componentId : this.componentId,
-                    skipVariantIds : Ext.pluck(this.variants, 'id'),
-                    title: this.variants[i].name,
-                    variantsUuid : this.variantsUuid,
-                    listeners : {
-                        save : function (tab, variant) {
+                tabComponent = this._createVariantAdder(this.variants[i]);
+            } else {
+                propertiesForm = new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
+                    variant: this.variants[i],
+                    mountId: this.mountId,
+                    composerRestMountUrl: this.composerRestMountUrl,
+                    locale: this.locale,
+                    componentId: this.componentId,
+                    bubbleEvents: ['cancel'],
+                    margins: {
+                        top: 0,
+                        right: 10,
+                        bottom: 0,
+                        left: 0
+                    },
+                    listeners: {
+                        'save': function() {
                             this._cleanupVariants();
-                            this.load(variant);
                         },
-                        scope : this
+                        'delete': function() {
+                            this._cleanupVariants();
+                            this.load();
+                        },
+                        scope: this
                     }
                 });
-            } else {
-                tabComponent = Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
-                    cls: 'component-properties-editor',
-                    componentId : this.componentId,
-                    variant: this.variants[i],
-                    title: this.variants[i].name,
-                    propertiesForm: new Hippo.ChannelManager.TemplateComposer.PropertiesForm({
-                        variant : this.variants[i],
-                        mountId : this.mountId,
-                        composerRestMountUrl : this.composerRestMountUrl,
-                        locale : this.locale,
-                        componentId : this.componentId,
-                        bubbleEvents: ['cancel'],
-                        margins: {
-                            top: 0,
-                            right: 10,
-                            bottom: 0,
-                            left: 0
-                        },
-                        listeners : {
-                            'save' : function() {
-                                this._cleanupVariants();
-                            },
-                            'delete' : function () {
-                                this._cleanupVariants();
-                                this.load();
-                            },
-                            scope : this
-                        }
-                    })
-                });
+                tabComponent = this._createPropertiesEditor(this.variants[i], propertiesEditorCount, propertiesForm);
             }
             this.relayEvents(tabComponent, ['cancel']);
             this.add(tabComponent);
         }
+    },
+
+    _createVariantAdder: function(variant) {
+        return Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.VariantAdder', {
+            composerRestMountUrl : this.composerRestMountUrl,
+            componentId : this.componentId,
+            skipVariantIds : Ext.pluck(this.variants, 'id'),
+            title: variant.name,
+            variantsUuid : this.variantsUuid,
+            listeners : {
+                'save' : function(tab, variant) {
+                    this._cleanupVariants();
+                    this.load(variant);
+                },
+                'copy': this._copyVariant,
+                scope : this
+            }
+        });
+    },
+
+    _createPropertiesEditor: function(variant, variantCount, propertiesForm) {
+        return Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.PropertiesEditor', {
+            cls: 'component-properties-editor',
+            componentId : this.componentId,
+            variant: variant,
+            variantCount: variantCount,
+            title: variant.name,
+            propertiesForm: propertiesForm
+        });
     },
 
     _hideTabs : function() {
@@ -259,11 +271,40 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         this.setActiveTab(0);
     },
 
+    _copyVariant: function(existingVariant, newVariant) {
+        var existingTab, newPropertiesForm, newTab, newTabIndex;
+
+        existingTab = this._getTab(existingVariant);
+        if (Ext.isDefined(existingTab) && existingTab instanceof Hippo.ChannelManager.TemplateComposer.PropertiesEditor) {
+            newPropertiesForm = existingTab.propertiesForm.copy(newVariant);
+            newTab = this._createPropertiesEditor(newVariant, this.items.length, newPropertiesForm);
+            newTabIndex = this.items.length - 1;
+            this.insert(newTabIndex, newTab);
+            this.setActiveTab(newTabIndex);
+            this.syncSize();
+        } else {
+            console.log("Cannot find tab for variant '" + existingVariant + "', copy to '" + newVariant + "' failed");
+        }
+    },
+
+    _getTab: function(variantId) {
+        var tab;
+
+        this.items.each(function(item) {
+            if (Ext.isDefined(item.variant) && item.variant.id === variantId) {
+                tab = item;
+            }
+        });
+        return tab;
+    },
+
     _cleanupVariants: function() {
-        if (this.globalVariantsStore) {
+        if (this.variants) {
             var variantIds = [];
-            this.globalVariantsStore.each(function(record) {
-                variantIds.push(record.get('id'));
+            Ext.each(this.variants, function(variant) {
+                if (variant.id !== 'default' && variant.id !== 'plus') {
+                    variantIds.push(variant.id);
+                }
             });
             Ext.Ajax.request({
                 method : 'POST',
@@ -283,18 +324,27 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
     mountId : null,
     variant : null,
+    newVariantId : null,
     composerRestMountUrl : null,
     componentId : null,
     locale : null,
 
     constructor : function (config) {
         this.variant = config.variant;
+        this.newVariantId = this.variant.id;
         this.mountId = config.mountId;
         this.composerRestMountUrl = config.composerRestMountUrl;
         this.locale = config.locale;
         this.componentId = config.componentId;
 
         Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, config);
+    },
+
+    copy: function(newVariant) {
+        var copy = new Hippo.ChannelManager.TemplateComposer.PropertiesForm(this.initialConfig);
+        copy.variant = newVariant;
+        copy._loadProperties(this.records);
+        return copy;
     },
 
     initComponent : function () {
@@ -349,6 +399,10 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         this.addEvents('save', 'cancel', 'delete');
     },
 
+    setNewVariant: function(newVariantId) {
+        this.newVariantId = newVariantId;
+    },
+
     _submitForm : function () {
         var uncheckedValues = {};
         this.fireEvent('save');
@@ -366,11 +420,11 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 'FORCE_CLIENT_HOST' : 'true'
             },
             params: uncheckedValues,
-            url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.variant.id + '?FORCE_CLIENT_HOST=true',
+            url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.variant.id + '/' + this.newVariantId + '?FORCE_CLIENT_HOST=true',
             method : 'POST',
             success : function () {
                 Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant.id);
-                Ext.getCmp('componentPropertiesPanel').load(this.variant.id);
+                Ext.getCmp('componentPropertiesPanel').load(this.newVariantId);
             }.bind(this)
         });
     },
@@ -456,7 +510,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         createDocumentWindow.show();
     },
 
-    _loadProperties : function (store, records) {
+    _loadProperties : function(records) {
+        this.records = records;
         var length = records.length, i, record, value, defaultValue;
         if (length == 0) {
             this.add({
@@ -630,8 +685,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.locale + '/' + this.variant.id + '?FORCE_CLIENT_HOST=true'
             });
 
-            componentPropertiesStore.on('load', function () {
-                this._loadProperties.apply(this, arguments);
+            componentPropertiesStore.on('load', function(store, records) {
+                this._loadProperties(records);
                 success();
             }, this);
             componentPropertiesStore.on('exception', function () {
@@ -640,6 +695,14 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             }, this);
             componentPropertiesStore.load();
         }.createDelegate(this));
+    },
+
+    disableSave: function() {
+        this.saveButton.disable();
+    },
+
+    enableSave: function() {
+        this.saveButton.enable();
     }
 
 });

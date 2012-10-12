@@ -55,7 +55,7 @@ Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
         return this.globalVariantsStore;
     },
 
-    addVariant: function(variant) {
+    saveVariant: function(variant) {
         Ext.Ajax.request({
             method : 'POST',
             url : this.composerRestMountUrl + '/' + this.componentId + './variant/' + variant + '?FORCE_CLIENT_HOST=true',
@@ -64,6 +64,10 @@ Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
             },
             scope : this
         });
+    },
+
+    copyVariant: function(existingVariantId, newVariant) {
+        this.fireEvent('copy', existingVariantId, newVariant);
     },
 
     load : function () {

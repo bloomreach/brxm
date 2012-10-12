@@ -148,6 +148,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
     headerAsText : false,
     frame : false,
     hideBorders :true,
+    removingAll: false,
 
     // private
     initComponent : function(){
@@ -487,7 +488,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
         c.un('titlechange', this.onItemTitleChanged, this);
         c.un('iconchange', this.onItemIconChanged, this);
         c.un('beforeshow', this.onBeforeShowItem, this);
-        if (c == this.activeTab) {
+        if (!this.removingAll && c == this.activeTab) {
             next = this.stack.next();
             if (next) {
                 this.setActiveTab(next);
@@ -500,6 +501,12 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
         if (!this.destroying) {
             this.delegateUpdates();
         }
+    },
+
+    removeAll: function() {
+        this.removingAll = true;
+        Ext.ux.tot2ivn.VrTabPanel.superclass.removeAll.call(this, arguments);
+        this.removingAll = false;
     },
 
     // private
