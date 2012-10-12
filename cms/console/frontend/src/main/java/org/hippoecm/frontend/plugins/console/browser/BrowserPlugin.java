@@ -184,7 +184,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             public void renderHead(final IHeaderResponse response) {
                 super.renderHead(response);
                 response.renderOnLoadJavascript(
-                        "initHippoTree('" + newTree.getMarkupId() + "', '" + getCallbackUrl() + "');");
+                        "Hippo.Tree.addShortcuts('" + getCallbackUrl() + "');");
             }
         });
         return newTree;

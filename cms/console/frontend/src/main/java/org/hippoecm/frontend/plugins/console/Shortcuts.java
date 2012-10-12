@@ -51,6 +51,8 @@ public final class Shortcuts {
         HELP_ITEMS.add(new HelpDescription("DELETE MULTIPLE NODES", "Select multiple nodes and delete those", "Ctrl + m"));
         HELP_ITEMS.add(new HelpDescription("OPEN", "Open node by path (rel & abs) or UUID", "Ctrl + o"));
         HELP_ITEMS.add(new HelpDescription("HELP", "Opens help (this) dialog", "Ctrl + h"));
+        HELP_ITEMS.add(new HelpDescription("Up, Down", "Navigate the tree", "Up, Down"));
+        HELP_ITEMS.add(new HelpDescription("Left / Right", "Collapse / expand the tree", "Left / Right"));
     }
 
 }

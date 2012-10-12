@@ -82,7 +82,7 @@
   </modules>
 
   <properties>
-    <hippo.commons.version>1.02.00</hippo.commons.version>
+    <hippo.commons.version>1.02.01-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>3-SNAPSHOT</hippo.services.version>
     <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
 

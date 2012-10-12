@@ -1,13 +1,13 @@
 
-initHippoTree = function(id, callbackUrl) {
+Hippo = Hippo || {};
+Hippo.Tree = Hippo.Tree || {};
+Hippo.Tree.addShortcuts = function(callbackUrl) {
+
     var register = function(key) {
-        shortcut.add(key,function() {
+        shortcut.add(key, function() {
             wicketAjaxGet(callbackUrl+'&key=' + key);
-        },{
-            'disable_in_input': false,
-            'type': 'keydown',
-            'propagate': false,
-            'target': document
+        }, {
+            'disable_in_input': true
         });
     };
     register('Up');
