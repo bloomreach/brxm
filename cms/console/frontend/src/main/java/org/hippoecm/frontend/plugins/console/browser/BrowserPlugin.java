@@ -15,6 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.console.browser;
 
+import java.util.Collection;
+
 import javax.jcr.Node;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
@@ -71,8 +73,10 @@ public class BrowserPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
 
+
     protected final JcrTree tree;
     private TreeWidgetBehavior treeBehavior;
+    private volatile boolean navigating;
 
     protected final JcrTreeModel treeModel;
     protected final IJcrTreeNode rootNode;
@@ -100,82 +104,36 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         newTree.add(JavascriptPackageResource.getHeaderContribution(BrowserPlugin.class, "navigation.js"));
         newTree.add(new AbstractDefaultAjaxBehavior() {
 
+            final TreeNavigator navigator = new TreeNavigator(newTree.getTreeState());
+
             @Override
             protected void respond(final AjaxRequestTarget target) {
-                final TreePath treePath = treeModel.lookup((JcrNodeModel) getDefaultModel());
-                final ITreeState treeState = tree.getTreeState();
-
-                TreeNode node = (TreeNode) treePath.getLastPathComponent();
-
-                RequestCycle rc = RequestCycle.get();
-                String key = rc.getRequest().getParameter("key");
-                if ("Up".equals(key)) {
-                    final IJcrTreeNode parent = (IJcrTreeNode) node.getParent();
-                    if (parent != null) {
-                        final int nodeIndex = parent.getIndex(node);
-                        TreeNode newSelection;
-                        if (nodeIndex > 0) {
-                            newSelection = parent.getChildAt(nodeIndex - 1);
-                            while (treeState.isNodeExpanded(newSelection) && (newSelection.getChildCount() > 0)) {
-                                TreeNode candidate = newSelection.getChildAt(newSelection.getChildCount() - 1);
-                                if (candidate.equals(node)) {
-                                    break;
-                                } else {
-                                    newSelection = candidate;
-                                }
-                            }
-                        } else {
-                            newSelection = parent;
-                        }
-
-                        if (newSelection instanceof IJcrTreeNode) {
-                            boolean expanded = treeState.isNodeExpanded(newSelection);
-                            setDefaultModel(((IJcrTreeNode) newSelection).getNodeModel());
-                            if (!expanded) {
-                                treeState.collapseNode(newSelection);
-                            }
-                        } else {
-                            treeState.selectNode(newSelection, true);
-                        }
+                navigating = true;
+                try {
+                    RequestCycle rc = RequestCycle.get();
+                    String key = rc.getRequest().getParameter("key");
+                    if ("Up".equals(key)) {
+                        navigator.up();
+                        updateModel(target);
+                    } else if ("Down".equals(key)) {
+                        navigator.down();
+                        updateModel(target);
+                    } else if ("Left".equals(key)) {
+                        navigator.left();
+                    } else if ("Right".equals(key)) {
+                        navigator.right();
                     }
-                } else if ("Down".equals(key)) {
-                    TreeNode newSelection = null;
-                    if (treeState.isNodeExpanded(node) && node.getChildCount() > 0) {
-                        newSelection = node.getChildAt(0);
-                    } else {
-                        do {
-                            final IJcrTreeNode parent = (IJcrTreeNode) node.getParent();
-                            if (parent == null) {
-                                break;
-                            }
-                            final int nodeIndex = parent.getIndex(node);
-                            if (nodeIndex < (parent.getChildCount() - 1)) {
-                                newSelection = parent.getChildAt(nodeIndex + 1);
-                                break;
-                            } else {
-                                node = parent;
-                            }
-                        } while (newSelection == null);
-                    }
+                } finally {
+                    navigating = false;
+                }
+            }
 
-                    if (newSelection != null) {
-                        if (newSelection instanceof IJcrTreeNode) {
-                            boolean expanded = treeState.isNodeExpanded(newSelection);
-                            setDefaultModel(((IJcrTreeNode) newSelection).getNodeModel());
-                            if (!expanded) {
-                                treeState.collapseNode(newSelection);
-                            }
-                        } else {
-                            treeState.selectNode(newSelection, true);
-                        }
-                    }
-                } else if ("Left".equals(key)) {
-                    if (treeState.isNodeExpanded(node)) {
-                        treeState.collapseNode(node);
-                    }
-                } else if ("Right".equals(key)) {
-                    if (!treeState.isNodeExpanded(node)) {
-                        treeState.expandNode(node);
+            private void updateModel(final AjaxRequestTarget target) {
+                final Collection<Object> selectedNodes = newTree.getTreeState().getSelectedNodes();
+                if (selectedNodes.size() == 1) {
+                    final Object treeNode = selectedNodes.iterator().next();
+                    if (treeNode instanceof IJcrTreeNode) {
+                        onSelect((IJcrTreeNode) treeNode, target);
                     }
                 }
             }
@@ -183,11 +141,9 @@ public class BrowserPlugin extends RenderPlugin<Node> {
             @Override
             public void renderHead(final IHeaderResponse response) {
                 super.renderHead(response);
-                response.renderOnLoadJavascript(
-                        "Hippo.Tree.addShortcuts('" + getCallbackUrl() + "');");
+                response.renderOnLoadJavascript("Hippo.Tree.addShortcuts('" + getCallbackUrl() + "');");
             }
-        });
-        return newTree;
+        }); return newTree;
     }
 
     protected void onSelect(final IJcrTreeNode treeNodeModel, AjaxRequestTarget target) {
@@ -208,10 +164,12 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         JcrNodeModel model = (JcrNodeModel) getDefaultModel();
         TreePath treePath = treeModel.lookup(model);
         ITreeState treeState = tree.getTreeState();
-        for (Object node : treePath.getPath()) {
-            TreeNode treeNode = (TreeNode) node;
-            if (!treeState.isNodeExpanded(treeNode)) {
-                treeState.expandNode(treeNode);
+        if (!navigating) {
+            for (Object node : treePath.getPath()) {
+                TreeNode treeNode = (TreeNode) node;
+                if (!treeState.isNodeExpanded(treeNode)) {
+                    treeState.expandNode(treeNode);
+                }
             }
         }
         treeState.selectNode(treePath.getLastPathComponent(), true);
