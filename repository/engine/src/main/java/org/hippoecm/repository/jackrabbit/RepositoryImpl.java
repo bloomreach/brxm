@@ -213,7 +213,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     protected class HippoWorkspaceInfo extends org.apache.jackrabbit.core.RepositoryImpl.WorkspaceInfo {
 
-        ReplicationJournalProducer listener;
+        private ReplicationJournalProducer listener;
         private SearchManager searchMgr;
 
         protected HippoWorkspaceInfo(WorkspaceConfig config) {
@@ -299,6 +299,15 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
                 }
                 return searchMgr;
              }
+        }
+
+        @Override
+        protected void doDispose() {
+            super.doDispose();
+            if (searchMgr != null) {
+                searchMgr.close();
+                searchMgr = null;
+            }
         }
 
         /**
