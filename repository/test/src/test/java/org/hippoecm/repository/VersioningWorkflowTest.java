@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository;
 
-import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,15 +22,11 @@ import java.util.Set;
 import java.util.SortedMap;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.api.MappingException;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.VersionWorkflow;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -41,14 +36,8 @@ import static org.junit.Assert.assertNotNull;
 
 public class VersioningWorkflowTest extends RepositoryTestCase {
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp(true);
-    }
-
     @Test
-    public void testSimpleVersioning() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void testSimpleVersioning() throws Exception {
         Node node, root = session.getRootNode();
         node = root.addNode("test", "nt:unstructured");
         node = node.addNode("testdocument", "hippo:handle");
@@ -83,7 +72,7 @@ public class VersioningWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testRestoreToTypeWithAutocreatedChild() throws WorkflowException, MappingException, RepositoryException, RemoteException {
+    public void testRestoreToTypeWithAutocreatedChild() throws Exception {
         Node node, root = session.getRootNode();
         node = root.addNode("test", "nt:unstructured");
         node = node.addNode("testdocument", "hippo:handle");

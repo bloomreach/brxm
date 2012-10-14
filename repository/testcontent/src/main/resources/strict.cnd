@@ -1,0 +1,54 @@
+/*
+ * Copyright 2008 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the  "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+ 
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<strict='http://www.onehippo.org/strict/nt/1.0'>
+
+[strict:basedocument] > hippo:document, hippostdpubwf:document, hippostd:publishableSummary
+
+[strict:address]
+- strict:street (string)
+- strict:number (long)
+
+[strict:article] > strict:basedocument
+- strict:title (string)
+- strict:introduction (string)
++ strict:body (hippostd:html)
+
+[strict:news] > strict:basedocument
+- strict:title (string)
+- strict:introduction (string)
+- strict:date (date)
++ strict:body (hippostd:html)
++ strict:internallink (hippo:mirror)
+
+[strict:event] > strict:basedocument
+- strict:title (string)
+- strict:introduction (string)
++ strict:date (hippostd:date)
++ strict:address (strict:address)
++ strict:body (hippostd:html)
+
+[strict:overview] > strict:basedocument
+- strict:title (string)
+- strict:introduction (string)
++ strict:query (hippo:query)

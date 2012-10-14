@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2007-2012 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,7 +44,6 @@
 
   <modules>
     <module>api</module>
-    <module>testutils</module>
     <module>connector</module>
     <module>provider</module>
     <module>engine</module>
@@ -52,6 +52,8 @@
     <module>utilities</module>
     <module>wfdropbox</module>
     <module>test</module>
+    <module>testutils</module>
+    <module>testcontent</module>
     <module>builtin</module>
     <module>ldap</module>
     <module>config</module>
@@ -174,16 +176,9 @@
         <configuration>
           <forkMode>once</forkMode>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemProperties>
-            <property>
-              <name>org.onehippo.repository.test.keepserver</name>
-              <value>true</value>
-            </property>
-            <!-- property>
-              <name>org.onehippo.repository.test.installfixture</name>
-              <value>true</value>
-            </property -->
-          </systemProperties>
+          <systemPropertyVariables>
+            <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
     </plugins>

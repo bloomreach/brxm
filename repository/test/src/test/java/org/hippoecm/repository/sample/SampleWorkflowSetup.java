@@ -98,11 +98,15 @@ abstract class SampleWorkflowSetup
         Node root = session.getRootNode();
         root.getNode("files").remove();
 
-        root.getNode("hippo:configuration/hippo:workflows").remove();
-        root.addNode("hippo:configuration/hippo:workflows", "hipposys:workflowfolder");
+        Node workflows = root.getNode("hippo:configuration/hippo:workflows");
+        if (workflows.hasNode("mycategory")) {
+            workflows.getNode("mycategory").remove();
+        }
 
-        root.getNode("hippo:configuration/hippo:documents").remove();
-        root.addNode("hippo:configuration/hippo:documents", "hipposys:ocmqueryfolder");
+        final Node documents = root.getNode("hippo:configuration/hippo:documents");
+        if (documents.hasNode("authors")) {
+            documents.getNode("authors").remove();
+        }
         session.save();
         session.logout();
     }

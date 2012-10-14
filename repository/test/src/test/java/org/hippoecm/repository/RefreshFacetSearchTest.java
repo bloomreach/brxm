@@ -41,12 +41,10 @@ public class RefreshFacetSearchTest extends RepositoryTestCase {
         node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getIdentifier());
         node.setProperty(HippoNodeType.HIPPO_FACETS, new String[] { "x" });
         session.save();
-        session.refresh(false);
         session.getRootNode().getNode("test/documents").addNode("dummy");
         //session.getRootNode().getNode("test/documents").addNode("test", "hippo:testdocument");
         //session.getRootNode().getNode("test/navigation/xyz").setProperty(HippoNodeType.HIPPO_QUERYNAME, "blaat");
         session.save();
-        session.refresh(false);
         session.getRootNode().getNode("test/documents").addNode("aap");
         session.save();
         session.getRootNode().getNode("test/navigation").remove();
@@ -64,37 +62,46 @@ public class RefreshFacetSearchTest extends RepositoryTestCase {
         documents.setProperty("x", "xValue");
         documents.setProperty("y", "yValue");
         session.save();
-        session.refresh(false);
 
         Node navigation = test.addNode("navigation", HippoNodeType.NT_FACETSEARCH);
         navigation.setProperty(HippoNodeType.HIPPO_QUERYNAME, "query");
-        navigation.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test").getIdentifier());
+        navigation.setProperty(HippoNodeType.HIPPO_DOCBASE, test.getIdentifier());
         navigation.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{"x"});
         session.save();
-        session.refresh(false);
 
         navigation = test.getNode("navigation");
+        String navigationNodePath = navigation.getPath();
         assertEquals(1, navigation.getProperty(HippoNodeType.HIPPO_COUNT).getLong());
-        session.save();
-        session.refresh(false);
 
         QueryManager queryMgr = session.getWorkspace().getQueryManager();
         Query query = queryMgr.createQuery("select * from " + HippoNodeType.NT_FACETSEARCH, Query.SQL);
         QueryResult result = query.execute();
         NodeIterator nodes = result.getNodes();
-        assertTrue(nodes.hasNext());
-        assertTrue(nodes.nextNode().isSame(navigation));
+        boolean found = false;
+        while (nodes.hasNext()) {
+            if (nodes.nextNode().isSame(navigation)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Faceted navigation node " + navigationNodePath + " was not found", found);
 
-        navigation = test.getNode("navigation");
+
         navigation.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{"y"});
         session.save();
-        session.refresh(false);
 
         queryMgr = session.getWorkspace().getQueryManager();
         query = queryMgr.createQuery("select * from " + HippoNodeType.NT_FACETSEARCH, Query.SQL);
         result = query.execute();
         nodes = result.getNodes();
-        assertTrue(nodes.hasNext());
-        assertTrue(nodes.nextNode().isSame(navigation));
+
+        found = false;
+        while (nodes.hasNext()) {
+            if (nodes.nextNode().isSame(navigation)) {
+                found = true;
+                break;
+            }
+        }
+        assertTrue("Faceted navigation node " + navigationNodePath + " was not found", found);
     }
 }

@@ -43,6 +43,7 @@ connector/tm.out.1
 connector/tm.out.lck
 connector/tmlog.lck
 connector/wdbp-error-log.txt
+/datanucleus.log
 dependencies/*.iml
 dependencies/.project
 dependencies/.settings
@@ -92,6 +93,7 @@ ldap/.classpath
 ldap/.project
 ldap/.settings
 ldap/target
+/log4j.log
 modules/*.iml
 modules/*.tmp
 modules/.classpath
@@ -148,6 +150,7 @@ test/*.tmp
 test/.classpath
 test/.project
 test/.settings
+test/datanucleus.log
 test/derby.log
 test/hippo-repository-test.iml
 test/jpox.log
@@ -165,6 +168,8 @@ test/tmlog.lck
 test/version
 test/wdbp-error-log.txt
 test/workspaces
+testcontent/hippo-repository-testcontent.iml
+testcontent/target
 testutils/*.tmp
 testutils/.classpath
 testutils/.project
@@ -220,3 +225,4 @@ workflow/*.iml
 workflow/*.log
 workflow/src/main/java/org/hippoecm/repository/reviewedactions/.FullReviewedActionsWorkflowImpl.java.swp
 workflow/target
+/workspaces

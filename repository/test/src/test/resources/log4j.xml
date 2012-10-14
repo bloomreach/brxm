@@ -93,6 +93,11 @@
     <appender-ref ref="console"/>
   </category>
 
+  <category additivity="false" name="org.hippoecm.repository.concurrent.AbstractRandomActionTest">
+    <level value="debug"/>
+    <appender-ref ref="console"/>
+  </category>
+
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>
