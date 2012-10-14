@@ -62,15 +62,15 @@ public class HippoSearchManager extends SearchManager {
     }
 
     @Override
-    public QueryObjectModel createQueryObjectModel(final SessionContext sessionContext, final QueryObjectModelTree qomTree, final String langugage, final Node node) throws InvalidQueryException, RepositoryException {
+    public QueryObjectModel createQueryObjectModel(final SessionContext sessionContext, final QueryObjectModelTree qomTree, final String language, final Node node) throws InvalidQueryException, RepositoryException {
         QueryObjectModelImpl qom = new HippoQueryObjectModelImpl();
-        qom.init(sessionContext, getQueryHandler(), qomTree, langugage, node);
+        qom.init(sessionContext, getQueryHandler(), qomTree, language, node);
         return qom;
     }
 
-    private static class AuthorizationContraint extends ConstraintImpl {
+    private static class AuthorizationConstraint extends ConstraintImpl {
 
-        public AuthorizationContraint(final NamePathResolver resolver) {
+        public AuthorizationConstraint(final NamePathResolver resolver) {
             super(resolver);
         }
 
@@ -92,7 +92,7 @@ public class HippoSearchManager extends SearchManager {
 
             QueryEngine engine = new QueryEngine(sessionContext.getSessionImpl(), lqf, variables);
             final ConstraintImpl constraint = (ConstraintImpl) getConstraint();
-            final ConstraintImpl authorization = new AuthorizationContraint(sessionContext);
+            final ConstraintImpl authorization = new AuthorizationConstraint(sessionContext);
             Constraint fullConstraint;
             if (constraint != null) {
                 fullConstraint = new HippoQueryObjectModelFactoryImpl(sessionContext).and(constraint, authorization);
@@ -122,7 +122,7 @@ public class HippoSearchManager extends SearchManager {
 
         @Override
         protected Query create(final Constraint constraint, final Map<String, NodeType> selectorMap, final JackrabbitIndexSearcher searcher) throws RepositoryException, IOException {
-            if (constraint instanceof AuthorizationContraint) {
+            if (constraint instanceof AuthorizationConstraint) {
                 if (sessionImpl instanceof InternalHippoSession) {
                     return ((InternalHippoSession) sessionImpl).getAuthorizationQuery().getQuery();
                 } else {
@@ -141,7 +141,7 @@ public class HippoSearchManager extends SearchManager {
         }
 
         @Override
-        protected QueryObjectModel createQuery(final QueryObjectModelTree qomTree) throws InvalidQueryException, RepositoryException {
+        protected QueryObjectModel createQuery(final QueryObjectModelTree qomTree) throws UnsupportedRepositoryOperationException {
             throw new UnsupportedRepositoryOperationException();
         }
     }
