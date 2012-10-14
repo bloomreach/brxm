@@ -406,6 +406,7 @@ utilities/src/main/java/org/hippoecm/repository/util/JcrUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java -text
 utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/Utilities.java -text
+utilities/src/test/java/org/hippoecm/repository/util/RepoUtilsTest.java -text
 wfdropbox/pom.xml svneol=native#text/plain
 wfdropbox/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 wfdropbox/src/main/resources/wfdropbox.cnd -text

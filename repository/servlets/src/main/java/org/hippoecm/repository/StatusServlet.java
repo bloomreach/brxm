@@ -35,6 +35,8 @@ import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.util.RepoUtils;
+
 public class StatusServlet extends HttpServlet {
 
     public static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
@@ -87,7 +89,7 @@ public class StatusServlet extends HttpServlet {
             }
             if (istream == null) {
                 try {
-                    istream = HippoRepositoryFactory.getManifest(getClass()).openStream();
+                    istream = RepoUtils.getManifestURL(getClass()).openStream();
                     manifestSource = "jar";
                 } catch (FileNotFoundException ex) {
                     manifestSource = "none";

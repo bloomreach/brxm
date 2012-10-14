@@ -32,6 +32,9 @@ public class HippoRepositoryFactory {
     private static String defaultLocation = null; // FIXME: should become: "java:comp/env/jcr/repository";
     private static HippoRepository defaultRepository = null;
 
+    private HippoRepositoryFactory() {
+    }
+
     /**
      * Sets the default location (url) to use when obtaining a repository through subsequent static getHippoRepository()
      * method calls.
@@ -52,9 +55,6 @@ public class HippoRepositoryFactory {
     public static void setDefaultRepository(HippoRepository repository) {
         defaultLocation = null;
         defaultRepository = repository;
-    }
-
-    private HippoRepositoryFactory() {
     }
 
     /**
@@ -209,26 +209,4 @@ public class HippoRepositoryFactory {
         }
     }
 
-    /**
-     * <b>This call is not part of the API.</b><p/>
-     * @param clazz the class object for which to obtain a reference to the manifest
-     * @return the URL of the manifest found, or null if it could not be obtained
-     */
-    public static URL getManifest(Class clazz) {
-        try {
-            StringBuffer sb = new StringBuffer();
-            String[] classElements = clazz.getName().split("\\.");
-            for (int i=0; i<classElements.length-1; i++) {
-                sb.append("../");
-            }
-            sb.append("META-INF/MANIFEST.MF");
-            URL classResource = clazz.getResource(classElements[classElements.length-1]+".class");
-            if (classResource != null) {
-                return new URL(classResource, new String(sb));
-            }
-        } catch (MalformedURLException ex) {
-            // ignore
-        }
-        return null;
-    }
 }

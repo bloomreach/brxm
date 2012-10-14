@@ -16,18 +16,15 @@
 package org.hippoecm.repository.impl;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.jar.Manifest;
 
 import javax.jcr.Credentials;
-import javax.jcr.LoginException;
-import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.decorating.DecoratorFactory;
+import org.hippoecm.repository.util.RepoUtils;
 
 /**
  * Simple {@link Repository Repository} decorator.
@@ -35,50 +32,29 @@ import org.hippoecm.repository.decorating.DecoratorFactory;
 public class RepositoryDecorator extends org.hippoecm.repository.decorating.RepositoryDecorator implements Repository {
 
     private Repository repository;
-    DecoratorFactory factory;
 
     public RepositoryDecorator(DecoratorFactory factory, Repository repository) {
         super(factory, repository);
         this.repository = repository;
-        this.factory = factory;
     }
 
-    /**
-     * Calls <code>login(credentials, null)</code>.
-     *
-     * @return decorated session
-     * @see #login(Credentials, String)
-     */
     @Override
-    public Session login(Credentials credentials) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+    public Session login(Credentials credentials) throws RepositoryException {
         return login(credentials, null);
     }
 
-    /**
-     * Calls <code>login(null, workspaceName)</code>.
-     *
-     * @return decorated session
-     * @see #login(Credentials, String)
-     */
     @Override
-    public Session login(String workspaceName) throws LoginException, NoSuchWorkspaceException, RepositoryException {
+    public Session login(String workspaceName) throws RepositoryException {
         return login(null, workspaceName);
     }
 
-    /**
-     * Calls <code>login(null, null)</code>.
-     *
-     * @return decorated session
-     * @see #login(Credentials, String)
-     */
     @Override
-    public Session login() throws LoginException, NoSuchWorkspaceException, RepositoryException {
+    public Session login() throws RepositoryException {
         return login(null, null);
     }
 
     @Override
-    public Session login(Credentials credentials, String workspaceName) throws LoginException,
-            NoSuchWorkspaceException, RepositoryException {
+    public Session login(Credentials credentials, String workspaceName) throws RepositoryException {
         Session session = repository.login(credentials, workspaceName);
         return DecoratorFactoryImpl.getSessionDecorator(session);
     }
@@ -93,9 +69,8 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
             return "http://www.onehippo.org/";
         } else if(REP_VERSION_DESC.equals(key)) {
             try {
-                InputStream istream = HippoRepositoryFactory.getManifest(getClass()).openStream();
-                if (istream != null) {
-                    Manifest manifest = new Manifest(istream);
+                Manifest manifest = RepoUtils.getManifest(getClass());
+                if (manifest != null) {
                     return manifest.getMainAttributes().getValue("Implementation-Version") + " build " + manifest.getMainAttributes().getValue("Implementation-Build");
                 } else {
                     return null;
