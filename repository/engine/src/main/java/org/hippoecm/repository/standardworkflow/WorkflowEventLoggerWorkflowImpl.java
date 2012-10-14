@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -89,6 +90,10 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
                 final Node node = session.getNode(handlePath);
                 if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                     return node.getIdentifier();
+                }
+            } catch (PathNotFoundException e) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Document handle " + handlePath + " was removed before we could log workflow event");
                 }
             } catch (RepositoryException e) {
                 log.error("Failed to determine uuid of document handle at " + handlePath + " while logging workflow event", e);
