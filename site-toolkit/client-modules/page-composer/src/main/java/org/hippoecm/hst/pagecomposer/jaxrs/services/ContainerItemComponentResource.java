@@ -28,6 +28,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -48,23 +49,108 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent". This is specified using the @Path annotation.
+ * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent".
+ * This is specified using the @Path annotation.
  *
- * @version $Id$
+ * The resources handler operates on variants and their parameters.
  */
-
 @Path("/hst:containeritemcomponent/")
 public class ContainerItemComponentResource extends AbstractConfigResource {
     
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
     private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
 
+    /**
+     * Returns all variants of this container item component. Note that the returned list might contain variants that
+     * are not available any more in the variants store.
+     *
+     * @param servletRequest the current servlet request
+     * @return all the configured unique variants (i.e. parameter prefixes) currently configured for this component
+     */
     @GET
-    @Path("/parameters/{locale}/{prefix}")
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getVariants(@Context HttpServletRequest servletRequest) {
+        final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+        try {
+            Set<String> variants = doGetVariants(containerItem);
+            return ok("Available variants: ", variants);
+        } catch (RepositoryException e) {
+            log.error("Unable to get the parameters of the component", e);
+            throw new WebApplicationException(e);
+        }
+    }
+
+    static Set<String> doGetVariants(final Node containerItem) throws RepositoryException {
+        HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+        return componentParameters.getPrefixes();
+    }
+
+    /**
+     * Retains all given variants. All other variants from this container item are removed.
+     *
+     * @param servletRequest the current servlet request
+     * @param variants the variants to keep
+     * @return the variants that have been removed from this container item
+     */
+    @POST
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response retainVariants(@Context HttpServletRequest servletRequest, String[] variants) {
+        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+        try {
+            Set<String> removedVariants = doRetainVariants(containerItem, variants);
+            return ok("Removed variants:", removedVariants);
+        } catch (RepositoryException e) {
+            log.error("Unable to cleanup the variants of the component", e);
+            throw new WebApplicationException(e);
+        }
+
+    }
+
+    /**
+     * Removes all variants that are not provided.
+     *
+     * @param containerItem the container item node
+     * @param variants the variants to keep
+     * @return a list of variants that have been removed
+     * @throws RepositoryException when some repository exception happened
+     */
+    private Set<String> doRetainVariants(final Node containerItem, final String[] variants) throws RepositoryException {
+        final Set<String> keepVariants = new HashSet<String>();
+        keepVariants.addAll(Arrays.asList(variants));
+
+        final HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+        final Set<String> removed = new HashSet<String>();
+
+        for (String variant : componentParameters.getPrefixes()) {
+            if (!keepVariants.contains(variant) && componentParameters.removePrefix(variant)) {
+                log.debug("Removed configuration for variant {} of container item {}", variant, containerItem.getIdentifier());
+                removed.add(variant);
+            }
+        }
+        if (!removed.isEmpty()) {
+            componentParameters.save();
+        }
+
+        return removed;
+    }
+
+    /**
+     * Returns all parameters of a specific variant. The names of the parameters will be in the given locale.
+     *
+     * @param servletRequest the current servlet request
+     * @param variant the variant
+     * @param localeString the desired locale of the parameter names
+     * @return the values and translated names of the parameters of the given variant.
+     */
+    @GET
+    @Path("/{variant}/{locale}")
     @Produces(MediaType.APPLICATION_JSON)
     public ContainerItemComponentRepresentation getParameters(@Context HttpServletRequest servletRequest,
-                                          @PathParam("locale") String localeString,
-                                          @PathParam("prefix") String prefix) {
+                                                              @PathParam("variant") String variant,
+                                                              @PathParam("locale") String localeString) {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
             Locale locale = null;
@@ -81,7 +167,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 }
             }
             String currentMountCanonicalContentPath = getCurrentMountCanonicalContentPath(servletRequest);
-            return doGetParameters(getRequestConfigNode(requestContext), locale, prefix, currentMountCanonicalContentPath);
+            return doGetParameters(getRequestConfigNode(requestContext), locale, variant, currentMountCanonicalContentPath);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to retrieve parameters.", e);
@@ -96,8 +182,16 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         return new ContainerItemComponentRepresentation().represents(node, locale, prefix, currentMountCanonicalContentPath);
     }
 
+    /**
+     * Saves parameters for the given variant.
+     *
+     * @param servletRequest the current servlet request
+     * @param variant the variant to store parameters for
+     * @param params the parameters to store
+     * @return whether saving the parameters went successfully or not.
+     */
     @POST
-    @Path("/parameters/{variant}")
+    @Path("/{variant}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setParameters(@Context HttpServletRequest servletRequest,
                             @PathParam("variant") String variant,
@@ -117,8 +211,18 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         }
     }
 
+    /**
+     * Saves parameters for the given new variant, and also removes the old variant. This effectively renames the
+     * old variant to the new one.
+     *
+     * @param servletRequest the current servlet request
+     * @param oldVariant the old variant to remove
+     * @param newVariant the new variant to store parameters for
+     * @param params the parameters to store
+     * @return whether saving the parameters went successfully or not.
+     */
     @POST
-    @Path("/parameters/{oldVariant}/{newVariant}")
+    @Path("/{oldVariant}/rename/{newVariant}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response setParametersAndRenameVariant(@Context HttpServletRequest servletRequest,
                                   @PathParam("oldVariant") String oldVariant,
@@ -154,110 +258,34 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         componentParameters.save();
     }
 
-   /**
-    * Note that the variants returned might contain variants that are not available any more in the variants store : Just
-    * all configured variant ids for the current component are returned
-    * @param servletRequest the current servlet request
-    * @return all the configured unique variants (prefixes) currently configured for this component
-    */
-    @GET 
-    @Path("/variants") 
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getVariants(@Context HttpServletRequest servletRequest) {
-        final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
-        try {
-            Set<String> variants = doGetVariants(containerItem);
-            return ok("Available variants: ", variants);
-        } catch (RepositoryException e) {
-            log.error("Unable to get the parameters of the component", e);
-            throw new WebApplicationException(e);
-        }
-    }
-
-    static Set<String> doGetVariants(final Node containerItem) throws RepositoryException {
-        HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
-        return componentParameters.getPrefixes();
-    }
-
-    /**
-     * Removes all variants from this container item that are not provided.
-     *
-     * @param servletRequest the current servlet request
-     * @param variantsToKeep a list of variants to keep for this container item
-     * @return the variants that have been removed from this container item
-     */
-    @POST
-    @Path("/variants")
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response cleanupVariants(@Context HttpServletRequest servletRequest, String[] variantsToKeep) {
-        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
-        try {
-            Set<String> removedVariants = doCleanupVariants(containerItem, variantsToKeep);
-            return ok("Removed variants:", removedVariants);
-        } catch (RepositoryException e) {
-            log.error("Unable to cleanup the variants of the component", e);
-            throw new WebApplicationException(e);
-        }
-
-    }
-
-    /**
-     * Removes all variants that are not provided.
-     *
-     * @param containerItem the container item node
-     * @param variantsToKeep the list of variants to keep
-     * @return a list of variants that have been removed
-     * @throws RepositoryException when some repository exception happened
-     */
-    private Set<String> doCleanupVariants(final Node containerItem, final String[] variantsToKeep) throws RepositoryException {
-        final Set<String> keepVariants = new HashSet<String>();
-        keepVariants.addAll(Arrays.asList(variantsToKeep));
-
-        final HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
-        final Set<String> removed = new HashSet<String>();
-
-        for (String variant : componentParameters.getPrefixes()) {
-            if (!keepVariants.contains(variant) && componentParameters.removePrefix(variant)) {
-                log.debug("Removed configuration for variant {} of container item {}", variant, containerItem.getIdentifier());
-                removed.add(variant);
-            }
-        }
-        if (!removed.isEmpty()) {
-            componentParameters.save();
-        }
-
-        return removed;
-    }
-
     /**
      * <p>
-     * Creates new variant / prefix for <code>variantid</code> with values for the 'default' variant copied. Note that
-     * <b>only</b> the values of 'default' are copied that are actually represented by a {@link Parameter} annotation
-     * in the corresponding hst component {@link ParametersInfo} interface. If the 'default' does not have a parametervalue
-     * configured, then, the default value if present from {@link Parameter} for that parametername is used
+     * Creates new variant with all values from the 'default' variant. Note that <b>only</b> the values of 'default'
+     * variant are copied that are actually represented by a {@link Parameter} annotation
+     * in the corresponding HST component {@link ParametersInfo} interface. If the 'default' does not have a
+     * parametervalue configured, then the default value if present from {@link Parameter} for that parametername is used.
      * </p>
      * <p>
      * If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created,
      * we return {@link AbstractConfigResource#created(String)}
      * </p>
      * @param servletRequest the current servlet request
-     * @param variantId the variant to create
+     * @param variant the variant to create
      * @return If the variant already exists, we return a 409 conflict {@link AbstractConfigResource#conflict(String)}. If created,
      * we return {@link AbstractConfigResource#created(String)}
      */
     @POST
-    @Path("/variant/{variantId}")
+    @Path("/{variant}/default")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variantId) {
+    public Response createVariant(@Context HttpServletRequest servletRequest, @PathParam("variant") String variant) {
         Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
         try {
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
-            if (componentParameters.hasPrefix(variantId)) {
-                return conflict("Cannot create variant '" + variantId + "' because it already exists");
+            if (componentParameters.hasPrefix(variant)) {
+                return conflict("Cannot create variant '" + variant + "' because it already exists");
             }
-            doCreateVariant(containerItem, componentParameters, variantId);
-            return created("Variant '"+ variantId + "' created successfully");
+            doCreateVariant(containerItem, componentParameters, variant);
+            return created("Variant '" + variant + "' created successfully");
         } catch (IllegalStateException e) {
             log.warn("Could not create variant ", e);
             return error(e.getMessage());
@@ -266,54 +294,6 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             return error(e.getMessage());
         } catch (RepositoryException e) {
             log.error("Unable to create new variant " + e, e);
-            throw new WebApplicationException(e);
-        }
-    }
-
-    @POST
-    @Path("/variant/rename/{oldVariantId}/{newVariantId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response renameVariant(@Context HttpServletRequest servletRequest, @PathParam("oldVariantId") String oldVariantId, @PathParam("newVariantId") String newVariantId) {
-        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
-        try {
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
-            if (!componentParameters.hasPrefix(oldVariantId)) {
-                return conflict("Cannot rename variant '" + oldVariantId + "' because it does not exist");
-            }
-            doRenameVariant(componentParameters, oldVariantId, newVariantId);
-            return ok("Renamed variant '" + oldVariantId + "' to '" + newVariantId + "'");
-        } catch (IllegalStateException e) {
-            log.warn("Could not rename variant '" + oldVariantId + "' to '" + newVariantId + "'", e);
-            return error(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.warn("Could not rename variant '" + oldVariantId + "' to '" + newVariantId + "'", e);
-            return error(e.getMessage());
-        } catch (RepositoryException e) {
-            log.error("Could not rename variant '" + oldVariantId + "' to '" + newVariantId + "'", e);
-            throw new WebApplicationException(e);
-        }
-    }
-
-    @POST
-    @Path("/variant/delete/{variantId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variantId) {
-        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
-        try {
-            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
-            if (!componentParameters.hasPrefix(variantId)) {
-                return conflict("Cannot delete variant '" + variantId + "' because it does not exist");
-            }
-            doDeleteVariant(componentParameters, variantId);
-            return ok("Variant '" + variantId + "' deleted successfully");
-        } catch (IllegalStateException e) {
-            log.warn("Could not delete variant '" + variantId + "'", e);
-            return error(e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.warn("Could not delete variant '" + variantId + "'", e);
-            return error(e.getMessage());
-        } catch (RepositoryException e) {
-            log.error("Unable to create new variant '" + variantId + "'", e);
             throw new WebApplicationException(e);
         }
     }
@@ -339,18 +319,28 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         componentParameters.save();
     }
 
-    /**
-     * Renames a variant.
-     *
-     * @param componentParameters the component parameters of the current container item
-     * @param oldVariantId the old variant
-     * @param newVariantId the new variant
-     * @throws IllegalArgumentException when either the old or new variant is the 'default' variant.
-     * @throws RepositoryException when something went wrong in the repository
-     */
-    void doRenameVariant(HstComponentParameters componentParameters, String oldVariantId, String newVariantId) throws IllegalArgumentException, RepositoryException {
-        componentParameters.renamePrefix(oldVariantId, newVariantId);
-        componentParameters.save();
+    @DELETE
+    @Path("/{variant}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteVariant(@Context HttpServletRequest servletRequest, @PathParam("variant") String variant) {
+        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+        try {
+            HstComponentParameters componentParameters = new HstComponentParameters(containerItem);
+            if (!componentParameters.hasPrefix(variant)) {
+                return conflict("Cannot delete variant '" + variant + "' because it does not exist");
+            }
+            doDeleteVariant(componentParameters, variant);
+            return ok("Variant '" + variant + "' deleted successfully");
+        } catch (IllegalStateException e) {
+            log.warn("Could not delete variant '" + variant + "'", e);
+            return error(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("Could not delete variant '" + variant + "'", e);
+            return error(e.getMessage());
+        } catch (RepositoryException e) {
+            log.error("Unable to create new variant '" + variant + "'", e);
+            throw new WebApplicationException(e);
+        }
     }
 
     /**
