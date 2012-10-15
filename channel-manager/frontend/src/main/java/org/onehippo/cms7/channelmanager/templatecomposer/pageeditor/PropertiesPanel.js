@@ -126,7 +126,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         return new Hippo.Future(function (success, fail) {
             if (this.componentId) {
                 Ext.Ajax.request({
-                    url : this.composerRestMountUrl + '/' + this.componentId + './variants/?FORCE_CLIENT_HOST=true',
+                    url : this.composerRestMountUrl + '/' + this.componentId + './?FORCE_CLIENT_HOST=true',
                     success : function (result) {
                         var jsonData = Ext.util.JSON.decode(result.responseText);
                         this._loadComponentVariants(jsonData.data).when(function() {
@@ -308,7 +308,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
             });
             Ext.Ajax.request({
                 method : 'POST',
-                url : this.composerRestMountUrl + '/' + this.componentId + './variants' + '?FORCE_CLIENT_HOST=true',
+                url : this.composerRestMountUrl + '/' + this.componentId + './' + '?FORCE_CLIENT_HOST=true',
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -354,8 +354,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 text : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-delete'],
                 handler : function () {
                     Ext.Ajax.request({
-                        method : 'POST',
-                        url : this.composerRestMountUrl + '/' + this.componentId + './variant/delete/' + this.variant.id + '?FORCE_CLIENT_HOST=true',
+                        method : 'DELETE',
+                        url : this.composerRestMountUrl + '/' + this.componentId + './' + this.variant.id + '?FORCE_CLIENT_HOST=true',
                         success : function () {
                             this.fireEvent('delete', this, this.variant.id);
                         },
@@ -420,7 +420,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 'FORCE_CLIENT_HOST' : 'true'
             },
             params: uncheckedValues,
-            url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.variant.id + '/' + this.newVariantId + '?FORCE_CLIENT_HOST=true',
+            url : this.composerRestMountUrl + '/' + this.componentId + './' + this.variant.id + '/rename/' + this.newVariantId + '?FORCE_CLIENT_HOST=true',
             method : 'POST',
             success : function () {
                 Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant.id);
@@ -682,7 +682,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 fields : ['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
                     'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
                     'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager' ],
-                url : this.composerRestMountUrl + '/' + this.componentId + './parameters/' + this.locale + '/' + this.variant.id + '?FORCE_CLIENT_HOST=true'
+                url : this.composerRestMountUrl + '/' + this.componentId + './' + this.variant.id + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
             });
 
             componentPropertiesStore.on('load', function(store, records) {
