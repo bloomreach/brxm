@@ -71,7 +71,7 @@ public class LCS {
      *
      * @param <T>
      */
-    static public class Change<T extends Serializable> implements Serializable {
+    static public class Change<T> implements Serializable {
 
         private ChangeType type;
         private T value;
@@ -91,14 +91,28 @@ public class LCS {
     }
 
     /**
-     * Construct the minimal changeset to turn an array into another one.
-     * 
-     * @param <T>
-     * @param a
-     * @param b
-     * @return
+     * Constructs the minimal changeset to turn the first array into the second one.
+     * The returned changeset is guaranteed to be serializable.
+     *
+     * @param <T> the type of the array elements
+     * @param a the first array
+     * @param b the second array
+     * @return the minimal changeset
      */
-    public static <T extends Serializable> List<Change<T>> getChangeSet(T[] a, T[] b) {
+    public static <T extends Serializable> List<Change<T>> getSerializableChangeSet(T[] a, T[] b) {
+        return getChangeSet(a, b);
+    }
+
+    /**
+     * Constructs the minimal changeset to turn the first array into the second one.
+     * The returned changeset is only serializable when T is serializable.
+     *
+     * @param <T> the type of the array elements
+     * @param a the first array
+     * @param b the second array
+     * @return the minimal changeset
+     */
+    public static <T> List<Change<T>> getChangeSet(T[] a, T[] b) {
         List<T> lcs = getLongestCommonSubsequence(a, b);
 
         LinkedList<Change<T>> operations = new LinkedList<Change<T>>();
