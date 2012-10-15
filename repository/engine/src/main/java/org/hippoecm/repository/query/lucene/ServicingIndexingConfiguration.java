@@ -40,26 +40,22 @@ public interface ServicingIndexingConfiguration extends IndexingConfiguration {
     Name[] getHippoAggregates();
     
     /**
-     * Returns QName of the hippo:handle
-     * @return
+     * @return QName of the hippo:handle
      */
     Name getHippoHandleName();
-    
+
     /**
-     * Returns QName of the hippo:request
-     * @return
+     * @return QName of hippo:document
      */
-    Name getHippoRequestName();
-    
+    Name getHippoDocumentName();
+
     /**
-     * Returns QName of the hippo:paths property
-     * @return
+     * @return QName of the hippo:paths property
      */
     Name getHippoPathPropertyName();
     
     /**
-     * Returns QName of the hippo:text property
-     * @return
+     * @return QName of the hippo:text property
      */
     Name getHippoTextPropertyName();
     

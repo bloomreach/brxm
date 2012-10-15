@@ -66,10 +66,8 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      */
     private Name hippoHandle;
 
-    /**
-     * QName Hippo Request qualified name
-     */
-    private Name hippoRequest;
+
+    private Name hippoDocument;
 
     
     /**
@@ -168,7 +166,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         hippoPath = resolver.getQName(HippoNodeType.HIPPO_PATHS);
         hippoText = resolver.getQName(HippoNodeType.HIPPO_TEXT);
         hippoHandle = resolver.getQName(HippoNodeType.NT_HANDLE);
-        hippoRequest = resolver.getQName(HippoNodeType.NT_REQUEST);
+        hippoDocument = resolver.getQName(HippoNodeType.NT_DOCUMENT);
         
         hippoAggregates = idxHippoAggregates.toArray(new Name[idxHippoAggregates.size()]);
     }
@@ -208,7 +206,7 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
      * @return the text content of the <code>node</code>.
      */
     private static String getTextContent(Node node) {
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         NodeList nodes = node.getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node n = nodes.item(i);
@@ -235,10 +233,11 @@ public class ServicingIndexingConfigurationImpl extends IndexingConfigurationImp
         return this.hippoHandle;
     }
 
-    public Name getHippoRequestName() {
-        return this.hippoRequest;
+    @Override
+    public Name getHippoDocumentName() {
+        return hippoDocument;
     }
-    
+
     public Name getHippoPathPropertyName() {
         return this.hippoPath;
     }

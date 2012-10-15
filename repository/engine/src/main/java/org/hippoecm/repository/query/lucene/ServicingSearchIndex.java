@@ -26,12 +26,12 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.QueryResult;
 import javax.xml.parsers.DocumentBuilder;
@@ -41,6 +41,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
+import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.query.ExecutableQuery;
 import org.apache.jackrabbit.core.query.lucene.AbstractQueryImpl;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
@@ -87,7 +88,6 @@ import org.xml.sax.SAXException;
 
 public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandler {
 
-    /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(ServicingSearchIndex.class);
 
     /**
@@ -106,9 +106,6 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     }
     
     /**
-     *
-     * @param session
-     * @param reader
      * @return the authorization bitset and <code>null</code> when every bit is allowed to be read
      * @throws IOException
      */
@@ -327,30 +324,30 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     @Override
     public void updateNodes(Iterator<NodeId> remove, Iterator<NodeState> add) throws RepositoryException, IOException {
-        NodeStateIteratorImpl addedIt = new NodeStateIteratorImpl(add);
-        NodeIdIteratorImpl removedIt = new NodeIdIteratorImpl(remove);
+        final NodeStateIteratorImpl addedIt = new NodeStateIteratorImpl(add);
+        final NodeIdIteratorImpl removedIt = new NodeIdIteratorImpl(remove);
         super.updateNodes(removedIt, addedIt);
+        updateContainingDocumentNodes(addedIt.processedStates, addedIt.processedIds, removedIt.processedIds);
+    }
 
-        /*
-         * now see if there are added nodestate that are childs of a hippo:document in a hippo:handle:
-         * When there are, and the hippo:document was not part of the NodeStateIterator add or remove, it means
-         * the hippo:document must be reindexed
-         */
-
-        List<NodeState> addedStates = addedIt.processedStates;
-        List<NodeId> addedIds = addedIt.processedIds;
-        List<NodeId> removedIds = removedIt.processedIds;
-        List<NodeId> checkedIds = new ArrayList<NodeId>();
-        List<NodeState> reIndexVariantsStates = new ArrayList<NodeState>();
-        List<NodeId> reIndexVariantsIds = new ArrayList<NodeId>();
+    /*
+     * If node states have been updated that are descendants of hippo:document nodes, then those hippo:document
+     * nodes need to be re-indexed.
+     */
+    private void updateContainingDocumentNodes(final List<NodeState> addedStates,
+                                               final List<NodeId> addedIds,
+                                               final List<NodeId> removedIds) throws RepositoryException, IOException {
+        final List<NodeId> checkedIds = new ArrayList<NodeId>();
+        final List<NodeState> updateDocumentStates = new ArrayList<NodeState>();
+        final List<NodeId> updateDocumentIds = new ArrayList<NodeId>();
         for (NodeState addedState : addedStates) {
             try {
-                NodeState documentVariant = getVariantDocumentIfAncestor(addedState, checkedIds);
-                if (documentVariant != null && !addedIds.contains(documentVariant.getNodeId())
-                        && !reIndexVariantsIds.contains(documentVariant.getNodeId())) {
-                    if (!removedIds.contains(documentVariant.getNodeId())) {
-                        reIndexVariantsStates.add(documentVariant);
-                        reIndexVariantsIds.add(documentVariant.getNodeId());
+                NodeState document = getContainingDocument(addedState, checkedIds);
+                if (document != null && !addedIds.contains(document.getNodeId())
+                        && !updateDocumentIds.contains(document.getNodeId())) {
+                    if (!removedIds.contains(document.getNodeId())) {
+                        updateDocumentStates.add(document);
+                        updateDocumentIds.add(document.getNodeId());
                     }
                 }
             } catch (ItemStateException e) {
@@ -358,9 +355,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             }
         }
 
-        if (reIndexVariantsStates.size() > 0) {
-            super.updateNodes(new NodeIdIteratorImpl(reIndexVariantsIds.iterator()), new NodeStateIteratorImpl(
-                    reIndexVariantsStates.iterator()));
+        if (updateDocumentStates.size() > 0) {
+            super.updateNodes(updateDocumentIds.iterator(), updateDocumentStates.iterator());
         }
     }
 
@@ -378,14 +374,13 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         if (node.getId() instanceof HippoNodeId) {
             log.warn("Indexing a virtual node should never happen, and not be possible. Return an empty lucene doc");
-            Document doc = new Document();
-            return doc;
+            return new Document();
         }
 
         ServicingNodeIndexer indexer = new ServicingNodeIndexer(node, getContext(), nsMappings, getParser());
 
-        indexer.setSupportHighlighting(super.getSupportHighlighting());
-        indexer.setServicingIndexingConfiguration((ServicingIndexingConfiguration) super.getIndexingConfig());
+        indexer.setSupportHighlighting(getSupportHighlighting());
+        indexer.setServicingIndexingConfiguration(getIndexingConfig());
         indexer.setIndexFormatVersion(indexFormatVersion);
         Document doc = indexer.createDoc();
         mergeAggregatedNodeIndexes(node, doc, indexFormatVersion);
@@ -420,8 +415,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             ItemStateManager ism = getContext().getItemStateManager();
 
             NodeState parent = (NodeState) ism.getItemState(node.getParentId());
-            if (parent != null && parent.getNodeTypeName().equals(getIndexingConfig().getHippoHandleName())
-                    && !node.getNodeTypeName().equals(getIndexingConfig().getHippoRequestName())) {
+            if (parent != null && isHandle(parent) && isHippoDocument(node)) {
                 return true;
             }
 
@@ -429,15 +423,25 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return false;
     }
 
+    private boolean isHandle(NodeState node) {
+        return node.getNodeTypeName().equals(getIndexingConfig().getHippoHandleName());
+    }
+
+    private boolean isHippoDocument(NodeState node) {
+        try {
+            final EffectiveNodeType nodeType = getContext().getNodeTypeRegistry().getEffectiveNodeType(node.getNodeTypeName());
+            return nodeType.includesNodeType(getIndexingConfig().getHippoDocumentName());
+        } catch (NoSuchNodeTypeException e) {
+            log.error("Unexpected exception while checking node type", e);
+        }
+        return false;
+    }
+
     /**
-     * 
-     * @param state
-     * @param checkedIds
-     * @return the <code>NodeState</code> of the Document variant which is an ancestor of the state or <code>null</code> if this state was not a child of a document variant
+     * @return the <code>NodeState</code> of the Document variant which is an ancestor of the state
+     * or <code>null</code> if this state was not a child of a document variant
      */
-
-    private NodeState getVariantDocumentIfAncestor(NodeState state, List<NodeId> checkedIds) throws ItemStateException {
-
+    private NodeState getContainingDocument(NodeState state, List<NodeId> checkedIds) throws ItemStateException {
         if (checkedIds.contains(state.getNodeId())) {
             // already checked these ancestors: no need to do it again
             return null;
@@ -455,97 +459,86 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             return null;
 
         }
-        return getVariantDocumentIfAncestor(parent, checkedIds);
-
+        return getContainingDocument(parent, checkedIds);
     }
 
     /**
      * Adds the fulltext index field of the child states to Document doc
-     * @param state
-     * @param doc
-     * @param indexer
-     * @param aggregateChildTypes When <code>true</code>, properties of child nodes will also be indexed as explicit fields on <code>doc</code> if configured as aggregate/childType in indexing_configuration.xml
-     * @param indexFormatVersion
+     * @param aggregateChildTypes When <code>true</code>, properties of child nodes will also be indexed as explicit
+     *                            fields on <code>doc</code> if configured as aggregate/childType in indexing_configuration.xml
      */
     private void aggregateDescendants(NodeState state, Document doc, IndexFormatVersion indexFormatVersion, ServicingNodeIndexer indexer,  boolean aggregateChildTypes) {
-        List childNodeEntries = state.getChildNodeEntries();
-        for (Iterator it = childNodeEntries.iterator(); it.hasNext();) {
-            Object o = it.next();
-            if (o instanceof ChildNodeEntry) {
-                ChildNodeEntry childNodeEntry = (ChildNodeEntry) o;
-                if (childNodeEntry.getId() instanceof HippoNodeId) {
-                    // do not index virtual child nodes, ever
-                    continue;
-                }
-                Document aDoc;
-                try {
-                    NodeState childState = (NodeState) getContext().getItemStateManager().getItemState(
-                            childNodeEntry.getId());
-                    if (aggregateChildTypes) {
-                        if (getIndexingConfig().isChildAggregate(childState.getNodeTypeName())) {
-                            Set props = childState.getPropertyNames();
-                            for (Iterator propsIt = props.iterator(); propsIt.hasNext();) {
-                                Name propName = (Name) propsIt.next();
-                                PropertyId id = new PropertyId(childNodeEntry.getId(), propName);
-                                PropertyState propState = (PropertyState) getContext().getItemStateManager().getItemState(id);
-                                InternalValue[] values = propState.getValues();
-                                if (!indexer.isHippoPath(propName) && indexer.isFacet(propName)) {
-                                    for (int i = 0; i < values.length; i++) {
-                                        String s = indexer.getResolver().getJCRName(propState.getName()) + "/"
-                                                + indexer.getResolver().getJCRName(childNodeEntry.getName());
-                                        indexer.addFacetValue(doc, values[i], s, propState.getName());
-                                    }
+        for (ChildNodeEntry childNodeEntry : state.getChildNodeEntries()) {
+            if (childNodeEntry.getId() instanceof HippoNodeId) {
+                // do not index virtual child nodes, ever
+                continue;
+            }
+            Document aDoc;
+            try {
+                NodeState childState = (NodeState) getContext().getItemStateManager().getItemState(
+                        childNodeEntry.getId());
+                if (aggregateChildTypes) {
+                    if (getIndexingConfig().isChildAggregate(childState.getNodeTypeName())) {
+                        for (Name propName : childState.getPropertyNames()) {
+                            PropertyId id = new PropertyId(childNodeEntry.getId(), propName);
+                            PropertyState propState = (PropertyState) getContext().getItemStateManager().getItemState(id);
+                            InternalValue[] values = propState.getValues();
+                            if (!indexer.isHippoPath(propName) && indexer.isFacet(propName)) {
+                                for (final InternalValue value : values) {
+                                    String s = indexer.getResolver().getJCRName(propState.getName()) + "/"
+                                            + indexer.getResolver().getJCRName(childNodeEntry.getName());
+                                    indexer.addFacetValue(doc, value, s, propState.getName());
                                 }
                             }
                         }
                     }
-                    
-                    doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, childState.getNodeId().toString(),
-                            Field.Store.NO, Field.Index.NO_NORMS));
-
-                    aDoc = createDocument(childState, getNamespaceMappings(), indexFormatVersion, true);
-
-                    // transfer fields to doc if there are any
-                    Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
-                    if (fulltextFields != null) {
-                        for (int k = 0; k < fulltextFields.length; k++) {
-                            doc.add(fulltextFields[k]);
-                        }
-                    }
-
-                    // Really important to keep here for updating the aggregate (document variant) when a child is removed
-                    Fieldable[] aggrNodeUUID = aDoc.getFieldables(FieldNames.AGGREGATED_NODE_UUID);
-                    if (aggrNodeUUID != null) {
-                        for (Fieldable f : aggrNodeUUID) {
-                            doc.add(f);
-                        }
-                    }
-                } catch (NoSuchItemStateException e) {
-                    final String message = "Unable to add index fields for child states of " + state.getId() + " because an item could not be found. " +
-                            "Probably because it was removed again.";
-                    if (log.isDebugEnabled()) {
-                        log.debug(message, e);
-                    } else {
-                        log.warn(message + " (full stack trace on debug level)");
-                    }
-                } catch (ItemStateException e) {
-                    log.warn("ItemStateException while indexing descendants of a hippo:document for "
-                            + "node with UUID: " + state.getNodeId().toString(), e);
-                } catch (ItemNotFoundException e) {
-                    final String message = "Unable to add index fields for child states of " + state.getId() + " because an item could not be found. " +
-                            "Probably because it was removed again.";
-                    if (log.isDebugEnabled()) {
-                        log.debug(message, e);
-                    } else {
-                        log.warn(message + " (full stack trace on debug level)");
-                    }
-                } catch (RepositoryException e) {
-                    log.warn("RepositoryException while indexing descendants of a hippo:document for "
-                            + "node with UUID: " + state.getNodeId().toString(), e);
                 }
+
+                doc.add(new Field(FieldNames.AGGREGATED_NODE_UUID, childState.getNodeId().toString(),
+                        Field.Store.NO, Field.Index.NOT_ANALYZED_NO_NORMS));
+
+                aDoc = createDocument(childState, getNamespaceMappings(), indexFormatVersion, true);
+
+                // transfer fields to doc if there are any
+                Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
+                if (fulltextFields != null) {
+                    for (int k = 0; k < fulltextFields.length; k++) {
+                        doc.add(fulltextFields[k]);
+                    }
+                }
+
+                // Really important to keep here for updating the aggregate (document variant) when a child is removed
+                Fieldable[] aggrNodeUUID = aDoc.getFieldables(FieldNames.AGGREGATED_NODE_UUID);
+                if (aggrNodeUUID != null) {
+                    for (Fieldable f : aggrNodeUUID) {
+                        doc.add(f);
+                    }
+                }
+            } catch (NoSuchItemStateException e) {
+                final String message = "Unable to add index fields for child states of " + state.getId() + " because an item could not be found. " +
+                        "Probably because it was removed again.";
+                if (log.isDebugEnabled()) {
+                    log.debug(message, e);
+                } else {
+                    log.warn(message + " (full stack trace on debug level)");
+                }
+            } catch (ItemStateException e) {
+                log.warn("ItemStateException while indexing descendants of a hippo:document for "
+                        + "node with UUID: " + state.getNodeId().toString(), e);
+            } catch (ItemNotFoundException e) {
+                final String message = "Unable to add index fields for child states of " + state.getId() + " because an item could not be found. " +
+                        "Probably because it was removed again.";
+                if (log.isDebugEnabled()) {
+                    log.debug(message, e);
+                } else {
+                    log.warn(message + " (full stack trace on debug level)");
+                }
+            } catch (RepositoryException e) {
+                log.warn("RepositoryException while indexing descendants of a hippo:document for "
+                        + "node with UUID: " + state.getNodeId().toString(), e);
             }
         }
-    }
+     }
 
     // TODO remove when jackrabbit supports sorting on nodename
     @Override
