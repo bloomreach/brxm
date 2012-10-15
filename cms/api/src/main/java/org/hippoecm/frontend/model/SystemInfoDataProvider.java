@@ -39,6 +39,7 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepositoryFactory;
+import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -150,12 +151,8 @@ public class SystemInfoDataProvider implements IDataProvider {
 
     public String getCMSVersion() {
         try {
-            final Manifest manifest;
-            // try to get the version from the cms-api manifest
-            final InputStream manifestInputStream = HippoRepositoryFactory.getManifest(Home.class).openStream();
-            if (manifestInputStream != null) {
-                manifest = new Manifest(manifestInputStream);
-            } else {
+            Manifest manifest = RepoUtils.getManifest(Home.class);
+            if (manifest == null) {
                 manifest = getWebAppManifest();
             }
             if (manifest != null) {
