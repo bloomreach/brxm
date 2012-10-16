@@ -27,6 +27,6 @@ public class FacetedNavigationEngineThirdImpl extends FacetedNavigationEngineImp
     private static Logger log = LoggerFactory.getLogger(FacetedNavigationEngineThirdImpl.class);
 
     public FacetedNavigationEngineThirdImpl() {
-        log.warn("You are using a deprecated SearchIndex. Please use " + FacetedNavigationEngine.class.getName() + " instead.");
+        log.warn("You are using a deprecated SearchIndex. Please use " + FacetedNavigationEngineImpl.class.getName() + " instead.");
     }
 }
