@@ -50,7 +50,6 @@ public class UpdaterRenameTest extends RepositoryTestCase {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        NamespaceRegistry namespaceRegistry = session.getWorkspace().getNamespaceRegistry();
         build(session, content);
         session.save();
     }
@@ -79,10 +78,9 @@ public class UpdaterRenameTest extends RepositoryTestCase {
                                                                                                 "repository-testsubns2.cnd"))));
             }
         };
-        List list = new LinkedList();
+        List<UpdaterModule> list = new LinkedList<UpdaterModule>();
         list.add(module);
-        Modules modules = new Modules(list);
-        UpdaterEngine.migrate(session, modules);
+        UpdaterEngine.migrate(session, new Modules<UpdaterModule>(list));
         session.logout();
         session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
         Node node = session.getRootNode().getNode("test").getNode("d");
