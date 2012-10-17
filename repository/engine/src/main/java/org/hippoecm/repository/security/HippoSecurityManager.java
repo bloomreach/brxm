@@ -27,8 +27,7 @@ public interface HippoSecurityManager extends JackrabbitSecurityManager {
 
 
     /**
-     * Initialize the SecurityManager.
-     * This method is a temporary fix for REPO-368 and will be removed in the future.
+     * Configure the SecurityManager.
      * @throws RepositoryException
      */
     void configure() throws RepositoryException;
