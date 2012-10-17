@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -88,8 +89,24 @@ class BrowserObserver implements IObserver<IModelReference<Node>>, IDetachable {
         if (modelReference == null) {
             return null;
         }
+
         try {
             return getEditorModel(modelReference.getModel());
+        } catch (InvalidItemStateException iex) {
+            final Node node = modelReference.getModel().getObject();
+
+            try {
+                log.info("Item '{}' appears not to be existing anymore", node.getIdentifier());
+
+                // I am checking for debug level to avoid string concatenation if debug is not enabled
+                if (log.isDebugEnabled()) {
+                    log.debug("Error happened when referencing item '" + node.getIdentifier() + "'", iex);
+                }
+            } catch (RepositoryException rex) {
+                log.debug("Could not retrieve editor model", rex);
+            }
+
+            return null;
         } catch (RepositoryException e) {
             log.error("Could not retrieve editor model", e);
             return null;

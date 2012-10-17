@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -34,9 +35,9 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
-import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -232,8 +233,19 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
                 if (node.getDepth() > 0 && node.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                     return new JcrNodeModel(node.getParent());
                 }
+            } catch (InvalidItemStateException iex) {
+                try {
+                    log.info("Item '{}' appears not to be existing anymore", node.getIdentifier());
+
+                    // I am checking for debug level to avoid string concatenation if debug is not enabled
+                    if (log.isDebugEnabled()) {
+                        log.debug("Error happened when referencing item '" + node.getIdentifier() + "'", iex);
+                    }
+                } catch (RepositoryException rex) {
+                    log.debug("Error resolving editor model", rex);
+                }
             } catch (RepositoryException ex) {
-                log.error("error resolving editor model", ex);
+                log.error("Error resolving editor model", ex);
             }
         }
         return nodeModel;
