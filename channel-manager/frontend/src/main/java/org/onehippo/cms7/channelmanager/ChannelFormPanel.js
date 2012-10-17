@@ -45,6 +45,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                 width: 450,
                 labelWidth: 100
             },
+            plugins: Hippo.ChannelManager.MarkRequiredFields,
             items:[
                 {
                     xtype: 'panel',
@@ -113,7 +114,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
         this.addEvents('channel-created');
 
         this.on('beforeshow', function () {
-            var blueprint, contentRootCmp, contentRootCmp;
+            var blueprint, contentRoot, contentRootCmp;
             this.getForm().reset();
             this.hideError();
 
@@ -152,7 +153,7 @@ Hippo.ChannelManager.ChannelFormPanel = Ext.extend(Ext.form.FormPanel, {
                     xaction: 'create',
                     records: Ext.encode(form.getValues())
                 },
-                success: function(form, action) {
+                success: function() {
                     //Event to hide the window & rerender the channels panel
                     panel.fireEvent('channel-created');
                 },

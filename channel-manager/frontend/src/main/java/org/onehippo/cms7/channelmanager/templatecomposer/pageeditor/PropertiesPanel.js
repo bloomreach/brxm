@@ -172,7 +172,6 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     },
 
     _initVariants: function(records) {
-        var i, id, record;
         this.variants = [];
         Ext.each(records, function(record) {
             this.variants.push(record);
@@ -390,7 +389,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             defaults : {
                 anchor : '100%'
             },
-
+            plugins: Hippo.ChannelManager.MarkRequiredFields,
             buttons : buttons
         });
 
@@ -707,15 +706,3 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
 });
 Ext.reg('Hippo.ChannelManager.TemplateComposer.PropertiesForm', Hippo.ChannelManager.TemplateComposer.PropertiesForm);
-
-//FIXME: don't override Ext provided code; create subclass or patch instance
-//Add * to the required fields
-Ext.apply(Ext.layout.FormLayout.prototype, {
-    originalRenderItem : Ext.layout.FormLayout.prototype.renderItem,
-    renderItem : function (c, position, target) {
-        if (c && !c.rendered && c.isFormField && c.fieldLabel && c.allowBlank === false) {
-            c.fieldLabel = c.fieldLabel + " <span class=\"req\">*</span>";
-        }
-        this.originalRenderItem.apply(this, arguments);
-    }
-});

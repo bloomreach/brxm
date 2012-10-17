@@ -4,6 +4,7 @@ import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.AbstractBehavior;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
+import org.onehippo.cms7.channelmanager.common.CommonBundle;
 import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
 import org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle;
 
@@ -14,6 +15,8 @@ public class TemplateComposerResourceBehavior extends AbstractBehavior {
     @Override
     public void bind(Component component) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
+            component.add(JavascriptPackageResource.getHeaderContribution(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
+
             component.add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.MI_FRAME));
             component.add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.MI_FRAME_MSG));
             component.add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.FLOATING_WINDOW));

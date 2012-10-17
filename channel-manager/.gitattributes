@@ -84,6 +84,8 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/triangle-collap
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/triangle-expanded.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/website.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/channels/zh_CN.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/common/CommonBundle.java -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/common/MarkRequiredFields.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/ExtWireframe.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.java -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/hstconfig/HstConfigEditor.js -text

@@ -9,6 +9,7 @@ import org.onehippo.cms7.channelmanager.channels.ChannelGridPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelIconPanel;
 import org.onehippo.cms7.channelmanager.channels.ChannelOverview;
 import org.onehippo.cms7.channelmanager.channels.ChannelPropertiesWindow;
+import org.onehippo.cms7.channelmanager.common.CommonBundle;
 
 public class ChannelManagerResourceBehaviour extends AbstractBehavior {
 
@@ -26,6 +27,8 @@ public class ChannelManagerResourceBehaviour extends AbstractBehavior {
 
     public void bind(Component component) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
+            component.add(JavascriptPackageResource.getHeaderContribution(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
+
             component.add(JavascriptPackageResource.getHeaderContribution(ExtStoreFuture.class, ExtStoreFuture.EXT_STORE_FUTURE));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, BREADCRUMB_TOOLBAR));
             component.add(JavascriptPackageResource.getHeaderContribution(ChannelManagerResourceBehaviour.class, ROOT_PANEL));
