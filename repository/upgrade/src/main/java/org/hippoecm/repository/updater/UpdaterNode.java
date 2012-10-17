@@ -597,16 +597,16 @@ final public class UpdaterNode extends UpdaterItem implements Node {
 
     // javax.jcr.Node interface
 
-    public Node addNode(String relPath) throws ItemExistsException, PathNotFoundException, VersionException, ConstraintViolationException, LockException, RepositoryException {
+    public Node addNode(String relPath) throws RepositoryException {
         substantiate();
         return this.addNode(relPath, null);
     }
 
-    public Node addNode(String relPath, String primaryNodeTypeName) throws ItemExistsException, PathNotFoundException, NoSuchNodeTypeException, LockException, VersionException, ConstraintViolationException, RepositoryException {
+    public Node addNode(String relPath, String primaryNodeTypeName) throws RepositoryException {
         substantiate();
         String name = relPath;
         if (relPath.contains("/")) {
-            HierarchyResolver manager = ((HippoWorkspace) (session.getWorkspace())).getHierarchyResolver();
+            HierarchyResolver manager = ((UpdaterWorkspace) (session.getWorkspace())).getHierarchyResolver();
             HierarchyResolver.Entry last = new HierarchyResolver.Entry();
             manager.getItem(this, relPath, false, last);
             name = last.relPath;

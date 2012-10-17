@@ -39,6 +39,10 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionManager;
 
+import org.hippoecm.repository.api.DocumentManager;
+import org.hippoecm.repository.api.HierarchyResolver;
+import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.WorkflowManager;
 import org.xml.sax.ContentHandler;
 
 public class UpdaterWorkspace implements Workspace {
@@ -49,6 +53,10 @@ public class UpdaterWorkspace implements Workspace {
     UpdaterWorkspace(UpdaterSession session, Workspace upstream) {
         this.session = session;
         this.upstream = upstream;
+    }
+
+    HierarchyResolver getHierarchyResolver() throws RepositoryException {
+        return ((HippoWorkspace) upstream).getHierarchyResolver();
     }
 
     public Session getSession() {
@@ -71,12 +79,6 @@ public class UpdaterWorkspace implements Workspace {
         throw new UpdaterException("illegal method");
     }
 
-    public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath)
-            throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException,
-                   PathNotFoundException, ItemExistsException, RepositoryException {
-        throw new UpdaterException("illegal method");
-    }
-
     public void clone(String srcWorkspace, String srcAbsPath, String destAbsPath, boolean removeExisting)
             throws NoSuchWorkspaceException, ConstraintViolationException, VersionException, AccessDeniedException,
                    PathNotFoundException, ItemExistsException, LockException, RepositoryException {
@@ -86,11 +88,6 @@ public class UpdaterWorkspace implements Workspace {
     public void move(String srcAbsPath, String destAbsPath)
             throws ConstraintViolationException, VersionException, AccessDeniedException, PathNotFoundException,
                    ItemExistsException, RepositoryException {
-        throw new UpdaterException("illegal method");
-    }
-
-    public void restore(Version[] versions)
-            throws UnsupportedRepositoryOperationException, VersionException, RepositoryException {
         throw new UpdaterException("illegal method");
     }
 
@@ -125,19 +122,8 @@ public class UpdaterWorkspace implements Workspace {
         throw new UpdaterException("illegal method");
     }
 
-    public ContentHandler getImportContentHandler(String parentAbsPath)
-            throws PathNotFoundException, ConstraintViolationException, VersionException, RepositoryException {
-        throw new UpdaterException("illegal method");
-    }
-
     public ContentHandler getImportContentHandler(String parentAbsPath, int uuidBehavior)
             throws PathNotFoundException, ConstraintViolationException, VersionException, RepositoryException {
-        throw new UpdaterException("illegal method");
-    }
-
-    public void importXML(String parentAbsPath, InputStream in)
-            throws IOException, PathNotFoundException, ItemExistsException, ConstraintViolationException,
-                   InvalidSerializedDataException, RepositoryException {
         throw new UpdaterException("illegal method");
     }
 
