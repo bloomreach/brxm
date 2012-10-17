@@ -49,7 +49,9 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
         this.session = session;
     }
 
-    public WorkflowEventLoggerWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RepositoryException, WorkflowException {
+    public WorkflowEventLoggerWorkflowImpl(@SuppressWarnings("unused") Session userSession, Session rootSession,
+                                           @SuppressWarnings("unused") Node subject) throws RepositoryException, WorkflowException {
+
         this(rootSession);
     }
 
@@ -92,9 +94,7 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
                     return node.getIdentifier();
                 }
             } catch (PathNotFoundException e) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Document handle " + handlePath + " was removed before we could log workflow event");
-                }
+                log.debug("Document handle " + handlePath + " was removed before we could log workflow event");
             } catch (RepositoryException e) {
                 log.error("Failed to determine uuid of document handle at " + handlePath + " while logging workflow event", e);
             }
