@@ -87,6 +87,8 @@ public class SecurityManager implements HippoSecurityManager {
     public static final String INTERNAL_PROVIDER = "internal";
     public static final String SECURITY_CONFIG_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityManager.class);
+
     private String usersPath;
     private String groupsPath;
     private String rolesPath;
@@ -102,9 +104,7 @@ public class SecurityManager implements HippoSecurityManager {
 
     private AuthContextProvider authCtxProvider;
 
-    private final Logger log = LoggerFactory.getLogger(SecurityManager.class);
-
-    public void init() throws RepositoryException {
+    public void configure() throws RepositoryException {
         Node configNode = systemSession.getRootNode().getNode(SECURITY_CONFIG_PATH);
         usersPath = configNode.getProperty(HippoNodeType.HIPPO_USERSPATH).getString();
         groupsPath = configNode.getProperty(HippoNodeType.HIPPO_GROUPSPATH).getString();
@@ -112,7 +112,7 @@ public class SecurityManager implements HippoSecurityManager {
         domainsPath = configNode.getProperty(HippoNodeType.HIPPO_DOMAINSPATH).getString();
         SecurityProviderFactory spf = new SecurityProviderFactory(SECURITY_CONFIG_PATH, usersPath, groupsPath, rolesPath, domainsPath, maintenanceMode);
 
-        StringBuffer statement = new StringBuffer();
+        StringBuilder statement = new StringBuilder();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_SECURITYPROVIDER);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE '/").append(SECURITY_CONFIG_PATH).append("/%").append("'");
@@ -217,15 +217,15 @@ public class SecurityManager implements HippoSecurityManager {
         Properties[] moduleConfig = authCtxProvider.getModuleConfig();
 
         // retrieve default-ids (admin and anomymous) from login-module-configuration.
-        for (int i = 0; i < moduleConfig.length; i++) {
-            if (moduleConfig[i].containsKey(LoginModuleConfig.PARAM_ADMIN_ID)) {
-                adminID = moduleConfig[i].getProperty(LoginModuleConfig.PARAM_ADMIN_ID);
+        for (final Properties aModuleConfig : moduleConfig) {
+            if (aModuleConfig.containsKey(LoginModuleConfig.PARAM_ADMIN_ID)) {
+                adminID = aModuleConfig.getProperty(LoginModuleConfig.PARAM_ADMIN_ID);
             }
-            if (moduleConfig[i].containsKey(LoginModuleConfig.PARAM_ANONYMOUS_ID)) {
-                anonymID = moduleConfig[i].getProperty(LoginModuleConfig.PARAM_ANONYMOUS_ID);
+            if (aModuleConfig.containsKey(LoginModuleConfig.PARAM_ANONYMOUS_ID)) {
+                anonymID = aModuleConfig.getProperty(LoginModuleConfig.PARAM_ANONYMOUS_ID);
             }
-            if (moduleConfig[i].containsKey("maintenanceMode")) {
-                maintenanceMode = Boolean.parseBoolean(moduleConfig[i].getProperty("maintenanceMode"));
+            if (aModuleConfig.containsKey("maintenanceMode")) {
+                maintenanceMode = Boolean.parseBoolean(aModuleConfig.getProperty("maintenanceMode"));
             }
         }
         // fallback:
@@ -240,8 +240,8 @@ public class SecurityManager implements HippoSecurityManager {
 
         principalProviderRegistry = new ProviderRegistryImpl(new DefaultPrincipalProvider());
         // register all configured principal providers.
-        for (int i = 0; i < moduleConfig.length; i++) {
-            principalProviderRegistry.registerProvider(moduleConfig[i]);
+        for (final Properties aModuleConfig : moduleConfig) {
+            principalProviderRegistry.registerProvider(aModuleConfig);
         }
 
         providers.put(INTERNAL_PROVIDER, new SimpleSecurityProvider());
@@ -255,7 +255,6 @@ public class SecurityManager implements HippoSecurityManager {
      * all security providers until a successful authentication is found. It uses the
      * natural node order. If the authentication is successful a user node will be
      * created.
-     * @param creds
      * @return true only if the authentication is successful
      */
     public boolean authenticate(SimpleCredentials creds) {
@@ -371,12 +370,11 @@ public class SecurityManager implements HippoSecurityManager {
     /**
      * Get the domains in which the user has a role.
      * @param rawUserId the unparsed userId
-     * @return
      */
     private Set<Domain> getDomainsForUser(String rawUserId, String providerId) throws RepositoryException {
         String userId = sanitizeUserId(rawUserId, providerId);
         Set<Domain> domains = new HashSet<Domain>();
-        StringBuffer statement = new StringBuffer();
+        StringBuilder statement = new StringBuilder();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
@@ -400,13 +398,11 @@ public class SecurityManager implements HippoSecurityManager {
 
     /**
      * Get the domains in which the group has a role.
-     * @param rawGroupId
-     * @return
      */
     private Set<Domain> getDomainsForGroup(String rawGroupId, String providerId) throws RepositoryException {
         String groupId = sanitizeGroupId(rawGroupId, providerId);
         Set<Domain> domains = new HashSet<Domain>();
-        StringBuffer statement = new StringBuffer();
+        StringBuilder statement = new StringBuilder();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
         statement.append(" WHERE");
         statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
@@ -502,8 +498,6 @@ public class SecurityManager implements HippoSecurityManager {
     /**
      * Sanitize the raw userId input according to the case sensitivity of the 
      * security provider.
-     * @param rawUserId
-     * @param providerId
      * @return the trimmed and if needed converted to lowercase userId
      */
     private String sanitizeUserId(String rawUserId, String providerId) throws RepositoryException {
@@ -530,8 +524,6 @@ public class SecurityManager implements HippoSecurityManager {
     /**
      * Sanitize the raw userId input according to the case sensitivity of the 
      * security provider.
-     * @param rawGroupId
-     * @param providerId
      * @return the trimmed and if needed converted to lowercase groupId
      */
     private String sanitizeGroupId(String rawGroupId, String providerId) throws RepositoryException {

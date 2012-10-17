@@ -249,13 +249,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 initializeReindex();
             }
             initializeStartup();
-            ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).init();
+            ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).configure();
             if (upgradeValidateFlag) {
                 log.warn("post migration cycle validating content");
                 ((org.hippoecm.repository.impl.SessionDecorator)rootSession).postValidation();
             }
         } else {
-            ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).init();
+            ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).configure();
         }
     }
 

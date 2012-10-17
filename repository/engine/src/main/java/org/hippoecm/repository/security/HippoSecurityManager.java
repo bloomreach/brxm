@@ -31,7 +31,7 @@ public interface HippoSecurityManager extends JackrabbitSecurityManager {
      * This method is a temporary fix for REPO-368 and will be removed in the future.
      * @throws RepositoryException
      */
-    void init() throws RepositoryException;
+    void configure() throws RepositoryException;
 
     /**
      * Get the user, group and facet auth principals to the user. The principals 
