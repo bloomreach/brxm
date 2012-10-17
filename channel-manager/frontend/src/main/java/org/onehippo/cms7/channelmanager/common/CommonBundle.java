@@ -6,6 +6,6 @@ public final class CommonBundle {
         // prevent instantiation
     }
 
-    public static final String MARK_REQUIRED_FIELDS = "AllowBlank.js";
+    public static final String MARK_REQUIRED_FIELDS = "MarkRequiredFields.js";
 
 }
