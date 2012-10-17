@@ -76,25 +76,11 @@
       <version>${hippo.repository.version}</version>
     </dependency>
 
-    <!-- Repository, which explicitly comes without upgrade module to allow
-         specific upgrades and upgrades that come post-release cycle.
-	 The servlets may included in the repository dependencies, but this
-	 dependency is transient, as sites/applications may not want to
-	 have them, while for a packages CMS these are very useful, yet still
-	 optional.  For the CMS it is a recommended practise.
-	 (note that the dependency is still there, because of backward
-	 compatibility).
-      -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-dependencies</artifactId>
       <version>${hippo.repository.version}</version>
       <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-upgrade</artifactId>
-      <version>${hippo.repository.version}</version>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>

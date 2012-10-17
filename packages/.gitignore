@@ -11,5 +11,6 @@ package-app-dependencies/target
 package-cms-dependencies/.classpath
 package-cms-dependencies/.project
 package-cms-dependencies/.settings
+package-cms-dependencies/hippo-package-cms-dependencies.iml
 package-cms-dependencies/target
 /target
