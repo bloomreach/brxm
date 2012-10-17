@@ -36,33 +36,18 @@ import javax.jcr.InvalidItemStateException;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 
-/**
- * 
- */
 public abstract class UpdaterItemVisitor implements ItemVisitor {
 
-    /**
-     * 
-     */
-    final protected boolean breadthFirst;
     private LinkedList<Item> currentQueue;
     private LinkedList<Item> nextQueue;
-    /**
-     * 
-     */
+
+    protected final boolean breadthFirst;
     protected int currentLevel;
 
-    /**
-     * 
-     */
     protected UpdaterItemVisitor() {
         this(false);
     }
 
-    /**
-     * 
-     * @param breadthFirst
-     */
     protected UpdaterItemVisitor(boolean breadthFirst) {
         this.breadthFirst = breadthFirst;
         if (breadthFirst) {
@@ -72,39 +57,15 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
         currentLevel = 0;
     }
 
-    /**
-     * 
-     * @param property
-     * @param level
-     * @throws javax.jcr.RepositoryException
-     */
     protected abstract void entering(Property property, int level)
             throws RepositoryException;
 
-    /**
-     * 
-     * @param node
-     * @param level
-     * @throws javax.jcr.RepositoryException
-     */
     protected abstract void entering(Node node, int level)
             throws RepositoryException;
 
-    /**
-     * 
-     * @param property
-     * @param level
-     * @throws javax.jcr.RepositoryException
-     */
     protected abstract void leaving(Property property, int level)
             throws RepositoryException;
 
-    /**
-     * 
-     * @param node
-     * @param level
-     * @throws javax.jcr.RepositoryException
-     */
     protected abstract void leaving(Node node, int level)
             throws RepositoryException;
 
@@ -175,22 +136,16 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     public void visit(Node node, int level, boolean leaving) throws RepositoryException {
         visit(node);
     }
-    
 
     /**
-     * 
+     * @deprecated use an {@link org.onehippo.repository.update.Updater} instead.
      */
+    @Deprecated
     public static class Default extends UpdaterItemVisitor {
-        /**
-         * 
-         */
+
         public Default() {
         }
 
-        /**
-         * 
-         * @param breadthFirst
-         */
         public Default(boolean breadthFirst) {
             super(breadthFirst);
         }
@@ -205,82 +160,44 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             leaving(node, 0);
         }
 
-        /**
-         * 
-         * @param node
-         * @param level
-         * @throws javax.jcr.RepositoryException
-         */
         protected void entering(Node node, int level)
                 throws RepositoryException {
         }
 
-        /**
-         * 
-         * @param property
-         * @param level
-         * @throws javax.jcr.RepositoryException
-         */
         protected void entering(Property property, int level)
                 throws RepositoryException {
         }
 
-        /**
-         * 
-         * @param node
-         * @param level
-         * @throws javax.jcr.RepositoryException
-         */
         protected void leaving(Node node, int level)
                 throws RepositoryException {
         }
 
-        /**
-         * 
-         * @param property
-         * @param level
-         * @throws javax.jcr.RepositoryException
-         */
         protected void leaving(Property property, int level)
                 throws RepositoryException {
         }
     }
 
     /**
-     * 
+     * @deprecated use an {@link org.onehippo.repository.update.Updater} instead.
      */
+    @Deprecated
     public static abstract class Iterated extends Default {
+
         private boolean isAtomic = false;
-        /**
-         * 
-         * @param session
-         * @return
-         * @throws javax.jcr.RepositoryException
-         */
+
         public abstract NodeIterator iterator(Session session) throws RepositoryException;
 
-        /**
-         * THIS METHOD WAS NEVER PART OF THE API, NO NOT USE UNLESS TRUELY NECESSARY AND REPORT AN ISSUE WITH YOUR USE CASE.
-         * 
-         * @return the same instance on which this method was invoked
-         * @deprecated
-         */
         @Deprecated
         public final Iterated setAtomic() {
             isAtomic = true;
             return this;
         }
 
-        /**
-         * THIS METHOD WAS NEVER PART OF THE API, NO NOT USE UNLESS TRUELY NECESSARY AND REPORT AN ISSUE WITH YOUR USE CASE.
-         * @return whether the #setAtomic method has been called on this visitor
-         */
+        @Deprecated
         public final boolean isAtomic() {
             return isAtomic;
         }
-        /**
-         * {@inheritDoc}
-         */
+
         @Override
         public final void visit(Node node, int level, boolean leaving) throws RepositoryException {
             if(leaving)
@@ -288,16 +205,12 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             else
                 entering(node, level);
         }
-        /**
-         * {@inheritDoc}
-         */
+
         @Override
         protected final void entering(Node node, int level)
                 throws RepositoryException {
         }
-        /**
-         * {@inheritDoc}
-         */
+
         @Override
         protected final void entering(Property property, int level)
                 throws RepositoryException {
@@ -305,40 +218,35 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     }
 
     /**
-     * 
+     * @deprecated use an {@link org.onehippo.repository.update.Updater} instead.
      */
+    @Deprecated
     public static class QueryVisitor extends Iterated {
+
         String statement;
         String language;
-        /**
-         * 
-         * @param statement
-         * @param language
-         */
+
         public QueryVisitor(String statement, String language) {
             this.statement = statement;
             this.language = language;
         }
-        /**
-         * 
-         * @param session
-         * @return
-         * @throws javax.jcr.RepositoryException
-         */
+
         public NodeIterator iterator(Session session) throws RepositoryException {
             Query query = session.getWorkspace().getQueryManager().createQuery(statement, language);
             QueryResult result = query.execute();
             return result.getNodes();
         }
-        /**
-         * {@inheritDoc}
-         */
+
         @Override
         public String toString() {
             return "QueryVisitor["+statement+"]";
         }
     }
 
+    /**
+     * @deprecated use an {@link org.onehippo.repository.update.Updater} instead.
+     */
+    @Deprecated
     public static class PathVisitor extends Iterated {
         private String relPath;
 
@@ -396,31 +304,22 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
     }
 
     /**
-     * 
+     * @deprecated use an {@link org.onehippo.repository.update.Updater} instead.
      */
+    @Deprecated
     public static class NodeTypeVisitor extends Iterated {
         String nodeType;
-        /**
-         * 
-         * @param nodeType
-         */
+
         public NodeTypeVisitor(String nodeType) {
           this.nodeType = nodeType;
         }
-        /**
-         * 
-         * @param session
-         * @return
-         * @throws javax.jcr.RepositoryException
-         */
+
         public NodeIterator iterator(Session session) throws RepositoryException {
             Query query = session.getWorkspace().getQueryManager().createQuery("SELECT * FROM "+nodeType, javax.jcr.query.Query.SQL);
             QueryResult result = query.execute();
             return result.getNodes();
         }
-        /**
-         * {@inheritDoc}
-         */
+
         @Override
         public String toString() {
             return "NodeTypeVisitor["+nodeType+"]";
@@ -428,25 +327,14 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
 
     }
 
-    /**
-     * 
-     */
     public static final class NamespaceVisitor extends UpdaterItemVisitor {
-        /**
-         * 
-         */
+
         public String prefix;
-        /**
-         * 
-         */
+
         public Reader cndReader;
-        /**
-         * 
-         */
+
         public String cndName;
-        /**
-         * 
-         */
+
         public UpdaterContext context;
 
         /**
@@ -495,50 +383,23 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
             this.context = context;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public String toString() {
             return "NamespaceVisitor["+prefix+"]";
         }
 
-        /**
-         * 
-         * @param property
-         * @param level
-         * @throws javax.jcr.RepositoryException
-         */
         @Override
         protected void entering(Property property, int level) throws RepositoryException {
         }
 
-        /**
-         * 
-         * @param node
-         * @param level
-         * @throws javax.jcr.RepositoryException
-         */
         @Override
         protected void entering(Node node, int level) throws RepositoryException {
         }
 
-        /**
-         * 
-         * @param property
-         * @param level
-         * @throws javax.jcr.RepositoryException
-         */
         @Override
         protected void leaving(Property property, int level) throws RepositoryException {
         }
 
-        /**
-         * 
-         * @param node
-         * @param level
-         * @throws javax.jcr.RepositoryException
-         */
         @Override
         protected void leaving(Node node, int level) throws RepositoryException {
         }

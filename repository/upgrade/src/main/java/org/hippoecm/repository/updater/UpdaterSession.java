@@ -47,11 +47,13 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
+import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
+import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -60,7 +62,9 @@ import javax.jcr.security.AccessControlManager;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
+import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.impl.SessionDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -438,7 +442,7 @@ final public class UpdaterSession implements HippoSession {
         }
         try {
             destNode = destNode.addNode(destAbsNodePath, srcNode.getPrimaryNodeType().getName());
-            SessionDecorator.copy(srcNode, destNode);
+            copy(srcNode, destNode);
             return destNode;
         } catch (ConstraintViolationException ex) {
             throw new RepositoryException("Internal error", ex); // this cannot happen
@@ -446,6 +450,73 @@ final public class UpdaterSession implements HippoSession {
             throw new RepositoryException("Internal error", ex); // this cannot happen
         }
     }
+
+    public static void copy(Node srcNode, Node destNode) throws ItemExistsException, LockException, RepositoryException {
+        try {
+            Node canonical;
+            boolean copyChildren = true;
+            if (srcNode instanceof HippoNode && ((HippoNode) srcNode).isVirtual()) {
+                copyChildren = false;
+            }
+
+            NodeType[] mixinNodeTypes = srcNode.getMixinNodeTypes();
+            for (final NodeType mixinNodeType : mixinNodeTypes) {
+                destNode.addMixin(mixinNodeType.getName());
+            }
+
+            for (PropertyIterator iter = NodeDecorator.unwrap(srcNode).getProperties(); iter.hasNext();) {
+                Property property = iter.nextProperty();
+                if (property instanceof UpdaterProperty) {
+                    if (((UpdaterProperty)property).isMultiple()) {
+                        destNode.setProperty(property.getName(), property.getValues(), property.getType());
+                    } else {
+                        destNode.setProperty(property.getName(), property.getValue());
+                    }
+                } else {
+                    PropertyDefinition definition = property.getDefinition();
+                    if (!definition.isProtected()) {
+                        if (definition.isMultiple())
+                            destNode.setProperty(property.getName(), property.getValues(), property.getType());
+                        else
+                            destNode.setProperty(property.getName(), property.getValue());
+                    }
+                }
+            }
+
+            /* Do not copy virtual nodes.  Partial virtual nodes like
+             * HippoNodeType.NT_FACETSELECT and HippoNodeType.NT_FACETSEARCH
+             * should be copied except for their children, even if though they
+             * are half virtual. On save(), the virtual part will be
+             * ignored.
+             */
+            if (copyChildren) {
+                for (NodeIterator iter = srcNode.getNodes(); iter.hasNext();) {
+                    Node node = iter.nextNode();
+                    if (!(node instanceof HippoNode) || ((canonical = ((HippoNode) node).getCanonicalNode()) != null && canonical.isSame(node))) {
+                        Node child;
+                        // check if the subnode is autocreated
+                        if (!(node instanceof UpdaterNode) && node.getDefinition().isAutoCreated() && destNode.hasNode(node.getName())) {
+                            child = destNode.getNode(node.getName());
+                        } else {
+                            child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
+                        }
+                        copy(node, child);
+                    }
+                }
+            }
+        } catch (PathNotFoundException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (VersionException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (ValueFormatException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (ConstraintViolationException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        } catch (NoSuchNodeTypeException ex) {
+            throw new RepositoryException("Internal error", ex); // this cannot happen
+        }
+    }
+
 
     @Deprecated
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException {

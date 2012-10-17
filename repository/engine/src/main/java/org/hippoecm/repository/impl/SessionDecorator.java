@@ -67,8 +67,6 @@ import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
 import org.hippoecm.repository.jackrabbit.xml.HippoDocumentViewExporter;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
-import org.hippoecm.repository.updater.UpdaterNode;
-import org.hippoecm.repository.updater.UpdaterProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -368,20 +366,12 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
             for (PropertyIterator iter = NodeDecorator.unwrap(srcNode).getProperties(); iter.hasNext();) {
                 Property property = iter.nextProperty();
-                if (property instanceof UpdaterProperty) {
-                    if (((UpdaterProperty)property).isMultiple()) {
+                PropertyDefinition definition = property.getDefinition();
+                if (!definition.isProtected()) {
+                    if (definition.isMultiple())
                         destNode.setProperty(property.getName(), property.getValues(), property.getType());
-                    } else {
+                    else
                         destNode.setProperty(property.getName(), property.getValue());
-                    }
-                } else {
-                    PropertyDefinition definition = property.getDefinition();
-                    if (!definition.isProtected()) {
-                        if (definition.isMultiple())
-                            destNode.setProperty(property.getName(), property.getValues(), property.getType());
-                        else
-                            destNode.setProperty(property.getName(), property.getValue());
-                    }
                 }
             }
 
@@ -395,13 +385,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
                 for (NodeIterator iter = srcNode.getNodes(); iter.hasNext();) {
                     Node node = iter.nextNode();
                     if (!(node instanceof HippoNode) || ((canonical = ((HippoNode) node).getCanonicalNode()) != null && canonical.isSame(node))) {
-                        Node child;
-                        // check if the subnode is autocreated
-                        if (!(node instanceof UpdaterNode) && node.getDefinition().isAutoCreated() && destNode.hasNode(node.getName())) {
-                            child = destNode.getNode(node.getName());
-                        } else {
-                            child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
-                        }
+                        Node child = destNode.addNode(node.getName(), node.getPrimaryNodeType().getName());
                         copy(node, child);
                     }
                 }

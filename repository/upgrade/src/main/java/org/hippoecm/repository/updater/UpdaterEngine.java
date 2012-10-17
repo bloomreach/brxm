@@ -88,11 +88,13 @@ import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
+import org.onehippo.repository.update.Updater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
 public class UpdaterEngine {
+
 
     protected static final Logger log = LoggerFactory.getLogger(UpdaterEngine.class);
 
@@ -378,14 +380,15 @@ public class UpdaterEngine {
                 currentVersions.add(values[i].getString());
             }
         }
-        StringBuffer logInfo = new StringBuffer();
-        for(String tag : currentVersions) {
-            logInfo.append(" ");
-            logInfo.append(tag);
-        }
-        log.info("Migration cycle starting with version tags:"+new String(logInfo));
 
         if (prepare(modules, currentVersions)) {
+            StringBuffer logInfo = new StringBuffer();
+            for(String tag : currentVersions) {
+                logInfo.append(" ");
+                logInfo.append(tag);
+            }
+            log.info("Migration cycle starting with version tags:"+new String(logInfo));
+
             // find out if we're migrating the hippo or hipposys namespace
             for (ModuleRegistration moduleRegistration : modules) {
                 for (ItemVisitor visitor : moduleRegistration.visitors) {
@@ -624,7 +627,7 @@ public class UpdaterEngine {
         try {
             if(!session.getRootNode().hasNode(HippoNodeType.CONFIGURATION_PATH) ||
                !session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH).hasNode(HippoNodeType.INITIALIZE_PATH)) {
-                log.info("no migration cycle because clean repository startup without hippo configuration");
+                log.debug("no migration cycle because clean repository startup without hippo configuration");
                 return false;
             }
             boolean updates;

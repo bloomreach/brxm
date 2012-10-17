@@ -22,6 +22,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.EnumSet;
@@ -62,12 +64,12 @@ import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
-import org.hippoecm.repository.updater.UpdaterEngine;
 import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LocalHippoRepository extends HippoRepositoryImpl {
+
 
     /** System property for overriding the repository path */
     public static final String SYSTEM_PATH_PROPERTY = "repo.path";
@@ -87,13 +89,13 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** The advised threshold on the number of modified nodes to hold in transient session state */
     public static int batchThreshold = 96;
 
+    protected static final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
+
+
     /** hippo decorated root session */
     private HippoSession rootSession;
 
-    protected static final Logger log = LoggerFactory.getLogger(LocalHippoRepository.class);
-
     private LocalRepositoryImpl jackrabbitRepository = null;
-    private DecoratorFactoryImpl hippoRepositoryFactory;
 
     /** Whether to generate a dump.xml file of the /hippo:configuration node at shutdown */
     private final boolean dump = false;
@@ -109,6 +111,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     private String repoPath;
 
+    /** When during startup a situation is detected that a restart is required, this flag signals this, but only one restart should be appropriate */
+    boolean needsRestart = false;
+
     public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
         session = org.hippoecm.repository.decorating.SessionDecorator.unwrap(session);
         session = org.hippoecm.repository.impl.SessionDecorator.unwrap(session);
@@ -122,9 +127,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private static enum UpgradeFlag {
         TRUE, FALSE, ABORT
     }
-
-    /** When during startup a situation is detected that a restart is required, this flag signals this, but only one restart should be appropriate */
-    boolean needsRestart = false;
 
     List<DaemonModule> daemonModules = new LinkedList<DaemonModule>();
 
@@ -316,8 +318,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             log.info("Automatic upgrade enabled: abort on upgrade required");
         }
 
-        hippoRepositoryFactory = new DecoratorFactoryImpl();
-        repository = hippoRepositoryFactory.getRepositoryDecorator(repository);
+        repository = new DecoratorFactoryImpl().getRepositoryDecorator(repository);
 
         try {
             // get the current root/system session for the default workspace for namespace and nodetypes init
@@ -340,9 +341,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 switch(upgradeFlag) {
                 case TRUE:
                     jackrabbitRepository.enableVirtualLayer(false);
-                    Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
-                    needsRestart = UpdaterEngine.migrate(migrateSession);
-                    migrateSession.logout();
+                    migrate(jcrRootSession);
                     if (needsRestart) {
                         return;
                     }
@@ -356,7 +355,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
 
-            final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl(log);
+            final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
 
             initializeSystemNodeTypes(syncSession, jackrabbitRepository.getFileSystem(), initializationProcessor);
 
@@ -390,9 +389,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             }
 
             if (!hasHippoNamespace) {
-                Session initializeSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {})));
-                UpdaterEngine.migrate(initializeSession);
-                initializeSession.logout();
+                migrate(jcrRootSession);
             }
 
             for(DaemonModule module : new Modules<DaemonModule>(Modules.getModules(), DaemonModule.class)) {
@@ -410,6 +407,30 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);
+        }
+    }
+
+    /**
+     * Migration via the UpdaterEngine is enabled when the UpdaterEngine is on the classpath.
+     * Users must explicitly add the dependency to their project in order to use the old
+     * style updaters.
+     */
+    private void migrate(final Session jcrRootSession) throws RepositoryException {
+        try {
+            final Class<?> updaterEngineClass = Class.forName("org.hippoecm.repository.updater.UpdaterEngine");
+            final Method migrate = updaterEngineClass.getMethod("migrate", Session.class);
+            final Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(
+                    jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+            needsRestart = (Boolean) migrate.invoke(null, migrateSession);
+            migrateSession.logout();
+        } catch (ClassNotFoundException ignore) {
+            log.debug("UpdaterEngine not found");
+        } catch (NoSuchMethodException e) {
+            log.error("Unexpected error while trying to invoke UpdaterEngine", e);
+        } catch (InvocationTargetException e) {
+            log.error("Unexpected error while trying to invoke UpdaterEngine", e);
+        } catch (IllegalAccessException e) {
+            log.error("Unexpected error while trying to invoke UpdaterEngine", e);
         }
     }
 
