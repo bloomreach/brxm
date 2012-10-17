@@ -94,7 +94,7 @@ public class WorkflowEventLoggerWorkflowImpl implements WorkflowEventLoggerWorkf
                     return node.getIdentifier();
                 }
             } catch (PathNotFoundException e) {
-                log.debug("Document handle " + handlePath + " was removed before we could log workflow event");
+                log.debug("Document handle '{}' was removed before we could log workflow event", handlePath);
             } catch (RepositoryException e) {
                 log.error("Failed to determine uuid of document handle at " + handlePath + " while logging workflow event", e);
             }
