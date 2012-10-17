@@ -527,7 +527,11 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     @Override
     public synchronized void close() {
         for(DaemonModule module : daemonModules) {
-            module.shutdown();
+            try {
+                module.shutdown();
+            } catch (Exception e) {
+                log.error("Error while shutting down deamon module", e);
+            }
         }
         daemonModules.clear();
 
@@ -538,9 +542,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 java.io.OutputStream out = new java.io.FileOutputStream("dump.xml");
                 session.exportSystemView("/hippo:configuration", out, false, false);
             } catch (IOException ex) {
-                log.error("Error while dumping comfiguration: " + ex.getMessage(), ex);
+                log.error("Error while dumping configuration: " + ex.getMessage(), ex);
             } catch (RepositoryException ex) {
-                log.error("Error while dumping comfiguration: " + ex.getMessage(), ex);
+                log.error("Error while dumping configuration: " + ex.getMessage(), ex);
             } finally {
                 if (session != null) {
                     session.logout();
