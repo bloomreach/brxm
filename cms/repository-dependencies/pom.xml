@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010 Hippo.
+  Copyright 2010-2012 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -38,11 +38,6 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-config</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-cms-upgrade</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -101,9 +96,5 @@
     </dependency>
 
   </dependencies>
-
-  <build>
-    <defaultGoal>package</defaultGoal>
-  </build>
 
 </project>
