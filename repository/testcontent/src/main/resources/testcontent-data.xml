@@ -127,7 +127,7 @@
         </sv:property>
         <sv:node sv:name="myarticle1">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>defaultcontent:article</sv:value>
+            <sv:value>testcontent:article</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
@@ -135,10 +135,10 @@
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>db1bddc5-d29f-47a1-ac12-b34d97a82715</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:introduction" sv:type="String">
+          <sv:property sv:name="testcontent:introduction" sv:type="String">
             <sv:value>introduction</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:title" sv:type="String">
+          <sv:property sv:name="testcontent:title" sv:type="String">
             <sv:value>title</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
@@ -166,7 +166,7 @@
           <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
             <sv:value>admin</sv:value>
           </sv:property>
-          <sv:node sv:name="defaultcontent:body">
+          <sv:node sv:name="testcontent:body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippostd:html</sv:value>
             </sv:property>
@@ -199,7 +199,7 @@
         </sv:node>
         <sv:node sv:name="myarticle1">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>defaultcontent:article</sv:value>
+            <sv:value>testcontent:article</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
@@ -207,10 +207,10 @@
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>118b876b-fc73-4400-89b8-5a0e2153628d</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:introduction" sv:type="String">
+          <sv:property sv:name="testcontent:introduction" sv:type="String">
             <sv:value>introduction</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:title" sv:type="String">
+          <sv:property sv:name="testcontent:title" sv:type="String">
             <sv:value>title published version</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
@@ -238,7 +238,7 @@
           <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
             <sv:value>admin</sv:value>
           </sv:property>
-          <sv:node sv:name="defaultcontent:body">
+          <sv:node sv:name="testcontent:body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippostd:html</sv:value>
             </sv:property>
@@ -282,7 +282,7 @@
         </sv:property>
         <sv:node sv:name="myarticle2">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>defaultcontent:article</sv:value>
+            <sv:value>testcontent:article</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
@@ -290,10 +290,10 @@
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>b363e8be-2ec7-4f62-8ba0-2f9c7a335b17</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:introduction" sv:type="String">
+          <sv:property sv:name="testcontent:introduction" sv:type="String">
             <sv:value>introduction</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:title" sv:type="String">
+          <sv:property sv:name="testcontent:title" sv:type="String">
             <sv:value>title</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
@@ -320,7 +320,7 @@
           <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
             <sv:value>admin</sv:value>
           </sv:property>
-          <sv:node sv:name="defaultcontent:body">
+          <sv:node sv:name="testcontent:body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippostd:html</sv:value>
             </sv:property>
@@ -359,7 +359,7 @@
         </sv:property>
         <sv:node sv:name="mynews1">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>defaultcontent:news</sv:value>
+            <sv:value>testcontent:news</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
@@ -367,13 +367,13 @@
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>d1847bd1-78da-4491-beab-e0e6d2fee3e0</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:date" sv:type="Date">
+          <sv:property sv:name="testcontent:date" sv:type="Date">
             <sv:value>2010-01-05T09:03:00.000+01:00</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:introduction" sv:type="String">
+          <sv:property sv:name="testcontent:introduction" sv:type="String">
             <sv:value>&lt;html&gt;&lt;body&gt;introduction&lt;/body&gt;&lt;/html&gt;</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:title" sv:type="String">
+          <sv:property sv:name="testcontent:title" sv:type="String">
             <sv:value>title</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
@@ -400,7 +400,7 @@
           <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
             <sv:value>admin</sv:value>
           </sv:property>
-          <sv:node sv:name="defaultcontent:body">
+          <sv:node sv:name="testcontent:body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippostd:html</sv:value>
             </sv:property>
@@ -430,7 +430,7 @@
               <sv:property sv:multiple="true" sv:name="hippo:values" sv:type="String"/>
             </sv:node>
           </sv:node>
-          <sv:node sv:name="defaultcontent:internallink">
+          <sv:node sv:name="testcontent:internallink">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippo:mirror</sv:value>
             </sv:property>
@@ -472,7 +472,7 @@
         </sv:property>
         <sv:node sv:name="myevent1">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>defaultcontent:event</sv:value>
+            <sv:value>testcontent:event</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
             <sv:value>hippo:harddocument</sv:value>
@@ -480,10 +480,10 @@
           <sv:property sv:name="jcr:uuid" sv:type="String">
             <sv:value>24c54e63-78d3-452f-a9f0-f216cc60c276</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:introduction" sv:type="String">
+          <sv:property sv:name="testcontent:introduction" sv:type="String">
             <sv:value>&lt;html&gt;&lt;body&gt;introduction&lt;/body&gt;&lt;/html&gt;</sv:value>
           </sv:property>
-          <sv:property sv:name="defaultcontent:title" sv:type="String">
+          <sv:property sv:name="testcontent:title" sv:type="String">
             <sv:value>title</sv:value>
           </sv:property>
           <sv:property sv:multiple="true" sv:name="hippo:availability" sv:type="String">
@@ -510,18 +510,18 @@
           <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
             <sv:value>admin</sv:value>
           </sv:property>
-          <sv:node sv:name="defaultcontent:address">
+          <sv:node sv:name="testcontent:address">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>defaultcontent:address</sv:value>
+              <sv:value>testcontent:address</sv:value>
             </sv:property>
-            <sv:property sv:name="defaultcontent:number" sv:type="Long">
+            <sv:property sv:name="testcontent:number" sv:type="Long">
               <sv:value>4</sv:value>
             </sv:property>
-            <sv:property sv:name="defaultcontent:street" sv:type="String">
+            <sv:property sv:name="testcontent:street" sv:type="String">
               <sv:value>Dolomieten</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="defaultcontent:date">
+          <sv:node sv:name="testcontent:date">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippostd:date</sv:value>
             </sv:property>
@@ -563,7 +563,7 @@
               <sv:value>2008</sv:value>
             </sv:property>
           </sv:node>
-          <sv:node sv:name="defaultcontent:body">
+          <sv:node sv:name="testcontent:body">
             <sv:property sv:name="jcr:primaryType" sv:type="Name">
               <sv:value>hippostd:html</sv:value>
             </sv:property>

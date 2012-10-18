@@ -32,10 +32,10 @@ public class EditDocumentAction extends AbstractFullReviewedActionsWorkflowActio
     protected Node doExecute(Node node) throws Exception {
         Document document = getFullReviewedActionsWorkflow(node).obtainEditableInstance();
         node.getSession().refresh(false);
-        Node draft = node.getSession().getNodeByUUID(document.getIdentity());
-        String value = draft.getProperty("defaultcontent:introduction").getString();
+        Node draft = node.getSession().getNodeByIdentifier(document.getIdentity());
+        String value = draft.getProperty("testcontent:introduction").getString();
         value += "x";
-        draft.setProperty("defaultcontent:introduction", value);
+        draft.setProperty("testcontent:introduction", value);
         draft.getSession().save();
         Node handle = draft.getParent();
         document = getFullReviewedActionsWorkflow(draft).commitEditableInstance();
@@ -45,15 +45,15 @@ public class EditDocumentAction extends AbstractFullReviewedActionsWorkflowActio
         for(NodeIterator iter = handle.getNodes(handle.getName()); iter.hasNext(); ) {
             Node variant = iter.nextNode();
             if(variant.getProperty("hippostd:state").getString().equals("unpublished")) {
-                variantValue = variant.getProperty("defaultcontent:introduction").getString();
-                variantUUID = variant.getUUID();
+                variantValue = variant.getProperty("testcontent:introduction").getString();
+                variantUUID = variant.getIdentifier();
             }
         }
         if(variantValue != null && variantValue.length() < value.length()) {
             throw new RepositoryException("edit action failed "+Thread.currentThread().getName()+" document "+handle.getPath()+" "+variantUUID+" is "+(variantValue!=null?variantValue.length():-1)+" expected "+value.length());
         }
 
-        node = node.getSession().getNodeByUUID(document.getIdentity());
+        node = node.getSession().getNodeByIdentifier(document.getIdentity());
         node = node.getParent();
         if (node.isNodeType("hippo:handle")) {
             node = node.getParent();

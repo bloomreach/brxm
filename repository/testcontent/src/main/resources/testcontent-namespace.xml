@@ -17,7 +17,7 @@
 <sv:node xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
          xmlns:mix="http://www.jcp.org/jcr/mix/1.0"
          xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         sv:name="strict">
+         sv:name="testcontent">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposysedit:namespace</sv:value>
   </sv:property>

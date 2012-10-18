@@ -29,10 +29,10 @@
     <sv:value>ranges</sv:value>
   </sv:property>
   <sv:property sv:name="hippofacnav:facets" sv:type="String">
-    <sv:value>defaultcontent:date$year</sv:value>
-    <sv:value>defaultcontent:date$month</sv:value>
-    <sv:value>defaultcontent:date$day</sv:value>
-    <sv:value>defaultcontent:date$[{name:'today', resolution:'day',  begin:0, end:1}, {name:'yesterday', resolution:'day',  begin:-1, end:0},  {name:'last 7 days', resolution:'day',  begin:-6, end:1},  {name:'this month', resolution:'month',  begin:0, end:1} , {name:'last 3 months', resolution:'month',  begin:-2, end:1} , {name:'this year', resolution:'year',  begin:0, end:1} ]</sv:value>
+    <sv:value>testcontent:date$year</sv:value>
+    <sv:value>testcontent:date$month</sv:value>
+    <sv:value>testcontent:date$day</sv:value>
+    <sv:value>testcontent:date$[{name:'today', resolution:'day',  begin:0, end:1}, {name:'yesterday', resolution:'day',  begin:-1, end:0},  {name:'last 7 days', resolution:'day',  begin:-6, end:1},  {name:'this month', resolution:'month',  begin:0, end:1} , {name:'last 3 months', resolution:'month',  begin:-2, end:1} , {name:'this year', resolution:'year',  begin:0, end:1} ]</sv:value>
   </sv:property>
 </sv:node>
 

@@ -366,23 +366,17 @@ test/src/test/resources/sample.cnd -text
 test/src/test/resources/user-author.xml -text svneol=unset#text/plain
 test/src/test/resources/user-editor.xml -text svneol=unset#text/plain
 testcontent/pom.xml -text
-testcontent/src/main/resources/defaultcontent-asset-example.xml -text
-testcontent/src/main/resources/defaultcontent-data.xml -text
-testcontent/src/main/resources/defaultcontent-facnav-example.xml -text
-testcontent/src/main/resources/defaultcontent-image-example.xml -text
-testcontent/src/main/resources/defaultcontent-namespace.xml -text
-testcontent/src/main/resources/defaultcontent-node-live.xml -text
-testcontent/src/main/resources/defaultcontent-node-preview.xml -text
-testcontent/src/main/resources/defaultcontent.cnd -text
 testcontent/src/main/resources/hippoecm-extension.xml -text
-testcontent/src/main/resources/quickstart-users.xml -text
-testcontent/src/main/resources/strict-data.xml -text
-testcontent/src/main/resources/strict-namespace.xml -text
-testcontent/src/main/resources/strict.cnd -text
-testcontent/src/main/resources/types/defaultcontent-type-document.xml -text
-testcontent/src/main/resources/types/defaultcontent-type-news.xml -text
-testcontent/src/main/resources/types/strict-type-document.xml -text
-testcontent/src/main/resources/types/strict-type-news.xml -text
+testcontent/src/main/resources/testcontent-asset-example.xml -text
+testcontent/src/main/resources/testcontent-data.xml -text
+testcontent/src/main/resources/testcontent-facnav-example.xml -text
+testcontent/src/main/resources/testcontent-image-example.xml -text
+testcontent/src/main/resources/testcontent-namespace.xml -text
+testcontent/src/main/resources/testcontent-node-live.xml -text
+testcontent/src/main/resources/testcontent-node-preview.xml -text
+testcontent/src/main/resources/testcontent.cnd -text
+testcontent/src/main/resources/types/testcontent-type-document.xml -text
+testcontent/src/main/resources/types/testcontent-type-news.xml -text
 testutils/pom.xml -text
 testutils/src/main/java/org/onehippo/repository/testutils/ExecuteOnLogLevel.java -text
 testutils/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml -text

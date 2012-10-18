@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><!--
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
   Copyright 2007-2010 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
@@ -29,7 +30,7 @@
       <sv:value>nl</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Strict Basis Document</sv:value>
+      <sv:value>Basis Document</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -40,7 +41,7 @@
       <sv:value>en</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Strict Base Document</sv:value>
+      <sv:value>Base Document</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -51,7 +52,7 @@
       <sv:value>fr</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Document de base strict</sv:value>
+      <sv:value>Document de base</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hippo:translation">
@@ -62,7 +63,7 @@
       <sv:value>it</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:message" sv:type="String">
-      <sv:value>Documento baso stretto</sv:value>
+      <sv:value>Documento Base</sv:value>
     </sv:property>
   </sv:node>
   <sv:node sv:name="hipposysedit:nodetype">
@@ -84,7 +85,7 @@
         <sv:value>a87d38af-21b1-4245-ac9c-e47afda6f294</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
-        <sv:value>http://www.onehippo.org/strict/nt/1.0</sv:value>
+        <sv:value>http://www.hippoecm.org/testcontent/nt/1.7</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
         <sv:value>true</sv:value>

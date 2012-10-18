@@ -19,30 +19,30 @@
     <sv:value>hippo:initializefolder</sv:value>
   </sv:property>
   <sv:property sv:name="hippo:version" sv:type="String">
-    <sv:value>v19a-defaultcontent</sv:value>
+    <sv:value>v19a-testcontent</sv:value>
   </sv:property>
-  <!-- defaultcontent namespace -->
-  <sv:node sv:name="defaultcontent">
+  <!-- testcontent namespace -->
+  <sv:node sv:name="testcontent">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.7</sv:value>
+      <sv:value>http://www.hippoecm.org/testcontent/nt/1.7</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>defaultcontent.cnd</sv:value>
+      <sv:value>testcontent.cnd</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>3000.0</sv:value>
     </sv:property>
   </sv:node>
-  <!-- defaultcontent Types -->
-  <sv:node sv:name="defaultcontent-types">
+  <!-- testcontent Types -->
+  <sv:node sv:name="testcontent-types">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>defaultcontent-namespace.xml</sv:value>
+      <sv:value>testcontent-namespace.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/hippo:namespaces</sv:value>
@@ -52,7 +52,7 @@
     </sv:property>
   </sv:node>
   <!-- document type -->
-  <sv:node sv:name="defaultcontent-type-document">
+  <sv:node sv:name="testcontent-type-document">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -60,14 +60,14 @@
       <sv:value>3001.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>types/defaultcontent-type-document.xml</sv:value>
+      <sv:value>types/testcontent-type-document.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces/defaultcontent</sv:value>
+      <sv:value>/hippo:namespaces/testcontent</sv:value>
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="defaultcontent-type-news">
+  <sv:node sv:name="testcontent-type-news">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
@@ -75,80 +75,20 @@
       <sv:value>3001.5</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>types/defaultcontent-type-news.xml</sv:value>
+      <sv:value>types/testcontent-type-news.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces/defaultcontent</sv:value>
+      <sv:value>/hippo:namespaces/testcontent</sv:value>
     </sv:property>
   </sv:node>
 
-  <!-- strict namespace -->
-  <sv:node sv:name="strict">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:namespace" sv:type="String">
-      <sv:value>http://www.onehippo.org/strict/nt/1.0</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:nodetypesresource" sv:type="String">
-      <sv:value>strict.cnd</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3000.0</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="strict-types">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>strict-namespace.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3001.0</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="strict-type-document">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3001.1</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>types/strict-type-document.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces/strict</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="strict-type-news">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3001.5</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>types/strict-type-news.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:namespaces/strict</sv:value>
-    </sv:property>
-  </sv:node>
-  <!-- defaultcontent content -->
+  <!-- testcontent content -->
   <sv:node sv:name="content">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>defaultcontent-data.xml</sv:value>
+      <sv:value>testcontent-data.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
@@ -158,29 +98,13 @@
     </sv:property>
   </sv:node>
 
-  <!-- strict content -->
-  <sv:node sv:name="strict-content">
+  <!-- testcontent faceted navigation example -->
+  <sv:node sv:name="testcontent-facnav-example">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>strict-data.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>3004.1</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <!-- defaultcontent faceted navigation example -->
-  <sv:node sv:name="defaultcontent-facnav-example">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>defaultcontent-facnav-example.xml</sv:value>
+      <sv:value>testcontent-facnav-example.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
@@ -189,13 +113,13 @@
       <sv:value>3005.0</sv:value>
     </sv:property>
   </sv:node>
-  <!-- defaultcontent live -->
+  <!-- testcontent live -->
   <sv:node sv:name="live">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>defaultcontent-node-live.xml</sv:value>
+      <sv:value>testcontent-node-live.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
@@ -204,13 +128,13 @@
       <sv:value>3006.0</sv:value>
     </sv:property>
   </sv:node>
-  <!-- defaultcontent preview -->
+  <!-- testcontent preview -->
   <sv:node sv:name="preview">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>defaultcontent-node-preview.xml</sv:value>
+      <sv:value>testcontent-node-preview.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/</sv:value>
@@ -219,13 +143,13 @@
       <sv:value>3007.0</sv:value>
     </sv:property>
   </sv:node>
-  <!-- defaultcontent image example -->
+  <!-- testcontent image example -->
   <sv:node sv:name="image_example">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>defaultcontent-image-example.xml</sv:value>
+      <sv:value>testcontent-image-example.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/content/gallery</sv:value>
@@ -234,34 +158,19 @@
       <sv:value>3008.0</sv:value>
     </sv:property>
   </sv:node>
-  <!-- defaultcontent asset example -->
+  <!-- testcontent asset example -->
   <sv:node sv:name="asset_example">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>defaultcontent-asset-example.xml</sv:value>
+      <sv:value>testcontent-asset-example.xml</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentroot" sv:type="String">
       <sv:value>/content/assets</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>3009.0</sv:value>
-    </sv:property>
-  </sv:node>
-
-  <sv:node sv:name="quickstart-users">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentresource" sv:type="String">
-      <sv:value>quickstart-users.xml</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>907.0</sv:value>
     </sv:property>
   </sv:node>
 

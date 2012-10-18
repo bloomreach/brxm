@@ -87,13 +87,13 @@
         <sv:value>1773c954-2938-4a5c-abf9-031419da4379</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:uri" sv:type="String">
-        <sv:value>http://www.hippoecm.org/defaultcontent/nt/1.7</sv:value>
+        <sv:value>http://www.hippoecm.org/testcontent/nt/1.7</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:node" sv:type="Boolean">
         <sv:value>true</sv:value>
       </sv:property>
       <sv:property sv:name="hipposysedit:supertype" sv:type="String">
-        <sv:value>defaultcontent:basedocument</sv:value>
+        <sv:value>testcontent:basedocument</sv:value>
         <sv:value>hippostd:relaxed</sv:value>
       </sv:property>
       <sv:node sv:name="title">
@@ -101,7 +101,7 @@
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>defaultcontent:title</sv:value>
+          <sv:value>testcontent:title</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>String</sv:value>
@@ -116,7 +116,7 @@
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>defaultcontent:date</sv:value>
+          <sv:value>testcontent:date</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>Date</sv:value>
@@ -127,7 +127,7 @@
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>defaultcontent:introduction</sv:value>
+          <sv:value>testcontent:introduction</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>Html</sv:value>
@@ -138,7 +138,7 @@
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>defaultcontent:body</sv:value>
+          <sv:value>testcontent:body</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>hippostd:html</sv:value>
@@ -149,7 +149,7 @@
           <sv:value>hipposysedit:field</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:path" sv:type="String">
-          <sv:value>defaultcontent:internallink</sv:value>
+          <sv:value>testcontent:internallink</sv:value>
         </sv:property>
         <sv:property sv:name="hipposysedit:type" sv:type="String">
           <sv:value>hippo:mirror</sv:value>
@@ -163,7 +163,7 @@
     </sv:property>
     <sv:node sv:name="hipposysedit:prototype">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>defaultcontent:news</sv:value>
+        <sv:value>testcontent:news</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
         <sv:value>hippo:harddocument</sv:value>
@@ -184,10 +184,10 @@
       <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
         <sv:value>2010-02-04T16:32:28.068+02:00</sv:value>
       </sv:property>
-      <sv:property sv:name="defaultcontent:introduction" sv:type="String">
+      <sv:property sv:name="testcontent:introduction" sv:type="String">
         <sv:value>introduction</sv:value>
       </sv:property>
-      <sv:property sv:name="defaultcontent:title" sv:type="String">
+      <sv:property sv:name="testcontent:title" sv:type="String">
         <sv:value></sv:value>
       </sv:property>
       <sv:property sv:name="hippo:paths" sv:type="String">
@@ -209,7 +209,7 @@
       <sv:property sv:name="hippotranslation:locale" sv:type="String">
         <sv:value>document-type-locale</sv:value>
       </sv:property>
-      <sv:node sv:name="defaultcontent:body">
+      <sv:node sv:name="testcontent:body">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippostd:html</sv:value>
         </sv:property>
@@ -217,7 +217,7 @@
           <sv:value>body</sv:value>
         </sv:property>
       </sv:node>
-      <sv:node sv:name="defaultcontent:internallink">
+      <sv:node sv:name="testcontent:internallink">
         <sv:property sv:name="jcr:primaryType" sv:type="Name">
           <sv:value>hippo:mirror</sv:value>
         </sv:property>

@@ -29,7 +29,7 @@ public class AddNewsDocumentAction extends AbstractFolderWorkflowAction {
         do {
             newName +=  random.nextInt(10);
         } while (node.hasNode(newName));
-        String absPath = getFolderWorkflow(node).add("new-document", "defaultcontent:news", newName);
+        String absPath = getFolderWorkflow(node).add("new-document", "testcontent:news", newName);
         node.getSession().refresh(false);
         return node.getSession().getNode(absPath);
     }

@@ -58,7 +58,6 @@ public class CndUpdateTest extends RepositoryTestCase {
         updateModel("testUpdateModel", "cnd3");
         logoutLogin();
         assertEquals("testUpdateModel:folder", session.getNode("/test/testUpdateModel:folder/testUpdateModel:folder/testUpdateModel:folder[2]").getDefinition().getDeclaringNodeType().getName());
-        System.out.println("Done testCustomFolderUpdate");
     }
 
     @Test
@@ -81,9 +80,7 @@ public class CndUpdateTest extends RepositoryTestCase {
                 "hippo:docbase", "cafebabe-cafe-babe-cafe-babecafebabe"
         });
         session.save();
-        System.out.println("closing");
         server.close();
-        System.out.println("Restarting");
         server = HippoRepositoryFactory.getHippoRepository();
         if (background != null) {
             background = server;

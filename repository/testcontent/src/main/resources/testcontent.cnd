@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2008-2012 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -21,34 +21,16 @@
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
 <hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
-<strict='http://www.onehippo.org/strict/nt/1.0'>
+<testcontent='http://www.hippoecm.org/testcontent/nt/1.7'>
 
-[strict:basedocument] > hippo:document, hippostdpubwf:document, hippostd:publishableSummary
+[testcontent:basedocument] > hippo:document, hippostdpubwf:document, hippostd:publishableSummary
 
-[strict:address]
-- strict:street (string)
-- strict:number (long)
+[testcontent:address] > hippo:compound, hippostd:relaxed
 
-[strict:article] > strict:basedocument
-- strict:title (string)
-- strict:introduction (string)
-+ strict:body (hippostd:html)
+[testcontent:article] > testcontent:basedocument, hippostd:relaxed
 
-[strict:news] > strict:basedocument
-- strict:title (string)
-- strict:introduction (string)
-- strict:date (date)
-+ strict:body (hippostd:html)
-+ strict:internallink (hippo:mirror)
+[testcontent:news] > testcontent:basedocument, hippostd:relaxed
 
-[strict:event] > strict:basedocument
-- strict:title (string)
-- strict:introduction (string)
-+ strict:date (hippostd:date)
-+ strict:address (strict:address)
-+ strict:body (hippostd:html)
+[testcontent:event] > testcontent:basedocument, hippostd:relaxed
 
-[strict:overview] > strict:basedocument
-- strict:title (string)
-- strict:introduction (string)
-+ strict:query (hippo:query)
+[testcontent:overview] > testcontent:basedocument, hippostd:relaxed
