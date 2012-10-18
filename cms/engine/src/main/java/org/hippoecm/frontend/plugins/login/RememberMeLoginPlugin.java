@@ -24,9 +24,12 @@ import java.util.Map;
 
 import javax.jcr.LoginException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 import javax.servlet.http.Cookie;
 
 import org.apache.commons.codec.binary.Base64;
@@ -64,6 +67,7 @@ import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.util.AclChecker;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.event.HippoSecurityEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -88,7 +92,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     private static final String HAL_REQUEST_ATTRIBUTE_NAME = "in_try_hippo_autologin";
     private static final long serialVersionUID = 1L;
 
-    private static final Logger log = LoggerFactory.getLogger(LoginPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(RememberMeLoginPlugin.class);
 
     /** Algorithm to use for creating the passkey secret.
         Intentionally a relative weak algorithm, as this whole procedure isn't
@@ -386,8 +390,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                                     RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean("use.httponly.cookies",
                                             false));
 
-                            Node userinfo = jcrSession.getRootNode().getNode(
-                                    HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.USERS_PATH + "/" + username);
+                            Node userinfo = RememberMeLoginPlugin.this.getUserInfo(jcrSession);
                             String[] strings = passphrase.split("\\$");
                             userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
                             userinfo.save();
@@ -527,6 +530,39 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         } else {
             response.addCookie(cookie);
         }
+    }
+
+    private Node getUserInfo(final Session session) throws RepositoryException {
+        final String userId = sanitize(session.getUserID());
+        StringBuilder statement = new StringBuilder();
+
+        statement.append("//element");
+        statement.append("(*, ").append(HippoNodeType.NT_USER).append(")");
+        statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append("'").append(']');
+
+        try {
+            Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
+            QueryResult result = q.execute();
+            NodeIterator nodesIterator = result.getNodes();
+
+            if (nodesIterator.hasNext()) {
+                return nodesIterator.nextNode();
+            }
+        } catch (RepositoryException rex) {
+            log.info("Could not retrieve information of user: '{}'", userId);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Error happened while retrieving information of user: '" + userId + "'", rex);
+            }
+
+            throw rex;
+        }
+
+        return null;
+    }
+
+    private String sanitize(final String userId) {
+        return userId.trim();
     }
 
 }
