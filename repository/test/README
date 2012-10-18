@@ -1,0 +1,32 @@
+Tests are divided between regular tests and integration tests,
+the difference being the amount of time they take to execute.
+
+Running 'mvn clean install' runs only the regular tests. Run
+'mvn clean install -Pintegration' to run the integration tests
+as well.
+
+Tests can be run against different databases using profiles.
+There are two predefined profiles for h2 and mysql. Run
+'mvn test -Ph2' to run the regular tests against h2. Run
+'mvn integration-test -Pintegration,h2 to run both regular
+and integration tests against h2.
+
+The mysql configuration assumes a mysql database is running
+on port 3306, a database called jcr exists in that server,
+and user root without a password has read/write privileges.
+edit config/mysql-repository.xml to adjust according to your
+local setup.
+
+When running the tests against different databases make sure
+you do a 'mvn clean' before switching databases each time
+so that the repository storage directory gets wiped. Otherwise
+you will continue to run with the previous configuration.
+
+Note on StampedeTest:
+StampedeTest is a load test on the repository. It starts
+a bunch of threads that execute a random set of actions
+on the repository continually for a configured amount of time.
+For instance 'mvn test -Dtest=StampedeTest -Pintegration,h2
+-Dstampede.minutes=3 -Dstampede.threads=5' executes the
+StampedeTest against h2 for a period of 3 minutes with 5
+concurrent threads.

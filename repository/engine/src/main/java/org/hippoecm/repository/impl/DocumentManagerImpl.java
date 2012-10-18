@@ -75,7 +75,7 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
             InputStream istream = getClass().getClassLoader().getResourceAsStream("jdo.properties");
             properties.load(istream);
             properties.setProperty("javax.jdo.option.ConnectionURL", "jcr:file:" + System.getProperty("user.dir"));
-            pmf = JDOHelper.getPersistenceManagerFactory(properties);
+            pmf = JDOHelper.getPersistenceManagerFactory(properties, getClass().getClassLoader());
             ((JcrStoreManager)((JDOPersistenceManagerFactory)pmf).getOMFContext().getStoreManager()).setSession(session);
             ((JDOPersistenceManagerFactory)pmf).setPrimaryClassLoader(getClass().getClassLoader());
             pm = null;
