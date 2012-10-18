@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo.
+ *  Copyright 2009-2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -94,7 +94,6 @@ import javax.servlet.http.HttpSession;
 public class PingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-
     /** Servlet parameters */
     private static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
     private static final String USERNAME_PARAM = "check-username";
@@ -111,6 +110,7 @@ public class PingServlet extends HttpServlet {
     private static final String DEFAULT_NODE = "content/documents";
     private static final String DEFAULT_WRITE_ENABLE = "false";
     private static final String DEFAULT_WRITE_PATH = "pingcheck";
+    private static final String DEFAULT_CLUSTER_NODE_ID = "default";
 
     /** Running config */
     private String repositoryLocation;
@@ -122,7 +122,7 @@ public class PingServlet extends HttpServlet {
     private boolean writeTestEnabled = false;
 
     /** Local vars */
-    private HippoRepository repository;
+    private volatile HippoRepository repository;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -139,7 +139,6 @@ public class PingServlet extends HttpServlet {
     private String getParameter(ServletConfig config, String paramName, String defaultValue) {
         String initValue = config.getInitParameter(paramName);
         String contextValue = config.getServletContext().getInitParameter(paramName);
-
         if (isNotNullAndNotEmpty(initValue)) {
             return initValue;
         } else if (isNotNullAndNotEmpty(contextValue)) {
@@ -165,44 +164,56 @@ public class PingServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int resultStatus = HttpServletResponse.SC_OK;
-        String resultMessage = "OK - Repository online and accessible.";
+        String resultMessage = getOkMessage();
         Exception exception = null;
 
         if (hasCustomMessage()) {
             resultMessage = "CUSTOM - " + customMessage;
             resultStatus = HttpServletResponse.SC_SERVICE_UNAVAILABLE;
-        } else {
-            if (writeTestEnabled) {
-                resultMessage = "OK - Repository online, accessible and writable.";
-            }
-            try {
-                doRepositoryChecks();
-            } catch (PingException e) {
-                resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-                resultMessage = e.getMessage();
-                exception = e;
-            } catch (RuntimeException e) {
-                resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-                resultMessage = "FAILURE - Serious problem with the ping servlet. Might have lost repository access: "
-                        + e.getClass().getName() + ": " + e.getMessage();
-                exception = e;
-            }
+            printMessage(response, resultMessage, resultStatus, exception);
+            return;
         }
 
-        res.setContentType("text/plain");
-        res.setStatus(resultStatus);
-        PrintWriter writer = res.getWriter();
-        writer.println(resultMessage);
-        if (exception != null) {
-            exception.printStackTrace(writer);
+        try {
+            doRepositoryChecks();
+        } catch (PingException e) {
+            resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            resultMessage = e.getMessage();
+            exception = e;
+        } catch (RuntimeException e) {
+            resultStatus = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+            resultMessage = "FAILURE - Serious problem with the ping servlet. Might have lost repository access: "
+                    + e.getClass().getName() + ": " + e.getMessage();
+            exception = e;
+        } finally {
+            printMessage(response, resultMessage, resultStatus, exception);
+            closeHttpSession(request);
         }
-        closeHttpSession(req);
+    }
+
+    private String getOkMessage() {
+        String resultMessage = "OK - Repository online and accessible.";
+        if (writeTestEnabled) {
+            resultMessage = "OK - Repository online, accessible and writable.";
+        }
+        return resultMessage;
     }
 
     private boolean hasCustomMessage() {
         return (customMessage != null);
+    }
+
+    private void printMessage(HttpServletResponse response, String message, int status, Exception exception)
+            throws IOException {
+        response.setContentType("text/plain");
+        response.setStatus(status);
+        PrintWriter writer = response.getWriter();
+        writer.println(message);
+        if (exception != null) {
+            exception.printStackTrace(writer);
+        }
     }
 
     private void closeHttpSession(HttpServletRequest req) {
@@ -215,10 +226,9 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private void doRepositoryChecks() throws PingException {
+    private synchronized void doRepositoryChecks() throws PingException {
         Session session = null;
         try {
-            obtainRepository();
             session = obtainSession();
             doReadTest(session);
             doWriteTestIfEnabled(session);
@@ -229,9 +239,9 @@ public class PingServlet extends HttpServlet {
 
     private void obtainRepository() throws PingException {
         try {
-            repository = null;
             repository = HippoRepositoryFactory.getHippoRepository(repositoryLocation);
         } catch (RepositoryException e) {
+            repository = null;
             String msg = "FAILURE - Problem obtaining repository connection in ping servlet : Is the property" + " '"
                     + REPOSITORY_ADDRESS_PARAM + "' configured as an init-param or context-param?";
             throw new PingException(msg, e);
@@ -239,6 +249,9 @@ public class PingServlet extends HttpServlet {
     }
 
     private Session obtainSession() throws PingException {
+        if (repository == null) {
+            obtainRepository();
+        }
         try {
             return repository.login(username, password.toCharArray());
         } catch (LoginException e) {
@@ -247,6 +260,8 @@ public class PingServlet extends HttpServlet {
                     + "' configured as an init-param or context-param?";
             throw new PingException(msg, e);
         } catch (RepositoryException e) {
+            // make sure the the obtainRepository is tried again the next request.
+            repository = null;
             String msg = "FAILURE - Problem obtaining session from repository in ping servlet : Are the '"
                     + USERNAME_PARAM + "' and" + " '" + PASSWORD_PARAM
                     + "' configured as an init-param or context-param?";
@@ -284,7 +299,7 @@ public class PingServlet extends HttpServlet {
         }
     }
 
-    private synchronized void doWriteTest(Session session) throws PingException {
+    private void doWriteTest(Session session) throws PingException {
         try {
             Node writePath = getOrCreateWriteNode(session);
             writePath.setProperty("lastcheck", Calendar.getInstance());
@@ -329,11 +344,15 @@ public class PingServlet extends HttpServlet {
     }
 
     private String getClusterNodeId() {
-        String id = System.getProperty("org.apache.jackrabbit.core.cluster.node_id");
-        if (id == null || id.length() == 0) {
-            return "default";
+        String clusterNodeId = null;
+        if (repository != null) {
+            clusterNodeId = repository.getRepository().getDescriptor("jackrabbit.cluster.id");
         }
-        return id;
+        if (isNotNullAndNotEmpty(clusterNodeId)) {
+            return clusterNodeId;
+        } else {
+            return DEFAULT_CLUSTER_NODE_ID;
+        }
     }
 
     /**
