@@ -19,7 +19,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
 
 /**
- * Any instance of a {@link javax.jcr.Workspace} returned by a HippoRepository may be casted to a HippoWorkspace to expose some
+ * Any instance of a {@link Workspace} returned by a HippoRepository may be cast to a HippoWorkspace to expose some
  * additional services from the Hippo repository.  These services are bound to the session from which this
  * workspace was obtained.
  */
