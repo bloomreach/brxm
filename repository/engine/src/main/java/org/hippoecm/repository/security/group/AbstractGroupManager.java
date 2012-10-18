@@ -336,7 +336,7 @@ public abstract class AbstractGroupManager implements GroupManager {
 
     public final void setMembers(Node group, Set<String> members) throws RepositoryException {
         if (!isManagerForGroup(group)) {
-            log.warn("Group '" + group.getName() + "' is nog managed by provider '" + providerId
+            log.warn("Group '" + group.getName() + "' is not managed by provider '" + providerId
                     + "' skipping setMembers");
             return;
         }
@@ -352,7 +352,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     public final void addMember(Node group, String rawUserId) throws RepositoryException {
         String userId = sanitizeId(rawUserId);
         if (!isManagerForGroup(group)) {
-            log.warn("Group '" + group.getName() + "' is nog managed by provider '" + providerId
+            log.warn("Group '" + group.getName() + "' is not managed by provider '" + providerId
                     + "' skipping addMember '" + userId + "'");
             return;
         }
@@ -366,7 +366,7 @@ public abstract class AbstractGroupManager implements GroupManager {
     public final void removeMember(Node group, String rawUserId) throws RepositoryException {
         String userId = sanitizeId(rawUserId);
         if (!isManagerForGroup(group)) {
-            log.warn("Group '" + group.getName() + "' is nog managed by provider '" + providerId
+            log.warn("Group '" + group.getName() + "' is not managed by provider '" + providerId
                     + "' skipping removeMember '" + userId + "'");
             return;
         }
