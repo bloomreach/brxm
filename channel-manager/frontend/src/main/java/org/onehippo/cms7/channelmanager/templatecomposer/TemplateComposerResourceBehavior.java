@@ -15,8 +15,6 @@ public class TemplateComposerResourceBehavior extends AbstractBehavior {
     @Override
     public void bind(Component component) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
-            component.add(JavascriptPackageResource.getHeaderContribution(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
-
             component.add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.MI_FRAME));
             component.add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.MI_FRAME_MSG));
             component.add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.FLOATING_WINDOW));
@@ -24,6 +22,7 @@ public class TemplateComposerResourceBehavior extends AbstractBehavior {
             component.add(JavascriptPackageResource.getHeaderContribution(PluginsBundle.class, PluginsBundle.VTABS));
 
             component.add(JavascriptPackageResource.getHeaderContribution(TemplateComposerGlobalBundle.class, TemplateComposerGlobalBundle.GLOBALS));
+            component.add(JavascriptPackageResource.getHeaderContribution(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
             component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.ICON_GRID_VIEW));
             component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.TOOLKIT_GRID_PANEL));
             component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.ICON_TOOLBAR_WINDOW));
