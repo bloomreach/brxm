@@ -226,6 +226,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         return Hippo.ExtWidgets.create('Hippo.ChannelManager.TemplateComposer.VariantAdder', {
             composerRestMountUrl : this.composerRestMountUrl,
             componentId : this.componentId,
+            locale: this.locale,
             skipVariantIds : Ext.pluck(this.variants, 'id'),
             title: variant.name,
             variantsUuid : this.variantsUuid,

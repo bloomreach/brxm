@@ -39,6 +39,7 @@ Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
 
         this.globalVariantsStore = new Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore({
             composerRestMountUrl: this.composerRestMountUrl,
+            locale: config.locale,
             skipIds: config.skipVariantIds,
             variantsUuid: this.variantsUuid
         });
