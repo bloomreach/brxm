@@ -88,6 +88,9 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>${cluster.id}.workflows</sv:value>
     </sv:property>
+    <sv:property sv:name="wicket.model" sv:type="String">
+      <sv:value>${model.compareTo}</sv:value>
+    </sv:property>
     <sv:property sv:name="workflow.categories" sv:type="String">
       <sv:value>default</sv:value>
       <sv:value>versioning</sv:value>
