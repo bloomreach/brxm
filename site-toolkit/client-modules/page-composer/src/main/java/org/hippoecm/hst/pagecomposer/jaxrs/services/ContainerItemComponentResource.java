@@ -40,6 +40,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -154,17 +155,10 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         try {
             HstRequestContext requestContext = getRequestContext(servletRequest);
             Locale locale = null;
-            if (localeString != null) {
-                String[] localeParts = localeString.split("_");
-                if (localeParts.length == 3) {
-                    locale = new Locale(localeParts[0], localeParts[1], localeParts[2]);
-                } else if (localeParts.length == 2) {
-                    locale = new Locale(localeParts[0], localeParts[1]);
-                } else if (localeParts.length == 1) {
-                    locale = new Locale(localeParts[0]);
-                } else {
-                    log.warn("Failed to create Locale from string '{}'", localeString);
-                }
+            try {
+                locale = LocaleUtils.toLocale(localeString);
+            } catch (IllegalArgumentException e) {
+                log.warn("Failed to create Locale from string '{}'", localeString);
             }
             String currentMountCanonicalContentPath = getCurrentMountCanonicalContentPath(servletRequest);
             return doGetParameters(getRequestConfigNode(requestContext), locale, variant, currentMountCanonicalContentPath);
