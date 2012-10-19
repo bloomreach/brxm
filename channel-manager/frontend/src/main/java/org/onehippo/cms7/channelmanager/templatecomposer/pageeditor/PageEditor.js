@@ -23,7 +23,7 @@ Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore = Ext.extend(Hippo.Cha
 
         var proxy = new Ext.data.HttpProxy({
             api: {
-                read: config.composerRestMountUrl + '/' + config.variantsUuid + './globalvariants/?FORCE_CLIENT_HOST=true',
+                read: config.composerRestMountUrl + '/' + config.variantsUuid + './globalvariants/?locale=' + config.locale + '&FORCE_CLIENT_HOST=true',
                 create: '#',
                 update: '#',
                 destroy: '#'
@@ -91,6 +91,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         if (Ext.isDefined(this.variantsUuid)) {
             this.globalVariantsStore = new Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore({
                 composerRestMountUrl: this.composerRestMountUrl,
+                locale: this.locale,
                 variantsUuid: this.variantsUuid
             });
             this.globalVariantsStoreFuture = new Hippo.Future(function (success, fail) {

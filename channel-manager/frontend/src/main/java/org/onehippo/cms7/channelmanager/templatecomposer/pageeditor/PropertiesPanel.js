@@ -151,7 +151,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
     _loadComponentVariants: function(variants) {
         return new Hippo.Future(function (success, fail) {
             Ext.Ajax.request({
-                url : this.composerRestMountUrl + '/' + this.variantsUuid + './componentvariants?FORCE_CLIENT_HOST=true',
+                url : this.composerRestMountUrl + '/' + this.variantsUuid + './componentvariants?locale=' + this.locale + '&FORCE_CLIENT_HOST=true',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
