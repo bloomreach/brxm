@@ -232,9 +232,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             variantsComboBox.setValue(this.renderedVariant);
             this.globalVariantsStoreFuture.when(function() {
                 var variantRecord = this.globalVariantsStore.getById(this.renderedVariant);
-                if (variantRecord) {
-                    variantsComboBox.setValue(variantRecord.get('name'));
+                if (!Ext.isDefined(variantRecord)) {
+                    variantRecord = this.globalVariantsStore.getById('default');
                 }
+                variantsComboBox.setValue(variantRecord.get('name'));
             }.createDelegate(this));
         }, this);
 
