@@ -142,7 +142,9 @@ public class SystemInfoDataProvider implements IDataProvider {
     public String getProjectVersion() {
         try {
             final Manifest manifest = getWebAppManifest();
-            return buildVersionString(manifest, "Project-Version", "Project-Build");
+            if (manifest != null) {
+                return buildVersionString(manifest, "Project-Version", "Project-Build");
+            }
         } catch(IOException iOException) {
             log.debug("Error occurred getting the project version from the webapp-manifest.", iOException);
         }
