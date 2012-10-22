@@ -119,7 +119,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                     YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
                 }
                 //console.time('HippoAjax.processComponent.purgeElement');
-                YAHOO.util.Event.purgeElement(el, false);
+                YAHOO.util.Event.purgeElement(el, true);
                 //console.timeEnd('HippoAjax.processComponent.purgeElement');
                 //console.timeEnd("HippoAjax.processComponent.cleanup");
             }

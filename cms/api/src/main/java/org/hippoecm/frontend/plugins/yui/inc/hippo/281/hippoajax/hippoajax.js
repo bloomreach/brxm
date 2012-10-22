@@ -117,7 +117,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                 for(var i=0; i<els.length; i++) {
                     YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
                 }
-                YAHOO.util.Event.purgeElement(el, false);
+                YAHOO.util.Event.purgeElement(el, true);
             }
             tmpFunc.call(this, steps, node);
         }

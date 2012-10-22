@@ -1061,6 +1061,16 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
         }
         
         this.unsubscribeAll();
+
+        var wrap = this.get('wrap');
+        if (wrap) {
+            delete YAHOO.widget.LayoutUnit._instances[wrap.id];
+        }
+        var body = this.get('body');
+        if (body) {
+            delete YAHOO.widget.LayoutUnit._instances[body];
+        }
+
         Event.purgeElement(this.get('element'));
         //this.get('parentNode').removeChild(this.get('element'));
     
