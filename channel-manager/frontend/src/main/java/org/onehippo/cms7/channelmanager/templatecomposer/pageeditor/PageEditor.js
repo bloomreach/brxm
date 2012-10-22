@@ -85,6 +85,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         this.locale = config.locale;
 
         this.canUnlockChannels = config.canUnlockChannels;
+        this.toolbarPlugins = config.toolbarPlugins;
 
         this.globalVariantsStore = null;
         this.globalVariantsStoreFuture = null;
@@ -167,22 +168,23 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         });
     },
 
-    getFullScreenButtonConfig : function(fullscreen) {
+    getFullScreenButtonConfig: function(fullscreen) {
         return {
-            xtype : 'button',
-            text : this.resources[fullscreen ? 'expand-button' : 'collapse-button'],
-            iconCls : fullscreen ? 'expand' : 'collapse',
+            xtype: 'button',
+            id: 'template-composer-toolbar-fullscreen-button',
+            text: this.resources[fullscreen ? 'expand-button' : 'collapse-button'],
+            iconCls: fullscreen ? 'expand' : 'collapse',
             width: 120,
-            listeners : {
-                click : {
-                    fn : function (button) {
+            listeners: {
+                click: {
+                    fn: function(button) {
                         this.fullscreen = fullscreen;
                         this.createViewToolbar();
                         this.registerResizeListener();
                         var iFrame = Ext.getCmp('Iframe');
                         iFrame.getFrame().sendMessage({}, fullscreen ? 'fullscreen' : 'partscreen');
                     },
-                    scope : this
+                    scope: this
                 }
             }
         };
@@ -192,6 +194,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         var self = this;
 
         var variantsComboBox = new Ext.form.ComboBox({
+            id: 'template-composer-toolbar-variants-combo',
             store: this.globalVariantsStore,
             displayField: 'name',
             typeAhead: true,
@@ -253,6 +256,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     createVariantLabel: function () {
         return new Ext.Toolbar.TextItem({
+            id: 'template-composer-toolbar-variants-label',
             text : this.resources['variants-combo-box-label'],
             hidden : (this.globalVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
         });
@@ -285,6 +289,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 this.getFullScreenButtonConfig(true)
             );
         }
+        this.addToolbarPlugins(toolbar, 'view');
         if (toolbar.rendered) {
             toolbar.doLayout();
         }
@@ -298,110 +303,169 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         toolbar.removeAll();
         toolbar.add(
-            {
-                text : this.initialConfig.resources['close-button'],
-                iconCls : 'save-close-channel',
-                allowDepress : false,
-                width : 120,
-                listeners : {
-                    click : {
-                        fn : this.pageContainer.toggleMode,
-                        scope : this.pageContainer
+                {
+                    id: 'template-composer-toolbar-save-and-close-button',
+                    text: this.initialConfig.resources['close-button'],
+                    iconCls: 'save-close-channel',
+                    allowDepress: false,
+                    width: 120,
+                    listeners: {
+                        click: {
+                            fn: this.pageContainer.toggleMode,
+                            scope: this.pageContainer
+                        }
                     }
-                }
-            }, {
-                text : this.initialConfig.resources['discard-button'],
-                iconCls : 'discard-channel',
-                allowDepress : false,
-                width : 120,
-                listeners : {
-                    click : {
-                        fn : this.pageContainer.discardChanges,
-                        scope : this.pageContainer
+                },
+                {
+                    id: 'template-composer-toolbar-discard-button',
+                    text: this.initialConfig.resources['discard-button'],
+                    iconCls: 'discard-channel',
+                    allowDepress: false,
+                    width: 120,
+                    listeners: {
+                        click: {
+                            fn: this.pageContainer.discardChanges,
+                            scope: this.pageContainer
+                        }
                     }
-                }
-            }, ' ',
-            variantsComboBoxLabel,
-            variantsComboBox,
-            '->',
-            {
-                id : 'channel-properties-window-button',
-                text : this.initialConfig.resources['show-channel-properties-button'],
-                mode : 'show',
-                allowDepress : false,
-                width : 120,
-                listeners : {
-                    click : {
-                        fn : function () {
-                            var propertiesWindow = Ext.getCmp('channel-properties-window');
-                            var button = Ext.getCmp('channel-properties-window-button');
-                            if (button.mode === 'show') {
-                                propertiesWindow.show({
-                                    channelId : this.channelId,
-                                    channelName : this.channelName
-                                });
-                                propertiesWindow.on('hide', function () {
+                },
+                ' ',
+                variantsComboBoxLabel,
+                variantsComboBox,
+                '->',
+                {
+                    id: 'template-composer-toolbar-channel-properties-button',
+                    text: this.initialConfig.resources['show-channel-properties-button'],
+                    mode: 'show',
+                    allowDepress: false,
+                    width: 120,
+                    listeners: {
+                        click: {
+                            fn: function(button) {
+                                var propertiesWindow = Ext.getCmp('channel-properties-window');
+                                if (button.mode === 'show') {
+                                    propertiesWindow.show({
+                                        channelId: this.channelId,
+                                        channelName: this.channelName
+                                    });
+                                    propertiesWindow.on('hide', function() {
+                                        button.mode = 'show';
+                                        button.setText(this.initialConfig.resources['show-channel-properties-button']);
+                                    }, this, {single: true});
+                                    button.mode = 'hide';
+                                    button.setText(this.initialConfig.resources['close-channel-properties-button']);
+                                } else {
+                                    propertiesWindow.hide();
                                     button.mode = 'show';
                                     button.setText(this.initialConfig.resources['show-channel-properties-button']);
-                                }, this, {single : true});
-                                button.mode = 'hide';
-                                button.setText(this.initialConfig.resources['close-channel-properties-button']);
-                            } else {
-                                propertiesWindow.hide();
-                                button.mode = 'show';
-                                button.setText(this.initialConfig.resources['show-channel-properties-button']);
-                            }
-                        },
-                        scope : this
+                                }
+                            },
+                            scope: this
+                        }
                     }
-                }
-            },
-            {
-                id : 'toolkit-window-button',
-                text : (toolboxVisible ? this.initialConfig.resources['close-components-button'] : this.initialConfig.resources['add-components-button']),
-                mode : (toolboxVisible ? 'hide' : 'show'),
-                allowDepress : false,
-                width : 120,
-                listeners : {
-                    click : {
-                        fn : function () {
-                            var toolkitWindow = Ext.getCmp('icon-toolbar-window');
-                            var button = Ext.getCmp('toolkit-window-button');
-                            if (button.mode === 'show') {
-                                toolkitWindow.show();
-                                button.mode = 'hide';
-                                button.setText(this.initialConfig.resources['close-components-button']);
-                            } else {
-                                toolkitWindow.hide();
-                                button.mode = 'show';
-                                button.setText(this.initialConfig.resources['add-components-button']);
-                            }
-                        },
-                        scope : this
+                },
+                {
+                    id: 'template-composer-toolbar-components-button',
+                    text: (toolboxVisible ? this.initialConfig.resources['close-components-button'] : this.initialConfig.resources['add-components-button']),
+                    mode: (toolboxVisible ? 'hide' : 'show'),
+                    allowDepress: false,
+                    width: 120,
+                    listeners: {
+                        click: {
+                            fn: function(button) {
+                                var toolkitWindow = Ext.getCmp('icon-toolbar-window');
+                                if (button.mode === 'show') {
+                                    toolkitWindow.show();
+                                    button.mode = 'hide';
+                                    button.setText(this.initialConfig.resources['close-components-button']);
+                                } else {
+                                    toolkitWindow.hide();
+                                    button.mode = 'show';
+                                    button.setText(this.initialConfig.resources['add-components-button']);
+                                }
+                            },
+                            scope: this
+                        }
                     }
-                }
-            },
-            {
-                cls : 'toolbarMenuIcon',
-                iconCls : 'channel-gear',
-                allowDepress : false,
-                menu : {
-                    items : {
-                        text : this.initialConfig.resources['edit-hst-configuration'],
-                        listeners : {
-                            click : {
-                                fn : function () {
-                                    this.fireEvent('edit-hst-config', this.channelId, (this.initializeHstConfigEditorWithPreviewContext ? this.hstPreviewMountPoint : this.hstMountPoint));
-                                },
-                                scope : this
+                },
+                {
+                    id: 'template-composer-toolbar-gear-menu',
+                    cls: 'toolbarMenuIcon',
+                    iconCls: 'channel-gear',
+                    allowDepress: false,
+                    menu: {
+                        items: {
+                            text: this.initialConfig.resources['edit-hst-configuration'],
+                            listeners: {
+                                click: {
+                                    fn: function() {
+                                        this.fireEvent('edit-hst-config', this.channelId, (this.initializeHstConfigEditorWithPreviewContext ? this.hstPreviewMountPoint : this.hstMountPoint));
+                                    },
+                                    scope: this
+                                }
                             }
                         }
                     }
                 }
-            });
+        );
+        this.addToolbarPlugins(toolbar, 'edit');
         if (toolbar.rendered) {
             toolbar.doLayout();
         }
+    },
+
+    addToolbarPlugins: function(toolbar, mode) {
+        Ext.each(this.toolbarPlugins, function(plugin) {
+            var insertIndex, pluginInstance;
+
+            if (plugin.positions[mode] !== 'hidden') {
+                insertIndex = this.parseToolbarInsertIndex(toolbar, plugin, mode);
+                if (insertIndex >= 0) {
+                    console.log("Adding " + mode + " toolbar plugin '" + plugin.xtype + "' " + plugin.positions[mode]);
+                    pluginInstance = Hippo.ExtWidgets.create(plugin.xtype, {
+                        toolbarMode: mode
+                    });
+                    toolbar.insert(insertIndex, pluginInstance);
+                }
+            }
+        }, this);
+    },
+
+    parseToolbarInsertIndex: function(toolbar, plugin, mode) {
+        var spaceIndex, beforeOrAfter, neighborId, neighbor, insertIndex;
+
+        if (plugin.positions[mode] === 'first') {
+            return 0;
+        }
+        if (plugin.positions[mode] === 'last') {
+            return toolbar.items.getCount();
+        }
+
+        spaceIndex = plugin.positions[mode].indexOf(' ');
+        beforeOrAfter = plugin.positions[mode].substring(0, spaceIndex);
+
+        if (spaceIndex < 0 || (beforeOrAfter !== 'before' && beforeOrAfter !== 'after')) {
+            console.warn("Ignoring toolbar plugin '" + plugin.xtype + "', unknown position: '" + plugin.positions[mode]
+                    + "'. Expected 'before <toolbar-item-id>' or 'after <toolbar-item-id>'");
+            return -1;
+        }
+
+        insertIndex = -1;
+        neighborId = plugin.positions[mode].substring(spaceIndex + 1);
+
+        toolbar.items.each(function(toolbarItem, index) {
+            if (toolbarItem.id === neighborId) {
+                insertIndex = beforeOrAfter === 'before' ? index : index + 1;
+                return false;
+            }
+        }, this);
+
+        if (insertIndex === -1) {
+            console.warn("Ignoring toolbar plugin '" + plugin.xtype + "', unknown neighbor: '" + neighborId
+                    + "'. Known neighbors are: " + Ext.pluck(toolbar.items.items, 'id').toString());
+        }
+
+        return insertIndex;
     },
 
     enableUI: function(pageContext) {
@@ -679,6 +743,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     getToolbarButtons : function() {
         var editButton = new Ext.Toolbar.Button({
+            id: 'template-composer-toolbar-edit-button',
             text: this.initialConfig.resources['edit-button'],
             iconCls: 'edit-channel',
             allowDepress: false,
@@ -692,6 +757,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         });
         var publishButton = new Ext.Toolbar.Button({
+            id: 'template-composer-toolbar-publish-button',
             text: this.initialConfig.resources['publish-button'],
             iconCls: 'publish-channel',
             allowDepress: false,
@@ -706,6 +772,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         });
         var discardButton = new Ext.Toolbar.Button({
+            id: 'template-composer-toolbar-discard-button',
             text: this.initialConfig.resources['discard-button'],
             iconCls: 'discard-channel',
             allowDespress: false,
@@ -720,6 +787,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         });
         var unlockButton = new Ext.Toolbar.Button({
+            id: 'template-composer-toolbar-unlock-button',
             text: this.initialConfig.resources['unlock-button'],
             iconCls: 'remove-lock',
             allowDepress: false,
@@ -732,7 +800,9 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 }
             }
         });
-        var lockLabel = new Ext.Toolbar.TextItem({});
+        var lockLabel = new Ext.Toolbar.TextItem({
+            id: 'template-composer-toolbar-lock-label'
+        });
         if (this.pageContainer.pageContext.locked) {
             var lockedOn = new Date(this.pageContainer.pageContext.lockedOn).format(this.initialConfig.resources['mount-locked-format']);
             lockLabel.setText(this.initialConfig.resources['mount-locked-toolbar'].format(this.pageContainer.pageContext.lockedBy, lockedOn));

@@ -328,6 +328,7 @@ public class PageEditor extends ExtPanel {
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ERROR_HTML)).toString()));
         properties.put("iFrameCssHeadContributions", Arrays.asList(
                 rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.CHANNEL_MANAGER_IFRAME_CSS)).toString()));
+        properties.put("toolbarPlugins", createToolbarPluginConfigs());
         if (debug) {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
                     rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_CORE)).toString(),
@@ -350,6 +351,25 @@ public class PageEditor extends ExtPanel {
                     rc.urlFor(new ResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL)).toString(),
                     rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.ALL)).toString()));
         }
+    }
+
+    private JSONArray createToolbarPluginConfigs() throws JSONException {
+        final JSONArray configs = new JSONArray();
+
+        final List<ToolbarPlugin> toolbarPlugins = context.getServices(ToolbarPlugin.SERVICE_ID, ToolbarPlugin.class);
+        for (ToolbarPlugin plugin : toolbarPlugins) {
+            JSONObject config = new JSONObject();
+            config.put("xtype", plugin.getXType());
+
+            JSONObject positions = new JSONObject();
+            positions.put("view", plugin.getPositionView());
+            positions.put("edit", plugin.getPositionEdit());
+            config.put("positions", positions);
+
+            configs.put(config);
+        }
+
+        return configs;
     }
 
     @Override
