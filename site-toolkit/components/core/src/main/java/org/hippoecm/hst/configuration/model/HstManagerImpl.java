@@ -16,9 +16,8 @@
 package org.hippoecm.hst.configuration.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -80,7 +79,7 @@ public class HstManagerImpl implements HstManager {
      * HstNode's identify uniqueness 
      * Also this cache is reused when a configuration change did not impact HstComponentsConfiguration's at all
      */
-    private Map<Set<String>, HstComponentsConfigurationService> hstComponentsConfigurationInstanceCache = new LinkedHashMap<Set<String>, HstComponentsConfigurationService>();;
+    private Map<Set<String>, HstComponentsConfigurationService> hstComponentsConfigurationInstanceCache = new HashMap<Set<String>, HstComponentsConfigurationService>();;
     
     
     /**
@@ -112,19 +111,19 @@ public class HstManagerImpl implements HstManager {
      * The map of all configurationRootNodes where the key is the path to the configuration: This is the non enhanced map: in other words,
      * no hstconfiguration inheritance is accounted for. This is the plain hierarchical jcr tree translation to HstNode tree
      */
-    private Map<String, HstNode> configurationRootNodes = new LinkedHashMap<String, HstNode>();
+    private Map<String, HstNode> configurationRootNodes = new HashMap<String, HstNode>();
     
     /**
      * The enhanced version of configurationRootNodes : During enhancing, the inheritance (hst:inheritsfrom) is resolved. Note
      * that the original HstNode's in configurationRootNodes are not changed. Thus, all HstNode's in configurationRootNodes are 
      * first copied to new instances. The backing provider is allowed to be the same instance still.
      */
-    private Map<String, HstNode> enhancedConfigurationRootNodes = new LinkedHashMap<String, HstNode>();
+    private Map<String, HstNode> enhancedConfigurationRootNodes = new HashMap<String, HstNode>();
 
     /**
      * The map of all site nodes where the key is the path
      */
-    private Map<String, HstSiteRootNode> siteRootNodes = new LinkedHashMap<String, HstSiteRootNode>();
+    private Map<String, HstSiteRootNode> siteRootNodes = new HashMap<String, HstSiteRootNode>();
 
     /**
 
@@ -299,7 +298,7 @@ public class HstManagerImpl implements HstManager {
 
                     fineGrainedReloading = true;
 
-                    Set<String> loadNodes = new LinkedHashSet<String>();
+                    Set<String> loadNodes = new HashSet<String>();
                     int pathLengthHstHostNode = (rootPath + "/hst:hosts").length();
                     if(configChangeEventMap != null) {
                         Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.HOST_NODE);
@@ -403,12 +402,10 @@ public class HstManagerImpl implements HstManager {
                 } else {
                     // do finegrained reloading, removing and loading of previously loaded nodes that changed.
 
-                    Set<String> loadNodes = new LinkedHashSet<String>();
+                    Set<String> loadNodes = new HashSet<String>();
                     List<String> reloadNodes = new ArrayList<String>();
                     if(configChangeEventMap != null) {
-                        removeUnnecessaryNodeRemovedEventTriggeredByConfigNodeMoving();
                         Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.HSTCONFIGURATION_NODE);
-
                         if(events.size() > 0) {
                             hstComponentsConfigurationChanged = true;
                         }
@@ -418,7 +415,7 @@ public class HstManagerImpl implements HstManager {
                          * the ordering is most likely changed: Jackrabbit returns for a MOVE a 'remove' and an 'add' as event.
                          * we keep track of removals in removedPaths. When we also later encounter an add, we reload the parent
                          */
-                        Map<String, HstNode> removedPathsForParentNode = new LinkedHashMap<String, HstNode>();
+                        Map<String, HstNode> removedPathsForParentNode = new HashMap<String, HstNode>();
                           
                         for(HstEvent event : events) {
                             if(event.eventType == HstEvent.EventType.NODE_EVENT) { 
@@ -497,7 +494,7 @@ public class HstManagerImpl implements HstManager {
                 loadAllSiteNodes(session);
             } else {
                 // do finegrained reloading, removing and loading of previously loaded nodes that changed.
-                Set<String> loadNodes = new LinkedHashSet<String>();
+                Set<String> loadNodes = new HashSet<String>();
                 if(configChangeEventMap != null) {
                     Set<HstEvent> events = configChangeEventMap.get(HstEvent.ConfigurationType.SITE_NODE);
                     for (HstEvent event : events) {
@@ -603,118 +600,6 @@ public class HstManagerImpl implements HstManager {
 
     }
 
-    private void removeUnnecessaryNodeRemovedEventTriggeredByConfigNodeMoving() {
-        if (configChangeEventMap == null) {
-            log.debug("Nothing to exclude because configChangeEventMap is null.");
-            return;
-        }
-
-        log.debug("removeUnnecessaryNodeRemovedEventTriggeredByConfigNodeMoving starts...");
-
-        // 
-        // HSTTWO-2311:
-        // If configuration node is moved (renamed) to the node which was just removed,
-        // the NODE_REMOVED events on the descendants of the removed node and the removed node itself happen
-        // after NODE_ADDED event happens on the new node which was the target of the move() call.
-        // Therefore, we have to filter out those unnecessary NODE_REMOVED events before processing.
-        // 
-        // We assume the set keeps the insertion order to keep the event ordering from the event iterator.
-        Set<HstEvent> configNodeEvents = configChangeEventMap.get(HstEvent.ConfigurationType.HSTCONFIGURATION_NODE);
-
-        if (configNodeEvents != null && !configNodeEvents.isEmpty()) {
-            HstEvent [] configNodeEventsArray = configNodeEvents.toArray(new HstEvent[configNodeEvents.size()]);
-
-            boolean exclusionNeeded = false;
-            Set<Integer> excludedIndexes = new HashSet<Integer>();
-            String unnecessaryRemovedNodeEventConfigNodePath = null;
-            String unnecessaryRemovedNodeEventPathPrefix = null;
-
-            if (configNodeEventsArray.length > 0 && configNodeEventsArray[0].eventType == HstEvent.EventType.PROP_EVENT) {
-                String propName = StringUtils.substringAfterLast(configNodeEventsArray[0].path, "/");
-
-                if (StringUtils.equals(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, propName) || StringUtils.equals(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, propName)) {
-                    excludedIndexes.add(0);
-                    log.debug("Exclusion added at [{}] on \"{}\" because it's internal locking property.", 0, configNodeEventsArray[0].path);
-                } else if (StringUtils.equals(configNodeEventsArray[0].path, getRootConfigurationNodePath(configNodeEventsArray[0].path))) {
-                    excludedIndexes.add(0);
-                    log.debug("Exclusion added at [{}] on \"{}\" because it's property event on configuration node path.", 0, configNodeEventsArray[0].path);
-                }
-            }
-
-            for (int i = 1; i < configNodeEventsArray.length; i++) {
-                HstEvent.EventType curHstEventType = configNodeEventsArray[i].eventType;
-                int prevEventType = configNodeEventsArray[i - 1].jcrEventType;
-                String prevEventPath = configNodeEventsArray[i - 1].path;
-                int curEventType = configNodeEventsArray[i].jcrEventType;
-                String curEventPath = configNodeEventsArray[i].path;
-                String propName = null;
-                log.debug("[{}] - curEventPath=\"{}\"", curEventType, curEventPath);
-
-                if (curHstEventType == HstEvent.EventType.PROP_EVENT) {
-                    propName = StringUtils.substringAfterLast(curEventPath, "/");
-
-                    if (StringUtils.equals(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, propName) || StringUtils.equals(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, propName)) {
-                        excludedIndexes.add(i);
-                        log.debug("Exclusion added at [{}] on \"{}\" because it's internal locking property.", i, curEventPath);
-                        continue;
-                    } else if (StringUtils.equals(curEventPath, getRootConfigurationNodePath(curEventPath))) {
-                        excludedIndexes.add(i);
-                        log.debug("Exclusion added at [{}] on \"{}\" because it's property event on configuration node path.", i, curEventPath);
-                        continue;
-                    }
-                }
-
-                if (!exclusionNeeded) {
-                    log.debug("Exclusion checking: [{}] - prevEventPath=\"{}\"", prevEventType, prevEventPath);
-
-                    // only when the previous one is NODE_REMOVED on a configuration root node
-                    // and the current one is NODE_ADDED on another configuration root node.
-                    if (prevEventType == Event.NODE_REMOVED && curEventType == Event.NODE_ADDED &&
-                            StringUtils.equals(prevEventPath, getRootConfigurationNodePath(prevEventPath)) &&
-                            StringUtils.equals(curEventPath, getRootConfigurationNodePath(curEventPath))) {
-
-                        exclusionNeeded = true;
-                        unnecessaryRemovedNodeEventConfigNodePath = curEventPath;
-                        unnecessaryRemovedNodeEventPathPrefix = curEventPath + "/";
-                        log.debug("Exclusion needed now. unnecessaryRemovedNodeEventPathPrefix=\"{}\"", unnecessaryRemovedNodeEventPathPrefix);
-                    }
-                } else {
-                    if (curHstEventType == HstEvent.EventType.PROP_EVENT && StringUtils.startsWith(curEventPath, unnecessaryRemovedNodeEventPathPrefix)) {
-                        excludedIndexes.add(i);
-                        log.debug("Exclusion added at [{}] on \"{}\"", i, curEventPath);
-                    } else if (curEventType == Event.NODE_REMOVED) {
-                        log.debug("Checking if the event node is under the moving target config node. curEventPath=\"{}\", unnecessaryRemovedNodeEventPathBase=\"{}\"",
-                                curEventPath, unnecessaryRemovedNodeEventPathPrefix);
-
-                        if (StringUtils.startsWith(curEventPath, unnecessaryRemovedNodeEventPathPrefix)) {
-                            excludedIndexes.add(i);
-                            log.debug("Exclusion added at [{}] on \"{}\"", i, curEventPath);
-                        } else if (StringUtils.equals(curEventPath, unnecessaryRemovedNodeEventConfigNodePath)) {
-                            excludedIndexes.add(i);
-                            log.debug("Final Exclusion added at [{}] on \"{}\"", i, curEventPath);
-                            exclusionNeeded = false;
-                        }
-                    }
-                }
-            }
-
-            if (!excludedIndexes.isEmpty()) {
-                configNodeEvents = new LinkedHashSet<HstEvent>();
-
-                for (int i = 0; i < configNodeEventsArray.length; i++) {
-                    if (!excludedIndexes.contains(i)) {
-                        configNodeEvents.add(configNodeEventsArray[i]);
-                    }
-                }
-
-                log.debug("Removed unnecessary NODE_REMOVED events on from the nodes under HSTCONFIGURATION_NODE. The filtered events are now:\n{}", configNodeEvents);
-                configChangeEventMap.put(HstEvent.ConfigurationType.HSTCONFIGURATION_NODE, configNodeEvents);
-            } else {
-                log.debug("Nothing to exclude from the HstEvent set for HSTCONFIGURATION_NODE.");
-            }
-        }
-    }
-
     private void loadConfigurationNode(final Session session, final String path) throws RepositoryException {
         String parentPath = path.substring(0,path.lastIndexOf("/"));
         HstNode parentNode = getConfigurationNodeForPath(parentPath);
@@ -740,7 +625,7 @@ public class HstManagerImpl implements HstManager {
     }
 
     private Map<String, HstNode> enhanceHstConfigurationNodes(Map<String, HstNode> nodes) {
-        Map<String, HstNode> enhanced = new LinkedHashMap<String, HstNode>();
+        Map<String, HstNode> enhanced = new HashMap<String, HstNode>();
         for(HstNode node : nodes.values()) {
             HstNode enhancedNode = new HstSiteConfigurationRootNodeImpl((HstNodeImpl)node, nodes, rootPath);
             enhanced.put(enhancedNode.getValueProvider().getPath(), enhancedNode);
@@ -861,7 +746,7 @@ public class HstManagerImpl implements HstManager {
              * all nodes that have been added or moved or deleted or have a property added/changed/removed
              */
 
-            Map<String, HstEvent> nodeIdentifierToEventMap = new LinkedHashMap<String, HstEvent>();
+            Map<String, HstEvent> nodeIdentifierToEventMap = new HashMap<String, HstEvent>();
             
             try {
                 while (events.hasNext()) {
@@ -920,11 +805,11 @@ public class HstManagerImpl implements HstManager {
             String hstChannelsPath = rootPath+"/hst:channels";
             
             if(configChangeEventMap == null) {
-                configChangeEventMap = new LinkedHashMap<HstEvent.ConfigurationType, Set<HstEvent>>(); 
-                configChangeEventMap.put(HstEvent.ConfigurationType.HSTCONFIGURATION_NODE, new LinkedHashSet<HstEvent>());
-                configChangeEventMap.put(HstEvent.ConfigurationType.COMMON_CATALOG_NODE, new LinkedHashSet<HstEvent>());
-                configChangeEventMap.put(HstEvent.ConfigurationType.HOST_NODE, new LinkedHashSet<HstEvent>());
-                configChangeEventMap.put(HstEvent.ConfigurationType.SITE_NODE, new LinkedHashSet<HstEvent>());
+                configChangeEventMap = new HashMap<HstEvent.ConfigurationType, Set<HstEvent>>();
+                configChangeEventMap.put(HstEvent.ConfigurationType.HSTCONFIGURATION_NODE, new HashSet<HstEvent>());
+                configChangeEventMap.put(HstEvent.ConfigurationType.COMMON_CATALOG_NODE, new HashSet<HstEvent>());
+                configChangeEventMap.put(HstEvent.ConfigurationType.HOST_NODE, new HashSet<HstEvent>());
+                configChangeEventMap.put(HstEvent.ConfigurationType.SITE_NODE, new HashSet<HstEvent>());
             }
             
             for(HstEvent event : nodeIdentifierToEventMap.values()) {
@@ -953,7 +838,10 @@ public class HstManagerImpl implements HstManager {
     }
     
     private void addNodePathIfAbsentForPropertyToMap(Map<String, HstEvent> idPathMapOfChangedAddedOrMovedNodes, Event ev) throws RepositoryException {
-        if(idPathMapOfChangedAddedOrMovedNodes.containsKey(ev.getIdentifier())) {
+        if (propertyEventCanBeIgnored(ev.getPath())) {
+            return;
+        }
+        if (idPathMapOfChangedAddedOrMovedNodes.containsKey(ev.getIdentifier())) {
             return;
         } else {
             String propertyPath = ev.getPath();
@@ -961,6 +849,16 @@ public class HstManagerImpl implements HstManager {
             idPathMapOfChangedAddedOrMovedNodes.put(ev.getIdentifier(), new HstEvent(nodePath, HstEvent.EventType.PROP_EVENT, ev.getType()));
         }
     }
+
+    private boolean propertyEventCanBeIgnored(final String propEventPath) {
+        String propName = StringUtils.substringAfterLast(propEventPath, "/");
+        if (StringUtils.equals(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, propName) || StringUtils.equals(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, propName)) {
+            log.debug("Property event for path '{}' can be ignored as won't affect the hst model", propEventPath);
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public void invalidateAll() {
