@@ -51,7 +51,7 @@ public class RootResource extends AbstractConfigResource {
         HttpSession session = servletRequest.getSession(true);
         session.setAttribute(ContainerConstants.RENDERING_HOST, renderingHost);
         session.setAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
-        servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
+        session.removeAttribute(ContainerConstants.RENDER_VARIANT);
         boolean canWrite;
         try {
             HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
