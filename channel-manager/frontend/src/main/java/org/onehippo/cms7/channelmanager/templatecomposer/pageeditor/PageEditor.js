@@ -197,6 +197,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             id: 'template-composer-toolbar-variants-combo',
             store: this.globalVariantsStore,
             displayField: 'name',
+            valueField: 'id',
             typeAhead: true,
             mode: 'local',
             triggerAction: 'all',
