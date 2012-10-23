@@ -46,17 +46,20 @@ if (!YAHOO.hippo.FeedbackManager) {
                 }
                 var element = Dom.get(this.id);
                 this.module.render(element.parentNode);
-                YAHOO.util.Event.addListener(this.id, "click", this.module.hide, this.module, true);
+                YAHOO.util.Event.addListener(this.id, "click", this.hide, this, true);
                 this.module.show();
             },
 
             hide : function () {
-                this.module.hide();
+                if (this.module != null) {
+                    this.module.hide();
+                }
             },
 
             cleanup : function () {
                 if (this.module != null) {
                     this.module.destroy();
+                    this.module = null;
                 }
             }
         };
@@ -85,9 +88,9 @@ if (!YAHOO.hippo.FeedbackManager) {
             },
 
             delayedHide : function (id, delay) {
-                var module = this.instances.get(id);
-                module.show();
-                YAHOO.lang.later(delay, module, 'hide');
+                var panel = this.instances.get(id);
+                panel.show();
+                YAHOO.lang.later(delay, panel, 'hide');
             },
 
             _cleanup : function () {
