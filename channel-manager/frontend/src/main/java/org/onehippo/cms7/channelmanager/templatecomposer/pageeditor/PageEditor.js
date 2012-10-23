@@ -207,6 +207,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             autoSelect: true,
             disabled: !this.pageContainer.previewMode,
             hidden: (this.globalVariantsStore instanceof Ext.data.ArrayStore), // hide when only default is available
+            tpl: '<tpl for="."><div class="x-combo-list-item template-composer-variant-{id}">{name}</div></tpl>',
             listeners: {
                 scope: this,
                 select : function(combo, record, index) {
