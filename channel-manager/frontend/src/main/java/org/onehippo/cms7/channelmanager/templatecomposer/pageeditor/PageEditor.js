@@ -198,6 +198,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             store: this.globalVariantsStore,
             displayField: 'name',
             valueField: 'id',
+            valueNotFoundText: ' ',
             typeAhead: true,
             mode: 'local',
             triggerAction: 'all',
@@ -233,15 +234,19 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             }
         });
 
+        variantsComboBox.addEvents('selectvariant');
+
+        variantsComboBox.setValue = variantsComboBox.setValue.createSequence(function(value) {
+            variantsComboBox.fireEvent('selectvariant', variantsComboBox, value);
+        }, this);
+
         variantsComboBox.on('afterRender', function() {
             variantsComboBox.setValue(this.renderedVariant);
             this.globalVariantsStoreFuture.when(function() {
-                var variantRecord = this.globalVariantsStore.getById(this.renderedVariant);
-                if (!Ext.isDefined(variantRecord)) {
-                    variantRecord = this.globalVariantsStore.getById('default');
-                }
-                if (Ext.isDefined(variantRecord)) {
-                    variantsComboBox.setValue(variantRecord.get('name'));
+                if (this.globalVariantsStore.indexOf(this.renderedVariant) >= 0) {
+                    variantsComboBox.setValue(this.renderedVariant);
+                } else if (this.globalVariantsStore.indexOf('default') >= 0) {
+                    variantsComboBox.setValue('default');
                 }
             }.createDelegate(this));
         }, this);
