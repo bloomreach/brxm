@@ -407,6 +407,7 @@ commons/src/main/java/org/hippoecm/hst/util/DOMElementWriter.java svneol=native#
 commons/src/main/java/org/hippoecm/hst/util/DefaultKeyValue.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/DuplicateKeyNotAllowedHashMap.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/util/GenericHttpServletRequestWrapper.java -text
+commons/src/main/java/org/hippoecm/hst/util/HDC.java -text
 commons/src/main/java/org/hippoecm/hst/util/HeadElementUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstRequestUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstResponseUtils.java svneol=native#text/plain
@@ -428,6 +429,7 @@ commons/src/test/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualhostAug
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenerImpl.java -text svneol=unset#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenersContainerImpl.java svneol=native#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestRewindableEventIterator.java svneol=native#text/plain
+commons/src/test/java/org/hippoecm/hst/util/TestHDC.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHeadElementUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstRequestUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstResponseUtils.java svneol=native#text/plain
