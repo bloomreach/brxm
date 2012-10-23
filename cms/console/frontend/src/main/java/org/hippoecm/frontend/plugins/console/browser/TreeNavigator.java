@@ -103,6 +103,8 @@ public class TreeNavigator implements IClusterable {
 
         if (treeState.isNodeExpanded(node)) {
             treeState.collapseNode(node);
+        } else {
+            treeState.selectNode(node.getParent(), true);
         }
     }
 
@@ -114,6 +116,8 @@ public class TreeNavigator implements IClusterable {
 
         if (!treeState.isNodeExpanded(node)) {
             treeState.expandNode(node);
+        } else if (node.getChildCount() > 0) {
+            treeState.selectNode(node.getChildAt(0), true);
         }
     }
 }

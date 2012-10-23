@@ -26,6 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 public class TreeNavigatorTest {
 
@@ -161,6 +163,83 @@ public class TreeNavigatorTest {
         final Collection<Object> selectedNodes = state.getSelectedNodes();
         assertEquals(1, selectedNodes.size());
         assertEquals(sibling, selectedNodes.iterator().next());
+    }
+
+    @Test
+    public void leftCollapsedNodeWhenItIsExpanded() {
+        final DefaultMutableTreeNode parent = new DefaultMutableTreeNode();
+        rootNode.insert(parent, 0);
+
+        ITreeState state = new DefaultTreeState();
+        state.expandNode(rootNode);
+        state.expandNode(parent);
+        state.selectNode(parent, true);
+
+        TreeNavigator navigator = new TreeNavigator(state);
+        navigator.left();
+
+        final Collection<Object> selectedNodes = state.getSelectedNodes();
+        assertEquals(1, selectedNodes.size());
+        assertEquals(parent, selectedNodes.iterator().next());
+        assertFalse(state.isNodeExpanded(parent));
+    }
+
+    @Test
+    public void leftSelectsParentWhenNodeIsCollapsed() {
+        final DefaultMutableTreeNode parent = new DefaultMutableTreeNode();
+        rootNode.insert(parent, 0);
+        final DefaultMutableTreeNode child = new DefaultMutableTreeNode();
+        parent.insert(child, 0);
+
+        ITreeState state = new DefaultTreeState();
+        state.expandNode(rootNode);
+        state.expandNode(parent);
+        state.selectNode(child, true);
+
+        TreeNavigator navigator = new TreeNavigator(state);
+        navigator.left();
+
+        final Collection<Object> selectedNodes = state.getSelectedNodes();
+        assertEquals(1, selectedNodes.size());
+        assertEquals(parent, selectedNodes.iterator().next());
+    }
+
+    @Test
+    public void rightExpandsNodeWhenItIsCollapsed() {
+        final DefaultMutableTreeNode parent = new DefaultMutableTreeNode();
+        rootNode.insert(parent, 0);
+
+        ITreeState state = new DefaultTreeState();
+        state.expandNode(rootNode);
+        state.selectNode(parent, true);
+
+        TreeNavigator navigator = new TreeNavigator(state);
+        navigator.right();
+
+        final Collection<Object> selectedNodes = state.getSelectedNodes();
+        assertEquals(1, selectedNodes.size());
+        assertEquals(parent, selectedNodes.iterator().next());
+        assertTrue(state.isNodeExpanded(parent));
+    }
+
+    @Test
+    public void rightSelectsFirstChildWhenNodeIsExpanded() {
+        final DefaultMutableTreeNode parent = new DefaultMutableTreeNode();
+        rootNode.insert(parent, 0);
+        final DefaultMutableTreeNode child = new DefaultMutableTreeNode();
+        parent.insert(child, 0);
+
+        ITreeState state = new DefaultTreeState();
+        state.expandNode(rootNode);
+        state.expandNode(parent);
+        state.selectNode(parent, true);
+
+        TreeNavigator navigator = new TreeNavigator(state);
+        navigator.right();
+
+        final Collection<Object> selectedNodes = state.getSelectedNodes();
+        assertEquals(1, selectedNodes.size());
+        assertEquals(child, selectedNodes.iterator().next());
     }
 
 }

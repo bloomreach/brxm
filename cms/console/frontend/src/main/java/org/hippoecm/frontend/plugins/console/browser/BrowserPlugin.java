@@ -31,7 +31,6 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
-import org.apache.wicket.markup.html.resources.CompressedResourceReference;
 import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.Model;
@@ -99,8 +98,7 @@ public class BrowserPlugin extends RenderPlugin<Node> {
         final JcrTree newTree = new BrowserTree(treeModel);
         newTree.add(treeBehavior = new TreeWidgetBehavior(new TreeWidgetSettings()));
 
-        newTree.add(JavascriptPackageResource.getHeaderContribution(
-                new CompressedResourceReference(InputBehavior.class, "shortcuts.js")));
+        newTree.add(JavascriptPackageResource.getHeaderContribution(InputBehavior.class, "shortcuts.js"));
         newTree.add(JavascriptPackageResource.getHeaderContribution(BrowserPlugin.class, "navigation.js"));
         newTree.add(new AbstractDefaultAjaxBehavior() {
 
