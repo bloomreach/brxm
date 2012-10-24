@@ -129,7 +129,7 @@ public class HstSiteService implements HstSite {
                     } 
                 }
                 throw new ServiceException(
-                        "There is no preview configuration available for '"+path+"'. Also it is not ending with the convention -preview. Cannot load a configuration for it");
+                        "There is no configuration found at'"+path+"'. Cannot load a configuration for it");
             }
         } else if (site.getValueProvider().getPath().equals(mount.getPreviewMountPoint())) {
             path = hstManager.getRootPath() + "/hst:configurations/" + site.getValueProvider().getName();
@@ -141,7 +141,7 @@ public class HstSiteService implements HstSite {
             } else {
                 if(path.endsWith("-"+Mount.PREVIEW_NAME)) {
                     String livePath = path.substring(0, path.length() - (Mount.PREVIEW_NAME.length() + 1));
-                    log.debug("There is no preview configuration available for '{}'. Try to use live '{}' if present.",
+                    log.debug("There is no preview configuration available at '{}'. Try to use live '{}' if present.",
                             path, livePath);
                     return livePath;
                 } else {
