@@ -42,7 +42,7 @@ public class HstComponentParametersTest {
 
         assertFalse(parameters.hasPrefix(null));
         assertFalse(parameters.hasPrefix(""));
-        assertFalse(parameters.hasPrefix("default"));
+        assertFalse(parameters.hasPrefix("hippo-default"));
         assertFalse(parameters.hasPrefix("prefix"));
     }
 
@@ -53,15 +53,15 @@ public class HstComponentParametersTest {
 
         assertTrue(parameters.hasPrefix(null));
         assertTrue(parameters.hasPrefix(""));
-        assertTrue(parameters.hasPrefix("default"));
+        assertTrue(parameters.hasPrefix("hippo-default"));
         assertFalse(parameters.hasPrefix("prefix"));
 
         assertEquals("valueOne", parameters.getValue(null, "parameterOne"));
         assertEquals("valueOne", parameters.getValue("", "parameterOne"));
-        assertEquals("valueOne", parameters.getValue("default", "parameterOne"));
+        assertEquals("valueOne", parameters.getValue("hippo-default", "parameterOne"));
         assertEquals("valueTwo", parameters.getValue(null, "parameterTwo"));
         assertEquals("valueTwo", parameters.getValue("", "parameterTwo"));
-        assertEquals("valueTwo", parameters.getValue("default", "parameterTwo"));
+        assertEquals("valueTwo", parameters.getValue("hippo-default", "parameterTwo"));
     }
 
     @Test
@@ -71,12 +71,12 @@ public class HstComponentParametersTest {
 
         assertTrue(parameters.hasPrefix(null));
         assertTrue(parameters.hasPrefix(""));
-        assertTrue(parameters.hasPrefix("default"));
+        assertTrue(parameters.hasPrefix("hippo-default"));
         assertTrue(parameters.hasPrefix("prefix"));
 
         assertEquals("defaultValue", parameters.getValue(null, "parameterOne"));
         assertEquals("defaultValue", parameters.getValue("", "parameterOne"));
-        assertEquals("defaultValue", parameters.getValue("default", "parameterOne"));
+        assertEquals("defaultValue", parameters.getValue("hippo-default", "parameterOne"));
         assertEquals("prefixValue", parameters.getValue("prefix", "parameterOne"));
     }
 
@@ -103,7 +103,7 @@ public class HstComponentParametersTest {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-empty.xml");
 
         HstComponentParameters parameters = new HstComponentParameters(node);
-        parameters.setValue("default", "parameterOne", "bar");
+        parameters.setValue("hippo-default", "parameterOne", "bar");
         parameters.save();
 
         assertHasPrefixesNamesValues(node, false, true, true);

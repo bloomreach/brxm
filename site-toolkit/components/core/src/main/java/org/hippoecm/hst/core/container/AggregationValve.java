@@ -397,7 +397,7 @@ public class AggregationValve extends AbstractValve {
                         }
                         Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
                         if (variant == null) {
-                            variant = "default";
+                            variant = HstComponentConfiguration.DEFAULT_PARAMETER_PREFIX;
                         }
                         rootWindow.getResponseState().addHeader("HST-Render-Variant", variant.toString());
                         boolean isPreviewConfig = false;

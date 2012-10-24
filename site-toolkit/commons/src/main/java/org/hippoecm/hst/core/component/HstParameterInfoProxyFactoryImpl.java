@@ -162,7 +162,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
             final HttpSession session = req.getSession(false);
             if (session != null && session.getAttribute(ContainerConstants.RENDER_VARIANT) != null) {
                 final String prefix = session.getAttribute(ContainerConstants.RENDER_VARIANT).toString();
-                if ("default".equals(prefix)) {
+                if (HstComponentConfiguration.DEFAULT_PARAMETER_PREFIX.equals(prefix)) {
                     return parameterName;
                 }
                 final String prefixedParameterName = prefix + HstComponentConfiguration.PARAMETER_PREFIX_NAME_DELIMITER + parameterName;

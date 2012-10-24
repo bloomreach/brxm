@@ -28,16 +28,15 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to retrieve and modify HST component parameters of a node. Empty prefixes are returned as the
- * string "default", and the prefix "default" is saved again as an empty string.
+ * string {@link HstComponentConfiguration#DEFAULT_PARAMETER_PREFIX}, and that prefix is saved again as an empty string.
  */
 public class HstComponentParameters {
-
-    private static final String DEFAULT_PARAMETER_PREFIX = "default";
 
     private static final Logger log = LoggerFactory.getLogger(HstComponentParameters.class);
 
@@ -91,12 +90,12 @@ public class HstComponentParameters {
         }
 
         for (int i = 0; i < names.length; i++) {
-            setValue(DEFAULT_PARAMETER_PREFIX, names[i].getString(), values[i].getString());
+            setValue(HstComponentConfiguration.DEFAULT_PARAMETER_PREFIX, names[i].getString(), values[i].getString());
         }
     }
 
     private static String prefixOrDefault(final String prefix) {
-        return StringUtils.isEmpty(prefix) ? DEFAULT_PARAMETER_PREFIX : prefix;
+        return StringUtils.isEmpty(prefix) ? HstComponentConfiguration.DEFAULT_PARAMETER_PREFIX : prefix;
     }
 
     private boolean nodeHasPrefixes() throws RepositoryException {
@@ -108,7 +107,7 @@ public class HstComponentParameters {
     }
 
     public static boolean isDefaultPrefix(final String prefix) {
-        return StringUtils.isEmpty(prefix) || DEFAULT_PARAMETER_PREFIX.equals(prefix);
+        return StringUtils.isEmpty(prefix) || HstComponentConfiguration.DEFAULT_PARAMETER_PREFIX.equals(prefix);
     }
 
     public boolean hasPrefix(final String prefix) {
@@ -128,7 +127,7 @@ public class HstComponentParameters {
     }
 
     public boolean hasDefaultParameter(final String name) {
-        return hasParameter(DEFAULT_PARAMETER_PREFIX, name);
+        return hasParameter(HstComponentConfiguration.DEFAULT_PARAMETER_PREFIX, name);
     }
 
     public String getValue(final String prefix, final String name) {
@@ -140,7 +139,7 @@ public class HstComponentParameters {
     }
 
     public String getDefaultValue(final String name) {
-        return getValue(DEFAULT_PARAMETER_PREFIX, name);
+        return getValue(HstComponentConfiguration.DEFAULT_PARAMETER_PREFIX, name);
     }
 
     public void setValue(final String prefix, final String name, final String value) {
@@ -181,7 +180,7 @@ public class HstComponentParameters {
 
         for (Map.Entry<String, Map<String, String>> entry : prefixedParameters.entrySet()) {
             String prefix = entry.getKey();
-            String savePrefix = prefix.equals(DEFAULT_PARAMETER_PREFIX) ? "" : prefix;
+            String savePrefix = prefix.equals(HstComponentConfiguration.DEFAULT_PARAMETER_PREFIX) ? "" : prefix;
 
             for (Map.Entry<String, String> f : entry.getValue().entrySet()) {
                 String name = f.getKey();

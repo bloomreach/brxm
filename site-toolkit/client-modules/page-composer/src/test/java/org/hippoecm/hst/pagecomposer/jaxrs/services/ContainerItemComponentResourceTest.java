@@ -57,7 +57,7 @@ public class ContainerItemComponentResourceTest {
     public void testGetParametersForDefaultPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
 
-        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "default", "").getProperties();
+        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "hippo-default", "").getProperties();
         assertEquals(2, result.size());
         assertNameValueDefault(result.get(0), "parameterOne", "bar", "");
         assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
@@ -107,7 +107,7 @@ public class ContainerItemComponentResourceTest {
 
         Set<String> variants =  ContainerItemComponentResource.doGetVariants(node);
         assertTrue(variants.size() == 1);
-        assertTrue(variants.contains("default"));
+        assertTrue(variants.contains("hippo-default"));
 
         // 2. create a new variant 'lux' : The creation of the variant should 
         // pick up the explicitly defined parameters from 'default' that are ALSO annotated (thus parameterOne, and NOT someNonAnnotatedParameter) PLUS
@@ -121,7 +121,7 @@ public class ContainerItemComponentResourceTest {
 
         variants = ContainerItemComponentResource.doGetVariants(node);
         assertTrue(variants.size() == 2);
-        assertTrue(variants.contains("default"));
+        assertTrue(variants.contains("hippo-default"));
         assertTrue(variants.contains("newvar"));
 
         componentParameters = new HstComponentParameters(node);
@@ -136,12 +136,12 @@ public class ContainerItemComponentResourceTest {
         new ContainerItemComponentResource().doDeleteVariant(new HstComponentParameters(node), "newvar");
         variants = ContainerItemComponentResource.doGetVariants(node);
         assertTrue(variants.size() == 1);
-        assertTrue(variants.contains("default"));
+        assertTrue(variants.contains("hippo-default"));
 
         // 4. try to remove the 'default' variant : this should not be allowed
         boolean removeSucceeded = true;
         try {
-            new ContainerItemComponentResource().doDeleteVariant(new HstComponentParameters(node), "default");
+            new ContainerItemComponentResource().doDeleteVariant(new HstComponentParameters(node), "hippo-default");
             fail("Default variant should not be possible to be removed");
         } catch (IllegalStateException e) {
             removeSucceeded = false;
