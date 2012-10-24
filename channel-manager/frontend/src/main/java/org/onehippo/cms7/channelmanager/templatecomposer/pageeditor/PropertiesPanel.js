@@ -102,7 +102,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         }.createDelegate(this);
 
         if (typeof(this.variantsUuid) === 'undefined' || this.variantsUuid === null) {
-            this.variants = [{id: 'default', name: 'Default'}];
+            this.variants = [{id: 'hippo-default', name: this.resources['properties-panel-variant-default']}];
             this._hideTabs();
             loadVariantTabs();
         } else {
@@ -142,7 +142,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
                     scope : this
                 });
             } else {
-                this.variants = [{id: 'default', name: this.resources['properties-panel-variant-default']}];
+                this.variants = [{id: 'hippo-default', name: this.resources['properties-panel-variant-default']}];
                 success();
             }
         }.createDelegate(this));
@@ -181,7 +181,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
 
     _loadException : function (response) {
         Hippo.Msg.alert('Failed to get variants.', 'Only default variant will be available: ' + response.status + ':' + response.statusText);
-        this.variants = [{id: 'default', name: this.resources['properties-panel-variant-default']}];
+        this.variants = [{id: 'hippo-default', name: this.resources['properties-panel-variant-default']}];
     },
 
     _initTabs : function () {
@@ -302,7 +302,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesPanel = Ext.extend(Ext.ux.tot2iv
         if (this.variants) {
             var variantIds = [];
             Ext.each(this.variants, function(variant) {
-                if (variant.id !== 'default' && variant.id !== 'plus') {
+                if (variant.id !== 'hippo-default' && variant.id !== 'plus') {
                     variantIds.push(variant.id);
                 }
             });
@@ -349,7 +349,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
 
     initComponent : function () {
         var buttons = [];
-        if (this.variant.id != 'default') {
+        if (this.variant.id != 'hippo-default') {
             buttons.push({
                 text : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-delete'],
                 handler : function () {

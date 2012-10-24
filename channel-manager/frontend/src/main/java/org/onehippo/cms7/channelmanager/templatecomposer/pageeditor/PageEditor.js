@@ -113,7 +113,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     success(this.globalVariantsStore);
                 }, {single : true});
                 this.globalVariantsStore.on('exception', fail, {single : true});
-                this.globalVariantsStore.loadData([['default', 'Default', 'default']]);
+                this.globalVariantsStore.loadData([['hippo-default', 'Default', 'hippo-default']]);
             }.createDelegate(this));
         }
 
@@ -243,10 +243,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         variantsComboBox.on('afterRender', function() {
             variantsComboBox.setValue(this.renderedVariant);
             this.globalVariantsStoreFuture.when(function() {
-                if (this.globalVariantsStore.indexOf(this.renderedVariant) >= 0) {
+                if (this.globalVariantsStore.indexOfId(this.renderedVariant) >= 0) {
                     variantsComboBox.setValue(this.renderedVariant);
-                } else if (this.globalVariantsStore.indexOf('default') >= 0) {
-                    variantsComboBox.setValue('default');
+                } else if (this.globalVariantsStore.indexOfId('hippo-default') >= 0) {
+                    variantsComboBox.setValue('hippo-default');
                 }
             }.createDelegate(this));
         }, this);

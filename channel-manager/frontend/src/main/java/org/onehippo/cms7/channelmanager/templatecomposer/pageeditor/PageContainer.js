@@ -313,7 +313,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         var lockState = Ext.decode(response.responseText).data;
                         console.warn('Is it locked: ' + lockState);
                         if (lockState == 'lock-acquired') {
-                            if (self.pageContext.renderedVariant !== 'default') {
+                            if (self.pageContext.renderedVariant !== 'hippo-default') {
                                 Ext.Ajax.request({
                                     url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/?FORCE_CLIENT_HOST=true',
                                     method: 'POST',
@@ -321,14 +321,14 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                                         'FORCE_CLIENT_HOST': 'true'
                                     },
                                     params: {
-                                        'variant': 'default'
+                                        'variant': 'hippo-default'
                                     },
                                     success : function() {
                                         self.pageContext = null;
                                         self.refreshIframe.call(self, null);
                                     },
                                     failure : function() {
-                                        console.error('Error setting the rendered page variant back to default');
+                                        console.error('Error setting the rendered page variant back to hippo-default');
                                         doneCallback();
                                     }
                                 });
