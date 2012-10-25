@@ -24,6 +24,15 @@
     </layout>
   </appender>
 
+  <!-- hippo-site-diagnostic.log -->
+  <appender name="site-diagnostic" class="org.apache.log4j.DailyRollingFileAppender">
+    <param name="File" value="${catalina.base}/logs/hippo-site-diagnostic.log"/>
+    <param name="Append" value="true"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%t] %m%n"/>
+    </layout>
+  </appender>
+
   <!-- hippo-audit.log -->
   <appender name="audit" class="org.apache.log4j.DailyRollingFileAppender">
     <param name="File" value="${catalina.base}/logs/hippo-audit.log"/>
@@ -76,6 +85,12 @@
   <logger additivity="false" name="org.hippoecm.hst">
     <level value="warn"/>
     <appender-ref ref="site"/>
+    <appender-ref ref="console"/>
+  </logger>
+
+  <logger additivity="false" name="org.hippoecm.hst.core.container.DiagnosticReportingValve">
+    <level value="info"/>
+    <appender-ref ref="site-diagnostic"/>
     <appender-ref ref="console"/>
   </logger>
 
