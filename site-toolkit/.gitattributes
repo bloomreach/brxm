@@ -227,6 +227,7 @@ api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenuItem.java svneol=nat
 api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenus.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/sitemenu/HstSiteMenusManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/sitemenu/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/diagnosis/Task.java -text
 api/src/main/java/org/hippoecm/hst/jaxrs/JAXRSService.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/logging/LogEvent.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/logging/LogEventBuffer.java svneol=native#text/plain
@@ -397,6 +398,9 @@ commons/src/main/java/org/hippoecm/hst/core/sitemenu/AbstractMenu.java svneol=na
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/AbstractMenuItem.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/EditableMenuImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/EditableMenuItemImpl.java svneol=native#text/plain
+commons/src/main/java/org/hippoecm/hst/diagnosis/DefaultTaskImpl.java -text
+commons/src/main/java/org/hippoecm/hst/diagnosis/HDC.java -text
+commons/src/main/java/org/hippoecm/hst/diagnosis/NOOPTaskImpl.java -text
 commons/src/main/java/org/hippoecm/hst/security/HstSubject.java -text
 commons/src/main/java/org/hippoecm/hst/security/PolicyContextWrapper.java -text
 commons/src/main/java/org/hippoecm/hst/security/TransientRole.java -text
@@ -407,7 +411,6 @@ commons/src/main/java/org/hippoecm/hst/util/DOMElementWriter.java svneol=native#
 commons/src/main/java/org/hippoecm/hst/util/DefaultKeyValue.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/DuplicateKeyNotAllowedHashMap.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/util/GenericHttpServletRequestWrapper.java -text
-commons/src/main/java/org/hippoecm/hst/util/HDC.java -text
 commons/src/main/java/org/hippoecm/hst/util/HeadElementUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstRequestUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstResponseUtils.java svneol=native#text/plain
@@ -429,7 +432,7 @@ commons/src/test/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualhostAug
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenerImpl.java -text svneol=unset#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenersContainerImpl.java svneol=native#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestRewindableEventIterator.java svneol=native#text/plain
-commons/src/test/java/org/hippoecm/hst/util/TestHDC.java -text
+commons/src/test/java/org/hippoecm/hst/diagnosis/TestHDC.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHeadElementUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstRequestUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstResponseUtils.java svneol=native#text/plain
