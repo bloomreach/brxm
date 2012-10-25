@@ -36,9 +36,9 @@ import org.hippoecm.hst.content.beans.query.filter.FilterImpl;
 import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoQuery;
 import org.slf4j.LoggerFactory;
 
 public class HstQueryImpl implements HstQuery {
@@ -258,8 +258,16 @@ public class HstQueryImpl implements HstQuery {
     }
 
     public HstQueryResult execute() throws QueryException {
-        String query = getQuery();
+        Task queryTask = null;
+
         try {
+            String query = getQuery();
+
+            if (HDC.isStarted()) {
+                queryTask = HDC.getCurrentTask().startSubtask("HstQuery");
+                queryTask.setAttribute("query", query);
+            }
+
             QueryManager jcrQueryManager = getQueryManager();
 
             Query jcrQuery = jcrQueryManager.createQuery(query, "xpath");
@@ -269,9 +277,8 @@ public class HstQueryImpl implements HstQuery {
             if(limit > -1){
                 jcrQuery.setLimit(limit);
             }
-            long start = System.currentTimeMillis();
+
             QueryResult queryResult = jcrQuery.execute();
-            log.debug("Executing query took --({})-- ms to complete for '{}'", (System.currentTimeMillis() - start), query);
             return new HstQueryResultImpl(this.objectConverter, queryResult);
         } catch (InvalidQueryException e) {
             throw new QueryException(e.getMessage(), e);
@@ -279,7 +286,12 @@ public class HstQueryImpl implements HstQuery {
             log.warn("LoginException. Return null : {}", e);
         } catch (RepositoryException e) {
             throw new QueryException(e.getMessage(), e);
+        } finally {
+            if (queryTask != null) {
+                queryTask.stop();
+            }
         }
+
         return null;
     }
 

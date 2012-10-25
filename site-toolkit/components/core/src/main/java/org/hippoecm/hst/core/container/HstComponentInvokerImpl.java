@@ -27,6 +27,8 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResourceResponseImpl;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstResponseImpl;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -367,14 +369,24 @@ public class HstComponentInvokerImpl implements HstComponentInvoker {
 
             window.addComponentExcpetion(new HstComponentException("The dispatch url is null."));
         } else {
+            Task dispatchTask = null;
             ClassLoader currentClassloader = switchToContainerClassloader(requestContainerConfig);
 
             try {
+                if (HDC.isStarted()) {
+                    dispatchTask = HDC.getCurrentTask().startSubtask("Dispatcher");
+                    dispatchTask.setAttribute("dispatch", dispatchUrl);
+                }
+
                 disp.include(servletRequest, servletResponse);
             } finally {
                 if (currentClassloader != null) {
                     Thread.currentThread().setContextClassLoader(currentClassloader);
-                }                
+                }
+
+                if (dispatchTask != null) {
+                    dispatchTask.stop();
+                }
             }
         }
     }

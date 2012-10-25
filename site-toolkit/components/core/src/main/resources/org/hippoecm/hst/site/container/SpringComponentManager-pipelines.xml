@@ -134,7 +134,10 @@
   <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CleanupValve">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
-  
+
+  <bean id="diagnosticReportingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.DiagnosticReportingValve">
+  </bean>
+
   <!-- Pipelines -->
   
   <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
@@ -166,6 +169,7 @@
             <property name="cleanupValves">
               <list>
                 <ref bean="cleanupValve" />
+                <ref bean="diagnosticReportingValve" />
               </list>
             </property>
           </bean>

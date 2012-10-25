@@ -19,52 +19,48 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.container.HstComponentWindow;
-import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.logging.Logger;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.logging.LoggerFactory;
 
 public class HstComponentInvokerProfiler {
 
-    private static final String LOGGER_NAME = HstComponentInvokerProfiler.class.getName();
-    
-    private LoggerFactory loggerFactory;
-
-    public HstComponentInvokerProfiler(LoggerFactory loggerFactory) {
-        this.loggerFactory = loggerFactory;
+    public HstComponentInvokerProfiler() {
     }
-    
+
+    /**
+     * @deprecated it does not need loggerFactory argument any more
+     */
+    public HstComponentInvokerProfiler(LoggerFactory loggerFactory) {
+    }
+
     public Object profile(ProceedingJoinPoint call) throws Throwable {
-        Logger logger = this.loggerFactory.getLogger(LOGGER_NAME);
-        
-        if (logger.isInfoEnabled()) {
-            long start = System.currentTimeMillis();
+        if (HDC.isStarted()) {
             Object [] args = call.getArgs();
             String method = call.toShortString();
-            String pathInfo = "";
             String windowName = "";
             String refNamespace = "";
-            
+
+            Task profileTask = HDC.getCurrentTask().startSubtask(HstComponentInvokerProfiler.class.getSimpleName());
+            profileTask.setAttribute("method", method);
+
             try {
-                
                 if (args.length > 1 && args[1] instanceof HstRequest) {
                     HstRequest hstRequest = (HstRequest) args[1];
                     HstComponentWindow window = ((HstRequestImpl) hstRequest).getComponentWindow();
                     windowName = window.getName();
-                    HstRequestContext hstRequestContext = hstRequest.getRequestContext();
-                    HstContainerURL url = hstRequestContext.getBaseURL();
-                    pathInfo = url.getPathInfo();
+                    profileTask.setAttribute("window", windowName);
+                    profileTask.setAttribute("component", window.getComponentName());
                     refNamespace = hstRequest.getReferenceNamespace();
                     if ("".equals(refNamespace)) {
                         refNamespace = "root";
                     }
+                    profileTask.setAttribute("ref", refNamespace);
                 }
-                
+
                 return call.proceed();
-                
             } finally {
-                long laps = System.currentTimeMillis() - start;
-                logger.info("Profiling: {} of {} ({}) on {} took {}ms.", new Object [] { method, windowName, refNamespace, pathInfo, Long.toString(laps) });
+                profileTask.stop();
             }
         } else {
             return call.proceed();

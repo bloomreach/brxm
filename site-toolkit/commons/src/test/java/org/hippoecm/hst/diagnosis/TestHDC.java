@@ -36,7 +36,7 @@ public class TestHDC {
     @Test
     public void testDefaultExample() throws Exception {
         // first, the HST container will start the root task first somewhere. e.g., HstFilter or InitializationValve
-        Task rootTask = HDC.start();
+        Task rootTask = HDC.start("request-processing");
 
         // when invoking each valve, HST container can start a subtask
         {
@@ -80,6 +80,37 @@ public class TestHDC {
             valve2.execute();
             valveTask.stop();
         }
+
+        // all the task execution information can be collected and reported later (maybe in another valve before cleanupValve)
+        logSummary();
+
+        // clean up all the stored thread context information..
+        HDC.cleanUp();
+    }
+
+    @Test
+    public void testRootTaskOnlyExample() throws Exception {
+        // first, the HST container will start the root task first somewhere. e.g., HstFilter or InitializationValve
+        Task rootTask = HDC.start("request-processing");
+        HDC.setCurrentTask(HDC.NOOP_TASK);
+
+        // when invoking each valve, HST container can start a subtask
+        {
+            Task valveTask = HDC.getCurrentTask().startSubtask("valve1");
+            valve1.execute();
+            // if the container started a subtask, then it should stop the task.
+            // in reality, it should use try ~ finally to guarantee this call.
+            valveTask.stop();
+        }
+
+        {
+            Task valveTask = HDC.getCurrentTask().startSubtask("valve2");
+            valve2.execute();
+            valveTask.stop();
+        }
+
+        // also the container will stop the root task.
+        rootTask.stop();
 
         // all the task execution information can be collected and reported later (maybe in another valve before cleanupValve)
         logSummary();

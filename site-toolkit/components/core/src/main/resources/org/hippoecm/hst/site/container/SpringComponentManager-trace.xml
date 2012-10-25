@@ -34,9 +34,7 @@
     <property name="levelByName" value="DEBUG" />
   </bean>
   
-  <!-- Profiling -->
   <bean id="componentInvokerProfiler" class="org.hippoecm.hst.core.logging.HstComponentInvokerProfiler">
-    <constructor-arg><ref bean="org.hippoecm.hst.logging.LoggerFactory"/></constructor-arg>
   </bean>  
   
   <aop:config>

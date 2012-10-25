@@ -66,6 +66,8 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
@@ -80,7 +82,6 @@ public class HstFilter implements Filter {
     private static final String LOGGER_CATEGORY_NAME = HstFilter.class.getName();
 
     private final static String FILTER_DONE_KEY = "filter.done_"+HstFilter.class.getName();
-    private final static String REQUEST_START_TICK_KEY = "request.start_"+HstFilter.class.getName();
 
     // used to redirect to nodes with a certain JCR uuid in mounts of a certain type
     private static final String PATH_PREFIX_UUID_REDIRECT = "/previewfromcms";
@@ -225,12 +226,20 @@ public class HstFilter implements Filter {
 
     	boolean requestContextSetToProvider = false;
 
-    	try {
+        Task rootTask = null;
+
+        try {
     		if (!HstServices.isAvailable()) {
     			res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
     			logger.error("The HST Container Services are not initialized yet.");
     			return;
     		}
+
+            if (HstServices.getComponentManager().getContainerConfiguration().isDevelopmentMode()) {
+                rootTask = HDC.start(HstFilter.class.getSimpleName());
+                rootTask.setAttribute("uri", req.getRequestURI());
+                rootTask.setAttribute("query", req.getQueryString());
+            }
 
     		// ensure ClientComponentManager (if defined) is initialized properly
     		if (!initialized) {
@@ -257,8 +266,6 @@ public class HstFilter implements Filter {
         			}
         		}
     		}
-
-    		if (logger.isDebugEnabled()) {request.setAttribute(REQUEST_START_TICK_KEY, System.nanoTime());}
 
     		// Sets up the container request wrapper
             HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstSitesManager.getPathSuffixDelimiter());
@@ -439,13 +446,11 @@ public class HstFilter implements Filter {
     	    if (requestContextSetToProvider) {
     	        RequestContextProvider.clear();
     	    }
-    	    
-    		if (logger != null && logger.isDebugEnabled()) {
-    			long starttick = request.getAttribute(REQUEST_START_TICK_KEY) == null ? 0 : (Long)request.getAttribute(REQUEST_START_TICK_KEY);
-    			if(starttick != 0) {
-    				logger.debug( "Handling request took --({})-- ms for '{}'.", (System.nanoTime() - starttick)/1000000, req.getRequestURI());
-    			}
-    		}
+
+            if (rootTask != null) {
+                rootTask.stop();
+                HDC.cleanUp();
+            }
     	}
     }
 

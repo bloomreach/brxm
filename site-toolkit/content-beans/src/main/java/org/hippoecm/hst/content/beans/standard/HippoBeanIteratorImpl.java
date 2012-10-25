@@ -15,12 +15,15 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
+import org.hippoecm.hst.diagnosis.HDC;
 import org.slf4j.LoggerFactory;
 
 public class HippoBeanIteratorImpl implements HippoBeanIterator {
@@ -49,6 +52,14 @@ public class HippoBeanIteratorImpl implements HippoBeanIterator {
         try {
             n = nodeIterator.nextNode();
             if(n != null) {
+                if (HDC.isStarted()) {
+                    AtomicInteger iterCount = (AtomicInteger) HDC.getCurrentTask().getAttribute("HippoBeanIterationCount");
+                    if (iterCount == null) {
+                        HDC.getCurrentTask().setAttribute("HippoBeanIterationCount", new AtomicInteger(1));
+                    } else {
+                        iterCount.incrementAndGet();
+                    }
+                }
                 return (HippoBean)objectConverter.getObject(n);
             } else {
                 log.warn("Node in node iterator is null. Cannot return a HippoStdNode");

@@ -119,7 +119,7 @@ class DefaultTaskImpl implements Task {
     @Override
     public void stop() {
         if (stopped) {
-            throw new IllegalStateException("The task was already stopped.");
+            return;
         }
 
         stopped = true;

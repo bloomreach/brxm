@@ -21,21 +21,22 @@ package org.hippoecm.hst.diagnosis;
  */
 public class HDC {
 
+    public static final Task NOOP_TASK = new NOOPTaskImpl();
+
     private static ThreadLocal<Task> tlRootTask = new ThreadLocal<Task>();
     private static ThreadLocal<Task> tlCurrentTask = new ThreadLocal<Task>();
-    private static Task noopTask = new NOOPTaskImpl();
 
     private HDC() {
     }
 
-    public static Task start() {
+    public static Task start(String name) {
         Task rootTask = tlRootTask.get();
 
         if (rootTask != null) {
             throw new IllegalStateException("The root task was already started.");
         }
 
-        rootTask = new DefaultTaskImpl(null, "<root/>");
+        rootTask = new DefaultTaskImpl(null, name);
         tlRootTask.set(rootTask);
         return rootTask;
     }
@@ -46,7 +47,7 @@ public class HDC {
 
     public static Task getRootTask() {
         Task rootTask = tlRootTask.get();
-        return (rootTask != null ? rootTask : noopTask);
+        return (rootTask != null ? rootTask : NOOP_TASK);
     }
 
     public static Task getCurrentTask() {
@@ -59,7 +60,7 @@ public class HDC {
         return getRootTask();
     }
 
-    static void setCurrentTask(Task currentTask) {
+    public static void setCurrentTask(Task currentTask) {
         tlCurrentTask.set(currentTask);
     }
 
