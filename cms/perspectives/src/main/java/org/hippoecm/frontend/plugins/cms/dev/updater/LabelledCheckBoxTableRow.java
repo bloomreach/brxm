@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2011-2012 Hippo
+ * Copyright (C) 2012 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.cms.dev.panels;
+package org.hippoecm.frontend.plugins.cms.dev.updater;
 
-import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.model.IModel;
 
-public abstract class UpdaterBreadCrumbPanel extends PanelPluginBreadCrumbPanel {
+public class LabelledCheckBoxTableRow extends Panel {
 
-    public UpdaterBreadCrumbPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
-        super(id, breadCrumbModel);
+    public LabelledCheckBoxTableRow(String id, IModel<String> labelModel, IModel<Boolean> checkboxModel) {
+        super(id);
+        add(new Label("label", labelModel));
+        add(new CheckBox("input", checkboxModel));
     }
 
 }

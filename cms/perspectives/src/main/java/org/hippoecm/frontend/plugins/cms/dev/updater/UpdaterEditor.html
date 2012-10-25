@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2012 Hippo
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+            http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<wicket:panel xmlns:wicket="http://wicket.apache.org/">
+  <form wicket:id="updater-form">
+      <div>
+          <input type="submit" style="margin-right: 5px;" value="Save" wicket:id="save-button"/>
+          <input type="submit" style="margin-right: 5px;" value="Dry run" wicket:id="dryrun-button"/>
+          <input type="submit" style="margin-right: 5px;" value="Execute" wicket:id="execute-button"/>
+          <input type="submit" style="margin-right: 5px;" value="Stop" wicket:id="stop-button"/>
+          <input type="submit" style="margin-right: 5px;" value="New" wicket:id="new-button"/>
+          <input type="submit" style="margin-right: 5px;" value="Delete" wicket:id="delete-button"/>
+      </div>
+      <p>&nbsp;</p>
+    <span wicket:id="radios">
+        <table border="0">
+            <tr wicket:id="name"/>
+            <tr wicket:id="path"/>
+            <tr wicket:id="query"/>
+            <tr wicket:id="batch-size"/>
+            <tr wicket:id="throttle"/>
+            <tr wicket:id="dryrun"/>
+        </table>
+    </span>
+    <p>&nbsp;</p>
+    <p>Script</p>
+    <p>&nbsp;</p>
+    <fieldset id="script">
+      <textarea wicket:id="script-editor"></textarea>
+    </fieldset>
+    <p>&nbsp;</p>
+    <div wicket:id="updater-output"/>
+  </form>
+</wicket:panel>

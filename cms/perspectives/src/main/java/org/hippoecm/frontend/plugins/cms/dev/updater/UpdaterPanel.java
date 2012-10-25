@@ -1,0 +1,226 @@
+/**
+ * Copyright (C) 2012 Hippo
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.hippoecm.frontend.plugins.cms.dev.updater;
+
+import java.util.Iterator;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.observation.Event;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.tree.DefaultTreeState;
+import org.apache.wicket.markup.html.tree.ITreeState;
+import org.apache.wicket.model.AbstractReadOnlyModel;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.event.IEvent;
+import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.tree.JcrTreeModel;
+import org.hippoecm.frontend.model.tree.JcrTreeNode;
+import org.hippoecm.frontend.model.tree.ObservableTreeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.widgets.JcrTree;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Updater editor
+ */
+public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
+
+    private final static Logger log = LoggerFactory.getLogger(UpdaterPanel.class);
+
+    private static final String UPDATE_PATH = "/hippo:configuration/hippo:update";
+    private static final String UPDATE_QUEUE_PATH = UPDATE_PATH + "/hippo:queue";
+    private static final String UPDATE_REGISTRY_PATH = UPDATE_PATH + "/hippo:registry";
+    private static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
+
+    private static final Label EMPTY_EDITOR = new Label("updater-editor");
+
+    private final JcrTree tree;
+    private final JcrTreeModel treeModel;
+
+    private Component editor;
+
+    public UpdaterPanel(final String componentId, final IBreadCrumbModel breadCrumbModel, final IPluginContext context) {
+        super(componentId, breadCrumbModel);
+
+        treeModel = new JcrTreeModel(new JcrTreeNode(new JcrNodeModel(UPDATE_PATH), null)) {
+            @Override
+            public void onEvent(final Iterator<? extends IEvent<ObservableTreeModel>> iter) {
+                super.onEvent(iter);
+                AjaxRequestTarget.get().addComponent(tree);
+            }
+
+            @Override
+            protected TreeModelEvent newTreeModelEvent(final Event event) throws RepositoryException {
+                if (event.getType() == Event.NODE_MOVED) {
+                    final String destAbsPath = (String) event.getInfo().get("destAbsPath");
+                    if (destAbsPath.equals(getNodePath())) {
+                        // node was moved need to update editor
+                        onModelChanged();
+                    }
+                }
+                return super.newTreeModelEvent(event);
+            }
+        };
+        context.registerService(treeModel, IObserver.class.getName());
+        tree = new JcrTree("updater-tree", treeModel) {
+
+            @Override
+            protected void onNodeLinkClicked(final AjaxRequestTarget target, final TreeNode clickedNode) {
+                UpdaterPanel.this.setDefaultModel(((JcrTreeNode) clickedNode).getChainedModel());
+            }
+
+            @Override
+            protected ITreeState newTreeState() {
+                DefaultTreeState state = new DefaultTreeState();
+                JcrTreeModel model = (JcrTreeModel) getModelObject();
+                model.setTreeState(state);
+                return state;
+            }
+
+            @Override
+            public void onBeforeRender() {
+                super.onBeforeRender();
+                updateTree();
+            }
+        };
+        tree.setOutputMarkupId(true);
+        add(tree);
+
+        editor = EMPTY_EDITOR;
+        add(editor);
+
+        final Label title = new Label("updater-title", new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                return getUpdaterTitle();
+            }
+        });
+        add(title);
+
+        setOutputMarkupId(true);
+    }
+
+    private String getUpdaterTitle() {
+        if (isQueuedUpdater()) {
+            return "Monitoring updater run " + getUpdaterName();
+        }
+        if (isRegisteredUpdater()) {
+            return "Editing updater " + getUpdaterName();
+        }
+        if (isArchivedUpdater()) {
+            return "Viewing updater run " + getUpdaterName();
+        }
+        return getTitle(null).getObject();
+    }
+
+    public IModel<String> getTitle(final Component component) {
+        return new StringResourceModel("updater-editor-title", this, null);
+    }
+
+    @Override
+    protected void onModelChanged() {
+        super.onModelChanged();
+        expandAndSelectNodeInTree();
+        updateEditor();
+        AjaxRequestTarget.get().addComponent(this);
+    }
+
+    private void updateEditor() {
+        if (isQueuedUpdater()) {
+            replace(editor = new UpdaterQueueEditor(getDefaultModel(), this));
+        }
+        else if (isRegisteredUpdater() || isRegistryNode()) {
+            replace(editor = new UpdaterRegistryEditor(getDefaultModel(), this));
+        }
+        else if (isArchivedUpdater()) {
+            replace(editor = new UpdaterHistoryEditor(getDefaultModel(), this));
+        }
+        else {
+            if (editor != EMPTY_EDITOR) {
+                replace(editor = EMPTY_EDITOR);
+            }
+        }
+    }
+
+    private void expandAndSelectNodeInTree() {
+        final JcrNodeModel model = (JcrNodeModel) getDefaultModel();
+        final TreePath treePath = treeModel.lookup(model);
+        final ITreeState treeState = tree.getTreeState();
+        for (Object n : treePath.getPath()) {
+            final TreeNode treeNode = (TreeNode) n;
+            if (!treeState.isNodeExpanded(treeNode)) {
+                treeState.expandNode(treeNode);
+            }
+        }
+        treeState.selectNode(treePath.getLastPathComponent(), true);
+    }
+
+    private String getNodePath() {
+        final Node node = (Node) getDefaultModelObject();
+        try {
+            if (node != null) {
+                return node.getPath();
+            }
+        } catch (RepositoryException e) {
+            final String message = "An unexpected error occurred: " + e.getMessage();
+            error(message);
+            log.error(message, e);
+        }
+        return "";
+    }
+
+    public String getUpdaterName() {
+        final Node node = (Node) getDefaultModelObject();
+        try {
+            if (node != null) {
+                return node.getName();
+            }
+        } catch (RepositoryException e) {
+            log.error("Failed to get name of updater");
+        }
+        return "";
+    }
+
+    private boolean isRegisteredUpdater() {
+        return getNodePath().startsWith(UPDATE_REGISTRY_PATH + "/");
+    }
+
+    private boolean isRegistryNode() {
+        return getNodePath().equals(UPDATE_REGISTRY_PATH);
+    }
+
+    private boolean isQueuedUpdater() {
+        return getNodePath().startsWith(UPDATE_QUEUE_PATH + "/");
+    }
+
+    private boolean isArchivedUpdater() {
+        return getNodePath().startsWith(UPDATE_HISTORY_PATH + "/");
+    }
+}

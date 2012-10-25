@@ -1,4 +1,4 @@
-package org.hippoecm.frontend.plugins.cms.dev.panels
+package org.hippoecm.frontend.plugins.cms.dev.updater
 
 import org.onehippo.repository.update.BaseUpdater
 
