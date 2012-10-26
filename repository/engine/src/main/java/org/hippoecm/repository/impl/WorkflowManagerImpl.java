@@ -82,9 +82,9 @@ public class WorkflowManagerImpl implements WorkflowManager {
     static final Logger log = LoggerFactory.getLogger(WorkflowManagerImpl.class);
 
     /** Session from which this WorkflowManager instance was created.  Is used
-     * to look-up which workflows are active for a user.  It is however not
+     * to look up which workflows are active for a user.  It is however not
      * used to instantiate workflows, persist and as execution context when
-     * performing a workflow step (i.e. method invocatin).
+     * performing a workflow step (i.e. method invocation).
      */
     Session session;
     Session rootSession;
@@ -614,58 +614,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
             rootSession.refresh(false);
 
             WorkflowPostActions postActions = null;
-            Node lockable = null;
             try {
                 targetMethod = upstream.getClass().getMethod(method.getName(), method.getParameterTypes());
                 synchronized (SessionDecorator.unwrap(rootSession)) {
                     postActions = WorkflowPostActionsImpl.createPostActions(WorkflowManagerImpl.this, category, targetMethod, uuid);
-                    try {
-                        if(!method.getName().equals("hints")) {
-                            lockable = rootSession.getNodeByIdentifier(uuid);
-                            if (lockable.isLocked()) {
-                                try {
-                                    Lock lock = lockable.getLock();
-                                    if(lock.isLockOwningSession()) {
-                                        lockable = null;
-                                    }
-                                } catch (LockException ex) {
-                                    // no longer locked
-                                }
-                            }
-                            if(!lockable.isNodeType("mix:lockable")) {
-                                lockable = lockable.getParent();
-                                if (lockable.isLocked()) {
-                                    try {
-                                        Lock lock = lockable.getLock();
-                                        if(lock.isLockOwningSession()) {
-                                            lockable = null;
-                                        }
-                                    } catch (LockException ex) {
-                                        // no longer locked
-                                    }
-                                }
-                            }
-                            if(lockable != null && !lockable.isNodeType("mix:lockable")) {
-                                lockable = null;
-                            }
-                        }
-                    } catch(ItemNotFoundException ex) {
-                        // if the item is not yet persisted, there is no need to try to lock it
-                        lockable = null;
-                    }
-                    if(lockable != null) {
-                        for (int retry=0; retry<12; retry++) {
-                            try {
-                                rootSession.getWorkspace().getLockManager().lock(lockable.getPath(), false, true, Long.MAX_VALUE, null);
-                                break;
-                            } catch (LockException ex) {
-                                try {
-                                    Thread.sleep(250);
-                                } catch(InterruptedException e) {
-                                }
-                            }
-                        }
-                    }
                     returnObject = targetMethod.invoke(upstream, args);
                     if (objectPersist && !targetMethod.getName().equals("hints")) {
                         documentManager.putObject(uuid, types, upstream);
@@ -745,14 +697,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                     }
                 } else {
                     log.info(new String(sb));
-                }
-                if(lockable != null) {
-                    rootSession.save();
-                    rootSession.refresh(false);
-                    try {
-                        rootSession.getWorkspace().getLockManager().unlock(lockable.getPath());
-                    } catch(LockException ex) {
-                    }
                 }
             }
         }
@@ -929,9 +873,8 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         Object invoke(WorkflowManagerImpl manager) throws RepositoryException, WorkflowException {
             WorkflowPostActions postActions = null;
-            Node lockable = null;
             try {
-                Workflow workflow = null; // compiler does not detect properly there is no path where this not set
+                Workflow workflow = null;
                 String classname = workflowNode.getProperty(HippoNodeType.HIPPO_CLASSNAME).getString();
                 Node types = workflowNode.getNode(HippoNodeType.HIPPO_TYPES);
 
@@ -989,29 +932,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
                 Method targetMethod = workflow.getClass().getMethod(method.getName(), method.getParameterTypes());
                 synchronized (SessionDecorator.unwrap(manager.rootSession)) {
-                    if(!method.getName().equals("hints")) {
-                        try {
-                            lockable = manager.rootSession.getNodeByIdentifier(uuid);
-                            if (lockable.isLocked()) {
-                                try {
-                                    Lock lock = lockable.getLock();
-                                    if (lock.isLockOwningSession()) {
-                                        lockable = null;
-                                    }
-                                } catch (LockException ex) {
-                                    // no longer locked
-                                }
-                            }
-                            if (lockable != null && !lockable.isNodeType("mix:lockable")) {
-                                lockable = null;
-                            }
-                        } catch (ItemNotFoundException ex) {
-                            // if the item is not yet persisted, there is no need to try to lock it
-                        }
-                    }
-                    if(lockable != null) {
-                        manager.rootSession.getWorkspace().getLockManager().lock(lockable.getPath(), false, true, Long.MAX_VALUE, null);
-                    }
                     Object returnObject = targetMethod.invoke(workflow, arguments);
                     if (objectPersist && !targetMethod.getName().equals("hints")) {
                         manager.documentManager.putObject(uuid, types, workflow);
@@ -1077,9 +997,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 log.debug(ex.getMessage(), ex);
                 throw ex;
             } finally {
-                if(lockable != null) {
-                    manager.rootSession.getWorkspace().getLockManager().lock(lockable.getPath(), false, true, Long.MAX_VALUE, null);
-                }
                 if (postActions != null) {
                     postActions.dispose();
                 }
