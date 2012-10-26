@@ -30,6 +30,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.NamespaceRegistry;
+import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -48,6 +49,7 @@ import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
@@ -381,6 +383,23 @@ abstract class SessionImplHelper {
     }
 
     abstract SessionItemStateManager getItemStateManager();
+
+
+    public static ObservationManagerImpl createObservationManager(SessionContext context, org.apache.jackrabbit.core.SessionImpl session, String wspName)
+            throws RepositoryException {
+        try {
+            final RepositoryImpl repository = (RepositoryImpl) context.getRepository();
+            final RepositoryImpl.HippoWorkspaceInfo workspaceInfo = (RepositoryImpl.HippoWorkspaceInfo) repository.getWorkspaceInfo(
+                    wspName);
+            return new HippoObservationManager(
+                    workspaceInfo.getObservationDispatcher(),
+                    session, context.getRepositoryContext().getClusterNode());
+        } catch (NoSuchWorkspaceException e) {
+            // should never get here
+            throw new RepositoryException(
+                    "Internal error: failed to create observation manager", e);
+        }
+    }
 
     public NodeIterator pendingChanges(Node node, String nodeType, boolean prune)
         throws NamespaceException, NoSuchNodeTypeException, RepositoryException {

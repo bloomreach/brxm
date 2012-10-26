@@ -42,6 +42,7 @@ import org.apache.jackrabbit.core.WorkspaceImpl;
 import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
+import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
@@ -124,6 +125,11 @@ public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImp
         SessionItemStateManager mgr = new HippoSessionItemStateManager(context.getRootNodeId(), context.getWorkspace().getItemStateManager());
         context.getWorkspace().getItemStateManager().addListener(mgr);
         return mgr;
+    }
+
+    protected ObservationManagerImpl createObservationManager(String wspName)
+            throws RepositoryException {
+        return SessionImplHelper.createObservationManager(context, this, wspName);
     }
 
     @Override
