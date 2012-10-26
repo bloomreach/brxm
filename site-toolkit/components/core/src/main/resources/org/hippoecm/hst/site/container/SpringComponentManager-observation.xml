@@ -192,6 +192,8 @@
                   </bean>
                 </list>
               </property>
+              <property name="refreshDisposableRepositories" value="true" />
+              <property name="multipleRepository" ref="javax.jcr.Repository" />
             </bean>
           </property>
         </bean>

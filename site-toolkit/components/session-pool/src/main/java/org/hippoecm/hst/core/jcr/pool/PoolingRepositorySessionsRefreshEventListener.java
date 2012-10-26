@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.jcr.pool;
 
 import java.util.List;
 
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
@@ -26,18 +27,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PoolingRepositorySessionsRefreshEventListener extends GenericEventListener {
-    
+
     static Logger log = LoggerFactory.getLogger(PoolingRepositorySessionsRefreshEventListener.class);
-    
+
+    // This is the statically decided pools list which should be refreshed on the specific content changes.
     protected List<PoolingRepository> poolingRepositories;
-    
+
+    // flag whether or not refresh disposable session pools from the multipleRepository.
+    private boolean refreshDisposableRepositories;
+
+    // This is just for finding the disposable pools
+    private MultipleRepository multipleRepository;
+
     public void setPoolingRepositories(List<PoolingRepository> poolingRepositories) {
         this.poolingRepositories = poolingRepositories;
     }
-    
+
+    public void setRefreshDisposableRepositories(boolean refreshDisposableRepositories) {
+        this.refreshDisposableRepositories = refreshDisposableRepositories;
+    }
+
+    public void setMultipleRepository(MultipleRepository multipleRepository) {
+        this.multipleRepository = multipleRepository;
+    }
+
     public void onEvent(EventIterator events) {
         boolean invalidatePools = false;
-        
+
         while (events.hasNext()) {
             Event event = events.nextEvent();
 
@@ -48,23 +64,35 @@ public class PoolingRepositorySessionsRefreshEventListener extends GenericEventL
             } catch (RepositoryException e) {
                 continue;
             }
-            
+
             invalidatePools = true;
             break;
         }
-        
+
         if (invalidatePools) {
             log.debug("Event received. Invalidating session pools.");
             doInvalidation();
         }
     }
-    
+
     private void doInvalidation() {
         long currentTimeMillis = System.currentTimeMillis();
-        
+
         if (this.poolingRepositories != null) {
             for (PoolingRepository poolingRepository : this.poolingRepositories) {
                 poolingRepository.setSessionsRefreshPendingAfter(currentTimeMillis);
+            }
+        }
+
+        if (refreshDisposableRepositories && multipleRepository != null) {
+            for (Repository repository : multipleRepository.getRepositoryMap().values()) {
+                if (repository instanceof PoolingRepository) {
+                    PoolingRepository poolingRepository = (PoolingRepository) repository;
+
+                    if (poolingRepository.isDisposableWhenNotInUse()) {
+                        poolingRepository.setSessionsRefreshPendingAfter(currentTimeMillis);
+                    }
+                }
             }
         }
     }
