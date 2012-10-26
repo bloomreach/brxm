@@ -255,15 +255,15 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
             }
 
             public void setUserData(String userData) throws RepositoryException {
-                throw new UnsupportedOperationException("Not supported yet.");
+                upstream.setUserData(userData);
             }
 
             public EventJournal getEventJournal() throws RepositoryException {
-                throw new UnsupportedOperationException("Not supported yet.");
+                return upstream.getEventJournal();
             }
 
             public EventJournal getEventJournal(int eventTypes, String absPath, boolean isDeep, String[] uuid, String[] nodeTypeName) throws RepositoryException {
-                throw new UnsupportedOperationException("Not supported yet.");
+                return upstream.getEventJournal(eventTypes, absPath, isDeep, uuid, nodeTypeName);
             }
         };
     }
