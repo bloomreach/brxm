@@ -49,6 +49,67 @@ class BroadcastThread extends Thread {
 
     private volatile boolean keepRunning = true;
 
+    class JobRunner {
+
+        private final BroadcastJob job;
+        private boolean processedEvents = false;
+
+        JobRunner(BroadcastJob job) {
+            this.job = job;
+        }
+
+        void run() {
+            try {
+                long lastProcessItem = job.getLastProcessed();
+                logger.debug("Getting latest log items from {}", lastProcessItem);
+
+                List<Node> logItems = getNextLogNodes(lastProcessItem);
+                long timeStamp = processEvents(job, logItems);
+
+                if (timeStamp > -1L) {
+                    job.setLastProcessed(timeStamp);
+                }
+                processedEvents = (logItems.size() > 0);
+            } catch (Exception e) {
+                logger.warn("Error during running thread", e);
+            }
+        }
+
+        /**
+         * Process the logNodes for events
+         *
+         *
+         * @param job ordered list of Node instances corresponding to logged events
+         * @param logItems ordered list of Node instances corresponding to logged events
+         * @return timestamp
+         */
+        private Long processEvents(final BroadcastJob job, final List<Node> logItems) {
+            Long timeStamp = DEFAULT_TIMESTAMP;
+            if (logItems.size() == 0) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("No pending log items to process");
+                }
+                return DEFAULT_TIMESTAMP;
+            }
+            for (Node logItem : logItems) {
+                String path = "<unknown>";
+                try {
+                    path = logItem.getPath();
+                    final HippoWorkflowEvent event = createEvent(logItem);
+                    job.publish(event);
+                    timeStamp = event.timestamp();
+                } catch (RepositoryException re) {
+                    logger.warn("Unable to process logItem at " + path, re);
+                }
+            }
+            return timeStamp;
+        }
+
+        public boolean wereEventsProcessed() {
+            return processedEvents;
+        }
+    }
+
     private final Session session;
     private final BroadcastService broadcastService;
 
@@ -81,7 +142,12 @@ class BroadcastThread extends Thread {
         while (keepRunning) {
             BroadcastJob job = broadcastService.getNextJob();
             if (job != null) {
-                runJob(job);
+                JobRunner runner = new JobRunner(job);
+                runner.run();
+
+                if (keepRunning && runner.wereEventsProcessed()) {
+                    continue;
+                }
             }
 
             if (keepRunning) {
@@ -94,22 +160,6 @@ class BroadcastThread extends Thread {
                     logger.error("Error during running thread", e);
                 }
             }
-        }
-    }
-
-    private void runJob(final BroadcastJob job) {
-        try {
-            long lastProcessItem = job.getLastProcessed();
-            logger.debug("Getting latest log items from {}", lastProcessItem);
-
-            List<Node> logItems = getNextLogNodes(lastProcessItem);
-            long timeStamp = processEvents(job, logItems);
-
-            if (timeStamp > -1L) {
-                job.setLastProcessed(timeStamp);
-            }
-        } catch (Exception e) {
-            logger.warn("Error during running thread", e);
         }
     }
 
@@ -187,36 +237,6 @@ class BroadcastThread extends Thread {
         } finally {
             session.refresh(false);
         }
-    }
-
-    /**
-     * Process the logNodes for events
-     *
-     *
-     * @param job ordered list of Node instances corresponding to logged events
-     * @param logItems ordered list of Node instances corresponding to logged events
-     * @return timestamp
-     */
-    private Long processEvents(final BroadcastJob job, final List<Node> logItems) {
-        Long timeStamp = DEFAULT_TIMESTAMP;
-        if (logItems.size() == 0) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("No pending log items to process");
-            }
-            return DEFAULT_TIMESTAMP;
-        }
-        for (Node logItem : logItems) {
-            String path = "<unknown>";
-            try {
-                path = logItem.getPath();
-                final HippoWorkflowEvent event = createEvent(logItem);
-                job.publish(event);
-                timeStamp = event.timestamp();
-            } catch (RepositoryException re) {
-                logger.warn("Unable to process logItem at " + path, re);
-            }
-        }
-        return timeStamp;
     }
 
     /**

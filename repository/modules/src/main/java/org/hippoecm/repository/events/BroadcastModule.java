@@ -172,7 +172,6 @@ public class BroadcastModule implements DaemonModule, BroadcastService {
 
     @Override
     public BroadcastJob getNextJob() {
-
         Multimap<String, HippoSynchronizedEventHandler> handlers = ArrayListMultimap.create();
         HippoAnnotationHandlerFinder hahf = new HippoAnnotationHandlerFinder();
         for (HippoServiceRegistration registration : HippoServiceRegistry.getRegistrations(HippoEventBus.class)) {
@@ -184,16 +183,18 @@ public class BroadcastModule implements DaemonModule, BroadcastService {
                         Persisted persisted = (Persisted) annotation;
                         String name = persisted.name();
                         handlers.put(name, handler);
+                        break;
                     }
                 }
             }
         }
+
         String oldestSubscriber = null;
         long oldestProcessingStamp = -1;
         for (String name : handlers.keys()) {
             try {
                 long lastProcessed = getLastProcessed(name);
-                if (lastProcessed <= oldestProcessingStamp) {
+                if (oldestSubscriber == null || lastProcessed <= oldestProcessingStamp) {
                     oldestProcessingStamp = lastProcessed;
                     oldestSubscriber = name;
                 }

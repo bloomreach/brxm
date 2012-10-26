@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.hippoecm.repository.logging.RepositoryLogger;
@@ -62,7 +61,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testPoller() throws RepositoryException, InterruptedException {
+    public void testPoller() throws Exception {
         Listener listener = new Listener();
 
         HippoWorkflowEvent event = new HippoWorkflowEvent();
@@ -79,13 +78,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
             logger.shutdown();
 
-            int n = 50;
-            while (n-- > 0) {
-                Thread.sleep(100);
-                if (listener.seenEvents.size() == 1) {
-                    break;
-                }
-            }
+            waitForEvent(listener);
 
             assertEquals(1, listener.seenEvents.size());
 
@@ -98,9 +91,32 @@ public class BroadcastModuleTest extends RepositoryTestCase {
             Node clusterNode = moduleNode.getNodes().nextNode();
             Node basicNode = clusterNode.getNode("basic");
             assertEquals(hippoEvent.timestamp(), basicNode.getProperty(BroadcastConstants.LAST_PROCESSED).getLong());
+
+            // new event
+            HippoWorkflowEvent newEvent = new HippoWorkflowEvent(event);
+            newEvent.timestamp(System.currentTimeMillis());
+            listener.seenEvents.clear();
+            logger.initialize(session);
+            logger.logHippoEvent(newEvent);
+            logger.shutdown();
+
+            waitForEvent(listener);
+
+            assertEquals(1, listener.seenEvents.size());
         } finally {
             HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
         }
 
+    }
+
+    private void waitForEvent(final Listener listener) throws Exception {
+        int n = 50;
+        while (n-- > 0) {
+            Thread.sleep(100);
+            if (listener.seenEvents.size() == 1) {
+                return;
+            }
+        }
+        throw new Exception("Event not received within 5 seconds");
     }
 }
