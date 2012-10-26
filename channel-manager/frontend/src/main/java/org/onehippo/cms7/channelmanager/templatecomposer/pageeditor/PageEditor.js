@@ -430,6 +430,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 if (insertIndex >= 0) {
                     console.log("Adding " + mode + " toolbar plugin '" + plugin.xtype + "' " + plugin.positions[mode]);
                     pluginInstance = Hippo.ExtWidgets.create(plugin.xtype, {
+                        pageContainer: this.pageContainer,
                         toolbarMode: mode
                     });
                     toolbar.insert(insertIndex, pluginInstance);
