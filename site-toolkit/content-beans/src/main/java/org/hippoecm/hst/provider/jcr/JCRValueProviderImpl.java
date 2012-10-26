@@ -18,6 +18,7 @@ package org.hippoecm.hst.provider.jcr;
 import java.util.Calendar;
 import java.util.Map;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -28,6 +29,7 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
@@ -78,7 +80,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 populateIdentifier();
             }
         } catch (RepositoryException e) {
-            log.error("RepositoryException ", e);
+            throw new RuntimeRepositoryException(e);
         }
     }
 
@@ -101,9 +103,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 return null;
             } 
             return this.jcrNode.getParent();
-        } catch(RepositoryException e ) {
-            log.error("Repository Exception", e);
-            return null;
+        } catch(RepositoryException e) {
+            throw new RuntimeRepositoryException(e);
         }
     }
    
@@ -139,8 +140,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             localizedName = ((HippoNode)node).getLocalizedName();
             return localizedName;
         } catch (RepositoryException e) {
-           log.error("RepositoryException during fetching localizedName. Return null", e);
-           return null;
+            throw new RuntimeRepositoryException(e);
         } 
     }
     
@@ -180,9 +180,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         try {
             return jcrNode.isNodeType(nodeType);
         } catch (RepositoryException e) {
-            log.warn("Repository Exception during nodetype check: ", e);
+            throw new RuntimeRepositoryException(e);
         }
-        return false;
     }
     
     public boolean hasProperty(String propertyName){
@@ -214,9 +213,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             }
             return bool;
         } catch (RepositoryException e) {
-            log.warn("Repository Exception during check if property exists: ", e);
+            throw new RuntimeRepositoryException(e);
         }
-        return false;
     }
     
     public String getString(String propertyName){
@@ -434,9 +432,8 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 return;
             }
         } catch (RepositoryException e) {
-            if (log.isWarnEnabled()) log.warn("RepositoryException: Exception for fetching property '{}' from '{}'", propertyName, this.nodePath);
+            throw new RuntimeRepositoryException(e);
         }
-        return;
     }
     
     private void loadProperty(Property p, PropertyDefinition propDef, String propertyName){
@@ -537,11 +534,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 return ;
             }
         } catch (ValueFormatException e) {
-            if (log.isWarnEnabled()) log.warn("ValueFormatException: Exception for fetching property from '{}'", this.nodePath);
+            log.warn("ValueFormatException: Exception for fetching property from '{}'", this.nodePath);
         } catch (IllegalStateException e) {
-            if (log.isWarnEnabled()) log.warn("IllegalStateException: Exception for fetching property from '{}'", this.nodePath);
+            log.warn("IllegalStateException: Exception for fetching property from '{}'", this.nodePath);
         } catch (RepositoryException e) {
-            if (log.isWarnEnabled()) log.warn("RepositoryException: Exception for fetching property from '{}'", this.nodePath);
+            throw new RuntimeRepositoryException(e);
         }
         return ;
     }
@@ -572,7 +569,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 }
             }
         } catch (RepositoryException e) {
-            log.error("Repository Exception: {}", e.getMessage());
+            throw new RuntimeRepositoryException(e);
         }
         this.isLoaded = true;
     }
@@ -594,7 +591,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                     this.canonicalPath = jcrNode.getPath();
                 }
             } catch (RepositoryException e) {
-                log.warn("Repository Exception during fetching canonical path: ", e);
+                throw new RuntimeRepositoryException(e);
             }
             
         }
@@ -615,7 +612,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                     this.identifier = jcrNode.getPath(); 
                 }
             } catch (RepositoryException e) {
-                log.warn("Repository Exception during fetching canonical path: ", e);
+                throw new RuntimeRepositoryException(e);
             }
             
         }
