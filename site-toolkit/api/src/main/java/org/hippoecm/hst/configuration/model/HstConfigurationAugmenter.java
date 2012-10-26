@@ -16,7 +16,7 @@
 package org.hippoecm.hst.configuration.model;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.container.ContainerException;
 
 /**
  * Classes that implement this interface can be used to augment the loaded configuration. The implementations will get the 
@@ -30,7 +30,7 @@ public interface HstConfigurationAugmenter {
     /**
      * Implementations that are 
      * @param manager
-     * @throws RepositoryNotAvailableException 
+     * @throws ContainerException
      */
-    void augment(HstManager manager) throws RepositoryNotAvailableException;
+    void augment(HstManager manager) throws ContainerException;
 }

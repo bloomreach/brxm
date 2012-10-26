@@ -150,7 +150,6 @@ api/src/main/java/org/hippoecm/hst/core/container/PageErrorHandler.java svneol=n
 api/src/main/java/org/hippoecm/hst/core/container/PageErrors.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/Pipeline.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/Pipelines.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/core/container/RepositoryNotAvailableException.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ServletContextAware.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/Valve.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ValveContext.java svneol=native#text/plain
@@ -458,7 +457,6 @@ components/core/src/main/java/org/hippoecm/hst/configuration/hosting/MountServic
 components/core/src/main/java/org/hippoecm/hst/configuration/hosting/PortMountService.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationEventListener.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstManagerImpl.java -text svneol=unset#text/plain
-components/core/src/main/java/org/hippoecm/hst/configuration/model/HstNodeException.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstNodeImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstSiteConfigurationRootNodeImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstSiteRootNodeImpl.java -text svneol=unset#text/plain

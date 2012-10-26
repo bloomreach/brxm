@@ -68,16 +68,12 @@ public class HstNodeImpl implements HstNode {
      */
     private boolean inherited = false; 
     
-    public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds) throws HstNodeException {
+    public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds) throws RepositoryException {
         this.parent = parent;
-        try {
-            provider = new JCRValueProviderImpl(jcrNode, false);
-            nodeTypeName = jcrNode.getPrimaryNodeType().getName();
-            if(loadChilds) {
-                loadChilds(jcrNode, parent);
-            }
-        } catch (RepositoryException e) {
-           throw new HstNodeException(e);
+        provider = new JCRValueProviderImpl(jcrNode, false);
+        nodeTypeName = jcrNode.getPrimaryNodeType().getName();
+        if(loadChilds) {
+            loadChilds(jcrNode);
         }
         // detach the backing jcr node now we are done.       
         stale = false;
@@ -126,36 +122,30 @@ public class HstNodeImpl implements HstNode {
         }
     }
 
-    protected void loadChilds(Node jcrNode, HstNode parent) throws RepositoryException {
+    protected void loadChilds(Node jcrNode) throws RepositoryException {
         NodeIterator nodes = jcrNode.getNodes();
+        long iteratorSizeBeforeLoop = nodes.getSize();
         while (nodes.hasNext()) {
             Node child = nodes.nextNode();
-            if (child == null) {
-                throw new HstNodeException("Configuration changed while loading. Reload");
+            HstNode childRepositoryNode = createNew(child, this, true);
+            if(children == null) {
+                children = new LinkedHashMap<String, HstNode>();
             }
-            HstNode childRepositoryNode = null;
-            try {
-                childRepositoryNode = createNew(child, this, true);
-            } catch (HstNodeException e) {
-                log.warn("Failed to load configuration node for '{}'. {}", child.getPath(), e.toString());
+            HstNodeImpl existing = (HstNodeImpl) children.get(childRepositoryNode.getValueProvider().getName());
+            if (existing != null) {
+                log.warn("Ignoring node configuration at '{}' for '{}' because it is duplicate. This is not allowed",
+                            provider.getPath(), childRepositoryNode.getValueProvider().getPath());
+            } else {
+                // does not exist yet
+                children.put(childRepositoryNode.getValueProvider().getName(), childRepositoryNode);
             }
-            if (childRepositoryNode != null) {
-                if(children == null) {
-                    children = new LinkedHashMap<String, HstNode>();
-                }
-                HstNodeImpl existing = (HstNodeImpl) children.get(childRepositoryNode.getValueProvider().getName());
-                if (existing != null) {
-                    log.warn("Ignoring node configuration at '{}' for '{}' because it is duplicate. This is not allowed",
-                                provider.getPath(), childRepositoryNode.getValueProvider().getPath());
-                } else {
-                    // does not exist yet
-                    children.put(childRepositoryNode.getValueProvider().getName(), childRepositoryNode);
-                }
-            }
+
         }
+        long iteratorSizeAfterLoop = nodes.getSize();
+        HstManagerImpl.throwModelChangedExceptionIfCountsAreNotEqual(iteratorSizeBeforeLoop, iteratorSizeAfterLoop);
     }
     
-    protected HstNode createNew(Node jcrNode,  HstNode parent, boolean loadChilds)  throws HstNodeException {
+    protected HstNode createNew(Node jcrNode,  HstNode parent, boolean loadChilds) throws RepositoryException{
         return new HstNodeImpl(jcrNode, parent, loadChilds);
     }
     

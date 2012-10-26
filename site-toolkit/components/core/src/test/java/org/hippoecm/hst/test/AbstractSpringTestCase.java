@@ -31,8 +31,8 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -131,7 +131,7 @@ public abstract class AbstractSpringTestCase
     }
     
 
-    protected HstRequestContext resolveRequest(HttpServletRequest request, HttpServletResponse response) throws RepositoryNotAvailableException {
+    protected HstRequestContext resolveRequest(HttpServletRequest request, HttpServletResponse response) throws ContainerException {
         HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
         HstMutableRequestContext requestContext = ((HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName())).create(false);

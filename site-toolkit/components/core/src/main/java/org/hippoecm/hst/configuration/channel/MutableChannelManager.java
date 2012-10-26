@@ -19,7 +19,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 
 /**
  * Interface to synchronize updates to the virtual hosts / mounts with those in the channel configuration.
@@ -30,7 +29,7 @@ public interface MutableChannelManager extends ChannelManager {
      * Populate the mounts under the virtual hosts with channel information.
      *
      * @param hosts
-     * @throws RepositoryNotAvailableException
+     * @throws RepositoryException
      */
     void load(VirtualHosts hosts, Session session) throws RepositoryException;
 

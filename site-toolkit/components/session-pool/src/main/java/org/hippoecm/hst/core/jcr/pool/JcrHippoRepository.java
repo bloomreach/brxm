@@ -34,31 +34,31 @@ import org.slf4j.LoggerFactory;
 
 /**
  * JCR Repository implementation wrapping HippoRepository.
- * 
+ *
  * @version $Id$
  */
 public class JcrHippoRepository implements Repository {
-    
+
     private static final Logger log = LoggerFactory.getLogger(JcrHippoRepository.class);
 
     protected String repositoryURI;
-    
+
     protected HippoRepository hippoRepository;       // repository created via HippoRepositoryFactory
     protected Repository jcrDelegateeRepository;     // repository created from hippo ecm jca support
-    
+
     private boolean vmRepositoryUsed;
     private boolean localRepositoryUsed;
-    
+
     private boolean repositoryInitialized;
-    
+
     public JcrHippoRepository() {
         this((String) null);
     }
-    
+
     public JcrHippoRepository(String repositoryURI) {
         this.repositoryURI = repositoryURI;
         vmRepositoryUsed = (repositoryURI != null && repositoryURI.startsWith("vm:"));
-        
+
         if (StringUtils.isBlank(repositoryURI)) {
             localRepositoryUsed = true;
         } else if (StringUtils.startsWith(repositoryURI, "file:")) {
@@ -67,16 +67,16 @@ public class JcrHippoRepository implements Repository {
             localRepositoryUsed = true;
         }
     }
-    
+
     public JcrHippoRepository(HippoRepository hippoRepository) {
         this.hippoRepository = hippoRepository;
-        
+
         if (hippoRepository != null) {
             repositoryInitialized = true;
             repositoryURI = hippoRepository.getLocation();
-            
+
             vmRepositoryUsed = (repositoryURI != null && repositoryURI.startsWith("vm:"));
-            
+
             if (StringUtils.isBlank(repositoryURI)) {
                 localRepositoryUsed = true;
             } else if (StringUtils.startsWith(repositoryURI, "file:")) {
@@ -86,12 +86,12 @@ public class JcrHippoRepository implements Repository {
             }
         }
     }
-    
+
     private synchronized void initHippoRepository() throws RepositoryException {
         if (repositoryInitialized) {
             return;
         }
-        
+
         try {
             log.info("Trying to get hippo repository from {}.", repositoryURI);
 
@@ -100,7 +100,7 @@ public class JcrHippoRepository implements Repository {
             } else if (repositoryURI.startsWith("java:")) {
                 InitialContext ctx = new InitialContext();
                 Object repositoryObject = ctx.lookup(repositoryURI);
-                
+
                 if (repositoryObject instanceof Repository) {
                     jcrDelegateeRepository = (Repository) repositoryObject;
                 } else if (repositoryObject instanceof HippoRepository) {
@@ -119,15 +119,15 @@ public class JcrHippoRepository implements Repository {
             repositoryInitialized = (jcrDelegateeRepository != null || hippoRepository != null);
         }
     }
-    
+
     public String getDescriptor(String key) {
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.getDescriptor(key);
         }
-        
+
         if (hippoRepository != null) {
             ClassLoader currentClassloader = switchToRepositoryClassloader();
-            
+
             try {
                 return hippoRepository.getRepository().getDescriptor(key);
             } finally {
@@ -136,7 +136,7 @@ public class JcrHippoRepository implements Repository {
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -144,10 +144,10 @@ public class JcrHippoRepository implements Repository {
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.getDescriptorKeys();
         }
-        
+
         if (hippoRepository != null) {
             ClassLoader currentClassloader = switchToRepositoryClassloader();
-            
+
             try {
                 return hippoRepository.getRepository().getDescriptorKeys();
             } finally {
@@ -156,7 +156,7 @@ public class JcrHippoRepository implements Repository {
                 }
             }
         }
-        
+
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
@@ -164,13 +164,13 @@ public class JcrHippoRepository implements Repository {
         if (!repositoryInitialized) {
             initHippoRepository();
         }
-        
+
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.login();
         }
-        
+
         ClassLoader currentClassloader = switchToRepositoryClassloader();
-        
+
         try {
             return hippoRepository.login();
         } finally {
@@ -184,13 +184,13 @@ public class JcrHippoRepository implements Repository {
         if (!repositoryInitialized) {
             initHippoRepository();
         }
-        
+
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.login(credentials);
         }
-        
+
         ClassLoader currentClassloader = switchToRepositoryClassloader();
-        
+
         try {
             return hippoRepository.login((SimpleCredentials) credentials);
         } finally {
@@ -204,11 +204,11 @@ public class JcrHippoRepository implements Repository {
         if (!repositoryInitialized) {
             initHippoRepository();
         }
-        
+
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.login(workspaceName);
         }
-        
+
         return login();
     }
 
@@ -217,32 +217,32 @@ public class JcrHippoRepository implements Repository {
         if (!repositoryInitialized) {
             initHippoRepository();
         }
-        
+
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.login(credentials, workspaceName);
         }
-        
+
         return login(credentials);
     }
-    
+
     public void closeHippoRepository() {
         if (hippoRepository != null && !localRepositoryUsed && !vmRepositoryUsed) {
             hippoRepository.close();
         }
     }
-    
+
     /*
-     * Because HippoRepository can be loaded in other classloader which is not the same as the caller's classloader,
-     * the context classloader needs to be switched.
-     */
+    * Because HippoRepository can be loaded in other classloader which is not the same as the caller's classloader,
+    * the context classloader needs to be switched.
+    */
     private ClassLoader switchToRepositoryClassloader() {
         if (vmRepositoryUsed) {
             return null;
         }
-        
+
         ClassLoader repositoryClassloader = hippoRepository.getClass().getClassLoader();
         ClassLoader currentClassloader = Thread.currentThread().getContextClassLoader();
-        
+
         if (repositoryClassloader != currentClassloader) {
             Thread.currentThread().setContextClassLoader(repositoryClassloader);
             return currentClassloader;
@@ -255,10 +255,10 @@ public class JcrHippoRepository implements Repository {
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.getDescriptorValue(key);
         }
-        
+
         if (hippoRepository != null) {
             ClassLoader currentClassloader = switchToRepositoryClassloader();
-            
+
             try {
                 return hippoRepository.getRepository().getDescriptorValue(key);
             } finally {
@@ -267,7 +267,7 @@ public class JcrHippoRepository implements Repository {
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -275,10 +275,10 @@ public class JcrHippoRepository implements Repository {
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.getDescriptorValues(key);
         }
-        
+
         if (hippoRepository != null) {
             ClassLoader currentClassloader = switchToRepositoryClassloader();
-            
+
             try {
                 return hippoRepository.getRepository().getDescriptorValues(key);
             } finally {
@@ -287,7 +287,7 @@ public class JcrHippoRepository implements Repository {
                 }
             }
         }
-        
+
         return null;
     }
 
@@ -295,10 +295,10 @@ public class JcrHippoRepository implements Repository {
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.isSingleValueDescriptor(key);
         }
-        
+
         if (hippoRepository != null) {
             ClassLoader currentClassloader = switchToRepositoryClassloader();
-            
+
             try {
                 return hippoRepository.getRepository().isSingleValueDescriptor(key);
             } finally {
@@ -314,10 +314,10 @@ public class JcrHippoRepository implements Repository {
         if (jcrDelegateeRepository != null) {
             return jcrDelegateeRepository.isStandardDescriptor(key);
         }
-        
+
         if (hippoRepository != null) {
             ClassLoader currentClassloader = switchToRepositoryClassloader();
-            
+
             try {
                 return hippoRepository.getRepository().isStandardDescriptor(key);
             } finally {

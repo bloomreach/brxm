@@ -49,7 +49,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -255,7 +255,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
             try {
                 manager.getVirtualHosts();
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 throw new ChannelException("could not build channels");
             }
             if (channels == null) {

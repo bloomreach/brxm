@@ -50,7 +50,6 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ContainerNotFoundException;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
@@ -512,10 +511,9 @@ public class HstFilter implements Filter {
      *
      * @return the resolved mount of the given type
      *
-     * @throws org.hippoecm.hst.core.container.RepositoryNotAvailableException
      * @throws org.hippoecm.hst.configuration.hosting.MatchException when no matching mount could be found for the given host and type.
      */
-    private ResolvedMount getMountForType(HstContainerRequest containerRequest, String type, String hostName, String hostGroupName, VirtualHosts vHosts, String nodePath) throws RepositoryNotAvailableException {
+    private ResolvedMount getMountForType(HstContainerRequest containerRequest, String type, String hostName, String hostGroupName, VirtualHosts vHosts, String nodePath) {
         List<Mount> mounts = vHosts.getMountsByHostGroup(hostGroupName);
         if (mounts == null) {
             throw new MatchException("No mounts found for host '" + hostName + "' and '" + containerRequest.getRequestURL() + "'");
@@ -594,7 +592,7 @@ public class HstFilter implements Filter {
      * @throws java.io.IOException
      */
     private void sendRedirectToUuidUrl(HttpServletRequest req, HttpServletResponse res, HstMutableRequestContext requestContext, 
-            HstManager hstSitesManager, ResolvedVirtualHost resolvedVirtualHost, HstContainerRequest containerRequest, String hostName, Logger logger) throws RepositoryNotAvailableException, RepositoryException, IOException {
+            HstManager hstSitesManager, ResolvedVirtualHost resolvedVirtualHost, HstContainerRequest containerRequest, String hostName, Logger logger) throws RepositoryException, IOException {
          
         final String jcrUuid = getJcrUuidParameter(req, logger);
         if (jcrUuid == null) {

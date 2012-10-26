@@ -34,7 +34,7 @@ import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
@@ -151,7 +151,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 }
                 
                 
-            }catch (RepositoryNotAvailableException e) {
+            }catch (ContainerException e) {
                 e.printStackTrace();
             }
         }
@@ -192,7 +192,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                     fail("Failed to create HstSiteMapItemHandler instance: " + e.getMessage());
                 }
                 
-            }catch (RepositoryNotAvailableException e) {
+            }catch (ContainerException e) {
                 e.printStackTrace();
             }
         }
@@ -235,7 +235,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 
                 // because we have configured to sitemapHandlers that do not really do something (NoopExampleHandler1 and NoopExampleHandler2), we expect the same resolved sitemap item.
                 assertTrue("expectede the original resolved sitemap item back because the handlers are Noop",processedSiteMapItem == resolvedSiteMapItem);
-            }catch (RepositoryNotAvailableException e) {
+            }catch (ContainerException e) {
                 e.printStackTrace();
             }
         }
@@ -315,7 +315,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 } catch (HstSiteMapItemHandlerException e){
                     fail("Failed to create HstSiteMapItemHandler instance: " + e.getMessage());
                 }
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 e.printStackTrace();
             }
             
@@ -361,7 +361,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
                 } catch (HstSiteMapItemHandlerException e){
                     fail("Failed to create HstSiteMapItemHandler instance: " + e.getMessage());
                 }
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 e.printStackTrace();
             }
             

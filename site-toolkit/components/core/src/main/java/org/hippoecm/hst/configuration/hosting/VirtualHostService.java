@@ -241,12 +241,15 @@ public class VirtualHostService implements MutableVirtualHost {
                     MutablePortMount portMount = new PortMountService(mount, this);
                     attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
-                    log.error("Skipping incorrect mount or port mount for mount node '"+mountNode.getValueProvider().getPath()+"'" ,e);
-                    // if we are in fine grained reloading mode, we will try next request a full blown reload (reload all HstNode instances)
-                    // as something went wrong.
-                    if (hstManager.isFineGrainedReloading()) {
-                        hstManager.setFineGrainedReloading(false);
-                        hstManager.setFullBlownReloadNeeded(true);
+                    if (log.isDebugEnabled()) {
+                        log.error("Skipping incorrect mount or port mount for mount node '"+mountNode.getValueProvider().getPath()+"'. " ,e);
+                    } else {
+                        String path = mountNode.getValueProvider().getPath();
+                        String[] args = {path, e.toString(), path, path};
+                        log.warn("Skipping incorrect mount or port mount for mount node '{}' because of '{}'. " +
+                                "On next request, we will check the existence of the jcr node at '{}' : In clustered repository setup " +
+                                "it can happen that a jcr node is temporarily missing. If this warning keeps being logged, then check " +
+                                "whether there exists in the repository a configuration node at '{}'", args);
                     }
                 }
             } else {
@@ -261,12 +264,6 @@ public class VirtualHostService implements MutableVirtualHost {
                     attachPortMountToHost.childVirtualHosts.put(childHost.name, childHost);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect virtual host for node '"+child.getValueProvider().getPath()+"'" ,e);
-                    // if we are in fine grained reloading mode, we will try next request a full blown reload (reload all HstNode instances)
-                    // as something went wrong.
-                    if (hstManager.isFineGrainedReloading()) {
-                        hstManager.setFineGrainedReloading(false);
-                        hstManager.setFullBlownReloadNeeded(true);
-                    }
                 }
                 
             } else if (HstNodeTypes.NODETYPE_HST_PORTMOUNT.equals(child.getNodeTypeName())){
@@ -275,12 +272,6 @@ public class VirtualHostService implements MutableVirtualHost {
                 attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
                     log.error("Skipping incorrect port mount for node '"+child.getValueProvider().getPath()+"'" ,e);
-                    // if we are in fine grained reloading mode, we will try next request a full blown reload (reload all HstNode instances)
-                    // as something went wrong.
-                    if (hstManager.isFineGrainedReloading()) {
-                        hstManager.setFineGrainedReloading(false);
-                        hstManager.setFullBlownReloadNeeded(true);
-                    }
                 }
             } 
         }

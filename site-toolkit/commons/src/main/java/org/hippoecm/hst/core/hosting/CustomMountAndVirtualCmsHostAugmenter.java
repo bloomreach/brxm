@@ -44,7 +44,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.service.ServiceException;
@@ -93,7 +93,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
      * Every virtual hostgroup that has a hst:cmslocation property defined we try to add the correct mount for.
      */
     @Override
-    public void augment(HstManager manager) throws RepositoryNotAvailableException {
+    public void augment(HstManager manager) throws ContainerException {
         if (!validateState(manager)) {
             return;
         }
@@ -251,7 +251,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
     }
 
-    private boolean validateState(final HstManager manager) throws RepositoryNotAvailableException {
+    private boolean validateState(final HstManager manager) throws ContainerException {
         if (!(manager.getVirtualHosts() instanceof MutableVirtualHosts)) {
             log.error("{} can only work when the hosts is an instanceof MutableVirtualHosts", this.getClass().getName());
             return false;

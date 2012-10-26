@@ -31,8 +31,8 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -664,7 +664,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
             return hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
         }
         
-        public ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws RepositoryNotAvailableException {
+        public ResolvedSiteMapItem getResolvedSiteMapItem(HstContainerURL url) throws ContainerException {
             VirtualHosts vhosts = hstManager.getVirtualHosts();
             return vhosts.matchSiteMapItem(url);
         }

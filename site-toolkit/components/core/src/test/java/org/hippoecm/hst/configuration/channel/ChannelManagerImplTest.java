@@ -43,7 +43,7 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
@@ -239,7 +239,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void channelsAreReloaded() throws ChannelException, RepositoryException, PrivilegedActionException, RepositoryNotAvailableException {
+    public void channelsAreReloaded() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
         final ChannelManagerImpl manager = createManager();
         int numberOfChannels = manager.getChannels().size();
 
@@ -524,7 +524,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
                     return vhosts;
                 }
             }).anyTimes();
-        } catch (RepositoryNotAvailableException e) {
+        } catch (ContainerException e) {
             // mock impl doesn't throw
         }
         expect(cm.getComponent(HstManager.class.getName())).andReturn(hstMgr).anyTimes();

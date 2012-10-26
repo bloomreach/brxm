@@ -17,11 +17,12 @@ package org.hippoecm.hst.configuration.model;
 
 import java.util.List;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.component.HstURLFactory;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
@@ -31,7 +32,7 @@ public interface HstManager {
     /**
      * @return the <code>VirtualHosts</code> 
      */
-    VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException;
+    VirtualHosts getVirtualHosts() throws ContainerException;
 
     /**
      * @return the HstURLFactory

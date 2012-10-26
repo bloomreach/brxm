@@ -35,7 +35,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
     private String canonicalContentPath;
     
     public HstSiteRootNodeImpl(Node siteRootNode, HstNode parent)
-            throws HstNodeException {
+            throws RepositoryException {
         
         // do not load child nodes as this is the entire content
         super(siteRootNode, parent, false);
@@ -69,7 +69,8 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
                 
             }
         } catch (RepositoryException e) {
-            throw new HstNodeException("Repository Exception during instantiating '"+getValueProvider().getName()+"'. Skipping subsite.");
+            log.warn("Repository Exception during instantiating '"+getValueProvider().getName()+"'. Skipping subsite.");
+            throw e;
         }
         
     }

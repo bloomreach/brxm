@@ -39,8 +39,9 @@ import org.hippoecm.hst.configuration.components.HstComponentsConfigurationServi
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstComponentRegistry;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
@@ -140,14 +141,6 @@ public class HstManagerImpl implements HstManager {
     // this member is only accessed in synchronized blocks so does not need to be volatile
     private boolean clearAll = false;
 
-    // flag to indicate that fineGrainedReloading is used.
-    // this member is only accessed in synchronized blocks so does not need to be volatile
-    private boolean fineGrainedReloading = false;
-
-    // flag to indicate that a full blown reload is needed
-    // this member is only accessed in synchronized blocks so does not need to be volatile
-    private boolean fullBlownReloadNeeded = false;
-
     private Map<HstEvent.ConfigurationType, Set<HstEvent>> configChangeEventMap;
     private MutableChannelManager channelManager;
 
@@ -237,34 +230,44 @@ public class HstManagerImpl implements HstManager {
         this.hstLinkCreator = hstLinkCreator;
     }
     
-    public VirtualHosts getVirtualHosts() throws RepositoryNotAvailableException {
+    public VirtualHosts getVirtualHosts() throws ContainerException {
 
         VirtualHosts currentHosts = virtualHosts;
         if (currentHosts == null) {
             synchronized(this) {
                 if (virtualHosts == null) {
-                    buildSites(); 
-                    if(virtualHosts == null) {
-                        throw new IllegalStateException("The HST configuration model could not be loaded. Cannot process request");
+                    try {
+                        buildSites();
+                    } catch (ModelChangedDuringLoadingException e) {
+                        // since the model has changed during loading, we try a complete rebuild (invalidateAll). If that one fails again, we return a ContainerException
+                        // and it will be tried during the next request
+                        log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches. Reason : {} ", e.toString());
+                        retryCleanBuildSites();
+                    } catch (ContainerException e) {
+                        log.warn("During building the HST model an error occured. Flush all caches now and do a full rebuild during next " +
+                                "request. Error : {}", e);
+                        invalidateAll();
+                        throw e;
                     }
                 }
                 currentHosts = virtualHosts;
-
-                if (fullBlownReloadNeeded) {
-                    log.warn("Due to incorrect loading of the HST model during previous request, during next request a full blown " +
-                            "reload will be done. If the incorrect loading was the result of broken hst configuration, please fix this because " +
-                            "it is expensive to do a full blown reload.");
-                    fullBlownReloadNeeded = false;
-                    fineGrainedReloading = false;
-                    invalidateAll();
-                }
             }
         }
-        
         return currentHosts;
     }
 
-    private void buildSites() throws RepositoryNotAvailableException {
+    private void retryCleanBuildSites() throws ContainerException  {
+        invalidateAll();
+        try {
+            buildSites();
+        } catch (ModelChangedDuringLoadingException e) {
+            invalidateAll();
+            throw new ContainerException("Retry of building HST model due to jcr config changes during the previous build failed again " +
+                    "because the jcr config changed again. No retry done untill next request.");
+        }
+    }
+
+    private void buildSites() throws ContainerException {
         log.info("Start building in memory hst configuration model");
         long start = System.currentTimeMillis();
         
@@ -284,10 +287,7 @@ public class HstManagerImpl implements HstManager {
             } else {
                 session = this.repository.login(this.credentials);
             }
-            
-            // session can come from a pooled event based pool so always refresh before building configuration:
-            session.refresh(false);
-            
+
             // get all the root hst virtualhosts node: there is only allowed to be exactly ONE
             {   
                 if(virtualHostsNode == null) {
@@ -295,9 +295,6 @@ public class HstManagerImpl implements HstManager {
                     virtualHostsNode = new HstNodeImpl(virtualHostsJcrNode, null, true);
                 } else {
                     // do finegrained reloading, removing and loading of previously loaded nodes that changed.
-
-                    fineGrainedReloading = true;
-
                     Set<String> loadNodes = new HashSet<String>();
                     int pathLengthHstHostNode = (rootPath + "/hst:hosts").length();
                     if(configChangeEventMap != null) {
@@ -309,14 +306,7 @@ public class HstManagerImpl implements HstManager {
                                     String path = event.path.substring(pathLengthHstHostNode);
                                     if(path.length() == 0) {
                                         // the root has been removed / moved
-                                        // we can do no better than set virtualHosts to 'null', remove 
-                                        // the events for the HOST_NODE, and try again the next request
-                                        virtualHosts = null;
-                                        events.clear();
-                                        virtualHostsNode = null;
-                                        fullBlownReloadNeeded = true;
-                                        log.warn("The node '{}' has been removed. Cannot reload model.", rootPath + "/hst:hosts");
-                                        return;
+                                        throw new ContainerException("The node '"+rootPath + "/hst:hosts' has been removed. Cannot reload model.");
                                     } 
                                     HstNode node = virtualHostsNode.getNode(path.substring(1));
                                     if(node != null) {
@@ -325,8 +315,7 @@ public class HstManagerImpl implements HstManager {
                                 } else if(event.jcrEventType == Event.NODE_ADDED) {
                                     loadNodes.add(event.path);
                                 } else if(event.jcrEventType == Event.NODE_MOVED) {
-                                    log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
-                                    fullBlownReloadNeeded = true;
+                                    throw new ContainerException("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
                                 } 
                             }  else if (event.eventType == HstEvent.EventType.PROP_EVENT) {
                                 // PROPERTY EVENT : we mark the HstNode as stale
@@ -433,8 +422,7 @@ public class HstManagerImpl implements HstManager {
                                 } else if(event.jcrEventType == Event.NODE_ADDED) {
                                     loadNodes.add(event.path);
                                 } else if(event.jcrEventType == Event.NODE_MOVED) {
-                                    log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
-                                    fullBlownReloadNeeded = true;
+                                    throw new ContainerException("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
                                 } 
                             } else if (event.eventType == HstEvent.EventType.PROP_EVENT) {
                                 // PROPERTY EVENT : we mark the HstNode as stale
@@ -516,8 +504,8 @@ public class HstManagerImpl implements HstManager {
                                 }
      
                             } else if (event.jcrEventType == Event.NODE_MOVED) {
-                                log.error("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
-                                fullBlownReloadNeeded = true;
+                                log.warn("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
+                                throw new ContainerException("NODE MOVE not used because jackrabbit returns a delete and an add instead. This should not be possible");
                             } else {
                                 // if a node was not removed, we will reload the hst:site, also for property changes
                                 String[] elems = event.path.split("/");
@@ -550,13 +538,12 @@ public class HstManagerImpl implements HstManager {
                                     HstSiteRootNode hstRootSiteNode = new HstSiteRootNodeImpl(rootSiteNode, null);
                                     siteRootNodes.put(hstRootSiteNode.getValueProvider().getPath(), hstRootSiteNode);
                                 } else {
-                                    log.error("We can only load nodes of site '{}' here. This should not be happening.", HstNodeTypes.NODETYPE_HST_SITE);
-                                    fullBlownReloadNeeded = true;
+                                    log.warn("We can only load nodes of site '{}' here. This should not be happening.", HstNodeTypes.NODETYPE_HST_SITE);
+                                    throw new ContainerException("We can only load nodes of site '"+HstNodeTypes.NODETYPE_HST_SITE+"' here. This should not be happening.");
                                 }
                             }
                         } else {
                             log.error("It is not possible to load '{}' because is not a site root node", path);
-                            fullBlownReloadNeeded = true;
                         }
                     }
                 }
@@ -573,14 +560,17 @@ public class HstManagerImpl implements HstManager {
                 }
                 log.info("Finished build in memory hst configuration model in " + (System.currentTimeMillis() - start) + " ms.");
             } catch (ServiceException e) {
-                throw new RepositoryNotAvailableException(e);
+                throw new ContainerException("Exception during building HST model", e);
             }
 
             this.channelManager.load(virtualHosts, session);
+
         } catch (PathNotFoundException e) {
-            throw new IllegalStateException("Exception during loading configuration nodes. The HST model cannot be loaded. ",e);
+            throw new ContainerException("PathNotFoundException during building HST model", e);
         } catch (RepositoryException e) {
-            throw new RepositoryNotAvailableException("Exception during loading configuration nodes. ",e);
+            throw new ContainerException("RepositoryException during building HST model", e);
+        } catch (RuntimeRepositoryException e) {
+            throw new ContainerException("RepositoryException during building HST model", e);
         } finally {
             // clear the StringPool as it is not needed any more
             StringPool.clear();
@@ -592,8 +582,8 @@ public class HstManagerImpl implements HstManager {
             if (session != null) {
                 try { 
                     session.logout(); 
-                } catch (Exception ce) {
-                    throw new RepositoryNotAvailableException("Exception while loging out jcr session ",ce);
+                } catch (Exception e) {
+                    log.warn("Exception during loggin out jcr session", e);
                 }
             }
         }
@@ -641,7 +631,8 @@ public class HstManagerImpl implements HstManager {
                JCRValueProvider provider = new JCRValueProviderImpl(session.getNode(nodePath), false);
                node.setJCRValueProvider(provider);
            } else {
-               log.error("Unable to reload an HstNode as it has been deleted. Should not be possible at this place: \"{}\"", nodePath);
+               throw new ModelChangedDuringLoadingException("Unable to reload an HstNode '"+nodePath+"' as it seems to be deleted from " +
+                       "the repository during building the hst model.");
            }
        }
 
@@ -704,24 +695,24 @@ public class HstManagerImpl implements HstManager {
         return node.getNode(relPath);
     }
 
-    private void loadAllConfigurationNodes(Session session) throws PathNotFoundException, RepositoryException {
+    private void loadAllConfigurationNodes(Session session) throws RepositoryException {
         Node configurationsNode = session.getNode(rootPath + "/hst:configurations");
         NodeIterator configurationRootJcrNodes = configurationsNode.getNodes();
+        long iteratorSizeBeforeLoop = configurationRootJcrNodes.getSize();
         while(configurationRootJcrNodes.hasNext()) {
             Node configurationRootNode = configurationRootJcrNodes.nextNode();
             if(configurationRootNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
-                try {
-                    HstNode hstNode = new HstNodeImpl(configurationRootNode, null, true);
-                    configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
-                } catch (HstNodeException e) {
-                    log.error("Exception while creating Hst configuration for '"+configurationRootNode.getPath()+"'. Fix configuration" ,e);
-                } 
+                HstNode hstNode = new HstNodeImpl(configurationRootNode, null, true);
+                configurationRootNodes.put(hstNode.getValueProvider().getPath(), hstNode);
             }
         }
+        long iteratorSizeAfterLoop = configurationRootJcrNodes.getSize();
+        throwModelChangedExceptionIfCountsAreNotEqual(iteratorSizeBeforeLoop, iteratorSizeAfterLoop);
     }
-    
-    private void loadAllSiteNodes(Session session) throws RepositoryException, PathNotFoundException {
+
+    private void loadAllSiteNodes(Session session) throws RepositoryException {
         NodeIterator nodes = session.getNode(rootPath).getNodes();
+        long iteratorSizeBeforeLoop = nodes.getSize();
         while(nodes.hasNext()) {
             Node node = nodes.nextNode();
             if(node.isNodeType(HstNodeTypes.NODETYPE_HST_SITES)) {
@@ -732,6 +723,17 @@ public class HstManagerImpl implements HstManager {
                     siteRootNodes.put(hstSiteRootNode.getValueProvider().getPath(), hstSiteRootNode);
                 }
             }
+        }
+        long iteratorSizeAfterLoop = nodes.getSize();
+        throwModelChangedExceptionIfCountsAreNotEqual(iteratorSizeBeforeLoop, iteratorSizeAfterLoop);
+    }
+
+    public static void throwModelChangedExceptionIfCountsAreNotEqual(final long iteratorSizeBeforeLoop, final long iteratorSizeAfterLoop) {
+        // typically, in jackrabbit (clustering) it is not uncommon that a jcr iterator at initialization contains nodes that
+        // get deleted before actually fetched through the LazyItemIterator. This can be detected by a different size after
+        // the iteration than before the iteration
+        if (iteratorSizeBeforeLoop != iteratorSizeAfterLoop) {
+            throw new ModelChangedDuringLoadingException("During building the in memory HST model, the hst configuration jcr nodes have changed.");
         }
     }
 
@@ -888,18 +890,6 @@ public class HstManagerImpl implements HstManager {
         return commonCatalog;
     }
 
-    public synchronized boolean isFineGrainedReloading() {
-        return fineGrainedReloading;
-    }
-
-    public synchronized void setFineGrainedReloading(final boolean fineGrainedReloading) {
-        this.fineGrainedReloading = fineGrainedReloading;
-    }
-
-    public synchronized void setFullBlownReloadNeeded(final boolean fullBlownReloadNeeded) {
-        this.fullBlownReloadNeeded = fullBlownReloadNeeded;
-    }
-
     /**
      * @return the hstComponentsConfigurationInstanceCache. This {@link Map} is never <code>null</code> 
      */
@@ -963,4 +953,9 @@ public class HstManagerImpl implements HstManager {
         }
     }
 
+    private static class ModelChangedDuringLoadingException extends RuntimeException {
+        private ModelChangedDuringLoadingException(String message) {
+            super(message);
+        }
+    }
 }

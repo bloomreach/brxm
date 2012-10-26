@@ -41,7 +41,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstConfigurationAugmenter;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.logging.Logger;
 import org.hippoecm.hst.service.ServiceException;
@@ -83,7 +83,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
     }
 
     @Override
-    public void augment(HstManager manager) throws RepositoryNotAvailableException {
+    public void augment(HstManager manager) throws ContainerException {
         try {
             if (!(manager.getVirtualHosts() instanceof MutableVirtualHosts)) {
                 log.error("{} can only work when the hosts is an instanceof MutableVirtualHosts.", this.getClass().getName());

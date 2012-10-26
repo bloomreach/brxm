@@ -16,19 +16,13 @@
 package org.hippoecm.hst.configuration;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.container.RepositoryNotAvailableException;
 import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedMount;
@@ -39,6 +33,12 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class TestMatchHostAndURL extends AbstractSpringTestCase {
 
@@ -59,7 +59,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
                 assertTrue("Expected from the hst testcontents default hostname to be localhost. ", "localhost".equals(vhosts.getDefaultHostName()));
                 
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -92,7 +92,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // the requestURI did not match the preview Mount, so our Mount must be live:
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
                 assertTrue("The live Mount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -124,7 +124,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
                 assertTrue("The preview Mount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -148,7 +148,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
                
                 assertTrue("We expect the mount to return true for version in preview header", mount.getMount().isVersionInPreviewHeader());
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -181,7 +181,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 assertFalse("We should have a match in LIVE ",resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
                 assertTrue("The live Mount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -214,7 +214,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
                 assertTrue( "We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
                 assertTrue("The preview Mount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -247,7 +247,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // LIVE mount. This isPreview() should be false
                 assertFalse("We should have a LIVE mount", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
                 
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -275,7 +275,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // assert we now have a PREVIEW mount as ResolvedMount
                 assertTrue("We should have a PREVIEW mount", resolvedMount.getMount().isPreview());
                 
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -314,7 +314,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 // because the /preview/services Mount has configured a different pipeline, the resolvedSiteMapItem should reflect this:
                 assertTrue("Expected pipeline name is 'CustomPipeline' ", "CustomPipeline".equals(resolvedSiteMapItem.getNamedPipeline()));
                 
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -365,7 +365,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertTrue("Expected pipeline name is 'CustomPipeline' but was '"+generalResolvedSiteMapItem.getNamedPipeline()+"'", "CustomPipeline".equals(generalResolvedSiteMapItem.getNamedPipeline()));
                 
                 
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -394,7 +394,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 ResolvedSiteMapItem resolvedSiteMapItem = vhosts.matchSiteMapItem(hstContainerURL);
                
                 assertTrue("The expected id of the resolved sitemap item is 'home'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -422,7 +422,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 // this should be the page not found sitemap item
                 assertTrue("The expected id of the resolved sitemap item is 'pagenotfound'", "pagenotfound".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-            }catch (RepositoryNotAvailableException e) {
+            }catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -451,7 +451,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 assertNull("An not mounted Mount should have a HstSite that is null", mount.getMount().getHstSite());
                 assertTrue("The mountpath for /preview/services mount must be '/preview/services' but was '"+mount.getMount().getMountPath()+"'", "/preview/services".equals(mount.getMount().getMountPath()));
                 assertTrue("The mountpoint for /preview/services mount must be '/hst:hst/hst:sites/unittestproject-preview' but was '"+mount.getMount().getMountPoint()+"'", "/hst:hst/hst:sites/unittestproject-preview".equals(mount.getMount().getMountPoint()));
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -488,7 +488,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertTrue("The id for the resolved sitemap item must be 'home' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -565,7 +565,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertTrue("The id for the resolved sitemap item must be 'home' but was '"+resolvedSiteMapItem.getHstSiteMapItem().getId()+ "'", "home".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
                 
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -610,7 +610,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                
                 assertTrue("As the contextPath '/mywrongpath' does not match the configured one of Mount 'examplecontextpathonly', we expect a fallback to the Mount hst:root ",mount.getMount().getName().equals("hst:root"));
                 
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
@@ -696,7 +696,7 @@ public class TestMatchHostAndURL extends AbstractSpringTestCase {
                 
                 assertTrue("We expect the parameter 'testparam to resolve to 'foo' ","foo".equals(resolvedSiteMapItem.getParameter("testparam")));
                 
-            } catch (RepositoryNotAvailableException e) {
+            } catch (ContainerException e) {
                 fail(e.getMessage());
                 e.printStackTrace();
             }
