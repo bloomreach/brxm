@@ -106,7 +106,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
 
     @Override
     public boolean containsKey(Object key) {
-        return get(key) != null;
+        return upstream.get(key) != null;
     }
 
     @Override

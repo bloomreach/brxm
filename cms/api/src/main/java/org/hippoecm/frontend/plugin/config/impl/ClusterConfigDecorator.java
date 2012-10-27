@@ -47,9 +47,11 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
             Object value = super.get(key);
             if (value != null) {
                 return value;
-            } else if (ClusterConfigDecorator.this.values.containsKey(key)) {
+            }
+            if (ClusterConfigDecorator.this.values.containsKey(key)) {
                 return ClusterConfigDecorator.this.values.get(key);
-            } else if (ClusterConfigDecorator.this.getClusterKeys().contains(key)) {
+            }
+            if (ClusterConfigDecorator.this.containsKey(key)) {
                 return ClusterConfigDecorator.this.get(key);
             }
             return null;
@@ -213,7 +215,7 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
                 } else {
                     Object result = ClusterConfigDecorator.this.get(variable);
                     if (result instanceof String) {
-                        return ((String) result) + remainder;
+                        return result + remainder;
                     } else {
                         return result;
                     }
