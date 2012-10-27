@@ -48,11 +48,13 @@ public class ClusterConfigDecorator extends AbstractClusterDecorator {
             if (value != null) {
                 return value;
             }
-            if (ClusterConfigDecorator.this.values.containsKey(key)) {
-                return ClusterConfigDecorator.this.values.get(key);
+            value = ClusterConfigDecorator.this.values.get(key);
+            if (value != null) {
+                return value;
             }
-            if (ClusterConfigDecorator.this.containsKey(key)) {
-                return ClusterConfigDecorator.this.get(key);
+            value = ClusterConfigDecorator.this.get(key);
+            if (value != null && !(value instanceof IPluginConfig)) {
+                return value;
             }
             return null;
         }
