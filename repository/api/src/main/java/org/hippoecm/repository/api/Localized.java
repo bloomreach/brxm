@@ -122,42 +122,44 @@ public final class Localized implements Serializable {
      * DO NOT USE THIS METHOD IS NOT PART OF THE PUBLIC API
      */
     public Localized matches(Localized candidate1, Localized candidate2) {
-        if (candidate1 == null && candidate2 == null)
+        if (candidate1 == null && candidate2 == null) {
             return null;
-        if (candidate1 == null)
-            if (matches(candidate2))
-                return candidate2;
-            else
-                return null;
-        if (candidate2 == null)
-            if (matches(candidate1))
-                return candidate1;
-            else
-                return null;
-        if (matches(candidate1) && !matches(candidate2))
+        }
+        if (candidate1 == null) {
+            return matches(candidate2) ? candidate2 : null;
+        }
+        if (candidate2 == null) {
+            return matches(candidate1) ? candidate1 : null;
+        }
+        final boolean candidate1Matches = matches(candidate1);
+        final boolean candidate2Matches = matches(candidate2);
+        if (candidate1Matches && !candidate2Matches) {
             return candidate1;
-        if (matches(candidate2) && !matches(candidate1))
+        }
+        if (candidate2Matches && !candidate1Matches) {
             return candidate2;
+        }
         Locale locale1 = candidate1.getLocale();
         Locale locale2 = candidate2.getLocale();
         String locale1Language = (locale1 != null ? locale1.getLanguage() : null);
         String locale2Language = (locale2 != null ? locale2.getLanguage() : null);
-        String locale1Country = (locale1 != null ? locale1.getCountry() : null);
-        String locale2Country = (locale2 != null ? locale2.getCountry() : null);
-        String locale1Variant = (locale1 != null ? locale1.getVariant() : null);
-        String locale2Variant = (locale2 != null ? locale2.getVariant() : null);
         if (locale != null && locale.getLanguage() != null) {
-            if (locale1Language == null)
+            if (locale1Language == null) {
                 return candidate2;
-            if (locale2Language == null)
+            }
+            if (locale2Language == null) {
                 return candidate1;
+            }
         } else {
-            if (locale1Language != null && locale2Language != null)
+            if (locale1Language != null && locale2Language != null) {
                 return null;
-            if (locale1Language != null && locale2Language == null)
+            }
+            if (locale1Language != null) {
                 return candidate2;
-            if (locale2Language != null && locale1Language == null)
+            }
+            if (locale2Language != null) {
                 return candidate1;
+            }
         }
         return candidate1;
     }
