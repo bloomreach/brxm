@@ -38,6 +38,7 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.journal.JournalException;
 import org.apache.jackrabbit.core.lock.LockManagerImpl;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.apache.jackrabbit.core.observation.ObservationDispatcher;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.query.QueryHandler;
 import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
@@ -205,6 +206,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
     }
 
     @Override
+    protected WorkspaceInfo getWorkspaceInfo(final String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
+        return super.getWorkspaceInfo(workspaceName);
+    }
+
+    @Override
     protected WorkspaceInfo createWorkspaceInfo(WorkspaceConfig wspConfig) {
         return new HippoWorkspaceInfo(wspConfig);
     }
@@ -316,6 +322,11 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
          */
         protected Session getRootSession() throws RepositoryException {
             return super.getSystemSession();
+        }
+
+        @Override
+        protected ObservationDispatcher getObservationDispatcher() {
+            return super.getObservationDispatcher();
         }
 
         @Override
