@@ -204,6 +204,15 @@
       <rtexprvalue>false</rtexprvalue>
       <type>java.lang.String</type>
     </attribute>
+    <attribute>
+      <description>If value is 'true' the created link will be a fully qualified link (URLs), thus starting with
+        'http://' or 'https://' etc
+      </description>
+      <name>fullyQualified</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.Boolean</type>
+    </attribute>
     <example><![CDATA[
       <c:forEach var="pageNr" items="${searchResults.pageNumbersArray}">
         <hst:componentRenderingURL var="ajaxURL">
