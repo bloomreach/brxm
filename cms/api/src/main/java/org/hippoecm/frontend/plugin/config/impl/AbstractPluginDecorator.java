@@ -106,7 +106,7 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
 
     @Override
     public boolean containsKey(Object key) {
-        return upstream.get(key) != null;
+        return get(key) != null;
     }
 
     @Override
@@ -195,7 +195,6 @@ public abstract class AbstractPluginDecorator extends AbstractValueMap implement
 
     @Override
     public boolean isImmutable() {
-        // FIXME: shouldn't this be true?
         return true;
     }
 
