@@ -32,7 +32,7 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
     private static final long serialVersionUID = 1L;
 
     private IObserver<IClusterConfig> observer;
-    
+
     public AbstractClusterDecorator(IClusterConfig upstream) {
         super(upstream);
     }
@@ -67,7 +67,7 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
     protected IObservationContext<IClusterConfig> getObservationContext() {
         return (IObservationContext<IClusterConfig>) super.getObservationContext();
     }
-    
+
     @Override
     public void startObservation() {
         super.startObservation();
@@ -92,7 +92,7 @@ public abstract class AbstractClusterDecorator extends AbstractPluginDecorator i
                     obContext.notifyObservers(collection);
                 }
             }
-            
+
         });
     }
 
