@@ -47,8 +47,7 @@ public class ContextResolvingValve extends AbstractValve
         }
         
         if (rootComponentConfig == null) {
-        	// TODO: log ResolvedSiteMapItem.getQualifiedId() as reference)
-            throw new ContainerNotFoundException("Resolved siteMapItem does not contain a ComponentConfiguration that can be resolved.");
+            throw new ContainerNotFoundException("Resolved siteMapItem '"+resolvedSiteMapItem.getHstSiteMapItem().getQualifiedId()+"' does not contain a ComponentConfiguration that can be resolved.");
         }
         
         String targetComponentPath = requestContext.getTargetComponentPath();
