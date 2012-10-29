@@ -327,6 +327,15 @@ public abstract class UpdaterItemVisitor implements ItemVisitor {
 
     }
 
+    /**
+     * This is the only UpdaterItemVisitor that is not deprecated due to the fact that it is currently
+     * the only solution to do backward incompatible cnd changes. In the vast majority of cases you should
+     * not have to write such an updater. Reloading the cnd initialize item, in combination with an
+     * {@link org.onehippo.repository.update.Updater} script should suffice. In the rare case that you
+     * do need to run a NamespaceVisitor be aware that you <b>must never</b> run it in a clustered environment.
+     * This visitor does not work in a cluster and you will certainly break your environment when you attempt to
+     * do so.
+     */
     public static final class NamespaceVisitor extends UpdaterItemVisitor {
 
         public String prefix;
