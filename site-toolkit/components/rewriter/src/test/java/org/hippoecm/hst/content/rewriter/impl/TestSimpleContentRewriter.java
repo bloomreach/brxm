@@ -65,7 +65,15 @@ public class TestSimpleContentRewriter {
         "<a href=\"/foo/bar?a=b\">Foo2</a>\n" +
         "<a href=\"http://www.onehippo.org/external/foo/bar?a=b\">Foo2</a>\n" +
         "</div>";
-    
+
+    private static final String CONTENT_WITH_NON_INTERNAL_IMAGES = 
+            "<div>\n" + 
+            "<h1>Hello, World!</h1>\n" + 
+            "<p>Test</p>\n" + 
+            "<img src=\"http://upload.wikimedia.org/wikipedia/commons/3/31/Red-dot-5px.png\" alt=\"Red dot\"/>\n" +
+            "<img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==\" alt=\"Red dot\">\n" +
+            "</div>";
+
     private Node node;
     private HstRequestContext requestContext;
     private Mount mount;
@@ -131,4 +139,12 @@ public class TestSimpleContentRewriter {
         assertTrue(html.contains("/foo/bar?a=b"));
         assertTrue(html.contains("http://www.onehippo.org/external/foo/bar?a=b"));
     }
+
+    @Test
+    public void testContentWithNonInternalImages() {
+        ContentRewriter<String> rewriter = new SimpleContentRewriter();
+        String html = rewriter.rewrite(CONTENT_WITH_NON_INTERNAL_IMAGES, node, requestContext, mount);
+        assertEquals(CONTENT_WITH_NON_INTERNAL_IMAGES, html);
+    }
+
 }
