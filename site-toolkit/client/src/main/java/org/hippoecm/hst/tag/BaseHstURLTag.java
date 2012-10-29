@@ -18,6 +18,7 @@ package org.hippoecm.hst.tag;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -27,7 +28,11 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstURL;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.HstRequestUtils;
 
 /**
  * Abstract supporting class for Hst URL tags (action, redner and resource)
@@ -38,11 +43,12 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
     private static final long serialVersionUID = 1L;
 
     protected String var = null;
-    
+
     protected Boolean escapeXml = true;
-  
+
     protected String resourceId;
-    
+
+    protected boolean fullyQualified;
 
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
@@ -76,12 +82,29 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
 
             HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
-            //  properly encoding urls to allow non-cookie enabled sessions - PLUTO-252
+            //  properly encoding urls to allow non-cookie enabled sessions - ref.) PLUTO-252
             String urlString = response.encodeURL(url.toString());
 
-            if(escapeXml)
-            {
-                 urlString = doEscapeXml(urlString);
+            if (escapeXml) {
+                urlString = doEscapeXml(urlString);
+            }
+
+            if (fullyQualified) {
+                HstRequest hstRequest = HstRequestUtils.getHstRequest((HttpServletRequest) pageContext.getRequest());
+
+                if (hstRequest != null) {
+                    HstRequestContext requestContext = hstRequest.getRequestContext();
+                    Mount mount = requestContext.getResolvedMount().getMount();
+                    String scheme = mount.getScheme();
+                    // When 0, the Mount is port agnostic. Then take port from current container url
+                    int port = (mount.getPort() == 0 ? requestContext.getBaseURL().getPortNumber() : mount.getPort());
+
+                    if (!mount.isPortInUrl() || ("http".equals(scheme) && port == 80) || ("https".equals(scheme) && port == 443)) {
+                        urlString = scheme + "://" + mount.getVirtualHost().getHostName() + urlString;
+                    } else {
+                        urlString = scheme + "://" + mount.getVirtualHost().getHostName() + ":" + port + urlString;
+                    }
+                }
             }
 
             if (var == null) {
@@ -108,6 +131,7 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
         resourceId = null;
         escapeXml = true;
         var = null;
+        fullyQualified = false;
         super.cleanup();
     }
 
@@ -146,6 +170,15 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
     }
     
     /**
+     * Returns true if the generated URL should be a fully qualified URL, 
+     * starting with 'http://' or 'https://', etc.
+     * @return
+     */
+    public boolean isFullyQualified() {
+        return this.fullyQualified;
+    }
+    
+    /**
      * Sets the var property.
      * @param var The var to set
      * @return void
@@ -171,6 +204,13 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
         this.resourceId = resourceId;
     }
     
+    /**
+     * Sets the flag to generate URL as a fully qualified URL, 
+     * starting with 'http://' or 'https://', etc.
+     */
+    public void setFullyQualified(boolean fullyQualified) {
+        this.fullyQualified = fullyQualified;
+    }
     
     /**
      * Copies the parameters from map to the BaseURL.
