@@ -28,6 +28,8 @@ import javax.swing.tree.TreePath;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
@@ -61,6 +63,8 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
     private static final Label EMPTY_EDITOR = new Label("updater-editor");
 
+    private final IPluginContext context;
+
     private final JcrTree tree;
     private final JcrTreeModel treeModel;
 
@@ -68,6 +72,8 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
     public UpdaterPanel(final String componentId, final IBreadCrumbModel breadCrumbModel, final IPluginContext context) {
         super(componentId, breadCrumbModel);
+
+        this.context = context;
 
         treeModel = new JcrTreeModel(new JcrTreeNode(new JcrNodeModel(UPDATE_PATH), null)) {
             @Override
@@ -80,15 +86,32 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             protected TreeModelEvent newTreeModelEvent(final Event event) throws RepositoryException {
                 if (event.getType() == Event.NODE_MOVED) {
                     final String destAbsPath = (String) event.getInfo().get("destAbsPath");
-                    if (destAbsPath.equals(getNodePath())) {
-                        // node was moved need to update editor
-                        onModelChanged();
-                    }
+                    final Session session = UserSession.get().getJcrSession();
+                    UpdaterPanel.this.setDefaultModel(new JcrNodeModel(session.getNode(destAbsPath)));
                 }
                 return super.newTreeModelEvent(event);
             }
         };
         context.registerService(treeModel, IObserver.class.getName());
+
+        breadCrumbModel.addListener(new IBreadCrumbModelListener() {
+            @Override
+            public void breadCrumbActivated(final IBreadCrumbParticipant previousParticipant, final IBreadCrumbParticipant breadCrumbParticipant) {
+            }
+
+            @Override
+            public void breadCrumbAdded(final IBreadCrumbParticipant breadCrumbParticipant) {
+            }
+
+            @Override
+            public void breadCrumbRemoved(final IBreadCrumbParticipant breadCrumbParticipant) {
+                if (breadCrumbParticipant == UpdaterPanel.this) {
+                    breadCrumbModel.removeListener(this);
+                    context.unregisterService(treeModel, IObserver.class.getName());
+                }
+            }
+        });
+
         tree = new JcrTree("updater-tree", treeModel) {
 
             @Override
@@ -154,13 +177,13 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
     private void updateEditor() {
         if (isQueuedUpdater()) {
-            replace(editor = new UpdaterQueueEditor(getDefaultModel(), this));
+            replace(editor = new UpdaterQueueEditor(getDefaultModel(), context, this));
         }
         else if (isRegisteredUpdater() || isRegistryNode()) {
-            replace(editor = new UpdaterRegistryEditor(getDefaultModel(), this));
+            replace(editor = new UpdaterRegistryEditor(getDefaultModel(), context, this));
         }
         else if (isArchivedUpdater()) {
-            replace(editor = new UpdaterHistoryEditor(getDefaultModel(), this));
+            replace(editor = new UpdaterHistoryEditor(getDefaultModel(), context, this));
         }
         else {
             if (editor != EMPTY_EDITOR) {
@@ -189,9 +212,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
                 return node.getPath();
             }
         } catch (RepositoryException e) {
-            final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
-            log.error(message, e);
+            log.error("Error while getting node path", e);
         }
         return "";
     }
@@ -223,4 +244,6 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     private boolean isArchivedUpdater() {
         return getNodePath().startsWith(UPDATE_HISTORY_PATH + "/");
     }
+
+
 }

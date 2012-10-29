@@ -16,11 +16,14 @@
 package org.hippoecm.frontend.plugins.cms.dev.updater;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.InvalidQueryException;
+import javax.jcr.query.Query;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -29,12 +32,16 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.RadioGroup;
 import org.apache.wicket.markup.html.form.TextArea;
+import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.io.IOUtils;
+import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.dev.codemirror.CodeMirrorEditor;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.util.JcrUtils;
@@ -54,8 +61,10 @@ public class UpdaterEditor extends Panel {
     private static final long DEFAULT_THOTTLE = 1000l;
     private static final String DEFAULT_METHOD = "path";
 
+    protected final IPluginContext context;
     protected final Panel container;
     protected final Form form;
+    protected final FeedbackPanel feedback;
     protected String script;
 
     protected String name;
@@ -67,16 +76,22 @@ public class UpdaterEditor extends Panel {
     protected Boolean dryRun = false;
 
 
-    public UpdaterEditor(IModel<?> model, Panel container) {
+    public UpdaterEditor(IModel<?> model, final IPluginContext context, Panel container) {
         super("updater-editor", model);
+        this.context = context;
         this.container = container;
 
         form = new Form("updater-form");
+
+        feedback = new FeedbackPanel("feedback");
+        feedback.setOutputMarkupId(true);
+        form.add(feedback);
 
         final AjaxButton executeButton = new AjaxButton("execute-button") {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUpdater(false);
+                AjaxRequestTarget.get().addComponent(feedback);
             }
 
             @Override
@@ -96,6 +111,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 executeUpdater(true);
+                AjaxRequestTarget.get().addComponent(feedback);
             }
 
             @Override
@@ -117,6 +133,7 @@ public class UpdaterEditor extends Panel {
                 saveUpdater();
                 AjaxRequestTarget.get().addComponent(executeButton);
                 AjaxRequestTarget.get().addComponent(dryRunButton);
+                AjaxRequestTarget.get().addComponent(feedback);
             }
 
             @Override
@@ -135,6 +152,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 stopUpdater();
+                AjaxRequestTarget.get().addComponent(feedback);
             }
 
             @Override
@@ -153,6 +171,7 @@ public class UpdaterEditor extends Panel {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
                 newUpdater();
+                AjaxRequestTarget.get().addComponent(feedback);
             }
 
             @Override
@@ -364,49 +383,30 @@ public class UpdaterEditor extends Panel {
     }
 
     protected void deleteUpdater() {
-        final Node node = (Node) getDefaultModelObject();
-        final Session session = UserSession.get().getJcrSession();
-        if (node != null) {
-            try {
-                final Node siblingOrParent = getSiblingOrParent(node);
-                node.remove();
-                session.save();
-                container.setDefaultModel(new JcrNodeModel(siblingOrParent));
-            } catch (RepositoryException e) {
-                final String message = "An unexpected error occurred: " + e.getMessage();
-                error(message);
-                log.error(message, e);
-            }
-        }
+        IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+        dialogService.show(new DeleteUpdaterDialog(getDefaultModel(), container));
     }
 
-    private Node getSiblingOrParent(Node node) throws RepositoryException {
-        final Node parent = node.getParent();
-        final NodeIterator nodes = parent.getNodes();
-        Node sibling = null;
-        while (nodes.hasNext()) {
-            final Node nextNode = nodes.nextNode();
-            if (node.isSame(nextNode)) {
-                if (nodes.hasNext()) {
-                    return nodes.nextNode();
-                } else if (sibling != null) {
-                    return sibling;
-                }
-            }
-            sibling = nextNode;
-        }
-        return parent;
+    @Override
+    protected void onBeforeRender() {
+        super.onBeforeRender();
     }
 
-    private void saveUpdater() {
+    private boolean saveUpdater() {
         final Node node = (Node) getDefaultModelObject();
         try {
             if (isPathMethod()) {
+                if (!validateVisitorPath()) {
+                    return false;
+                }
                 node.setProperty("hipposys:path", visitorPath);
                 node.setProperty("hipposys:query", (String) null);
             } else {
-                node.setProperty("hipposys:path", (String) null);
+                if (!validateVisitorQuery()) {
+                    return false;
+                }
                 node.setProperty("hipposys:query", visitorQuery);
+                node.setProperty("hipposys:path", (String) null);
             }
             node.setProperty("hipposys:dryrun", dryRun);
             node.setProperty("hipposys:batchsize", batchSize);
@@ -416,11 +416,51 @@ public class UpdaterEditor extends Panel {
             if (!node.getName().equals(name)) {
                 rename();
             }
+            return true;
         } catch (RepositoryException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
+            errorFeedback(message);
             log.error(message, e);
         }
+        return false;
+    }
+
+    private boolean validateVisitorPath() throws RepositoryException {
+        if (visitorPath == null || visitorPath.isEmpty()) {
+            errorFeedback("Path is empty");
+            return false;
+        }
+        final Session session = UserSession.get().getJcrSession();
+        try {
+            if (!session.nodeExists(visitorPath)) {
+                final String message = "The path does not exist";
+                errorFeedback(message);
+                return false;
+            }
+        } catch (RepositoryException e) {
+            final String message = "The path is not well-formed";
+            errorFeedback(message);
+            log.error(message, e);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateVisitorQuery() throws RepositoryException {
+        if (visitorQuery == null || visitorQuery.isEmpty()) {
+            errorFeedback("Query is empty");
+            return false;
+        }
+        final Session session = UserSession.get().getJcrSession();
+        try {
+            session.getWorkspace().getQueryManager().createQuery(visitorQuery, Query.XPATH);
+        } catch (InvalidQueryException e) {
+            final String message = "The query that is provided is not a valid xpath query";
+            errorFeedback(message);
+            log.error(message, e);
+            return false;
+        }
+        return true;
     }
 
     private boolean isPathMethod() {
@@ -449,18 +489,20 @@ public class UpdaterEditor extends Panel {
             container.setDefaultModel(new JcrNodeModel(node));
         } catch (RepositoryException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
+            errorFeedback(message);
             log.error(message, e);
         } catch (IOException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
+            errorFeedback(message);
             log.error(message, e);
         }
     }
 
     private void executeUpdater(boolean dryRun) {
         this.dryRun = dryRun;
-        saveUpdater();
+        if (!saveUpdater()) {
+            return;
+        }
         final Node node = (Node) getDefaultModelObject();
         final Session session = UserSession.get().getJcrSession();
         if (node != null) {
@@ -476,7 +518,7 @@ public class UpdaterEditor extends Panel {
                 }
             } catch (RepositoryException e) {
                 final String message = "An unexpected error occurred: " + e.getMessage();
-                error(message);
+                errorFeedback(message);
                 log.error(message, e);
             }
         }
@@ -492,10 +534,14 @@ public class UpdaterEditor extends Panel {
                 session.save();
             } catch (RepositoryException e) {
                 final String message = "An unexpected error occurred: " + e.getMessage();
-                error(message);
+                errorFeedback(message);
                 log.error(message, e);
             }
         }
+    }
+
+    private void errorFeedback(Serializable message) {
+        error(message);
     }
 
     protected boolean isStopButtonVisible() {

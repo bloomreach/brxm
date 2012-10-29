@@ -2000,14 +2000,14 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective-48.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective.css -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev.png -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/DeleteUpdaterDialog.html -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/DeleteUpdaterDialog.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledCheckBoxTableRow.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledCheckBoxTableRow.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledInputFieldTableRow.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledInputFieldTableRow.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/RadioLabelledInputFieldTableRow.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/RadioLabelledInputFieldTableRow.java -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterBreadCrumbPanel.html -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterBreadCrumbPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterEditor.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterHistoryEditor.java -text

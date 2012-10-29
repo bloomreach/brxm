@@ -18,12 +18,13 @@ package org.hippoecm.frontend.plugins.cms.dev.updater;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 
 
 public class UpdaterQueueEditor extends UpdaterEditor {
 
-    public UpdaterQueueEditor(final IModel<?> model, final Panel container) {
-        super(model, container);
+    public UpdaterQueueEditor(final IModel<?> model, final IPluginContext context, final Panel container) {
+        super(model, context, container);
     }
 
     @Override
@@ -83,11 +84,11 @@ public class UpdaterQueueEditor extends UpdaterEditor {
 
     @Override
     protected boolean isPathFieldVisible() {
-        return method.equals("path");
+        return "path".equals(method);
     }
 
     @Override
     protected boolean isQueryFieldVisible() {
-        return method.equals("query");
+        return "query".equals(method);
     }
 }

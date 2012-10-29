@@ -23,13 +23,14 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.session.UserSession;
 
 
 public class UpdaterRegistryEditor extends UpdaterEditor {
 
-    public UpdaterRegistryEditor(final IModel<?> model, final Panel container) {
-        super(model, container);
+    public UpdaterRegistryEditor(final IModel<?> model, final IPluginContext context, final Panel container) {
+        super(model, context, container);
     }
 
     @Override

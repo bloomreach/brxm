@@ -18,11 +18,12 @@ package org.hippoecm.frontend.plugins.cms.dev.updater;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.plugin.IPluginContext;
 
 public class UpdaterHistoryEditor extends UpdaterEditor {
 
-    public UpdaterHistoryEditor(IModel<?> model, Panel container) {
-        super(model, container);
+    public UpdaterHistoryEditor(IModel<?> model, final IPluginContext context, Panel container) {
+        super(model, context, container);
     }
 
     @Override
