@@ -83,7 +83,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                 //While over a target node, return the default drop allowed class which
                 //places a "tick" icon into the drag proxy.
                 onNodeOver : function(target, dd, e, data) {
-                    var curX, curY, i, item;
+                    var curX, curY, i, item, box;
                     curX = dd.lastPageX + dd.deltaX - self.iFramePosition[0];
                     curY = dd.lastPageY + dd.deltaY - self.iFramePosition[1];
                     //TODO: implement dynamic fetch of toolbar height to adjust pageY
