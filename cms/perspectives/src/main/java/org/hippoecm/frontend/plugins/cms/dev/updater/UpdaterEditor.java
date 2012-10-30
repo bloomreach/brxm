@@ -38,6 +38,9 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.io.IOUtils;
+import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.IValidator;
+import org.apache.wicket.validation.ValidationError;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -71,10 +74,9 @@ public class UpdaterEditor extends Panel {
     protected String visitorPath;
     protected String visitorQuery;
     protected String method = DEFAULT_METHOD;
-    protected Long batchSize = DEFAULT_BATCH_SIZE;
-    protected Long throttle = DEFAULT_THOTTLE;
+    protected String batchSize = String.valueOf(DEFAULT_BATCH_SIZE);
+    protected String throttle = String.valueOf(DEFAULT_THOTTLE);
     protected Boolean dryRun = false;
-
 
     public UpdaterEditor(IModel<?> model, final IPluginContext context, Panel container) {
         super("updater-editor", model);
@@ -266,6 +268,7 @@ public class UpdaterEditor extends Panel {
             public boolean isVisible() {
                 return isBatchSizeFieldVisible();
             }
+
         };
         radios.add(batchSizeField);
 
@@ -319,8 +322,8 @@ public class UpdaterEditor extends Panel {
         }
         visitorPath = getStringProperty("hipposys:path", null);
         visitorQuery = getStringProperty("hipposys:query", null);
-        batchSize = getLongProperty("hipposys:batchsize", DEFAULT_BATCH_SIZE);
-        throttle = getLongProperty("hipposys:throttle", DEFAULT_THOTTLE);
+        batchSize = String.valueOf(getLongProperty("hipposys:batchsize", DEFAULT_BATCH_SIZE));
+        throttle = String.valueOf(getLongProperty("hipposys:throttle", DEFAULT_THOTTLE));
         if (visitorQuery != null) {
             method = "query";
         }
@@ -409,8 +412,14 @@ public class UpdaterEditor extends Panel {
                 node.setProperty("hipposys:path", (String) null);
             }
             node.setProperty("hipposys:dryrun", dryRun);
-            node.setProperty("hipposys:batchsize", batchSize);
-            node.setProperty("hipposys:throttle", throttle);
+            if (!validateBatchSize()) {
+                return false;
+            }
+            node.setProperty("hipposys:batchsize", Long.valueOf(batchSize));
+            if (!validateThrottle()) {
+                return false;
+            }
+            node.setProperty("hipposys:throttle", Long.valueOf(throttle));
             node.setProperty("hipposys:script", script);
             node.getSession().save();
             if (!node.getName().equals(name)) {
@@ -419,27 +428,47 @@ public class UpdaterEditor extends Panel {
             return true;
         } catch (RepositoryException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
-            errorFeedback(message);
+            error(message);
             log.error(message, e);
         }
         return false;
     }
 
+    private boolean validateThrottle() {
+        try {
+            Long.valueOf(throttle);
+            return true;
+        } catch (NumberFormatException e) {
+            error("Throttle must be a positive integer");
+            return false;
+        }
+    }
+
+    private boolean validateBatchSize() {
+        try {
+            Long.valueOf(batchSize);
+            return true;
+        } catch(NumberFormatException e) {
+            error("Batch size must be a positive integer");
+            return false;
+        }
+    }
+
     private boolean validateVisitorPath() throws RepositoryException {
         if (visitorPath == null || visitorPath.isEmpty()) {
-            errorFeedback("Path is empty");
+            error("Path is empty");
             return false;
         }
         final Session session = UserSession.get().getJcrSession();
         try {
             if (!session.nodeExists(visitorPath)) {
                 final String message = "The path does not exist";
-                errorFeedback(message);
+                error(message);
                 return false;
             }
         } catch (RepositoryException e) {
             final String message = "The path is not well-formed";
-            errorFeedback(message);
+            error(message);
             log.error(message, e);
             return false;
         }
@@ -448,7 +477,7 @@ public class UpdaterEditor extends Panel {
 
     private boolean validateVisitorQuery() throws RepositoryException {
         if (visitorQuery == null || visitorQuery.isEmpty()) {
-            errorFeedback("Query is empty");
+            error("Query is empty");
             return false;
         }
         final Session session = UserSession.get().getJcrSession();
@@ -456,7 +485,7 @@ public class UpdaterEditor extends Panel {
             session.getWorkspace().getQueryManager().createQuery(visitorQuery, Query.XPATH);
         } catch (InvalidQueryException e) {
             final String message = "The query that is provided is not a valid xpath query";
-            errorFeedback(message);
+            error(message);
             log.error(message, e);
             return false;
         }
@@ -489,11 +518,11 @@ public class UpdaterEditor extends Panel {
             container.setDefaultModel(new JcrNodeModel(node));
         } catch (RepositoryException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
-            errorFeedback(message);
+            error(message);
             log.error(message, e);
         } catch (IOException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
-            errorFeedback(message);
+            error(message);
             log.error(message, e);
         }
     }
@@ -518,7 +547,7 @@ public class UpdaterEditor extends Panel {
                 }
             } catch (RepositoryException e) {
                 final String message = "An unexpected error occurred: " + e.getMessage();
-                errorFeedback(message);
+                error(message);
                 log.error(message, e);
             }
         }
@@ -534,14 +563,10 @@ public class UpdaterEditor extends Panel {
                 session.save();
             } catch (RepositoryException e) {
                 final String message = "An unexpected error occurred: " + e.getMessage();
-                errorFeedback(message);
+                error(message);
                 log.error(message, e);
             }
         }
-    }
-
-    private void errorFeedback(Serializable message) {
-        error(message);
     }
 
     protected boolean isStopButtonVisible() {

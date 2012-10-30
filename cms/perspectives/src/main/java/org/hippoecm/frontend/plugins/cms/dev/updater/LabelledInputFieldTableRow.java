@@ -19,6 +19,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.IValidator;
 
 public class LabelledInputFieldTableRow extends Panel {
 
@@ -32,6 +34,5 @@ public class LabelledInputFieldTableRow extends Panel {
         input = new TextField<String>("input", inputModel);
         add(input);
     }
-
 
 }
