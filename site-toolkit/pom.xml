@@ -82,7 +82,7 @@
     <ehcache-web.version>2.0.3</ehcache-web.version>
     <freemarker.version>2.3.16</freemarker.version>
     
-    <spring.version>3.0.4.RELEASE</spring.version>
+    <spring.version>3.0.7.RELEASE</spring.version>
     <aspectj.version>1.6.9</aspectj.version>
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
