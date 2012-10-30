@@ -85,7 +85,7 @@ class BroadcastThread extends Thread {
          */
         private Long processEvents(final BroadcastJob job, final List<Node> logItems) {
             Long timeStamp = DEFAULT_TIMESTAMP;
-            if (logItems.size() == 0) {
+            if (logItems.isEmpty()) {
                 if (logger.isDebugEnabled()) {
                     logger.debug("No pending log items to process");
                 }
