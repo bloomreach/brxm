@@ -79,5 +79,15 @@ public interface HstSite {
      * @return the absolute location where the configuration for this {@link HstSite} is stored
      */
     String getConfigurationPath();
-    
+
+    /**
+     * @return The version of hst configuration this {@link HstSite} uses. When no explicit version present, <code>-1</code>
+     * is returned
+     */
+    long getVersion();
+
+    /**
+     * @return <code>true</code> when this {@link HstSite} has a different configuration than the live.
+     */
+    boolean hasPreviewConfiguration();
 }

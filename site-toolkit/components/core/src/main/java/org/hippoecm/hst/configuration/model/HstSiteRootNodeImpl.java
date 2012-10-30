@@ -33,6 +33,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
 
     private String contentPath;
     private String canonicalContentPath;
+    private long version = -1;
     
     public HstSiteRootNodeImpl(Node siteRootNode, HstNode parent)
             throws RepositoryException {
@@ -41,6 +42,14 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
         super(siteRootNode, parent, false);
         
         try {
+            if (getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH) != null) {
+                log.warn("'{}' is using deprecated property '{}'. Please remove this property and make sure the hst:site has " +
+                        "the same name as the hst:configuration node (minus the version info in that name)");
+            }
+            if (getValueProvider().hasProperty(HstNodeTypes.SITE_VERSION)) {
+                version = getValueProvider().getLong(HstNodeTypes.SITE_VERSION).longValue();
+            }
+
             if(siteRootNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
                 Node contentNode = siteRootNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                 contentPath = contentNode.getPath();
@@ -66,7 +75,6 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
                     // contentNode is not a mirror. Take the canonical path to be the same
                     this.canonicalContentPath = this.contentPath;
                 }
-                
             }
         } catch (RepositoryException e) {
             log.warn("Repository Exception during instantiating '"+getValueProvider().getName()+"'. Skipping subsite.");
@@ -75,15 +83,17 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
         
     }
 
-
+    @Override
     public String getCanonicalContentPath() {
         return canonicalContentPath;
     }
 
-    public String getConfigurationPath() {
-        return this.getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH);
+    @Override
+    public long getVersion() {
+        return version;
     }
 
+    @Override
     public String getContentPath() {
         return contentPath;
     }

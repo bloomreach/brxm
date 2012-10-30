@@ -77,9 +77,12 @@ public class BlueprintHandler {
             final Node siteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
 
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                blueprint.getPrototypeChannel().setHstConfigPath(siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString());
-            } else if (!blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {  // validate that blueprint is correct
-                throw new ItemNotFoundException("Blueprint " + blueprint.getId() + " has neither a hst:configuration node prototype or a fixed hst:configurationpath");
+                log.warn("Property '{}'  on '{}' has been deprecated. Make sure the blueprint has its own hst:configuration prototype.",
+                        HstNodeTypes.SITE_CONFIGURATIONPATH, siteNode.getPath());
+            }
+
+            if (!blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {  // validate that blueprint is correct
+                throw new ItemNotFoundException("Blueprint " + blueprint.getId() + " has not a hst:configuration node prototype");
             }
 
             if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && !blueprint.getHasContentPrototype()) {

@@ -168,6 +168,7 @@
 [hst:site] > nt:base, mix:referenceable, mix:versionable
 + hst:content (hippo:facetselect) mandatory
 - hst:configurationpath (string)
+- hst:version (long)
 - hst:portalconfigurationenabled (boolean)
 
 [hst:sites] > nt:base, mix:referenceable, mix:versionable

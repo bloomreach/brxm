@@ -400,11 +400,7 @@ public class AggregationValve extends AbstractValve {
                             variant = HstComponentConfiguration.DEFAULT_PARAMETER_PREFIX;
                         }
                         rootWindow.getResponseState().addHeader("HST-Render-Variant", variant.toString());
-                        boolean isPreviewConfig = false;
-                        if(mount.getHstSite().getConfigurationPath().endsWith("-"+Mount.PREVIEW_NAME)) {
-                            isPreviewConfig = true;
-                        }
-                        rootWindow.getResponseState().addHeader("HST-Site-HasPreviewConfig", String.valueOf(isPreviewConfig));
+                        rootWindow.getResponseState().addHeader("HST-Site-HasPreviewConfig", String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
                         //"-" + Mount.PREVIEW_NAME;
                     } else if(Boolean.TRUE.equals(composerMode)) {
                         HashMap<String, String> attributes = new HashMap<String, String>();

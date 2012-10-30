@@ -37,7 +37,6 @@ import org.hippoecm.hst.jaxrs.util.AnnotatedContentBeanClassesScanner;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.util.ObjectConverterUtils;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,24 +70,28 @@ public class AbstractConfigResource {
     protected String getRequestConfigIdentifier(HstRequestContext requestContext) {
         return (String) requestContext.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
     }
-    
-    protected HstSite getEditingHstSite(final HstRequestContext requestContext) {
-        final Mount mount = getEditingHstMount(requestContext);
-        if (mount == null) {
-            log.warn("No mount found for identifier '{}'", getRequestConfigIdentifier(requestContext));
-            return null;
-        }
+
+    protected HstSite getEditingLiveSite(final HstRequestContext requestContext) {
+        final Mount mount = getEditingLiveMount(requestContext);
         return mount.getHstSite();
     }
 
-    protected Mount getEditingHstMount(final HstRequestContext requestContext) {
+    protected HstSite getEditingPreviewSite(final HstRequestContext requestContext) {
+        final Mount mount = getEditingPreviewMount(requestContext);
+        return mount.getHstSite();
+    }
+
+    protected Mount getEditingLiveMount(final HstRequestContext requestContext) {
         final String hstMountIdentifier = getRequestConfigIdentifier(requestContext);
-        Mount mount =  requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(hstMountIdentifier);
-        // The mount is fetch by UUID. We now need to decorate to act as preview
-        if(mountDecorator == null) {
-            log.warn("MountDecorator is null. Cannot decorate the mount to preview");
-            return mount;
-        } 
+        Mount mount = requestContext.getVirtualHost().getVirtualHosts().getMountByIdentifier(hstMountIdentifier);
+        if (mount == null) {
+            throw new IllegalStateException("Cound not find a Mount for identifier + '"+hstMountIdentifier+"'");
+        }
+        return mount;
+    }
+    
+    protected Mount getEditingPreviewMount(final HstRequestContext requestContext) {
+        Mount mount =  getEditingLiveMount(requestContext);
         if(!(mount instanceof ContextualizableMount )) {
             log.warn("Mount must be an instance of ContextualizableMount. Cannot create a preview. Return mount as is");
             return mount;

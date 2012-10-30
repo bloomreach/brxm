@@ -680,12 +680,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
             Node siteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
-                if (!session.nodeExists(configurationPath)) {
-                    throw new ChannelException(
-                            "Blueprint '" + blueprintNode.getPath() + "' does not have an hst:configuration node, and its hst:site node points to a non-existing node: '" + configurationPath + "'");
-                }
-                return configurationPath;
+                throw new ChannelException(
+                        "Blueprint '" + blueprintNode.getPath() + "' uses deprecated property '" + HstNodeTypes.SITE_CONFIGURATIONPATH + "'." +
+                                "Make sure the blueprint gets its own configuration prototype.");
+
             }
         }
 
@@ -782,7 +780,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
 
         log.debug("Creating new subsite content from blueprint '{}' under '{}'", blueprint.getId(),
-                  blueprintContentPath);
+                blueprintContentPath);
 
         FolderWorkflow fw = (FolderWorkflow) getWorkflow("subsite", session.getNode(blueprintContentPath));
         if (fw == null) {

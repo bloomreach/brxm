@@ -160,8 +160,10 @@ public interface HstNodeTypes {
     static final String BLUEPRINT_PROPERTY_CONTENT_ROOT = "hst:contentRoot";
 
     static final String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
-    
+
+    @Deprecated
     static final String SITE_CONFIGURATIONPATH = "hst:configurationpath";
+    static final String SITE_VERSION = "hst:version";
     
     static final String NODENAME_HST_CONTENTNODE = "hst:content";
     static final String NODENAME_HST_SITEMAP = "hst:sitemap";
