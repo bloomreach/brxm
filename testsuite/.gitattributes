@@ -176,7 +176,6 @@ random-numbers/src/main/java/org/hippoecm/hst/demo/addonmodules/randomnumbers/Ra
 random-numbers/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 random-numbers/src/main/resources/META-INF/hst-assembly/addon/org/hippoecm/hst/demo/addonmodules/randomnumbers/base.xml -text
 resources/pom.xml -text
-resources/src/main/webapp/META-INF/context.xml svneol=native#text/plain
 resources/src/main/webapp/WEB-INF/applicationContext.xml -text
 resources/src/main/webapp/WEB-INF/beans-annotated-classes.xml svneol=native#text/plain
 resources/src/main/webapp/WEB-INF/ftl/components/main/detailpage.ftl -text
@@ -259,6 +258,7 @@ resources/src/main/webapp/images/vorige.gif -text
 resources/src/main/webapp/javascript/inline-editing.js svneol=native#text/plain
 resources/src/main/webapp/javascript/simple-io.js -text
 site/pom.xml svneol=native#text/plain
+site/src/main/webapp/META-INF/context.xml svneol=native#text/plain
 solr/pom.xml -text
 solr/src/main/java/org/hippoecm/hst/demo/servlet/SolrConfigContextListener.java -text
 solr/src/main/webapp/WEB-INF/solr/README.txt -text
