@@ -1,7 +1,5 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation.ParameterType;
-
 public class ContainerItemComponentPropertyRepresentation {
     private String name;
     private String value;

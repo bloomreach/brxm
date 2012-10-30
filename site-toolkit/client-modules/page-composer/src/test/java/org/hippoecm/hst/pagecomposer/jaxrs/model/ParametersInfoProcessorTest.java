@@ -15,16 +15,20 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-import org.hippoecm.hst.core.parameters.*;
+import org.hippoecm.hst.core.parameters.Color;
+import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 public class ParametersInfoProcessorTest {
 
@@ -32,12 +36,14 @@ public class ParametersInfoProcessorTest {
     static class NewstyleContainer {
     }
 
+    ParametersInfoProcessor processor = new ParametersInfoProcessor();
+
     @Test
     public void additionalAnnotationBasedProcessing() {
         final String currentMountCanonicalContentPath = "/content/documents/testchannel";
 
         ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
-        List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null, currentMountCanonicalContentPath);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, currentMountCanonicalContentPath);
         assertEquals(16, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order
@@ -111,6 +117,7 @@ public class ParametersInfoProcessorTest {
 
     }
 
+
     private static class PropertyComparator implements Comparator<ContainerItemComponentPropertyRepresentation> {
 
         @Override
@@ -118,6 +125,24 @@ public class ParametersInfoProcessorTest {
             return p1.getName().compareTo(p2.getName());
         }
 
+    }
+
+
+    @Test
+    public void valuesAreLocalized() {
+        final String currentMountCanonicalContentPath = "/content/documents/testchannel";
+
+        ParametersInfo parameterInfo = NewstyleContainer.class.getAnnotation(ParametersInfo.class);
+
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
+        assertEquals(16, properties.size());
+
+        final ContainerItemComponentPropertyRepresentation representation = properties.get(14);
+        final String[] displayValues = representation.getDropDownListDisplayValues();
+        assertEquals(3, displayValues.length);
+        assertEquals("Waarde 1", displayValues[0]);
+        assertEquals("Waarde 2", displayValues[1]);
+        assertEquals("value3", displayValues[2]);
     }
     
     /**
@@ -134,6 +159,7 @@ public class ParametersInfoProcessorTest {
         @DocumentLink(docLocation = "/content", docType = "hst:testdocument")
         Date getDocumentLocation();
     }
+
     @ParametersInfo(type=InvalidReturnTypeAnnotationCombinationInterface.class)
     static class InvalidReturnTypeAnnotationCombination {
     
@@ -143,7 +169,7 @@ public class ParametersInfoProcessorTest {
     public void testInvalidReturnTypeAnnotationCombination() {
         ParametersInfo parameterInfo = InvalidReturnTypeAnnotationCombination.class.getAnnotation(ParametersInfo.class);
         // the getProperties below are expected to log some warnings
-        List<ContainerItemComponentPropertyRepresentation> properties = ContainerItemComponentRepresentation.getProperties(parameterInfo, null, "");
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
         assertEquals(2, properties.size());
 
         // sort properties alphabetically by name to ensure a deterministic order

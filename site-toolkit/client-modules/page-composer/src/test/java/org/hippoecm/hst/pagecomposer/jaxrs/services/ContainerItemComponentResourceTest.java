@@ -27,7 +27,9 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 import org.onehippo.repository.mock.MockNodeFactory;
@@ -42,12 +44,22 @@ public class ContainerItemComponentResourceTest {
     private static final String HST_PARAMETERVALUES = "hst:parametervalues";
     private static final String HST_PARAMETERNAMES = "hst:parameternames";
     private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
+    private ContainerItemComponentResource containerItemComponentResource;
+
+    @Before
+    public void setUp() throws Exception {
+        containerItemComponentResource = new ContainerItemComponentResource();
+        containerItemComponentResource.setProcessor(new ParametersInfoProcessor());
+    }
 
     @Test
     public void testGetParametersForEmptyPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
 
-        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "", "").getProperties();
+        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node,
+                                                                                                                   null,
+                                                                                                                   "",
+                                                                                                                   "").getProperties();
         assertEquals(2, result.size());
         assertNameValueDefault(result.get(0), "parameterOne", "bar", "");
         assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
@@ -57,7 +69,7 @@ public class ContainerItemComponentResourceTest {
     public void testGetParametersForDefaultPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
 
-        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "hippo-default", "").getProperties();
+        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node, null, "hippo-default", "").getProperties();
         assertEquals(2, result.size());
         assertNameValueDefault(result.get(0), "parameterOne", "bar", "");
         assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
@@ -67,7 +79,7 @@ public class ContainerItemComponentResourceTest {
     public void testGetParametersForPrefix() throws RepositoryException, ClassNotFoundException, JAXBException, IOException {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/services/ContainerItemComponentResourceTest-test-component.xml");
 
-        List<ContainerItemComponentPropertyRepresentation> result = new ContainerItemComponentResource().doGetParameters(node, null, "prefix", "").getProperties();
+        List<ContainerItemComponentPropertyRepresentation> result = containerItemComponentResource.doGetParameters(node, null, "prefix", "").getProperties();
         assertEquals(2, result.size());
         assertNameValueDefault(result.get(0), "parameterOne", "baz", "");
         assertNameValueDefault(result.get(1), "parameterTwo", "", "test");
@@ -91,7 +103,7 @@ public class ContainerItemComponentResourceTest {
         params.add("someNonAnnotatedParameter", "lux");
 
         HstComponentParameters componentParameters = new HstComponentParameters(node);
-        new ContainerItemComponentResource().doSetParameters(componentParameters, null, params);
+        containerItemComponentResource.doSetParameters(componentParameters, null, params);
 
         assertTrue(node.hasProperty(HST_PARAMETERNAMES));
         assertTrue(node.hasProperty(HST_PARAMETERVALUES));
@@ -113,7 +125,7 @@ public class ContainerItemComponentResourceTest {
         // pick up the explicitly defined parameters from 'default' that are ALSO annotated (thus parameterOne, and NOT someNonAnnotatedParameter) PLUS
         // the implicit parameters from the DummyInfo (parameterTwo but not parameterOne because already from 'default')
 
-        new ContainerItemComponentResource().doCreateVariant(node, new HstComponentParameters(node), "newvar");
+        containerItemComponentResource.doCreateVariant(node, new HstComponentParameters(node), "newvar");
         assertTrue(node.hasProperty(HST_PARAMETERNAMES));
         assertTrue(node.hasProperty(HST_PARAMETERVALUES));
         // now it must contain HST_PARAMETERNAMEPREFIXES
@@ -133,7 +145,7 @@ public class ContainerItemComponentResourceTest {
         assertFalse(componentParameters.hasParameter("newvar", "someNonAnnotatedParameter"));
 
         // 3. try to remove the new variant
-        new ContainerItemComponentResource().doDeleteVariant(new HstComponentParameters(node), "newvar");
+        containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node), "newvar");
         variants = ContainerItemComponentResource.doGetVariants(node);
         assertTrue(variants.size() == 1);
         assertTrue(variants.contains("hippo-default"));
@@ -141,7 +153,7 @@ public class ContainerItemComponentResourceTest {
         // 4. try to remove the 'default' variant : this should not be allowed
         boolean removeSucceeded = true;
         try {
-            new ContainerItemComponentResource().doDeleteVariant(new HstComponentParameters(node), "hippo-default");
+            containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node), "hippo-default");
             fail("Default variant should not be possible to be removed");
         } catch (IllegalStateException e) {
             removeSucceeded = false;

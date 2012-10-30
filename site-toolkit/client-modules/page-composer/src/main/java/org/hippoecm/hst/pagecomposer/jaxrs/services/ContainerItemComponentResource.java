@@ -16,10 +16,12 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +46,9 @@ import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstComponentParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +64,12 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     
     private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
     private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
+
+    private ParametersInfoProcessor processor;
+
+    public void setProcessor(final ParametersInfoProcessor processor) {
+        this.processor = processor;
+    }
 
     /**
      * Returns all variants of this container item component. Note that the returned list might contain variants that
@@ -173,8 +183,51 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     }
     
     ContainerItemComponentRepresentation doGetParameters(Node node, Locale locale, String prefix, String currentMountCanonicalContentPath) throws RepositoryException, ClassNotFoundException {
-        return new ContainerItemComponentRepresentation().represents(node, locale, prefix, currentMountCanonicalContentPath);
+        return represent(node, locale, prefix, currentMountCanonicalContentPath);
     }
+
+
+    /**
+     * Constructs a component node wrapper
+     *
+     * @param node JcrNode for a component.
+     * @param locale the locale to get localized names, can be null
+     * @param prefix  the parameter prefix
+     * @throws RepositoryException    Thrown if the repository exception occurred during reading of the properties.
+     * @throws ClassNotFoundException thrown when this class can't instantiate the component class.
+     */
+    private ContainerItemComponentRepresentation represent(Node node, Locale locale, String prefix, String currentMountCanonicalContentPath) throws RepositoryException, ClassNotFoundException {
+        List<ContainerItemComponentPropertyRepresentation> properties= new ArrayList<ContainerItemComponentPropertyRepresentation>();
+
+        HstComponentParameters componentParameters = new HstComponentParameters(node);
+
+        //Get the properties via annotation on the component class
+        String componentClassName = null;
+        if (node.hasProperty(HST_COMPONENTCLASSNAME)) {
+            componentClassName = node.getProperty(HST_COMPONENTCLASSNAME).getString();
+        }
+
+        if (componentClassName != null) {
+            Class<?> componentClass = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
+            if (componentClass.isAnnotationPresent(ParametersInfo.class)) {
+                ParametersInfo parametersInfo = (ParametersInfo) componentClass.getAnnotation(ParametersInfo.class);
+                properties = processor.getProperties(parametersInfo, locale, currentMountCanonicalContentPath);
+            }
+            if (componentParameters.hasPrefix(prefix)) {
+                for (ContainerItemComponentPropertyRepresentation prop : properties) {
+                    String value = componentParameters.getValue(prefix, prop.getName());
+                    if (value != null && !value.isEmpty()) {
+                        prop.setValue(value);
+                    }
+                }
+            }
+        }
+
+        ContainerItemComponentRepresentation representation = new ContainerItemComponentRepresentation();
+        representation.setProperties(properties);
+        return representation;
+    }
+
 
     /**
      * Saves parameters for the given variant.

@@ -33,7 +33,14 @@
   <bean id="abstractConfigResource" abstract="true" >
     <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator" />
   </bean>
-  <!-- 
+
+  <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" parent="abstractConfigResource" id="containerItemComponentResource">
+    <property name="processor">
+      <bean class="org.hippoecm.hst.pagecomposer.jaxrs.model.ParametersInfoProcessor" />
+    </property>
+  </bean>
+
+  <!--
     The internal server factory. 
     Each JAX-RS service component is registered by "resourceProvider" property. 
   -->
@@ -53,7 +60,7 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResource" parent="abstractConfigResource"/>
+            <ref bean="containerItemComponentResource" />
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
