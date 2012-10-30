@@ -32,7 +32,10 @@ public class DefaultPageErrorHandler implements PageErrorHandler {
     protected final static Logger log = LoggerFactory.getLogger(DefaultPageErrorHandler.class);
     
     public Status handleComponentExceptions(PageErrors pageErrors, HstRequest hstRequest, HstResponse hstResponse) {
-        logWarningsForEachComponentExceptions(pageErrors);
+        if (!pageErrors.isEmpty()) {
+            log.warn("Component exception(s) found in page request, '{}'.", hstRequest.getRequestContext().getServletRequest().getRequestURI());
+            logWarningsForEachComponentExceptions(pageErrors);
+        }
         return Status.HANDLED_BUT_CONTINUE;
     }
     
@@ -44,9 +47,9 @@ public class DefaultPageErrorHandler implements PageErrorHandler {
                     throwable = throwable.getCause();
                 }
                 if (log.isDebugEnabled()) {
-                    log.warn("Component exception found on " + componentInfo.getComponentClassName(), throwable);
+                    log.warn("Component exception on " + componentInfo.getComponentClassName(), throwable);
                 } else if (log.isWarnEnabled()) {
-                    log.warn("Component exception found on {} : {} ", componentInfo.getComponentClassName(), throwable.toString());
+                    log.warn("Component exception on {} : {} ", componentInfo.getComponentClassName(), throwable.toString());
                 }
             }
         }

@@ -39,6 +39,10 @@ public class DefaultPageErrors implements PageErrors {
         this.componentExceptions = componentExceptions;
     }
     
+    public boolean isEmpty() {
+        return (componentExceptions == null || componentExceptions.isEmpty());
+    }
+    
     public Collection<HstComponentInfo> getComponentInfos() {
         if (componentInfos == null) {
             componentInfos = new ArrayList<HstComponentInfo>();

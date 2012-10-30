@@ -31,6 +31,12 @@ import org.hippoecm.hst.core.component.HstComponentException;
 public interface PageErrors {
     
     /**
+     * Returns true if there's no component exceptions.
+     * @return
+     */
+    public boolean isEmpty();
+    
+    /**
      * Returns collection of <CODE>HstComponentInfo</CODE> which causes exceptions.
      * @return
      */
