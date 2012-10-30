@@ -103,7 +103,7 @@
     <stax2-api.version>3.1.1</stax2-api.version>
     <woodstox.version>4.1.1</woodstox.version>
     
-    <cxf.version>2.3.7</cxf.version>
+    <cxf.version>2.6.3</cxf.version>
     <jackson.version>1.9.5</jackson.version>
     <mime4j.version>0.6</mime4j.version>
     <atomikos.version>3.1.4</atomikos.version>

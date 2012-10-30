@@ -31,7 +31,8 @@ import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.transport.servlet.ServletController;
-import org.apache.cxf.transport.servlet.ServletTransportFactory;
+import org.apache.cxf.transport.http.HTTPTransportFactory;
+import org.apache.cxf.transport.servlet.servicelist.ServiceListGeneratorServlet;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -56,13 +57,19 @@ public class CXFJaxrsService extends AbstractJaxrsService {
     private List<Interceptor<? extends Message>> inFaultInterceptors;
     private List<Interceptor<? extends Message>> outInterceptors;
     private List<Interceptor<? extends Message>> outFaultInterceptors;
+
+    private static Map<String,String> injectRequiredJaxrsConfigParameters(Map<String, String> parameters) {
+        // guard against potential concurrency issue in cxf dynamic endpoint state management: HSTTWO-1663, CXF-2997
+        parameters.put("disable-address-updates", "true");
+        return parameters;
+    }
 	
     public CXFJaxrsService(String serviceName) {
     	this(serviceName, new HashMap<String,String>());
     }
     
     public CXFJaxrsService(String serviceName, Map<String, String> jaxrsConfigParameters) {
-    	super(serviceName, jaxrsConfigParameters);
+    	super(serviceName, injectRequiredJaxrsConfigParameters(jaxrsConfigParameters));
     }
     
 	public synchronized void setJaxrsServerFactoryBean(JAXRSServerFactoryBean jaxrsServerFactoryBean) {
@@ -109,12 +116,10 @@ public class CXFJaxrsService extends AbstractJaxrsService {
     protected synchronized ServletController getController(ServletContext servletContext) {
         if (controller == null) {
             defaultBus = createBus();
-            ServletTransportFactory df = new ServletTransportFactory(defaultBus);
+            HTTPTransportFactory df = new HTTPTransportFactory(defaultBus);
             jaxrsServerFactoryBean.setDestinationFactory(df);
             server = jaxrsServerFactoryBean.create();
-            controller = new ServletController(df, getJaxrsServletConfig(servletContext), servletContext, defaultBus);
-            // guard against potential concurrency issue in cxf dynamic endpoint state management: HSTTWO-1663, CXF-2997
-            controller.setDisableAddressUpdates(true);
+            controller = new ServletController(df.getRegistry(), getJaxrsServletConfig(servletContext), new ServiceListGeneratorServlet(df.getRegistry(), defaultBus));
         }
         BusFactory.setThreadDefaultBus(defaultBus);
         return controller;
