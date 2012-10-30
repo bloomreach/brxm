@@ -887,6 +887,7 @@ content-beans/src/test/java/org/hippoecm/hst/service/jcr/HippoStdImpl.java svneo
 content-beans/src/test/java/org/hippoecm/hst/service/jcr/TestJCRServiceBean.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/service/jcr/TextPage.java svneol=native#text/plain
 content-beans/src/test/java/org/hippoecm/hst/service/jcr/TextPageImpl.java svneol=native#text/plain
+content-beans/src/test/java/org/hippoecm/hst/util/TestContentBeanUtils.java -text
 content-beans/src/test/java/org/hippoecm/hst/util/TestObjectConverterUtils.java -text
 content-beans/src/test/java/org/hippoecm/hst/util/TestSearchInputParsingUtils.java -text svneol=unset#text/plain
 content-beans/src/test/resources/log4j.xml -text

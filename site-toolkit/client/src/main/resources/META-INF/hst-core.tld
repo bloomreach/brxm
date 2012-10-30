@@ -799,4 +799,19 @@
     </example>
   </function>
 
+  <function>
+    <description>
+      Determines if the class or interface represented by this content bean object is either the same as, or is a 
+      subclass of, the class or interface represented by the specified fully qualified class name or simple class name name parameter.
+      When the typeName argument is a simple name, then it compares only with the simple class name of the bean object argument.
+      It returns true if so; otherwise it returns false. 
+    </description>
+    <name>isBeanType</name>
+    <function-class>org.hippoecm.hst.util.ContentBeanUtils</function-class>
+    <function-signature>boolean isBeanType(java.lang.Object, java.lang.String)</function-signature>
+    <example>
+      &lt;c:if test="${hst:isBeanType(bean, 'org.hippoecm.hst.demo.beans.NewsBean')}"&gt;
+    </example>
+  </function>
+
 </taglib>

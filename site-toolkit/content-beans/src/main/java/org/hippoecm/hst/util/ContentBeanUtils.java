@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
@@ -38,6 +39,54 @@ import org.slf4j.LoggerFactory;
 public class ContentBeanUtils {
 
     private final static Logger log = LoggerFactory.getLogger(ContentBeanUtils.class);
+
+    private ContentBeanUtils() {
+    }
+
+    /**
+     * Determines if the class or interface represented by this content bean object is either the same as, or is a 
+     * subclass of, the class or interface represented by the specified fully qualified class name or simple class name name parameter.
+     * When the typeName is a simple name, then it compares only with the simple class name of the bean object argument.
+     * It returns true if so; otherwise it returns false. 
+     * @param bean content bean object
+     * @param typeName fully qualified class name or simple class name
+     * @return
+     */
+    public static boolean isBeanType(Object bean, String typeName) {
+        if (bean == null || StringUtils.isEmpty(typeName)) {
+            return false;
+        }
+
+        Class<?> beanType = bean.getClass();
+        String beanFqcn = beanType.getName();
+        String beanSimpleName = beanFqcn;
+
+        int offset = beanFqcn.lastIndexOf('.');
+        if (offset != -1) {
+            beanSimpleName = beanFqcn.substring(offset + 1);
+            offset = beanSimpleName.lastIndexOf('$');
+            if (offset != -1) {
+                beanSimpleName = beanSimpleName.substring(offset + 1);
+            }
+        }
+
+        if (StringUtils.equals(beanFqcn, typeName) || StringUtils.equals(beanSimpleName, typeName)) {
+            return true;
+        }
+
+        try {
+            Class<?> type = Thread.currentThread().getContextClassLoader().loadClass(typeName);
+
+            if (type.isAssignableFrom(bean.getClass())) {
+                return true;
+            }
+        } catch (ClassNotFoundException e) {
+            log.debug("Type not found.", e);
+            return false;
+        }
+
+        return false;
+    }
 
     /**
      * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it
