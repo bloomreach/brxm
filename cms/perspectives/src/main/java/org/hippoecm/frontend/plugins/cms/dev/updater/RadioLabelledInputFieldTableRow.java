@@ -26,12 +26,6 @@ public abstract class RadioLabelledInputFieldTableRow extends LabelledInputField
 
     public RadioLabelledInputFieldTableRow(String id, RadioGroup<String> radios, final IModel<String> labelModel, final IModel<String> inputModel) {
         super(id, labelModel, inputModel);
-        radios.add(new Radio<String>("radio-" + id, new Model<String>(id)) {
-            @Override
-            public boolean isVisible() {
-                return isRadioVisible();
-            }
-        });
         add(new Radio<String>("radio", new Model<String>(id)) {
             @Override
             public boolean isVisible() {

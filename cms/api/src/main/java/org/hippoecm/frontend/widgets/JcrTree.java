@@ -57,7 +57,6 @@ public abstract class JcrTree extends Tree {
 
         ITreeState treeState = getTreeState();
         treeState.setAllowSelectMultiple(false);
-        treeState.collapseAll();
         treeState.expandNode(treeModel.getRoot());
     }
 

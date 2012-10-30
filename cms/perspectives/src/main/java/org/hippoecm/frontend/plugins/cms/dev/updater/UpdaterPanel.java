@@ -26,10 +26,14 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
+import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
@@ -39,6 +43,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
+import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.model.tree.ObservableTreeModel;
@@ -76,11 +81,6 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         this.context = context;
 
         treeModel = new JcrTreeModel(new JcrTreeNode(new JcrNodeModel(UPDATE_PATH), null)) {
-            @Override
-            public void onEvent(final Iterator<? extends IEvent<ObservableTreeModel>> iter) {
-                super.onEvent(iter);
-                AjaxRequestTarget.get().addComponent(tree);
-            }
 
             @Override
             protected TreeModelEvent newTreeModelEvent(final Event event) throws RepositoryException {
@@ -116,7 +116,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
             @Override
             protected void onNodeLinkClicked(final AjaxRequestTarget target, final TreeNode clickedNode) {
-                UpdaterPanel.this.setDefaultModel(((JcrTreeNode) clickedNode).getChainedModel());
+                UpdaterPanel.this.setDefaultModel(((IJcrTreeNode) clickedNode).getNodeModel());
             }
 
             @Override
@@ -124,6 +124,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
                 DefaultTreeState state = new DefaultTreeState();
                 JcrTreeModel model = (JcrTreeModel) getModelObject();
                 model.setTreeState(state);
+                state.expandAll();
                 return state;
             }
 
@@ -132,7 +133,35 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
                 super.onBeforeRender();
                 updateTree();
             }
+
+            @Override
+            protected ResourceReference getNodeIcon(final TreeNode node) {
+                final IModel<Node> nodeModel = ((IJcrTreeNode) node).getNodeModel();
+                if (nodeModel == null) {
+                    return super.getNodeIcon(node);
+                }
+                return isUpdater(nodeModel.getObject()) ? super.getItem() : super.getFolderOpen();
+            }
+
+            @Override
+            protected Component newJunctionLink(final MarkupContainer parent, final String id, final String imageId, final TreeNode node) {
+                final MarkupContainer junctionLink = new WebMarkupContainer(id) {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected void onComponentTag(ComponentTag tag) {
+                        super.onComponentTag(tag);
+                        tag.put("onclick", "return false");
+                    }
+                };
+                junctionLink.add(new Label("image"));
+
+                return junctionLink;
+            }
+
+
         };
+        tree.setRootLess(true);
         tree.setOutputMarkupId(true);
         add(tree);
 
@@ -245,5 +274,14 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         return getNodePath().startsWith(UPDATE_HISTORY_PATH + "/");
     }
 
-
+    private static boolean isUpdater(Node node) {
+        if (node != null) {
+            try {
+                return node.isNodeType("hipposys:updaterinfo");
+            } catch (RepositoryException e) {
+                log.error("Failed to determine whether node is updater node", e);
+            }
+        }
+        return false;
+    }
 }

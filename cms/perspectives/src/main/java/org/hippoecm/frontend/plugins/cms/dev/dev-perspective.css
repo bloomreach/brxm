@@ -22,13 +22,19 @@
 }
 
 .updater-tree {
-    float: left;
+    margin: 10px;
     width: 150px;
+    padding: 10px;
+    border: groove;
+    border-radius: 10px;
+    height: 800px;
 }
 
 .updater-details {
-    float: left;
-    padding-left:4%;
-    padding-right:4%;
-    width: 90%;
+    margin: 10px;
+    width: 95%;
+    border: groove;
+    padding: 10px;
+    border-radius: 10px;
+    height: 800px;
 }

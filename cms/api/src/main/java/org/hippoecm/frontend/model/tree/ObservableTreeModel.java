@@ -33,7 +33,6 @@ import javax.swing.tree.TreePath;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.wicket.markup.html.tree.DefaultTreeState;
-import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.markup.html.tree.ITreeStateListener;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -244,7 +243,6 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
     protected final IJcrTreeNode root;
     private final String rootPath;
     private final ExpandedNode expandedRoot;
-    private ITreeState state;
 
     public ObservableTreeModel(IJcrTreeNode rootModel) {
         super(rootModel);
@@ -266,9 +264,8 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
     }
 
     public void setTreeState(final DefaultTreeState state) {
-        this.state = state;
         expandNodes(state, expandedRoot);
-        this.state.addTreeStateListener(new ObservableTreeStateListener());
+        state.addTreeStateListener(new ObservableTreeStateListener());
     }
 
     private void expandNodes(DefaultTreeState state, ExpandedNode node) {
@@ -356,6 +353,14 @@ public class ObservableTreeModel extends DefaultTreeModel implements IJcrTreeMod
 
         @Override
         public void allNodesExpanded() {
+            expandAll(expandedRoot);
+        }
+
+        private void expandAll(final ExpandedNode expandedNode) {
+            expandedNode.expand();
+            for (ExpandedNode expandedChild : expandedNode.children.values()) {
+                expandAll(expandedChild);
+            }
         }
 
         @Override
