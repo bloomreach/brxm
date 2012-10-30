@@ -85,7 +85,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     
     public void clear() {
         loadedSubLocationMapTree.clear();
-        // TODO CMS7-5601 also clear the locationResolvers the LocationMap
+        // TODO HSTTWO-1874 also clear the locationResolvers the LocationMap
     }
     
     /**
