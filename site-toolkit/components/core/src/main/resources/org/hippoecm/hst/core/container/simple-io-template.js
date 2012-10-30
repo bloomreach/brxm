@@ -8,18 +8,31 @@ if (typeof Hippo.Hst === 'undefined') {
 Hippo.Hst.AsyncPage = {
 
     load : function() {
-        var result = document.getElementsByClassName("_async");
+        var result,divs , i, length;
+        result = [];
 
-        for (var i=0, length=result.length; i< length; i++) {
+        if (document.getElementsByClassName) {
+            result = document.getElementsByClassName('_async');
+        } else {
+            divs = document.getElementsByTagName('div');
+            for (i=0, length=divs.length; i<length; i++) {
+                if (divs[i].className === '_async') {
+                    result.push(divs[i]);
+                }
+            }
+        }
+
+        for (i=0, length=result.length; i< length; i++) {
             (function(element) {
                 this.sendRequest(element.id, function(xmlHttp) {
-                    var fragment = document.createDocumentFragment();
-                    var tmpDiv = document.createElement('tmpDiv');
-                    tmpDiv.innerHTML = xmlHttp.response;
+                    var fragment, tmpDiv, parent;
+                    fragment = document.createDocumentFragment();
+                    tmpDiv = document.createElement('tmpDiv');
+                    tmpDiv.innerHTML = xmlHttp.responseText;
                     while (tmpDiv.firstChild) {
                         fragment.appendChild(tmpDiv.firstChild);
                     }
-                    var parent = element.parentNode;
+                    parent = element.parentNode;
                     parent.replaceChild(fragment, element);
                 });
             }).call(this, result[i]);
