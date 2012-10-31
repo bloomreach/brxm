@@ -18,6 +18,7 @@ package org.hippoecm.frontend.observation;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -70,7 +71,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private String path;
     private int eventTypes;
     private boolean isDeep;
-    private Set<String> uuids;
+    private List<String> uuids;
     private String[] nodeTypes;
     private boolean noLocal;
 
@@ -140,10 +141,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         this.eventTypes = eventTypes;
         this.isDeep = isDeep;
         if (uuid != null) {
-            this.uuids = new HashSet<String>();
-            for (String id : uuid) {
-                uuids.add(id);
-            }
+            this.uuids = Arrays.asList(uuid);
         }
         this.nodeTypes = nodeTypes;
         this.noLocal = noLocal;
@@ -187,7 +185,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             return;
         }
 
-        if (events.size() > 0) {
+        if (!events.isEmpty()) {
             for (Event event : events) {
                 String path;
                 try {
@@ -271,22 +269,21 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private Node getRoot() throws PathNotFoundException, RepositoryException {
-        Session session = getSession().getJcrSession();
-        if ("/".equals(path)) {
-            return session.getRootNode();
-        } else {
-            return session.getRootNode().getNode(path.substring(1));
+        final Session session = getSession().getJcrSession();
+        if (uuids != null && uuids.size() == 1) {
+            return session.getNodeByIdentifier(uuids.get(0));
         }
+        return session.getNode(path);
     }
 
     private List<Node> getReferencedNodes() {
         if (uuids != null) {
             Session session = getSession().getJcrSession();
-            ArrayList<Node> list = new ArrayList<Node>(uuids.size());
-            Set<String> validUuids = new HashSet<String>(uuids.size());
+            List<Node> list = new ArrayList<Node>(uuids.size());
+            List<String> validUuids = new ArrayList<String>(uuids.size());
             for (String id : uuids) {
                 try {
-                    list.add(session.getNodeByUUID(id));
+                    list.add(session.getNodeByIdentifier(id));
                     validUuids.add(id);
                 } catch (ItemNotFoundException e) {
                     log.info("Could not dereference uuid {} : {}", id, e.getMessage());
@@ -324,7 +321,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             String path = node.getPath();
             if ((isDeep && path.startsWith(this.path)) || path.equals(this.path)) {
                 if (uuids != null) {
-                    if (node.isNodeType("mix:referenceable") && uuids.contains(node.getUUID())) {
+                    if (uuids.contains(node.getIdentifier())) {
                         return true;
                     }
                 } else {
@@ -348,9 +345,9 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         }
     }
     
-    private void processPending(NodeIterator iter, Set<Node> nodes) {
-        while (iter.hasNext()) {
-            Node node = iter.nextNode();
+    private void addVisibleNodes(NodeIterator pending, Set<Node> nodes) {
+        while (pending.hasNext()) {
+            Node node = pending.nextNode();
             if (node != null) {
                 if (isVisible(node)) {
                     nodes.add(node);
@@ -421,10 +418,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
         // check UUIDs
         if (uuids != null) {
-            if (!parent.isNodeType("mix:referenceable")) {
-                return true;
-            }
-            String parentId = parent.getUUID();
+            String parentId = parent.getIdentifier();
             boolean match = false;
             for (String uuid : uuids) {
                 if (uuid.equals(parentId)) {
@@ -450,8 +444,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             }
             boolean match = false;
             for (int i = 0; i < nodeTypes.length && !match; i++) {
-                for (Iterator<NodeType> iter = eventTypes.iterator(); iter.hasNext();) {
-                    NodeType nodeType = iter.next();
+                for (NodeType nodeType : eventTypes) {
                     if (nodeType.isNodeType(nodeTypes[i])) {
                         match = true;
                         break;
@@ -583,8 +576,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 }
                 // use pendingChanges to detect changes in sub-trees and properties
                 if (!root.isNew()) {
-                    NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, null, false);
-                    processPending(iter, nodes);
+                    NodeIterator pending = ((HippoSession) root.getSession()).pendingChanges(root, null, false);
+                    addVisibleNodes(pending, nodes);
                 }
             } else {
                 if ((root.isModified() || root.isNew()) && isVisible(root)) {
@@ -602,17 +595,21 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 // use pendingChanges to detect changes in sub-trees and properties
                 if (!root.isNew()) {
                     for (String type : nodeTypes) {
-                        NodeIterator iter = ((HippoSession) root.getSession()).pendingChanges(root, type, false);
-                        processPending(iter, nodes);
+                        NodeIterator pending = ((HippoSession) root.getSession()).pendingChanges(root, type, false);
+                        addVisibleNodes(pending, nodes);
                     }
                 }
             }
-        } catch (PathNotFoundException ex) {
-            log.warn("Root node no longer exists: " + ex.getMessage());
+        } catch (PathNotFoundException e) {
+            log.info("Root node no longer exists: " + e.getMessage());
             dispose();
             return events;
-        } catch (RepositoryException ex) {
-            log.error("Failed to parse pending changes", ex);
+        } catch(ItemNotFoundException e) {
+            log.info("Root node no longer exists: " + e.getMessage());
+            dispose();
+            return events;
+        } catch (RepositoryException e) {
+            log.error("Failed to parse pending changes", e);
             dispose();
             return events;
         }
