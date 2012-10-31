@@ -15,16 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.dev.updater;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.query.InvalidQueryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.session.UserSession;
 
 
 public class UpdaterRegistryEditor extends UpdaterEditor {
@@ -36,11 +29,6 @@ public class UpdaterRegistryEditor extends UpdaterEditor {
     @Override
     protected boolean isStopButtonVisible() {
         return false;
-    }
-
-    @Override
-    protected boolean isExecuteButtonEnabled() {
-        return isExecutable();
     }
 
     @Override
@@ -83,30 +71,5 @@ public class UpdaterRegistryEditor extends UpdaterEditor {
         return false;
     }
 
-    private boolean isExecutable() {
-        if (method.equals("query")) {
-            return isValidQuery();
-        }
-        return isValidPath();
-    }
 
-    private boolean isValidPath() {
-        return visitorPath != null && visitorPath.startsWith("/");
-    }
-
-    private boolean isValidQuery() {
-        if (visitorQuery != null) {
-            final Session session = UserSession.get().getJcrSession();
-            try {
-                final QueryManager queryManager = session.getWorkspace().getQueryManager();
-                queryManager.createQuery(visitorQuery, Query.XPATH);
-                return true;
-            } catch (InvalidQueryException e) {
-                log.debug("Query is invalid: " + visitorQuery);
-            } catch (RepositoryException e) {
-                log.error("Error while validating jcr query", e);
-            }
-        }
-        return false;
-    }
 }

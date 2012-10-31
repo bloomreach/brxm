@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.dev.updater;
 
-import java.util.Iterator;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -41,12 +39,10 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
-import org.hippoecm.frontend.model.tree.ObservableTreeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.session.UserSession;
@@ -54,9 +50,6 @@ import org.hippoecm.frontend.widgets.JcrTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Updater editor
- */
 public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
     private final static Logger log = LoggerFactory.getLogger(UpdaterPanel.class);
@@ -122,8 +115,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             @Override
             protected ITreeState newTreeState() {
                 DefaultTreeState state = new DefaultTreeState();
-                JcrTreeModel model = (JcrTreeModel) getModelObject();
-                model.setTreeState(state);
+                treeModel.setTreeState(state);
                 state.expandAll();
                 return state;
             }

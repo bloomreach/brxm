@@ -421,10 +421,10 @@ public class UpdaterEditor extends Panel {
             }
             node.setProperty("hipposys:throttle", Long.valueOf(throttle));
             node.setProperty("hipposys:script", script);
-            node.getSession().save();
             if (!node.getName().equals(name)) {
                 rename();
             }
+            node.getSession().save();
             return true;
         } catch (RepositoryException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
