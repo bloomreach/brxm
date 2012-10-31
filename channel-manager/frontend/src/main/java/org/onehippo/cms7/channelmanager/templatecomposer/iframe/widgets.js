@@ -754,8 +754,21 @@
                     data: data,
                     dataType: 'html',
                     success: function(response) {
+                        var emptyElementHeight, element, intervalCounter, interval;
+                        this.el.html('');
+                        emptyElementHeight = this.el.height();
                         this.el.html(response);
-                        callback();
+
+                        // poll for five seconds to check the component is rendered
+                        element = this.el;
+                        intervalCounter = 0;
+                        interval = window.setInterval(function() {
+                            if (intervalCounter > 50 || element.height() !== emptyElementHeight) {
+                                window.clearInterval(interval);
+                                callback();
+                            }
+                            intervalCounter++;
+                        }, 100);
                     }
                 });
             }
