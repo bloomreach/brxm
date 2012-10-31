@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2011 Hippo.
+  Copyright 2010-2012 Hippo.
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -48,19 +48,10 @@
       <type>pom</type>
     </dependency>
 
-    <!-- Brokenlinks -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-wfdropbox</artifactId>
       <version>${hippo.repository.version}</version>
-    </dependency>
-
-    <!-- Faceted date type -->
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-faceteddate-repository</artifactId>
-      <version>${hippo.addon-faceteddate.version}</version>
-      <type>jar</type>
     </dependency>
 
     <!-- upgrade modules, optional -->
