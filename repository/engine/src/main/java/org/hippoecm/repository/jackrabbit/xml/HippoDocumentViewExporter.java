@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit.xml;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -42,19 +41,6 @@ public class HippoDocumentViewExporter extends DocumentViewExporter {
     }
 
     private boolean isVirtual(Node node) throws RepositoryException {
-        if (node == null || !(node instanceof HippoNode)) {
-            return false;
-        }
-        try {
-            HippoNode hippoNode = (HippoNode) node;
-            Node canonical = hippoNode.getCanonicalNode();
-            if (canonical == null) {
-                return true;
-            }
-            return !canonical.isSame(hippoNode);
-        } catch (ItemNotFoundException e) {
-            return true;
-        }
-
+        return node instanceof HippoNode && ((HippoNode) node).isVirtual();
     }
 }
