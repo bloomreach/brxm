@@ -337,7 +337,9 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         this.locale = config.locale;
         this.componentId = config.componentId;
 
-        Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, config);
+        Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
+            cls: 'templateComposerPropertiesForm'
+        }));
     },
 
     copy: function(newVariant) {
@@ -615,7 +617,15 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             triggerAction: 'all',
             selectOnFocus:true,
             valueField : 'id',
-            displayField : 'displayText'
+            displayField : 'displayText',
+            listeners : {
+                afterrender : function() {
+                    // workaround, the padding-left which gets set on the element, let the right box side disappear,
+                    // removing the style attribute after render fixes the layout
+                    var formElement = this.el.findParent('.x-form-element');
+                    formElement.removeAttribute('style');
+                }
+            }
         });
     },
 
@@ -637,6 +647,12 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                     } else {
                         this.removeClass('default-value');
                     }
+                },
+                afterrender : function() {
+                    // workaround, the padding-left which gets set on the element, let the right box side disappear,
+                    // removing the style attribute after render fixes the layout
+                    var formElement = this.el.findParent('.x-form-element');
+                    formElement.removeAttribute('style');
                 }
             }
         };

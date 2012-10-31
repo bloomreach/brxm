@@ -416,3 +416,11 @@
     overflow-x: hidden;
     overflow-y: auto;
 }
+
+.ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item {
+    overflow: hidden;
+}
+
+.ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item .x-form-element {
+    padding-left: 0px;
+}
