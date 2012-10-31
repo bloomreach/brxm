@@ -137,6 +137,9 @@ public class ParametersInfoProcessorTest {
         List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
         assertEquals(16, properties.size());
 
+        // sort properties alphabetically by name to ensure a deterministic order
+        Collections.sort(properties, new PropertyComparator());
+
         final ContainerItemComponentPropertyRepresentation representation = properties.get(14);
         final String[] displayValues = representation.getDropDownListDisplayValues();
         assertEquals(3, displayValues.length);
