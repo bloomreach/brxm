@@ -357,7 +357,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 handler : function () {
                     Ext.Ajax.request({
                         method : 'DELETE',
-                        url : this.composerRestMountUrl + '/' + this.componentId + './' + this.variant.id + '?FORCE_CLIENT_HOST=true',
+                        url : this.composerRestMountUrl + '/' + this.componentId + './' +
+                                encodeURIComponent(this.variant.id) + '?FORCE_CLIENT_HOST=true',
                         success : function () {
                             this.fireEvent('delete', this, this.variant.id);
                         },
@@ -422,7 +423,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 'FORCE_CLIENT_HOST' : 'true'
             },
             params: uncheckedValues,
-            url : this.composerRestMountUrl + '/' + this.componentId + './' + this.variant.id + '/rename/' + this.newVariantId + '?FORCE_CLIENT_HOST=true',
+            url : this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId) + '?FORCE_CLIENT_HOST=true',
             method : 'POST',
             success : function () {
                 Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant.id);
@@ -698,7 +699,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
                 fields : ['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
                     'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
                     'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager' ],
-                url : this.composerRestMountUrl + '/' + this.componentId + './' + this.variant.id + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
+                url : this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
             });
 
             componentPropertiesStore.on('load', function(store, records) {
