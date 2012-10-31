@@ -30,3 +30,30 @@ For instance 'mvn test -Dtest=StampedeTest -Pintegration,h2
 -Dstampede.minutes=3 -Dstampede.threads=5' executes the
 StampedeTest against h2 for a period of 3 minutes with 5
 concurrent threads.
+
+Note on running StampedeTest clustered:
+There are two predefined profiles for running the StampedeTest
+in a clustered setup using mysql as the backing database.
+Open two console windows for the current directory In the one run:
+
+'mvn test -Dtest=StampedeTest -Pintegration,clusternode1
+-Dstampede.minutes=1 -Dstampede.threads1 -Dsurefire.forkmode=none
+-Dstampede.prompt=true'
+
+In the other run the other profile:
+
+'mvn test -Dtest=StampedeTest -Pintegration,clusternode1
+-Dstampede.minutes=1 -Dstampede.threads1 -Dsurefire.forkmode=none
+-Dstampede.prompt=true'
+
+After the test case setup phase you will be prompted to press
+enter to continue. This is to make sure the tests run concurrently
+the whole time.
+
+Note that because of the forkmode=none option the repository needs to have been
+bootstrapped during a previous normal run because not all extensions
+seem to be loaded in this mode.
+
+You may leave out the '-Dsurefire.forkmode=none -Dstampede.prompt=true'
+part but this will not allow you to coordinate the concurrency, which may
+be important if you are doing performance measurements.

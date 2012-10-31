@@ -113,7 +113,7 @@ public class StampedeTest extends AbstractRandomActionTest {
             runners[i].setDaemon(true);
         }
         if (Boolean.getBoolean("stampede.prompt")) {
-            System.out.println("Press enter to continue...");
+            System.out.println("Press enter to start test...");
             System.console().readLine();
         }
         for(RandomActionRunner runner : runners) {

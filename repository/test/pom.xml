@@ -29,9 +29,10 @@
   <packaging>jar</packaging>
 
   <properties>
-    <repo.path>${project.build.directory}</repo.path>
+    <repo.path>${project.build.directory}/storage</repo.path>
     <repo.config/>
     <surefire.forkmode>once</surefire.forkmode>
+    <mysql.version>5.1.18</mysql.version>
   </properties>
 
   <dependencies>
@@ -191,6 +192,13 @@
         <groupId>org.datanucleus</groupId>
         <artifactId>maven-datanucleus-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -268,7 +276,83 @@
         <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
-          <version>5.1.18</version>
+          <version>${mysql.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>sql-maven-plugin</artifactId>
+            <dependencies>
+              <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql.version}</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <driver>com.mysql.jdbc.Driver</driver>
+              <url>jdbc:mysql://localhost:3306/mysql?autoReconnect=true</url>
+              <username>root</username>
+              <password/>
+            </configuration>
+            <executions>
+              <execution>
+                <id>drop-db</id>
+                <phase>clean</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <autocommit>true</autocommit>
+                  <sqlCommand>drop database jcr</sqlCommand>
+                  <onError>continue</onError>
+                </configuration>
+              </execution>
+              <execution>
+                <id>create-db</id>
+                <phase>clean</phase>
+                <goals>
+                  <goal>execute</goal>
+                </goals>
+                <configuration>
+                  <autocommit>true</autocommit>
+                  <sqlCommand>create database jcr</sqlCommand>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>clusternode1</id>
+      <properties>
+        <repo.config>file://${project.basedir}/config/mysql-repository-clusternode1.xml</repo.config>
+        <repo.path>${project.build.directory}/storage1</repo.path>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>${mysql.version}</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>clusternode2</id>
+      <properties>
+        <repo.config>file://${project.basedir}/config/mysql-repository-clusternode2.xml</repo.config>
+        <repo.path>${project.build.directory}/storage2</repo.path>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>${mysql.version}</version>
           <scope>test</scope>
         </dependency>
       </dependencies>

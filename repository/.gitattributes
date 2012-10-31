@@ -286,6 +286,8 @@ src/site/site.css svneol=native#text/css
 src/site/site.xml svneol=native#text/plain
 test/README -text
 test/config/h2-repository.xml -text
+test/config/mysql-repository-clusternode1.xml -text
+test/config/mysql-repository-clusternode2.xml -text
 test/config/mysql-repository.xml -text
 test/pom.xml svneol=native#text/plain
 test/src/main/resources/org/hippoecm/repository/test/package.jdo -text

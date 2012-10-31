@@ -35,14 +35,15 @@ import javax.jcr.observation.EventListener;
 import javax.jdo.JDODataStoreException;
 
 import org.apache.jackrabbit.core.state.ItemStateException;
+import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.concurrent.action.Action;
-import org.hippoecm.repository.concurrent.action.ActionContext;
-import org.hippoecm.repository.concurrent.action.ActionFailure;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.concurrent.action.Action;
+import org.hippoecm.repository.concurrent.action.ActionContext;
+import org.hippoecm.repository.concurrent.action.ActionFailure;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.After;
 import org.junit.Before;
@@ -68,6 +69,7 @@ abstract class AbstractRandomActionTest {
 
     protected Random random = new Random();
     protected Repository repository;
+    protected HippoRepository hippoRepository;
     protected int nthreads;
     private boolean stopRunning = false;
     private final long duration;
@@ -79,7 +81,8 @@ abstract class AbstractRandomActionTest {
 
     @Before
     public void setUp() throws Exception {
-        repository = HippoRepositoryFactory.getHippoRepository().getRepository();
+        hippoRepository = HippoRepositoryFactory.getHippoRepository();
+        repository = hippoRepository.getRepository();
 
         Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
 
@@ -98,6 +101,13 @@ abstract class AbstractRandomActionTest {
 
     @After
     public void tearDown() throws Exception {
+        if (repository != null) {
+            if (Boolean.getBoolean("stampede.prompt")) {
+                System.out.println("Press enter to stop repository...");
+                System.console().readLine();
+            }
+            hippoRepository.close();
+        }
     }
 
     protected class RandomActionRunner extends Thread {

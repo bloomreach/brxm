@@ -85,4 +85,12 @@
     <param name="schemaObjectPrefix" value="" />
   </DataStore>
 
+  <Cluster id="node2">
+    <Journal class="org.apache.jackrabbit.core.journal.DatabaseJournal">
+      <param name="dataSourceName" value="ds1"/>
+      <param name="schemaObjectPrefix" value="repository_"/>
+      <param name="databaseType" value="mysql"/>
+    </Journal>
+  </Cluster>
+
 </Repository>
