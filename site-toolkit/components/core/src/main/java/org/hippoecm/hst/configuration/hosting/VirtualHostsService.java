@@ -228,22 +228,23 @@ public class VirtualHostsService implements MutableVirtualHosts {
     
     public boolean isExcluded(String pathInfo) {
         // test prefix
-        if(prefixExclusions != null) {
+        if (prefixExclusions != null && prefixExclusions.length != 0) {
             for(String excludePrefix : prefixExclusions) {
                 if(pathInfo.startsWith(excludePrefix)) {
                     return true;
                 }
             }
         }
+
         // test suffix
-        if(suffixExclusions != null) {
+        if (suffixExclusions != null && suffixExclusions.length != 0) {
             for(String excludeSuffix : suffixExclusions) {
                 if(pathInfo.endsWith(excludeSuffix)) {
                     return true;
                 }
             }
         }
-        
+
         return false;
     }
     

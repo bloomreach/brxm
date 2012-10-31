@@ -98,6 +98,9 @@ public class HstFilter implements Filter {
     public static final String CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM = "clientComponentManagerContextAttributeName";
     public static final String CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME = HstFilter.class.getName() + ".clientComponentManager";
 
+    public static final String PREFIX_EXCLUSIONS_INIT_PARAM = "prefixExclusions";
+    public static final String SUFFIX_EXCLUSIONS_INIT_PARAM = "suffixExclusions";
+
     private static final String DEFAULT_LOGIN_RESOURCE_PATH = "/login/resource";
     
     protected String contextNamespace;
@@ -108,6 +111,10 @@ public class HstFilter implements Filter {
     protected ComponentManager clientComponentManager;
     protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
     protected volatile HstContainerConfig requestContainerConfig;
+
+    private String [] prefixExclusions;
+    private String [] suffixExclusions;
+    private String requestPathSuffixDelimiter = "./";
 
     private String defaultLoginResourcePath;
     
@@ -122,21 +129,14 @@ public class HstFilter implements Filter {
 
         clientComponentManagerClassName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CLASS_INIT_PARAM, clientComponentManagerClassName);
 
-        String param = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM, null);
-
-        if (param != null) {
-            String [] configs = param.split(",");
-
-            for (int i = 0; i < configs.length; i++) {
-                configs[i] = configs[i].trim();
-            }
-
-            clientComponentManagerConfigurations = configs;
-        }
+        clientComponentManagerConfigurations = splitParamValue(getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONFIGURATIONS_INIT_PARAM, null), ",");
 
         clientComponentManagerContextAttributeName = getConfigOrContextInitParameter(CLIENT_COMPONENT_MANAGER_CONTEXT_ATTRIBUTE_NAME_INIT_PARAM, clientComponentManagerContextAttributeName);
         
         defaultLoginResourcePath = getInitParameter(filterConfig, null, "loginResource", DEFAULT_LOGIN_RESOURCE_PATH);
+
+        prefixExclusions = splitParamValue(getConfigOrContextInitParameter(PREFIX_EXCLUSIONS_INIT_PARAM, null), ",");
+        suffixExclusions = splitParamValue(getConfigOrContextInitParameter(SUFFIX_EXCLUSIONS_INIT_PARAM, null), ",");
 
         initialized = false;
 
@@ -209,8 +209,13 @@ public class HstFilter implements Filter {
 
     	HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
-        
-      	// Cross-context includes are not (yet) supported to be handled directly by HstFilter
+
+        if (isExcludedRequest(req)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        // Cross-context includes are not (yet) supported to be handled directly by HstFilter
     	// Typical use-case for these is within a portal environment where the portal dispatches to a portlet (within in a separate portlet application)
     	// which *might* dispatch to HST. If such portlet dispatches again it most likely will run through this filter (being by default configured against /*)
     	// but in that case the portlet container will have setup a wrapper request as embedded within this web application (not cross-context).
@@ -250,6 +255,7 @@ public class HstFilter implements Filter {
     		    }
     		}
     	    HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+    	    requestPathSuffixDelimiter = hstSitesManager.getPathSuffixDelimiter();
     	    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
           
     	    if(siteMapItemHandlerFactory == null || hstSitesManager == null) {
@@ -267,7 +273,7 @@ public class HstFilter implements Filter {
     		}
 
     		// Sets up the container request wrapper
-            HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstSitesManager.getPathSuffixDelimiter());
+            HstContainerRequest containerRequest = new HstContainerRequestImpl(req, requestPathSuffixDelimiter);
 
     		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
 
@@ -870,5 +876,63 @@ public class HstFilter implements Filter {
         }
         
         return value;
+    }
+
+    private static String [] splitParamValue(String param, String delimiter) {
+        if (param == null) {
+            return null;
+        }
+
+        String [] tokens = param.split(delimiter);
+        String value = null;
+        ArrayList<String> valuesList = new ArrayList<String>();
+
+        for (int i = 0; i < tokens.length; i++) {
+            value = tokens[i].trim();
+
+            if (!"".equals(value)) {
+                valuesList.add(value);
+            }
+        }
+
+        if (!valuesList.isEmpty()) {
+            return valuesList.toArray(new String[valuesList.size()]);
+        }
+
+        return null;
+    }
+
+    protected boolean isExcludedRequest(HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        String pathInfo = requestURI.substring(request.getContextPath().length());
+
+        if (requestPathSuffixDelimiter != null) {
+            int offset = pathInfo.indexOf(requestPathSuffixDelimiter);
+            if (offset != -1) {
+                pathInfo = pathInfo.substring(0, offset);
+            }
+        }
+
+        pathInfo = HstRequestUtils.removeAllMatrixParams(pathInfo);
+
+        // test prefix
+        if (prefixExclusions != null) {
+            for (String excludePrefix : prefixExclusions) {
+                if (pathInfo.startsWith(excludePrefix)) {
+                    return true;
+                }
+            }
+        }
+
+        // test suffix
+        if (suffixExclusions != null) {
+            for (String excludeSuffix : suffixExclusions) {
+                if (pathInfo.endsWith(excludeSuffix)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
