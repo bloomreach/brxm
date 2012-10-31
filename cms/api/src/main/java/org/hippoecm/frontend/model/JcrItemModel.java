@@ -24,11 +24,11 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.wicket.Application;
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.string.PrependingStringBuffer;
@@ -218,72 +218,76 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
 
     private void save() {
         if (uuid == null) {
-            try {
-                relPath = null;
-                Node node = null;
-                PrependingStringBuffer spb = new PrependingStringBuffer();
-
-                // if we have an item, use it to update the path
-                Item item = getObject();
-                if (item != null) {
-                    try {
-                        absPath = item.getPath();
-                        if (item.isNode()) {
-                            node = (Node) item;
-                        } else {
-                            node = item.getParent();
-                            spb.prepend(item.getName());
-                            spb.prepend('/');
-                        }
-                    } catch (InvalidItemStateException ex) {
-                        // ignore; item doesn't exist anymore
-                        super.detach();
-                    }
-                }
-
-                // no node was found, use path to resolve an ancestor
-                if (node == null) {
-                    if (absPath != null) {
-                        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
-                        String path = absPath;
-                        while (path.lastIndexOf('/') > 0) {
-                            spb.prepend(path.substring(path.lastIndexOf('/')));
-                            path = path.substring(0, path.lastIndexOf('/'));
-                            try {
-                                node = (Node) session.getItem(path);
-                                break;
-                            } catch (PathNotFoundException ex) {
-                                continue;
-                            }
-                        }
-                    } else {
-                        log.debug("Neither path nor uuid present");
-                        return;
-                    }
-                }
-
-                while (node != null && !node.isNodeType("mix:referenceable")) {
-                    if (node.getIndex() > 1) {
-                        spb.prepend(']');
-                        spb.prepend(Integer.toString(node.getIndex()));
-                        spb.prepend('[');
-                    }
-                    spb.prepend(node.getName());
-                    spb.prepend('/');
-                    node = node.getParent();
-                }
-
-                if (node != null) {
-                    uuid = node.getIdentifier();
-                    if (spb.length() > 1) {
-                        relPath = spb.toString().substring(1);
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
+            doSave();
         }
     }
+
+    private void doSave() {
+        try {
+            relPath = null;
+            Node node = null;
+            PrependingStringBuffer spb = new PrependingStringBuffer();
+
+            // if we have an item, use it to update the path
+            Item item = getObject();
+            if (item != null) {
+                try {
+                    absPath = item.getPath();
+                    if (item.isNode()) {
+                        node = (Node) item;
+                    } else {
+                        node = item.getParent();
+                        spb.prepend(item.getName());
+                        spb.prepend('/');
+                    }
+                } catch (InvalidItemStateException ex) {
+                    // ignore; item doesn't exist anymore
+                    super.detach();
+                }
+            }
+
+            // no node was found, use path to resolve an ancestor
+            if (node == null) {
+                if (absPath != null) {
+                    Session session = UserSession.get().getJcrSession();
+                    String path = absPath;
+                    while (path.lastIndexOf('/') > 0) {
+                        spb.prepend(path.substring(path.lastIndexOf('/')));
+                        path = path.substring(0, path.lastIndexOf('/'));
+                        try {
+                            node = (Node) session.getItem(path);
+                            break;
+                        } catch (PathNotFoundException ignored) {
+                        }
+                    }
+                } else {
+                    log.debug("Neither path nor uuid present");
+                    return;
+                }
+            }
+
+            while (node != null && JcrHelper.isVirtualNode(node)) {
+                if (node.getIndex() > 1) {
+                    spb.prepend(']');
+                    spb.prepend(Integer.toString(node.getIndex()));
+                    spb.prepend('[');
+                }
+                spb.prepend(node.getName());
+                spb.prepend('/');
+                node = node.getParent();
+            }
+
+            if (node != null) {
+                uuid = node.getIdentifier();
+                if (spb.length() > 1) {
+                    relPath = spb.toString().substring(1);
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+    }
+
 
     private void writeObject(ObjectOutputStream output) throws IOException {
         if (isAttached()) {
