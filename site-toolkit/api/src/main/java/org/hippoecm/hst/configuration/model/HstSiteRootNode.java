@@ -36,4 +36,6 @@ public interface HstSiteRootNode extends HstNode{
      */
     long getVersion();
 
+    
+    String getConfigurationPath();
 }

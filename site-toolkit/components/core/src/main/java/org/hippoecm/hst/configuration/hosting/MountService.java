@@ -526,18 +526,10 @@ public class MountService implements ContextualizableMount, MutableMount {
                 previewCanonicalContentPath = canonicalContentPath;
                 previewContentPath = contentPath;
             } else {
-                try {
-                    previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager);
-                    previewCanonicalContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
-                    //previewContentPath = previewHstSiteNodeForMount.getContentPath();
-                    previewContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
-                } catch (ServiceException e) {
-                   if(log.isDebugEnabled()) {
-                       log.warn("Cannot create a preview version for mount '" + mount.getValueProvider().getPath() + "'", e);
-                   } else {
-                       log.warn("Cannot create a preview version for mount '{}' : '{}'", mount.getValueProvider().getPath(), e.toString());
-                   }
-                }
+                previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager);
+                previewCanonicalContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
+                //previewContentPath = previewHstSiteNodeForMount.getContentPath();
+                previewContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
             }
         }
 
@@ -549,14 +541,10 @@ public class MountService implements ContextualizableMount, MutableMount {
         
         for(HstNode childMount : mount.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(childMount.getNodeTypeName())) {
-                try {
-                    MountService childMountService = new MountService(childMount, this, virtualHost, hstManager, port);
-                    MutableMount prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
-                    if(prevValue != null) {
-                        log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());
-                    }
-                } catch (ServiceException e) {
-                    log.error("Skipping incorrect configured child mount '"+childMount.getValueProvider().getName()+"' for '"+childMount.getParent()+"'", e);
+                MountService childMountService = new MountService(childMount, this, virtualHost, hstManager, port);
+                MutableMount prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
+                if(prevValue != null) {
+                    log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());
                 }
             }
         }

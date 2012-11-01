@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
@@ -29,6 +28,7 @@ import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
+import org.hippoecm.hst.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapService;
@@ -61,8 +61,8 @@ public class HstSiteService implements HstSite {
         name = site.getValueProvider().getName();
         canonicalIdentifier = site.getValueProvider().getIdentifier();
         version = site.getVersion();
-        HstNode configurationNode = getConfigurationNode(site, hstManager, mount);
-        configurationPath = configurationNode.getValueProvider().getPath();
+        configurationPath = site.getConfigurationPath();
+        HstNode configurationNode = getConfigurationNode(configurationPath, hstManager);
         String hstSiteNodePath = site.getValueProvider().getPath();
 
         if (version > -1 && hstSiteNodePath.endsWith("-preview")) {
@@ -82,30 +82,15 @@ public class HstSiteService implements HstSite {
         init(configurationNode, mount, hstManager);
     }
 
-    private HstNode getConfigurationNode(HstSiteRootNode site, HstManagerImpl hstManager, ContextualizableMount mount) throws ServiceException {
-        String configurationName = findConfigurationName(site);
-        String path = hstManager.getRootPath() + "/hst:configurations/" + configurationName;
-        HstNode configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(path);
+    private HstNode getConfigurationNode(final String configurationPath, final HstManagerImpl hstManager) throws ServiceException {
+        HstNode configurationNode = hstManager.getEnhancedConfigurationRootNodes().get(configurationPath);
         if (configurationNode == null) {
-            throw new ServiceException(
-                    "There is no configuration found at'"+path+"'. Cannot load a configuration for it");
+            throw new ModelLoadingException(
+                    "There is no configuration found at '"+configurationPath+"'. Cannot load a configuration for it. This can only" +
+                            " happen if the jcr model changed during loading.");
         }
         return configurationNode;
 
-    }
-
-    private String findConfigurationName(final HstSiteRootNode site) {
-        String configurationName;
-        String siteNodeName = site.getValueProvider().getName();
-        if (siteNodeName.endsWith("-preview")) {
-            configurationName = siteNodeName.substring(0, (siteNodeName.length() - "-preview".length()) );
-        } else {
-            configurationName = siteNodeName;
-        }
-        if (version > -1) {
-            configurationName = configurationName+"-v"+version;
-        }
-        return configurationName;
     }
 
     private void init(HstNode configurationNode, Mount mount, HstManagerImpl hstManager) throws ServiceException {

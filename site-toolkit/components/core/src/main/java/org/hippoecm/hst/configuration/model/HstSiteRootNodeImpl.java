@@ -21,6 +21,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.LoggerFactory;
@@ -34,8 +35,9 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
     private String contentPath;
     private String canonicalContentPath;
     private long version = -1;
+    private String configurationPath;
     
-    public HstSiteRootNodeImpl(Node siteRootNode, HstNode parent)
+    public HstSiteRootNodeImpl(Node siteRootNode, HstNode parent, String rootConfigurationsPath)
             throws RepositoryException {
         
         // do not load child nodes as this is the entire content
@@ -49,6 +51,8 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
             if (getValueProvider().hasProperty(HstNodeTypes.SITE_VERSION)) {
                 version = getValueProvider().getLong(HstNodeTypes.SITE_VERSION).longValue();
             }
+            
+            configurationPath = rootConfigurationsPath + "/" + findConfigurationNameForSite(this.getValueProvider().getName(), version);
 
             if(siteRootNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
                 Node contentNode = siteRootNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
@@ -83,6 +87,19 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
         
     }
 
+    
+    
+    private String findConfigurationNameForSite(final String name, final long version) {
+        String configurationName;
+        // if ends with -preview, we strip it off.
+        configurationName = StringUtils.substringBefore(name, "-preview");
+
+        if (version > -1) {
+            configurationName = configurationName+"-v"+version;
+        }
+        return configurationName;
+    }
+    
     @Override
     public String getCanonicalContentPath() {
         return canonicalContentPath;
@@ -91,6 +108,11 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
     @Override
     public long getVersion() {
         return version;
+    }
+    
+    @Override
+    public String getConfigurationPath(){
+        return configurationPath;
     }
 
     @Override
