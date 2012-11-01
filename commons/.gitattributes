@@ -1,6 +1,7 @@
 * text=auto !eol
 /pom.xml -text
 src/main/java/org/onehippo/cms7/event/HippoEvent.java -text
+src/main/java/org/onehippo/cms7/event/HippoEventConstants.java -text
 src/main/java/org/onehippo/cms7/event/HippoSecurityEventConstants.java -text
 src/main/java/org/onehippo/sso/UrlSafeBase64.java -text
 src/test/java/org/onehippo/cms7/event/HippoEventTest.java -text

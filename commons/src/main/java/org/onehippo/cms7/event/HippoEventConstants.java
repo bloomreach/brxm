@@ -15,14 +15,15 @@
  */
 package org.onehippo.cms7.event;
 
-/**
- * @deprecated use {@link HippoEventConstants} instead
- */
-@Deprecated
-public final class HippoSecurityEventConstants {
 
-    private HippoSecurityEventConstants() {
-    }
+public class HippoEventConstants {
 
+    public static final String CATEGORY_USER_MANAGEMENT = "user-management";
+    public static final String CATEGORY_GROUP_MANAGEMENT = "group-management";
+    public static final String CATEGORY_PERMISSIONS_MANAGEMENT = "permissions-management";
     public static final String CATEGORY_SECURITY = "security";
+    public static final String CATEGORY_WORKFLOW = "workflow";
+
+    private HippoEventConstants() {}
+
 }
