@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import org.hippoecm.repository.ext.DaemonModule;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.event.HippoEventConstants;
+import org.onehippo.cms7.event.HippoSecurityEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.eventbus.Subscribe;
@@ -106,6 +107,10 @@ public class RepositoryLogger implements DaemonModule {
             returnType = workflowEvent.returnType();
             arguments = workflowEvent.arguments();
         } else if (HippoEventConstants.CATEGORY_SECURITY.equals(event.category())) {
+            HippoSecurityEvent securityEvent = new HippoSecurityEvent(event);
+            if (!securityEvent.success()) {
+                return;
+            }
             methodName = event.action();
         } else {
             return;
