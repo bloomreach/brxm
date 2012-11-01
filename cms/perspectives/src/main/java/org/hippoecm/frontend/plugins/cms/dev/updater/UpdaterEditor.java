@@ -512,7 +512,8 @@ public class UpdaterEditor extends Panel {
         final Session session = UserSession.get().getJcrSession();
         try {
             final Node registry = session.getNode(UPDATE_REGISTRY_PATH);
-            final Node node = registry.addNode("new", "hipposys:updaterinfo");
+            long index = registry.getNodes("new*").getSize() + 1;
+            final Node node = registry.addNode("new-" + index, "hipposys:updaterinfo");
             node.setProperty("hipposys:script", IOUtils.toString(UpdaterEditor.class.getResource("UpdaterTemplate.groovy").openStream()));
             session.save();
             container.setDefaultModel(new JcrNodeModel(node));
