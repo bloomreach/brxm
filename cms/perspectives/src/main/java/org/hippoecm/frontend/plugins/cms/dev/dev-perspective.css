@@ -13,7 +13,7 @@
 .updater-feedback {
     position: relative;
     height:200px;
-    border:1px #EEEEEE solid;
+    border:1px #EEE solid;
     font-size: 1.2em;
     display: block;
     overflow-x: auto;
@@ -37,4 +37,18 @@
     padding: 10px;
     border-radius: 10px;
     height: 800px;
+}
+
+.updater-details form input[type=submit] {
+    margin-right: 5px;
+}
+
+.updater-details form input[type=text] {
+    width: 100%;
+}
+
+.updater-details .labelcell {
+    width: 100px;
+    overflow: hidden;
+    white-space: nowrap;
 }

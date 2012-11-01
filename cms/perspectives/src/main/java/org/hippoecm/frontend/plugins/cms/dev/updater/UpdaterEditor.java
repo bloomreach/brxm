@@ -16,10 +16,8 @@
 package org.hippoecm.frontend.plugins.cms.dev.updater;
 
 import java.io.IOException;
-import java.io.Serializable;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.InvalidQueryException;
@@ -38,10 +36,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.util.io.IOUtils;
-import org.apache.wicket.validation.IValidatable;
-import org.apache.wicket.validation.IValidator;
-import org.apache.wicket.validation.ValidationError;
-import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -58,7 +52,6 @@ public class UpdaterEditor extends Panel {
     protected static final String UPDATE_PATH = "/hippo:configuration/hippo:update";
     protected static final String UPDATE_QUEUE_PATH = UPDATE_PATH + "/hippo:queue";
     protected static final String UPDATE_REGISTRY_PATH = UPDATE_PATH + "/hippo:registry";
-    protected static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
 
     private static final long DEFAULT_BATCH_SIZE = 10l;
     private static final long DEFAULT_THOTTLE = 1000l;
@@ -76,7 +69,7 @@ public class UpdaterEditor extends Panel {
     protected String method = DEFAULT_METHOD;
     protected String batchSize = String.valueOf(DEFAULT_BATCH_SIZE);
     protected String throttle = String.valueOf(DEFAULT_THOTTLE);
-    protected Boolean dryRun = false;
+    protected boolean dryRun = false;
 
     public UpdaterEditor(IModel<?> model, final IPluginContext context, Panel container) {
         super("updater-editor", model);
