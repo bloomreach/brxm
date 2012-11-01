@@ -278,13 +278,12 @@ public class JCRJobStore extends AbstractJobStore {
                     jobNode.remove();
                     session.save();
                 }
-            } catch (ItemNotFoundException ex) {
+            } catch (ItemNotFoundException e) {
                 log.warn("Trigger no longer exists: " + trigger.getName());
-            } catch (RepositoryException ex) {
+            } catch (RepositoryException e) {
                 refreshSession(session);
                 final String message = "Failed to finalize job: " + ((JCRJobDetail) jobDetail).getIdentifier();
-                log.error(message, ex);
-                throw new JobPersistenceException(message, ex);
+                log.error(message, e);
             }
         }
     }
