@@ -330,7 +330,7 @@ public class UpdaterEditor extends Panel {
         if (visitorPath != null) {
             method = "path";
         }
-
+        dryRun = getBooleanProperty("hipposys:dryrun", false);
     }
 
     private String getName() {
@@ -350,6 +350,18 @@ public class UpdaterEditor extends Panel {
         if (node != null) {
             try {
                 return JcrUtils.getStringProperty(node, propertyName, defaultValue);
+            } catch (RepositoryException e) {
+                log.error("Failed to retrieve property {}", propertyName, e);
+            }
+        }
+        return defaultValue;
+    }
+
+    protected final boolean getBooleanProperty(String propertyName, boolean defaultValue) {
+        final Node node = (Node) getDefaultModelObject();
+        if (node != null) {
+            try {
+                return JcrUtils.getBooleanProperty(node, propertyName, defaultValue);
             } catch (RepositoryException e) {
                 log.error("Failed to retrieve property {}", propertyName, e);
             }
