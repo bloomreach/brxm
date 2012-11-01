@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.model;
 
-import java.rmi.RemoteException;
-
-import javax.jcr.AccessDeniedException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -33,11 +30,10 @@ import org.apache.wicket.protocol.http.servlet.AbortWithHttpStatusException;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.standardworkflow.EventLoggerWorkflow;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
+import org.onehippo.cms7.event.HippoSecurityEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
@@ -70,23 +66,16 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     protected void flush() {
         Session session = getObject();
         if (session != null) {
-            log.debug("Flushing session of {}", session.getUserID());
             if (session.isLive()) {
                 if (saveOnExit) {
                     try {
-                        session.refresh(true);
                         session.save();
                     } catch (RepositoryException e) {
-                        log.error("Error when logging out", e);
+                        log.error("Failed to save session before logging out", e);
                     }
                 }
                 session.logout();
-                final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-                if (eventBus != null) {
-                    final HippoEvent event = new HippoEvent("cms").user(session.getUserID()).action("logout");
-                    event.sealEvent();
-                    eventBus.post(event);
-                }
+                logHippoEvent(true, session.getUserID(), "logout", true);
             }
             super.detach();
         }
@@ -110,13 +99,6 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     @Override
     public void detach() {
-        if (log.isInfoEnabled()) {
-            String username = (credentials != null ? credentials.getUsername() : null);
-            if (username != null && username.length() > 0) {
-                // don't log logouts from anonymous (eg login screen)
-                log.info("[" + getRemoteAddr() + "] Logout as " + username + " from Hippo CMS 7");
-            }
-        }
         if (isAttached()) {
             flush();
         }
@@ -125,31 +107,20 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     @Override
     protected Session load() {
-        javax.jcr.Session session = null;
+        Session session = null;
         boolean fatalError = false;
-        String username = (credentials != null ? credentials.getUsername() : null);
         try {
-            session = login(credentials);
-            if (session == null) {
+            if (credentials == null) {
                 return null;
             }
-            try {
-                logLogin(session);
-                if (isSystemUser(session)) {
-                    session = null;
-                    log.warn("[" + getRemoteAddr() + "] Login not allowed for system user: " + username);
-                } else {
-                    log.info("[" + getRemoteAddr() + "] Login by: " + username);
-                }
-            } catch (AccessDeniedException e) {
-                log.debug("Unable to log login event (maybe trying as Anonymous?): " + e.getMessage());
-            } catch (RepositoryException e) {
-                log.error("RepositoryException while logging login event", e);
-            } catch (RemoteException e) {
-                log.error("RemoteException while logging login event", e);
+            session = login(credentials);
+            if (isSystemUser(session)) {
+                logHippoEvent(true, credentials.getUsername(), "system user", false);
+                return null;
             }
+            logHippoEvent(true, credentials.getUsername(), "login successful", true);
         } catch (LoginException e) {
-            log.info("[" + getRemoteAddr() + "] Invalid login as user: " + username);
+            logHippoEvent(true, credentials.getUsername(), "invalid credentials", false);
         } catch (RepositoryException e) {
             fatalError = true;
             log.error("Unable to obtain repository instance, aborting.", e);
@@ -165,22 +136,20 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
     public static Session login(UserCredentials credentials) throws LoginException, RepositoryException {
         Main main = (Main) Application.get();
         HippoRepository repository = main.getRepository();
-        if (credentials != null) {
-            return repository.getRepository().login(credentials.getJcrCredentials());
-        } else {
-            return null;
-        }
+        return repository.getRepository().login(credentials.getJcrCredentials());
     }
 
-    private void logLogin(Session session) throws RepositoryException, RemoteException {
+    private void logHippoEvent(final boolean login, final String user, final String message, boolean success) {
         final HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
         if (eventBus != null) {
-            final HippoEvent event = new HippoEvent("cms").user(session.getUserID()).action("login").set("remoteAddress", getRemoteAddr());
+            final String action = login ? "login" : "logout";
+            final HippoEvent event = new HippoSecurityEvent("cms").success(success).action(action)
+                    .category(HippoEventConstants.CATEGORY_SECURITY).user(user).set("remoteAddress", getRemoteAddr())
+                    .message(message);
             event.sealEvent();
             eventBus.post(event);
         }
     }
-
 
     protected boolean isSystemUser(Session session) {
         try {

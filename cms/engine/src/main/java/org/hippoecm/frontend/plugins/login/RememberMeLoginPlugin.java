@@ -69,7 +69,7 @@ import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.event.HippoSecurityEventConstants;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
@@ -404,13 +404,6 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     }
                 }
 
-                HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-                if (eventBus != null) {
-                    HippoEvent event = new HippoEvent(userSession.getApplicationName())
-                            .user(userSession.getJcrSession().getUserID()).action("login")
-                            .category(HippoSecurityEventConstants.CATEGORY_SECURITY).message(username + " logged in");
-                    eventBus.post(event);
-                }
             } else {
                 String key = DEFAULT_KEY;
                 if (loginExceptionPageParameters != null) {
@@ -430,14 +423,6 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 // Get an anonymous session, this is in case the user provided valid username and password
                 // but failed to provide a valid captcha is case it was enabled and displayed
                 userSession.login();
-                HippoEventBus eventBus = HippoServiceRegistry.getService(HippoEventBus.class);
-                if (eventBus != null) {
-                    HippoEvent event = new HippoEvent(userSession.getApplicationName())
-                            .user(userSession.getJcrSession().getUserID()).action("login")
-                            .category(HippoSecurityEventConstants.CATEGORY_SECURITY).result("failure")
-                            .message(username + " failed to login");
-                    eventBus.post(event);
-                }
             }
 
             userSession.setLocale(new Locale(selectedLocale));
