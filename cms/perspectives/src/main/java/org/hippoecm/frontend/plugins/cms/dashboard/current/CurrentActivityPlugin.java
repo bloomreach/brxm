@@ -100,7 +100,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                 }
             }));
 
-            final DocumentEvent documentEvent = new DocumentEvent(item.getModel());
+            final DocumentEvent documentEvent = new DocumentEvent(item.getModelObject());
             final IModel<String> nameModel = documentEvent.getName();
             String path = documentEvent.getDocumentPath();
             if (path != null) {

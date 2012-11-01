@@ -33,7 +33,6 @@ import javax.jcr.query.QueryResult;
 import org.apache.jackrabbit.util.ISO9075;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
@@ -42,6 +41,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
@@ -353,7 +353,7 @@ public class Group implements Comparable<Group>, IClusterable {
             HippoEvent event = new HippoEvent(userSession.getApplicationName())
                     .user(userSession.getJcrSession().getUserID())
                     .action("delete-group")
-                    .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                    .category(HippoEventConstants.CATEGORY_GROUP_MANAGEMENT)
                     .message("deleted group " + groupname);
             eventBus.post(event);
         }

@@ -36,12 +36,12 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
@@ -101,7 +101,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                         HippoEvent event = new HippoEvent(userSession.getApplicationName())
                                 .user(userSession.getJcrSession().getUserID())
                                 .action("grant-role")
-                                .category(HippoSecurityEventConstants.CATEGORY_PERMISSIONS_MANAGEMENT)
+                                .category(HippoEventConstants.CATEGORY_PERMISSIONS_MANAGEMENT)
                                 .message(
                                         "grant " + selectedRole + " role to group " + selectedGroup.getGroupname() +
                                                 " for domain " + domain.getName());
@@ -180,7 +180,7 @@ public class SetPermissionsPanel extends AdminBreadCrumbPanel {
                             HippoEvent event = new HippoEvent(userSession.getApplicationName())
                                     .user(userSession.getJcrSession().getUserID())
                                     .action("revoke-role")
-                                    .category(HippoSecurityEventConstants.CATEGORY_PERMISSIONS_MANAGEMENT)
+                                    .category(HippoEventConstants.CATEGORY_PERMISSIONS_MANAGEMENT)
                                     .message("revoke " + selectedRole + " role from group " + groupName + " for domain "
                                             + domain.getName());
                             eventBus.post(event);

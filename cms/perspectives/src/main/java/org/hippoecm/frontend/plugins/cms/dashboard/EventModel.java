@@ -62,8 +62,7 @@ public class EventModel implements IComponentAssignedModel<String> {
         Node node = eventNode.getNode();
         try {
             if (node == null || !node.isNodeType("hippolog:item")) {
-                throw new IllegalArgumentException(
-                        "CurrentActivityPlugin can only process Nodes of type hippolog:item.");
+                throw new IllegalArgumentException("CurrentActivityPlugin can only process nodes of type hippolog:item.");
             }
 
             this.dateFormat = dateFormat;
@@ -75,13 +74,8 @@ public class EventModel implements IComponentAssignedModel<String> {
                     + node.getProperty("hippolog:eventClass").getString();
             this.user = node.getProperty("hippolog:eventUser").getString();
             this.nameModel = nameModel;
-        } catch (RepositoryException ex) {
-            JcrItemModel itemModel = eventNode.getItemModel();
-            if (itemModel.exists()) {
-                log.error("Could not parse event node " + itemModel.getPath());
-            } else {
-                log.warn("Event node retrieved that no longer exists");
-            }
+        } catch (RepositoryException e) {
+            log.error("Could not parse event node", e);
         }
     }
 
@@ -167,7 +161,7 @@ public class EventModel implements IComponentAssignedModel<String> {
 
         private final Component component;
 
-        public AssignmentWrapper(Component component) {
+        private AssignmentWrapper(Component component) {
             this.component = component;
         }
 
@@ -179,23 +173,21 @@ public class EventModel implements IComponentAssignedModel<String> {
         @Override
         public String getObject() {
             try {
+                final String timeString = new StringResourceModel(time, component, null).getString();
+                StringResourceModel operationModel;
                 if (nameModel != null) {
                     String name = nameModel.getObject();
-                    StringResourceModel operationModel;
                     if(name != null && name.startsWith("org.hippoecm.repository.api.Document[uuid=")) {
-                        final String method2 = StringUtils.replaceOnce(method, "delete", "delete-unknown");
-                        operationModel = new StringResourceModel(method2, component, null, new Object[]{user});
+                        final String resourceKey = StringUtils.replaceOnce(method, "delete", "delete-unknown");
+                        operationModel = new StringResourceModel(resourceKey, component, null, new Object[]{user});
                     } else {
                         name = StringEscapeUtils.escapeHtml(name);
-                        operationModel = new StringResourceModel(method, component, null,
-                                                                                     new Object[]{user, name});
+                        operationModel = new StringResourceModel(method, component, null, new Object[]{user, name});
                     }
-                    return new StringResourceModel(time, component, null, "").getString() + operationModel.getString();
                 } else {
-                    StringResourceModel operationModel = new StringResourceModel(method, component, null,
-                                                                                 new Object[]{user});
-                    return new StringResourceModel(time, component, null, "").getString() + operationModel.getString();
+                    operationModel = new StringResourceModel(method, component, null, new Object[]{user});
                 }
+                return timeString + operationModel.getString();
             } catch (MissingResourceException mre) {
                 return "Warning: could not translate Workflow operation " + method;
             }

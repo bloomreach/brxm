@@ -35,9 +35,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
@@ -83,7 +83,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                         HippoEvent event = new HippoEvent(userSession.getApplicationName())
                                 .user(userSession.getJcrSession().getUserID())
                                 .action("create-group")
-                                .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                                .category(HippoEventConstants.CATEGORY_GROUP_MANAGEMENT)
                                 .message("added group " + groupname);
                         eventBus.post(event);
                     }

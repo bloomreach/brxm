@@ -22,10 +22,10 @@ import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
@@ -85,7 +85,7 @@ public class DeleteUserDialog extends DeleteDialog<User> {
                 final UserSession userSession = UserSession.get();
                 HippoEvent event = new HippoEvent(userSession.getApplicationName())
                         .user(userSession.getJcrSession().getUserID()).action("delete-user")
-                        .category(HippoSecurityEventConstants.CATEGORY_USER_MANAGEMENT)
+                        .category(HippoEventConstants.CATEGORY_USER_MANAGEMENT)
                         .message("deleted user " + username);
                 eventBus.post(event);
             }

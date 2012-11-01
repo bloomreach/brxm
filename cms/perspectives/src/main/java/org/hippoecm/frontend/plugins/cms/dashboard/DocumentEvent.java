@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,33 +27,31 @@ import javax.jcr.version.VersionHistory;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservationContext;
-import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.frontend.plugins.cms.dashboard.current.CurrentActivityPlugin;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentEvent extends JcrObject {
+public class DocumentEvent {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
     private static final Pattern pattern = Pattern.compile("document\\[(?:(?:(?:uuid=([0-9a-fA-F-]+))|(?:path='(/[^']*)')),?)*\\]");
+
+    private final Node node;
 
     private String sourceVariant;
     private boolean sourceVariantExists;
     private String targetVariant;
     private boolean targetVariantExists;
 
-    public DocumentEvent(IModel<Node> nodeModel) {
-        super(nodeModel);
-
+    public DocumentEvent(Node node) {
+        this.node = node;
         try {
-            Node node = getNode();
             Session session = node.getSession();
 
             // Best effort algoritm to create a 'browse' link to a document.
@@ -125,33 +122,18 @@ public class DocumentEvent extends JcrObject {
             log.error(e.getMessage(), e);
         }
     }
+
     public String getMethod() {
         try {
-            Node node = getNode();
-            if (node.hasProperty("hippolog:eventMethod")) {
-                return node.getProperty("hippolog:eventMethod").getString();
-            }
+            return JcrUtils.getStringProperty(node, "hippolog:eventMethod", null);
         } catch (RepositoryException e) {
             log.error(e.getMessage());
+            return null;
         }
-        return null;
-    }
-
-    public String getDocument() {
-        try {
-            Node node = getNode();
-            if (node.hasProperty("hippolog:eventDocument")) {
-                return node.getProperty("hippolog:eventDocument").getString();
-            }
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-        }
-        return null;
     }
 
     public String getArgument(int index) {
         try {
-            Node node = getNode();
             if (node.hasProperty("hippolog:eventArguments")
                     && node.getProperty("hippolog:eventArguments").getValues().length > index) {
                 return node.getProperty("hippolog:eventArguments").getValues()[index].getString();
@@ -163,21 +145,9 @@ public class DocumentEvent extends JcrObject {
     }
 
     public IModel<String> getName() {
-        if ("delete".equals(getMethod()) && getArgument(0) != null) {
-            return new LoadableDetachableModel<String>() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected String load() {
-                    return getArgument(0);
-                }
-
-                @Override
-                public void detach() {
-                    DocumentEvent.this.detach();
-                    super.detach();
-                }
-            };
+        final String argument = getArgument(0);
+        if ("delete".equals(getMethod()) && argument != null) {
+            return new Model<String>(argument);
         } else if ("add".equals(getMethod())) {
             return new NodeTranslator(new JcrNodeModel(targetVariant)).getNodeName();
         } else {
@@ -233,6 +203,4 @@ public class DocumentEvent extends JcrObject {
         return null;
     }
 
-    @Override
-    protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {}
 }

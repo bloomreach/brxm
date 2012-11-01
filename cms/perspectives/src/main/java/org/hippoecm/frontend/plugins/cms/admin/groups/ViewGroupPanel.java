@@ -38,7 +38,6 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.HippoSecurityEventConstants;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
@@ -51,6 +50,7 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.DeleteDialog;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
@@ -257,7 +257,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                 HippoEvent event = new HippoEvent(userSession.getApplicationName())
                         .user(userSession.getJcrSession().getUserID())
                         .action("remove-group-from-role")
-                        .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                        .category(HippoEventConstants.CATEGORY_GROUP_MANAGEMENT)
                         .message(
                                 "removed group " + groupToChange.getGroupname()
                                         + " from role " + authRole.getRole());
@@ -357,7 +357,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                 HippoEvent event = new HippoEvent(userSession.getApplicationName())
                         .user(userSession.getJcrSession().getUserID())
                         .action("remove-user-from-group")
-                        .category(HippoSecurityEventConstants.CATEGORY_GROUP_MANAGEMENT)
+                        .category(HippoEventConstants.CATEGORY_GROUP_MANAGEMENT)
                         .message("removed user " + userName + " from group " + group.getGroupname());
                 eventBus.post(event);
             }

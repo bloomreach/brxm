@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard;
 
-import java.text.DateFormat;
 import java.util.Calendar;
 
 import javax.jcr.Node;
@@ -76,7 +75,7 @@ public class EventLabelTest extends PluginTest {
         Long timestamp = Calendar.getInstance().getTimeInMillis();
         Node eventNode = createEventNode(timestamp, "testMethod", "testUser");
 
-        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        DocumentEvent parser = new DocumentEvent(eventNode);
         assertNull(parser.getDocumentPath());
 
         EventModel label = new EventModel(new JcrNodeModel(eventNode));
@@ -91,7 +90,7 @@ public class EventLabelTest extends PluginTest {
         Node eventNode = createEventNode(timestamp, "testDocumentMethod", "testUser");
         eventNode.setProperty("hippolog:eventDocument", docNode.getPath());
 
-        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        DocumentEvent parser = new DocumentEvent(eventNode);
         assertEquals("/test/testDocument", parser.getDocumentPath());
 
         EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName(), null);
@@ -110,7 +109,7 @@ public class EventLabelTest extends PluginTest {
         eventNode.setProperty("hippolog:eventReturnValue", "document[uuid=" + docNode.getUUID() + ",path='"
                 + docNode.getPath() + "']");
 
-        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        DocumentEvent parser = new DocumentEvent(eventNode);
         assertEquals("/test/testDocument", parser.getDocumentPath());
 
         EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName(), null);
@@ -131,7 +130,7 @@ public class EventLabelTest extends PluginTest {
         eventNode.setProperty("hippolog:eventReturnValue", "document[uuid=" + version.getUUID() + ",path='"
                 + version.getPath() + "']");
 
-        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        DocumentEvent parser = new DocumentEvent(eventNode);
         assertEquals("/test/testDocument", parser.getDocumentPath());
 
         EventModel label = new EventModel(new JcrNodeModel(eventNode), parser.getName(), null);
@@ -154,7 +153,7 @@ public class EventLabelTest extends PluginTest {
         docNode.remove();
         session.save();
 
-        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        DocumentEvent parser = new DocumentEvent(eventNode);
         String path = parser.getDocumentPath();
         assertEquals("/test/testDocument", path);
 
@@ -170,7 +169,7 @@ public class EventLabelTest extends PluginTest {
         Node eventNode = createEventNode(timestamp, "delete", "testUser");
         eventNode.setProperty("hippolog:eventDocument", docNode.getPath());
 
-        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        DocumentEvent parser = new DocumentEvent(eventNode);
         IModel<String> nameModel = parser.getName();
         assertEquals("testDocument", nameModel.getObject());
     }
@@ -182,7 +181,7 @@ public class EventLabelTest extends PluginTest {
         Node eventNode = createEventNode(timestamp, "delete", "testUser", new String[] { "child" });
         eventNode.setProperty("hippolog:eventDocument", docNode.getPath());
 
-        DocumentEvent parser = new DocumentEvent(new JcrNodeModel(eventNode));
+        DocumentEvent parser = new DocumentEvent(eventNode);
         IModel<String> nameModel = parser.getName();
         assertEquals("child", nameModel.getObject());
     }
