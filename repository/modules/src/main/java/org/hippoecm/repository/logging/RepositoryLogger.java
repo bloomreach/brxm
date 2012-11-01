@@ -24,6 +24,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.repository.ext.DaemonModule;
 import org.onehippo.cms7.event.HippoEvent;
+import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.cms7.services.eventbus.Subscribe;
@@ -86,20 +87,29 @@ public class RepositoryLogger implements DaemonModule {
             return;
         }
 
-        if (!"workflow".equals(event.category())) {
+        long timestamp = event.timestamp();
+        String userName = event.user();
+        String methodName;
+        String returnValue = null;
+        String className = null;
+        String documentPath = null;
+        String handleUuid = null;
+        String returnType = null;
+        List<String> arguments = null;
+        if (HippoEventConstants.CATEGORY_WORKFLOW.equals(event.category())) {
+            HippoWorkflowEvent workflowEvent = new HippoWorkflowEvent(event);
+            returnValue = workflowEvent.result();
+            methodName = workflowEvent.methodName();
+            className = workflowEvent.className();
+            documentPath = workflowEvent.documentPath();
+            handleUuid = workflowEvent.handleUuid();
+            returnType = workflowEvent.returnType();
+            arguments = workflowEvent.arguments();
+        } else if (HippoEventConstants.CATEGORY_SECURITY.equals(event.category())) {
+            methodName = event.action();
+        } else {
             return;
         }
-
-        HippoWorkflowEvent workflowEvent = new HippoWorkflowEvent(event);
-        long timestamp = workflowEvent.timestamp();
-        String userName = workflowEvent.user();
-        String returnValue = workflowEvent.result();
-        String methodName = workflowEvent.methodName();
-        String className = workflowEvent.className();
-        String documentPath = workflowEvent.documentPath();
-        String handleUuid = workflowEvent.handleUuid();
-        String returnType = workflowEvent.returnType();
-        List<String> arguments = workflowEvent.arguments();
 
         try {
             char[] randomChars = generateRandomCharArray(HIERARCHY_DEPTH);
@@ -151,11 +161,11 @@ public class RepositoryLogger implements DaemonModule {
 
 
     private String getClusterNodeId() {
-        String clusteNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
-        if (clusteNodeId == null) {
-            clusteNodeId = DEFAULT_CLUSTER_NODE_ID;
+        String clusterNodeId = session.getRepository().getDescriptor("jackrabbit.cluster.id");
+        if (clusterNodeId == null) {
+            clusterNodeId = DEFAULT_CLUSTER_NODE_ID;
         }
-        return clusteNodeId;
+        return clusterNodeId;
     }
 
     private static String charArrayToRelPath(char[] chars, int len) {
