@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentEvent {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
     private static final Pattern pattern = Pattern.compile("document\\[(?:(?:(?:uuid=([0-9a-fA-F-]+))|(?:path='(/[^']*)')),?)*\\]");
 
@@ -146,10 +145,13 @@ public class DocumentEvent {
 
     public IModel<String> getName() {
         final String argument = getArgument(0);
-        if ("delete".equals(getMethod()) && argument != null) {
+        final String method = getMethod();
+        if ("delete".equals(method) && argument != null) {
             return new Model<String>(argument);
-        } else if ("add".equals(getMethod())) {
+        } else if ("add".equals(method)) {
             return new NodeTranslator(new JcrNodeModel(targetVariant)).getNodeName();
+        } else if ("addTranslation".equals(method)) {
+            return new NodeTranslator(new JcrNodeModel(sourceVariant)).getNodeName();
         } else {
             String path = getDocumentPath();
             if (path != null) {
