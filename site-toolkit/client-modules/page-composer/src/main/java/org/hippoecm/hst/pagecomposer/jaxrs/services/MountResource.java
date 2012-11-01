@@ -50,6 +50,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +65,6 @@ public class MountResource extends AbstractConfigResource {
     @Path("/pagemodel/{pageId}/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPageModelRepresentation(@Context HttpServletRequest servletRequest,
-                                               @Context HttpServletResponse servletResponse,
                                                @PathParam("pageId") String pageId) {
         try { 
             final HstRequestContext requestContext = getRequestContext(servletRequest);
@@ -88,8 +88,7 @@ public class MountResource extends AbstractConfigResource {
     @GET
     @Path("/toolkit/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getToolkitRepresentation(@Context HttpServletRequest servletRequest,
-                                             @Context HttpServletResponse servletResponse) {
+    public Response getToolkitRepresentation(@Context HttpServletRequest servletRequest) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
         final Mount editingMount = getEditingPreviewMount(requestContext);
         if (editingMount == null) {
@@ -176,20 +175,7 @@ public class MountResource extends AbstractConfigResource {
                 return ok("Site can be edited now");
             }
 
-            long liveVersion = ctxEditingLiveMountSite.getVersion();
-            long newVersion = liveVersion + 1;
-            String liveConfigurationPath = ctxEditingLiveMountSite.getConfigurationPath();
-            StringBuilder newPreviewConfigurationPathBuilder = new StringBuilder();
-            newPreviewConfigurationPathBuilder.append(StringUtils.substringBeforeLast(liveConfigurationPath, "/"));
-            newPreviewConfigurationPathBuilder.append("/").append(ctxEditingLiveMountSite.getName());
-            newPreviewConfigurationPathBuilder.append("-v").append(newVersion);
-            String newPreviewConfigurationPath = newPreviewConfigurationPathBuilder.toString();
-
-            session.getWorkspace().copy(liveConfigurationPath, newPreviewConfigurationPath);
-            Node newPreviewConfigurationNode = session.getNode(newPreviewConfigurationPath);
-            Node hstPreviewSiteNode = session.getNodeByIdentifier(ctxEditingPreviewSite.getCanonicalIdentifier());
-            hstPreviewSiteNode.setProperty(HstNodeTypes.SITE_VERSION, newVersion);
-
+            Node newPreviewConfigurationNode = createPreviewConfigurationNode(requestContext);
             setLockProperties(newPreviewConfigurationNode);
             session.save();
         } catch (IllegalStateException e) {
@@ -201,6 +187,32 @@ public class MountResource extends AbstractConfigResource {
         }
    
         return ok("Site can be edited now");
+    }
+
+    private Node createPreviewConfigurationNode(final HstRequestContext requestContext) throws RepositoryException {
+        HstSite ctxEditingPreviewSite = getEditingPreviewMount(requestContext).getHstSite();
+        HstSite ctxEditingLiveMountSite = getEditingLiveMount(requestContext).getHstSite();
+        long liveVersion = ctxEditingLiveMountSite.getVersion();
+        long newVersion = liveVersion + 1;
+        String liveConfigurationPath = ctxEditingLiveMountSite.getConfigurationPath();
+        String newPreviewConfigurationPath = getNewPreviewConfigurationPath(ctxEditingLiveMountSite, newVersion, liveConfigurationPath);
+        Session session = requestContext.getSession();
+        Node liveConfiguration = session.getNode(liveConfigurationPath);
+        // cannot cast session from request context to HippoSession, hence, get it from jcr node first
+        ((HippoSession)liveConfiguration.getSession()).copy(liveConfiguration, newPreviewConfigurationPath);
+        //session.getWorkspace().copy(liveConfigurationPath, newPreviewConfigurationPath);
+        Node newPreviewConfigurationNode = session.getNode(newPreviewConfigurationPath);
+        Node hstPreviewSiteNode = session.getNodeByIdentifier(ctxEditingPreviewSite.getCanonicalIdentifier());
+        hstPreviewSiteNode.setProperty(HstNodeTypes.SITE_VERSION, newVersion);
+        return newPreviewConfigurationNode;
+    }
+
+    private String getNewPreviewConfigurationPath(final HstSite ctxEditingLiveMountSite, final long newVersion, final String liveConfigurationPath) {
+        StringBuilder newPreviewConfigurationPathBuilder = new StringBuilder();
+        newPreviewConfigurationPathBuilder.append(StringUtils.substringBeforeLast(liveConfigurationPath, "/"));
+        newPreviewConfigurationPathBuilder.append("/").append(ctxEditingLiveMountSite.getName());
+        newPreviewConfigurationPathBuilder.append("-v").append(newVersion);
+        return newPreviewConfigurationPathBuilder.toString();
     }
 
     /**
@@ -260,8 +272,8 @@ public class MountResource extends AbstractConfigResource {
             
             removeLockProperties(previewConfigurationNode);
             session.removeItem(editingLiveSite.getConfigurationPath());
-            Node HstSiteLiveNode = session.getNodeByIdentifier(editingLiveSite.getCanonicalIdentifier());
-            HstSiteLiveNode.setProperty(HstNodeTypes.SITE_VERSION, editingPreviewSite.getVersion());
+            Node hstSiteLiveNode = session.getNodeByIdentifier(editingLiveSite.getCanonicalIdentifier());
+            hstSiteLiveNode.setProperty(HstNodeTypes.SITE_VERSION, editingPreviewSite.getVersion());
             session.save();
         } catch (LoginException e) {
             return error("Could not get a jcr session : " + e + ". Cannot publish configuration.");
@@ -277,7 +289,6 @@ public class MountResource extends AbstractConfigResource {
      * Creates a document in the repository using the WorkFlowManager
      * The post parameters should contain the 'path', 'docType' and 'name' of the document.
      * @param servletRequest Servlet Request
-     * @param servletResponse Servlet Response
      * @param params The POST parameters
      * @return response JSON with the status of the result
      */
@@ -285,14 +296,13 @@ public class MountResource extends AbstractConfigResource {
     @Path("/create/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response createDocument(@Context HttpServletRequest servletRequest,
-                                   @Context HttpServletResponse servletResponse,
                                    MultivaluedMap<String, String> params) {
 
         final HstRequestContext requestContext = getRequestContext(servletRequest);
         try {
             final Mount editingPreviewMount = getEditingPreviewMount(requestContext);
             if (editingPreviewMount == null) {
-                log.error("Could not get the editing mount to get the content path for creating the document.");
+                log.warn("Could not get the editing mount to get the content path for creating the document.");
                 return error("Could not get the editing mount to get the content path for creating the document.");
             }
             String canonicalContentPath = editingPreviewMount.getCanonicalContentPath();
@@ -300,10 +310,10 @@ public class MountResource extends AbstractConfigResource {
                     getObjectConverter(requestContext));
             workflowPersistenceManager.createAndReturn(canonicalContentPath + "/" + params.getFirst("docLocation"), params.getFirst("docType"), params.getFirst("docName"), true);
         } catch (RepositoryException e) {
-            log.error("Exception happened while trying to create the document " + e, e);
+            log.warn("Exception happened while trying to create the document " + e, e);
             return error("Exception happened while trying to create the document " + e);
         } catch (ObjectBeanPersistenceException e) {
-            log.error("Exception happened while trying to create the document " + e, e);
+            log.warn("Exception happened while trying to create the document " + e, e);
             return error("Exception happened while trying to create the document " + e);
         }
         return ok("Successfully created a document", null);
@@ -313,7 +323,6 @@ public class MountResource extends AbstractConfigResource {
      * Method that returns a {@link Response} containing the list of document of (sub)type <code>docType</code> that
      * belong to the content of the site that is currently composed.
      * @param servletRequest
-     * @param servletResponse
      * @param docType         the docType the found documents must be of. The documents can also be a subType of
      *                        docType
      * @return An ok Response containing the list of documents or an error response in case an exception occurred
@@ -322,12 +331,12 @@ public class MountResource extends AbstractConfigResource {
     @Path("/documents/{docType}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDocumentsByType(@Context HttpServletRequest servletRequest,
-                                       @Context HttpServletResponse servletResponse, @PathParam("docType") String docType) {
+                                       @PathParam("docType") String docType) {
 
         final HstRequestContext requestContext = getRequestContext(servletRequest);
         final Mount editingHstMount = getEditingPreviewMount(requestContext);
         if (editingHstMount == null) {
-            log.error("Could not get the editing mount to get the content path for listing documents.");
+            log.warn("Could not get the editing mount to get the content path for listing documents.");
             return error("Could not get the editing mount to get the content path for listing documents.");
         }
         List<DocumentRepresentation> documentLocations = new ArrayList<DocumentRepresentation>();
@@ -352,13 +361,13 @@ public class MountResource extends AbstractConfigResource {
                 }
                 String docPath = doc.getPath();
                 if (!docPath.startsWith(canonicalContentPath + "/")) {
-                    log.error("Unexpected document path '{}'", docPath);
+                    log.warn("Unexpected document path '{}'", docPath);
                     continue;
                 }
                 documentLocations.add(new DocumentRepresentation(docPath.substring(canonicalContentPath.length() + 1)));
             }
         } catch (RepositoryException e) {
-            log.error("Exception happened while trying to fetch documents of type '" + docType + "'", e);
+            log.warn("Exception happened while trying to fetch documents of type '" + docType + "'", e);
             return error("Exception happened while trying to fetch documents of type '" + docType + "': " + e.getMessage());
         }
         return ok("Document list", documentLocations);

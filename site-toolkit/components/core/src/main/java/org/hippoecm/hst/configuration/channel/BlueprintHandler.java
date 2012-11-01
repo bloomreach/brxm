@@ -82,7 +82,7 @@ public class BlueprintHandler {
             }
 
             if (!blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_CONFIGURATION)) {  // validate that blueprint is correct
-                throw new ItemNotFoundException("Blueprint " + blueprint.getId() + " has not a hst:configuration node prototype");
+                throw new ItemNotFoundException("Blueprint "+blueprint.getId()+" does not have the mandatory node 'hst:configuration'");
             }
 
             if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && !blueprint.getHasContentPrototype()) {
