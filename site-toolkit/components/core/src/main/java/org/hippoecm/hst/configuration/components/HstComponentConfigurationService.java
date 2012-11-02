@@ -832,18 +832,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         Set<String> variantsSet = new HashSet<String>();
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.populateVariants();
-            variantsSet.addAll(child.getParameterPrefixes());
             variantsSet.addAll(child.getVariants());
         }
-        // add parameter prefixes of component itself (not child)
-        if (!getParameterPrefixes().isEmpty()) {
-            variantsSet.addAll(getParameterPrefixes());
-        }
+        variantsSet.addAll(getParameterPrefixes());
         if (!variantsSet.isEmpty()) {
             // set variants to unmodifiable list
             this.variants = Collections.unmodifiableList(new ArrayList<String>(variantsSet));
         }
-        
+
     }
 
     protected void makeCollectionsImmutableAndOptimize() {
