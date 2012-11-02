@@ -29,6 +29,7 @@ api/src/main/java/org/hippoecm/hst/configuration/model/HstConfigurationAugmenter
 api/src/main/java/org/hippoecm/hst/configuration/model/HstManager.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstNode.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/model/HstSiteRootNode.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/hst/configuration/model/MutableHstManager.java -text
 api/src/main/java/org/hippoecm/hst/configuration/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/site/HstSite.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/site/package-info.java -text svneol=unset#text/plain

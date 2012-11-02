@@ -42,6 +42,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.MutableHstManager;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -114,7 +115,6 @@ public class HstFilter implements Filter {
 
     private String [] prefixExclusions;
     private String [] suffixExclusions;
-    private String requestPathSuffixDelimiter = "./";
 
     private String defaultLoginResourcePath;
     
@@ -181,6 +181,17 @@ public class HstFilter implements Filter {
         catch (Exception e) {
             log("Invalid client component manager class or configuration: " + e);
         }
+
+        Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
+        HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        if(hstSitesManager == null) {
+            logger.error("The HstManager is not available");
+            return;
+        }
+        if (hstSitesManager instanceof MutableHstManager) {
+            ((MutableHstManager) hstSitesManager).setHstFilterPrefixExclusions(prefixExclusions);
+            ((MutableHstManager) hstSitesManager).setHstFilterSuffixExclusions(suffixExclusions);
+        }
     }
 
     /**
@@ -209,11 +220,6 @@ public class HstFilter implements Filter {
 
     	HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
-
-        if (isExcludedRequest(req)) {
-            chain.doFilter(request, response);
-            return;
-        }
 
         // Cross-context includes are not (yet) supported to be handled directly by HstFilter
     	// Typical use-case for these is within a portal environment where the portal dispatches to a portlet (within in a separate portlet application)
@@ -255,12 +261,11 @@ public class HstFilter implements Filter {
     		    }
     		}
     	    HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-    	    requestPathSuffixDelimiter = hstSitesManager.getPathSuffixDelimiter();
     	    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
           
     	    if(siteMapItemHandlerFactory == null || hstSitesManager == null) {
                 res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-                logger.error("The HST virtualHostsManager or siteMapItemHandlerFactory is not available");
+                logger.error("The HstManager or siteMapItemHandlerFactory is not available");
                 return;
             }
     	    
@@ -273,7 +278,13 @@ public class HstFilter implements Filter {
     		}
 
     		// Sets up the container request wrapper
-            HstContainerRequest containerRequest = new HstContainerRequestImpl(req, requestPathSuffixDelimiter);
+            HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstSitesManager.getPathSuffixDelimiter());
+
+            // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
+            if((containerRequest.getPathSuffix() == null && hstSitesManager.isExcludedByHstFilterInitParameter(containerRequest.getPathInfo()))) {
+                chain.doFilter(request, response);
+                return;
+            }
 
     		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
 
@@ -884,13 +895,12 @@ public class HstFilter implements Filter {
         }
 
         String [] tokens = param.split(delimiter);
-        String value = null;
         ArrayList<String> valuesList = new ArrayList<String>();
 
         for (int i = 0; i < tokens.length; i++) {
-            value = tokens[i].trim();
+            String value = tokens[i].trim();
 
-            if (!"".equals(value)) {
+            if (!value.isEmpty()) {
                 valuesList.add(value);
             }
         }
@@ -902,37 +912,4 @@ public class HstFilter implements Filter {
         return null;
     }
 
-    protected boolean isExcludedRequest(HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        String pathInfo = requestURI.substring(request.getContextPath().length());
-
-        if (requestPathSuffixDelimiter != null) {
-            int offset = pathInfo.indexOf(requestPathSuffixDelimiter);
-            if (offset != -1) {
-                pathInfo = pathInfo.substring(0, offset);
-            }
-        }
-
-        pathInfo = HstRequestUtils.removeAllMatrixParams(pathInfo);
-
-        // test prefix
-        if (prefixExclusions != null) {
-            for (String excludePrefix : prefixExclusions) {
-                if (pathInfo.startsWith(excludePrefix)) {
-                    return true;
-                }
-            }
-        }
-
-        // test suffix
-        if (suffixExclusions != null) {
-            for (String excludeSuffix : suffixExclusions) {
-                if (pathInfo.endsWith(excludeSuffix)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
 }

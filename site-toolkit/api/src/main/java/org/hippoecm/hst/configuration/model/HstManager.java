@@ -63,7 +63,19 @@ public interface HstManager {
      * repository reconnection where you do not know whether some events might have been missed
      */
     void invalidateAll();
-    
+
+    /**
+     *
+     * Typically, some paths we do not want to be handle by the hst framework request processing. Typically, this would
+     * be for example paths starting with /binaries/, or paths ending with some extension, like .pdf
+     *
+     * When a path must be excluded, this method return true.
+     *
+     * @param pathInfo
+     * @return true when the path must be excluded for matching to a host.
+     */
+    boolean isExcludedByHstFilterInitParameter(String pathInfo);
+
     /**
      * Returns the request path suffix delimiter.
      * @return

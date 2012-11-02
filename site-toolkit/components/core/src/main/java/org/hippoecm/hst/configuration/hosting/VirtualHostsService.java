@@ -218,14 +218,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         
     }
-    
 
     public HstManager getHstManager() {
         return hstManager;
     }
 
-    
-    
     public boolean isExcluded(String pathInfo) {
         // test prefix
         if (prefixExclusions != null && prefixExclusions.length != 0) {
@@ -244,8 +241,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
                 }
             }
         }
-
-        return false;
+        return hstManager.isExcludedByHstFilterInitParameter(pathInfo);
     }
     
     @Override
