@@ -68,10 +68,6 @@ import org.hippoecm.frontend.util.AclChecker;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.onehippo.cms7.event.HippoEvent;
-import org.onehippo.cms7.event.HippoEventConstants;
-import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,6 +169,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     protected LoginPlugin.SignInForm createSignInForm(String id) {
         Cookie rememberMeCookie = WebApplicationHelper.retrieveWebRequest().getCookie(
                 WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.REMEMBERME_COOKIE_BASE_NAME));
+
         boolean rememberme = (rememberMeCookie != null) ? Boolean.valueOf(rememberMeCookie.getValue()) : false;
 
         if (rememberme) {
@@ -186,8 +183,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             }
         }
 
-        LoginPlugin.SignInForm form = new SignInForm(id, rememberme);        
-        return form;
+        return new SignInForm(id, rememberme);
     }
 
     protected class SignInForm extends org.hippoecm.frontend.plugins.login.LoginPlugin.SignInForm {
@@ -240,10 +236,15 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 private static final long serialVersionUID = 1L;
 
                 protected void onUpdate(AjaxRequestTarget target) {
-                    // When the 'Remember me' check-box is un-checked Username and Password fields should be cleared 
+                    // When the 'Remember me' check-box is un-checked clean the password field if the user did not fill
+                    // in his/her own password
                     if (!SignInForm.this.getRememberme()) {
-                        SignInForm.this.usernameTextField.setModelObject("");
-                        SignInForm.this.passwordTextField.setModelObject("");
+                        final String passwordValue = SignInForm.this.passwordTextField.getModelObject();
+
+                        if (StringUtils.isNotBlank(passwordValue)&& passwordValue.equals("********")) {
+                            SignInForm.this.passwordTextField.setModelObject("");
+                        }
+
                         // Also remove the cookie which contains user information
                         WebApplicationHelper.clearCookie(REMEMBERME_COOKIE_NAME);
                         WebApplicationHelper.clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
@@ -251,6 +252,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         Cookie remembermeCookie = new Cookie(REMEMBERME_COOKIE_NAME, String.valueOf(true));
                         remembermeCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger(
                                 "rememberme.cookie.maxage", COOKIE_DEFAULT_MAX_AGE));
+
                         WebApplicationHelper.retrieveWebResponse().addCookie(remembermeCookie);
                     }
 
