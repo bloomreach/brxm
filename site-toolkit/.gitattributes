@@ -460,6 +460,8 @@ components/core/src/main/java/org/hippoecm/hst/configuration/model/HstManagerImp
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstNodeImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstSiteConfigurationRootNodeImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/model/HstSiteRootNodeImpl.java -text svneol=unset#text/plain
+components/core/src/main/java/org/hippoecm/hst/configuration/model/ModelLoadingException.java -text
+components/core/src/main/java/org/hippoecm/hst/configuration/model/RelevantEventsHolder.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/site/HstSiteService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemap/HstSiteMapItemService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemap/HstSiteMapService.java svneol=native#text/plain
