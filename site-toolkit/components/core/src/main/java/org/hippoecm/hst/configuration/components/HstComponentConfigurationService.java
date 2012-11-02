@@ -832,7 +832,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         Set<String> variantsSet = new HashSet<String>();
         for (HstComponentConfigurationService child : orderedListConfigs) {
             child.populateVariants();
-            variantsSet.addAll(child.getVariants());
+            if (child.isAsync()) {
+                onlyAddChildVariantsIfCurrentOrAncestorIsAlreadyAsync(variantsSet, child);
+            } else {
+                variantsSet.addAll(child.getVariants());
+            }
         }
         variantsSet.addAll(getParameterPrefixes());
         if (!variantsSet.isEmpty()) {
@@ -840,6 +844,29 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             this.variants = Collections.unmodifiableList(new ArrayList<String>(variantsSet));
         }
 
+    }
+
+    /**
+     * Since the HST supports async only on one level (thus async descendants of an async component are rendered with the
+     * async ancestor), we only include the variants of an async component if the current or an ancestor component is already
+     * async
+     */
+    private void onlyAddChildVariantsIfCurrentOrAncestorIsAlreadyAsync(final Set<String> variantsSet, final HstComponentConfigurationService asyncChild) {
+        if (isAsync() || hasAsyncAncestor()) {
+            // we are already async, thus add variants
+            variantsSet.addAll(asyncChild.getVariants());
+        }
+    }
+
+    private boolean hasAsyncAncestor() {
+        HstComponentConfiguration parent = getParent();
+        while (parent != null) {
+            if (parent.isAsync()) {
+                return true;
+            }
+            parent = parent.getParent();
+        }
+        return false;
     }
 
     protected void makeCollectionsImmutableAndOptimize() {
