@@ -106,9 +106,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
     // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
-    initComposer : function(previewMode) {
-        var retry, self;
-
+    initComposer : function() {
         if (typeof this.contextPath === 'undefined'
                 || typeof this.renderHost === 'undefined'
                 || this.renderHost.trim() === '') {
@@ -117,56 +115,15 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             return;
         }
 
-        this.previewMode = (typeof previewMode != 'undefined') ? previewMode : true;
+        this.previewMode = true;
 
         this._lock();
 
-        retry = this.initialHstConnectionTimeout;
-        self = this;
         // do initial handshake with CmsSecurityValve of the composer mount and
         // go ahead with the actual host which we want to edit (for which we need to be authenticated)
-        var composerMode = function(callback) {
-            Ext.Ajax.request({
-                headers: {
-                    'CMS-User': self.cmsUser,
-                    'FORCE_CLIENT_HOST': 'true'
-                },
-                url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+self.renderHost+'/?FORCE_CLIENT_HOST=true',
-                success: callback,
-                failure: function(exceptionObject) {
-                    if (exceptionObject.isTimeout) {
-                        if (retry > 0) {
-                                retry = retry - Ext.Ajax.timeout;
-                                window.setTimeout(function() {
-                                    composerMode(callback);
-                                }, Ext.Ajax.timeout);
-                        } else {
-                            Hippo.Msg.hide();
-                            Hippo.Msg.confirm(self.resources['hst-exception-title'], self.resources['hst-timeout-message'], function(id) {
-                                if (id === 'yes') {
-                                    retry = self.initialHstConnectionTimeout;
-                                    composerMode(callback);
-                                } else {
-                                    self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['hst-exception']}]);
-                                }
-                            });
-                        }
-                    } else {
-                        console.error(exceptionObject);
-                        console.error(self.resources['hst-exception']+' status: "'+exceptionObject.status+'", statusText: "'+exceptionObject.statusText+'"');
-                        Hippo.Msg.alert(self.resources['hst-exception-title'], self.resources['hst-exception'], function() {
-                            self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['hst-exception']}]);
-                        });
-                    }
-                }
-            });
-        };
-        composerMode(function(response) {
-            var responseObj, iFrame, iFrameUrl;
-            responseObj = Ext.util.JSON.decode(response.responseText);
+        this._initializeHstSession(function() {
+            var iFrame, iFrameUrl;
             iFrame = Ext.getCmp('Iframe');
-            this.canEdit = responseObj.data;
-            this.sessionCookie = this._getCookie('JSESSIONID');
 
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
 
@@ -189,6 +146,49 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             iFrame.setSrc(iFrameUrl);
 
         }.createDelegate(this));
+    },
+
+    _initializeHstSession : function(callback) {
+        var retry = this.initialHstConnectionTimeout, self = this;
+        Ext.Ajax.request({
+            headers: {
+                'CMS-User': self.cmsUser,
+                'FORCE_CLIENT_HOST': 'true'
+            },
+            url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+self.renderHost+'/?FORCE_CLIENT_HOST=true',
+            success: function(response) {
+                this.sessionCookie = this._getCookie('JSESSIONID');
+                var responseObj = Ext.util.JSON.decode(response.responseText);
+                this.canEdit = responseObj.data;
+                callback();
+            }.createDelegate(this),
+            failure: function(exceptionObject) {
+                if (exceptionObject.isTimeout) {
+                    if (retry > 0) {
+                        retry = retry - Ext.Ajax.timeout;
+                        window.setTimeout(function() {
+                            self._initializeHstSession(callback);
+                        }, Ext.Ajax.timeout);
+                    } else {
+                        Hippo.Msg.hide();
+                        Hippo.Msg.confirm(self.resources['hst-exception-title'], self.resources['hst-timeout-message'], function(id) {
+                            if (id === 'yes') {
+                                retry = self.initialHstConnectionTimeout;
+                                self._initializeHstSession(callback);
+                            } else {
+                                self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['hst-exception']}]);
+                            }
+                        });
+                    }
+                } else {
+                    console.error(exceptionObject);
+                    console.error(self.resources['hst-exception']+' status: "'+exceptionObject.status+'", statusText: "'+exceptionObject.statusText+'"');
+                    Hippo.Msg.alert(self.resources['hst-exception-title'], self.resources['hst-exception'], function() {
+                        self.fireEvent.apply(self, ['fatalIFrameException', {msg : self.resources['hst-exception']}]);
+                    });
+                }
+            }
+        });
     },
 
     _getCookie: function (c_name) {
@@ -516,7 +516,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             this.previewMode = this.pageContext.previewMode;
             var sessionCookie = this._getCookie('JSESSIONID');
             if (sessionCookie != this.sessionCookie) {
-                this.initComposer(this.previewMode);
+                this._initializeHstSession(this._complete.createDelegate(this));
             } else {
                 console.error(this.resources['page-context-initialization-failed-message']);
                 console.error(error);
