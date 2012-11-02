@@ -106,7 +106,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
     // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
-    initComposer : function() {
+    initComposer : function(previewMode) {
         var retry, self;
 
         if (typeof this.contextPath === 'undefined'
@@ -117,7 +117,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             return;
         }
 
-        this.previewMode = true;
+        this.previewMode = (typeof previewMode != 'undefined') ? previewMode : true;
 
         this._lock();
 
@@ -166,6 +166,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             responseObj = Ext.util.JSON.decode(response.responseText);
             iFrame = Ext.getCmp('Iframe');
             this.canEdit = responseObj.data;
+            this.sessionCookie = this._getCookie('JSESSIONID');
 
             iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
 
@@ -188,6 +189,22 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             iFrame.setSrc(iFrameUrl);
 
         }.createDelegate(this));
+    },
+
+    _getCookie: function (c_name) {
+        var document = Ext.getCmp('Iframe').getFrameDocument();
+        var i,x,y,ARRcookies=document.cookie.split(";");
+        for (i=0;i<ARRcookies.length;i++)
+        {
+            x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
+            y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
+            x=x.replace(/^\s+|\s+$/g,"");
+            if (x==c_name)
+            {
+                return unescape(y);
+            }
+        }
+        return undefined;
     },
 
     refreshIframe : function() {
@@ -226,7 +243,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         var jsonData = Ext.util.JSON.decode(result.responseText);
                         console.error('Unlocking failed ' + jsonData.message);
                         Hippo.Msg.alert(self.resources['unlocking-failed-title'], self.resources['unlocking-failed-message'], function() {
-                        self.initComposer.call(self);
+                            self.initComposer.call(self);
                         });
                     }
                 });
@@ -497,12 +514,16 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         }, this);
         this.pageContext.on('pageContextInitializationFailed', function(error) {
             this.previewMode = this.pageContext.previewMode;
-            console.error(this.resources['page-context-initialization-failed-message']);
-            console.error(error);
-            if (this._hasFocus()) {
-                Hippo.Msg.alert(this.resources['page-context-initialization-failed-title'], this.resources['page-context-initialization-failed-message'], this);
+            var sessionCookie = this._getCookie('JSESSIONID');
+            if (sessionCookie != this.sessionCookie) {
+                this.initComposer(this.previewMode);
+            } else {
+                console.error(this.resources['page-context-initialization-failed-message']);
+                console.error(error);
+                if (this._hasFocus()) {
+                    Hippo.Msg.alert(this.resources['page-context-initialization-failed-title'], this.resources['page-context-initialization-failed-message'], this);
+                }
             }
-            this._fail();
         }, this);
         this.pageContext.initialize(frm, this.canEdit);
     },
@@ -607,7 +628,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
     _hasFocus : function() {
         var node = Ext.getCmp('Iframe').el.dom;
-        while (node) {
+        while (node && node.style) {
             if (node.style.visibility === 'hidden' || node.style.display === 'none') {
                 return false;
             }

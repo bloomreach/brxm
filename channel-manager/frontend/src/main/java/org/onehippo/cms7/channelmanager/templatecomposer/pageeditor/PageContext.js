@@ -171,6 +171,10 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                     var pageId, mountId, lockedBy, futures;
                     pageId = responseObject.getResponseHeader('HST-Page-Id');
                     mountId = responseObject.getResponseHeader('HST-Mount-Id');
+                    if (typeof pageId == 'undefined' || typeof mountId == 'undefined') {
+                        onFail('No page and/or mount information found');
+                        return;
+                    }
 
                     self.renderedVariant = responseObject.getResponseHeader('HST-Render-Variant');
                     self.hasPreviewHstConfig = self._getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig'));
