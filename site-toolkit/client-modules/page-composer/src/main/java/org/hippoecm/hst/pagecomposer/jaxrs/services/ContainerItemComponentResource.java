@@ -168,7 +168,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             try {
                 locale = LocaleUtils.toLocale(localeString);
             } catch (IllegalArgumentException e) {
-                log.warn("Failed to create Locale from string '{}'", localeString);
+                log.warn("Failed to create Locale from string '{}'. Using default locale", localeString);
+                locale = Locale.getDefault();
             }
             String currentMountCanonicalContentPath = getCurrentMountCanonicalContentPath(servletRequest);
             return doGetParameters(getRequestConfigNode(requestContext), locale, variant, currentMountCanonicalContentPath);
