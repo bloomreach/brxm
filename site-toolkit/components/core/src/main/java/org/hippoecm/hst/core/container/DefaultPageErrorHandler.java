@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.core.container;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -33,7 +35,12 @@ public class DefaultPageErrorHandler implements PageErrorHandler {
     
     public Status handleComponentExceptions(PageErrors pageErrors, HstRequest hstRequest, HstResponse hstResponse) {
         if (!pageErrors.isEmpty()) {
-            log.warn("Component exception(s) found in page request, '{}'.", hstRequest.getRequestContext().getServletRequest().getRequestURI());
+            final HttpServletRequest request = hstRequest.getRequestContext().getServletRequest();
+            String requestInfo = request.getRequestURI();
+            if(request.getQueryString() != null) {
+                requestInfo += "?"+request.getQueryString();
+            }
+            log.warn("Component exception(s) found in page request, '{}'.", requestInfo);
             logWarningsForEachComponentExceptions(pageErrors);
         }
         return Status.HANDLED_BUT_CONTINUE;
