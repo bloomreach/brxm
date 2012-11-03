@@ -33,12 +33,16 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract supporting class for Hst URL tags (action, redner and resource)
  */
 
 public abstract class BaseHstURLTag extends ParamContainerTag {
+    
+    private static final Logger log = LoggerFactory.getLogger(BaseHstURLTag.class);
     
     private static final long serialVersionUID = 1L;
 
@@ -88,22 +92,17 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
             if (escapeXml) {
                 urlString = doEscapeXml(urlString);
             }
+            HstRequestContext requestContext =  HstRequestUtils.getHstRequestContext((HttpServletRequest) pageContext.getRequest());
+            if (makeURLFullyQualified(requestContext)) {
+                Mount mount = requestContext.getResolvedMount().getMount();
+                String scheme = mount.getScheme();
+                // When 0, the Mount is port agnostic. Then take port from current container url
+                int port = (mount.getPort() == 0 ? requestContext.getBaseURL().getPortNumber() : mount.getPort());
 
-            if (fullyQualified) {
-                HstRequest hstRequest = HstRequestUtils.getHstRequest((HttpServletRequest) pageContext.getRequest());
-
-                if (hstRequest != null) {
-                    HstRequestContext requestContext = hstRequest.getRequestContext();
-                    Mount mount = requestContext.getResolvedMount().getMount();
-                    String scheme = mount.getScheme();
-                    // When 0, the Mount is port agnostic. Then take port from current container url
-                    int port = (mount.getPort() == 0 ? requestContext.getBaseURL().getPortNumber() : mount.getPort());
-
-                    if (!mount.isPortInUrl() || ("http".equals(scheme) && port == 80) || ("https".equals(scheme) && port == 443)) {
-                        urlString = scheme + "://" + mount.getVirtualHost().getHostName() + urlString;
-                    } else {
-                        urlString = scheme + "://" + mount.getVirtualHost().getHostName() + ":" + port + urlString;
-                    }
+                if (!mount.isPortInUrl() || ("http".equals(scheme) && port == 80) || ("https".equals(scheme) && port == 443)) {
+                    urlString = scheme + "://" + mount.getVirtualHost().getHostName() + urlString;
+                } else {
+                    urlString = scheme + "://" + mount.getVirtualHost().getHostName() + ":" + port + urlString;
                 }
             }
 
@@ -124,6 +123,16 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
         } finally {
             cleanup();
         }
+    }
+
+    private boolean makeURLFullyQualified(final HstRequestContext requestContext) {
+        if (requestContext == null) {
+            if (fullyQualified) {
+              log.warn("Cannot make url fully qualified when requestContext is null");
+            }
+            return false;
+        }
+        return fullyQualified || requestContext.isFullyQualifiedURLs();
     }
 
     @Override
