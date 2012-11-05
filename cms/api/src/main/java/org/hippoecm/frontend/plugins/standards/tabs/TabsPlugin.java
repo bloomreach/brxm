@@ -214,6 +214,30 @@ public class TabsPlugin extends RenderPlugin {
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
         tabbie.renderer.focus(null);
         onSelectTab(tabs.indexOf(tabbie));
+
+        if (tabbie.getTabId() != null) {
+            final StringBuilder fireEventJS = new StringBuilder();
+            fireEventJS.append("(function(document) {\n" +
+                    "            var event;\n" +
+                    "            if (document.createEvent) {\n" +
+                    "                event = document.createEvent('HTMLEvents');\n" +
+                    "                event.initEvent('tabSelected', true, true);\n" +
+                    "            } else {\n" +
+                    "                event = document.createEventObject();\n" +
+                    "                event.eventType = 'tabSelected'\n" +
+                    "            }\n" +
+                    "    \n" +
+                    "            event.eventName = 'tabSelected';\n" +
+                    "            event.tabId = '"+tabbie.getTabId()+"';\n" +
+                    "    \n" +
+                    "            if (document.createEvent) {\n" +
+                    "                document.body.dispatchEvent(event);\n" +
+                    "            } else {\n" +
+                    "                document.body.fireEvent('on' + event.eventType, event);\n" +
+                    "            }\n" +
+                    "        })(document);");
+            target.appendJavascript(fireEventJS.toString());
+        }
     }
 
     /**
@@ -486,6 +510,13 @@ public class TabsPlugin extends RenderPlugin {
                 }
             }
             return titleModel;
+        }
+
+        public String getTabId() {
+            if (decorator != null) {
+                return this.decorator.getClass().getName();
+            }
+            return null;
         }
 
         public ResourceReference getIcon(IconSize type) {
