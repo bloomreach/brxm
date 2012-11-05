@@ -152,6 +152,7 @@ public class LoginServlet extends HttpServlet {
     public static final String MODE_LOGIN_ERROR = "error";
     
     private static final String RESOURCE_BUNDLE_BASE_NAME = LoginServlet.class.getName();
+    private static final String REDIRECT_HOST_NAME_REQUEST_ATTR = LoginServlet.class.getName() + ".hostname";
     
     private static Logger log = LoggerFactory.getLogger(LoginServlet.class);
     
@@ -263,15 +264,15 @@ public class LoginServlet extends HttpServlet {
         } else {
             session.removeAttribute(PASSWORD_ATTR_NAME);
         }
-        
+
         String resourcePath = getRequestOrSessionAttributeAsString(request, BASE_NAME + ".loginResourcePath", defaultLoginResourcePath);
-        if(isContextPathInUrl(request)) {
+        if (isContextPathInUrl(request)) {
             response.sendRedirect(response.encodeURL(request.getContextPath() + resourcePath));
         } else {
             response.sendRedirect(response.encodeURL(resourcePath));
         }
     }
-    
+
     protected void doLoginLogin(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         Principal userPrincipal = request.getUserPrincipal();
         
@@ -497,15 +498,19 @@ public class LoginServlet extends HttpServlet {
      * @return <code>true</code> when the global {@link VirtualHosts} is configured to have the contextPath in the URL 
      */
     protected boolean isContextPathInUrl(HttpServletRequest request) {
-        ResolvedVirtualHost host = (ResolvedVirtualHost) request.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
-        
-        if(host != null) {
-           return host.getVirtualHost().isContextPathInUrl();
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute(ContainerConstants.RENDERING_HOST) != null) {
+            return true;
         }
-        
+
+        ResolvedVirtualHost host = (ResolvedVirtualHost) request.getAttribute(REDIRECT_HOST_NAME_REQUEST_ATTR);
+        if (host != null) {
+            return host.getVirtualHost().isContextPathInUrl();
+        }
+
         return true;
     }
-    
+
     private String getRequestOrSessionAttributeAsString(HttpServletRequest request, String name, String defaultValue) {
         String value = (String) request.getAttribute(name);
         
@@ -526,21 +531,15 @@ public class LoginServlet extends HttpServlet {
      * @param request
      */
     private void resolveVirtualHost(HttpServletRequest request) {
-        ResolvedVirtualHost resolvedVirtualHost = (ResolvedVirtualHost) request.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
-        
-        if (resolvedVirtualHost != null) {
-            return;
-        }
-        
-        String hostName = HstRequestUtils.getFarthestRequestHost(request);
+        String hostName = HstRequestUtils.getFarthestRequestHost(request, false);
         HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         
         try {
-            resolvedVirtualHost = hstSitesManager.getVirtualHosts().matchVirtualHost(hostName);
-            request.setAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR, resolvedVirtualHost);
+            ResolvedVirtualHost host = hstSitesManager.getVirtualHosts().matchVirtualHost(hostName);
+            request.setAttribute(REDIRECT_HOST_NAME_REQUEST_ATTR, host);
         } catch (Exception e) {
             log.warn("Unable to match '" + hostName + "' to a hst host. Try to complete request without but contextpath might be included in URLs while not desired", e);
-        }  
+        }
     }
     
 }
