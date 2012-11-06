@@ -86,7 +86,6 @@ public class SitesOverview extends BaseHstComponent {
                     // add a new hst:site
                     
                     Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
-                    site.setProperty("hst:configurationpath", "/hst:hst/hst:configurations/demosite-test-many" + tryToAdd);
                     Node content = site.addNode("hst:content", "hippo:facetselect");
                     String[] availability = {"hippo:availability"};
                     content.setProperty("hippo:facets", availability);
