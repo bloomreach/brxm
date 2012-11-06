@@ -17,6 +17,7 @@ package org.onehippo.cms7.utilities.io;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
@@ -53,6 +54,7 @@ public class CircularBufferOutputStreamTest {
     }
 
     @Test
+    @Ignore
     public void testWriteMoreThanMaxInteger() throws Exception {
         final CircularBufferOutputStream circularBuffer = new CircularBufferOutputStream(100);
         long moreThanMaxInteger = 2 + (long) Integer.MAX_VALUE;
