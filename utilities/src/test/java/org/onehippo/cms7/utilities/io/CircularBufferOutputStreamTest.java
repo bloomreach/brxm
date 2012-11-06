@@ -52,4 +52,13 @@ public class CircularBufferOutputStreamTest {
         assertEquals(0, new CircularBufferOutputStream(10).toByteArray().length);
     }
 
+    @Test
+    public void testWriteMoreThanMaxInteger() throws Exception {
+        final CircularBufferOutputStream circularBuffer = new CircularBufferOutputStream(100);
+        long moreThanMaxInteger = 2 + (long) Integer.MAX_VALUE;
+        for (long i=0; i<moreThanMaxInteger; i++) {
+            circularBuffer.write((byte) Math.random());
+        }
+    }
+
 }

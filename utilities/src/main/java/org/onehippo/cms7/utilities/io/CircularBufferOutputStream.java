@@ -26,19 +26,16 @@ import java.io.OutputStream;
 public class CircularBufferOutputStream extends OutputStream {
 
     protected final byte[] buf;
-    protected int count;
-    protected int cursor = -1;
+    protected int cursor = 0;
 
     public CircularBufferOutputStream(int bufferSize) {
         buf = new byte[bufferSize];
-        count = 0;
     }
 
     @Override
     public void write(final int b) throws IOException {
-        cursor = count % buf.length;
-        buf[cursor] = (byte) b;
-        count = count + 1;
+        buf[cursor++] = (byte) b;
+        cursor = cursor % buf.length;
     }
 
     @Override
@@ -49,9 +46,8 @@ public class CircularBufferOutputStream extends OutputStream {
             return;
         }
         for (int i = off; i < off+len; i++) {
-            cursor = count % buf.length;
-            buf[cursor] = b[i];
-            count = count + 1;
+            buf[cursor++] = b[i];
+            cursor = cursor % buf.length;
         }
     }
 
@@ -62,19 +58,19 @@ public class CircularBufferOutputStream extends OutputStream {
 
     public byte[] toByteArray() {
         final int length;
-        if (buf.length == cursor+1) {
+        if (buf.length == cursor) {
             length = buf.length;
-        } else if (buf[cursor+1] == 0) {
-            length = cursor+1;
+        } else if (buf[cursor] == 0) {
+            length = cursor;
         } else {
             length = buf.length;
         }
         final byte[] result = new byte[length];
         int i = 0;
-        for (int j = cursor + 1; j < length; i++, j++) {
+        for (int j = cursor; j < length; i++, j++) {
             result[i] = buf[j];
         }
-        for (int j = 0; j < cursor + 1; i++, j++) {
+        for (int j = 0; j < cursor; i++, j++) {
             result[i] = buf[j];
         }
         return result;
