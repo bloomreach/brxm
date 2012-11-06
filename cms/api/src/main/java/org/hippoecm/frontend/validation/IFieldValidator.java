@@ -17,6 +17,7 @@ package org.hippoecm.frontend.validation;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 
 /**
@@ -24,6 +25,8 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
  * violations.
  */
 public interface IFieldValidator extends IClusterable {
+
+    IFieldDescriptor getFieldDescriptor();
 
     ITypeDescriptor getFieldType();
 
