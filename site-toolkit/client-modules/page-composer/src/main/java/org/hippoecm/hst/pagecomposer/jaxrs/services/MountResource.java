@@ -197,10 +197,11 @@ public class MountResource extends AbstractConfigResource {
         String liveConfigurationPath = ctxEditingLiveMountSite.getConfigurationPath();
         String newPreviewConfigurationPath = getNewPreviewConfigurationPath(ctxEditingLiveMountSite, newVersion, liveConfigurationPath);
         Session session = requestContext.getSession();
-        Node liveConfiguration = session.getNode(liveConfigurationPath);
+
         // cannot cast session from request context to HippoSession, hence, get it from jcr node first
+        Node liveConfiguration = session.getNode(liveConfigurationPath);
         ((HippoSession)liveConfiguration.getSession()).copy(liveConfiguration, newPreviewConfigurationPath);
-        //session.getWorkspace().copy(liveConfigurationPath, newPreviewConfigurationPath);
+
         Node newPreviewConfigurationNode = session.getNode(newPreviewConfigurationPath);
         Node hstPreviewSiteNode = session.getNodeByIdentifier(ctxEditingPreviewSite.getCanonicalIdentifier());
         hstPreviewSiteNode.setProperty(HstNodeTypes.SITE_VERSION, newVersion);
