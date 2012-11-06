@@ -37,8 +37,9 @@ public class Home extends BaseHstComponent {
 
         final Mount mount = request.getRequestContext().getResolvedMount().getMount();
         final DemoChannelInfo info = mount.getChannelInfo();
-        request.setAttribute("channelInfoExample", info.getExampleValue());
-
+        if (info != null) {
+            request.setAttribute("channelInfoExample", info.getExampleValue());
+        }
         try {
             HippoBean image = (HippoBean) this.getObjectBeanManager(request).getObject("/content/gallery/images/screenshot_cms_small.jpg");
             request.setAttribute("image",image);
