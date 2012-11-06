@@ -100,12 +100,6 @@
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-modules</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-config</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
