@@ -40,6 +40,14 @@ public class CircularBufferOutputStreamTest {
     }
 
     @Test
+    public void testWriteBufferSizeCharacters() throws Exception {
+        final String testString = "abcde";
+        final CircularBufferOutputStream cbos = new CircularBufferOutputStream(5);
+        cbos.write(testString.getBytes());
+        assertEquals(testString, cbos.toString());
+    }
+
+    @Test
     public void testWriteNothing() throws Exception {
         assertEquals(0, new CircularBufferOutputStream(10).toByteArray().length);
     }

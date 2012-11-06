@@ -62,7 +62,9 @@ public class CircularBufferOutputStream extends OutputStream {
 
     public byte[] toByteArray() {
         final int length;
-        if (buf[cursor+1] == 0) {
+        if (buf.length == cursor+1) {
+            length = buf.length;
+        } else if (buf[cursor+1] == 0) {
             length = cursor+1;
         } else {
             length = buf.length;
