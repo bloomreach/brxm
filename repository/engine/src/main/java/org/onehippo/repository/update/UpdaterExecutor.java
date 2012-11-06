@@ -167,6 +167,10 @@ public class UpdaterExecutor implements EventListener {
             try {
                 startNode.accept(visitor);
                 for (String nodePath : visitor.nodePaths) {
+                    if (cancelled) {
+                        info("Update cancelled");
+                        return;
+                    }
                     try {
                         Node node = session.getNode(nodePath);
                         executeUpdater(node);
