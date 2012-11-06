@@ -497,6 +497,10 @@ public class LoginServlet extends HttpServlet {
      * @return <code>true</code> when the global {@link VirtualHosts} is configured to have the contextPath in the URL
      */
     protected boolean isContextPathInUrl(HttpServletRequest request) {
+        if (loginSiteFromTemplateComposer(request)) {
+            // site running in cms host always needs context path
+            return true;
+        }
         ResolvedVirtualHost host = (ResolvedVirtualHost) request.getAttribute(ContainerConstants.VIRTUALHOSTS_REQUEST_ATTR);
 
         if(host != null) {
@@ -504,6 +508,14 @@ public class LoginServlet extends HttpServlet {
         }
 
         return true;
+    }
+
+    private boolean loginSiteFromTemplateComposer(final HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null && session.getAttribute(ContainerConstants.RENDERING_HOST) != null) {
+            return true;
+        }
+        return false;
     }
 
     private String getRequestOrSessionAttributeAsString(HttpServletRequest request, String name, String defaultValue) {
