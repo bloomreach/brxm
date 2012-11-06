@@ -102,7 +102,9 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
     public void render(final PluginRequestTarget target) {
         super.render(target);
         if (siteIsUp) {
-            rootPanel.render(target);
+            if (isActive()) {
+                rootPanel.render(target);
+            }
             for (IRenderService child : childservices) {
                 child.render(target);
             }

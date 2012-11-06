@@ -145,6 +145,7 @@ public class PageEditor extends ExtPanel {
     @ExtProperty
     @SuppressWarnings("unused")
     private String channelId;
+    private boolean refreshIFrame;
 
     public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
         this.context = context;
@@ -395,6 +396,9 @@ public class PageEditor extends ExtPanel {
             ExtPropertyConverter.addProperties(this, getClass(), update);
             target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').browseTo(" + update.toString() + ");");
             redraw = false;
+        } else if (refreshIFrame) {
+            refreshIFrame = false;
+            target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').refreshIframe();");
         }
     }
 
@@ -469,10 +473,11 @@ public class PageEditor extends ExtPanel {
 
         @Override
         public void onEvent(final Iterator events) {
-            AjaxRequestTarget target = AjaxRequestTarget.get();
-            if (target != null) {
-                target.appendJavascript("Ext.getCmp('" + getMarkupId() + "').refreshIframe();");
-            }
+            refreshIFrame();
         }
+    }
+
+    private void refreshIFrame() {
+        refreshIFrame = true;
     }
 }
