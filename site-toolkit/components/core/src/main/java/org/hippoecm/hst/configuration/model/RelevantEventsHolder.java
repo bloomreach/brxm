@@ -57,8 +57,7 @@ public class RelevantEventsHolder {
     }
 
     private Set<RelevantEvent> configurationEvents = new HashSet<RelevantEvent>();
-    private List<String> allEvents = new ArrayList<String>();
-    
+
     public RelevantEventsHolder(String rootPath) {
         configPath = rootPath+"/hst:configurations";
         commonCatalogPath = configPath+"/hst:catalog";
@@ -69,11 +68,9 @@ public class RelevantEventsHolder {
 
     public void clear() {
         configurationEvents.clear();
-        allEvents.clear();
     }
 
     public void addEvent(final Event jcrEvent) throws RepositoryException {
-        allEvents.add(jcrEvent.getPath());
         if (isPropertyEventAndNotRelevant(jcrEvent)) {
             return;
         }
@@ -82,10 +79,6 @@ public class RelevantEventsHolder {
         if (added) {
             log.debug("Added event '{}'", event.relevantPath);
         }
-    }
-
-    public List<String> getAllEvents() {
-        return allEvents;
     }
 
     public boolean hasEvents() {
@@ -234,7 +227,7 @@ public class RelevantEventsHolder {
             // interested in and can be removed (then the hst:site myproject will be reloaded)
             
             // below returns original if does not end with "/hsT:content"
-            return StringUtils.substringBefore(nodePath, "/hsT:content");
+            return StringUtils.substringBefore(nodePath, "/"+HstNodeTypes.NODENAME_HST_CONTENTNODE);
            
         }
 
