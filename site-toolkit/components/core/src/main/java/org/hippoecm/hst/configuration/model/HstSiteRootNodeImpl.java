@@ -46,7 +46,8 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
         try {
             if (getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH) != null) {
                 log.warn("'{}' is using deprecated property '{}'. Please remove this property and make sure the hst:site has " +
-                        "the same name as the hst:configuration node (minus the version info in that name)");
+                        "the same name as the hst:configuration node (minus the version info in that name)",
+                        siteRootNode.getPath(), HstNodeTypes.SITE_CONFIGURATIONPATH);
             }
             if (getValueProvider().hasProperty(HstNodeTypes.SITE_VERSION)) {
                 version = getValueProvider().getLong(HstNodeTypes.SITE_VERSION).longValue();
