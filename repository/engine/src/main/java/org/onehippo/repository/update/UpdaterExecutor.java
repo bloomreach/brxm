@@ -18,6 +18,8 @@ package org.onehippo.repository.update;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.Binary;
 import javax.jcr.ItemVisitor;
@@ -164,6 +166,15 @@ public class UpdaterExecutor implements EventListener {
             final UpdaterPathVisitor visitor = new UpdaterPathVisitor();
             try {
                 startNode.accept(visitor);
+                for (String nodePath : visitor.nodePaths) {
+                    try {
+                        Node node = session.getNode(nodePath);
+                        executeUpdater(node);
+                        commitBatchIfNeeded();
+                    } catch (PathNotFoundException e) {
+                        debug("Node no longer exists: " + nodePath);
+                    }
+                }
             } catch (UnsupportedOperationException e) {
                 warn("Cannot run updater: " + updaterInfo.getMethod() + " is not implemented");
             } catch (RepositoryException e) {
@@ -285,6 +296,8 @@ public class UpdaterExecutor implements EventListener {
 
     private class UpdaterPathVisitor implements ItemVisitor {
 
+        private List<String> nodePaths = new ArrayList<String>();
+
         @Override
         public void visit(final Property property) throws RepositoryException {
         }
@@ -296,8 +309,7 @@ public class UpdaterExecutor implements EventListener {
                 return;
             }
             final String path = node.getPath();
-            executeUpdater(node);
-            commitBatchIfNeeded();
+            nodePaths.add(path);
             visitChildren(path);
         }
 
