@@ -523,19 +523,7 @@
                                 partners and that there's certainly a keen interested in future
                                 events. The fact that our partners want to share their knowledge
                                 with each other is obviously something we encourage and fits in the
-                                open source mindset!&lt;/p&gt; &lt;p&gt;A short
-                                impression:&lt;/p&gt; &lt;p&gt; &lt;img
-                                vspace="" hspace="" border="0"
-                                src="http://www.onehippo.com/binaries/partnerevent/img_4799.jpg"
-                                alt="Jan Willem Broekema" /&gt; &lt;/p&gt;
-                                &lt;p&gt; &lt;img vspace="" hspace="" border="0"
-                                src="http://www.onehippo.com/binaries/partnerevent/img_4867.jpg"
-                                alt="Partners of Hippo" /&gt; &lt;/p&gt;
-                                &lt;p&gt; &lt;img vspace="" hspace="" border="0"
-                                src="http://www.onehippo.com/binaries/partnerevent/img_4816.jpg"
-                                alt="Partners of Hippo" /&gt; &lt;/p&gt; &lt;div
-                                id="right"&gt; &lt;div id="content_sub"&gt;&lt;br
-                                /&gt;&lt;/div&gt; &lt;/div&gt;</sv:value>
+                                open source mindset!</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>
@@ -696,128 +684,6 @@
           </sv:property>
         </sv:node>
       </sv:node>
-      <sv:node sv:name="ninth-apache-commiter">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>hippo:handle</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-          <sv:value>hippo:hardhandle</sv:value>
-          <sv:value>hippo:translated</sv:value>
-        </sv:property>
-        <sv:property sv:name="jcr:uuid" sv:type="String">
-          <sv:value>58314885-ea0f-4aec-b955-4d28fc98541e</sv:value>
-        </sv:property>
-        <sv:node sv:name="ninth-apache-commiter">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>demosite:newsdocument</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
-            <sv:value>hippo:harddocument</sv:value>
-            <sv:value>hippotranslation:translated</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:locale" sv:type="String">
-             <sv:value>en</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippotranslation:id" sv:type="String">
-            <sv:value>demosite-new-2008-10-ninth-apache-commiter-document-id</sv:value>
-          </sv:property>
-          <sv:property sv:name="jcr:uuid" sv:type="String">
-            <sv:value>153389d6-db3f-467c-b7e5-021a052d9785</sv:value>
-          </sv:property>
-          <sv:property sv:name="demosite:date" sv:type="Date">
-            <sv:value>2008-10-09T16:11:00.000+01:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="demosite:summary" sv:type="String">
-            <sv:value>Jasha Joachimsthal, developer at Hippo, is officially asked to
-                            become Apache Cocoon Committer. The number of committers of the
-                            international community Apache software developers is limited because of
-                            the stringent admissions.</sv:value>
-          </sv:property>
-          <sv:property sv:name="demosite:title" sv:type="String">
-            <sv:value>The Ninth Hippo Employee is chosen to become an Apache
-                        Committer</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:availability" sv:type="String">
-            <sv:value>live</sv:value>
-            <sv:value>preview</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:holder" sv:type="String">
-            <sv:value>marc</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:state" sv:type="String">
-            <sv:value>published</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostd:stateSummary" sv:type="String">
-            <sv:value>live</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
-            <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
-            <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
-            <sv:value>admin</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippostdpubwf:publicationDate" sv:type="Date">
-            <sv:value>2010-06-25T13:11:09.869+02:00</sv:value>
-          </sv:property>
-          <sv:node sv:name="demosite:body">
-            <sv:property sv:name="jcr:primaryType" sv:type="Name">
-              <sv:value>hippostd:html</sv:value>
-            </sv:property>
-            <sv:property sv:name="hippostd:content" sv:type="String">
-              <sv:value>Joachimsthal is already the ninth Hippo employee who may hold
-                                such an exclusive position. &lt;p&gt;Members of the Apache
-                                Software Foundation community are requested to become committer on
-                                the basis of their significant contributions. The contribution could
-                                be through active participation in mailing lists, new code additions
-                                and presentations. After a round vote among members one can be
-                                officially appointed as committer. As Apache committer you get an
-                                Apache email address, write access to the project code to which you
-                                are elected and eternal fame.&lt;/p&gt;
-                                &lt;p&gt;&lt;strong&gt;Jasha
-                                Joachimsthal&lt;/strong&gt; &lt;br /&gt;
-                                Joachimsthal (30) studied Business IT at the University of Twente.
-                                Thereafter, he was site manager with a tour operator. In 2006 he
-                                started working at Hippo and came into contact with Cocoon. Since
-                                then he is active on the mailing list, he lectures to outside
-                                developers and presents at events such as GetTogether in Rome and
-                                the ApacheCon in Amsterdam.&lt;/p&gt;
-                                &lt;p&gt;&lt;strong&gt;Apache
-                                Cocoon&lt;/strong&gt; &lt;br /&gt; Apache Cocoon is
-                                a web development framework based on the use of components, also
-                                known as pipelines. These components are like LEGO blocks and a web
-                                application can be built without programming in Java. The framework
-                                itself is built with the Java programming language and makes mainly
-                                use of XML and XSLT. Logic, content and format are kept separately
-                                of each other.&lt;/p&gt; &lt;p&gt;More on Apache
-                                Cocoon can be found &lt;a
-                                href="http://cocoon.apache.org/"&gt;here&lt;/a&gt;.
-                                &lt;/p&gt; &lt;p&gt;&lt;a
-                                href="http://www.onehippo.com/en/about_us,index2.html"&gt;Other
-                                committers&lt;/a&gt; employed by Hippo are: Arje Cahn (CTO
-                                of Hippo), David Taylor, Ate Douma, Woonsan Ko, Vivek Kumar, Ard
-                                Schrijvers, Dennis Dam and Jeroen Reijn.
-                            &lt;/p&gt;</sv:value>
-            </sv:property>
-          </sv:node>
-        </sv:node>
-        <sv:node sv:name="hippo:translation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>hippo:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="hippo:language" sv:type="String">
-            <sv:value/>
-          </sv:property>
-          <sv:property sv:name="hippo:message" sv:type="String">
-            <sv:value>ninth Apache commiter</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
     </sv:node>
     <sv:node sv:name="06">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -902,9 +768,7 @@
               <sv:value>JTeam a java based system integrator has in co-operation with
                                 Hippo, supplier of the open source CMS and Portal software with the
                                 same name, produced this official website of the KNVB (Royal Dutch
-                                Football Federation). &lt;img align="right" alt="image"
-                                src="http://www.onehippo.com/binaries/content_management/cases/2008/onsoranje.jpg"
-                                /&gt; &lt;p&gt;&lt;a
+                                Football Federation). &lt;p&gt;&lt;a
                                 href="http://www.onsoranje.nl/"&gt;Onsoranje.nl&lt;/a&gt;
                                 is an initiative between Hacchette Fillipachi Media Nederland and
                                 the KNVB. This site is a showcase of Hachette's editorial strengths
@@ -1183,12 +1047,7 @@
                                 Europe&lt;/a&gt; takes place 7-11 April at the Mövenpick
                                 Hotel Amsterdam City Centre, The Netherlands. Early Bird
                                 Registration and Conference Package incentives include savings up to
-                                EUR 500 through 7 February.&lt;/p&gt; &lt;div
-                                id="right"&gt; &lt;p&gt; &lt;img vspace="" hspace=""
-                                border="0" alt="Picture"
-                                src="http://www.onehippo.com/binaries/right-content/nl/apachecon-europe-2008/eu_2008_logo_small.jpg"
-                                /&gt; &lt;/p&gt; &lt;br /&gt;
-                                &lt;/div&gt;</sv:value>
+                                EUR 500 through 7 February.&lt;/p&gt; &lt;</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>
@@ -1551,13 +1410,7 @@
                                 &lt;p&gt;This OLPC laptop is designed for the poorest
                                 children in the most remote area's. The aim is to give these
                                 children an opportunity to discover, experiment and to be connected
-                                through internet with the world.&lt;/p&gt;
-                                &lt;p&gt;More information about this project you can find
-                                on: &lt;a
-                                href="http://www.laptop.org/"&gt;www.laptop.org&lt;/a&gt;.&lt;/p&gt;
-                                &lt;p&gt; &lt;img vspace="" hspace="" border="0"
-                                src="http://www.onehippo.com/binaries/hippo/nieuws/2008/olpc_small.jpg"
-                                alt="OLPC" /&gt; &lt;/p&gt;</sv:value>
+                                through internet with the world.&lt;/p&gt;</sv:value>
             </sv:property>
           </sv:node>
         </sv:node>
