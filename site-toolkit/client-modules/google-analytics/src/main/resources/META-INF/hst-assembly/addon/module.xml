@@ -2,6 +2,7 @@
 <module xmlns="http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd">
   <name>org.onehippo.cms7.googleanalytics</name>
   <config-locations>
-    <config-location>classpath*:META-INF/hst-assembly/addon/org.onehippo.cms7.googleanalytics/hippo-google-analytics.xml</config-location>
+    <config-location>classpath*:META-INF/hst-assembly/addon/google-analytics.xml</config-location>
+    <config-location>classpath*:META-INF/hst-assembly/overrides/google-analytics-*.xml</config-location>
   </config-locations>
 </module>
