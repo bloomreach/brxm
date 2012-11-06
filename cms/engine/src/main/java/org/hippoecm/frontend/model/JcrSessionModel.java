@@ -75,7 +75,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
                     }
                 }
                 session.logout();
-                logHippoEvent(true, session.getUserID(), "logout", true);
+                logHippoEvent(false, session.getUserID(), "logout", true);
             }
             super.detach();
         }
