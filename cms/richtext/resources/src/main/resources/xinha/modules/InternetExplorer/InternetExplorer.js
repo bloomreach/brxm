@@ -764,7 +764,7 @@ Xinha.prototype.insertHTML = function(html)
     this.focusEditor();
     var sel = this.getSelection();
     var range = this.createRange(sel);
-    if (range.htmlText ) {
+    if (typeof range.htmlText !== 'undefined') {
         range.pasteHTML(html);
     } else if (range.length > 0) {
         var item = range.item(0);
