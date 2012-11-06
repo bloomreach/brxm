@@ -51,6 +51,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
+import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -63,6 +64,7 @@ import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowContext;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.ManagerServiceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -277,8 +279,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         QueryResult rs = query.execute();
         Node result = null;
         Node target = rootSession.getRootNode();
-        if(!subject.getPath().substring(1).equals(""))
+        if (!subject.getPath().substring(1).equals("")) {
             target = target.getNode(subject.getPath().substring(1));
+        }
         Map<String, String[]> renames = new TreeMap<String, String[]>();
         if (foldertype.hasProperty("hippostd:modify")) {
             Value[] values = foldertype.getProperty("hippostd:modify").getValues();
@@ -465,8 +468,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     public void delete(String name) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        if(name.startsWith("/"))
-            name  = name.substring(1);
+        if (name.startsWith("/")) {
+            name = name.substring(1);
+        }
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
@@ -494,26 +498,17 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     private void renameChildDocument(Node folderNode, String newName) throws RepositoryException {
         Node documentNode = folderNode.getSession().getRootNode().getNode(folderNode.getPath().substring(1)+"/"+newName);
-        if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-            for (NodeIterator children = documentNode.getNodes(); children.hasNext(); ) {
-                Node child = children.nextNode();
-                if (child != null) {
-                    if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        child.checkout();
-                        folderNode.getSession().move(child.getPath(), documentNode.getPath()+"/"+documentNode.getName());
-                    }
-                }
-            }
-        }
+        renameChildDocument(documentNode);
     }
 
     private void renameChildDocument(Node documentNode) throws RepositoryException {
         if (documentNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+            JcrUtils.ensureIsCheckedOut(documentNode, false);
             for (NodeIterator children = documentNode.getNodes(); children.hasNext(); ) {
                 Node child = children.nextNode();
                 if (child != null) {
                     if (child.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        child.checkout();
+                        JcrUtils.ensureIsCheckedOut(child, false);
                         documentNode.getSession().move(child.getPath(), documentNode.getPath()+"/"+documentNode.getName());
                     }
                 }
@@ -522,8 +517,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     public void rename(String name, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        if(name.startsWith("/"))
-            name  = name.substring(1);
+        if (name.startsWith("/")) {
+            name = name.substring(1);
+        }
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
@@ -627,10 +623,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 continue;
             }
             String childPath;
-            if(renames.containsKey(path + "/_node/_name") && !renames.containsKey(path + "/"+ child.getName()))
+            if (renames.containsKey(path + "/_node/_name") && !renames.containsKey(path + "/" + child.getName())) {
                 childPath = path + "/_node";
-            else
+            } else {
                 childPath = path + "/" + child.getName();
+            }
             copy(child, target, renames, childPath);
         }
 
@@ -660,8 +657,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 for(int i=0; i<nodeTypes.length; i++) {
                     PropertyDefinition[] propDefs = nodeTypes[i].getPropertyDefinitions();
                     for(int j=0; j<propDefs.length; j++) {
-                        if(propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected())
+                        if (propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected()) {
                             isProtected = true;
+                        }
                     }
                 }
                 if (!isProtected) {
@@ -694,8 +692,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 for(int i=0; i<nodeTypes.length; i++) {
                     PropertyDefinition[] propDefs = nodeTypes[i].getPropertyDefinitions();
                     for(int j=0; j<propDefs.length; j++) {
-                        if(propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected())
+                        if (propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected()) {
                             isProtected = true;
+                        }
                     }
                 }
                 if (!isProtected) {
@@ -728,8 +727,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 Property p = source.getProperty(value);
                 if(p.getDefinition().isMultiple()) {
                     Value[] referencedValues = p.getValues();
-                    for(int j=0; j<referencedValues.length; j++)
+                    for (int j = 0; j < referencedValues.length; j++) {
                         newValues.add(referencedValues[j]);
+                    }
                 } else {
                     newValues.add(p.getValue());
                 }
@@ -953,9 +953,9 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (source.isNodeType(HippoNodeType.NT_DOCUMENT) && source.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             source = source.getParent();
         }
-        if (!folder.isCheckedOut()) {
-            folder.checkout();
-        }
+
+        JcrUtils.ensureIsCheckedOut(folder, false);
+
         folder.getSession().move(source.getPath(), folder.getPath() + "/" + targetName);
         renameChildDocument(folder, targetName);
         rootSession.save();
