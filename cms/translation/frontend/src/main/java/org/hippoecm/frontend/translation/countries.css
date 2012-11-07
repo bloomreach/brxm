@@ -33,6 +33,11 @@ table#translations-break-link {
   border-color: #ccc;
 }
 
+.translation-field-set .x-fieldset-bwrap .x-fieldset-body {
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
 /**
  * Below this line file has been generated with the generate_countries.sh script.
  **/

@@ -92,7 +92,8 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
     this.translationsfield = Ext.create({
       xtype: 'fieldset',
       title: self.resources['translation-folders'],
-      height: 156
+      height: 156,
+      cls: 'translation-field-set'
     });
     this.translationsfield.add(this.panel);
     config.items.push(this.translationsfield);
@@ -136,9 +137,7 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
       resources: this.resources,
       pathRenderer: this.pathRenderer,
       entries: siblings,
-      height: 140,
-      width: 618,
-      autoScroll: true
+      width: 618
     });
   },
   
@@ -178,14 +177,12 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
 
 Hippo.Translation.Folder.SelectTree = Ext.extend(Ext.ux.tree.TreeGrid, {
   useArrows: true,
-  autoScroll: true,
   enableSort: false,
   hideHeaders: false,
   enableHdMenu: false,
   enableDD: true,
   collapsible: false,
   width: 618,
-  height: 137,
 
   constructor: function(config) {
   	this.images = config.images;
@@ -263,7 +260,6 @@ Hippo.Translation.Folder.Container = Ext.extend(Ext.Container, {
     this.list = Ext.create({
       xtype: 'listview',
       hideHeaders: true,
-      height: 216,
       width: 622,
       store: store,
       columns: [{
