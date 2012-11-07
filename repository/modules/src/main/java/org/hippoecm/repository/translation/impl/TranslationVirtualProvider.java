@@ -45,9 +45,11 @@ import org.slf4j.LoggerFactory;
 
 public class TranslationVirtualProvider extends HippoVirtualProvider {
 
-    static final Logger log = LoggerFactory.getLogger(TranslationVirtualProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(TranslationVirtualProvider.class);
+    private static final Logger translationsSizeLog = LoggerFactory.getLogger(TranslationVirtualProvider.class.getName() + "/TranslationsSize");
 
     private static final String HIPPOTRANSLATION_NAMESPACE = "http://www.onehippo.org/jcr/hippotranslation/nt/1.0";
+    private static final int MAX_TRANSLATIONS = 100;
 
     private HippoVirtualProvider subNodesProvider;
     private FacetedNavigationEngine<Query, Context> facetedEngine;
@@ -77,7 +79,6 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
 
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
-        log.debug("populating " + state.getNodeId());
 
         if (subNodesProvider == null) {
             subNodesProvider = getDataProviderContext().lookupProvider(resolveName(HippoNodeType.NT_MIRROR));
@@ -86,46 +87,36 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
             }
         }
 
-        NodeId parentId = state.getParentId();
-        NodeId docId = parentId;
-        if (docId instanceof MirrorNodeId) {
-            docId = ((MirrorNodeId) docId).getCanonicalId();
-        } else {
-            String[] docbase = getProperty(docId, docbaseName, null);
-            if (docbase != null && docbase.length > 0) {
-                try {
-                    docId = new NodeId(UUID.fromString(docbase[0]));
-                } catch (IllegalArgumentException e) {
-                    log.warn("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
-                    return super.populate(context, state);
-                }
-            }
-        }
-        String[] ids = getProperty(docId, idName, null);
-        if (ids == null || ids.length == 0) {
+        final NodeId parentId = state.getParentId();
+
+        final NodeId docId = getCanonicalId(parentId);
+        if (docId == null) {
             return super.populate(context, state);
         }
-        String id = ids[0];
-        log.debug("  id=" + id);
+
+        final String id = getTranslationId(docId);
+        if (id == null) {
+            return super.populate(context, state);
+        }
 
         boolean singledView = false;
         LinkedHashMap<Name, String> view = null;
         LinkedHashMap<Name, String> order = null;
 
-        if (parentId instanceof IFilterNodeId) {
-            IFilterNodeId filterNodeId = (IFilterNodeId) parentId;
-            if (filterNodeId.getView() != null) {
-                view = new LinkedHashMap<Name, String>(filterNodeId.getView());
-            }
-            if (filterNodeId.getOrder() != null) {
-                order = new LinkedHashMap<Name, String>(filterNodeId.getOrder());
-            }
-            singledView = filterNodeId.isSingledView();
-        }
-
         FacetedNavigationEngine.Result facetedResult = facetedEngine.query(
                 "//element(*,hippotranslation:translated)[@hippotranslation:id='" + id + "']", facetedContext);
         if (facetedResult.length() > 0) { // NPE if we don't check
+
+            if (parentId instanceof IFilterNodeId) {
+                IFilterNodeId filterNodeId = (IFilterNodeId) parentId;
+                if (filterNodeId.getView() != null) {
+                    view = new LinkedHashMap<Name, String>(filterNodeId.getView());
+                }
+                if (filterNodeId.getOrder() != null) {
+                    order = new LinkedHashMap<Name, String>(filterNodeId.getOrder());
+                }
+                singledView = filterNodeId.isSingledView();
+            }
 
             ArrayList<ViewNodeId.Child> viewNodesOrdered = new ArrayList<ViewNodeId.Child>();
             for (NodeId t9nDocId : facetedResult) {
@@ -174,8 +165,45 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
                 state.addChildNodeEntry(child.getValue().name, child.getValue());
             }
 
+            final int numberOfTranslations = state.getChildNodeEntries().size();
+            if (numberOfTranslations > MAX_TRANSLATIONS) {
+                if (translationsSizeLog.isWarnEnabled()) {
+                    translationsSizeLog.warn("The translations node {} has more than {} translations. " +
+                            "This usually indicates a workflow misconfiguration.", state.getNodeId(), numberOfTranslations);
+                }
+            }
+
         }
+
         return state;
+    }
+
+    private String getTranslationId(final NodeId docId) throws RepositoryException {
+        final String id;
+        String[] ids = getProperty(docId, idName, null);
+        if (ids == null || ids.length == 0) {
+            id = null;
+        } else {
+            id = ids[0];
+        }
+        return id;
+    }
+
+    private NodeId getCanonicalId(NodeId docId) throws RepositoryException {
+        if (docId instanceof MirrorNodeId) {
+            docId = ((MirrorNodeId) docId).getCanonicalId();
+        } else {
+            String[] docbase = getProperty(docId, docbaseName, null);
+            if (docbase != null && docbase.length > 0) {
+                try {
+                    docId = new NodeId(UUID.fromString(docbase[0]));
+                } catch (IllegalArgumentException e) {
+                    log.warn("invalid docbase '" + docbase[0] + "' because not a valid UUID ");
+                    docId = null;
+                }
+            }
+        }
+        return docId;
     }
 
     // FIXME: copied from ViewVirtualProvider
