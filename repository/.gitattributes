@@ -64,6 +64,7 @@ config/src/main/resources/role-author.xml -text svneol=unset#text/plain
 config/src/main/resources/role-editor.xml -text svneol=unset#text/plain
 config/src/main/resources/role-jcrread.xml -text svneol=unset#text/plain
 config/src/main/resources/shortcuts-workflows.xml svneol=native#text/plain
+config/src/main/resources/update.xml -text
 config/src/main/resources/versioning-workflows.xml -text
 config/src/site/apt/index.apt -text
 config/src/site/site.xml svneol=native#text/plain
