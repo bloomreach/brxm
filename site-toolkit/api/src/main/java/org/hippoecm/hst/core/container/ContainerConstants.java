@@ -157,4 +157,10 @@ public interface ContainerConstants {
      * or a request for the preview website in a cms environment (host)
      */
     String REQUEST_COMES_FROM_CMS = "org.hippoecm.hst.container.request_comes_from_cms";
+
+    /**
+     * The 'default' prefix of HST component parameters. This prefix is used when no other prefix is set or the
+     * configured prefix is empty.
+     */
+    String DEFAULT_PARAMETER_PREFIX = "hippo-default";
 }

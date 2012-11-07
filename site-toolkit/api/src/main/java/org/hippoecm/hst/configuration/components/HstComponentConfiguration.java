@@ -91,12 +91,6 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     static final char PARAMETER_PREFIX_NAME_DELIMITER  = '\uFFFF';
 
     /**
-     * The 'default' prefix of HST component parameters. This prefix is used when no other prefix is set or the
-     * configured prefix is empty.
-     */
-    static final String DEFAULT_PARAMETER_PREFIX = "hippo-default";
-
-    /**
      * A {@link HstComponentConfiguration} comes in three different main types. The {@link Type} enum describes the possible
      * values. This {@link Type} is similar to the {@link HstComponentConfiguration#getComponentType()} which is the {@link String} representation
      */

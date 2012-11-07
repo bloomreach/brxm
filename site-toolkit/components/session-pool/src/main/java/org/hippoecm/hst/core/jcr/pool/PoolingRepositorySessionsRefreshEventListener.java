@@ -88,7 +88,6 @@ public class PoolingRepositorySessionsRefreshEventListener extends GenericEventL
             for (Repository repository : multipleRepository.getRepositoryMap().values()) {
                 if (repository instanceof PoolingRepository) {
                     PoolingRepository poolingRepository = (PoolingRepository) repository;
-
                     if (poolingRepository.isDisposableWhenNotInUse()) {
                         poolingRepository.setSessionsRefreshPendingAfter(currentTimeMillis);
                     }
