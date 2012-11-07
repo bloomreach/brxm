@@ -27,6 +27,7 @@ public class CircularBufferOutputStream extends OutputStream {
 
     protected final byte[] buf;
     protected int cursor = 0;
+    protected boolean firstCircleDone = false;
 
     public CircularBufferOutputStream(int bufferSize) {
         buf = new byte[bufferSize];
@@ -36,6 +37,9 @@ public class CircularBufferOutputStream extends OutputStream {
     public void write(final int b) throws IOException {
         buf[cursor++] = (byte) b;
         cursor = cursor % buf.length;
+        if (!firstCircleDone && cursor == 0) {
+            firstCircleDone = true;
+        }
     }
 
     @Override
@@ -48,6 +52,9 @@ public class CircularBufferOutputStream extends OutputStream {
         for (int i = off; i < off+len; i++) {
             buf[cursor++] = b[i];
             cursor = cursor % buf.length;
+            if (!firstCircleDone && cursor == 0) {
+                firstCircleDone = true;
+            }
         }
     }
 
@@ -57,16 +64,15 @@ public class CircularBufferOutputStream extends OutputStream {
     }
 
     public byte[] toByteArray() {
-        final int length;
-        if (buf[cursor] == 0) {
-            length = cursor;
-        } else {
-            length = buf.length;
-        }
-        final byte[] result = new byte[length];
+        final byte[] result;
         int i = 0;
-        for (int j = cursor; j < length; i++, j++) {
-            result[i] = buf[j];
+        if (!firstCircleDone) {
+            result = new byte[cursor];
+        } else {
+            result = new byte[buf.length];
+            for (int j = cursor; j < result.length; i++, j++) {
+                result[i] = buf[j];
+            }
         }
         for (int j = 0; j < cursor; i++, j++) {
             result[i] = buf[j];

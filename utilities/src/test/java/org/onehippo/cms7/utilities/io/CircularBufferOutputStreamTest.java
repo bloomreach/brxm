@@ -54,6 +54,23 @@ public class CircularBufferOutputStreamTest {
     }
 
     @Test
+    public void testWriteZeros() throws Exception {
+        final byte[] zeros = new byte[] {0, 0, 1, 0, 0, 0};
+        final CircularBufferOutputStream circularBuffer = new CircularBufferOutputStream(5);
+        for (int i=0; i<zeros.length; i++) {
+            circularBuffer.write(zeros[i]);
+        }
+        final byte[] expectedResult = new byte[] {0, 1, 0, 0, 0};
+        final byte[] result = circularBuffer.toByteArray();
+
+        assertEquals(expectedResult.length, result.length);
+
+        for (int i=0; i<expectedResult.length; i++) {
+            assertEquals(expectedResult[i], result[i]);
+        }
+    }
+
+    @Test
     @Ignore
     public void testWriteMoreThanMaxInteger() throws Exception {
         final CircularBufferOutputStream circularBuffer = new CircularBufferOutputStream(100);
