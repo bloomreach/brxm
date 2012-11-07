@@ -50,11 +50,7 @@ public class CircularBufferOutputStream extends OutputStream {
             return;
         }
         for (int i = off; i < off+len; i++) {
-            buf[cursor++] = b[i];
-            cursor = cursor % buf.length;
-            if (!firstCircleDone && cursor == 0) {
-                firstCircleDone = true;
-            }
+            write(b[i]);
         }
     }
 
