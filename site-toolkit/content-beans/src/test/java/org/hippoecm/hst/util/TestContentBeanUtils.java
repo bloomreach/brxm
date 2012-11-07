@@ -38,6 +38,10 @@ public class TestContentBeanUtils {
         assertTrue(ContentBeanUtils.isBeanType(news, NewsBean.class.getName()));
         assertTrue(ContentBeanUtils.isBeanType(news, NewsBean.class.getSimpleName()));
 
+        // test supertypes
+        assertTrue(ContentBeanUtils.isBeanType(text, BaseBean.class.getName()));
+        assertTrue(ContentBeanUtils.isBeanType(news, BaseBean.class.getName()));
+
         assertFalse(ContentBeanUtils.isBeanType(base, TextBean.class.getName()));
         assertFalse(ContentBeanUtils.isBeanType(base, TextBean.class.getSimpleName()));
         assertFalse(ContentBeanUtils.isBeanType(base, NewsBean.class.getName()));
