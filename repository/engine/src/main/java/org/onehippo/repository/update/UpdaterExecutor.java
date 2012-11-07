@@ -15,13 +15,23 @@
  */
 package org.onehippo.repository.update;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.jcr.Binary;
+import javax.jcr.InvalidItemStateException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -29,7 +39,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.ValueFactory;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
@@ -40,6 +49,7 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
+import org.apache.jackrabbit.core.id.NodeId;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -57,6 +67,7 @@ public class UpdaterExecutor implements EventListener {
 
     private static final Logger log = LoggerFactory.getLogger(UpdaterExecutor.class);
     private static final int PROPERTY_EVENTS = Event.PROPERTY_ADDED | Event.PROPERTY_REMOVED | Event.PROPERTY_CHANGED;
+    private static final long PROGRESS_REPORT_INTERVAL = 500;
 
     private final Session session;
     private final UpdaterInfo updaterInfo;
@@ -165,18 +176,20 @@ public class UpdaterExecutor implements EventListener {
         if (startNode != null) {
             final UpdaterPathVisitor visitor = new UpdaterPathVisitor();
             try {
+                info("Loading nodes to update");
                 startNode.accept(visitor);
-                for (String nodePath : visitor.nodePaths) {
+                info("Finished loading nodes to update");
+                for (String identifier : visitor.identifiers()) {
                     if (cancelled) {
                         info("Update cancelled");
                         return;
                     }
                     try {
-                        Node node = session.getNode(nodePath);
+                        Node node = session.getNodeByIdentifier(identifier);
                         executeUpdater(node);
                         commitBatchIfNeeded();
-                    } catch (PathNotFoundException e) {
-                        debug("Node no longer exists: " + nodePath);
+                    } catch (ItemNotFoundException e) {
+                        debug("Node no longer exists: " + identifier);
                     }
                 }
             } catch (UnsupportedOperationException e) {
@@ -300,7 +313,8 @@ public class UpdaterExecutor implements EventListener {
 
     private class UpdaterPathVisitor implements ItemVisitor {
 
-        private List<String> nodePaths = new ArrayList<String>();
+        private final List<NodeId> identifiers = new ArrayList<NodeId>();
+        private long count = 0;
 
         @Override
         public void visit(final Property property) throws RepositoryException {
@@ -312,25 +326,59 @@ public class UpdaterExecutor implements EventListener {
                 info("Update cancelled");
                 return;
             }
-            final String path = node.getPath();
-            nodePaths.add(path);
-            visitChildren(path);
+            identifiers.add(new NodeId(node.getIdentifier()));
+            visitChildren(node);
+            if (count++ % PROGRESS_REPORT_INTERVAL == 0) {
+                info("Loaded " + count + " nodes");
+            }
         }
 
-        private void visitChildren(final String path) throws RepositoryException {
-            Node node;
+        private void visitChildren(final Node node) throws RepositoryException {
+            NodeIterator children = null;
             try {
-                // updater might have removed the node, fetch it anew
-                node = session.getNode(path);
-            } catch (PathNotFoundException e) {
+                children = node.getNodes();
+            } catch (RepositoryException e) {
+                if (e.getCause() instanceof ItemNotFoundException) {
+                    debug("Node no longer exists: " + node.getIdentifier());
+                } else {
+                    throw e;
+                }
+            }
+            if (children == null) {
                 return;
             }
-            for (Node child : new NodeIterable(node.getNodes())) {
+            for (Node child : new NodeIterable(children)) {
                 if (child != null && !isVirtual(child)) {
                     visit(child);
                 }
             }
         }
+
+        private Iterable<String> identifiers() {
+            return new Iterable<String>() {
+                @Override
+                public Iterator<String> iterator() {
+                    final Iterator<NodeId> iterator = identifiers.iterator();
+                    return new Iterator<String>() {
+                        @Override
+                        public boolean hasNext() {
+                            return iterator.hasNext();
+                        }
+
+                        @Override
+                        public String next() {
+                            return iterator.next().toString();
+                        }
+
+                        @Override
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+                    };
+                }
+            };
+        }
+
     }
 
     private void commitBatchIfNeeded() throws RepositoryException {
