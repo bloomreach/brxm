@@ -16,10 +16,10 @@
 package org.hippoecm.hst.demo.beans;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoItem;
 
 @Node(jcrType = "demosite:placecompound")
-public class PlaceBean extends HippoDocument {
+public class PlaceBean extends HippoItem {
     private String city;
     private String country;
 

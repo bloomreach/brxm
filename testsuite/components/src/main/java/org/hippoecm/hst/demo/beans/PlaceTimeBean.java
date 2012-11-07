@@ -18,10 +18,10 @@ package org.hippoecm.hst.demo.beans;
 import java.util.Calendar;
 
 import org.hippoecm.hst.content.beans.Node;
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoItem;
 
 @Node(jcrType = "demosite:placetimecompound")
-public class PlaceTimeBean extends HippoDocument {
+public class PlaceTimeBean extends HippoItem {
     private Calendar date;
 
     public Calendar getDate() {
