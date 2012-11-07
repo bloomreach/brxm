@@ -35,7 +35,7 @@
         },
 
         createSurfAndEditLinks : function() {
-            var self, links, query, i, length,  element, hstMetaData, domWalker, hstMetaData, childNode;
+            var self, links, query, i, length,  element, hstMetaData, domWalker;
             links = [];
             try {
                 if (!!document.evaluate) {
@@ -56,6 +56,7 @@
                         if (!node || typeof node.nodeType === 'undefined') {
                             return;
                         }
+                        var i, hstMetaData, childNode, length;
                         if (node.nodeType === 8) {
                             hstMetaData = self.convertToHstMetaData(node);
                             if (hstMetaData !== null) {
