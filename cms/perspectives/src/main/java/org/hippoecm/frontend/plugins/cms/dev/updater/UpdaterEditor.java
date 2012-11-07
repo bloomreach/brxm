@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.dev.updater;
 
 import java.io.IOException;
 
+import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -517,9 +518,7 @@ public class UpdaterEditor extends Panel {
         final Session session = UserSession.get().getJcrSession();
         try {
             final Node registry = session.getNode(UPDATE_REGISTRY_PATH);
-            long index = registry.getNodes("new*").getSize() + 1;
-            final Node node = registry.addNode("new-" + index, "hipposys:updaterinfo");
-            node.setProperty("hipposys:script", IOUtils.toString(UpdaterEditor.class.getResource("UpdaterTemplate.groovy").openStream()));
+            final Node node = addUpdater(registry, 1);
             session.save();
             container.setDefaultModel(new JcrNodeModel(node));
         } catch (RepositoryException e) {
@@ -530,6 +529,16 @@ public class UpdaterEditor extends Panel {
             final String message = "An unexpected error occurred: " + e.getMessage();
             error(message);
             log.error(message, e);
+        }
+    }
+
+    private Node addUpdater(final Node registry, int index) throws IOException, RepositoryException {
+        try {
+            final Node node = registry.addNode("new-" + index, "hipposys:updaterinfo");
+            node.setProperty("hipposys:script", IOUtils.toString(UpdaterEditor.class.getResource("UpdaterTemplate.groovy").openStream()));
+            return node;
+        } catch (ItemExistsException e) {
+            return addUpdater(registry, index+1);
         }
     }
 
