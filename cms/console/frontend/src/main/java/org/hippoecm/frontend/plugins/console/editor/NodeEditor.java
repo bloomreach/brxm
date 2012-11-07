@@ -27,6 +27,7 @@ import java.util.TreeMap;
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.commons.lang.StringUtils;
@@ -181,10 +182,21 @@ class NodeEditor extends Form<Node> {
     public void setPrimaryType(String primaryType) {
         final Node node = getModelObject();
         if (node != null) {
+            String oldPrimaryType = null;
             try {
+                oldPrimaryType = node.getPrimaryNodeType().getName();
                 node.setPrimaryType(primaryType);
+            } catch (ConstraintViolationException e) {
+                log.error("Cannot set primary type to {}", primaryType);
+                if (oldPrimaryType != null) {
+                    try {
+                        node.setPrimaryType(oldPrimaryType);
+                    } catch (RepositoryException e1) {
+                        log.error("Failed to set primary node type to previous value");
+                    }
+                }
             } catch (RepositoryException e) {
-                log.error(e.getClass().getName() + ": " + e.getMessage(), e);
+                log.error("Failed to set primary node type", e);
             }
         }
     }
