@@ -142,7 +142,7 @@ public class HstParameterInfoProxyFactoryImpl implements HstParameterInfoProxyFa
         private String getParameterValue (final String parameterName, final ComponentConfiguration config, final HstRequest req) {
             String prefixedParameterName = getPrefixedParameterName(parameterName, config, req);
             String parameterValue = config.getParameter(prefixedParameterName, req.getRequestContext().getResolvedSiteMapItem());
-            if ((parameterValue == null || parameterValue.isEmpty()) && !parameterName.equals(prefixedParameterName)) {
+            if (parameterValue == null && !parameterName.equals(prefixedParameterName)) {
                 // fallback semantics should be the same as fallback to annotated value:
                 // if prefixed value is null or empty then use the default value
                 parameterValue = config.getParameter(parameterName, req.getRequestContext().getResolvedSiteMapItem());
