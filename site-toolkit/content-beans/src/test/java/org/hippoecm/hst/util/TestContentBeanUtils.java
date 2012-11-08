@@ -32,11 +32,14 @@ public class TestContentBeanUtils {
         NewsBean news = new NewsBean();
 
         assertTrue(ContentBeanUtils.isBeanType(base, BaseBean.class.getName()));
-        assertTrue(ContentBeanUtils.isBeanType(base, BaseBean.class.getSimpleName()));
+        // We do not support simple name, but only FQCN.
+        assertFalse(ContentBeanUtils.isBeanType(base, BaseBean.class.getSimpleName()));
         assertTrue(ContentBeanUtils.isBeanType(text, TextBean.class.getName()));
-        assertTrue(ContentBeanUtils.isBeanType(text, TextBean.class.getSimpleName()));
+        // We do not support simple name, but only FQCN.
+        assertFalse(ContentBeanUtils.isBeanType(text, TextBean.class.getSimpleName()));
         assertTrue(ContentBeanUtils.isBeanType(news, NewsBean.class.getName()));
-        assertTrue(ContentBeanUtils.isBeanType(news, NewsBean.class.getSimpleName()));
+        // We do not support simple name, but only FQCN.
+        assertFalse(ContentBeanUtils.isBeanType(news, NewsBean.class.getSimpleName()));
 
         // test supertypes
         assertTrue(ContentBeanUtils.isBeanType(text, BaseBean.class.getName()));

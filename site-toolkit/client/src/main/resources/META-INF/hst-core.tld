@@ -802,8 +802,7 @@
   <function>
     <description>
       Determines if the class or interface represented by this content bean object is either the same as, or is a 
-      subclass of, the class or interface represented by the specified fully qualified class name or simple class name name parameter.
-      When the typeName argument is a simple name, then it compares only with the simple class name of the bean object argument.
+      subclass of, the class or interface represented by the specified fully qualified class name parameter.
       It returns true if so; otherwise it returns false. 
     </description>
     <name>isBeanType</name>

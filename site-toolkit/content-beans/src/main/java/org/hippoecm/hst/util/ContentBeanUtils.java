@@ -45,8 +45,7 @@ public class ContentBeanUtils {
 
     /**
      * Determines if the class or interface represented by this content bean object is either the same as, or is a 
-     * subclass of, the class or interface represented by the specified fully qualified class name or simple class name name parameter.
-     * When the typeName is a simple name, then it compares only with the simple class name of the bean object argument.
+     * subclass of, the class or interface represented by the specified fully qualified class name parameter.
      * It returns true if so; otherwise it returns false. 
      * @param bean content bean object
      * @param typeName fully qualified class name or simple class name
@@ -59,18 +58,8 @@ public class ContentBeanUtils {
 
         Class<?> beanType = bean.getClass();
         String beanFqcn = beanType.getName();
-        String beanSimpleName = beanFqcn;
 
-        int offset = beanFqcn.lastIndexOf('.');
-        if (offset != -1) {
-            beanSimpleName = beanFqcn.substring(offset + 1);
-            offset = beanSimpleName.lastIndexOf('$');
-            if (offset != -1) {
-                beanSimpleName = beanSimpleName.substring(offset + 1);
-            }
-        }
-
-        if (StringUtils.equals(beanFqcn, typeName) || StringUtils.equals(beanSimpleName, typeName)) {
+        if (StringUtils.equals(beanFqcn, typeName)) {
             return true;
         }
 
