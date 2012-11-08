@@ -84,6 +84,7 @@ public class PersistableSessionAroundAdvice {
                 Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName());
                 Credentials persistableCredentials = requestContext.getContextCredentialsProvider().getWritableCredentials(requestContext);
                 persistableSession = repository.login(persistableCredentials);
+                requestContext.setAttribute(PERSISTABLE_SESSION_ATTR, persistableSession);
             } catch (Exception e) {
                 log.warn("Failed to get a persistableSession", e);
             }
