@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.configuration.AbstractFileConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -42,6 +41,7 @@ import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
+import org.hippoecm.hst.container.event.ComponentManagerBeforeReplacedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
@@ -310,22 +310,7 @@ public class HstSiteConfigServlet extends HttpServlet {
 
         if (oldComponentManager != null) {
             log.info("HstSiteConfigServlet will re-initialize the Component manager...");
-            
-            // we need to unregister MBeans first from the old component manager
-            // because old component manager will be destroyed after the new component manager is initialized
-            // and old component manager will trigger unregistering the newly registered MBeans when destroying.
-            try {
-                Map<String, UnregisterableMBeanExporter> unregisterableMBeanExportersMap = oldComponentManager.getComponentsOfType(UnregisterableMBeanExporter.class);
-                
-                if (!MapUtils.isEmpty(unregisterableMBeanExportersMap)) {
-                    for (Map.Entry<String, UnregisterableMBeanExporter> entry : unregisterableMBeanExportersMap.entrySet()) {
-                        log.info("Unregistering MBeans from the exporter, '{}'.", entry.getKey());
-                        entry.getValue().unregisterBeans();
-                    }
-                }
-            } catch (Exception e) {
-                log.warn("Failed to unregister MBeans from the old component manager.", e);
-            }
+            oldComponentManager.publishEvent(new ComponentManagerBeforeReplacedEvent(oldComponentManager));
         }
 
         try {

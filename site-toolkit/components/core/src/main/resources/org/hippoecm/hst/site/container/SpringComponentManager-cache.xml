@@ -21,6 +21,10 @@
   <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
   </bean>
   
+  <bean class="org.hippoecm.hst.cache.ehcache.EhCacheManagerShuttingDownListener" init-method="init" destroy-method="destroy">
+    <property name="cacheManager" ref="ehCacheManager" />
+  </bean>
+  
   <bean id="abstractEhCacheBase" abstract="true">
     <property name="cacheManager" ref="ehCacheManager" />
     <property name="maxElementsInMemory" value="256" />

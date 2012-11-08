@@ -45,6 +45,7 @@ api/src/main/java/org/hippoecm/hst/configuration/sitemenu/package-info.java svne
 api/src/main/java/org/hippoecm/hst/container/HstContainerRequest.java -text
 api/src/main/java/org/hippoecm/hst/container/HstPortalContextProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/container/HstPortletRequestDispatcherPathProvider.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/container/event/ComponentManagerBeforeReplacedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/event/HttpSessionCreatedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/event/HttpSessionDestroyedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/package-info.java svneol=native#text/plain
@@ -443,6 +444,7 @@ commons/src/test/java/org/hippoecm/hst/util/TestPropertyDefinitionUtils.java -te
 commons/src/test/java/org/hippoecm/hst/util/TestServletConfigUtils.java svneol=native#text/plain
 components/core/pom.xml svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/CacheElementEhCacheImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/ehcache/EhCacheManagerShuttingDownListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/HstCacheEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationViewUtilities.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AbstractHstPropertyDefinition.java -text
@@ -566,6 +568,7 @@ components/core/src/main/java/org/hippoecm/hst/site/container/ResourceFactoryBea
 components/core/src/main/java/org/hippoecm/hst/site/container/SpringComponentManager.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/container/SpringMetadataReaderClasspathResourceScanner.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/UnregisterableMBeanExporter.java -text
+components/core/src/main/java/org/hippoecm/hst/site/container/UnregisteringMBeanExportersListener.java -text
 components/core/src/main/java/org/hippoecm/hst/site/container/session/HttpSessionEventPublisher.java -text
 components/core/src/main/java/org/hippoecm/hst/site/request/BasicHstSiteMapMatcher.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/ComponentConfigurationImpl.java svneol=native#text/plain

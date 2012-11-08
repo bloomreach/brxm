@@ -129,4 +129,7 @@
     <property name="serviceUrl" value="${management.connector.server.serviceUrl}" />
   </bean>
   
+  <bean class="org.hippoecm.hst.site.container.UnregisteringMBeanExportersListener" init-method="init" destroy-method="destroy">
+  </bean>
+  
 </beans>
