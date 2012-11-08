@@ -21,15 +21,11 @@ package org.hippoecm.hst.core.component;
 public interface HstComponentMetadata {
 
     /**
-     * Return the name of the underlying class.
-     */
-    String getClassName();
-
-    /**
      * Determine whether the underlying operation method has an annotation
      * of the given type defined.
-     * @param annotationType the annotation type to look for
-     * @return whether a matching annotation is defined
+     * @param methodName the method to inspect for whether it has an annotation of type <code>annotationType</code>
+     * @param annotationType the fully qualified annotation class name to look for
+     * @return <code>true </code> when the method has the annotation
      */
     boolean hasMethodAnnotatedBy(String annotationType, String methodName);
 

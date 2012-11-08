@@ -15,65 +15,36 @@
  */
 package org.hippoecm.hst.core.component;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.hippoecm.hst.content.annotations.Persistable;
-import org.springframework.core.type.AnnotationMetadata;
-import org.springframework.core.type.MethodMetadata;
-import org.springframework.core.type.classreading.MetadataReader;
-import org.springframework.core.type.classreading.MetadataReaderFactory;
-import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
+import org.hippoecm.hst.util.AnnotationsScanner;
 
 public class HstComponentMetadataReader {
 
     private HstComponentMetadataReader() {
     }
 
-    public static HstComponentMetadata getHstComponentMetadata(ClassLoader classloader, String componentClassName) {
-        HstComponentMetadata componentMetadata = null;
+    public static HstComponentMetadata getHstComponentMetadata(Class<?> clazz) {
 
-        try {
-            MetadataReaderFactory factory = new SimpleMetadataReaderFactory(classloader);
-            MetadataReader reader = factory.getMetadataReader(componentClassName);
-            AnnotationMetadata annotationMetadata = reader.getAnnotationMetadata();
+        final Map<String, Set<String>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(clazz);
+        return  new DefaultHstComponentMetadata(methodAnnotations);
 
-            Map<String, MethodMetadata> methodMetadataMap = new HashMap<String, MethodMetadata>();
-            Set<MethodMetadata> annotatedMethodMetadataSet = annotationMetadata.getAnnotatedMethods(Persistable.class.getName());
-
-            for (MethodMetadata annotatedMethodMetadata : annotatedMethodMetadataSet) {
-                methodMetadataMap.put(annotatedMethodMetadata.getMethodName(), annotatedMethodMetadata);
-            }
-
-            componentMetadata = new DefaultHstComponentMetadata(componentClassName, methodMetadataMap);
-        } catch (Exception e) {
-        }
-
-        return componentMetadata;
     }
 
     private static class DefaultHstComponentMetadata implements HstComponentMetadata {
 
-        private final String className;
-        private final Map<String, MethodMetadata> methodMetadataMap;
+        final Map<String, Set<String>> methodAnnotations;
 
-        private DefaultHstComponentMetadata(final String className, final Map<String, MethodMetadata> methodMetadataMap) {
-            this.className = className;
-            this.methodMetadataMap = methodMetadataMap;
+        public DefaultHstComponentMetadata(final Map<String, Set<String>> methodAnnotations) {
+            this.methodAnnotations = methodAnnotations;
         }
 
-        public String getClassName() {
-            return className;
-        }
-
-        public boolean hasMethodAnnotatedBy(String annotationType, String methodName) {
-            if (!methodMetadataMap.containsKey(methodName)) {
+        public boolean hasMethodAnnotatedBy(String annotation, String methodName) {
+            if (!methodAnnotations.containsKey(methodName)) {
                 return false;
             }
-
-            MethodMetadata metadata = methodMetadataMap.get(methodName);
-            return metadata.isAnnotated(annotationType);
+            return methodAnnotations.get(methodName).contains(annotation);
         }
     }
 }

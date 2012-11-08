@@ -64,7 +64,12 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     protected HstResponseState responseState;
     
-    public HstComponentWindowImpl(HstComponentConfiguration hstComponentConfiguration, String componentName, HstComponent component, HstComponentMetadata componentMetadata, HstComponentWindow parentWindow, String referenceNamespace) {
+    public HstComponentWindowImpl(final HstComponentConfiguration hstComponentConfiguration,
+                                  final String componentName,
+                                  final HstComponent component,
+                                  final HstComponentMetadata componentMetadata,
+                                  final HstComponentWindow parentWindow,
+                                  final String referenceNamespace) {
         this.hstComponentConfiguration = hstComponentConfiguration;
         this.componentName = componentName;
         this.component = component;

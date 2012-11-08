@@ -56,7 +56,7 @@ public class HstComponentRegistryImpl implements HstComponentRegistry {
     }
 
     public void registerComponent(HstContainerConfig requestContainerConfig, String componentId, HstComponent component) {
-        HstComponentMetadata componentMetadata = HstComponentMetadataReader.getHstComponentMetadata(getClass().getClassLoader(), component.getClass().getName());
+        HstComponentMetadata componentMetadata = HstComponentMetadataReader.getHstComponentMetadata(getClass());
         HstComponentHolder componentHolder = new HstComponentHolder(component, componentMetadata);
         getServletConfigComponentsMap(requestContainerConfig, true).put(componentId, componentHolder);
     }

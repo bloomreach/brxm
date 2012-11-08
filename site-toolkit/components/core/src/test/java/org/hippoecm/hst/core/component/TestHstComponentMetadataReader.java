@@ -20,6 +20,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.hippoecm.hst.content.annotations.Persistable;
+import org.hippoecm.hst.content.beans.Node;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -27,15 +29,41 @@ import org.junit.Test;
  */
 public class TestHstComponentMetadataReader {
 
-    @Test
-    public void testMetadataReading() throws Exception {
-        HstComponentMetadata metadata = HstComponentMetadataReader.getHstComponentMetadata(getClass().getClassLoader(), DetailComponent.class.getName());
+    private HstComponentMetadata metadataDetailComponent;
+    private HstComponentMetadata metadataDetailComponentImplementingInterface;
+    
+    @Before
+    public void setup(){
+        metadataDetailComponent = HstComponentMetadataReader.getHstComponentMetadata(DetailComponent.class);
+        metadataDetailComponentImplementingInterface = HstComponentMetadataReader.getHstComponentMetadata(DetailComponentImplementingInterface.class);
+    }
 
-        assertNotNull(metadata);
-        assertFalse(metadata.hasMethodAnnotatedBy(Persistable.class.getName(), "doBeforeRender"));
-        assertTrue(metadata.hasMethodAnnotatedBy(Persistable.class.getName(), "doAction"));
-        // Note: annotation of the parent class is not read
-        assertFalse(metadata.hasMethodAnnotatedBy(Persistable.class.getName(), "doBeforeServeResource"));
+
+    @Test
+    public void testMetadataDeclaredAnnotationReading() throws Exception {
+        assertNotNull(metadataDetailComponent);
+        assertFalse(metadataDetailComponent.hasMethodAnnotatedBy(Persistable.class.getName(), "doBeforeRender"));
+        assertTrue(metadataDetailComponent.hasMethodAnnotatedBy(Persistable.class.getName(), "doAction"));
+    }
+
+    @Test
+    public void testMetadataSuperClassAnnotationReading() throws Exception {
+        assertTrue(metadataDetailComponent.hasMethodAnnotatedBy(Persistable.class.getName(), "doBeforeServeResource"));
+    }
+
+    @Test
+    public void testMetadataSuperInterfaceAnnotationReading() throws Exception {
+        // from BaseComponent
+        assertTrue(metadataDetailComponentImplementingInterface.hasMethodAnnotatedBy(Persistable.class.getName(), "doBeforeServeResource"));
+        // from super interface
+        assertTrue(metadataDetailComponentImplementingInterface.hasMethodAnnotatedBy(Persistable.class.getName(), "doAction"));
+    }
+
+    @Test
+    public void testMetadataSuperInterfaceTwoAnnotations() throws Exception {
+        // from super interface
+        assertTrue(metadataDetailComponentImplementingInterface.hasMethodAnnotatedBy(Persistable.class.getName(), "doAction"));
+        assertTrue(metadataDetailComponentImplementingInterface.hasMethodAnnotatedBy(Node.class.getName(), "doAction"));
     }
 
     public static class BaseComponent extends GenericHstComponent {
@@ -48,6 +76,17 @@ public class TestHstComponentMetadataReader {
         @Persistable
         public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
         }
+    }
+
+    public static class DetailComponentImplementingInterface extends BaseComponent implements InterfaceWithPersistableAnno {
+        public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+    }
+
+    public static interface InterfaceWithPersistableAnno {
+        @Persistable
+        @Node(jcrType = "test")
+        public void doAction(HstRequest request, HstResponse response);
     }
 
 }

@@ -36,7 +36,6 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
-@Inherited
 public @interface Persistable {
 
 }
