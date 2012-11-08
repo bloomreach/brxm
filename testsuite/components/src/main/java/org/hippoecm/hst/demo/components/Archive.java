@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.demo.components;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -31,14 +32,12 @@ public class Archive extends AbstractSearchComponent {
         super.doBeforeRender(request, response);
         HippoBean currentBean = this.getContentBean(request);
 
-        int pageSize;
-        try {
-            pageSize = Integer.parseInt(getPublicRequestParameter(request, "pageSize"));
+        // NOTE: It is intended to not catch NumberFormatException below.
+        //       In order to test component exceptions more easily, you can just provide a non-number parameter for 'pageSize'.
 
-            if (pageSize <= 0) {
-                pageSize = DEFAULT_PAGE_SIZE;
-            }
-        } catch (NumberFormatException e) {
+        int pageSize = Integer.parseInt(StringUtils.defaultIfEmpty(getPublicRequestParameter(request, "pageSize"), Integer.toString(DEFAULT_PAGE_SIZE)));
+
+        if (pageSize <= 0) {
             pageSize = DEFAULT_PAGE_SIZE;
         }
 
