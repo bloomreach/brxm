@@ -27,16 +27,8 @@ import org.slf4j.LoggerFactory;
  */
 @XmlRootElement(name = "component")
 public class ContainerItemComponentRepresentation {
-    
-    private static Logger log = LoggerFactory.getLogger(ContainerItemComponentRepresentation.class);
-
-    private static final String HST_PARAMETERNAMES = "hst:parameternames";
-    private static final String HST_COMPONENTCLASSNAME = "hst:componentclassname";
-    private static final String HST_PARAMETERVALUES = "hst:parametervalues";
-    private static final String HST_PARAMETERNAMEPREFIXES = "hst:parameternameprefixes";
 
     private List<ContainerItemComponentPropertyRepresentation> properties;
-
 
     public List<ContainerItemComponentPropertyRepresentation> getProperties() {
         return properties;
