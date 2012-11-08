@@ -42,13 +42,21 @@
     elementId: null,
     calls: 0,
     timerID: 0,
+    active: false,
     
     getElement: function() {
         YAHOO.log('Trying to find ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
         return Dom.get(this.elementId);
     },
+
+    setActive: function(active) {
+      this.active = active;
+    },
     
     show: function() {
+        if (!this.active) {
+            return;
+        }
         if(this.calls == 0) {
             this.timerID = self.setTimeout("document.body.style.cursor = 'wait';", 300);
         }
@@ -58,6 +66,9 @@
     },
     
     hide: function() {
+        if (!this.active) {
+            return;
+        }
         if(this.calls > 0) {
             this.calls--;
         } 
