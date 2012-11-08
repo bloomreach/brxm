@@ -251,6 +251,7 @@ api/src/main/java/org/hippoecm/hst/service/jcr/JCRService.java svneol=native#tex
 api/src/main/java/org/hippoecm/hst/service/jcr/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/service/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/statistics/Counter.java -text
+api/src/main/java/org/hippoecm/hst/util/AnnotationsScanner.java -text
 api/src/main/java/org/hippoecm/hst/util/ClasspathResourceScanner.java -text
 api/src/main/java/org/hippoecm/hst/util/KeyValue.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/util/package-info.java svneol=native#text/plain

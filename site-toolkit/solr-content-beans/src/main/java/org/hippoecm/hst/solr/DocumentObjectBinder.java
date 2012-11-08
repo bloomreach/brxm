@@ -45,6 +45,7 @@ import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
+import org.hippoecm.hst.util.AnnotationsScanner;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -353,13 +354,13 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         List<DocField> fields = new ArrayList<DocField>();
         // SEARCH for public getter annotated with IndexField
         for (Method method : clazz.getMethods()) {
-            Method annotatedIndexFieldMethod = doGetAnnotatedMethod(method, IndexField.class);
+            Method annotatedIndexFieldMethod = AnnotationsScanner.doGetAnnotatedMethod(method, IndexField.class);
             if (annotatedIndexFieldMethod != null) {
                 if (Modifier.isPublic(method.getModifiers())) {
                     // check whether there is somewhere in the class hierarchy also for the method
                     // an indication that it should be ignored for compound beans
                     boolean ignoreForCompoundBean =  false;
-                    if (doGetAnnotatedMethod(method, IgnoreForCompoundBean.class) != null) {
+                    if (AnnotationsScanner.doGetAnnotatedMethod(method, IgnoreForCompoundBean.class) != null) {
                         // there is an annotation that indicates that compound beans should ignore the method for indexing
                         ignoreForCompoundBean = true;
                     }
@@ -373,50 +374,6 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
     }
 
 
-    /**
-     * returns the annotated method with annotation clazz and null if the clazz annotation is not present
-     * @param m
-     * @param clazz the annotation to look for
-     * @return the {@link Method} that contains the annotation <code>clazz</code> and <code>null</code> if none found
-     */
-    private static Method doGetAnnotatedMethod(final Method m, Class<? extends Annotation> clazz) {
-
-        if (m == null) {
-            return m;
-        }
-
-        Annotation annotation = m.getAnnotation(clazz);
-        if(annotation != null ) {
-            // found annotation
-            return m;
-        }
-
-        Class<?> superC = m.getDeclaringClass().getSuperclass();
-        if (superC != null && Object.class != superC) {
-            try {
-                Method method = doGetAnnotatedMethod(superC.getMethod(m.getName(), m.getParameterTypes()), clazz);
-                if (method != null) {
-                    return method;
-                }
-            } catch (NoSuchMethodException ex) {
-                // ignore
-            }
-        }
-        for (Class<?> i : m.getDeclaringClass().getInterfaces()) {
-            try {
-                Method method = doGetAnnotatedMethod(i.getMethod(m.getName(), m.getParameterTypes()), clazz);
-                if (method != null) {
-                    return method;
-                }
-            } catch (NoSuchMethodException ex) {
-                // ignore
-            }
-        }
-
-        return null;
-    }
-
-    
     private static void setClassHierarchyField(SolrInputDocument doc, Class<?> clazz) {
 
         doc.addField(HIPPO_CONTENT_BEAN_FQN_CLAZZ_HIERARCHY, clazz.getName());
