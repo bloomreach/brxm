@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -229,6 +231,15 @@ public abstract class AbstractValve implements Valve {
     }
     
     protected PageErrorHandler.Status handleComponentExceptions(PageErrors pageErrors, HstContainerConfig requestContainerConfig, HstComponentWindow window, HstRequest hstRequest, HstResponse hstResponse) {
+        if (!pageErrors.isEmpty()) {
+            final HttpServletRequest request = hstRequest.getRequestContext().getServletRequest();
+            String requestInfo = request.getRequestURI();
+            if (request.getQueryString() != null) {
+                requestInfo += "?" + request.getQueryString();
+            }
+            log.warn("Component exception(s) found in page request, '{}'.", requestInfo);
+        }
+
         PageErrorHandler pageErrorHandler = (PageErrorHandler) hstRequest.getAttribute(ContainerConstants.CUSTOM_ERROR_HANDLER_PARAM_NAME);
         
         if (pageErrorHandler == null) {
