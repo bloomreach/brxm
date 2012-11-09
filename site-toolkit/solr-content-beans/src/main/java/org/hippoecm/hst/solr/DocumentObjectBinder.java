@@ -45,7 +45,6 @@ import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
-import org.hippoecm.hst.util.AnnotationsScanner;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -334,7 +333,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
 
 
     private List<DocField> getDocFields(Class clazz) {
-       List<DocField> fields = infocache.get(clazz);
+        List<DocField> fields = infocache.get(clazz);
         if (fields == null) {
             synchronized (infocache) {
                 fields = collectInfo(clazz);
@@ -354,13 +353,13 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         List<DocField> fields = new ArrayList<DocField>();
         // SEARCH for public getter annotated with IndexField
         for (Method method : clazz.getMethods()) {
-            Method annotatedIndexFieldMethod = AnnotationsScanner.doGetAnnotatedMethod(method, IndexField.class);
+            Method annotatedIndexFieldMethod = doGetAnnotatedMethod(method, IndexField.class);
             if (annotatedIndexFieldMethod != null) {
                 if (Modifier.isPublic(method.getModifiers())) {
                     // check whether there is somewhere in the class hierarchy also for the method
                     // an indication that it should be ignored for compound beans
                     boolean ignoreForCompoundBean =  false;
-                    if (AnnotationsScanner.doGetAnnotatedMethod(method, IgnoreForCompoundBean.class) != null) {
+                    if (doGetAnnotatedMethod(method, IgnoreForCompoundBean.class) != null) {
                         // there is an annotation that indicates that compound beans should ignore the method for indexing
                         ignoreForCompoundBean = true;
                     }
@@ -371,6 +370,50 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
             }
         }
         return fields;
+    }
+
+
+    /**
+     * returns the annotated method with annotation clazz and null if the clazz annotation is not present
+     * @param m
+     * @param clazz the annotation to look for
+     * @return the {@link Method} that contains the annotation <code>clazz</code> and <code>null</code> if none found
+     */
+    private static Method doGetAnnotatedMethod(final Method m, Class<? extends Annotation> clazz) {
+
+        if (m == null) {
+            return m;
+        }
+
+        Annotation annotation = m.getAnnotation(clazz);
+        if(annotation != null ) {
+            // found annotation
+            return m;
+        }
+
+        Class<?> superC = m.getDeclaringClass().getSuperclass();
+        if (superC != null && Object.class != superC) {
+            try {
+                Method method = doGetAnnotatedMethod(superC.getMethod(m.getName(), m.getParameterTypes()), clazz);
+                if (method != null) {
+                    return method;
+                }
+            } catch (NoSuchMethodException ex) {
+                // ignore
+            }
+        }
+        for (Class<?> i : m.getDeclaringClass().getInterfaces()) {
+            try {
+                Method method = doGetAnnotatedMethod(i.getMethod(m.getName(), m.getParameterTypes()), clazz);
+                if (method != null) {
+                    return method;
+                }
+            } catch (NoSuchMethodException ex) {
+                // ignore
+            }
+        }
+
+        return null;
     }
 
 
@@ -412,7 +455,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                     }
                     return strings;
                 }
-            } 
+            }
         } else if (val instanceof Object[]) {
             Object[] vals = (Object[])val;
             if (vals.length > 0) {
@@ -439,7 +482,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         }
         return val;
     }
-    
+
     private static class DocField {
         private String name;
         private Method getter;
@@ -490,7 +533,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                     name = getterName.substring(2, 3).toLowerCase() + getterName.substring(3);
                 } else {
                     name = getter.getName();
-                } 
+                }
             } else {
                 name = annotation.name();
             }
@@ -512,8 +555,8 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                 isContainedInMap = true;
                 //assigned a default type
                 type = Object.class;
-                    if (getter.getGenericReturnType() instanceof ParameterizedType) {
-                        //check what are the generic values
+                if (getter.getGenericReturnType() instanceof ParameterizedType) {
+                    //check what are the generic values
                     ParameterizedType parameterizedType = (ParameterizedType) getter.getGenericReturnType();
                     Type[] types = parameterizedType.getActualTypeArguments();
                     if (types != null && types.length == 2 && types[0] == String.class) {
@@ -548,7 +591,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                                     "Object, Object[] and List");
                         }
                     }
-                } 
+                }
             }
         }
 
@@ -646,7 +689,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                         cal = (Calendar) v;
                         return cal.getTime();
                     }
-    
+
                 }
             } catch (ParseException e) {
                 log.warn("Could not parse value '' to Date. Return null", v.toString());
