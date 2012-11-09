@@ -244,6 +244,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         if (StringUtils.isNotBlank(passwordValue)&& passwordValue.equals("********")) {
                             SignInForm.this.passwordTextField.setModelObject("");
                         }
+                        target.addComponent(passwordTextField);
 
                         // Also remove the cookie which contains user information
                         WebApplicationHelper.clearCookie(REMEMBERME_COOKIE_NAME);
@@ -255,8 +256,6 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
                         WebApplicationHelper.retrieveWebResponse().addCookie(remembermeCookie);
                     }
-
-                    setResponsePage(this.getFormComponent().getPage());
                 }
             });
 
