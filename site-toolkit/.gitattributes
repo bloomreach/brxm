@@ -252,7 +252,6 @@ api/src/main/java/org/hippoecm/hst/service/jcr/JCRService.java svneol=native#tex
 api/src/main/java/org/hippoecm/hst/service/jcr/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/service/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/statistics/Counter.java -text
-api/src/main/java/org/hippoecm/hst/util/AnnotationsScanner.java -text
 api/src/main/java/org/hippoecm/hst/util/ClasspathResourceScanner.java -text
 api/src/main/java/org/hippoecm/hst/util/KeyValue.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/util/package-info.java svneol=native#text/plain
@@ -410,6 +409,7 @@ commons/src/main/java/org/hippoecm/hst/security/TransientRole.java -text
 commons/src/main/java/org/hippoecm/hst/security/TransientUser.java -text
 commons/src/main/java/org/hippoecm/hst/site/HstServices.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/statistics/DefaultCounter.java -text
+commons/src/main/java/org/hippoecm/hst/util/AnnotationsScanner.java -text
 commons/src/main/java/org/hippoecm/hst/util/DOMElementWriter.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/DefaultKeyValue.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/DuplicateKeyNotAllowedHashMap.java -text svneol=unset#text/plain
@@ -436,6 +436,7 @@ commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenerImpl.java -text
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenersContainerImpl.java svneol=native#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestRewindableEventIterator.java svneol=native#text/plain
 commons/src/test/java/org/hippoecm/hst/diagnosis/TestHDC.java -text
+commons/src/test/java/org/hippoecm/hst/util/TestAnnotationsScanner.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHeadElementUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstRequestUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHstResponseUtils.java svneol=native#text/plain

@@ -28,7 +28,7 @@ public class HstComponentMetadataReader {
     public static HstComponentMetadata getHstComponentMetadata(Class<?> clazz) {
 
         final Map<String, Set<String>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(clazz);
-        return  new DefaultHstComponentMetadata(methodAnnotations);
+        return new DefaultHstComponentMetadata(methodAnnotations);
 
     }
 

@@ -68,8 +68,25 @@ public class AnnotationsScanner {
     }
 
     /**
+     * <p>
      * Returns the map of method name mapped to all the annotations on such a method name. Note that also annotations
      * on the public methods of super classes and interfaces are present
+     * </p>
+     * <p>
+     *     Note that the annotations for <b>overloaded</b> methods are all combined. Thus the overloaded annotated method
+     *     below will result in a Map that has a key <code>annotated</code> and value a <code>Set</code> containing
+     *     {TestAnno1.class.getName(),TestAnno2.class.getName(), TestAnno2.class.getName() }
+     *     <pre>
+     *     <code>
+     *          @TestAnno1
+     *          public void annotated() {}
+     *          @TestAnno2
+     *          public String annotated(String foo) {return null;}
+     *          @TestAnno3
+     *          public void annotated(boolean foo) {}
+     *     </code>
+     *     </pre>
+     * </p>
      * @param clazz
      * @return the map where the keys are all the method names that contain annotations, and the values are the set of
      * fully qualified annotation class name for the method name. Return empty map if no single method with an annotation
@@ -79,14 +96,20 @@ public class AnnotationsScanner {
         Map<String, Set<String>> methodAnnotations = new HashMap<String, Set<String>>();
         List<MethodAnnotations> methodAnnotationsList = getMethodAnnotationsList(clazz);
         for (MethodAnnotations methodAnnotation : methodAnnotationsList) {
-            methodAnnotations.put(methodAnnotation.getMethodName(), methodAnnotation.getAnnotations());
+            Set<String> overLoadedMethodPresent = methodAnnotations.get(methodAnnotation.getMethodName());
+            if (overLoadedMethodPresent != null) {
+                overLoadedMethodPresent.addAll(methodAnnotation.getAnnotations());
+            } else {
+             methodAnnotations.put(methodAnnotation.getMethodName(), methodAnnotation.getAnnotations());
+            }
         }
         return methodAnnotations;
     }
     
     /**
      * Returns the {@link List} of all {@link MethodAnnotations} for class <code>clazz</code> : Thus, all the methods that
-     * have an annotation (possibly on super classes/interfaces)
+     * have an annotation (possibly on super classes/interfaces). <b>note</b> that the List can contain multiple MethodAnnotations
+     * with the same {@link MethodAnnotations#getMethodName()} because due to method overloading
      * @param clazz the clazz to scan its methods 
      * @return the List of all {@link MethodAnnotations} for <code>clazz</code>. Empty list when no annotated methods found
      */
