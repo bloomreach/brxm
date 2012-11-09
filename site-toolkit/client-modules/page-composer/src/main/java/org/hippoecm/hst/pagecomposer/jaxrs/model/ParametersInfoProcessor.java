@@ -18,11 +18,16 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceMap;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.JcrPath;
@@ -35,8 +40,58 @@ public class ParametersInfoProcessor {
 
     static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
 
-    public List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale,
-            String currentMountCanonicalContentPath) {
+    private static class CacheKey {
+        private final String type;
+        private final Locale locale;
+
+        private CacheKey(final String type, final Locale locale) {
+            this.type = type;
+            this.locale = locale;
+        }
+
+        private CacheKey(final String type) {
+            this(type, Locale.getDefault());
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public Locale getLocale() {
+            return locale;
+        }
+
+        @Override
+        public int hashCode() {
+            return type.hashCode() * 7 + locale.hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof CacheKey) {
+                CacheKey other = (CacheKey) obj;
+                return other.type.equals(type) && other.locale.equals(locale);
+            }
+            return false;
+        }
+    }
+
+    private static final Map<CacheKey, ResourceBundle> cacheList = Collections.synchronizedMap(
+            new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.WEAK));
+
+    private static ResourceBundle NOT_FOUND = new ResourceBundle() {
+        @Override
+        protected Object handleGetObject(final String key) {
+            return null;
+        }
+
+        @Override
+        public Enumeration<String> getKeys() {
+            return null;
+        }
+    };
+
+    public List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale, String currentMountCanonicalContentPath) {
         final List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
 
         final Class<?> classType = parameterInfo.type();
@@ -44,17 +99,7 @@ public class ParametersInfoProcessor {
             return properties;
         }
 
-        ResourceBundle resourceBundle = null;
-        final String typeName = parameterInfo.type().getName();
-        try {
-            if (locale != null) {
-                resourceBundle = ResourceBundle.getBundle(typeName, locale);
-            } else {
-                resourceBundle = ResourceBundle.getBundle(typeName);
-            }
-        } catch (MissingResourceException missingResourceException) {
-            log.info("Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.", new Object[]{typeName, locale});
-        }
+        ResourceBundle resourceBundle = getResourceBundle(parameterInfo, locale);
 
         for (Method method : classType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
@@ -92,7 +137,7 @@ public class ParametersInfoProcessor {
                     prop.setPickerRemembersLastVisited(jcrPath.pickerRemembersLastVisited());
                     prop.setPickerSelectableNodeTypes(jcrPath.pickerSelectableNodeTypes());
                 } else if (annotation instanceof DropDownList) {
-                    final DropDownList dropDownList = (DropDownList)annotation;
+                    final DropDownList dropDownList = (DropDownList) annotation;
                     final String values[] = dropDownList.value();
                     final String[] displayValues = new String[values.length];
 
@@ -118,6 +163,32 @@ public class ParametersInfoProcessor {
         }
 
         return properties;
+    }
+
+    protected final ResourceBundle getResourceBundle(final ParametersInfo parameterInfo, final Locale locale) {
+        ResourceBundle resourceBundle = NOT_FOUND;
+        final String typeName = parameterInfo.type().getName();
+        CacheKey key;
+        if (locale != null) {
+            key = new CacheKey(typeName, locale);
+        } else {
+            key = new CacheKey(typeName);
+        }
+        try {
+            if (!cacheList.containsKey(key)) {
+                resourceBundle = ResourceBundle.getBundle(key.getType(), key.getLocale());
+                cacheList.put(key, resourceBundle);
+            }
+        } catch (MissingResourceException missingResourceException) {
+            cacheList.put(key, NOT_FOUND);
+            log.warn(
+                    "Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.",
+                    new Object[]{typeName, locale});
+        }
+        if (resourceBundle == NOT_FOUND) {
+            return null;
+        }
+        return resourceBundle;
     }
 
 }
