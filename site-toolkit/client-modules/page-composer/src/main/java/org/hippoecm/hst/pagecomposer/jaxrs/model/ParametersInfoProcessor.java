@@ -53,7 +53,7 @@ public class ParametersInfoProcessor {
                 resourceBundle = ResourceBundle.getBundle(typeName);
             }
         } catch (MissingResourceException missingResourceException) {
-            log.error("Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.", new Object[]{typeName, locale});
+            log.info("Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.", new Object[]{typeName, locale});
         }
 
         for (Method method : classType.getMethods()) {
