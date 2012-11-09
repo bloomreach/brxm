@@ -42,7 +42,7 @@
     elementId: null,
     calls: 0,
     timerID: 0,
-    active: false,
+    active: true,
     
     getElement: function() {
         YAHOO.log('Trying to find ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');

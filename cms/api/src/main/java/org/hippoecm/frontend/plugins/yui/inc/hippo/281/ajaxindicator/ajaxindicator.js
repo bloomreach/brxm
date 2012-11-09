@@ -42,7 +42,7 @@
     elementId: null,
     calls: 0,
     timerID: 0,
-    active: false,
+    active: true,
     
     getElement: function() {
         return Dom.get(this.elementId);
