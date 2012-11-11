@@ -518,7 +518,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 final String message = "Unable to add index fields for child states of " + state.getId() + " because an item could not be found. " +
                         "Probably because it was removed again.";
                 if (log.isDebugEnabled()) {
-                    log.debug(message, e);
+                    log.warn(message, e);
                 } else {
                     log.warn(message + " (full stack trace on debug level)");
                 }
@@ -529,7 +529,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 final String message = "Unable to add index fields for child states of " + state.getId() + " because an item could not be found. " +
                         "Probably because it was removed again.";
                 if (log.isDebugEnabled()) {
-                    log.debug(message, e);
+                    log.warn(message, e);
                 } else {
                     log.warn(message + " (full stack trace on debug level)");
                 }
