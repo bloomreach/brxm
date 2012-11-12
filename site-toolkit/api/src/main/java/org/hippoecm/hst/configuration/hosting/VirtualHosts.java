@@ -167,5 +167,10 @@ public interface VirtualHosts {
       * @return the node name of the hst:sites that will be managed by the {@link ChannelManager}. If not configured it returns <code>hst:sites</code>
       */
      String getChannelManagerSitesName();
-    
+
+    /**
+     * @return <code>true</code> when diagostics about page rendering is enabled
+     */
+    boolean isDiagnosticsEnabled();
+
 }

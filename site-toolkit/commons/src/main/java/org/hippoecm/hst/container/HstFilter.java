@@ -245,12 +245,6 @@ public class HstFilter implements Filter {
     			return;
     		}
 
-            if (HstServices.getComponentManager().getContainerConfiguration().isDevelopmentMode()) {
-                rootTask = HDC.start(HstFilter.class.getSimpleName());
-                rootTask.setAttribute("uri", req.getRequestURI());
-                rootTask.setAttribute("query", req.getQueryString());
-            }
-
     		// ensure ClientComponentManager (if defined) is initialized properly
     		if (!initialized) {
     		    synchronized (this) {
@@ -292,7 +286,16 @@ public class HstFilter implements Filter {
     		// We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
     		// This info is on the virtual host.
             String hostName = HstRequestUtils.getFarthestRequestHost(containerRequest);
+
+            if (vHosts.isDiagnosticsEnabled()) {
+                rootTask = HDC.start(HstFilter.class.getSimpleName());
+                rootTask.setAttribute("hostName", hostName);
+                rootTask.setAttribute("uri", req.getRequestURI());
+                rootTask.setAttribute("query", req.getQueryString());
+            }
+
             ResolvedVirtualHost resolvedVirtualHost = vHosts.matchVirtualHost(hostName);
+
             // when resolvedVirtualHost = null, we cannot do anything else then fall through to the next filter
             if(resolvedVirtualHost == null) {
                 logger.warn("hostName '{}' can not be matched. Skip HST Filter and request processing. ", hostName);
@@ -362,6 +365,7 @@ public class HstFilter implements Filter {
                 ResolvedMount resolvedMount = requestContext.getResolvedMount();
 
                 if (resolvedMount == null) {
+
                     resolvedMount = vHosts.matchMount(hostName, containerRequest.getContextPath(), containerRequest.getPathInfo());
                     if (resolvedMount != null) {
                         requestContext.setResolvedMount(resolvedMount);
@@ -464,7 +468,6 @@ public class HstFilter implements Filter {
     	    }
 
             if (rootTask != null) {
-                rootTask.stop();
                 HDC.cleanUp();
             }
     	}

@@ -33,6 +33,8 @@ import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
@@ -323,12 +325,22 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     
     public ResolvedMount matchMount(String hostName, String contextPath, String requestPath) throws MatchException {
-        ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hostName);
-        ResolvedMount resolvedMount = null;
-        if(resolvedVirtualHost != null) {
-            resolvedMount  = resolvedVirtualHost.matchMount(contextPath, requestPath);
+        Task matchingTask = null;
+        try {
+            if (HDC.isStarted()) {
+                matchingTask = HDC.getCurrentTask().startSubtask("Host and Mount Matching");
+            }
+            ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hostName);
+            ResolvedMount resolvedMount = null;
+            if(resolvedVirtualHost != null) {
+                resolvedMount  = resolvedVirtualHost.matchMount(contextPath, requestPath);
+            }
+            return resolvedMount;
+        } finally {
+            if (matchingTask != null) {
+                matchingTask.stop();
+            }
         }
-        return resolvedMount;
     }
     
     public ResolvedVirtualHost matchVirtualHost(String hostName) throws MatchException {
@@ -342,28 +354,28 @@ public class VirtualHostsService implements MutableVirtualHosts {
         //  hostname matching is always done lower-cased
         hostName =  hostName.toLowerCase();
 
-        // NOTE : the resolvedMapCache does not need synchronization. Theoretically it would need it as it is used concurrent. 
+        // NOTE : the resolvedMapCache does not need synchronization. Theoretically it would need it as it is used concurrent.
         // In practice it won't happen ever. Trust me
         ResolvedVirtualHost rvHost = resolvedMapCache.get(hostName);
         if(rvHost != null) {
             return rvHost;
         }
-        
-    	int portNumber = 0;
+
+        int portNumber = 0;
         String portStrippedHostName = hostName;
         int offset = portStrippedHostName.indexOf(':');
         if (offset != -1) {
-        	try {
-        		portNumber = Integer.parseInt(portStrippedHostName.substring(offset+1));
-        	}
-        	catch (NumberFormatException nfe) {
-        		throw new MatchException("The hostName '"+portStrippedHostName+"' contains an invalid portnumber");
-        	}
-        	// strip off portNumber
+            try {
+                portNumber = Integer.parseInt(portStrippedHostName.substring(offset+1));
+            }
+            catch (NumberFormatException nfe) {
+                throw new MatchException("The hostName '"+portStrippedHostName+"' contains an invalid portnumber");
+            }
+            // strip off portNumber
            portStrippedHostName = portStrippedHostName.substring(0, offset);
         }
         ResolvedVirtualHost host = findMatchingVirtualHost(portStrippedHostName, portNumber);
-        
+
         // no host found. Let's try the default host, if there is one configured:
         if(host == null && getDefaultHostName() != null && !getDefaultHostName().equals(portStrippedHostName)) {
             log.debug("Cannot find a mapping for servername '{}'. We try the default servername '{}'", portStrippedHostName, getDefaultHostName());
@@ -376,11 +388,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         if(host == null) {
            log.info("We cannot find a servername mapping for '{}'. Even the default servername '{}' cannot be found. Return null", portStrippedHostName , getDefaultHostName());
-          
+
         }
         // store in the resolvedMap
         resolvedMapCache.put(hostName, host);
-        
+
         return host;
     }
     
@@ -555,5 +567,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
         return channelMngrSitesNodeName;
     }
 
-
+    @Override
+    public boolean isDiagnosticsEnabled() {
+        return true;
+    }
 }

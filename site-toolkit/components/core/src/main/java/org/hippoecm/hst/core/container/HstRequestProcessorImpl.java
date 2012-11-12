@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.diagnosis.HDC;
+import org.hippoecm.hst.diagnosis.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,8 +64,13 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
             	throw new ContainerException("No default pipeline defined. Request processing cannot continue.");
         	}
         }
-        
+        Task pipelineTask = null;
         try {
+            if (HDC.isStarted()) {
+                pipelineTask = HDC.getCurrentTask().startSubtask("Pipeline processing");
+                pipelineTask.setAttribute("pipeline", namedPipeline);
+            }
+
             tlCurrentRequestContainerConfig.set(requestContainerConfig);
 
             if (processorClassLoader != containerClassLoader) {
@@ -77,6 +84,9 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
         } catch (Exception e) {
             throw new ContainerException(e);
         } finally {
+            if (pipelineTask != null) {
+                pipelineTask.stop();
+            }
             pipeline.cleanup(requestContainerConfig, requestContext, servletRequest, servletResponse);
 
             tlCurrentRequestContainerConfig.remove();
