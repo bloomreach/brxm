@@ -162,7 +162,7 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
         if (declaredFields != null) {
             return Collections.unmodifiableMap(declaredFields);
         } else {
-            return null;
+            return Collections.emptyMap();
         }
     }
     
@@ -172,7 +172,7 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
         if (fields != null) {
             return Collections.unmodifiableMap(fields);
         } else {
-            return null;
+            return Collections.emptyMap();
         }
     }
 
