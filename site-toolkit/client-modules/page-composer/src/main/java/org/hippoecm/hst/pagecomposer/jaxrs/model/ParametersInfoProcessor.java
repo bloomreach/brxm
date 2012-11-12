@@ -19,15 +19,13 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.collections.map.AbstractReferenceMap;
-import org.apache.commons.collections.map.ReferenceMap;
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.JcrPath;
@@ -40,56 +38,7 @@ public class ParametersInfoProcessor {
 
     static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
 
-    private static class CacheKey {
-        private final String type;
-        private final Locale locale;
-
-        private CacheKey(final String type, final Locale locale) {
-            this.type = type;
-            this.locale = locale;
-        }
-
-        private CacheKey(final String type) {
-            this(type, Locale.getDefault());
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public Locale getLocale() {
-            return locale;
-        }
-
-        @Override
-        public int hashCode() {
-            return type.hashCode() * 7 + locale.hashCode();
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (obj instanceof CacheKey) {
-                CacheKey other = (CacheKey) obj;
-                return other.type.equals(type) && other.locale.equals(locale);
-            }
-            return false;
-        }
-    }
-
-    private static final Map<CacheKey, ResourceBundle> cacheList = Collections.synchronizedMap(
-            new ReferenceMap(AbstractReferenceMap.HARD, AbstractReferenceMap.WEAK));
-
-    private static ResourceBundle NOT_FOUND = new ResourceBundle() {
-        @Override
-        protected Object handleGetObject(final String key) {
-            return null;
-        }
-
-        @Override
-        public Enumeration<String> getKeys() {
-            return null;
-        }
-    };
+    private final Set<String> failedBundlesToLoad = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     public List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale, String currentMountCanonicalContentPath) {
         final List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
@@ -165,30 +114,34 @@ public class ParametersInfoProcessor {
         return properties;
     }
 
+    /**
+     *
+     * @return the ResourceBundle for <code><parameterInfo/code> and <code>locale</code> or <code>null</code> when
+     * it cannot be loaded
+     */
     protected final ResourceBundle getResourceBundle(final ParametersInfo parameterInfo, final Locale locale) {
-        ResourceBundle resourceBundle = NOT_FOUND;
         final String typeName = parameterInfo.type().getName();
-        CacheKey key;
-        if (locale != null) {
-            key = new CacheKey(typeName, locale);
-        } else {
-            key = new CacheKey(typeName);
-        }
-        try {
-            if (!cacheList.containsKey(key)) {
-                resourceBundle = ResourceBundle.getBundle(key.getType(), key.getLocale());
-                cacheList.put(key, resourceBundle);
-            }
-        } catch (MissingResourceException missingResourceException) {
-            cacheList.put(key, NOT_FOUND);
-            log.warn(
-                    "Could not find a resource bundle for class '{}', locale '{}'. The template composer properties panel will show displayName values instead of internationalised labels.",
-                    new Object[]{typeName, locale});
-        }
-        if (resourceBundle == NOT_FOUND) {
+        String bundleKey = getBundleKey(typeName, locale);
+        if (failedBundlesToLoad.contains(bundleKey)) {
             return null;
         }
-        return resourceBundle;
+        try {
+            return ResourceBundle.getBundle(typeName, locale);
+        } catch (MissingResourceException e) {
+            log.warn("Could not find a resource bundle for class '{}', locale '{}'. The template composer " +
+                    "properties panel will show displayName values instead of internationalized labels.", typeName, locale);
+            failedBundlesToLoad.add(bundleKey);
+            return null;
+        }
+    }
+
+    private String getBundleKey(final String typeName, final Locale locale) {
+        char delimiter = '\uFFFF';
+        final StringBuilder key = new StringBuilder(typeName).append(delimiter);
+        key.append(locale.getCountry()).append(delimiter);
+        key.append(locale.getLanguage()).append(delimiter);
+        key.append(locale.getVariant());
+        return key.toString();
     }
 
 }
