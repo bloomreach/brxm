@@ -90,7 +90,7 @@ public class UpdaterExecutor implements EventListener {
             report.getLogger().error("Cannot run updater: " + e.getClass().getName() + ": " + e.getMessage());
             throw e;
         } finally {
-            saveReport(updaterNode);
+            saveReport(session.getNodeByIdentifier(updaterNode.getIdentifier()));
         }
         session.getWorkspace().getObservationManager().addEventListener(this, PROPERTY_EVENTS, updaterNode.getPath(), false, null, null, true);
     }
