@@ -369,32 +369,40 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                     Session jcrSession = userSession.getJcrSession();
                     if (jcrSession.getUserID().equals(username)) {
                         try {
-                            MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
-                            digest.update(username.getBytes());
-                            digest.update(password.getBytes());
-                            String passphrase = digest.getAlgorithm() + "$"
-                                    + Base64.encodeBase64URLSafeString(username.getBytes()) + "$"
-                                    + Base64.encodeBase64URLSafeString(digest.digest());
-
-                            final Cookie halCookie = new Cookie(HIPPO_AUTO_LOGIN_COOKIE_NAME, passphrase);
-                            halCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger(
-                                    "hal.cookie.maxage", COOKIE_DEFAULT_MAX_AGE));
-                            halCookie.setSecure(RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean(
-                                    "use.secure.cookies", false));
-
-                            // Replace with Cookie#setHttpOnly when we upgrade to a container compliant with
-                            // Servlet API(s) v3.0t his was added cause the setHttpOnly/isHttpOnly at the time of
-                            // developing this code were not available cause we used to use Servlet API(s) v2.5
-                            RememberMeLoginPlugin.this.addCookieWithHttpOnly(
-                                    halCookie,
-                                    WebApplicationHelper.retrieveWebResponse(),
-                                    RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean("use.httponly.cookies",
-                                            false));
-
                             Node userinfo = RememberMeLoginPlugin.this.getUserInfo(jcrSession);
-                            String[] strings = passphrase.split("\\$");
-                            userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
-                            userinfo.save();
+
+                            if (userinfo != null) {
+                                MessageDigest digest = MessageDigest.getInstance(ALGORITHM);
+                                digest.update(username.getBytes());
+                                digest.update(password.getBytes());
+                                String passphrase = digest.getAlgorithm() + "$"
+                                        + Base64.encodeBase64URLSafeString(username.getBytes()) + "$"
+                                        + Base64.encodeBase64URLSafeString(digest.digest());
+
+                                String[] strings = passphrase.split("\\$");
+                                userinfo.setProperty(HippoNodeType.HIPPO_PASSKEY, strings[0] + "$" + strings[2]);
+                                userinfo.save();
+
+                                final Cookie halCookie = new Cookie(HIPPO_AUTO_LOGIN_COOKIE_NAME, passphrase);
+                                halCookie.setMaxAge(RememberMeLoginPlugin.this.getPluginConfig().getAsInteger(
+                                        "hal.cookie.maxage", COOKIE_DEFAULT_MAX_AGE));
+
+                                halCookie.setSecure(RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean(
+                                        "use.secure.cookies", false));
+
+                                // Replace with Cookie#setHttpOnly when we upgrade to a container compliant with
+                                // Servlet API(s) v3.0t his was added cause the setHttpOnly/isHttpOnly at the time of
+                                // developing this code were not available cause we used to use Servlet API(s) v2.5
+                                RememberMeLoginPlugin.this.addCookieWithHttpOnly(
+                                        halCookie,
+                                        WebApplicationHelper.retrieveWebResponse(),
+                                        RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean("use.httponly.cookies",
+                                                false));
+                            } else {
+                                loginExceptionPageParameters = buildPageParameters(org.hippoecm.frontend.session.LoginException.CAUSE.REPOSITORY_ERROR);
+                                handleLoginFailure(loginExceptionPageParameters, userSession);
+                                success = false;
+                            }
                         } catch (NoSuchAlgorithmException ex) {
                             log.error(ex.getClass().getName() + ": " + ex.getMessage());
                         } catch (LoginException ex) {
@@ -404,26 +412,8 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                         }
                     }
                 }
-
             } else {
-                String key = DEFAULT_KEY;
-                if (loginExceptionPageParameters != null) {
-                    Object loginExceptionCause = loginExceptionPageParameters
-                            .get(org.hippoecm.frontend.session.LoginException.CAUSE.class.getName());
-
-                    if ((loginExceptionCause != null) && (loginExceptionCause instanceof String)) {
-                        key = causeKeys.get(loginExceptionCause);
-                        key = StringUtils.isNotBlank(key) ? key : DEFAULT_KEY;
-                    }
-
-                    info(new StringResourceModel(key, this, null).getString());
-                }
-
-                // Clear the Hippo Auto Login cookie
-                WebApplicationHelper.clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
-                // Get an anonymous session, this is in case the user provided valid username and password
-                // but failed to provide a valid captcha is case it was enabled and displayed
-                userSession.login();
+                handleLoginFailure(loginExceptionPageParameters, userSession);
             }
 
             userSession.setLocale(new Locale(selectedLocale));
@@ -549,6 +539,27 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
     private String sanitize(final String userId) {
         return userId.trim();
+    }
+
+    private void handleLoginFailure(PageParameters loginExceptionPageParameters, PluginUserSession userSession) {
+        String key = DEFAULT_KEY;
+        if (loginExceptionPageParameters != null) {
+            Object loginExceptionCause = loginExceptionPageParameters
+                    .get(org.hippoecm.frontend.session.LoginException.CAUSE.class.getName());
+
+            if ((loginExceptionCause != null) && (loginExceptionCause instanceof String)) {
+                key = causeKeys.get(loginExceptionCause);
+                key = StringUtils.isNotBlank(key) ? key : DEFAULT_KEY;
+            }
+
+            info(new StringResourceModel(key, this, null).getString());
+        }
+
+        // Clear the Hippo Auto Login cookie
+        WebApplicationHelper.clearCookie(HIPPO_AUTO_LOGIN_COOKIE_NAME);
+        // Get an anonymous session, this is in case the user provided valid username and password
+        // but failed to provide a valid captcha is case it was enabled and displayed
+        userSession.login();
     }
 
 }
