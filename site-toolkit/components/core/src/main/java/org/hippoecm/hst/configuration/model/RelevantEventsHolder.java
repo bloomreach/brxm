@@ -71,9 +71,6 @@ public class RelevantEventsHolder {
     }
 
     public void addEvent(final Event jcrEvent) throws RepositoryException {
-        if (isPropertyEventAndNotRelevant(jcrEvent)) {
-            return;
-        }
         RelevantEvent event = new RelevantEvent(jcrEvent);
         boolean added = configurationEvents.add(event);
         if (added) {
@@ -152,16 +149,6 @@ public class RelevantEventsHolder {
         return eventsForOfType.iterator();
     }
 
-    private boolean isPropertyEventAndNotRelevant(final Event jcrEvent) throws RepositoryException {
-        if (isPropertyEvent(jcrEvent)) {
-            String propName = StringUtils.substringAfterLast(jcrEvent.getPath(), "/");
-            if (StringUtils.equals(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, propName) || StringUtils.equals(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON, propName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean isPropertyEvent(final Event jcrEvent) {
         return jcrEvent.getType() == Event.PROPERTY_ADDED
                 || jcrEvent.getType() == Event.PROPERTY_CHANGED
@@ -225,8 +212,8 @@ public class RelevantEventsHolder {
             // an event for a hst site is typically something like /hst:hst/hst:sites/myproject
             // however, it may also be at /hst:hst/hst:sites/myproject/hst:content : The latter hst:content we are not
             // interested in and can be removed (then the hst:site myproject will be reloaded)
-            
-            // below returns original if does not end with "/hsT:content"
+
+            // below returns original if does not end with "/hst:content"
             return StringUtils.substringBefore(nodePath, "/"+HstNodeTypes.NODENAME_HST_CONTENTNODE);
            
         }
