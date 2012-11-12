@@ -50,6 +50,24 @@ public class SortedTypeChoiceRenderer extends AbstractList<String> implements IC
     private final Map<String, String> typeToTranslationMap;
 
     public SortedTypeChoiceRenderer(Component component, Collection<String> types) {
+        this(types, component.getSession().getLocale(), component);
+    }
+
+    public SortedTypeChoiceRenderer(Collection<String> types, Locale locale) {
+        this(types, locale, null);
+    }
+
+    /**
+     * Creates a new choice renderer the given types in the given locale. The resource bundle of the given component
+     * is used as a backup to lookup the translated type names in case the repository does not contain a translation
+     * for it.
+     *
+     * @param types the JCR types to translate
+     * @param locale the locale to translate the types into
+     * @param component the component the component whose resource bundle is used as the backup for looking up
+     *                  translated type names. When <code>null</code>, no backup will be used.
+     */
+    public SortedTypeChoiceRenderer(Collection<String> types, Locale locale, Component component) {
         choices = new ArrayList<Choice>(types.size());
         typeToTranslationMap = new HashMap<String, String>();
 
@@ -61,9 +79,8 @@ public class SortedTypeChoiceRenderer extends AbstractList<String> implements IC
             choices.add(choice);
         }
 
-        // sort the list of choices alphabetically on the display value using the Collator for the current CMS locale
-        final Locale cmsLocale = component.getSession().getLocale();
-        final Comparator<Choice> choiceComparator = new ChoiceComparator(Collator.getInstance(cmsLocale));
+        // sort the list of choices alphabetically on the display value using the Collator for the given locale
+        final Comparator<Choice> choiceComparator = new ChoiceComparator(Collator.getInstance(locale));
         Collections.sort(choices, choiceComparator);
     }
 
@@ -71,8 +88,10 @@ public class SortedTypeChoiceRenderer extends AbstractList<String> implements IC
         JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(type);
         if (nodeTypeModel.getObject() != null) {
             return new TypeTranslator(nodeTypeModel).getTypeName().getObject();
-        } else {
+        } else if (component != null) {
             return new StringResourceModel(type, component, null, type).getString();
+        } else {
+            return type;
         }
     }
 
@@ -129,5 +148,5 @@ public class SortedTypeChoiceRenderer extends AbstractList<String> implements IC
             return collator.compare(c1.getDisplayValue(), c2.getDisplayValue());
         }
     }
-    
+
 }
