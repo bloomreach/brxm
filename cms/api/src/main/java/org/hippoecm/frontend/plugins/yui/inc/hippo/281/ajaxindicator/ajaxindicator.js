@@ -49,28 +49,31 @@
     },
 
     setActive: function(active) {
+        if (this.active && !active) {
+            document.body.style.cursor = 'default';
+            Dom.setStyle(this.getElement(), 'display', 'none');
+        }
+        if (!this.active && active && this.calls > 0) {
+            Dom.setStyle(this.getElement(), 'display', 'block');
+        }
         this.active = active;
     },
     
     show: function() {
-        if (!this.active) {
-            return;
-        }
-        if(this.calls == 0) {
+        if(this.active && this.calls === 0) {
             this.timerID = self.setTimeout("document.body.style.cursor = 'wait';", 750);
         }
         this.calls++;
-        Dom.setStyle(this.getElement(), 'display', 'block');
+        if (this.active) {
+            Dom.setStyle(this.getElement(), 'display', 'block');
+        }
     },
     
     hide: function() {
-        if (!this.active) {
-            return;
-        }
         if(this.calls > 0) {
             this.calls--;
         } 
-        if (this.calls == 0) {
+        if (this.active && this.calls === 0) {
             self.clearTimeout(this.timerID);
             document.body.style.cursor = 'default';
             Dom.setStyle(this.getElement(),'display', 'none');

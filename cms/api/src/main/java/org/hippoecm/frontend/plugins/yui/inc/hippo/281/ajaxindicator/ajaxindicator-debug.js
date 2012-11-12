@@ -50,33 +50,38 @@
     },
 
     setActive: function(active) {
-      this.active = active;
+        if (this.active && !active) {
+            YAHOO.log('Deactivate and hide ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
+            document.body.style.cursor = 'default';
+            Dom.setStyle(this.getElement(), 'display', 'none');
+        }
+        if (!this.active && active && this.calls > 0) {
+            Dom.setStyle(this.getElement(), 'display', 'block');
+            YAHOO.log('Activate ajax indicator and show ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
+        }
+        this.active = active;
     },
     
     show: function() {
-        if (!this.active) {
-            return;
-        }
-        if(this.calls == 0) {
+        if (this.active && this.calls === 0) {
             this.timerID = self.setTimeout("document.body.style.cursor = 'wait';", 300);
         }
         this.calls++;
-        Dom.setStyle(this.getElement(), 'display', 'block');
-        YAHOO.log('Activate ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
+        if (this.active) {
+            Dom.setStyle(this.getElement(), 'display', 'block');
+            YAHOO.log('Show ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
+        }
     },
     
     hide: function() {
-        if (!this.active) {
-            return;
-        }
-        if(this.calls > 0) {
+        if (this.calls > 0) {
             this.calls--;
-        } 
-        if (this.calls == 0) {
+        }
+        if (this.active && this.calls === 0) {
             self.clearTimeout(this.timerID);
             YAHOO.log('Hide ajax indicator element[' + this.elementId + ']', 'info', 'AjaxIndicator');
             document.body.style.cursor = 'default';
-            Dom.setStyle(this.getElement(),'display', 'none');
+            Dom.setStyle(this.getElement(), 'display', 'none');
         }  
     },
     
