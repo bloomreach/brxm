@@ -15,14 +15,19 @@
  */
 package org.hippoecm.hst.core.component;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import org.hippoecm.hst.content.annotations.Persistable;
 import org.hippoecm.hst.content.beans.Node;
 import org.junit.Before;
 import org.junit.Test;
+
+import static java.lang.annotation.ElementType.METHOD;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestHstComponentMetadataReader
@@ -31,11 +36,13 @@ public class TestHstComponentMetadataReader {
 
     private HstComponentMetadata metadataDetailComponent;
     private HstComponentMetadata metadataDetailComponentImplementingInterface;
+    private HstComponentMetadata metadataDetailComponentOverloaded;
     
     @Before
     public void setup(){
         metadataDetailComponent = HstComponentMetadataReader.getHstComponentMetadata(DetailComponent.class);
         metadataDetailComponentImplementingInterface = HstComponentMetadataReader.getHstComponentMetadata(DetailComponentImplementingInterface.class);
+        metadataDetailComponentOverloaded = HstComponentMetadataReader.getHstComponentMetadata(DetailComponentOverloaded.class);
     }
 
 
@@ -63,7 +70,14 @@ public class TestHstComponentMetadataReader {
     public void testMetadataSuperInterfaceTwoAnnotations() throws Exception {
         // from super interface
         assertTrue(metadataDetailComponentImplementingInterface.hasMethodAnnotatedBy(Persistable.class.getName(), "doAction"));
-        assertTrue(metadataDetailComponentImplementingInterface.hasMethodAnnotatedBy(Node.class.getName(), "doAction"));
+        assertTrue(metadataDetailComponentImplementingInterface.hasMethodAnnotatedBy(TestAnno1.class.getName(), "doAction"));
+    }
+
+    @Test
+    public void testMetadataOverloadedMethodAnnotationsAreCombined() throws Exception {
+        assertTrue(metadataDetailComponentOverloaded.hasMethodAnnotatedBy(Persistable.class.getName(), "doAction"));
+        assertTrue(metadataDetailComponentOverloaded.hasMethodAnnotatedBy(TestAnno1.class.getName(), "doAction"));
+        assertTrue(metadataDetailComponentOverloaded.hasMethodAnnotatedBy(TestAnno2.class.getName(), "doAction"));
     }
 
     public static class BaseComponent extends GenericHstComponent {
@@ -83,10 +97,35 @@ public class TestHstComponentMetadataReader {
         }
     }
 
+    public static class DetailComponentOverloaded extends BaseComponent implements InterfaceWithPersistableAnno {
+        public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+        }
+
+        @TestAnno1
+        public void doAction() {
+        }
+
+        @TestAnno2()
+        public void doAction(boolean b) {
+        }
+
+    }
+
     public static interface InterfaceWithPersistableAnno {
         @Persistable
-        @Node(jcrType = "test")
+        @TestAnno1()
         public void doAction(HstRequest request, HstResponse response);
+    }
+
+    @Target(METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface TestAnno1 {
+    }
+
+
+    @Target(METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    public @interface TestAnno2 {
     }
 
 }

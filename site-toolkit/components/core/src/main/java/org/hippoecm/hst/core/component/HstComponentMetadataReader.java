@@ -15,6 +15,10 @@
  */
 package org.hippoecm.hst.core.component;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,8 +31,7 @@ public class HstComponentMetadataReader {
 
     public static HstComponentMetadata getHstComponentMetadata(Class<?> clazz) {
 
-        final Map<String, Set<String>> methodAnnotations = AnnotationsScanner.getMethodAnnotations(clazz);
-        return new DefaultHstComponentMetadata(methodAnnotations);
+        return new DefaultHstComponentMetadata(AnnotationsScanner.getMethodAnnotations(clazz));
 
     }
 
@@ -36,8 +39,22 @@ public class HstComponentMetadataReader {
 
         final Map<String, Set<String>> methodAnnotations;
 
-        public DefaultHstComponentMetadata(final Map<String, Set<String>> methodAnnotations) {
-            this.methodAnnotations = methodAnnotations;
+        public DefaultHstComponentMetadata(final Map<Method, Set<Annotation>> methodAnnotationsMap) {
+            methodAnnotations = new HashMap<String, Set<String>>();
+            for (Map.Entry<Method, Set<Annotation>> methodAnnotation : methodAnnotationsMap.entrySet()) {
+                Set<String> annotations = new HashSet<String>();
+                for (Annotation annotation :  methodAnnotation.getValue()) {
+                    annotations.add(annotation.annotationType().getName());
+                }
+                Set<String> annotationsSet = methodAnnotations.get(methodAnnotation.getKey().getName());
+                if (annotationsSet == null) {
+                    // there is already a method with the same name containing annotations we do not need
+                    // to  create a new set but add the annotations of the overloaded method to the existing set
+                    annotationsSet = new HashSet<String>();
+                    methodAnnotations.put(methodAnnotation.getKey().getName(), annotationsSet);
+                }
+                annotationsSet.addAll(annotations);
+            }
         }
 
         public boolean hasMethodAnnotatedBy(String annotation, String methodName) {
