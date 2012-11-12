@@ -273,7 +273,7 @@ public class DerivedDataEngine {
             oldDependenciesValues = modified.getProperty(HippoNodeType.HIPPO_RELATED).getValues();
         }
 
-        final boolean changed = Arrays.equals(oldDependenciesValues, dependenciesValues);
+        final boolean changed = !Arrays.equals(oldDependenciesValues, dependenciesValues);
 
         if (changed) {
             JcrUtils.ensureIsCheckedOut(modified, false);
