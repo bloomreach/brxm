@@ -80,7 +80,7 @@ Hippo.ChannelManager.TemplateComposer.API = Ext.extend(Ext.util.Observable, {
     },
 
     refreshIFrame: function() {
-        this.pageContainer.refreshIFrame();
+        this.pageContainer.refreshIframe();
     }
 
 });
