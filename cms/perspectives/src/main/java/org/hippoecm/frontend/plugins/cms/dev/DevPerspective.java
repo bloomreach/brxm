@@ -35,7 +35,7 @@ public class DevPerspective extends PanelPluginPerspective {
 
     @Override
     public ResourceReference getIcon(IconSize type) {
-        return new ResourceReference(DevPerspective.class, "dev-perspective-" + type.getSize() + ".png");
+        return new ResourceReference(DevPerspective.class, "dev-perspective-32.png");
     }
 
     @Override

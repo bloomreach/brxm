@@ -15,9 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.dev.updater;
 
-import java.io.IOException;
-
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -36,7 +33,6 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -162,25 +158,6 @@ public class UpdaterEditor extends Panel {
             }
         };
         form.add(stopButton);
-
-        final AjaxButton newButton = new AjaxButton("new-button") {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
-                newUpdater();
-                AjaxRequestTarget.get().addComponent(feedback);
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return isNewButtonEnabled();
-            }
-
-            @Override
-            public boolean isVisible() {
-                return isNewButtonVisible();
-            }
-        };
-        form.add(newButton);
 
         final AjaxButton deleteButton = new AjaxButton("delete-button") {
             @Override
@@ -404,6 +381,9 @@ public class UpdaterEditor extends Panel {
     private boolean saveUpdater() {
         final Node node = (Node) getDefaultModelObject();
         try {
+            if (!validateName()) {
+                return false;
+            }
             if (isPathMethod()) {
                 if (!validateVisitorPath()) {
                     return false;
@@ -438,6 +418,14 @@ public class UpdaterEditor extends Panel {
             log.error(message, e);
         }
         return false;
+    }
+
+    private boolean validateName() {
+        if (name == null || name.isEmpty()) {
+            error("Name is empty");
+            return false;
+        }
+        return true;
     }
 
     private boolean validateThrottle() {
@@ -511,34 +499,6 @@ public class UpdaterEditor extends Panel {
             container.setDefaultModel(new JcrNodeModel(session.getNode(destAbsPath)));
         } catch (RepositoryException e) {
             log.error("Failed to rename updater", e);
-        }
-    }
-
-    private void newUpdater() {
-        final Session session = UserSession.get().getJcrSession();
-        try {
-            final Node registry = session.getNode(UPDATE_REGISTRY_PATH);
-            final Node node = addUpdater(registry, 1);
-            session.save();
-            container.setDefaultModel(new JcrNodeModel(node));
-        } catch (RepositoryException e) {
-            final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
-            log.error(message, e);
-        } catch (IOException e) {
-            final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
-            log.error(message, e);
-        }
-    }
-
-    private Node addUpdater(final Node registry, int index) throws IOException, RepositoryException {
-        try {
-            final Node node = registry.addNode("new-" + index, "hipposys:updaterinfo");
-            node.setProperty("hipposys:script", IOUtils.toString(UpdaterEditor.class.getResource("UpdaterTemplate.groovy").openStream()));
-            return node;
-        } catch (ItemExistsException e) {
-            return addUpdater(registry, index+1);
         }
     }
 

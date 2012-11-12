@@ -19,7 +19,11 @@
 <wicket:extend xmlns:wicket="http://wicket.apache.org/">
   <table border="0" class="hippo-panel-plugin-body">
     <tr>
-      <td>&nbsp;</td>
+      <td valign="middle" align="left" style="padding-left: 15px;">
+        <form wicket:id="new-form">
+          <input type="submit" value="New" wicket:id="new-button"/>
+        </form>
+      </td>
       <td width="100%" style="padding-left: 15px;">
         <div>
           <h2 wicket:id="updater-title"></h2>

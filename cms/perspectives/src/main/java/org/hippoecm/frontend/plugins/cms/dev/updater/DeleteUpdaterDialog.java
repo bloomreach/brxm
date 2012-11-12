@@ -40,7 +40,7 @@ public class DeleteUpdaterDialog extends AbstractDialog<Node> {
     public DeleteUpdaterDialog(final IModel<?> defaultModel, Panel container) {
         super((IModel<Node>) defaultModel);
         this.container = container;
-        add(new Label("message", "Are you sure you want to delete updater '" + getUpdaterName() + "'"));
+        add(new Label("message", "Are you sure you want to delete updater '" + getUpdaterName() + "'?"));
     }
 
     @Override

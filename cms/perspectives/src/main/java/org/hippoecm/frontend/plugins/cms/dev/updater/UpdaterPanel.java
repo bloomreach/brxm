@@ -15,6 +15,11 @@
  */
 package org.hippoecm.frontend.plugins.cms.dev.updater;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -27,17 +32,20 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.markup.html.tree.ITreeState;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.io.IOUtils;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
@@ -47,6 +55,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.JcrTree;
+import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +70,13 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     private static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
 
     private static final Label EMPTY_EDITOR = new Label("updater-editor");
+    private static final Map<String, String> TREE_LABELS = new HashMap<String, String>(3);
+
+    static {
+        TREE_LABELS.put("hippo:registry", "Registry");
+        TREE_LABELS.put("hippo:queue", "Queue");
+        TREE_LABELS.put("hippo:history", "History");
+    }
 
     private final IPluginContext context;
 
@@ -72,6 +89,17 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         super(componentId, breadCrumbModel);
 
         this.context = context;
+
+        final Form form = new Form("new-form");
+        final AjaxButton newButton = new AjaxButton("new-button") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
+                newUpdater();
+            }
+        };
+        form.add(newButton);
+
+        add(form);
 
         treeModel = new JcrTreeModel(new JcrTreeNode(new JcrNodeModel(UPDATE_PATH), null)) {
 
@@ -151,7 +179,21 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
                 return junctionLink;
             }
 
-
+            @Override
+            public String renderNode(final TreeNode treeNode) {
+                Node node = ((IJcrTreeNode) treeNode).getNodeModel().getObject();
+                if (node != null) {
+                    try {
+                        final String nodeName = node.getName();
+                        final String label = TREE_LABELS.get(nodeName);
+                        return label != null ? label : nodeName;
+                    } catch (RepositoryException e) {
+                        log.error("Failed to render tree node", e);
+                        return "<error>";
+                    }
+                }
+                return "<null>";
+            }
         };
         tree.setRootLess(true);
         tree.setOutputMarkupId(true);
@@ -200,7 +242,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         if (isQueuedUpdater()) {
             replace(editor = new UpdaterQueueEditor(getDefaultModel(), context, this));
         }
-        else if (isRegisteredUpdater() || isRegistryNode()) {
+        else if (isRegisteredUpdater()) {
             replace(editor = new UpdaterRegistryEditor(getDefaultModel(), context, this));
         }
         else if (isArchivedUpdater()) {
@@ -254,10 +296,6 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         return getNodePath().startsWith(UPDATE_REGISTRY_PATH + "/");
     }
 
-    private boolean isRegistryNode() {
-        return getNodePath().equals(UPDATE_REGISTRY_PATH);
-    }
-
     private boolean isQueuedUpdater() {
         return getNodePath().startsWith(UPDATE_QUEUE_PATH + "/");
     }
@@ -276,4 +314,34 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         }
         return false;
     }
+
+    private void newUpdater() {
+        final Session session = UserSession.get().getJcrSession();
+        try {
+            final Node registry = session.getNode(UPDATE_REGISTRY_PATH);
+            final Node node = addUpdater(registry, 1);
+            session.save();
+            setDefaultModel(new JcrNodeModel(node));
+        } catch (RepositoryException e) {
+            final String message = "An unexpected error occurred: " + e.getMessage();
+            error(message);
+            log.error(message, e);
+        } catch (IOException e) {
+            final String message = "An unexpected error occurred: " + e.getMessage();
+            error(message);
+            log.error(message, e);
+        }
+    }
+
+    private Node addUpdater(final Node registry, int index) throws IOException, RepositoryException {
+        try {
+            final Node node = registry.addNode("new-" + index, "hipposys:updaterinfo");
+            node.setProperty("hipposys:script", IOUtils.toString(UpdaterEditor.class.getResource("UpdaterTemplate.groovy").openStream()));
+            node.setProperty("hipposys:path", "/");
+            return node;
+        } catch (ItemExistsException e) {
+            return addUpdater(registry, index+1);
+        }
+    }
+
 }

@@ -25,19 +25,21 @@
     margin: 10px;
     width: 150px;
     padding: 10px;
-    border: groove;
-    border-radius: 10px;
+    border: solid;
+    border-color: #AFAFAF;
+    border-width: 1px;
     height: 800px;
 }
-
 .updater-details {
     margin: 10px;
     width: 95%;
-    border: groove;
+    border: solid;
+    border-color: #AFAFAF;
+    border-width: 1px;
     padding: 10px;
-    border-radius: 10px;
     height: 800px;
 }
+
 
 .updater-details form input[type=submit] {
     margin-right: 5px;

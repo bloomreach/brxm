@@ -1981,7 +1981,6 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/Todo
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPanelPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.properties -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/UpdaterPanelPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/CodeMirrorEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.css -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js -text
@@ -1996,9 +1995,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/them
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/night.css -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/theme/rubyblue.css -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective-32.png -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective-48.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev-perspective.css -text
-perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/dev.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/DeleteUpdaterDialog.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/DeleteUpdaterDialog.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/LabelledCheckBoxTableRow.html -text
@@ -2015,9 +2012,11 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/Updater
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanelPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterQueueEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterRegistryEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterTemplate.groovy -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/updater-panel-32.png -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/AutoEditPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/BrowserObserver.java svneol=native#text/plain
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/edit/EditPerspective.html -text
