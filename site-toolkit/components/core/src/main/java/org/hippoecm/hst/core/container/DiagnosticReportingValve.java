@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
+import org.hippoecm.hst.util.TaskLogFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,25 +42,10 @@ public class DiagnosticReportingValve extends AbstractValve {
 
     private void logDiagnosticSummary() {
         if (log.isInfoEnabled()) {
-            StringBuilder sb = new StringBuilder(256);
             Task rootTask = HDC.getRootTask();
-            appendTaskLog(sb, rootTask, 0);
-
-            log.info("Diagnostic Summary:\n{}", sb.toString());
+            log.info("Diagnostic Summary:\n{}", TaskLogFormatter.getTaskLog(rootTask));
         }
     }
 
-    private void appendTaskLog(StringBuilder sb, Task task, int depth) {
-        for (int i = 0; i < depth; i++) {
-            sb.append("  ");
-        }
-
-        String log = "- " + task.getName() + " (" + task.getDurationTimeMillis() + "ms): " + task.getAttributeMap();
-        sb.append(log).append('\n');
-
-        for (Task childTask : task.getChildTasks()) {
-            appendTaskLog(sb, childTask, depth + 1);
-        }
-    }
 
 }

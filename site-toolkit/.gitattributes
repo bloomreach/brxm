@@ -425,6 +425,7 @@ commons/src/main/java/org/hippoecm/hst/util/PathUtils.java svneol=native#text/pl
 commons/src/main/java/org/hippoecm/hst/util/PortletConfigUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/PropertyDefinitionUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/ServletConfigUtils.java svneol=native#text/plain
+commons/src/main/java/org/hippoecm/hst/util/TaskLogFormatter.java -text
 commons/src/main/java/org/hippoecm/hst/util/WrapperElementUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/XmlUtils.java -text
 commons/src/site/site.xml -text

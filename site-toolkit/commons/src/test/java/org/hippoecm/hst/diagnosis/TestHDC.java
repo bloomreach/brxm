@@ -15,9 +15,16 @@
  */
 package org.hippoecm.hst.diagnosis;
 
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.List;
+
+import org.hippoecm.hst.util.TaskLogFormatter;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * TestHDC
@@ -120,25 +127,11 @@ public class TestHDC {
     }
 
     private void logSummary() {
-        StringBuilder sb = new StringBuilder();
         Task rootTask = HDC.getRootTask();
-        appendTaskLog(sb, rootTask, 0);
-
-        System.out.println(sb.toString());
+        String formattedTask = TaskLogFormatter.getTaskLog(rootTask);
+        assertTrue(formattedTask.length() > 0);
     }
 
-    private void appendTaskLog(StringBuilder sb, Task task, int depth) {
-        for (int i = 0; i < depth; i++) {
-            sb.append("  ");
-        }
-
-        String log = "- " + task.getName() + " (" + task.getDurationTimeMillis() + "ms): " + task.getAttributeMap();
-        sb.append(log).append('\n');
-
-        for (Task childTask : task.getChildTasks()) {
-            appendTaskLog(sb, childTask, depth + 1);
-        }
-    }
 
     private void sleepRandom(long max) {
         try {
@@ -153,8 +146,13 @@ public class TestHDC {
 
             // A valve can also start a subtask from its current context task.
             Task compTask = HDC.getCurrentTask().startSubtask("comp1");
+            Task compTaskA = HDC.getCurrentTask().startSubtask("comp1A");
+            comp1.execute();
+            compTaskA.stop();
             comp1.execute();
             compTask.stop();
+
+
 
             sleepRandom(10);
 
