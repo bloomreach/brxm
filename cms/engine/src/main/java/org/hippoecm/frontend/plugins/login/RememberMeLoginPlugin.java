@@ -547,7 +547,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             Object loginExceptionCause = loginExceptionPageParameters
                     .get(org.hippoecm.frontend.session.LoginException.CAUSE.class.getName());
 
-            if ((loginExceptionCause != null) && (loginExceptionCause instanceof String)) {
+            if (loginExceptionCause instanceof String) {
                 key = causeKeys.get(loginExceptionCause);
                 key = StringUtils.isNotBlank(key) ? key : DEFAULT_KEY;
             }
