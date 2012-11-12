@@ -49,6 +49,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
@@ -215,7 +216,7 @@ public class TabsPlugin extends RenderPlugin {
         tabbie.renderer.focus(null);
         onSelectTab(tabs.indexOf(tabbie));
 
-        if (tabbie.getTabId() != null) {
+        if (tabbie.getDecoratorId() != null) {
             final StringBuilder fireEventJS = new StringBuilder();
             fireEventJS.append("(function(document) {\n" +
                     "            var event;\n" +
@@ -228,16 +229,20 @@ public class TabsPlugin extends RenderPlugin {
                     "            }\n" +
                     "    \n" +
                     "            event.eventName = 'tabSelected';\n" +
-                    "            event.tabId = '"+tabbie.getTabId()+"';\n" +
+                    "            event.tabId = '"+tabbie.getDecoratorId()+"';\n" +
                     "    \n" +
-                    "            if (document.createEvent) {\n" +
-                    "                document.body.dispatchEvent(event);\n" +
-                    "            } else {\n" +
-                    "                document.body.fireEvent('on' + event.eventType, event);\n" +
-                    "            }\n" +
+                    "            var decorator = document.getElementById('"+tabbie.getDecoratorId()+"');"+
+                    "            if (decorator) {" +
+                    "               if (document.createEvent) {\n" +
+                    "                 decorator.dispatchEvent(event);\n" +
+                    "               } else {\n" +
+                    "                 decorator.fireEvent('on' + event.eventType, event);\n" +
+                    "               }\n" +
+                    "            }"+
                     "        })(document);");
             target.appendJavascript(fireEventJS.toString());
         }
+
     }
 
     /**
@@ -512,9 +517,9 @@ public class TabsPlugin extends RenderPlugin {
             return titleModel;
         }
 
-        public String getTabId() {
-            if (decorator != null) {
-                return this.decorator.getClass().getName();
+        public String getDecoratorId() {
+            if (decorator instanceof Perspective) {
+                return ((Perspective)decorator).getMarkupId(true);
             }
             return null;
         }

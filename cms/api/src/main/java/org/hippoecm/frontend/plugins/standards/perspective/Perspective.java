@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.perspective;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -45,6 +46,12 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     public IModel<String> getTitle() {
         return title;
+    }
+
+    @Override
+    public void onComponentTag(final ComponentTag tag) {
+        super.onComponentTag(tag);
+        tag.append("class", "perspective", ",");
     }
 
     public ResourceReference getIcon(IconSize size) {
