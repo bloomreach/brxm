@@ -120,13 +120,19 @@ public class ParametersInfoProcessor {
      * it cannot be loaded
      */
     protected final ResourceBundle getResourceBundle(final ParametersInfo parameterInfo, final Locale locale) {
+        Locale localeOrDefault;
+        if (locale == null) {
+            localeOrDefault = Locale.getDefault();
+        } else {
+            localeOrDefault = locale;
+        }
         final String typeName = parameterInfo.type().getName();
-        String bundleKey = getBundleKey(typeName, locale);
+        String bundleKey = getBundleKey(typeName, localeOrDefault);
         if (failedBundlesToLoad.contains(bundleKey)) {
             return null;
         }
         try {
-            return ResourceBundle.getBundle(typeName, locale);
+            return ResourceBundle.getBundle(typeName, localeOrDefault);
         } catch (MissingResourceException e) {
             log.warn("Could not find a resource bundle for class '{}', locale '{}'. The template composer " +
                     "properties panel will show displayName values instead of internationalized labels.", typeName, locale);
