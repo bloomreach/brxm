@@ -40,67 +40,53 @@ public class AnnotationsScanner {
      */
     public static class MethodAnnotations {
         
-        private final String methodName;
-        private final Set<String> annotations;
+        private final Method method;
+        private final Set<Annotation> annotations;
 
         /**
-         * A {@link MethodAnnotations} object contains all the fully qualified annotation class names for some method name. 
-         * Note that this includes annotations defined on superclasses/interfaces for the method 
+         * A {@link MethodAnnotations} object contains all the fully qualified annotation classes for some method. 
+         * Note that this includes annotations defined on superclasses/interfaces for the super classes/interfaces that 
+         * have the same method
          */
-        private MethodAnnotations(final String methodName, final Set<String> annotations) {
+        private MethodAnnotations(final Method method, final Set<Annotation> annotations) {
             if (annotations == null) {
                 throw new IllegalArgumentException("Set not allowed to be null for MethodAnnotations");
             }
-            this.methodName = methodName;
+            this.method = method;
             this.annotations = annotations;
         }
         
-        public String getMethodName() {
-            return methodName;
+        public Method getMethod() {
+            return method;
         }
 
         /**
-         * @return the set of fully qualified annotation classnames for method {@link #getMethodName()}
+         * @return the set of fully qualified annotation classnames for method {@link #getMethod()}
          */
-        public Set<String> getAnnotations() {
+        public Set<Annotation> getAnnotations() {
             return annotations;
         }
     }
 
     /**
      * <p>
-     * Returns the map of method name mapped to all the annotations on such a method name. Note that also annotations
-     * on the public methods of super classes and interfaces are present
-     * </p>
-     * <p>
-     *     Note that the annotations for <b>overloaded</b> methods are all combined. Thus the overloaded annotated method
-     *     below will result in a Map that has a key <code>annotated</code> and value a <code>Set</code> containing
-     *     {TestAnno1.class.getName(),TestAnno2.class.getName(), TestAnno2.class.getName() }
-     *     <pre>
-     *     <code>
-     *          @TestAnno1
-     *          public void annotated() {}
-     *          @TestAnno2
-     *          public String annotated(String foo) {return null;}
-     *          @TestAnno3
-     *          public void annotated(boolean foo) {}
-     *     </code>
-     *     </pre>
+     * Returns the map of method mapped to all the annotation classes on such a method. Note that also annotations
+     * on the public methods of super classes and interfaces are present.
      * </p>
      * @param clazz
-     * @return the map where the keys are all the method names that contain annotations, and the values are the set of
-     * fully qualified annotation class name for the method name. Return empty map if no single method with an annotation
+     * @return the map where the keys are all the {@link Method} instances that contain annotations, and the values are the set of
+     * annotation classes for the {@link Method} instance. Return empty map if no single method with an annotation
      * is found
      */
-    public static Map<String,Set<String>> getMethodAnnotations(Class<?> clazz){
-        Map<String, Set<String>> methodAnnotations = new HashMap<String, Set<String>>();
+    public static Map<Method, Set<Annotation>> getMethodAnnotations(Class<?> clazz){
+        Map<Method, Set<Annotation>> methodAnnotations = new HashMap<Method, Set<Annotation>>();
         List<MethodAnnotations> methodAnnotationsList = getMethodAnnotationsList(clazz);
         for (MethodAnnotations methodAnnotation : methodAnnotationsList) {
-            Set<String> overLoadedMethodPresent = methodAnnotations.get(methodAnnotation.getMethodName());
+            Set<Annotation> overLoadedMethodPresent = methodAnnotations.get(methodAnnotation.getMethod());
             if (overLoadedMethodPresent != null) {
                 overLoadedMethodPresent.addAll(methodAnnotation.getAnnotations());
             } else {
-             methodAnnotations.put(methodAnnotation.getMethodName(), methodAnnotation.getAnnotations());
+             methodAnnotations.put(methodAnnotation.getMethod(), methodAnnotation.getAnnotations());
             }
         }
         return methodAnnotations;
@@ -108,8 +94,7 @@ public class AnnotationsScanner {
     
     /**
      * Returns the {@link List} of all {@link MethodAnnotations} for class <code>clazz</code> : Thus, all the methods that
-     * have an annotation (possibly on super classes/interfaces). <b>note</b> that the List can contain multiple MethodAnnotations
-     * with the same {@link MethodAnnotations#getMethodName()} because due to method overloading
+     * have an annotation (possibly on super classes/interfaces).
      * @param clazz the clazz to scan its methods 
      * @return the List of all {@link MethodAnnotations} for <code>clazz</code>. Empty list when no annotated methods found
      */
@@ -119,12 +104,11 @@ public class AnnotationsScanner {
             return cached;
         }
         List<MethodAnnotations> methodAnnotations = new ArrayList<MethodAnnotations>();
-        for (Method method : clazz.getMethods()) {
-            Set<String> allAnnotations = new HashSet<String>();
+        for (final Method method : clazz.getMethods()) {
+            final Set<Annotation> allAnnotations = new HashSet<Annotation>();
             populateAnnotationsForMethod(method, allAnnotations);
             if(!allAnnotations.isEmpty()) {
-                MethodAnnotations ma = new MethodAnnotations(method.getName(), allAnnotations);
-                methodAnnotations.add(ma);
+                methodAnnotations.add(new MethodAnnotations(method, allAnnotations));
             }
         }
         alreadyInspectedClasses.put(clazz.getName(), methodAnnotations);
@@ -132,14 +116,14 @@ public class AnnotationsScanner {
     }
 
 
-    private static void populateAnnotationsForMethod(final Method method, final Set<String> allAnnotations) {
+    private static void populateAnnotationsForMethod(final Method method, final Set<Annotation> allAnnotations) {
         if (method == null) {
             return;
         }
         final Annotation[] annotations = method.getAnnotations();
         // method.getAnnotations() never returns null, see java specs so no null check
         for (Annotation annotation : annotations) {
-            allAnnotations.add(annotation.annotationType().getName());
+            allAnnotations.add(annotation);
         }
         Class<?> superC = method.getDeclaringClass().getSuperclass();
         if (superC != null && Object.class != superC) {
