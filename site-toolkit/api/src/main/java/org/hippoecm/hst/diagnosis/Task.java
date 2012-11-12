@@ -31,13 +31,13 @@ public interface Task {
      * returns the task name
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * Returns attribute map which is unmodifiable. So, do not try to put or remove items directly from the returned map.
      * @return
      */
-    public Map<String, Object> getAttributeMap();
+    Map<String, Object> getAttributeMap();
 
     /**
      * Enumerates the attribute names
@@ -45,55 +45,57 @@ public interface Task {
     public Enumeration<String> getAttributeNames();
 
     /**
-     * Set an attribute for the task.
-     * @param name attribute name
-     * @param object attribute value
+     * Set an attribute for the task. The object <code>value</code> should have a proper #toString method
+     * as by default, the #toString method is used for displaying the object in the diagnostics.
+     * @param key attribute name
+     * @param value attribute value
      */
-    public void setAttribute(String key, Object value);
+    void setAttribute(String key, Object value);
 
     /**
-     * Retrieve the attribute value by the attribute name.
+     * Retrieve the attribute value by the attribute name. When not found, <code>null</code>
+     * is returned
      */
-    public Object getAttribute(String key);
+    Object getAttribute(String key);
 
     /**
-     * Removes the attribute by the attribute name.
+     * Removes the attribute by the attribute name. When an Object was
+     * removed for <code>key</code>, this object is returned. Otherwise <code>null</code> is returned.
      */
-    public Object removeAttribute(String key);
+    Object removeAttribute(String key);
 
     /**
-     * Returns the parent task
-     * @return
+     * @return Returns the parent task and <code>null</code> if this is the root task
      */
-    public Task getParentTask();
+    Task getParentTask();
 
     /**
      * Starts and returns a child subtask with the name.
      * @param name
      * @return
      */
-    public Task startSubtask(String name);
+    Task startSubtask(String name);
 
     /**
      * Stops the task
      */
-    public void stop();
+    void stop();
 
     /**
      * Returns the child tasks collection
      * @return
      */
-    public Collection<Task> getChildTasks();
+    Collection<Task> getChildTasks();
 
     /**
      * Returns true if the task was started but not stopped.
      * @return
      */
-    public boolean isRunning();
+    boolean isRunning();
 
     /**
      * Returns the task execution duration time in milliseconds
      * @return
      */
-    public long getDurationTimeMillis();
+    long getDurationTimeMillis();
 }
