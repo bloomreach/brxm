@@ -114,6 +114,7 @@ public interface HstNodeTypes {
     static final String VIRTUALHOSTS_PROPERTY_SHOWPORT = "hst:showport";
     static final String VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH = "hst:defaultcontextpath";
     static final String VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX = "hst:cmspreviewprefix";
+    static final String VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED = "hst:diagnosticsenabled";
     static final String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP = "hst:channelmanagerhostgroup";
     static final String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES = "hst:channelmanagersites";
     

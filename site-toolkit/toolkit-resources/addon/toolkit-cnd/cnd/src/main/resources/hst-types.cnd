@@ -301,6 +301,7 @@
 - hst:channelmanagerhostgroup (string)
 // the sites the channel manager should use: Default is 'hst:sites'
 - hst:channelmanagersites (string)
+- hst:diagnosticsenabled (boolean)
 + * (hst:virtualhostgroup)
 
 [hst:blueprint] > nt:base, mix:referenceable, mix:versionable

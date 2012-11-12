@@ -96,6 +96,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
      * the cms preview prefix : The prefix all URLs when accessed through the CMS 
      */
     private String cmsPreviewPrefix;
+
+    private boolean diagnosticsEnabled;
     
     /**
      * The 'active' virtual host group for the current environment. This should not be <code>null</code> and 
@@ -121,6 +123,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         contextPathInUrl = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
         defaultContextPath = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
         cmsPreviewPrefix = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
+        diagnosticsEnabled = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED);
         if(cmsPreviewPrefix == null) {
             // there is no explicit cms preview prefix configured. Take the default one from the hstManager
             cmsPreviewPrefix = hstManager.getCmsPreviewPrefix();
@@ -569,6 +572,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     @Override
     public boolean isDiagnosticsEnabled() {
-        return true;
+        return diagnosticsEnabled;
     }
 }
