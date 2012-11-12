@@ -243,7 +243,7 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(batchSizeField);
 
-        final LabelledInputFieldTableRow throttleField = new LabelledInputFieldTableRow("throttle", new Model<String>("Throttle"), new PropertyModel<String>(this, "throttle")) {
+        final LabelledInputFieldTableRow throttleField = new LabelledInputFieldTableRow("throttle", new Model<String>("Throttle (ms)"), new PropertyModel<String>(this, "throttle")) {
             @Override
             public boolean isEnabled() {
                 return isThrottleFieldEnabled();
@@ -560,10 +560,6 @@ public class UpdaterEditor extends Panel {
         return true;
     }
 
-    protected boolean isNewButtonVisible() {
-        return true;
-    }
-
     protected boolean isStopButtonEnabled() {
         return true;
     }
@@ -577,10 +573,6 @@ public class UpdaterEditor extends Panel {
     }
 
     protected boolean isDeleteButtonEnabled() {
-        return true;
-    }
-
-    protected boolean isNewButtonEnabled() {
         return true;
     }
 

@@ -47,11 +47,6 @@ public class UpdaterHistoryEditor extends UpdaterEditor {
     }
 
     @Override
-    protected boolean isNewButtonVisible() {
-        return false;
-    }
-
-    @Override
     protected boolean isNameFieldEnabled() {
         return false;
     }

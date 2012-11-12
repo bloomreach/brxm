@@ -48,11 +48,6 @@ public class UpdaterQueueEditor extends UpdaterEditor {
     }
 
     @Override
-    protected boolean isNewButtonVisible() {
-        return false;
-    }
-
-    @Override
     protected boolean isNameFieldEnabled() {
         return false;
     }
