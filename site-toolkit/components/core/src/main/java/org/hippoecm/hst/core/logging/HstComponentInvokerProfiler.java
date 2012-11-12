@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.logging;
 
+import org.apache.commons.lang.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
@@ -29,20 +30,22 @@ public class HstComponentInvokerProfiler {
     }
 
     /**
-     * @deprecated it does not need loggerFactory argument any more
+     * @deprecated since 2.25.05 it does not need loggerFactory argument any more
      */
+    @Deprecated
     public HstComponentInvokerProfiler(LoggerFactory loggerFactory) {
     }
 
     public Object profile(ProceedingJoinPoint call) throws Throwable {
         if (HDC.isStarted()) {
             Object [] args = call.getArgs();
-            String method = call.toShortString();
+            String invokerMethodName = call.getSignature().getName();
+            String compMethodName = StringUtils.replaceOnce(invokerMethodName, "invoke", "do");
             String windowName = "";
             String refNamespace = "";
 
             Task profileTask = HDC.getCurrentTask().startSubtask(HstComponentInvokerProfiler.class.getSimpleName());
-            profileTask.setAttribute("method", method);
+            profileTask.setAttribute("method", compMethodName);
 
             try {
                 if (args.length > 1 && args[1] instanceof HstRequest) {
