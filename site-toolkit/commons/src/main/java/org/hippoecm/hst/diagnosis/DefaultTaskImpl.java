@@ -18,16 +18,21 @@ package org.hippoecm.hst.diagnosis;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * DefaultTaskImpl
  */
 class DefaultTaskImpl implements Task {
 
+    private static final Logger log = LoggerFactory.getLogger(DefaultTaskImpl.class);
+    
     private final String name;
     private Map<String, Object> attributes;
 
@@ -71,7 +76,8 @@ class DefaultTaskImpl implements Task {
     @Override
     public void setAttribute(String key, Object value) {
         if (attributes == null) {
-            attributes = new HashMap<String, Object>();
+            // keep order of insertion thus Linked
+            attributes = new LinkedHashMap<String, Object> ();
         }
 
         attributes.put(key, value);
@@ -119,6 +125,7 @@ class DefaultTaskImpl implements Task {
     @Override
     public void stop() {
         if (stopped) {
+            log.warn("Task '{}' was already stopped.", name);
             return;
         }
 
@@ -143,6 +150,9 @@ class DefaultTaskImpl implements Task {
 
     @Override
     public long getDurationTimeMillis() {
+        if (!stopped) {
+            log.warn("Task '{}' was not stopped hence duration time unknown.", name);
+        }
         return durationTimeMillis;
     }
 
