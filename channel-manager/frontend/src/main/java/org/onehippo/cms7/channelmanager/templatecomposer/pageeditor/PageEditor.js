@@ -63,6 +63,28 @@ Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore = Ext.extend(Hippo.Cha
 
 });
 
+Hippo.ChannelManager.TemplateComposer.API = Ext.extend(Ext.util.Observable, {
+
+    constructor: function(config) {
+        Hippo.ChannelManager.TemplateComposer.API.superclass.constructor.call(this, config);
+        this.pageContainer = config.pageContainer;
+    },
+
+    initComponent: function() {
+        Hippo.ChannelManager.TemplateComposer.API.superclass.initComponent.apply(this, arguments);
+        this.addEvents('variantselected');
+    },
+
+    selectedVariant: function(variant) {
+        this.fireEvent('variantselected', variant);
+    },
+
+    refreshIFrame: function() {
+        this.pageContainer.refreshIFrame();
+    }
+
+});
+
 Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
     // height of the toolbar (in pixels)
@@ -86,6 +108,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
 
         this.canUnlockChannels = config.canUnlockChannels;
         this.toolbarPlugins = config.toolbarPlugins;
+
+        this.templateComposerApi = new Hippo.ChannelManager.TemplateComposer.API({
+            pageContainer: this.pageContainer
+        });
 
         this.globalVariantsStore = null;
         this.globalVariantsStoreFuture = null;
@@ -212,7 +238,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             tpl: '<tpl for="."><div class="x-combo-list-item template-composer-variant-{id}">{name}</div></tpl>',
             listeners: {
                 scope: this,
-                select : function(combo, record, index) {
+                beforeselect : function(combo, record, index) {
+                    var variant = record.get('id');
+                    if (variant === combo.getValue()) {
+                        return false;
+                    }
                     Ext.Ajax.request({
                         url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./setvariant?FORCE_CLIENT_HOST=true',
                         method: 'POST',
@@ -220,9 +250,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             'FORCE_CLIENT_HOST': 'true'
                         },
                         params: {
-                            'variant': record.get('id')
+                            'variant': variant
                         },
                         success : function() {
+                            self.templateComposerApi.selectedVariant(variant);
                             self.refreshIframe.call(self);
                         },
                         failure : function() {
@@ -430,7 +461,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 if (insertIndex >= 0) {
                     console.log("Adding " + mode + " toolbar plugin '" + plugin.xtype + "' " + plugin.positions[mode]);
                     pluginInstance = Hippo.ExtWidgets.create(plugin.xtype, {
-                        pageContainer: this.pageContainer,
+                        templateComposer: Hippo.ChannelManager.TemplateComposer.API,
                         toolbarMode: mode
                     });
                     toolbar.insert(insertIndex, pluginInstance);
