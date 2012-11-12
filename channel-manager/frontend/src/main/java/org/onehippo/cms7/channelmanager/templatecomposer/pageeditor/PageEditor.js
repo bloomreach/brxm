@@ -238,7 +238,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             tpl: '<tpl for="."><div class="x-combo-list-item template-composer-variant-{id}">{name}</div></tpl>',
             listeners: {
                 scope: this,
-                beforeselect : function(combo, record, index) {
+                beforeselect : function(combo, record) {
                     var variant = record.get('id');
                     if (variant === combo.getValue()) {
                         return false;
@@ -253,7 +253,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             'variant': variant
                         },
                         success : function() {
-                            self.templateComposerApi.selectedVariant(variant);
                             self.refreshIframe.call(self);
                         },
                         failure : function() {
@@ -261,24 +260,20 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                             combo.clearValue();
                         }
                     });
+                },
+                select: function(combo, record) {
+                    var variant = record.get('id');
+                    this.templateComposerApi.selectedVariant(variant);
                 }
             }
         });
 
-        variantsComboBox.addEvents('selectvariant');
-
-        variantsComboBox.setValue = variantsComboBox.setValue.createSequence(function(value) {
-            variantsComboBox.fireEvent('selectvariant', variantsComboBox, value);
-        }, this);
-
         variantsComboBox.on('afterRender', function() {
             variantsComboBox.setValue(this.renderedVariant);
             this.globalVariantsStoreFuture.when(function() {
-                if (this.globalVariantsStore.indexOfId(this.renderedVariant) >= 0) {
-                    variantsComboBox.setValue(this.renderedVariant);
-                } else if (this.globalVariantsStore.indexOfId('hippo-default') >= 0) {
-                    variantsComboBox.setValue('hippo-default');
-                }
+                var selectVariant = this.globalVariantsStore.indexOfId(this.renderedVariant) >= 0 ? this.renderedVariant : 'hippo-default';
+                variantsComboBox.setValue(selectVariant);
+                this.templateComposerApi.selectedVariant(selectVariant);
             }.createDelegate(this));
         }, this);
 
@@ -461,7 +456,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                 if (insertIndex >= 0) {
                     console.log("Adding " + mode + " toolbar plugin '" + plugin.xtype + "' " + plugin.positions[mode]);
                     pluginInstance = Hippo.ExtWidgets.create(plugin.xtype, {
-                        templateComposer: Hippo.ChannelManager.TemplateComposer.API,
+                        templateComposer: this.templateComposerApi,
                         toolbarMode: mode
                     });
                     toolbar.insert(insertIndex, pluginInstance);
