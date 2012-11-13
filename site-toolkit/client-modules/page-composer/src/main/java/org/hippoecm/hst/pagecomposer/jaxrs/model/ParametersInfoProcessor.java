@@ -38,7 +38,7 @@ public class ParametersInfoProcessor {
 
     static final Logger log = LoggerFactory.getLogger(ParametersInfoProcessor.class);
 
-    private final Set<String> failedBundlesToLoad = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+    private final Set<CacheKey> failedBundlesToLoad = Collections.newSetFromMap(new ConcurrentHashMap<CacheKey, Boolean>());
 
     public List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale, String currentMountCanonicalContentPath) {
         final List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
@@ -127,7 +127,7 @@ public class ParametersInfoProcessor {
             localeOrDefault = locale;
         }
         final String typeName = parameterInfo.type().getName();
-        String bundleKey = getBundleKey(typeName, localeOrDefault);
+        CacheKey bundleKey = new CacheKey(typeName, localeOrDefault);
         if (failedBundlesToLoad.contains(bundleKey)) {
             return null;
         }
@@ -141,13 +141,31 @@ public class ParametersInfoProcessor {
         }
     }
 
-    private String getBundleKey(final String typeName, final Locale locale) {
-        char delimiter = '\uFFFF';
-        final StringBuilder key = new StringBuilder(typeName).append(delimiter);
-        key.append(locale.getCountry()).append(delimiter);
-        key.append(locale.getLanguage()).append(delimiter);
-        key.append(locale.getVariant());
-        return key.toString();
+    private static class CacheKey {
+        private final String type;
+        private final Locale locale;
+
+        private CacheKey(final String type, final Locale locale) {
+            if (type == null || locale == null) {
+                throw new IllegalArgumentException("Both type and locale are not allowed to be null");
+            }
+            this.type = type;
+            this.locale = locale;
+        }
+
+        @Override
+        public int hashCode() {
+            return type.hashCode() * 7 + locale.hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof CacheKey) {
+                CacheKey other = (CacheKey) obj;
+                return other.type.equals(type) && other.locale.equals(locale);
+            }
+            return false;
+        }
     }
 
 }
