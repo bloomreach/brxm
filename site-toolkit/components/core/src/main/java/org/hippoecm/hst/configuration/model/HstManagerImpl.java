@@ -33,6 +33,7 @@ import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.MutableChannelManager;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -46,7 +47,6 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.hippoecm.hst.service.ServiceException;
-import org.onehippo.cms7.utilities.pools.StringPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
