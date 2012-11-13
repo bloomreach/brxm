@@ -65,7 +65,7 @@ public class UpdaterExecutor implements EventListener {
     private final UpdaterExecutionReport report;
     private volatile boolean cancelled;
 
-    public UpdaterExecutor(final Node updaterNode, final Session session) throws RepositoryException, IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, IllegalArgumentException, CompilationFailedException {
+    public UpdaterExecutor(Node updaterNode, final Session session) throws RepositoryException, IllegalAccessException, InstantiationException, ClassNotFoundException, IOException, IllegalArgumentException, CompilationFailedException {
         this.session = session;
         report = new UpdaterExecutionReport();
         try {
@@ -90,7 +90,9 @@ public class UpdaterExecutor implements EventListener {
             report.getLogger().error("Cannot run updater: " + e.getClass().getName() + ": " + e.getMessage());
             throw e;
         } finally {
-            saveReport(session.getNodeByIdentifier(updaterNode.getIdentifier()));
+            // we need to get node instance from our own session in order to save changes
+            updaterNode = session.getNodeByIdentifier(updaterNode.getIdentifier());
+            saveReport(updaterNode);
         }
         session.getWorkspace().getObservationManager().addEventListener(this, PROPERTY_EVENTS, updaterNode.getPath(), false, null, null, true);
     }
