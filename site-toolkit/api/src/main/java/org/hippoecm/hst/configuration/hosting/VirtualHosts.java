@@ -169,8 +169,9 @@ public interface VirtualHosts {
      String getChannelManagerSitesName();
 
     /**
-     * @return <code>true</code> when diagostics about page rendering is enabled
+     * @return <code>true</code> when diagostics about page rendering is enabled for ip address <code>ip</code>. If <code>ip</code>
+     * is <code>null</code> the ip address of the request won't be taken into account
      */
-    boolean isDiagnosticsEnabled();
+    boolean isDiagnosticsEnabled(String ip);
 
 }

@@ -287,7 +287,8 @@ public class HstFilter implements Filter {
     		// This info is on the virtual host.
             String hostName = HstRequestUtils.getFarthestRequestHost(containerRequest);
 
-            if (vHosts.isDiagnosticsEnabled()) {
+            String ip = HstRequestUtils.getFarthestRemoteAddr(containerRequest);
+            if (vHosts.isDiagnosticsEnabled(ip)) {
                 rootTask = HDC.start(HstFilter.class.getSimpleName());
                 rootTask.setAttribute("hostName", hostName);
                 rootTask.setAttribute("uri", req.getRequestURI());

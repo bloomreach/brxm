@@ -20,8 +20,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -99,6 +101,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private boolean diagnosticsEnabled;
     
+    private Set<String> diagnosticsForIps = new HashSet<String>(0);
+    
     /**
      * The 'active' virtual host group for the current environment. This should not be <code>null</code> and 
      * not contains slashes but just the name of the hst:virtualhostgroup node below the hst:hosts node
@@ -124,6 +128,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
         defaultContextPath = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
         cmsPreviewPrefix = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
         diagnosticsEnabled = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED);
+
+        String[] ips = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS);
+        for (String ip : ips) {
+            diagnosticsForIps.add(ip);
+        }
         if(cmsPreviewPrefix == null) {
             // there is no explicit cms preview prefix configured. Take the default one from the hstManager
             cmsPreviewPrefix = hstManager.getCmsPreviewPrefix();
@@ -571,7 +580,16 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public boolean isDiagnosticsEnabled() {
-        return diagnosticsEnabled;
+    public boolean isDiagnosticsEnabled(String ip) {
+        if (!diagnosticsEnabled) {
+            return false;
+        }
+        if (ip == null || diagnosticsForIps.isEmpty()) {
+            return true;
+        }
+        if (diagnosticsForIps.contains(ip)) {
+            return true;
+        }
+        return false;
     }
 }
