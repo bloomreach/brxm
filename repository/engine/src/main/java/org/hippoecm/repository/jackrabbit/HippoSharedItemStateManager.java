@@ -156,10 +156,15 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
                         }
                     }
                 }
-            } catch (NoSuchItemStateException nsise) {
-                log.error("Could not find parent item", nsise);
-            } catch (NoSuchNodeTypeException nsnte) {
-                log.error("Could not find node type", nsnte);
+            } catch (NoSuchItemStateException e) {
+                final String message = "Unable to add add handles for modified state " + state.getId() + " because an item could not be found.";
+                if (log.isDebugEnabled()) {
+                    log.info(message, e);
+                } else {
+                    log.info(message + " (full stacktrace on debug level)");
+                }
+            } catch (NoSuchNodeTypeException e) {
+                log.error("Could not find node type", e);
             }
         }
     }
