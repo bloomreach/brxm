@@ -22,10 +22,18 @@ import java.util.LinkedList;
  * A @{LinkedList} with a bounded capacity
  */
 public class BoundedLinkedList<E> extends LinkedList<E> {
-    private final long maxCapacity;
+    private final int maxCapacity;
 
-    public BoundedLinkedList(long maxCapacity) {
+    public BoundedLinkedList(int maxCapacity) {
+        if (maxCapacity <= 0) {
+            throw new IllegalArgumentException("Maximum capacity must be greater than 0");
+        }
+
         this.maxCapacity = maxCapacity;
+    }
+
+    public int getMaxCapacity() {
+        return this.maxCapacity;
     }
 
     @Override
@@ -38,13 +46,66 @@ public class BoundedLinkedList<E> extends LinkedList<E> {
     }
 
     @Override
-    public boolean addAll(Collection<? extends E> colleciton) {
+    public void add(int index, E element) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends E> collection) {
         boolean changed = false;
 
-        for (E element : colleciton) {
+        for (E element : collection) {
             changed |= add(element);
         }
 
         return changed;
     }
+
+    @Override
+    public boolean addAll(int index, Collection<? extends E> collection) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void addFirst(E element) {
+        validateCapacityAndPollFirstIfNeeded();
+        super.addFirst(element);
+    }
+
+    @Override
+    public void addLast(E element) {
+        validateCapacityAndPollFirstIfNeeded();
+        super.addLast(element);
+    }
+
+    @Override
+    public boolean offer(E element) {
+        validateCapacityAndPollFirstIfNeeded();
+        return super.offer(element);
+    }
+
+    @Override
+    public boolean offerFirst(E element) {
+        validateCapacityAndPollFirstIfNeeded();
+        return super.offerFirst(element);
+    }
+
+    @Override
+    public boolean offerLast(E element) {
+        validateCapacityAndPollFirstIfNeeded();
+        return super.offerLast(element);
+    }
+
+    @Override
+    public void push(E element) {
+        validateCapacityAndPollFirstIfNeeded();
+        super.push(element);
+    }
+
+    protected void validateCapacityAndPollFirstIfNeeded() {
+        if (size() >= maxCapacity) {
+            poll();
+        }
+    }
+
 }
