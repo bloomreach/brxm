@@ -204,7 +204,9 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                         ];
                         Hippo.Future.join(futures).when(function() {
                             onSuccess();
-                        }).otherwise(onFail("Failed to initialize page model"));
+                        }).otherwise(function() {
+                            onFail("Failed to initialize page model");
+                        });
                     } else {
                         onSuccess();
                     }
