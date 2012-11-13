@@ -48,6 +48,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.ocm.JcrOID;
 import org.hippoecm.repository.ocm.JcrPersistenceHandler;
 import org.hippoecm.repository.ocm.JcrStoreManager;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,21 +164,13 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
                 try {
                     tx.begin();
                     if (uuid != null) {
-                        Node node = session.getNodeByUUID(uuid);
-                        if (!node.isCheckedOut()) {
-                            if (node.isNodeType("mix:versionable")) {
-                                node.checkout();
-                            }
-                            try {
-                                Node parent = node.getParent();
-                                if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-                                    if (!parent.isCheckedOut()) {
-                                        parent.checkout();
-                                    }
-                                }
-                            } catch (ItemNotFoundException ex) {
-                                // no parent as this is root node, ignore.
-                            }
+                        Node node = session.getNodeByIdentifier(uuid);
+                        JcrUtils.ensureIsCheckedOut(node, false);
+                        try {
+                            Node parent = node.getParent();
+                            JcrUtils.ensureIsCheckedOut(parent, false);
+                        } catch (ItemNotFoundException ex) {
+                            // no parent as this is root node, ignore.
                         }
                     }
                     pm.makePersistent(object);
@@ -192,8 +185,9 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
                         throw ex;
                     }
                 } finally {
-                    if (tx.isActive())
+                    if (tx.isActive()) {
                         tx.rollback();
+                    }
                 }
             } else {
                 pm.makePersistent(object);
@@ -235,8 +229,9 @@ public class DocumentManagerImpl implements DocumentManager, HippoSession.CloseC
                     Row resultRow = iter.nextRow();
                     Node node = (selectorName != null ? resultRow.getNode(selectorName) : resultRow.getNode());
                     if (node != null) {
-                        if (resultNode == null || node.getPath().length() > resultNode.getPath().length())
+                        if (resultNode == null || node.getPath().length() > resultNode.getPath().length()) {
                             resultNode = node;
+                        }
                     }
                 }
                 String uuid = resultNode.getUUID();
