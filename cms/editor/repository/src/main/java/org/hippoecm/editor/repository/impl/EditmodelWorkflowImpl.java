@@ -237,7 +237,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                         PropertyDefinition definition = prop.getDefinition();
                         if (!definition.isProtected()) {
                             if (definition.isMultiple()) {
-                                draft.setProperty(prop.getName(), prop.getValues());
+                                draft.setProperty(prop.getName(), prop.getValues(), prop.getType());
                             } else {
                                 draft.setProperty(prop.getName(), prop.getValue());
                             }
