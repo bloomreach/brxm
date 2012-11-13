@@ -94,7 +94,7 @@ AutoSave.prototype.save = function(throttled, success, failure) {
         if (throttled) {
             this.saving = false;
         }
-        if(xmlHttpReq.status == 200) {
+        if(xmlHttpReq.status === 200) {
             if (success) {
                 success();
             }
@@ -103,12 +103,12 @@ AutoSave.prototype.save = function(throttled, success, failure) {
         }
     }.bind(this);
 
-    xmlHttpReq.open('POST', url, throttled);
+    xmlHttpReq.open('POST', url, throttled ? throttled : false);
     xmlHttpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xmlHttpReq.setRequestHeader('Wicket-Ajax', "true");
     if (throttled) {
         xmlHttpReq.onreadystatechange = function() {
-            if (xmlHttpReq.readyState == 4) {
+            if (xmlHttpReq.readyState === 4) {
                 afterCallbackHandler();
             }
         };

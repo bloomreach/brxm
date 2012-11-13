@@ -165,15 +165,14 @@ InsertImage.prototype.apply = function()
   {
     if ( Xinha.is_ie )
     {
-      var sel = editor.getSelection();
-      var range = editor.createRange(sel);
-      editor._doc.execCommand("insertimage", false, param.f_url);
-      img = range.parentElement();
-      // wonder if this works...
-      if ( img.tagName.toLowerCase() != "img" )
-      {
-        img = img.previousSibling;
-      }
+	  editor._doc.execCommand("insertimage", false, param.f_url);
+	  var images = editor._doc.getElementsByTagName("img");
+	  for (var i = 0; i < images.length; i++) {
+	     //Second check is here in case we have the same image more than once
+	     if (images[i].getAttribute("src") === param.f_url && !images[i].getAttribute("facetselect")) {
+		    img = images[i];
+		 }
+	  }
     }
     else
     {
