@@ -219,27 +219,34 @@ public class TabsPlugin extends RenderPlugin {
         if (tabbie.getDecoratorId() != null) {
             final StringBuilder fireEventJS = new StringBuilder();
             fireEventJS.append("(function(document) {\n" +
-                    "            var event;\n" +
-                    "            if (document.createEvent) {\n" +
-                    "                event = document.createEvent('HTMLEvents');\n" +
-                    "                event.initEvent('tabSelected', true, true);\n" +
-                    "            } else {\n" +
-                    "                event = document.createEventObject();\n" +
-                    "                event.eventType = 'tabSelected'\n" +
-                    "            }\n" +
-                    "    \n" +
-                    "            event.eventName = 'tabSelected';\n" +
-                    "            event.tabId = '"+tabbie.getDecoratorId()+"';\n" +
-                    "    \n" +
-                    "            var decorator = document.getElementById('"+tabbie.getDecoratorId()+"');"+
-                    "            if (decorator) {" +
-                    "               if (document.createEvent) {\n" +
-                    "                 decorator.dispatchEvent(event);\n" +
-                    "               } else {\n" +
-                    "                 decorator.fireEvent('on' + event.eventType, event);\n" +
-                    "               }\n" +
-                    "            }"+
-                    "        })(document);");
+                    "  var fireEvent = function(element, eventName) {" +
+                    "      var event;\n" +
+                    "      if (document.createEvent) {\n" +
+                    "          event = document.createEvent('HTMLEvents');\n" +
+                    "          event.initEvent(eventName, true, true);\n" +
+                    "      } else {\n" +
+                    "          event = document.createEventObject();\n" +
+                    "          event.eventType = eventName\n" +
+                    "      }\n" +
+                    "      event.eventName = eventName;\n" +
+                    "      event.tabId = element.id ? element.id : element.name;"+
+                    "      if (document.createEvent) {"+
+                    "          element.dispatchEvent(event);\n" +
+                    "      } else {\n" +
+                    "          element.fireEvent('on' + event.eventType, event);\n" +
+                    "      }\n" +
+                    "      console.log(eventName+' fired.');"+
+                    "   };"+
+                    "   var activePerspectives = document.getElementsByName('activePerspective');"+
+                    "   if (activePerspectives.length > 0) {"+
+                    "       console.log('fireEvent: tabDeselected');"+
+                    "       fireEvent(activePerspectives[0], 'tabDeselected');"+
+                    "       activePerspectives[0].setAttribute('name', '');"+
+                    "   }"+
+                    "   var decorator = document.getElementById('"+tabbie.getDecoratorId()+"');"+
+                    "   fireEvent(decorator, 'tabSelected');"+
+                    "   decorator.setAttribute('name', 'activePerspective');"+
+                    "})(document);");
             target.appendJavascript(fireEventJS.toString());
         }
 
