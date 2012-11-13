@@ -3,7 +3,6 @@
 src/main/java/org/hippoecm/hst/servlet/ResourceServlet.java -text
 src/main/java/org/onehippo/cms7/utilities/io/CircularBufferOutputStream.java -text
 src/main/java/org/onehippo/cms7/utilities/logging/PrintStreamLogger.java -text
-src/main/java/org/onehippo/cms7/utilities/pools/StringPool.java -text svneol=unset#text/plain
 src/main/java/org/onehippo/cms7/utilities/servlet/ResourceServlet.java -text
 src/test/java/org/onehippo/cms7/utilities/io/CircularBufferOutputStreamTest.java -text
 src/test/java/org/onehippo/cms7/utilities/servlet/ResourceServletTest.java -text
