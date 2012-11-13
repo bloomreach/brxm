@@ -68,7 +68,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.tika</groupId>
-      <artifactId>tika-core</artifactId>
+      <artifactId>tika-parsers</artifactId>
       <version>${tika.version}</version>
       <scope>provided</scope>
     </dependency>

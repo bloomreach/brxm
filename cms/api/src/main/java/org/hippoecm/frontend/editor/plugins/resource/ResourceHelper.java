@@ -30,9 +30,6 @@ import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.JcrConstants;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.utils.ParseUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,19 +188,12 @@ public class ResourceHelper {
         String nodePath = null;
         try {
             nodePath = node.getPath();
-            String content = ParseUtils.getStringContent(inputStream, getTikaConfig(), MIME_TYPE_PDF);
+            String content = PdfParser.synchronizedParse(inputStream);
             byteInputStream = new ByteArrayInputStream(content.getBytes());
             node.setProperty(HippoNodeType.HIPPO_TEXT, getValueFactory(node).createBinary(byteInputStream));
-        } catch (IOException e) {
-            setEmptyHippoTextBinary(node);
-            log.warn("An exception has occurred while trying to create inputstream based on " +
-                        "extracted text for node '"+nodePath+"' ",e);
         } catch (RepositoryException e) {
             setEmptyHippoTextBinary(node);
-            log.warn("An exception occurred while trying to set property with extracted text for node '"+nodePath+"' ",e);
-        } catch (TikaException e) {
-            setEmptyHippoTextBinary(node);
-            log.warn("An exception occurred while trying to set Tika configuration for node '"+nodePath+"' ",e);
+            log.warn("An exception occurred while trying to set property with extracted text for node '" + nodePath + "' ", e);
         } catch (Throwable e) {
             setEmptyHippoTextBinary(node);
             log.warn("An exception occurred while trying to set property with extracted text for node '"+nodePath+"' ",e);
@@ -222,15 +212,6 @@ public class ResourceHelper {
         } catch (RepositoryException e) {
             log.error("Unable to store empty hippo:text binary for node '"+nodePath+"'", e);
         }
-    }
-
-    /**
-     * Gets the default Tika Configuration
-     *
-     * @return the {@link org.apache.tika.config.TikaConfig}
-     */
-    private static TikaConfig getTikaConfig(){
-        return TikaConfig.getDefaultConfig();
     }
 
     /**

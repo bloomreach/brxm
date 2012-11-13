@@ -67,6 +67,7 @@ api/src/main/java/org/hippoecm/frontend/editor/compare/StreamComparer.java svneo
 api/src/main/java/org/hippoecm/frontend/editor/compare/TypedComparer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/compare/ValueComparer.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java -text svneol=unset#text/plain
+api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/PdfParser.java -text
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ResourceHelper.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/ReferringDocumentsView_de.properties -text
 api/src/main/java/org/hippoecm/frontend/editor/workflow/dialog/WhereUsedDialog_de.properties -text
@@ -772,6 +773,7 @@ api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/left-right.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/right-corners.gif -text
 api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/images/window/top-bottom.gif -text
+api/src/test/java/org/hippoecm/frontend/editor/plugins/resource/PdfParserTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageMetaDataTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ImageUtilTest.java -text
 api/src/test/java/org/hippoecm/frontend/plugins/gallery/imageutil/ReusableInputStreamTest.java -text
@@ -785,6 +787,7 @@ api/src/test/resources/test-CMYK.jpg -text
 api/src/test/resources/test-RGB.jpg -text
 api/src/test/resources/test-YCCK.jpg -text
 api/src/test/resources/test-broken-thumbnails.jpg -text
+api/src/test/resources/test.pdf -text
 automatic-export/frontend/pom.xml -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin.html -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin.java -text
