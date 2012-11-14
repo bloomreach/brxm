@@ -212,7 +212,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                     }
                 },
                 failure : function(responseObject) {
-                    onFail(new Ext.Error("HST-Meta-Data request failed", { url: url, status: responseObject.status, statusText: responseObject.statusText}));
+                    onFail("HST-Meta-Data request failed: " + Ext.encode({ url: url, status: responseObject.status, statusText: responseObject.statusText}));
                 }
             });
         }.createDelegate(this));

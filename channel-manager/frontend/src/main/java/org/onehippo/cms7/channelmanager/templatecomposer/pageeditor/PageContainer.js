@@ -157,9 +157,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             },
             url: self.composerRestMountUrl+'/cafebabe-cafe-babe-cafe-babecafebabe./composermode/'+self.renderHost+'/?FORCE_CLIENT_HOST=true',
             success: function(response) {
-                this.sessionCookie = this._getCookie('JSESSIONID');
                 var responseObj = Ext.util.JSON.decode(response.responseText);
-                this.canEdit = responseObj.data;
+                this.canEdit = responseObj.data.canWrite;
+                this.sessionCookie = responseObj.data.sessionId;
                 callback();
             }.createDelegate(this),
             failure: function(exceptionObject) {
@@ -191,20 +191,20 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         });
     },
 
-    _getCookie: function (c_name) {
-        var document = Ext.getCmp('Iframe').getFrameDocument();
-        var i,x,y,ARRcookies=document.cookie.split(";");
-        for (i=0;i<ARRcookies.length;i++)
-        {
-            x=ARRcookies[i].substr(0,ARRcookies[i].indexOf("="));
-            y=ARRcookies[i].substr(ARRcookies[i].indexOf("=")+1);
-            x=x.replace(/^\s+|\s+$/g,"");
-            if (x==c_name)
-            {
-                return unescape(y);
+    _isValidSession: function() {
+        var document = Ext.getCmp('Iframe').getFrameDocument(),
+            isValidSession = false;
+
+        Ext.each(document.cookie.split(";"), function(keyValue) {
+            var key = keyValue.substr(0, keyValue.indexOf("=")).trim(),
+                value = keyValue.substr(keyValue.indexOf("=") + 1).trim();
+            if (key === 'JSESSIONID' && value === this.sessionCookie) {
+                isValidSession = true;
+                return false;
             }
-        }
-        return undefined;
+        }, this);
+
+        return isValidSession;
     },
 
     refreshIframe : function() {
@@ -514,8 +514,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         }, this);
         this.pageContext.on('pageContextInitializationFailed', function(error) {
             this.previewMode = this.pageContext.previewMode;
-            var sessionCookie = this._getCookie('JSESSIONID');
-            if (sessionCookie != this.sessionCookie) {
+            if (!this._isValidSession()) {
                 this._initializeHstSession(this._complete.createDelegate(this));
             } else {
                 console.error(this.resources['page-context-initialization-failed-message']);
