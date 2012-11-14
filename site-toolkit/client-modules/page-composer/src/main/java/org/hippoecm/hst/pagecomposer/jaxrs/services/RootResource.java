@@ -59,7 +59,12 @@ public class RootResource extends AbstractConfigResource {
         } catch (RepositoryException e) {
             return error("Could not determine authorization", e);
         }
-        return ok("Composer-Mode successful", canWrite);
+
+        HandshakeResponse response = new HandshakeResponse();
+        response.setCanWrite(canWrite);
+        response.setSessionId(session.getId());
+
+        return ok("Composer-Mode successful", response);
     }
 
     @GET
@@ -88,6 +93,28 @@ public class RootResource extends AbstractConfigResource {
     public Response clearVariant(@Context HttpServletRequest servletRequest, String variant) {
         servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
         return ok("Variant cleared");
+    }
+
+    private static class HandshakeResponse {
+
+        private boolean canWrite;
+        private String sessionId;
+
+        public boolean isCanWrite() {
+            return canWrite;
+        }
+
+        public void setCanWrite(final boolean canWrite) {
+            this.canWrite = canWrite;
+        }
+
+        public String getSessionId() {
+            return sessionId;
+        }
+
+        public void setSessionId(final String sessionId) {
+            this.sessionId = sessionId;
+        }
     }
 
 }
