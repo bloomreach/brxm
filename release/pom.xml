@@ -56,7 +56,7 @@
     <forge.selection.version>2.05.07</forge.selection.version>
     <forge.sitemap.version>1.03.00</forge.sitemap.version>
     <forge.taxonomy.version>1.08.07</forge.taxonomy.version>
-    <forge.tcmp.version>1.05.05</forge.tcmp.version>
+    <forge.tcmp.version>1.06.01-SNAPSHOT</forge.tcmp.version>
     <forge.properties.version>2.07.08</forge.properties.version>
     <forge.content-blocks.version>1.08.02</forge.content-blocks.version>
     <forge.ecm-tagging.version>4.04.02</forge.ecm-tagging.version>
