@@ -87,11 +87,9 @@ public class AuthorizationQuery {
             for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
                 memberships.add(groupPrincipal.getName());
             }
-            log.debug("----START CREATION AUTHORIZATION QUERY---------");
+            long start = System.currentTimeMillis();
             this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class), memberships,(InternalHippoSession)session, indexingConfig, nsMappings, ntMgr);
-
-            log.info("AUTHORIZATION Query: " + query);
-            log.debug("----END CREATION AUTHORIZATION QUERY-----------");
+            log.info("Creating authorization query took {} ms. Query: {}", String.valueOf(System.currentTimeMillis() - start), query);
         }
     }
 

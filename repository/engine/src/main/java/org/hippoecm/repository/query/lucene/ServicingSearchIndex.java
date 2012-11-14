@@ -118,9 +118,11 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         BitSet bits;
         final AuthorizationBitSet authorizationBitSet = authorizationBitSets.get(session.getUserID());
         if (authorizationBitSet == null || !authorizationBitSet.isValid(reader)) {
+            long start = System.currentTimeMillis();
             Filter filter = new QueryWrapperFilter(session.getAuthorizationQuery().getQuery());
             bits = filter.bits(reader);
             authorizationBitSets.put(session.getUserID(), new AuthorizationBitSet(reader, bits));
+            log.info("Creating authorization bitset for user '{}' took {} ms.", session.getUserID(), String.valueOf(System.currentTimeMillis() - start));
         } else {
             bits = authorizationBitSet.bits;
         }
