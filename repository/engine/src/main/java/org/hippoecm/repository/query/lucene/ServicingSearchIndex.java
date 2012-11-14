@@ -23,9 +23,11 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jcr.ItemNotFoundException;
@@ -337,7 +339,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     private void updateContainingDocumentNodes(final List<NodeState> addedStates,
                                                final List<NodeId> addedIds,
                                                final List<NodeId> removedIds) throws RepositoryException, IOException {
-        final List<NodeId> checkedIds = new ArrayList<NodeId>();
+        final Set<NodeId> checkedIds = new HashSet<NodeId>();
         final List<NodeState> updateDocumentStates = new ArrayList<NodeState>();
         final List<NodeId> updateDocumentIds = new ArrayList<NodeId>();
         for (NodeState addedState : addedStates) {
@@ -441,7 +443,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      * @return the <code>NodeState</code> of the Document variant which is an ancestor of the state
      * or <code>null</code> if this state was not a child of a document variant
      */
-    private NodeState getContainingDocument(NodeState state, List<NodeId> checkedIds) throws ItemStateException {
+    private NodeState getContainingDocument(NodeState state, Set<NodeId> checkedIds) throws ItemStateException {
         if (checkedIds.contains(state.getNodeId())) {
             // already checked these ancestors: no need to do it again
             return null;
