@@ -226,7 +226,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             valueField: 'id',
             valueNotFoundText: ' ',
             typeAhead: true,
-            mode: 'local',
+            mode: 'remote',
             triggerAction: 'all',
             emptyText: this.resources['variants-combo-box-empty-text'],
             editable: false,
@@ -238,6 +238,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             tpl: '<tpl for="."><div class="x-combo-list-item template-composer-variant-{id}">{name}</div></tpl>',
             listeners: {
                 scope: this,
+                beforequery: function(queryEvent) {
+                    // remove the lastQuery property to force a reload of the store
+                    delete queryEvent.combo.lastQuery;
+                },
                 beforeselect : function(combo, record) {
                     var variant = record.get('id');
                     if (variant === combo.getValue()) {
