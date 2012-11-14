@@ -95,12 +95,11 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     }
 
     @Override
-    public String persist(String blueprintId, Channel channel) {
+    public String persist(String blueprintId, Channel channel) throws ChannelException {
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
             // We should use a proper validation framework!
             validate();
-            // This is only test data
             return channelManager.persist(blueprintId, channel);
         } catch (ResourceRequestValidationException rrve) {
             if (log.isDebugEnabled()) {
@@ -114,11 +113,13 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             // I know returning 'null' is not clean at all but thats *only* for now!
         } catch (ChannelException ce) {
             log.warn("Error while persisting a new channel - Channel: {} - {} : {}", new Object[] {channel, ce.getClass().getName(), ce.toString()});
+            throw ce;
         }
 
-        // Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
-        // HST, CMS and services!
-        return null;
+        log.warn("Unknown error while persisting a new channel - Channel: {} - Blueprint-Id: '{}'", new Object[] {channel, blueprintId});
+        throw new ChannelException("Could not persist a channel using blueprint-id: '" + blueprintId
+                + "' for an unknown reason please check with your system administrator", ChannelException.Type.UNKNOWN);
+
     }
 
     /* (non-Javadoc)

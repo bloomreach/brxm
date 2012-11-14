@@ -46,6 +46,8 @@
     <property name="mapper" ref="cmsRestJacksonObjectMapper" />
   </bean>
 
+  <bean id="channelExceptionMapper" class="org.hippoecm.hst.cmsrest.providers.exception.mappers.ChannelExceptionMapper" />
+
   <bean id="cmsRestJacksonObjectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
 
   <!-- Enable Jackson JSON ObjectMapper default typing -->
@@ -74,10 +76,11 @@
   </bean>
 
   <bean id="jaxrsCmsRestCxfServerFactoryBean" class="org.apache.cxf.jaxrs.JAXRSServerFactoryBean">
-    <property name="address" value="/"/>
+    <property name="address" value="/" />
     <property name="providers">
       <list>
-        <ref bean="cmsRestJsonProvider"/>
+        <ref bean="cmsRestJsonProvider" />
+        <ref bean="channelExceptionMapper" />
       </list>
     </property>
     <property name="resourceProviders">

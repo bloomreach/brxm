@@ -33,6 +33,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
@@ -88,7 +89,7 @@ public interface ChannelService {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public String persist(@QueryParam("blueprint") String blueprintId, Channel channel);
+    public String persist(@QueryParam("blueprint") String blueprintId, Channel channel) throws ChannelException;
 
 	/**
 	 * Retrieve {@link Channel} property definitions
