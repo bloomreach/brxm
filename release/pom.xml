@@ -573,6 +573,18 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+        <artifactId>hst-cms-dependencies</artifactId>
+        <version>${hippo.hst.version}</version>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+        <artifactId>hst-repository-dependencies</artifactId>
+        <version>${hippo.hst.version}</version>
+        <type>pom</type>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.dependencies</groupId>
         <artifactId>hst-client-dependencies</artifactId>
         <version>${hippo.hst.version}</version>
         <type>pom</type>
