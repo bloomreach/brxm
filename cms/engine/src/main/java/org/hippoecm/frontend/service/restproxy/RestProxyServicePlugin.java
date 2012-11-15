@@ -5,6 +5,8 @@ import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -30,7 +32,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
-import org.hippoecm.frontend.service.restproxy.custom.AnnotationJsonDeserializer;
+import org.hippoecm.frontend.service.restproxy.custom.json.deserializers.AnnotationJsonDeserializer;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.sso.CredentialCipher;
@@ -58,7 +60,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public static final String PING_SERVICE_TIMEOUT = "ping.service.timeout";
 
     private static final long serialVersionUID = 1L;
-    private static final List<?> PROVIDERS;
+    private static final List<Object> PROVIDERS;
 
     private final int pingServiceTimeout;
     private final String pingServiceUri;
@@ -76,7 +78,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         objectMapper.registerModule(cmsRestJacksonJsonModule);
         JacksonJaxbJsonProvider jjjProvider = new JacksonJaxbJsonProvider();
         jjjProvider.setMapper(objectMapper);
-        PROVIDERS = Collections.singletonList(jjjProvider);
+        PROVIDERS = Collections.unmodifiableList(Arrays.asList((Object) jjjProvider));
     }
 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
@@ -105,23 +107,27 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
     @Override
     public <T> T createRestProxy(final Class<T> restServiceApiClass) {
-        // Check whether the site is up and running or not
-        if (!siteIsAlive) {
-            log.info("It appears that the site might be down. Pinging site one more time!");
-            siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
-            if (!siteIsAlive) {
-                log.warn("It appears that site is still down. Please check with your administrator!");
-                return null;
-            } else {
-                log.info("Site is up and running.");
-            }
-        }
-
-        return JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
+        return createRestProxy(restServiceApiClass, null);
     }
 
     @Override
     public <T> T createSecureRestProxy(Class<T> restServiceApiClass) {
+        return createSecureRestProxy(restServiceApiClass, null);
+    }
+
+    /**
+     * Creates a proxy to a REST service based on the provided class
+     * <p/>
+     * <p/>
+     * This version takes addition list of providers to configure the client proxy with </P>
+     *
+     * @param restServiceApiClass the class representing the REST service API.
+     * @param <T>                 the generic type of the REST service API class.
+     * @param additionalProviders {@link java.util.List} of additional providers to configure client proxies with
+     * @return a proxy to the REST service represented by the given class, or null if no proxy could be created.
+     */
+    @Override
+    public <T> T createRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
         // Check whether the site is up and running or not
         if (!siteIsAlive) {
             log.info("It appears that the site might be down. Pinging site one more time!");
@@ -134,7 +140,37 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             }
         }
 
-        T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, PROVIDERS);
+        return JAXRSClientFactory.create(restUri, restServiceApiClass, getProviders(additionalProviders));
+    }
+
+    /**
+     * Creates a proxy to a REST service based on the provided class and security {@link javax.security.auth.Subject} A
+     * security {@link javax.security.auth.Subject} which indicates that the caller wants a security context to be
+     * propagated with the REST call
+     * <p/>
+     * <p/>
+     * This version takes addition list of providers to configure the client proxy with </P>
+     *
+     * @param restServiceApiClass the class representing the REST service API.
+     * @param <T>                 the generic type of the REST service API class.
+     * @param additionalProviders {@link java.util.List} of additional providers to configure client proxies with
+     * @return a proxy to the REST service represented by the given class, or null if no proxy could be created.
+     */
+    @Override
+    public <T> T createSecureRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
+        // Check whether the site is up and running or not
+        if (!siteIsAlive) {
+            log.info("It appears that the site might be down. Pinging site one more time!");
+            siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
+            if (!siteIsAlive) {
+                log.warn("It appears that site is still down. Please check with your administrator!");
+                return null;
+            } else {
+                log.info("Site is up and running.");
+            }
+        }
+
+        T clientProxy = JAXRSClientFactory.create(restUri, restServiceApiClass, getProviders(additionalProviders));
 
         Subject subject = getSubject();
         // The accept method is called to solve an issue as the REST call was sent with 'text/plain' as an accept header
@@ -216,6 +252,17 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         }
 
         return siteIsAlive;
+    }
+
+    protected List<Object> getProviders(final List<Object> additionalProviders) {
+        if (additionalProviders != null) {
+            List<Object> providers = new ArrayList<Object>(PROVIDERS.size() + additionalProviders.size());
+            providers.addAll(PROVIDERS);
+            providers.addAll(additionalProviders);
+            return providers;
+        }
+
+        return PROVIDERS;
     }
 
 }

@@ -15,11 +15,6 @@
  */
 package org.hippoecm.frontend.service.restproxy.custom;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static org.hippoecm.frontend.service.restproxy.test.utils.AnnotationsCollector.collect;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
@@ -33,6 +28,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.codehaus.jackson.type.TypeReference;
+import org.hippoecm.frontend.service.restproxy.custom.json.deserializers.AnnotationJsonDeserializer;
 import org.hippoecm.frontend.service.restproxy.test.annotations.AllInOneAnnotation;
 import org.hippoecm.frontend.service.restproxy.test.annotations.Color;
 import org.hippoecm.frontend.service.restproxy.test.annotations.DocumentLink;
@@ -49,6 +45,11 @@ import org.hippoecm.frontend.service.restproxy.test.channels.NoAttributesAnnotat
 import org.hippoecm.frontend.service.restproxy.test.channels.WebsiteInfo;
 import org.junit.Before;
 import org.junit.Test;
+
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static org.hippoecm.frontend.service.restproxy.test.utils.AnnotationsCollector.collect;
 
 /**
  * A test class for testing {@link AnnotationJsonDeserializer}

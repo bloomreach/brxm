@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.service.restproxy.custom;
+package org.hippoecm.frontend.service.restproxy.custom.json.deserializers;
 
 import java.lang.annotation.Annotation;
 
