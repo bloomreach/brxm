@@ -30,7 +30,6 @@
 
   <modules>
     <module>frontend</module>
-    <module>repository</module>
   </modules>
 
 </project>

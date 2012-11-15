@@ -249,8 +249,6 @@ gallery/workspaces
 google-analytics/frontend/hippo-cms-google-analytics-frontend.iml
 google-analytics/frontend/target
 google-analytics/hippo-cms-google-analytics.iml
-google-analytics/repository/hippo-cms-google-analytics-repository.iml
-google-analytics/repository/target
 google-analytics/target
 gotolink/.classpath
 gotolink/.project
