@@ -40,19 +40,14 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- google analytics dependencies-->
     <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
     </dependency>
+
     <dependency>
       <groupId>com.google.gdata</groupId>
       <artifactId>gdata-analytics</artifactId>
-      <version>${gdata.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gdata</groupId>
-      <artifactId>gdata-analytics-meta</artifactId>
       <version>${gdata.version}</version>
     </dependency>
     <dependency>

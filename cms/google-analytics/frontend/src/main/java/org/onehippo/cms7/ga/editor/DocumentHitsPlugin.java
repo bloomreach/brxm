@@ -47,6 +47,8 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.onehippo.cms7.ga.IGoogleAnalyticsConfigurationService;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,11 +112,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     // configuration
     private Long numberofintervals;
     private Period period;
-    
-    private final String username;
-    private final String password;
-    private final String tableId;
-    
+
     // result cache
     private String graphUrl;
     private String graphLabel;
@@ -130,11 +128,6 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     
     public DocumentHitsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
-        IGoogleAnalyticsConfigurationService gaConfig = context.getService(IGoogleAnalyticsConfigurationService.class.getName(), IGoogleAnalyticsConfigurationService.class);
-        this.username = gaConfig.getUsername();
-        this.password = gaConfig.getPassword();
-        this.tableId = gaConfig.getTableId();
         
         this.numberofintervals = config.getAsLong("numberofintervals", 10);
         this.period = Period.fromString(config.getString("period", "weeks"));
@@ -201,7 +194,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     }
     
     private String getGraphInfo() {
-        return getTranslation(Period.getI18InfoKey(period), new Model<String[]>(new String[] { numberofintervals.toString() }));
+        return getTranslation(Period.getI18InfoKey(period), new Model<String[]>(new String[]{numberofintervals.toString()}));
     }
 
     private String getGraphUrl() {
@@ -248,7 +241,7 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
         try {
             // Create Google analytics query
             DataQuery query = new DataQuery(new URL("https://www.google.com/analytics/feeds/data"));
-            query.setIds(tableId);
+            query.setIds(getTableId());
             query.setDimensions(period.getDimension());
             query.setMetrics("ga:pageviews");
             query.setFilters("ga:pagePath==" + getParentNodePath());
@@ -353,10 +346,25 @@ public class DocumentHitsPlugin extends RenderPlugin<Node> {
     private AnalyticsService getAnalyticsService() throws AuthenticationException {
         AnalyticsService analyticsService = new AnalyticsService("hippocms7_reporting_v1");
         // Client Login Authorization.
-        analyticsService.setUserCredentials(username, password);
+        analyticsService.setUserCredentials(getUserName(), getPassword());
         return analyticsService;
     }
-    
+
+    private String getTableId() {
+        final GoogleAnalyticsService service = HippoServiceRegistry.getService(GoogleAnalyticsService.class);
+        return service != null ? service.getTableId() : null;
+    }
+
+    private String getUserName() {
+        final GoogleAnalyticsService service = HippoServiceRegistry.getService(GoogleAnalyticsService.class);
+        return service != null ? service.getUserName() : null;
+    }
+
+    private String getPassword() {
+        final GoogleAnalyticsService service = HippoServiceRegistry.getService(GoogleAnalyticsService.class);
+        return service != null ? service.getPassword() : null;
+    }
+
     private String getParentNodePath() throws RepositoryException {
         Node node = getModelObject();
         return node.getParent().getPath();

@@ -1763,8 +1763,6 @@ google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHits
 google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/empty.gif -text
 google-analytics/pom.xml -text
 google-analytics/repository/pom.xml -text
-google-analytics/repository/src/main/resources/google-analytics-configuration-domainrule.xml -text
-google-analytics/repository/src/main/resources/google-analytics-configuration-service.xml -text
 google-analytics/repository/src/main/resources/google-analytics-configuration.xml -text
 google-analytics/repository/src/main/resources/hippoecm-extension.xml -text
 google-analytics/repository/src/main/resources/hippogoogleanalytics.cnd -text
