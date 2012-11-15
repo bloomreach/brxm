@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cms7.channelmanager.channels.util.rest.mappers.exceptions.util.rest;
+package org.onehippo.cms7.channelmanager.channels.util.rest;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import org.onehippo.cms7.channelmanager.channels.util.rest.mappers.exceptions.Re
 /**
  * A factory class to encapsulate any additional logic for creating REST client proxies
  */
-public class RestClientProxyFactory implements Serializable {
+public class RestClientProxyFactory implements IRestProxyService, Serializable {
 
     private IRestProxyService restProxyService;
     private List<Object> additionalProviders;
@@ -82,6 +82,40 @@ public class RestClientProxyFactory implements Serializable {
         }
 
         return this.restProxyService.createSecureRestProxy(restServiceApiClass);
+    }
+
+    /**
+     * Creates a proxy to a REST service based on the provided class
+     * <p/>
+     * <p/>
+     * This version takes addition list of providers to configure the client proxy with </P>
+     *
+     * @param restServiceApiClass the class representing the REST service API.
+     * @param <T>                 the generic type of the REST service API class.
+     * @param additionalProviders {@link java.util.List} of additional providers to configure client proxies with
+     * @return a proxy to the REST service represented by the given class, or null if no proxy could be created.
+     */
+    @Override
+    public <T> T createRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
+        throw new UnsupportedOperationException("This method should not be called");
+    }
+
+    /**
+     * Creates a proxy to a REST service based on the provided class and security {@link javax.security.auth.Subject} A
+     * security {@link javax.security.auth.Subject} which indicates that the caller wants a security context to be
+     * propagated with the REST call
+     * <p/>
+     * <p/>
+     * This version takes addition list of providers to configure the client proxy with </P>
+     *
+     * @param restServiceApiClass the class representing the REST service API.
+     * @param <T>                 the generic type of the REST service API class.
+     * @param additionalProviders {@link java.util.List} of additional providers to configure client proxies with
+     * @return a proxy to the REST service represented by the given class, or null if no proxy could be created.
+     */
+    @Override
+    public <T> T createSecureRestProxy(final Class<T> restServiceApiClass, final List<Object> additionalProviders) {
+        throw new UnsupportedOperationException("This method should not be called");
     }
 
     protected void init() {

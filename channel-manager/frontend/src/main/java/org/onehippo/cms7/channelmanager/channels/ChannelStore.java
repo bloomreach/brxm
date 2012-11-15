@@ -49,7 +49,6 @@ import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.onehippo.cms7.channelmanager.channels.util.rest.mappers.exceptions.util.rest.RestClientProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ActionFailedException;
@@ -97,8 +96,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
         ALL_FIELD_NAMES = Collections.unmodifiableList(names);
         INTERNAL_FIELDS = Collections.unmodifiableList(
-                                    Arrays.asList(ChannelField.cmsPreviewPrefix.name(),
-                                                  ChannelField.hstPreviewMountPoint.name()));
+                Arrays.asList(ChannelField.cmsPreviewPrefix.name(),
+                        ChannelField.hstPreviewMountPoint.name()));
     }
 
     public static enum SortOrder {ascending, descending}
@@ -116,23 +115,20 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private final String sortFieldName;
     private final SortOrder sortOrder;
     private final LocaleResolver localeResolver;
-    private final RestClientProxyFactory restClientProxyFactory;
+    private final IRestProxyService restProxyService;
     private String channelRegionIconPath = DEFAULT_CHANNEL_ICON_PATH;
     private String channelTypeIconPath = DEFAULT_CHANNEL_ICON_PATH;
 
-    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder,
-                        LocaleResolver localeResolver, IRestProxyService restProxyService) {
+    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver, IRestProxyService restProxyService) {
 
         super(fields);
         this.storeId = storeId;
         this.sortFieldName = sortFieldName;
         this.sortOrder = sortOrder;
         this.localeResolver = localeResolver;
+        this.restProxyService = restProxyService;
 
-        if (restProxyService != null) {
-            this.restClientProxyFactory = new RestClientProxyFactory(restProxyService);
-        } else {
-            this.restClientProxyFactory = null;
+        if (this.restProxyService == null) {
             log.warn("No RESTful proxy service configured!");
         }
     }
@@ -231,13 +227,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
     private String getChannelRegionIconUrl(final Map<String, String> channelFieldValues) {
         MapVariableInterpolator mapVariableInterpolator = new MapVariableInterpolator(this.channelRegionIconPath,
-                                                                                      channelFieldValues);
+                channelFieldValues);
         return getChannelIconUrl(mapVariableInterpolator.toString());
     }
 
     private String getChannelTypeIconUrl(final Map<String, String> channelFieldValues) {
         MapVariableInterpolator mapVariableInterpolator = new MapVariableInterpolator(this.channelTypeIconPath,
-                                                                                      channelFieldValues);
+                channelFieldValues);
         return getChannelIconUrl(mapVariableInterpolator.toString());
     }
 
@@ -315,7 +311,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         }
 
         // No translation found, is the site down?
-        SiteService siteService = restClientProxyFactory.createRestProxy(SiteService.class);
+        SiteService siteService = restProxyService.createRestProxy(SiteService.class);
         if (!siteService.isAlive()) {
             log.info(
                     "Field '{}' is not a known Channel field, and no custom ChannelInfo class contains a translation of it for locale '{}'. It looks like the site is down. Falling back to the field name itself as the column header.",
@@ -352,7 +348,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public boolean canModifyChannels() {
-        ChannelService channelService = restClientProxyFactory.createSecureRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
         return channelService.canUserModifyChannels();
     }
 
@@ -379,17 +375,17 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(Channel channel) {
-        ChannelService channelService = restClientProxyFactory.createRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
         return channelService.getChannelPropertyDefinitions(channel.getId());
     }
 
     public Properties getChannelResourceValues(Channel channel) {
-        ChannelService channelService = restClientProxyFactory.createRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
         return channelService.getChannelResourceValues(channel.getId(), Session.get().getLocale().toString());
     }
 
     public void saveChannel(Channel channel) {
-        ChannelService channelService = restClientProxyFactory.createSecureRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
         channelService.save(channel);
     }
 
@@ -399,7 +395,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
      *         ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
      */
     public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) {
-        ChannelService channelService = restClientProxyFactory.createRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
         return channelService.getChannelInfoClassInfo(channel.getId());
     }
 
@@ -422,7 +418,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     protected void loadChannels() {
-        ChannelService channelService = restClientProxyFactory.createRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
 
         if (channelService == null) {
             log.error("Could not get channelservice REST service!");
@@ -445,7 +441,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         // Create new channel
         final String blueprintId = record.getString("blueprintId");
         final Channel newChannel;
-        BlueprintService blueprintService = restClientProxyFactory.createRestProxy(BlueprintService.class);
+        BlueprintService blueprintService = restProxyService.createRestProxy(BlueprintService.class);
 
         if (blueprintService == null) {
             log.error("Could not get blueprint REST service!");
@@ -491,7 +487,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     }
 
     protected String persistChannel(String blueprintId, Channel newChannel) throws ChannelException {
-        ChannelService channelService = restClientProxyFactory.createSecureRestProxy(ChannelService.class);
+        ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
         return channelService.persist(blueprintId, newChannel);
     }
 

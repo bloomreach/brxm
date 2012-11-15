@@ -23,6 +23,7 @@
     <commons-lang.version>2.1</commons-lang.version>
 
     <cxf.version>2.4.0</cxf.version>
+    <jackson.version>1.9.5</jackson.version>
 
     <!-- test related -->
     <junit.version>4.5</junit.version>
@@ -52,6 +53,14 @@
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
         <version>${cxf.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
+      <!-- Jackson -->
+      <dependency>
+        <groupId>org.codehaus.jackson</groupId>
+        <artifactId>jackson-mapper-asl</artifactId>
+        <version>${jackson.version}</version>
         <scope>provided</scope>
       </dependency>
 
