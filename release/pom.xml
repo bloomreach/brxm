@@ -494,51 +494,6 @@
         <version>${hippo.packages.version}</version>
         <type>pom</type>
       </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-package-cms-ear</artifactId>
-        <version>${hippo.packages.version}</version>
-        <type>ear</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-package-cms-resources</artifactId>
-        <version>${hippo.packages.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-package-cms-test</artifactId>
-        <version>${hippo.packages.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-package-cms-war</artifactId>
-        <version>${hippo.packages.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-quickstart-bin</artifactId>
-        <version>${hippo.packages.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-quickstart-ear</artifactId>
-        <version>${hippo.packages.version}</version>
-        <type>ear</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-quickstart-test</artifactId>
-        <version>${hippo.packages.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-quickstart-war</artifactId>
-        <version>${hippo.packages.version}</version>
-        <type>war</type>
-      </dependency>
 
       <!-- All Hippo HST dependencies -->
       <dependency>
@@ -568,7 +523,12 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-        <artifactId>hst-google-analytics</artifactId>
+        <artifactId>hst-google-analytics-hst</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.client-modules</groupId>
+        <artifactId>hst-google-analytics-repository</artifactId>
         <version>${hippo.hst.version}</version>
       </dependency>
       <dependency>
