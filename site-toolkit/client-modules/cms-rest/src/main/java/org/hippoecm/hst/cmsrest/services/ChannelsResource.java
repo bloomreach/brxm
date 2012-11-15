@@ -119,7 +119,6 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         log.warn("Unknown error while persisting a new channel - Channel: {} - Blueprint-Id: '{}'", new Object[] {channel, blueprintId});
         throw new ChannelException("Could not persist a channel using blueprint-id: '" + blueprintId
                 + "' for an unknown reason please check with your system administrator", ChannelException.Type.UNKNOWN);
-
     }
 
     /* (non-Javadoc)
