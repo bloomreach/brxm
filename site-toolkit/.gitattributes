@@ -272,6 +272,9 @@ client-modules/google-analytics/hst/src/main/resources/META-INF/web-resources/go
 client-modules/google-analytics/pom.xml -text
 client-modules/google-analytics/repository/pom.xml -text
 client-modules/google-analytics/repository/src/main/java/org/onehippo/cms7/googleanalytics/GoogleAnalyticsServiceImpl.java -text
+client-modules/google-analytics/repository/src/main/resources/google-analytics-configuration.xml -text
+client-modules/google-analytics/repository/src/main/resources/hippoecm-extension.xml -text
+client-modules/google-analytics/repository/src/main/resources/hippogoogleanalytics.cnd -text
 client-modules/page-composer/pom.xml -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/builtin/components/StandardContainerComponent.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/VariantRepresentation.java -text svneol=unset#text/plain
