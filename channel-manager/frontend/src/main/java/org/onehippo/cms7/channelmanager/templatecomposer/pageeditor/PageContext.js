@@ -161,12 +161,16 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
     },
 
     _requestHstMetaData: function(url, canEdit) {
-        console.log('_requestHstMetaData ' + url);
+        // IE stores document.location.href unencoded, which causes the Ajax call to fail when the URL contains
+        // special unicode characters. Encode the URL to avoid this.
+        var encodedUrl = Ext.isIE ? encodeURI(url) : url;
+        console.log('_requestHstMetaData ' + encodedUrl);
+
         return new Hippo.Future(function(onSuccess, onFail) {
             var self = this;
             Ext.Ajax.request({
                 method: "HEAD",
-                url : url,
+                url : encodedUrl,
                 success : function(responseObject) {
                     var pageId, mountId, lockedBy, futures;
                     pageId = responseObject.getResponseHeader('HST-Page-Id');
@@ -195,7 +199,7 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                         self.unlockable = false;
                     }
 
-                    console.log('hstMetaDataResponse: url:'+url+', pageId:'+pageId+', mountId:'+mountId);
+                    console.log('hstMetaDataResponse: url:' + encodedUrl + ', pageId:' + pageId + ', mountId:' + mountId);
 
                     if (canEdit) {
                         futures = [
@@ -205,14 +209,14 @@ Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observab
                         Hippo.Future.join(futures).when(function() {
                             onSuccess();
                         }).otherwise(function() {
-                            onFail("Failed to initialize page model");
+                            onFail("Failed to initialize page model for url '" + encodedUrl + "'");
                         });
                     } else {
                         onSuccess();
                     }
                 },
                 failure : function(responseObject) {
-                    onFail("HST-Meta-Data request failed: " + Ext.encode({ url: url, status: responseObject.status, statusText: responseObject.statusText}));
+                    onFail("HST-Meta-Data request failed: " + Ext.encode({ url: encodedUrl, response: responseObject}));
                 }
             });
         }.createDelegate(this));
