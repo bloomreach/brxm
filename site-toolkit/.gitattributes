@@ -903,7 +903,9 @@ content-beans/src/test/resources/log4j.xml -text
 content-beans/src/test/resources/org/hippoecm/hst/util/TestObjectConverterUtils-beans-annotated-classes.xml -text
 dependencies/client-dependencies/pom.xml svneol=native#text/plain
 dependencies/client-dependencies/src/site/site.xml -text
+dependencies/cms-dependencies/pom.xml -text
 dependencies/pom.xml svneol=native#text/plain
+dependencies/repository-dependencies/pom.xml -text
 dependencies/server-dependencies/pom.xml svneol=native#text/plain
 dependencies/server-dependencies/src/site/site.xml -text
 dependencies/spring-dependencies/pom.xml svneol=native#text/plain
