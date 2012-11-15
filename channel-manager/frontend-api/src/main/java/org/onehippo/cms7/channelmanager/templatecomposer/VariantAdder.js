@@ -59,7 +59,7 @@ Hippo.ChannelManager.TemplateComposer.VariantAdder = Ext.extend(Ext.FormPanel, {
     saveVariant: function(variant) {
         Ext.Ajax.request({
             method : 'POST',
-            url : this.composerRestMountUrl + '/' + this.componentId + './' + variant + '?FORCE_CLIENT_HOST=true',
+            url : this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(variant) + '?FORCE_CLIENT_HOST=true',
             success : function () {
                 this.fireEvent('save', this, variant);
             },
