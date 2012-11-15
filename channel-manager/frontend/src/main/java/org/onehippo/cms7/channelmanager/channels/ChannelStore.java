@@ -39,6 +39,7 @@ import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
 import org.hippoecm.hst.rest.BlueprintService;
 import org.hippoecm.hst.rest.ChannelService;
@@ -469,7 +470,13 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             }
         }
 
-        String channelId = persistChannel(blueprintId, newChannel);
+        String channelId;
+        try {
+            channelId = persistChannel(blueprintId, newChannel);
+        } catch (ChannelException ce) {
+            throw createActionFailedException(ce, newChannel);
+        }
+
         log.info("Created new channel with ID '{}'", channelId);
 
         // Removed the old cached channels to force a refresh
@@ -479,7 +486,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return null;
     }
 
-    protected String persistChannel(String blueprintId, Channel newChannel) {
+    protected String persistChannel(String blueprintId, Channel newChannel) throws ChannelException {
         ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
         return channelService.persist(blueprintId, newChannel);
     }
@@ -499,6 +506,24 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             log.warn("Could not retrieve the locale of node '" + absPath + "'", e);
         }
         return null;
+    }
+
+    private ActionFailedException createActionFailedException(Exception cause, Channel newChannel) {
+        if (cause instanceof ChannelException) {
+            ChannelException ce = (ChannelException)cause;
+            switch(ce.getType()) {
+                case MOUNT_NOT_FOUND:
+                case MOUNT_EXISTS:
+                    String channelUrl = newChannel.getUrl();
+                    String parentUrl = StringUtils.substringBeforeLast(channelUrl, "/");
+                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), channelUrl, parentUrl), cause);
+                default:
+                    return new ActionFailedException(getResourceValue("channelexception." + ce.getType().getKey(), (Object[])ce.getParameters()), cause);
+            }
+        }
+        log.warn("Could not create new channel '" + newChannel.getName() + "': " + cause.getMessage());
+        log.debug("Stacktrace:", cause);
+        return new ActionFailedException(getResourceValue("error.cannot.create.channel", newChannel.getName()));
     }
 
 }
