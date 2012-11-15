@@ -33,8 +33,15 @@
   <dependencies>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-rest-api</artifactId>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-repository-dependencies</artifactId>
+      <type>pom</type>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.dependencies</groupId>
+      <artifactId>hst-cms-dependencies</artifactId>
+      <type>pom</type>
     </dependency>
 
     <dependency>
@@ -51,16 +58,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-package-cms-dependencies</artifactId>
       <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon</groupId>
-      <artifactId>hst-addon-repository</artifactId>
     </dependency>
 
     <dependency>
