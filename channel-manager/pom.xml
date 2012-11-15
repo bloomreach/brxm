@@ -22,6 +22,8 @@
     <hippo.addon-hst-configuration-editor.version>1.10.04-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>
 
+    <cxf.version>2.4.0</cxf.version>
+
     <!-- test related -->
     <junit.version>4.5</junit.version>
     <easymock.version>3.0</easymock.version>
@@ -45,6 +47,14 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- CXF -->
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+        <version>${cxf.version}</version>
+        <scope>provided</scope>
+      </dependency>
+
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-addon-hst-configuration-editor-frontend</artifactId>

@@ -19,6 +19,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-addon-channel-manager-frontend-api</artifactId>
       <version>${project.version}</version>
