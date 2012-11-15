@@ -18,26 +18,31 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.cms7.hst</groupId>
-    <artifactId>client-modules</artifactId>
+    <groupId>org.onehippo.cms7.hst.client-modules</groupId>
+    <artifactId>hst-google-analytics</artifactId>
     <version>2.25.05-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Client Module Google Analytics</name>
-  <groupId>org.onehippo.cms7.hst.client-modules</groupId>
-  <artifactId>hst-google-analytics</artifactId>
-  <packaging>pom</packaging>
-
+  <name>Hippo Site Toolkit Client Module Google Analytics HST</name>
+  <artifactId>hst-google-analytics-hst</artifactId>
+  
   <dependencies>
     <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-services</artifactId>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-commons</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
   </dependencies>
-
-  <modules>
-    <module>hst</module>
-    <module>repository</module>
-  </modules>
 
 </project>

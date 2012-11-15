@@ -261,17 +261,17 @@ client-modules/cms-rest/pom.xml -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/DocumentsResource.java -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/ResourceUtil.java -text
 client-modules/cms-rest/src/main/resources/org/hippoecm/hst/cmsrest/SpringComponentManager-cmsrest.xml -text
+client-modules/google-analytics/hst/pom.xml -text
+client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/CustomVariable.java -text
+client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/tags/GoogleAnalyticsAccountIdTag.java -text
+client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/tags/GoogleAnalyticsTrackDocumentTag.java -text
+client-modules/google-analytics/hst/src/main/resources/META-INF/googleanalytics.tld -text
+client-modules/google-analytics/hst/src/main/resources/META-INF/hst-assembly/addon/google-analytics.xml -text
+client-modules/google-analytics/hst/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
+client-modules/google-analytics/hst/src/main/resources/META-INF/web-resources/google-analytics.js -text
 client-modules/google-analytics/pom.xml -text
-client-modules/google-analytics/src/main/java/org/onehippo/cms7/hst/ga/CustomVariable.java -text
-client-modules/google-analytics/src/main/java/org/onehippo/cms7/hst/ga/config/GoogleAnalyticsConfiguration.java -text
-client-modules/google-analytics/src/main/java/org/onehippo/cms7/hst/ga/config/GoogleAnalyticsConfigurationEventListener.java -text
-client-modules/google-analytics/src/main/java/org/onehippo/cms7/hst/ga/config/GoogleAnalyticsConfigurationImpl.java -text
-client-modules/google-analytics/src/main/java/org/onehippo/cms7/hst/ga/tags/GoogleAnalyticsAccountIdTag.java -text
-client-modules/google-analytics/src/main/java/org/onehippo/cms7/hst/ga/tags/GoogleAnalyticsTrackDocumentTag.java -text
-client-modules/google-analytics/src/main/resources/META-INF/googleanalytics.tld -text
-client-modules/google-analytics/src/main/resources/META-INF/hst-assembly/addon/google-analytics.xml -text
-client-modules/google-analytics/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
-client-modules/google-analytics/src/main/resources/META-INF/web-resources/google-analytics.js -text
+client-modules/google-analytics/repository/pom.xml -text
+client-modules/google-analytics/repository/src/main/java/org/onehippo/cms7/googleanalytics/GoogleAnalyticsServiceImpl.java -text
 client-modules/page-composer/pom.xml -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/builtin/components/StandardContainerComponent.java -text svneol=unset#text/plain
 client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/api/VariantRepresentation.java -text svneol=unset#text/plain

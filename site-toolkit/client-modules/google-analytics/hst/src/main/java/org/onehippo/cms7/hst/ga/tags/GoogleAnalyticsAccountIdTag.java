@@ -21,8 +21,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.hippoecm.hst.site.HstServices;
-import org.onehippo.cms7.hst.ga.config.GoogleAnalyticsConfiguration;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
 
 public class GoogleAnalyticsAccountIdTag extends TagSupport {
 
@@ -30,16 +30,19 @@ public class GoogleAnalyticsAccountIdTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        GoogleAnalyticsConfiguration config = HstServices.getComponentManager().getComponent(GoogleAnalyticsConfiguration.class.getName(), "org.onehippo.cms7.googleanalytics");
-        
-        JspWriter writer = pageContext.getOut();
-        try {
-            writer.write("<script type=\"text/javascript\">\n");
-            writer.write("  Hippo_Ga_AccountId='" + config.getAccountId() + "';\n");
-            writer.write("</script>\n");
-        }
-        catch (IOException e) {
-            throw new JspException("IOException while trying to write script tag", e);
+
+        GoogleAnalyticsService service = HippoServiceRegistry.getService(GoogleAnalyticsService.class);
+
+        if (service != null) {
+            JspWriter writer = pageContext.getOut();
+            try {
+                writer.write("<script type=\"text/javascript\">\n");
+                writer.write("  Hippo_Ga_AccountId='" + service.getAccountId() + "';\n");
+                writer.write("</script>\n");
+            }
+            catch (IOException e) {
+                throw new JspException("IOException while trying to write script tag", e);
+            }
         }
 
         return SKIP_BODY;
