@@ -266,8 +266,6 @@ client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/Custo
 client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/tags/GoogleAnalyticsAccountIdTag.java -text
 client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/tags/GoogleAnalyticsTrackDocumentTag.java -text
 client-modules/google-analytics/hst/src/main/resources/META-INF/googleanalytics.tld -text
-client-modules/google-analytics/hst/src/main/resources/META-INF/hst-assembly/addon/google-analytics.xml -text
-client-modules/google-analytics/hst/src/main/resources/META-INF/hst-assembly/addon/module.xml -text
 client-modules/google-analytics/hst/src/main/resources/META-INF/web-resources/google-analytics.js -text
 client-modules/google-analytics/pom.xml -text
 client-modules/google-analytics/repository/pom.xml -text
