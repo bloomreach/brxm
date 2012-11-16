@@ -220,8 +220,4 @@ class NodeState {
         return events.iterator();
     }
 
-    Event getChangeEvent() {
-        return new NodeEvent(null, 0);
-    }
-
 }

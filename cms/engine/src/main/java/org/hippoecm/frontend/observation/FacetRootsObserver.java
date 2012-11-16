@@ -15,12 +15,9 @@
  */
 package org.hippoecm.frontend.observation;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
@@ -29,7 +26,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -70,7 +66,7 @@ public class FacetRootsObserver implements IFacetRootsObserver {
         }
     }
 
-    void subscribe(EventListener listener, Node node) throws RepositoryException {
+    void subscribe(JcrListener listener, Node node) throws RepositoryException {
         synchronized (upstream) {
             Session session = node.getSession();
             String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
@@ -89,7 +85,7 @@ public class FacetRootsObserver implements IFacetRootsObserver {
                 try {
                     String docbase = session.getNodeByIdentifier(id).getPath();
                     // CMS7-5568: facet navigation can have multiple docbases.
-                    FacetRootListener rootListener = new FacetRootListener(node.getPath(), listener);
+                    FacetRootListener rootListener = new FacetRootListener(node.getPath(), session.getUserID(), listener);
                     obMgr.addEventListener(rootListener, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_CHANGED, docbase, true,
                                          null, null, false);
                     entry.rootListeners.add(rootListener);
@@ -102,7 +98,7 @@ public class FacetRootsObserver implements IFacetRootsObserver {
         }
     }
 
-    void unsubscribe(EventListener listener, Session session) throws RepositoryException {
+    void unsubscribe(JcrListener listener, Session session) throws RepositoryException {
         ObservationManager obMgr = session.getWorkspace().getObservationManager();
         synchronized (upstream) {
             Iterator<UpstreamEntry> iter = upstream.iterator();
@@ -119,7 +115,7 @@ public class FacetRootsObserver implements IFacetRootsObserver {
     }
 
     private static class UpstreamEntry {
-        EventListener listener;
+        JcrListener listener;
         LinkedList<FacetRootListener> rootListeners;
     }
 
@@ -128,79 +124,19 @@ public class FacetRootsObserver implements IFacetRootsObserver {
         // path to the facet root node
         private String nodePath;
         private volatile boolean refresh = false;
-        private final EventListener listener;
+        private final JcrListener listener;
+        private final String userID;
 
-        FacetRootListener(String path, EventListener listener) {
+        FacetRootListener(String path, String userID, JcrListener listener) {
             this.nodePath = path;
             this.listener = listener;
+            this.userID = userID;
         }
 
         void broadcast() {
             if (refresh) {
                 refresh = false;
-                List<Event> base = new ArrayList<Event>(1);
-                base.add(new Event() {
-
-                    public String getPath() throws RepositoryException {
-                        return nodePath;
-                    }
-
-                    public int getType() {
-                        return 0;
-                    }
-
-                    public String getUserID() {
-                        return "FacetRootsObserver";
-                    }
-
-                    public String getIdentifier() throws RepositoryException {
-                        throw new UnsupportedOperationException("Not supported yet.");
-                    }
-
-                    public Map getInfo() throws RepositoryException {
-                        throw new UnsupportedOperationException("Not supported yet.");
-                    }
-
-                    public String getUserData() throws RepositoryException {
-                        throw new UnsupportedOperationException("Not supported yet.");
-                    }
-
-                    public long getDate() throws RepositoryException {
-                        throw new UnsupportedOperationException("Not supported yet.");
-                    }
-
-                });
-                final Iterator<Event> baseIter = base.iterator();
-                listener.onEvent(new EventIterator() {
-
-                    public Event nextEvent() {
-                        return baseIter.next();
-                    }
-
-                    public long getPosition() {
-                        return 0;
-                    }
-
-                    public long getSize() {
-                        return -1;
-                    }
-
-                    public void skip(long skipNum) {
-                    }
-
-                    public boolean hasNext() {
-                        return baseIter.hasNext();
-                    }
-
-                    public Object next() {
-                        return nextEvent();
-                    }
-
-                    public void remove() {
-                        throw new UnsupportedOperationException("EventIterator is immutable");
-                    }
-
-                });
+                listener.onVirtualEvent(new ChangeEvent(nodePath, userID));
             }
         }
 

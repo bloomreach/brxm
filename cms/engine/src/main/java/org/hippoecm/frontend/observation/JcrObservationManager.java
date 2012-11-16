@@ -28,7 +28,6 @@ import java.util.TreeSet;
 import java.util.WeakHashMap;
 
 import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.EventJournal;
@@ -195,31 +194,10 @@ public class JcrObservationManager implements ObservationManager {
             FacetRootsObserver fso = (FacetRootsObserver) session.getFacetRootsObserver();
             fso.refresh();
 
-            // create set of paths that need to be refreshed
-            Set<String> paths = new TreeSet<String>();
-            for (JcrListener listener : set) {
-                listener.getChanges(paths);
-            }
-
             Node root = session.getRootNode();
             if (root != null) {
                 try {
-                    if (paths.contains("")) {
-                        root.refresh(true);
-                    } else {
-                        prune(paths);
-
-                        // do the refresh
-                        for (String path : paths) {
-                            log.info("Refreshing {}, keeping changes", path);
-                            try {
-                                root.getNode(path.substring(1)).refresh(true);
-                            } catch (PathNotFoundException ex) {
-                                log.info("Could not find path " + path + " for event, discarding event and continue: "
-                                        + ex.getMessage());
-                            }
-                        }
-                    }
+                    root.refresh(true);
                 } catch (RepositoryException ex) {
                     log.error("Failed to refresh session", ex);
                 }

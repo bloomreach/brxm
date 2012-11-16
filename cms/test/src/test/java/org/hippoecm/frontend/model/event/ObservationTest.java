@@ -218,8 +218,8 @@ public class ObservationTest extends PluginTest {
         Thread.sleep(1000);
         home.processEvents();
 
-        // "out-of-session" event
-        assertEquals(2, events.size());
+        // NO "out-of-session" event
+        assertEquals(1, events.size());
 
         context.unregisterService(observer, IObserver.class.getName());
 
@@ -231,7 +231,7 @@ public class ObservationTest extends PluginTest {
         Thread.sleep(1000);
         home.processEvents();
 
-        assertEquals(2, events.size());
+        assertEquals(1, events.size());
     }
 
     @Test

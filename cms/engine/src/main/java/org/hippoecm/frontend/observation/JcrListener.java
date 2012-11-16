@@ -27,10 +27,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
@@ -51,6 +49,7 @@ import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
@@ -66,7 +65,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     
     private final static int MAX_EVENTS = Integer.getInteger("hippoecm.observation.maxevents", 10000);
     
-    private Map<Session, Map<String, NodeState>> cache;
+    private final Map<Session, Map<String, NodeState>> cache;
     
     private String path;
     private int eventTypes;
@@ -77,7 +76,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
     private boolean isvirtual;
     private List<String> parents;
-    private final Queue<Event> events = new ConcurrentLinkedQueue<Event>();
+    private final List<Event> virtualEvents = new LinkedList<Event>();
+    private final Set<String> externallyModifiedNodes = new ConcurrentHashSet<String>();
     private Session session;
     private FacetRootsObserver fro;
     private WeakReference<UserSession> sessionRef;
@@ -90,8 +90,16 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
     public void onEvent(EventIterator events) {
         while (events.hasNext()) {
-            this.events.add(events.nextEvent());
+            Event event = events.nextEvent();
+            try {
+                String eventPath = getEventParentPath(event.getPath());
+                Node parentNode = session.getNode(eventPath);
+                this.externallyModifiedNodes.add(parentNode.getIdentifier());
+            } catch (RepositoryException re) {
+                log.info("Unable to retrieve event's parent node identifier: " + re.getMessage());
+            }
         }
+
         // When the update requests do not arrive anymore,
         // for instance due to the user not properly having closed
         // its session, then the event queue just keeps growing,
@@ -102,7 +110,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         // and its pagemaps to be emptied.
         // This in turn causes wicket to send a page expired response
         // to the browser on the next request that comes in.
-        if (this.events.size() > MAX_EVENTS) {
+        if (this.externallyModifiedNodes.size() > MAX_EVENTS) {
             PluginUserSession session = ((PluginUserSession)getSession());
             if (session != null) {
                 String userID = session.getJcrSession().getUserID();
@@ -114,9 +122,13 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 // When the wicket session becomes active again a reinitialization of the 
                 // session will occur so we don't need these events anymore.
                 log.info("The event queue is full. Clearing pending events.");
-                this.events.clear();
+                this.externallyModifiedNodes.clear();
             }
         }
+    }
+
+    public void onVirtualEvent(final Event event) {
+        virtualEvents.add(event);
     }
 
     @Override
@@ -177,29 +189,6 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     UserSession getSession() {
         return sessionRef.get();
     }
-    
-    void getChanges(Set<String> paths) {
-        try {
-            checkSession();
-        } catch (ObservationException e1) {
-            return;
-        }
-
-        if (!events.isEmpty()) {
-            for (Event event : events) {
-                String path;
-                try {
-                    path = event.getPath();
-                    if (event.getType() != 0) {
-                        path = path.substring(0, path.lastIndexOf('/'));
-                    }
-                    paths.add(path);
-                } catch (RepositoryException e) {
-                    log.warn("Failed to get path from event", e);
-                }
-            }
-        }
-    }
 
     void dispose() {
         if (session != null) {
@@ -213,7 +202,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             }
             session = null;
         }
-        events.clear();
+        externallyModifiedNodes.clear();
     }
 
     private void subscribe() throws RepositoryException {
@@ -406,10 +395,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
         String eventPath = event.getPath();
         if (type != 0) {
-            eventPath = eventPath.substring(0, eventPath.lastIndexOf('/'));
-            if (eventPath.equals("")) {
-                eventPath = "/";
-            }
+            eventPath = getEventParentPath(eventPath);
         }
         if (!session.itemExists(eventPath)) {
             return true;
@@ -467,6 +453,14 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         return !match;
     }
 
+    private String getEventParentPath(String eventPath) {
+        eventPath = eventPath.substring(0, eventPath.lastIndexOf('/'));
+        if (eventPath.equals("")) {
+            eventPath = "/";
+        }
+        return eventPath;
+    }
+
     private void checkSession() throws ObservationException {
         // listeners can be invoked after they have been removed
         if (session == null) {
@@ -475,7 +469,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             log.info("resubscribing listener " + this);
 
             // events have references to the session, so they are useless now
-            events.clear();
+            externallyModifiedNodes.clear();
             try {
                 unsubscribe();
             } catch (RepositoryException ex) {
@@ -558,33 +552,61 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private List<Event> getEvents(Map<String, NodeState> dirty) {
-        List<Event> events = new LinkedList<Event>(this.events);
-        this.events.clear();
+        List<Event> events = new ArrayList<Event>(virtualEvents);
+        virtualEvents.clear();
+
+        List<String> nodeIds = new LinkedList<String>(this.externallyModifiedNodes);
+        this.externallyModifiedNodes.clear();
 
         if (isvirtual) {
             return events;
         }
 
+        for (String id : nodeIds) {
+            try {
+                Node node = session.getNodeByIdentifier(id);
+                String path = node.getPath();
+
+                // only create new state if the old state is cached
+                NodeState newState = null;
+                NodeState oldState = getNodeState(session, path);
+                if (oldState != null) {
+                    if (dirty.containsKey(path)) {
+                        newState = dirty.get(path);
+                    } else {
+                        newState = new NodeState(node, false);
+                        dirty.put(path, newState);
+                    }
+                }
+
+                addNodeStateEvents(events, path, newState);
+            } catch (ItemNotFoundException infe) {
+                log.debug("Ignoring id {} because it's no longer valid", id);
+            } catch (RepositoryException e) {
+                log.warn("Ignoring id {} because it's no longer valid", id);
+            }
+        }
+
         // process pending changes
-        Node root = null;
-        Set<Node> nodes = new TreeSet<Node>(new NodePathComparator());
+        Set<Node> locallyModifiedNodes = new TreeSet<Node>(new NodePathComparator());
+        Node root;
         try {
             root = getRoot();
             if (nodeTypes == null) {
                 if ((root.isModified() || root.isNew()) && isVisible(root)) {
-                    nodes.add(root);
+                    locallyModifiedNodes.add(root);
                 }
                 // use pendingChanges to detect changes in sub-trees and properties
                 if (!root.isNew()) {
                     NodeIterator pending = ((HippoSession) root.getSession()).pendingChanges(root, null, false);
-                    addVisibleNodes(pending, nodes);
+                    addVisibleNodes(pending, locallyModifiedNodes);
                 }
             } else {
                 if ((root.isModified() || root.isNew()) && isVisible(root)) {
                     for (String type : nodeTypes) {
                         try {
                             if (root.isNodeType(type)) {
-                                nodes.add(root);
+                                locallyModifiedNodes.add(root);
                                 break;
                             }
                         } catch (RepositoryException e) {
@@ -596,7 +618,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 if (!root.isNew()) {
                     for (String type : nodeTypes) {
                         NodeIterator pending = ((HippoSession) root.getSession()).pendingChanges(root, type, false);
-                        addVisibleNodes(pending, nodes);
+                        addVisibleNodes(pending, locallyModifiedNodes);
                     }
                 }
             }
@@ -604,7 +626,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             log.info("Root node no longer exists: " + e.getMessage());
             dispose();
             return events;
-        } catch(ItemNotFoundException e) {
+        } catch (ItemNotFoundException e) {
             log.info("Root node no longer exists: " + e.getMessage());
             dispose();
             return events;
@@ -617,14 +639,14 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         for (Node node : getReferencedNodes()) {
             if (nodeTypes == null) {
                 if (node.isModified() || node.isNew()) {
-                    nodes.add(node);
+                    locallyModifiedNodes.add(node);
                 }
             } else {
                 if (node.isModified() || node.isNew()) {
                     for (String type : nodeTypes) {
                         try {
                             if (root.isNodeType(type)) {
-                                nodes.add(root);
+                                locallyModifiedNodes.add(root);
                                 break;
                             }
                         } catch (RepositoryException e) {
@@ -635,9 +657,9 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             }
         }
 
-        expandNew(nodes);
+        expandNew(locallyModifiedNodes);
 
-        for (Node node : nodes) {
+        for (Node node : locallyModifiedNodes) {
             try {
                 String path = node.getPath();
 
@@ -649,26 +671,30 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                     dirty.put(path, newState);
                 }
 
-                NodeState oldState = getNodeState(session, path);
-                if (oldState != null) {
-                    Iterator<Event> iter = oldState.getEvents(newState);
-                    while (iter.hasNext()) {
-                        Event event = iter.next();
-                        if (!blocks(event)) {
-                            events.add(event);
-                        }
-                    }
-                } else {
-                    Event changeEvent = newState.getChangeEvent();
-                    if (!blocks(changeEvent)) {
-                        events.add(changeEvent);
-                    }
-                }
+                addNodeStateEvents(events, path, newState);
             } catch (RepositoryException e) {
                 log.warn("Failed to process node", e);
             }
         }
         return events;
+    }
+
+    private void addNodeStateEvents(final List<Event> events, final String path, final NodeState newState) throws RepositoryException {
+        NodeState oldState = getNodeState(session, path);
+        if (oldState != null) {
+            Iterator<Event> iter = oldState.getEvents(newState);
+            while (iter.hasNext()) {
+                Event event = iter.next();
+                if (!blocks(event)) {
+                    events.add(event);
+                }
+            }
+        } else {
+            Event changeEvent = new ChangeEvent(path, session.getUserID());
+            if (!blocks(changeEvent)) {
+                events.add(changeEvent);
+            }
+        }
     }
 
     @Override
@@ -701,7 +727,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         }
         return true;
     }
-    
+
     static class NodePathComparator implements Comparator<Node> {
 
         public int compare(Node o1, Node o2) {
