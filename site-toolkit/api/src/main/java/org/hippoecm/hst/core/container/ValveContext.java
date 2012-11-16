@@ -25,8 +25,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 /**
  * Context information during invoking valves in a pipeline.
  * This holds the necessary objects to serve a request.
- * 
- * @version $Id$
+ *
  */
 public interface ValveContext
 {
@@ -64,6 +63,15 @@ public interface ValveContext
      * @return
      */
     HttpServletResponse getServletResponse();
+
+
+    /**
+     * sets the {@link HttpServletResponse} for this {@link ValveContext} to <code>servletResponse</code>. This is
+     * typically useful when for example you want to wrap the response by some {@link javax.servlet.http.HttpServletResponseWrapper} and
+     * use this wrapper response for further processing
+     * @param servletResponse
+     */
+    void setHttpServletResponse(HttpServletResponse servletResponse);
     
     /**
      * Sets the root {@link HstComponentWindow} instancethat is used to process the current request.
@@ -100,5 +108,12 @@ public interface ValveContext
      * @return
      */
     HstComponentWindow getRootComponentRenderingWindow();
-    
+
+    /**
+     * Returns the {@link PageCacheContext} for this valve context. Individual {@link Valve}s can access this {@link PageCacheContext}
+     * and append key information to the {@link PageCacheContext#getPageCacheKey()} or indicate
+     * that the request cannot be cached at all through {@link PageCacheContext#markUnCachable()}
+     * @return the PageCacheContext for this valve context and never <code>null</code>
+     */
+    PageCacheContext getPageCacheContext();
 }

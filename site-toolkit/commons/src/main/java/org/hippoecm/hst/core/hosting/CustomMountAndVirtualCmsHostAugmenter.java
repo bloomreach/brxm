@@ -413,6 +413,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
+        public boolean isCachable() {
+            return false;
+        }
+
+        @Override
         public String getCmsLocation() {
             return cmsLocation;
         }
@@ -735,6 +740,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         @Override
         public String[] getDefaultSiteMapItemHandlerIds() {
             return null;
+        }
+
+        @Override
+        public boolean isCachable() {
+            return false;
         }
 
         @Override

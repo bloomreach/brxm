@@ -439,4 +439,9 @@ public interface Mount {
      * @return the String[] of defaultSiteMapItemHandlerIds which all {@link HstSiteMapItem}'s get or <code>null</code> if non configured
      */
     String[] getDefaultSiteMapItemHandlerIds();
+
+    /**
+     * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached.
+     */
+    boolean isCachable();
 }

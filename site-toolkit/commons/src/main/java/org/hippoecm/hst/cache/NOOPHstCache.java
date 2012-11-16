@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.cache;
 
+import java.util.concurrent.Callable;
+
 /**
  * NOOPHstCache
  * @version $Id$
@@ -22,7 +24,12 @@ package org.hippoecm.hst.cache;
 public class NOOPHstCache implements HstCache {
     
     public CacheElement createElement(Object key, Object content) {
-        return new NOOPCacheElement(key, content);
+        return new NOOPCacheElement(key, content, true);
+    }
+
+    @Override
+    public CacheElement createUncachableElement(final Object key, final Object content) {
+        return new NOOPCacheElement(key, content, false);
     }
 
     public void put(CacheElement object) {
@@ -34,6 +41,11 @@ public class NOOPHstCache implements HstCache {
 
     public CacheElement get(Object key) {
         return null;
+    }
+
+    @Override
+    public CacheElement get(final Object key, final Callable<? extends CacheElement> valueLoader) {
+        return get(key);
     }
 
     public boolean remove(Object key) {
@@ -63,10 +75,12 @@ public class NOOPHstCache implements HstCache {
         
         private Object key;
         private Object content;
+        private boolean cachable;
         
-        private NOOPCacheElement(Object key, Object content) {
+        private NOOPCacheElement(Object key, Object content, boolean cachable) {
             this.key = key;
             this.content = content;
+            this.cachable = cachable;
         }
         
         public Object getContent() {
@@ -96,6 +110,11 @@ public class NOOPHstCache implements HstCache {
         }
 
         public void setTimeToLiveSeconds(int timeToLive) {
+        }
+
+        @Override
+        public boolean isCachable() {
+            return cachable;
         }
     }
 }

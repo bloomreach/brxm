@@ -228,7 +228,9 @@ public class MountService implements ContextualizableMount, MutableMount {
     private boolean subjectBasedSession;
     
     private boolean sessionStateful;
-    
+
+    private final boolean cachable;
+
     private String formLoginPage;
     private ChannelInfo channelInfo;
     
@@ -475,7 +477,15 @@ public class MountService implements ContextualizableMount, MutableMount {
         } else if (parent != null){
             this.formLoginPage = parent.getFormLoginPage();
         }
-        
+
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHABLE)) {
+            this.cachable = mount.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHABLE);
+        } else if(parent != null) {
+            this.cachable = parent.isCachable();
+        } else {
+            this.cachable =  virtualHost.isCachable();
+        }
+
         this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
        
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
@@ -797,6 +807,11 @@ public class MountService implements ContextualizableMount, MutableMount {
     @Override
     public String[] getDefaultSiteMapItemHandlerIds() {
         return defaultSiteMapItemHandlerIds;
+    }
+
+    @Override
+    public boolean isCachable() {
+        return cachable;
     }
     
     public Map<String, String> getMountProperties() {

@@ -141,5 +141,8 @@ public interface VirtualHost {
      * @return whether the version of the HST is in the header of the preview
      */
     boolean isVersionInPreviewHeader();
-    
+
+
+    boolean isCachable();
+
 }

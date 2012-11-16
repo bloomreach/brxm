@@ -3,6 +3,7 @@ api/pom.xml svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/addon/module/ModuleInstance.java -text
 api/src/main/java/org/hippoecm/hst/cache/CacheElement.java -text
 api/src/main/java/org/hippoecm/hst/cache/HstCache.java -text
+api/src/main/java/org/hippoecm/hst/cache/HstCacheException.java -text
 api/src/main/java/org/hippoecm/hst/configuration/HstNodeTypes.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/channel/ChannelInfo.java -text
 api/src/main/java/org/hippoecm/hst/configuration/channel/ChannelManagerEvent.java -text
@@ -148,6 +149,8 @@ api/src/main/java/org/hippoecm/hst/core/container/HstContainerURLProvider.java s
 api/src/main/java/org/hippoecm/hst/core/container/HstNavigationalStateCodec.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstRequestProcessor.java -text
 api/src/main/java/org/hippoecm/hst/core/container/ModuleNotFoundException.java -text
+api/src/main/java/org/hippoecm/hst/core/container/PageCacheContext.java -text
+api/src/main/java/org/hippoecm/hst/core/container/PageCacheKey.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageErrorHandler.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/PageErrors.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/Pipeline.java svneol=native#text/plain
@@ -514,6 +517,7 @@ components/core/src/main/java/org/hippoecm/hst/core/container/JaxrsRestServiceVa
 components/core/src/main/java/org/hippoecm/hst/core/container/LocalizationValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/NoContentValve.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/NotFoundValve.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/PageCachingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/PersistableSessionAroundAdvice.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ResourceServingValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/SecurityValve.java svneol=native#text/plain

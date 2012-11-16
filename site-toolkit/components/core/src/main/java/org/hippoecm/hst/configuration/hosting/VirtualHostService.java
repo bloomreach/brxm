@@ -82,6 +82,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private String scheme;
     private String cmsLocation;
     private Integer defaultPort;
+    private final boolean cachable;
 
     public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, int defaultPort, HstManagerImpl hstManager) throws ServiceException {
        
@@ -187,7 +188,14 @@ public class VirtualHostService implements MutableVirtualHost {
                 this.versionInPreviewHeader = virtualHosts.isVersionInPreviewHeader();
             }
         }
-        
+
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHABLE)) {
+            this.cachable = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHABLE);
+        } else if(parentHost != null) {
+            this.cachable = parentHost.isCachable();
+        } else {
+            this.cachable =  virtualHosts.isCachable();
+        }
         
         String fullName = virtualHostNode.getValueProvider().getName();
         String[] nameSegments = fullName.split("\\.");
@@ -292,6 +300,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.contextPathInUrl = parent.contextPathInUrl;
         this.onlyForContextPath = parent.onlyForContextPath;
         this.showPort = parent.showPort;
+        this.cachable = parent.cachable;
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
@@ -405,6 +414,12 @@ public class VirtualHostService implements MutableVirtualHost {
 
     public List<VirtualHost> getChildHosts() {
         return new ArrayList<VirtualHost>(childVirtualHosts.values());
+    }
+
+
+    @Override
+    public boolean isCachable() {
+        return cachable;
     }
 
 

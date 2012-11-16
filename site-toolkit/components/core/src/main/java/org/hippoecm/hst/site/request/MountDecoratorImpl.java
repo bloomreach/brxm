@@ -213,6 +213,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public boolean isCachable() {
+            return false;
+        }
+
+        @Override
         public String getEmbeddedMountPath() {
             return delegatee.getEmbeddedMountPath();
         }

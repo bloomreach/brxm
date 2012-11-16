@@ -32,6 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 
+import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.MutableChannelManager;
@@ -67,6 +68,7 @@ public class HstManagerImpl implements MutableHstManager {
     
     private HstComponentRegistry componentRegistry;
     private HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry;
+    private HstCache pageCache;
     private HstLinkCreator hstLinkCreator;
     
     /**
@@ -155,11 +157,7 @@ public class HstManagerImpl implements MutableHstManager {
     private boolean clearAll = false;
 
     private RelevantEventsHolder relevantEventsHolder;
-
-    public RelevantEventsHolder getRelevantEventsHolder() {
-        return relevantEventsHolder;
-    }
-
+    
     private MutableChannelManager channelManager;
 
     public synchronized void setRepository(Repository repository) {
@@ -186,6 +184,10 @@ public class HstManagerImpl implements MutableHstManager {
     
     public void setSiteMapItemHandlerRegistry(HstSiteMapItemHandlerRegistry siteMapItemHandlerRegistry) {
         this.siteMapItemHandlerRegistry = siteMapItemHandlerRegistry;
+    }
+
+    public void setPageCache(HstCache pageCache) {
+        this.pageCache = pageCache;
     }
     
     public synchronized String getCmsPreviewPrefix() {
@@ -305,6 +307,8 @@ public class HstManagerImpl implements MutableHstManager {
                     }
                 }
                 currentHosts = virtualHosts;
+                log.info("Flushing page cache after new model is loaded");
+                pageCache.clear();
             }
         }
         return currentHosts;
@@ -650,4 +654,5 @@ public class HstManagerImpl implements MutableHstManager {
             log.debug("--------- End relevant events ----------- ");
         }
     }
+
 }

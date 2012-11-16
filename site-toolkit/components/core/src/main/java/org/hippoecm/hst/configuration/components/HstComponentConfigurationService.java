@@ -120,6 +120,21 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * object Boolean here to support the copying and merging etc.
      */
     private Boolean async = null;
+
+    /**
+     * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached. Note that 
+     * A {@link HstComponentConfiguration} is only cachable if and only if <b>none</b> of its descendant {@link HstComponentConfiguration}s for the request 
+     * are marked as uncachable : <b>Note</b>  explicitly for 'the request', thus {@link HstComponentConfiguration} that are {@link HstComponentConfiguration#isAsync()}
+     * and its descendants can be uncachable while an ancestor of the async {@link HstComponentConfiguration} can still be cachable
+     */
+    private boolean compositeCachable = true;
+
+    /**
+     * @return <code>true</code> this hst component configuration if configured to be cachable
+     */
+    private Boolean cachable = null;
+
+    
     
     /**
      * Optional iconPath relative to webapp for sites. If not configured, it is <code>null</code>. It does not inherit 
@@ -253,6 +268,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_ASYNC)) {
             this.async = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_ASYNC);
+        }
+
+        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHABLE)) {
+            this.cachable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHABLE);
         }
 
         if(!traverseDescendants) {
@@ -437,6 +456,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // when Boolean asyn is null, we return false by default
         return async == null ? false : async;
     }
+
+    @Override
+    public boolean isCompositeCachable() {
+        return compositeCachable;
+    }
     
     @Override
     public String getLabel() {
@@ -478,6 +502,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.inherited = child.inherited;
         copy.standalone = child.standalone;
         copy.async = child.async;
+        copy.cachable = child.cachable;
         copy.parameters = new LinkedHashMap<String, String>(child.parameters);
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
         // localParameters have no merging, but for copy, the localParameters are copied 
@@ -570,7 +595,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.async == null) {
                     this.async = referencedComp.async;
                 }
-
+                if (this.cachable == null) {
+                    this.cachable = referencedComp.cachable;
+                }
+                
                 // inherited variable flag not needed to take from the referencedComp so no check here for that variable!
                 
                 if (!referencedComp.parameters.isEmpty()) {
@@ -684,6 +712,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.async == null) {
             this.async = childToMerge.async;
+        }
+        if (this.cachable == null) {
+            this.cachable = childToMerge.cachable;
         }
         
         // inherited flag not needed to merge
@@ -867,6 +898,33 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
             parent = parent.getParent();
         }
         return false;
+    }
+
+    /**
+     * an {@link HstComponentConfiguration} is only cachable if all its none async descendants (trees) are cachable
+     */
+    public void populateIsCompositeCachable() {
+        if (cachable != null && !cachable.booleanValue()) {
+            compositeCachable = false;
+            // mark all ancestors uncachable unless the ancestor is async (and does not have another async ancestor)
+            HstComponentConfigurationService parent = (HstComponentConfigurationService)getParent();
+            while (parent != null) {
+                if (parent.isAsync()) {
+                    if (!parent.hasAsyncAncestor()) {
+                        // the parent is async and the parent does not have async ancestostors in turn
+                        // so we can break. If there are async ancestors, we still mark the parent as
+                        // cachable = false since async trees are rendered in one request even though they contain
+                        // in tur async components
+                        break;
+                    }
+                }
+                parent.compositeCachable = false;
+                parent = (HstComponentConfigurationService) parent.getParent();
+            }
+        }
+        for (HstComponentConfigurationService child : orderedListConfigs) {
+            child.populateIsCompositeCachable();
+        }
     }
 
     protected void makeCollectionsImmutableAndOptimize() {

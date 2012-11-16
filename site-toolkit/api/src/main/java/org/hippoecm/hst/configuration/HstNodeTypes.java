@@ -58,6 +58,7 @@ public interface HstNodeTypes {
     static final String GENERAL_PROPERTY_PAGE_NOT_FOUND = "hst:pagenotfound";
     static final String GENERAL_PROPERTY_LOCALE = "hst:locale";
     static final String GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER =  "hst:versioninpreviewheader" ;
+    static final String GENERAL_PROPERTY_CACHABLE = "hst:cachable";
     
     static final String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     static final String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
@@ -73,7 +74,6 @@ public interface HstNodeTypes {
     static final String COMPONENT_PROPERTY_PARAMETER_NAME_PREFIXES = "hst:parameternameprefixes";
     static final String COMPONENT_PROPERTY_ICON_PATH = "hst:iconpath";
     static final String COMPONENT_PROPERTY_LABEL = "hst:label";
-
     static final String COMPONENT_PROPERTY_COMPONENT_FILTER_TAG = "hst:componentfiltertag";
 
 

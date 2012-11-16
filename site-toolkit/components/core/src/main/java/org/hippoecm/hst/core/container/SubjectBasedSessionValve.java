@@ -51,12 +51,20 @@ public class SubjectBasedSessionValve extends AbstractValve {
             if (requestContext.getSubject() == null) {
                 log.debug("Subject based session cannot be set because no subject is found.");
             } else {
+                // we could include the session userId in the cachekey, but instead we mark the
+                // request as uncachable for subjectbased request rendering
+                markRequestUncachable(context);
                 setSubjectSession(context, requestContext, sessionStateful);
             }
         }
         context.invokeNext();
     }
-    
+
+    private void markRequestUncachable(final ValveContext context) {
+        context.getPageCacheContext().markUnCachable("Page response marked as uncachable " +
+                "because subjectBasedSession request rendering.");
+    }
+
     protected void setSubjectSession(ValveContext valveContext, HstRequestContext requestContext, boolean sessionStateful) throws ContainerException {
         LazySession lazySession = null;
         
@@ -94,7 +102,7 @@ public class SubjectBasedSessionValve extends AbstractValve {
                 throw new ContainerException("Failed to create session based on subject.", e);
             }
         }
-        
+
         if (sessionStateful) {
             valveContext.getServletRequest().getSession(true).setAttribute(SUBJECT_BASED_SESSION_ATTR_NAME, lazySession);
             

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Copyright 2008 Hippo
+    Copyright 2008 - 2012 Hippo
     
     Licensed under the Apache License, Version 2.0 (the  "License");
     you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@
     <property name="pathSuffixDelimiter" value="${container.request.path.suffix.delimiter}" />
     <property name="componentRegistry" ref="org.hippoecm.hst.core.container.HstComponentRegistry" />
     <property name="siteMapItemHandlerRegistry" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry" />
+    <property name="pageCache" ref="pageCache"/>
     <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager" />
     <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
   </bean>

@@ -55,6 +55,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private boolean inherited;
     private boolean standalone;
     private boolean async;
+    private boolean compositeCachable;
     private List<String> variants;
 
     public MockHstComponentConfiguration(String id) {
@@ -248,6 +249,15 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
 
     public void setAsync(boolean async) {
         this.async = async;
+    }
+
+    @Override
+    public boolean isCompositeCachable() {
+        return compositeCachable;
+    }
+
+    public void setCompositeCachable(boolean compositeCachable) {
+        this.compositeCachable = compositeCachable;
     }
 
     public String getLabel() {

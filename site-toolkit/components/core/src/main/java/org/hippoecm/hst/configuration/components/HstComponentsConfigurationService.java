@@ -136,6 +136,10 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         }
 
         for (HstComponentConfiguration child : childComponents) {
+            ((HstComponentConfigurationService) child).populateIsCompositeCachable();
+        }
+
+        for (HstComponentConfiguration child : childComponents) {
             ((HstComponentConfigurationService) child).makeCollectionsImmutableAndOptimize();
         }
 

@@ -44,17 +44,30 @@
   
   <bean id="abstractBlockingEhCache" abstract="true" parent="abstractEhCacheBase" class="org.hippoecm.hst.site.container.BlockingEhCacheFactoryBean">
   </bean>
-  
+
   <bean id="defaultBinariesCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
     <constructor-arg>
       <bean parent="abstractBlockingEhCache">
         <property name="cacheName" value="binariesCache" />
-        <!-- time to idle in seconds. default 1 day -->
+        <!-- time to live in seconds. default 1 day -->
         <property name="timeToLive" value="86400" />
         <property name="blocking" value="true" />
       </bean>
     </constructor-arg>
     <property name="statisticsEnabled" value="${default.binaries.cache.statistics.enabled}"/>
   </bean>
-  
+
+  <bean id="pageCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
+    <constructor-arg>
+      <bean parent="abstractBlockingEhCache">
+        <property name="cacheName" value="hstPageBlockingCache" />
+        <property name="maxElementsInMemory" value="1000"/>
+        <!-- time to live in seconds. default 1 hour -->
+        <property name="timeToLive" value="3600" />
+        <property name="blocking" value="true" />
+      </bean>
+    </constructor-arg>
+    <property name="statisticsEnabled" value="${default.binaries.cache.statistics.enabled}"/>
+  </bean>
+
 </beans>

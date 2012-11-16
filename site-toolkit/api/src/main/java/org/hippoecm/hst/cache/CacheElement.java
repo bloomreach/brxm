@@ -37,5 +37,10 @@ public interface CacheElement {
     boolean isEternal();
     
     void setEternal(boolean eternal);
+
+    /**
+     * @return <code>true</code> is this element is suited to be cached
+     */
+    boolean isCachable();
     
 }

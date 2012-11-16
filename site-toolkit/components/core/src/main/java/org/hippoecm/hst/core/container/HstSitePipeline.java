@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,8 +28,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * HstSitePipeline
- * 
- * @version $Id$
+ *
  */
 public class HstSitePipeline implements Pipeline
 {
@@ -228,10 +230,11 @@ public class HstSitePipeline implements Pipeline
 
         private final HstContainerConfig requestContainerConfig;
         private final HttpServletRequest servletRequest;
-        private final HttpServletResponse servletResponse;
+        private HttpServletResponse servletResponse;
         private HstComponentWindow rootComponentWindow;
         private HstComponentWindow rootComponentRenderingWindow;
         private final HstRequestContext requestContext;
+        private final PageCacheContext pageCacheContext = new PageCacheContextImpl();
 
         private int at = 0;
 
@@ -267,6 +270,10 @@ public class HstSitePipeline implements Pipeline
             return this.servletResponse;
         }
 
+        public void setHttpServletResponse(HttpServletResponse servletResponse) {
+            this.servletResponse = servletResponse;
+        }
+
         public void setRootComponentWindow(HstComponentWindow rootComponentWindow) {
             this.rootComponentWindow = rootComponentWindow;
         }
@@ -285,6 +292,82 @@ public class HstSitePipeline implements Pipeline
          */
         public HstComponentWindow getRootComponentRenderingWindow() {
             return rootComponentRenderingWindow == null ? rootComponentWindow : rootComponentRenderingWindow;
+        }
+
+        @Override
+        public PageCacheContext getPageCacheContext() {
+            return pageCacheContext;
+        }
+    }
+    
+    private final static class PageCacheContextImpl implements PageCacheContext {
+
+        private final PageCacheKey pageCacheKey = new PageCacheKeyImpl();
+        private boolean cachable = true;
+        private List<String> reasonsUncachable = new ArrayList<String>();
+
+        @Override
+        public boolean isCachable() {
+            return cachable;
+        }
+
+        @Override
+        public void markUnCachable() {
+            cachable = false;
+        }
+
+        @Override
+        public void markUnCachable(String reasonUncachable) {
+            cachable = false;
+            reasonsUncachable.add(reasonUncachable);
+        }
+
+        @Override
+          public List<String> getReasonsUncachable() {
+            return reasonsUncachable;
+        }
+
+        @Override
+        public PageCacheKey getPageCacheKey() {
+            return pageCacheKey;
+        }
+    }
+    
+    private final static class PageCacheKeyImpl implements PageCacheKey {
+        
+        private List<String> keyFragments = new ArrayList<String>();
+        // we keep the hashcode as instance variable for efficiency
+        private int hashCode = keyFragments.hashCode();
+
+        @Override
+        public void append(final String keyFragment) {
+            keyFragments.add(keyFragment);
+            hashCode = keyFragments.hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof PageCacheKeyImpl)) {
+                return false;
+            }
+            final PageCacheKeyImpl cacheKey = (PageCacheKeyImpl) o;
+            if (hashCode != cacheKey.hashCode) {
+                return false;
+            }
+            return keyFragments.equals(cacheKey.keyFragments);
+        }
+
+        @Override
+        public int hashCode() {
+            return hashCode;
+        }
+
+        @Override
+        public String toString() {
+            return "PageCacheKey[" + keyFragments.toString() + "]";
         }
     }
 }

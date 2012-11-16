@@ -92,10 +92,15 @@
       <artifactId>commons-logging</artifactId> 
       <scope>provided</scope> 
     </dependency>
-    
+
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache-core</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.sf.ehcache</groupId>
+      <artifactId>ehcache-web</artifactId>
     </dependency>
     
     <dependency>

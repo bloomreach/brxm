@@ -25,14 +25,22 @@ import org.hippoecm.hst.cache.CacheElement;
  */
 class CacheElementEhCacheImpl implements CacheElement {
     
-    Element element;
+    final Element element;
+    private final boolean cachable;
     
-    CacheElementEhCacheImpl(Element element) {
+    CacheElementEhCacheImpl(final Element element) {
         this.element = element;
+        cachable = true;
     }
     
-    CacheElementEhCacheImpl(Object key, Object value) {
+    CacheElementEhCacheImpl(final Object key, final Object value) {
         this.element = new Element(key, value);
+        cachable = true;
+    }
+
+    public CacheElementEhCacheImpl(final Object key, final Object value, final boolean cachable) {
+        this.element = new Element(key, value);
+        this.cachable = cachable;
     }
 
     public Object getKey() {
@@ -66,4 +74,10 @@ class CacheElementEhCacheImpl implements CacheElement {
     public void setTimeToLiveSeconds(int timeToLive) {
         element.setTimeToLive(timeToLive);
     }
+
+    @Override
+    public boolean isCachable() {
+        return cachable;
+    }
+
 }

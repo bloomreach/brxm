@@ -278,5 +278,9 @@ public interface HstSiteMapItem {
      * @return The List of {@link HstSiteMapItemHandlerConfiguration}s and an empty list if this SiteMapItem does not contain {@link HstSiteMapItemHandlerConfiguration}s 
      */
     List<HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations();
-    
+
+    /**
+     * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached.
+     */
+    boolean isCachable();
 }

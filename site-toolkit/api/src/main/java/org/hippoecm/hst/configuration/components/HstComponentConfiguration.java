@@ -89,7 +89,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * The delimiter that is used between the parametername and the parameterprefix when there is a prefix value
      */
     static final char PARAMETER_PREFIX_NAME_DELIMITER  = '\uFFFF';
-
+ 
     /**
      * A {@link HstComponentConfiguration} comes in three different main types. The {@link Type} enum describes the possible
      * values. This {@link Type} is similar to the {@link HstComponentConfiguration#getComponentType()} which is the {@link String} representation
@@ -262,5 +262,14 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * to the site webapp 
      */
     String getIconPath();
+
+    /**
+     * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached. Note that 
+     * a {@link HstComponentConfiguration} by default is cachable unless configured not to be cachable. A {@link HstComponentConfiguration}
+     * is only cachable if and only if <b>all</b> its descendant {@link HstComponentConfiguration}s for the request are cachable : <b>Note</b>
+     * explicitly for 'the request', thus {@link HstComponentConfiguration} that are {@link HstComponentConfiguration#isAsync()}
+     * and its descendants can be uncachable while an ancestor {@link HstComponentConfiguration} can stay cachable
+     */
+    boolean isCompositeCachable();
 
 }

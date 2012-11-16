@@ -124,7 +124,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private boolean containsWildCard;
     private String postfix; 
     private String extension;
-    private String prefix; 
+    private String prefix;
+    private final boolean cachable;
     
     public HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
@@ -320,7 +321,15 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         }
         
         namedPipeline = StringPool.get(namedPipeline);
-        
+
+        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHABLE)) {
+            this.cachable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHABLE);
+        } else if(this.parentItem != null) {
+            this.cachable = parentItem.isCachable();
+        } else {
+            this.cachable = mount.isCachable();
+        }
+
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
@@ -395,7 +404,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 	public HstSiteMapItemHandlerConfiguration getSiteMapItemHandlerConfiguration(String handlerId) {
 	    return siteMapItemHandlerConfigurations.get(handlerId);
 	}
-	
+
     public List<HstSiteMapItemHandlerConfiguration> getSiteMapItemHandlerConfigurations() {
         return Collections.unmodifiableList(new ArrayList<HstSiteMapItemHandlerConfiguration>(siteMapItemHandlerConfigurations.values()));
     }
@@ -438,6 +447,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
   
     public HstSiteMap getHstSiteMap() {
         return this.hstSiteMap;
+    }
+
+    @Override
+    public boolean isCachable() {
+        return cachable;
     }
 
     public HstSiteMapItem getParentItem() {

@@ -101,6 +101,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private boolean diagnosticsEnabled;
     
+    private boolean cachable = false;
+    
     private Set<String> diagnosticsForIps = new HashSet<String>(0);
     
     /**
@@ -171,6 +173,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
             versionInPreviewHeader = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         }
+        
+        if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHABLE)) {
+            cachable = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHABLE);
+            log.info("Page caching for HST is set to : {} ", cachable);
+        }
+        
         defaultHostName  = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if (defaultHostName != null) {
             defaultHostName = defaultHostName.toLowerCase();
@@ -591,5 +599,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
             return true;
         }
         return false;
+    }
+
+    public boolean isCachable() {
+        return cachable;
     }
 }
