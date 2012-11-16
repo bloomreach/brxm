@@ -449,6 +449,7 @@ commons/src/test/java/org/hippoecm/hst/util/TestNodeUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestPropertyDefinitionUtils.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestServletConfigUtils.java svneol=native#text/plain
 components/core/pom.xml svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/CacheElementEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/EhCacheManagerShuttingDownListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/HstCacheEhCacheImpl.java -text

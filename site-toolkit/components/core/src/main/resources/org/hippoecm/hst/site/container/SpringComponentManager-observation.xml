@@ -104,7 +104,7 @@
       <list>
 
         <!-- Changes in the hst configuration invoke an invalidation in the hstManager. -->
-         <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
           <property name="nodeAddedEnabled" value="true"/>
           <property name="nodeRemovedEnabled" value="true"/>
           <property name="propertyAddedEnabled" value="true"/>
@@ -120,11 +120,35 @@
           </property>
           <property name="noLocal" value="false"/>
           <property name="eventListener">
-                <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
-                  <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
-                </bean>
+            <bean parent="baseEventListener" class="org.hippoecm.hst.configuration.model.HstConfigurationEventListener">
+              <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
+            </bean>
           </property>
         </bean>
+
+        <!-- Changes in the content must invalidate the page cache. -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <property name="absolutePath" value="/content"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <property name="nodeTypeNames">
+            <null/>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.cache.CacheContentEventListener">
+              <property name="pageCache" ref="pageCache"/>
+            </bean>
+          </property>
+        </bean>
+
 
         <!-- session pools refreshing event listener -->
         <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
