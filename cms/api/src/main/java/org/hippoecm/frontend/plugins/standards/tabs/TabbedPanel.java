@@ -31,7 +31,6 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.IBehavior;
@@ -231,7 +230,7 @@ public class TabbedPanel extends WebMarkupContainer {
         TabsPlugin.Tab tab = getTabs().get(index);
         final IModel<TabsPlugin.Tab> tabModel = new Model<TabsPlugin.Tab>(tab);
         if (tab.isEditorTab()) {
-            container.add(new AjaxFallbackLink<TabsPlugin.Tab>("close", tabModel) {
+            container.add(new AjaxLink<TabsPlugin.Tab>("close", tabModel) {
                 private static final long serialVersionUID = 1L;
 
                 @Override
@@ -242,7 +241,7 @@ public class TabbedPanel extends WebMarkupContainer {
         } else {
             container.add(new Label("close").setVisible(false));
         }
-        WebMarkupContainer link = new AjaxFallbackLink<TabsPlugin.Tab>("link", tabModel) {
+        WebMarkupContainer link = new AjaxLink<TabsPlugin.Tab>("link", tabModel) {
             private static final long serialVersionUID = 1L;
 
             @Override

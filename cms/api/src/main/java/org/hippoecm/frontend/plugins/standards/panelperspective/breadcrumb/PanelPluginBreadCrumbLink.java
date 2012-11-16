@@ -16,12 +16,12 @@
 package org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.version.undo.Change;
 
-public abstract class PanelPluginBreadCrumbLink extends AjaxFallbackLink {
+public abstract class PanelPluginBreadCrumbLink extends AjaxLink {
     private static final long serialVersionUID = 1L;
 
     /** The bread crumb model. */

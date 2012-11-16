@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.permissions;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
@@ -26,7 +26,7 @@ import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 
 /**
  */
-public class ViewDomainActionLink extends AjaxFallbackLink<Domain> {
+public class ViewDomainActionLink extends AjaxLink<Domain> {
 
     private final AdminBreadCrumbPanel panelToReplace;
     private final Domain domain;

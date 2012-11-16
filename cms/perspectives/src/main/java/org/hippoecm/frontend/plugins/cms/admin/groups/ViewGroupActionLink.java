@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.plugins.cms.admin.groups;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
 import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
@@ -24,7 +24,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 
-public class ViewGroupActionLink extends AjaxFallbackLink<String> {
+public class ViewGroupActionLink extends AjaxLink<String> {
     private final Group group;
     private final IPluginContext context;
     private final BreadCrumbPanel breadCrumbPanel;

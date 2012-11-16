@@ -17,7 +17,7 @@ package org.hippoecm.frontend.plugins.cms.admin.system;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -50,7 +50,7 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        add(new AjaxFallbackLink("refresh") {
+        add(new AjaxLink("refresh") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -60,7 +60,7 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
             }
         });
         
-        add(new AjaxFallbackLink("gc") {
+        add(new AjaxLink("gc") {
             private static final long serialVersionUID = 1L;
 
             @Override

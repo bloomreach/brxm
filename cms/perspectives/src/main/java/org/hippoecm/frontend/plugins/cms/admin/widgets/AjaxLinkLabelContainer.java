@@ -16,23 +16,23 @@
 package org.hippoecm.frontend.plugins.cms.admin.widgets;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxFallbackLink;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 
 /**
- * The AjaxLinkLabelContainer is a container for an AjaxFallBackLink,
+ * The AjaxLinkLabelContainer is a container for an AjaxLink,
  * with attached to this link a label. Because it is a container a getter
- * is exposed to public in order to get the AjaxFallbackLink
+ * is exposed to public in order to get the AjaxLink
  */
 public abstract class AjaxLinkLabelContainer extends WebMarkupContainer{
 
-    private AjaxFallbackLink ajaxFallbackLink;
+    private AjaxLink ajaxLink;
 
     public AjaxLinkLabelContainer(final String id, final IModel labelTextModel) {
         super(id, labelTextModel);
-        ajaxFallbackLink = new AjaxFallbackLink("link") {
+        ajaxLink = new AjaxLink("link") {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -40,13 +40,13 @@ public abstract class AjaxLinkLabelContainer extends WebMarkupContainer{
                 AjaxLinkLabelContainer.this.onClick(target);
             }
         };
-        add(ajaxFallbackLink);
-        ajaxFallbackLink.add(new Label("label", labelTextModel));
+        add(ajaxLink);
+        ajaxLink.add(new Label("label", labelTextModel));
     }
 
     public abstract void onClick(AjaxRequestTarget target);
 
-    public AjaxFallbackLink getAjaxFallbackLink() {
-        return ajaxFallbackLink;
+    public AjaxLink getAjaxLink() {
+        return ajaxLink;
     }
 }
