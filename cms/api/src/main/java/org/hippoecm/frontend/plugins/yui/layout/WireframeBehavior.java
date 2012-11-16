@@ -262,14 +262,19 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
         final RequestCycle requestCycle = RequestCycle.get();
         String position = requestCycle.getRequest().getParameter("position");
         if (!Strings.isEmpty(position)) {
-            onToggleFromClient(position, toggle(position, target));
+            onToggleFromClient(position, toggle(position));
         }
     }
 
     protected void onToggleFromClient(String position, boolean expand) {
     }
 
+    @Deprecated
     public boolean toggle(String position, AjaxRequestTarget target) {
+        return toggle(position);
+    }
+
+    public boolean toggle(String position) {
         UnitSettings unitSettings = settings.getUnit(position);
         if (unitSettings == null) {
             throw new IllegalArgumentException(
@@ -277,9 +282,12 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
         }
 
         boolean expand = !unitSettings.isExpanded();
-        String jsMethod = expand ? "YAHOO.hippo.LayoutManager.expandUnit" : "YAHOO.hippo.LayoutManager.collapseUnit";
-        target.appendJavascript(
-                jsMethod + "('" + this.settings.getRootId().getElementId() + "', '" + position + "');");
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null) {
+            String jsMethod = expand ? "YAHOO.hippo.LayoutManager.expandUnit" : "YAHOO.hippo.LayoutManager.collapseUnit";
+            target.appendJavascript(
+                    jsMethod + "('" + this.settings.getRootId().getElementId() + "', '" + position + "');");
+        }
         unitSettings.setExpanded(expand);
         onToggle(expand, position);
         return expand;
@@ -289,12 +297,9 @@ public class WireframeBehavior extends AbstractYuiAjaxBehavior implements IWiref
     }
 
     public void collapseAll() {
-        AjaxRequestTarget target = AjaxRequestTarget.get();
-        if (target != null) {
-            for (UnitSettings unit : settings.getUnits()) {
-                if (unit.isExpanded()) {
-                    toggle(unit.getPosition(), target);
-                }
+        for (UnitSettings unit : settings.getUnits()) {
+            if (unit.isExpanded()) {
+                toggle(unit.getPosition());
             }
         }
     }
