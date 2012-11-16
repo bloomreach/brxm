@@ -309,8 +309,13 @@ public class BinariesServlet extends HttpServlet {
         if (page != null) {
             page = getValidatedPageFromCache(request, page);
         } else {
-            page = getBinaryPage(request, resourcePath);
-            binariesCache.putPage(page);
+            try {
+                page = getBinaryPage(request, resourcePath);
+                binariesCache.putPage(page);
+            } catch (RuntimeException e) {
+                binariesCache.clearBlockingLock(resourcePath);
+                throw e;
+            }
         }
         return page;
     }
