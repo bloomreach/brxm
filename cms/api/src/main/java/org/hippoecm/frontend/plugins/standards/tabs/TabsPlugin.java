@@ -218,8 +218,9 @@ public class TabsPlugin extends RenderPlugin {
 
         if (tabbie.getDecoratorId() != null) {
             final StringBuilder fireEventJS = new StringBuilder();
-            fireEventJS.append("(function(document) {\n" +
-                    "  var fireEvent = function(element, eventName) {" +
+            fireEventJS.append("(function(window, document) {\n" +
+                    "  try {"+
+                    "  var fireEvent = function(element, eventName, active) {" +
                     "      var event;\n" +
                     "      if (document.createEvent) {\n" +
                     "          event = document.createEvent('HTMLEvents');\n" +
@@ -230,23 +231,25 @@ public class TabsPlugin extends RenderPlugin {
                     "      }\n" +
                     "      event.eventName = eventName;\n" +
                     "      event.tabId = element.id ? element.id : element.name;"+
+                    "      event.active = active;"+
                     "      if (document.createEvent) {"+
-                    "          element.dispatchEvent(event);\n" +
-                    "      } else {\n" +
-                    "          element.fireEvent('on' + event.eventType, event);\n" +
+                    "           element.dispatchEvent(event);\n" +
+                    "      } else if (element.fireEvent) {\n" +
+                    "          element.fireEvent('on' + event.eventType, event); \n" +
                     "      }\n" +
-                    "      console.log(eventName+' fired.');"+
                     "   };"+
-                    "   var activePerspectives = document.getElementsByName('activePerspective');"+
-                    "   if (activePerspectives.length > 0) {"+
-                    "       console.log('fireEvent: tabDeselected');"+
-                    "       fireEvent(activePerspectives[0], 'tabDeselected');"+
-                    "       activePerspectives[0].setAttribute('name', '');"+
+                    "   if (window.Hippo && window.Hippo.activePerspective) {"+
+                    "       fireEvent(window.Hippo.activePerspective, 'readystatechange', false);"+
                     "   }"+
                     "   var decorator = document.getElementById('"+tabbie.getDecoratorId()+"');"+
-                    "   fireEvent(decorator, 'tabSelected');"+
-                    "   decorator.setAttribute('name', 'activePerspective');"+
-                    "})(document);");
+                    "   fireEvent(decorator, 'readystatechange', true);"+
+                    "   decorator.setAttribute('class', 'activePerspective');"+
+                    "   window.Hippo = window.Hippo || {};"+
+                    "   window.Hippo.activePerspective = decorator"+
+                    "   } catch (e) {" +
+                    "       console.log('Error firing tab selection event: '+e);"+
+                    "   }"+
+                    "})(window, document);");
             target.appendJavascript(fireEventJS.toString());
         }
 
