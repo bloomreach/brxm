@@ -62,11 +62,6 @@ public class PageCachingValve extends AbstractValve {
      */
     protected HstCache cache;
 
-    /**
-     * in case of blocking caches, we want to avoid reentry. That is done through this visitLog
-     */
-    private final VisitLog visitLog = new VisitLog();
-
     public void setCache(HstCache cache) {
         this.cache = cache;
     }
@@ -172,36 +167,30 @@ public class PageCachingValve extends AbstractValve {
      */
     protected PageInfo buildPageInfo(final ValveContext context) throws Exception {
         final PageCacheKey keyPage = context.getPageCacheContext().getPageCacheKey();
-        try {
-            checkNoReentry();
-            CacheElement element = cache.get(keyPage, new Callable<CacheElement>() {
-                @Override
-                public CacheElement call() throws Exception {
-                    PageInfo pageInfo = buildPage(context);
-                    if (pageInfo.isOk()) {
-                        if (isNoCacheHeaderPresent(pageInfo, context)) {
-                            log.debug("Creating uncachable element for page '{}' with keyPage '{}' because contains no cache header.",
-                                    context.getServletRequest().getRequestURI(), keyPage);
-                            return cache.createUncachableElement(keyPage, pageInfo);
-                        } else {
-                            log.debug("Caching request '{}' with keyPage '{}'", context.getServletRequest().getRequestURI(), keyPage);
-                            return cache.createElement(keyPage, pageInfo);
-                        }
+        CacheElement element = cache.get(keyPage, new Callable<CacheElement>() {
+            @Override
+            public CacheElement call() throws Exception {
+                PageInfo pageInfo = buildPage(context);
+                if (pageInfo.isOk()) {
+                    if (isNoCacheHeaderPresent(pageInfo, context)) {
+                        log.debug("Creating uncachable element for page '{}' with keyPage '{}' because contains no cache header.",
+                                context.getServletRequest().getRequestURI(), keyPage);
+                        return cache.createUncachableElement(keyPage, pageInfo);
                     } else {
-                        log.debug("PageInfo was not ok(200). Putting null into cache with keyPage {} ", keyPage);
-                        return createEmptyElement(keyPage);
+                        log.debug("Caching request '{}' with keyPage '{}'", context.getServletRequest().getRequestURI(), keyPage);
+                        return cache.createElement(keyPage, pageInfo);
                     }
+                } else {
+                    log.debug("PageInfo was not ok(200). Putting null into cache with keyPage {} ", keyPage);
+                    return createEmptyElement(keyPage);
                 }
+            }
 
-                private CacheElement createEmptyElement(Object key) {
-                    return cache.createElement(key, null);
-                }
-            });
-            return (PageInfo) element.getContent();
-        } finally {
-            // all done building page, reset the re-entrant flag
-            visitLog.clear();
-        }
+            private CacheElement createEmptyElement(Object key) {
+                return cache.createElement(key, null);
+            }
+        });
+        return (PageInfo) element.getContent();
     }
 
     private boolean isNoCacheHeaderPresent(final PageInfo pageInfo, final ValveContext context) {
@@ -387,51 +376,6 @@ public class PageCachingValve extends AbstractValve {
         OutputStream out = new BufferedOutputStream(response.getOutputStream());
         out.write(body);
         out.flush();
-    }
-
-    /**
-     * Check that this caching filter is not being reentered by the same
-     * recursively. Recursive calls will block indefinitely because the first
-     * request has not yet unblocked the cache.
-     * <p/>
-     * This condition usually indicates an error in filter chaining or
-     * RequestDispatcher dispatching.
-     *
-     * @throws ContainerException when visit log is already entered
-     */
-    protected void checkNoReentry()
-            throws ContainerException {
-        String filterName = getClass().getName();
-        if (visitLog.hasVisited()) {
-            throw new ContainerException("The request thread is attempting to reenter");
-        } else {
-            visitLog.markAsVisited();
-        }
-    }
-
-    /**
-     * threadlocal class to check for reentry
-     *
-     * @author hhuynh
-     *
-     */
-    private static class VisitLog extends ThreadLocal<Boolean> {
-        @Override
-        protected Boolean initialValue() {
-            return false;
-        }
-
-        public boolean hasVisited() {
-            return get();
-        }
-
-        public void markAsVisited() {
-            set(true);
-        }
-
-        public void clear() {
-            super.remove();
-        }
     }
 
 }
