@@ -41,6 +41,7 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.ehcache.constructs.web.AlreadyGzippedException;
 import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 import net.sf.ehcache.constructs.web.Header;
 import net.sf.ehcache.constructs.web.PageInfo;
@@ -83,6 +84,17 @@ public class PageCachingValve extends AbstractValve {
             }
             appendRequestInfoToCacheKey(context);
             PageInfo pageInfo = buildPageInfo(context);
+            if (pageInfo == null) {
+                throw new ContainerException("PageInfo null. ");
+            }
+            if (pageInfo instanceof ForwardPlaceHolderPageInfo) {
+                log.debug("Page '{}' is being forwarded internally.", context.getServletRequest().getRequestURI());
+                // we need to set the forwarded info again on the request as it might now be not yet set because 
+                // ForwardPlaceHolderPageInfo might come from the cache
+                String forwardPathInfo = ((ForwardPlaceHolderPageInfo)pageInfo).forwardPathInfo;
+                context.getServletRequest().setAttribute(ContainerConstants.HST_FORWARD_PATH_INFO, forwardPathInfo);
+                return;
+            }
             if (pageInfo.isOk()) {
                 HttpServletResponse response = context.getServletResponse();
                 if (response.isCommitted()) {
@@ -159,6 +171,11 @@ public class PageCachingValve extends AbstractValve {
         pageCacheKey.append(HstRequestUtils.getFarthestRequestHost(request));
         pageCacheKey.append(request.getRequestURI());
         pageCacheKey.append(request.getQueryString());
+
+        // AFter an internal HST FORWARD, all the above parts are the same because same http request,
+        // but the base URL pathInfo has been changed. Hence, we need to account for pathInfo
+        // to make sure that in a FORWARDED request we do not get the same cached entry
+        pageCacheKey.append(context.getRequestContext().getBaseURL().getPathInfo());
     }
 
 
@@ -182,7 +199,7 @@ public class PageCachingValve extends AbstractValve {
                     }
                 } else {
                     log.debug("PageInfo was not ok(200). Putting null into cache with keyPage {} ", keyPage);
-                    return createEmptyElement(keyPage);
+                    return cache.createUncachableElement(keyPage, pageInfo);
                 }
             }
 
@@ -242,11 +259,27 @@ public class PageCachingValve extends AbstractValve {
 
             // Return the page info
             boolean storeGzipped = false;
+            if (context.getServletRequest().getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+                // page is forwarded. We cache empty placeholder ForwardPageInfo
+               String forwardPathInfo = (String) context.getServletRequest().getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+               return new ForwardPlaceHolderPageInfo(forwardPathInfo);
+            }
             return new PageInfo(responseWrapper.getStatus(), responseWrapper.getContentType(),
                     responseWrapper.getCookies(), outstr.toByteArray(), storeGzipped,
                     timeToLiveSeconds, responseWrapper.getAllHeaders());
         } finally {
             context.setHttpServletResponse(nonWrappedReponse);
+        }
+    }
+
+
+    public class ForwardPlaceHolderPageInfo extends PageInfo {
+        
+        private final String forwardPathInfo;
+        
+        public ForwardPlaceHolderPageInfo(String forwardPathInfo) throws AlreadyGzippedException {
+            super(HttpServletResponse.SC_OK, null, null, null, false, 0, null);
+            this.forwardPathInfo = forwardPathInfo;
         }
     }
 
