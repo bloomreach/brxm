@@ -1264,6 +1264,12 @@ body .hippo-picker-properties div.text-input input {
 /*.hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 1px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}*/
 
 /* Referring documents */
+
+.hippo-window-form.compatibility-workflow-plugin-date-dialog {
+    position: absolute;
+    bottom: 50px;
+}
+
 .hippo-referring-documents {
   margin: 5px;
   height: 365px;
