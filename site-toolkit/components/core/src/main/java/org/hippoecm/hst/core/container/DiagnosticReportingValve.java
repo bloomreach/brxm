@@ -31,6 +31,9 @@ public class DiagnosticReportingValve extends AbstractValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
+        if (context.getServletRequest().getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+           return;
+        }
         if (HDC.isStarted()) {
             HDC.getRootTask().stop();
             logDiagnosticSummary();
