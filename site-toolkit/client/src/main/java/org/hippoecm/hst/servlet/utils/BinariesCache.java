@@ -121,6 +121,15 @@ public class BinariesCache {
         cache.put(element);
     }
 
+    public void clearBlockingLock(String resourcePath) {
+        if (log.isDebugEnabled()) {
+            log.debug("Clear lock for {}", resourcePath);
+        }
+        CacheElement element = cache.createElement(resourcePath, null);
+        cache.put(element);
+    }
+
+    
     public void removePage(BinaryPage page) {
         if (log.isDebugEnabled()) {
             log.debug("Remove page for {}", page.getResourcePath());
