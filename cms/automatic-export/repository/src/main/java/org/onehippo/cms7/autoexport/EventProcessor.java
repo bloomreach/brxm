@@ -323,9 +323,6 @@ public class EventProcessor implements EventListener {
         export();
         
         // update the initialize items in the repository
-        for (InitializeItem item : removed) {
-            removeInitializeItemNode(item);
-        }
         for (InitializeItem item : added) {
             addInitializeItemNode(item);
         }
@@ -363,19 +360,6 @@ public class EventProcessor implements EventListener {
         }
         catch (RepositoryException e) {
             log.error("Failed to add initialize item node: " + item.getName(), e);
-        }
-    }
-
-    private void removeInitializeItemNode(InitializeItem item) {
-        try {
-            if (log.isDebugEnabled()) {
-                log.debug("Removing node /" + CONFIGURATION_PATH + "/" + INITIALIZE_PATH + "/" + item.getName());
-            }
-            Node node = session.getRootNode().getNode(CONFIGURATION_PATH).getNode(INITIALIZE_PATH).getNode(item.getName());
-            node.remove();
-        }
-        catch (RepositoryException e) {
-            log.error("Failed to remove initialize item node: " + item.getName(), e);
         }
     }
 

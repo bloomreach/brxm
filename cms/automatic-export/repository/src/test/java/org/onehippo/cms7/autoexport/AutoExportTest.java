@@ -186,7 +186,6 @@ public class AutoExportTest extends RepositoryTestCase {
         waitForAutoExport();
         // result should be the same
         checkExportedFiles("simple");
-        assertTrue(!hasInitializeItemNode("et-simple2"));
     }
     
     @Test
