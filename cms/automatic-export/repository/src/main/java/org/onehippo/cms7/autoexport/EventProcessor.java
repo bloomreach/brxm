@@ -354,9 +354,11 @@ public class EventProcessor implements EventListener {
                 log.debug("Adding node /" + CONFIGURATION_PATH + "/" + INITIALIZE_PATH + "/" + item.getName());
             }
             Node parent = session.getRootNode().getNode(CONFIGURATION_PATH).getNode(INITIALIZE_PATH);
-            Node node = parent.addNode(item.getName());
-            node.setPrimaryType(NT_INITIALIZEITEM);
-            node.setProperty(HIPPO_SEQUENCE, item.getSequence());
+            if (!parent.hasNode(item.getName())) {
+                Node node = parent.addNode(item.getName());
+                node.setPrimaryType(NT_INITIALIZEITEM);
+                node.setProperty(HIPPO_SEQUENCE, item.getSequence());
+            }
         }
         catch (RepositoryException e) {
             log.error("Failed to add initialize item node: " + item.getName(), e);
