@@ -29,6 +29,7 @@ import org.hippoecm.frontend.plugins.standards.list.SearchDocumentsProviderTest;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchTest;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsTest;
 import org.hippoecm.frontend.session.UserSessionTest;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -57,6 +58,7 @@ import org.junit.runners.Suite;
     NodeComparerTest.class,
     ValueComparerTest.class
 })
+@Ignore
 public class EmbeddedTest
 {
 }
