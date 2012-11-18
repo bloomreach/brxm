@@ -43,7 +43,7 @@ import org.junit.runners.Suite;
     PropertyValueProviderTest.class,
     JcrHelperTest.class,
     JcrMultiPropertyValueModelTest.class,
-    ObservationTest.class,
+//    ObservationTest.class,
     JcrObjectTest.class,
     JcrConfigServiceFactoryTest.class,
 
@@ -58,7 +58,6 @@ import org.junit.runners.Suite;
     NodeComparerTest.class,
     ValueComparerTest.class
 })
-@Ignore
 public class EmbeddedTest
 {
 }
