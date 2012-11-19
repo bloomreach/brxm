@@ -19,7 +19,12 @@ import org.hippoecm.frontend.config.PluginConfigTest;
 import org.hippoecm.frontend.editor.compare.NodeComparerTest;
 import org.hippoecm.frontend.editor.compare.ValueComparerTest;
 import org.hippoecm.frontend.i18n.model.NodeTranslatorTest;
-import org.hippoecm.frontend.model.*;
+import org.hippoecm.frontend.model.JcrHelperTest;
+import org.hippoecm.frontend.model.JcrItemModelTest;
+import org.hippoecm.frontend.model.JcrMultiPropertyValueModelTest;
+import org.hippoecm.frontend.model.JcrPropertyModelTest;
+import org.hippoecm.frontend.model.JcrPropertyValueModelTest;
+import org.hippoecm.frontend.model.PropertyValueProviderTest;
 import org.hippoecm.frontend.model.event.ObservationTest;
 import org.hippoecm.frontend.model.map.JcrValueListTest;
 import org.hippoecm.frontend.model.ocm.JcrObjectTest;
@@ -29,7 +34,6 @@ import org.hippoecm.frontend.plugins.standards.list.SearchDocumentsProviderTest;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchTest;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsTest;
 import org.hippoecm.frontend.session.UserSessionTest;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -43,7 +47,7 @@ import org.junit.runners.Suite;
     PropertyValueProviderTest.class,
     JcrHelperTest.class,
     JcrMultiPropertyValueModelTest.class,
-//    ObservationTest.class,
+    ObservationTest.class,
     JcrObjectTest.class,
     JcrConfigServiceFactoryTest.class,
 

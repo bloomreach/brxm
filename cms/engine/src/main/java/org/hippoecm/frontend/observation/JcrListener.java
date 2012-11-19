@@ -27,8 +27,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
@@ -49,7 +51,6 @@ import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
@@ -77,7 +78,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private boolean isvirtual;
     private List<String> parents;
     private final List<Event> virtualEvents = new LinkedList<Event>();
-    private final Set<String> externallyModifiedNodes = new ConcurrentHashSet<String>();
+    private final Queue<Event> events = new ConcurrentLinkedQueue<Event>();
     private Session session;
     private FacetRootsObserver fro;
     private WeakReference<UserSession> sessionRef;
@@ -90,16 +91,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
     public void onEvent(EventIterator events) {
         while (events.hasNext()) {
-            Event event = events.nextEvent();
-            try {
-                String eventPath = getEventParentPath(event.getPath());
-                Node parentNode = session.getNode(eventPath);
-                this.externallyModifiedNodes.add(parentNode.getIdentifier());
-            } catch (RepositoryException re) {
-                log.info("Unable to retrieve event's parent node identifier: " + re.getMessage());
-            }
+            this.events.add(events.nextEvent());
         }
-
         // When the update requests do not arrive anymore,
         // for instance due to the user not properly having closed
         // its session, then the event queue just keeps growing,
@@ -110,7 +103,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         // and its pagemaps to be emptied.
         // This in turn causes wicket to send a page expired response
         // to the browser on the next request that comes in.
-        if (this.externallyModifiedNodes.size() > MAX_EVENTS) {
+        if (this.events.size() > MAX_EVENTS) {
             PluginUserSession session = ((PluginUserSession)getSession());
             if (session != null) {
                 String userID = session.getJcrSession().getUserID();
@@ -119,10 +112,10 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             } else {
                 // The wicket session was serialized but the JCR Session not yet logged out
                 // through JcrSessionReference.cleanup()
-                // When the wicket session becomes active again a reinitialization of the 
+                // When the wicket session becomes active again a reinitialization of the
                 // session will occur so we don't need these events anymore.
                 log.info("The event queue is full. Clearing pending events.");
-                this.externallyModifiedNodes.clear();
+                this.events.clear();
             }
         }
     }
@@ -202,31 +195,33 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             }
             session = null;
         }
-        externallyModifiedNodes.clear();
+        events.clear();
     }
 
     private void subscribe() throws RepositoryException {
-        ObservationManager obMgr = session.getWorkspace().getObservationManager();
-        String[] uuid = null;
-        if (uuids != null) {
-            uuid = uuids.toArray(new String[uuids.size()]);
+        if (!isvirtual) {
+            ObservationManager obMgr = session.getWorkspace().getObservationManager();
+            String[] uuid = null;
+            if (uuids != null) {
+                uuid = uuids.toArray(new String[uuids.size()]);
+            }
+            obMgr.addEventListener(this, eventTypes, path, isDeep, uuid, nodeTypes, noLocal);
         }
-        obMgr.addEventListener(this, eventTypes, path, isDeep, uuid, nodeTypes, noLocal);
+
+        // do not subscribe to facet root events when listening to deep tree structures;
+        // this is too expensive, as it will populate e.g. facet navigation nodes.
+        if (isDeep && uuids == null) {
+            return;
+        }
 
         // subscribe to facet search observer.
         // FIXME due to HREPTWO-2655, will not be able to receive events on newly
         // created facet search nodes.
         fro = (FacetRootsObserver) getSession().getFacetRootsObserver();
 
-        // subscribe when listening to deep tree structures;
-        // there will/might be facetsearches in there.
-        if (isDeep && uuids == null) {
-            return;
-        }
-
         // subscribe when target has a facetsearch as an ancestor
         try {
-            for (Node node = getRoot(); node.getDepth() > 0;) {
+            for (Node node = getRoot(); node.getDepth() > 0; ) {
                 if (JcrHelper.isVirtualRoot(node)) {
                     fro.subscribe(this, node);
                     break;
@@ -247,10 +242,12 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private void unsubscribe() throws RepositoryException {
-        fro.unsubscribe(this, session);
-        fro = null;
+        if (fro != null) {
+            fro.unsubscribe(this, session);
+            fro = null;
+        }
 
-        if (session.isLive()) {
+        if (!isvirtual && session.isLive()) {
             ObservationManager obMgr = session.getWorkspace().getObservationManager();
             obMgr.removeEventListener(this);
         }
@@ -469,7 +466,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             log.info("resubscribing listener " + this);
 
             // events have references to the session, so they are useless now
-            externallyModifiedNodes.clear();
+            events.clear();
             try {
                 unsubscribe();
             } catch (RepositoryException ex) {
@@ -555,16 +552,57 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         List<Event> events = new ArrayList<Event>(virtualEvents);
         virtualEvents.clear();
 
-        List<String> nodeIds = new LinkedList<String>(this.externallyModifiedNodes);
-        this.externallyModifiedNodes.clear();
+        List<Event> jcrEvents = new LinkedList<Event>(this.events);
+        this.events.clear();
 
         if (isvirtual) {
             return events;
         }
 
-        for (String id : nodeIds) {
+        Set<Node> externallyModified = getExternallyModifiedNodes(jcrEvents);
+        createEventsForExternallyModifiedNodes(dirty, events, externallyModified);
+
+        // process pending changes
+        Set<Node> locallyModified;
+        try {
+            locallyModified = getLocallyModifiedNodes();
+        } catch (PathNotFoundException e) {
+            log.info("Root node no longer exists: " + e.getMessage());
+            dispose();
+            return events;
+        } catch (ItemNotFoundException e) {
+            log.info("Root node no longer exists: " + e.getMessage());
+            dispose();
+            return events;
+        } catch (RepositoryException e) {
+            log.error("Failed to parse pending changes", e);
+            dispose();
+            return events;
+        }
+
+        expandNew(locallyModified);
+
+        createEventsForLocallyModifiedNodes(dirty, events, locallyModified);
+        return events;
+    }
+
+    private Set<Node> getExternallyModifiedNodes(final List<Event> jcrEvents) {
+        final Set<Node> nodes = new TreeSet<Node>(new NodePathComparator());
+        for (Event jcrEvent : jcrEvents) {
             try {
-                Node node = session.getNodeByIdentifier(id);
+                String eventPath = getEventParentPath(jcrEvent.getPath());
+                Node parentNode = session.getNode(eventPath);
+                nodes.add(parentNode);
+            } catch (RepositoryException re) {
+                log.info("Unable to retrieve event's parent node identifier: " + re.getMessage());
+            }
+        }
+        return nodes;
+    }
+
+    private void createEventsForExternallyModifiedNodes(final Map<String, NodeState> dirty, final List<Event> events, final Set<Node> nodes) {
+        for (Node node : nodes) {
+            try {
                 String path = node.getPath();
 
                 // only create new state if the old state is cached
@@ -580,85 +618,69 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 }
 
                 addNodeStateEvents(events, path, newState);
-            } catch (ItemNotFoundException infe) {
-                log.debug("Ignoring id {} because it's no longer valid", id);
             } catch (RepositoryException e) {
-                log.warn("Ignoring id {} because it's no longer valid", id);
+                log.warn("Ignoring node because it's no longer valid");
             }
         }
+    }
 
-        // process pending changes
-        Set<Node> locallyModifiedNodes = new TreeSet<Node>(new NodePathComparator());
-        Node root;
-        try {
-            root = getRoot();
-            if (nodeTypes == null) {
-                if ((root.isModified() || root.isNew()) && isVisible(root)) {
-                    locallyModifiedNodes.add(root);
-                }
-                // use pendingChanges to detect changes in sub-trees and properties
-                if (!root.isNew()) {
-                    NodeIterator pending = ((HippoSession) root.getSession()).pendingChanges(root, null, false);
-                    addVisibleNodes(pending, locallyModifiedNodes);
-                }
-            } else {
-                if ((root.isModified() || root.isNew()) && isVisible(root)) {
-                    for (String type : nodeTypes) {
-                        try {
-                            if (root.isNodeType(type)) {
-                                locallyModifiedNodes.add(root);
-                                break;
-                            }
-                        } catch (RepositoryException e) {
-                            log.debug("Unable to determine if node is of type " + type, e);
+    private Set<Node> getLocallyModifiedNodes() throws RepositoryException {
+        final Set<Node> locallyModifiedNodes = new TreeSet<Node>(new NodePathComparator());
+        Node root = getRoot();
+        if (nodeTypes == null) {
+            if ((root.isModified() || root.isNew()) && isVisible(root)) {
+                locallyModifiedNodes.add(root);
+            }
+            // use pendingChanges to detect changes in sub-trees and properties
+            if (!root.isNew()) {
+                NodeIterator pending = ((HippoSession) root.getSession()).pendingChanges(root, null, false);
+                addVisibleNodes(pending, locallyModifiedNodes);
+            }
+        } else {
+            if ((root.isModified() || root.isNew()) && isVisible(root)) {
+                for (String type : nodeTypes) {
+                    try {
+                        if (root.isNodeType(type)) {
+                            locallyModifiedNodes.add(root);
+                            break;
                         }
-                    }
-                }
-                // use pendingChanges to detect changes in sub-trees and properties
-                if (!root.isNew()) {
-                    for (String type : nodeTypes) {
-                        NodeIterator pending = ((HippoSession) root.getSession()).pendingChanges(root, type, false);
-                        addVisibleNodes(pending, locallyModifiedNodes);
+                    } catch (RepositoryException e) {
+                        log.debug("Unable to determine if node is of type " + type, e);
                     }
                 }
             }
-        } catch (PathNotFoundException e) {
-            log.info("Root node no longer exists: " + e.getMessage());
-            dispose();
-            return events;
-        } catch (ItemNotFoundException e) {
-            log.info("Root node no longer exists: " + e.getMessage());
-            dispose();
-            return events;
-        } catch (RepositoryException e) {
-            log.error("Failed to parse pending changes", e);
-            dispose();
-            return events;
+            // use pendingChanges to detect changes in sub-trees and properties
+            if (!root.isNew()) {
+                for (String type : nodeTypes) {
+                    NodeIterator pending = ((HippoSession) root.getSession()).pendingChanges(root, type, false);
+                    addVisibleNodes(pending, locallyModifiedNodes);
+                }
+            }
         }
 
         for (Node node : getReferencedNodes()) {
-            if (nodeTypes == null) {
-                if (node.isModified() || node.isNew()) {
+            if (node.isModified() || node.isNew()) {
+                if (nodeTypes == null) {
                     locallyModifiedNodes.add(node);
-                }
-            } else {
-                if (node.isModified() || node.isNew()) {
-                    for (String type : nodeTypes) {
-                        try {
-                            if (root.isNodeType(type)) {
-                                locallyModifiedNodes.add(root);
+                } else {
+                    try {
+                        for (String type : nodeTypes) {
+                            if (node.isNodeType(type)) {
+                                locallyModifiedNodes.add(node);
                                 break;
                             }
-                        } catch (RepositoryException e) {
-                            log.debug("Unable to determine if node is of type " + type, e);
                         }
+                    } catch (RepositoryException e) {
+                        log.debug("Unable to determine if modified node is of a filtered node type", e);
                     }
                 }
             }
         }
 
-        expandNew(locallyModifiedNodes);
+        return locallyModifiedNodes;
+    }
 
+    private void createEventsForLocallyModifiedNodes(final Map<String, NodeState> dirty, final List<Event> events, final Set<Node> locallyModifiedNodes) {
         for (Node node : locallyModifiedNodes) {
             try {
                 String path = node.getPath();
@@ -676,7 +698,6 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 log.warn("Failed to process node", e);
             }
         }
-        return events;
     }
 
     private void addNodeStateEvents(final List<Event> events, final String path, final NodeState newState) throws RepositoryException {
