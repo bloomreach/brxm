@@ -70,7 +70,7 @@ public class ChannelException extends Exception {
     public ChannelException(String message, Throwable cause, Type type, String... parameters) {
         super(message, cause);
         this.type = type;
-        this.parameters = parameters == null ? ZERO_PARAMETERS : parameters;
+        this.parameters = (parameters == null) ? ZERO_PARAMETERS : parameters;
     }
 
     public Type getType() {
