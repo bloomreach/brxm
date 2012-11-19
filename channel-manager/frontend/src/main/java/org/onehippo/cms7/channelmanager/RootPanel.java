@@ -134,6 +134,7 @@ public class RootPanel extends ExtPanel {
 
     public void render(PluginRequestTarget target) {
         pageEditor.render(target);
+        channelStore.update();
         if (redraw) {
             JSONObject update = new JSONObject();
             try {
