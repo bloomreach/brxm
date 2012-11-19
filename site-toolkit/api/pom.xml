@@ -41,12 +41,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Jackson JSON dependencies -->
-    <dependency>
-        <groupId>org.codehaus.jackson</groupId>
-        <artifactId>jackson-core-asl</artifactId>
-    </dependency>
-
     <!-- Test dependencies -->
     <dependency>
       <groupId>junit</groupId>
