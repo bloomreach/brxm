@@ -17,6 +17,7 @@ package org.hippoecm.hst.configuration.channel;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -27,6 +28,24 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
 
     private List<Annotation> annotations = new ArrayList<Annotation>();
 
+    private final static List<Class<?>> supportedTypes = Arrays.asList(new Class<?>[]{
+            String.class,
+            Boolean.class,
+            boolean.class,
+            Long.class,
+            long.class,
+            Integer.class,
+            int.class,
+            Calendar.class,
+            Double.class,
+            Float.class,
+            double.class,
+            float.class
+    });
+
+    /**
+     * @throws IllegalArgumentException if <code>returnType</code> is not one of the supported types
+     */
     public AnnotationHstPropertyDefinition(Parameter propAnnotation, Class<?> returnType, Annotation[] annotations) {
         super(propAnnotation.name());
         init(propAnnotation, returnType, annotations, propAnnotation.required(), propAnnotation.defaultValue());
@@ -65,6 +84,6 @@ public class AnnotationHstPropertyDefinition extends AbstractHstPropertyDefiniti
             return HstValueType.DOUBLE;
         }
 
-        throw new ClassCastException("Could not cast " + type + " to any of the primitive types");
+        throw new IllegalArgumentException("Unsupported type '"+type+"'. Only supported types are '"+supportedTypes.toString()+"'");
     }
 }

@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -161,14 +162,9 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         assertEquals(0, integerProperty.getLong());
     }
     
-    @Test 
+    @Test(expected = IllegalArgumentException.class)
     public void testUnsupportedReturnType() {
-        try {
-            List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoUnsupportedReturnType.class);
-            fail("BigDecimal is not a supported return type");
-        } catch (RuntimeException ignour) {
-            // expected because BigDecimal is not supported in ChannelPropertyMapper
-        }
+         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoUnsupportedReturnType.class);
     }
 
     @Test

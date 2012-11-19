@@ -20,17 +20,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hippoecm.hst.core.parameters.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ChannelInfoClassProcessor {
 
+    private static final Logger log = LoggerFactory.getLogger(ChannelInfoClassProcessor.class);
+    
     public static List<HstPropertyDefinition> getProperties(Class<? extends ChannelInfo> channelInfoClass) {
         List<HstPropertyDefinition> properties = new ArrayList<HstPropertyDefinition>();
         for (Method method : channelInfoClass.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
                 // new style annotations
                 Parameter propAnnotation = method.getAnnotation(Parameter.class);
-                HstPropertyDefinition prop = new AnnotationHstPropertyDefinition(propAnnotation, method.getReturnType(), method.getAnnotations());
-                properties.add(prop);
+                try {
+                    HstPropertyDefinition prop = new AnnotationHstPropertyDefinition(propAnnotation, method.getReturnType(), method.getAnnotations());
+                    properties.add(prop);
+                } catch (IllegalArgumentException e) {
+                    log.warn("Invalid parameterized method '{}' : {}", method.getName(), e.toString());
+                }
+                
             }
         }
         return properties;
