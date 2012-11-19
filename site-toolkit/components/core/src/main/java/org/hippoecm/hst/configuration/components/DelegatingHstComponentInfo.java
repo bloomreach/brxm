@@ -67,4 +67,8 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
         return delegatee.isAsync();
     }
 
+    @Override
+    public boolean isCompositeCachable() {
+        return delegatee.isCompositeCachable();
+    }
 }

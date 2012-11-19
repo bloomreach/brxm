@@ -157,5 +157,9 @@ public class TestPageErrors {
         public boolean isAsync() {
             return false;
         }
+        @Override
+        public boolean isCompositeCachable() {
+            return false;
+        }
     }
 }

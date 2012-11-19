@@ -906,20 +906,25 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     public void populateIsCompositeCachable() {
         if (cachable != null && !cachable.booleanValue()) {
             compositeCachable = false;
-            // mark all ancestors uncachable unless the ancestor is async (and does not have another async ancestor)
-            HstComponentConfigurationService parent = (HstComponentConfigurationService)getParent();
-            while (parent != null) {
-                if (parent.isAsync()) {
-                    if (!parent.hasAsyncAncestor()) {
-                        // the parent is async and the parent does not have async ancestostors in turn
-                        // so we can break. If there are async ancestors, we still mark the parent as
-                        // cachable = false since async trees are rendered in one request even though they contain
-                        // in tur async components
-                        break;
+            // mark all ancestors uncachable unless the ancestor or this item is async (and does not have another async ancestor)
+            if (isAsync() && !hasAsyncAncestor()) {
+                // do not traverse parents because we are an async item and
+                // we do not have async ancestors and we already marked ourselves as compositeCachable = false;
+            } else {
+                HstComponentConfigurationService parent = (HstComponentConfigurationService)getParent();
+                while (parent != null) {
+                    parent.compositeCachable = false;
+                    if (parent.isAsync()) {
+                        if (!parent.hasAsyncAncestor()) {
+                            // the parent is async and the parent does not have async ancestors in turn
+                            // so we can break. If there are async ancestors, we still mark the parent as
+                            // cachable = false since async trees are rendered in one request even if they contain
+                            // async components
+                            break;
+                        }
                     }
+                    parent = (HstComponentConfigurationService) parent.getParent();
                 }
-                parent.compositeCachable = false;
-                parent = (HstComponentConfigurationService) parent.getParent();
             }
         }
         for (HstComponentConfigurationService child : orderedListConfigs) {

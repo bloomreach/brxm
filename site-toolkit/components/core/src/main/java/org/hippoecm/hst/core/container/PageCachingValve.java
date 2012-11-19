@@ -148,17 +148,40 @@ public class PageCachingValve extends AbstractValve {
         return true;
     }
 
-    private boolean isSiteMapItemAndComponentConfigCachable(final ResolvedSiteMapItem resolvedSitemapItem,final ValveContext context) {
-        if (!resolvedSitemapItem.getHstComponentConfiguration().isCompositeCachable()) {
-            log.debug("Request '{}' is not cachable because hst component '{}' is not cachable.", context.getServletRequest().getRequestURI(),
-                    resolvedSitemapItem.getHstComponentConfiguration().getId());
-            return false;
-        }
+    private boolean isSiteMapItemAndComponentConfigCachable(final ResolvedSiteMapItem resolvedSitemapItem,
+                                                            final ValveContext context) throws ContainerException {
         if (!resolvedSitemapItem.getHstSiteMapItem().isCachable()) {
             log.debug("Request '{}' is not cachable because hst sitemapitem '{}' is not cachable.", context.getServletRequest().getRequestURI(),
                     resolvedSitemapItem.getHstSiteMapItem().getId());
             return false;
         }
+
+
+        // check whether component rendering is true: For component rendering, we need to check whether the specific sub
+        // component (tree) is cachable
+        String componentRenderingWindowReferenceNamespace = context.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace();
+        if (componentRenderingWindowReferenceNamespace != null) {
+            HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), componentRenderingWindowReferenceNamespace);
+            if (window == null) {
+                // incorrect request.
+                return false;
+            }
+            if (window.getComponentInfo().isStandalone()) {
+                return window.getComponentInfo().isCompositeCachable();
+            }
+            // normally component rendering is standalone, however, if not standalone, than also the
+            // ancestors need to be cachable because all components will be rendered
+            if (!resolvedSitemapItem.getHstComponentConfiguration().isCompositeCachable()) {
+                log.debug("Request '{}' is not cachable because hst component '{}' is not cachable.", context.getServletRequest().getRequestURI(),
+                        resolvedSitemapItem.getHstComponentConfiguration().getId());
+                return false;
+            }
+        } else if (!resolvedSitemapItem.getHstComponentConfiguration().isCompositeCachable()) {
+            log.debug("Request '{}' is not cachable because hst component '{}' is not cachable.", context.getServletRequest().getRequestURI(),
+                    resolvedSitemapItem.getHstComponentConfiguration().getId());
+            return false;
+        }
+
         return true;
     }
 
