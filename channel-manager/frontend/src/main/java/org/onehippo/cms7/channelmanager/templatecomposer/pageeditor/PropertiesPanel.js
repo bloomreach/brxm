@@ -372,7 +372,8 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
         this.saveButton = new Ext.Button({
             text : Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-save'],
             handler : this._submitForm,
-            scope : this
+            scope : this,
+            formBind: true
         });
         buttons.push(this.saveButton);
         buttons.push({
@@ -390,6 +391,7 @@ Hippo.ChannelManager.TemplateComposer.PropertiesForm = Ext.extend(Ext.FormPanel,
             autoScroll : true,
             labelWidth : 100,
             labelSeparator : '',
+            monitorValid: true,
             defaults : {
                 anchor : '100%'
             },
