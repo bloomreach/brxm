@@ -136,6 +136,10 @@ public class ChannelGridPanel extends ExtPanel {
                     + "{[values.mountPath === '' ? '/' : '']}{mountPath}\" "
                     + "name=\"show-preview\" class=\"show-preview\" target=\"hippochannelmanagerpreview\" title=\""
                     + previewTooltip + "\">" + previewLabel + "</a>");
+        } else if (ChannelStore.ChannelField.lockedOn.name().equals(columnName)) {
+            String dateFormat = getLocalizer().getString("locked-date-format", this);
+            String renderer = "function(timestamp) { return Ext.isEmpty(timestamp) ? '' : new Date(parseInt(timestamp)).format(\"" + dateFormat + "\"); }";
+            fieldConfig.put("renderer", new JSONIdentifier(renderer));
         }
         return fieldConfig;
     }
