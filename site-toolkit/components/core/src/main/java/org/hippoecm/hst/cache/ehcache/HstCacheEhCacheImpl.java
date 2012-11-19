@@ -66,11 +66,8 @@ public class HstCacheEhCacheImpl implements HstCache {
             element = valueLoader.call();
             if (element == null) {
                 log.debug("valueLoader '{}#call()' did " +
-                        "return null for ley '{}'",valueLoader.getClass().getName(), key);
+                        "return null for key '{}'",valueLoader.getClass().getName(), key);
             }
-        } catch (Exception e) {
-            log.warn("Exception for value loader '{}' : '{}'", valueLoader.getClass().getName(), e.toString());
-            throw e;
         } finally {
             // if exceptions (also unchecked) happened or the CacheElement is uncachable, we put an empty element (createElement(key,null))
             // to make sure that if a blocking cache is used, the lock on the key is freed. Also see ehcache BlockingCache
