@@ -52,7 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Executes an {@link Updater}
+ * Executes an {@link NodeUpdateVisitor}
  */
 public class UpdaterExecutor implements EventListener {
 
@@ -101,10 +101,10 @@ public class UpdaterExecutor implements EventListener {
         String message = "Executing updater " + updaterInfo.getName();
         info(message);
         logEvent(updaterInfo.getMethod(), updaterInfo.getStartedBy(), message);
-        final Updater updater = updaterInfo.getUpdater();
+        final NodeUpdateVisitor updater = updaterInfo.getUpdater();
         try {
-            if (updater instanceof BaseUpdater) {
-                ((BaseUpdater) updater).setLogger(getLogger());
+            if (updater instanceof BaseNodeUpdateVisitor) {
+                ((BaseNodeUpdateVisitor) updater).setLogger(getLogger());
             }
             updater.initialize(session);
             report.start();
@@ -252,7 +252,7 @@ public class UpdaterExecutor implements EventListener {
         boolean updated = false, failed = false;
         if (updaterInfo.isRevert()) {
             try {
-                updated = updaterInfo.getUpdater().revert(node);
+                updated = updaterInfo.getUpdater().undoUpdate(node);
             } catch (UnsupportedOperationException e) {
                 throw e;
             } catch (Exception e) {
@@ -262,7 +262,7 @@ public class UpdaterExecutor implements EventListener {
             }
         } else {
             try {
-                updated = updaterInfo.getUpdater().update(node);
+                updated = updaterInfo.getUpdater().doUpdate(node);
             } catch (UnsupportedOperationException e) {
                 throw e;
             } catch (Exception e) {

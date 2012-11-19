@@ -26,7 +26,7 @@ import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyCodeSource;
 
 /**
- * Encapsulates meta data for running an {@link Updater}
+ * Encapsulates meta data for running an {@link NodeUpdateVisitor}
  */
 class UpdaterInfo {
 
@@ -44,15 +44,15 @@ class UpdaterInfo {
     private final long batchSize;
     private final boolean dryRun;
     private final String startedBy;
-    private final Updater updater;
+    private final NodeUpdateVisitor updater;
 
     /**
-     * @param node  a node of type <code>hipposys:updaterinfo</code> carrying the meta data of the {@link Updater}
+     * @param node  a node of type <code>hipposys:updaterinfo</code> carrying the meta data of the {@link NodeUpdateVisitor}
      * @throws IllegalArgumentException if the node is not of type <code>hipposys:updaterinfo</code>
      * or does not carry the property <code>hipposys:path</code> nor the property <code>hipposys:query</code>
      * or does not carry the <code>hipposys:script</code> nor the property <code>hipposys:class</code>
-     * @throws IllegalAccessException if the {@link Updater} class could not be instantiated
-     * @throws InstantiationException if the {@link Updater} class could not be instantiated
+     * @throws IllegalAccessException if the {@link NodeUpdateVisitor} class could not be instantiated
+     * @throws InstantiationException if the {@link NodeUpdateVisitor} class could not be instantiated
      * @throws ClassNotFoundException if the the updater class could not be found.
      * @throws RepositoryException if something went wrong while reading the node.
      */
@@ -93,10 +93,10 @@ class UpdaterInfo {
             clazz = gcl.parseClass(gcs, false);
         }
         final Object o = clazz.newInstance();
-        if (!(o instanceof Updater)) {
-            throw new IllegalArgumentException("Class must implement " + Updater.class.getName());
+        if (!(o instanceof NodeUpdateVisitor)) {
+            throw new IllegalArgumentException("Class must implement " + NodeUpdateVisitor.class.getName());
         }
-        updater = (Updater) o;
+        updater = (NodeUpdateVisitor) o;
     }
 
     /**
@@ -104,10 +104,10 @@ class UpdaterInfo {
      * @param id  the unique identifier of this updater configuration in the updater registry
      * @param path  the path that should be visited
      * @param query  the query that should be visited
-     * @param updater  the {@link Updater} to execute
+     * @param updater  the {@link NodeUpdateVisitor} to execute
      * @throws IllegalArgumentException if both <code>path</code> and <code>query</code> are undefined
      */
-    UpdaterInfo(String id, String path, String query, boolean revert, Updater updater) throws IllegalArgumentException {
+    UpdaterInfo(String id, String path, String query, boolean revert, NodeUpdateVisitor updater) throws IllegalArgumentException {
         this.identifier = id;
         this.name = id;
         this.updater = updater;
@@ -196,9 +196,9 @@ class UpdaterInfo {
     }
 
     /**
-     * The {@link Updater} to execute
+     * The {@link NodeUpdateVisitor} to execute
      */
-    Updater getUpdater() {
+    NodeUpdateVisitor getUpdater() {
         return updater;
     }
 

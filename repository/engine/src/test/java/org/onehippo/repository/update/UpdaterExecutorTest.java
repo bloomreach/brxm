@@ -141,10 +141,10 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
         }
     }
 
-    public static class TestUpdater extends BaseUpdater {
+    public static class TestUpdater extends BaseNodeUpdateVisitor {
 
         @Override
-        public boolean update(final Node node) throws RepositoryException {
+        public boolean doUpdate(final Node node) throws RepositoryException {
             if (shouldUpdate(node)) {
                 node.setProperty("qux", "updated");
                 return true;
@@ -153,7 +153,7 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
         }
 
         @Override
-        public boolean revert(final Node node) throws RepositoryException {
+        public boolean undoUpdate(final Node node) throws RepositoryException {
             if (shouldUpdate(node)) {
                 node.setProperty("qux", "reverted");
                 return true;

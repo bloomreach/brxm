@@ -88,7 +88,6 @@ import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
-import org.onehippo.repository.update.Updater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;

@@ -20,10 +20,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
- * Repository updater for updating repository content. Replaces {@link org.hippoecm.repository.ext.UpdaterModule}s for
+ * Visitor for updating repository content. Replaces {@link org.hippoecm.repository.ext.UpdaterModule}s for
  * all update tasks except backward incompatible node type changes.
  */
-public interface Updater {
+public interface NodeUpdateVisitor {
 
     /**
      * Allows initialization of this updater. Called before any other method is called.
@@ -40,10 +40,10 @@ public interface Updater {
      * @return  <code>true</code> if the node was changed, <code>false</code> if not
      * @throws RepositoryException  if an exception occurred while updating the node
      */
-    boolean update(Node node) throws RepositoryException;
+    boolean doUpdate(Node node) throws RepositoryException;
 
     /**
-     * Revert the given node. This method is intended to be the reverse of the {@link #update(javax.jcr.Node)} method.
+     * Revert the given node. This method is intended to be the reverse of the {@link #doUpdate} method.
      * It allows update runs to be reverted in case a problem arises due to the update. The method should throw
      * an {@link UnsupportedOperationException} when it is not implemented.
      *
@@ -52,7 +52,7 @@ public interface Updater {
      * @throws RepositoryException  if an exception occurred while reverting the node
      * @throws UnsupportedOperationException if the method is not implemented
      */
-    boolean revert(Node node) throws RepositoryException, UnsupportedOperationException;
+    boolean undoUpdate(Node node) throws RepositoryException, UnsupportedOperationException;
 
     /**
      * Allows cleanup of resources held by this updater. Called after an updater run was completed.

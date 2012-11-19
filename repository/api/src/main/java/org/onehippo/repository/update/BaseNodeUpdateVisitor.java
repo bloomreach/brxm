@@ -21,9 +21,9 @@ import javax.jcr.Session;
 import org.slf4j.Logger;
 
 /**
- * Base {@link Updater} class adding support for logging.
+ * Base {@link NodeUpdateVisitor} class adding support for logging.
  */
-public abstract class BaseUpdater implements Updater {
+public abstract class BaseNodeUpdateVisitor implements NodeUpdateVisitor {
 
     protected Logger log;
 
