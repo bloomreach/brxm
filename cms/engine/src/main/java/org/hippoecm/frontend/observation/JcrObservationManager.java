@@ -76,7 +76,18 @@ public class JcrObservationManager implements ObservationManager {
 
         UserSession session = (UserSession) org.apache.wicket.Session.get();
         if (session != null) {
-            JcrListener realListener = new JcrListener(listenerQueue, cache, session, listener);
+
+            Session jcrSession = session.getJcrSession();
+            Map<String, NodeState> states;
+            synchronized (cache) {
+                states = cache.get(jcrSession);
+                if (states == null) {
+                    states = new HashMap<String, NodeState>();
+                    cache.put(jcrSession, states);
+                }
+            }
+
+            JcrListener realListener = new JcrListener(listenerQueue, states, session, listener);
             try {
                 realListener.init(eventTypes, absPath, isDeep, uuid, nodeTypeName, noLocal);
                 synchronized (listeners) {
@@ -85,26 +96,15 @@ public class JcrObservationManager implements ObservationManager {
 
                 // prefetch fixed nodes into cache
                 if (realListener.getParents().size() > 0) {
-                    Session jcrSession = session.getJcrSession();
-                    Map<String, NodeState> states;
-                    synchronized (cache) {
-                        states = cache.get(jcrSession);
-                        if (states == null) {
-                            states = new HashMap<String, NodeState>();
-                            cache.put(jcrSession, states);
-                        }
-                    }
-                    synchronized (states) {
-                        for (String path : realListener.getParents()) {
-                            if (!states.containsKey(path)) {
-                                try {
-                                    if (jcrSession.itemExists(path)) {
-                                        NodeState state = new NodeState((Node) jcrSession.getItem(path), true);
-                                        states.put(path, state);
-                                    }
-                                } catch (RepositoryException ex) {
-                                    log.warn("Failed to initialize node state", ex);
+                    for (String path : realListener.getParents()) {
+                        if (!states.containsKey(path)) {
+                            try {
+                                if (jcrSession.itemExists(path)) {
+                                    NodeState state = new NodeState((Node) jcrSession.getItem(path), true);
+                                    states.put(path, state);
                                 }
+                            } catch (RepositoryException ex) {
+                                log.warn("Failed to initialize node state", ex);
                             }
                         }
                     }
@@ -234,12 +234,11 @@ public class JcrObservationManager implements ObservationManager {
     public void processEvents() {
         cleanup();
 
-        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        UserSession session = UserSession.get();
         if (session != null) {
             // copy set of listeners; don't synchronize on map while notifying observers
             // as it may need to be modified as a result of the event.
             SortedSet<JcrListener> set = new TreeSet<JcrListener>();
-
             synchronized (listeners) {
                 for (JcrListener listener : listeners.values()) {
                     if (listener.getSession() == session) {
@@ -262,30 +261,28 @@ public class JcrObservationManager implements ObservationManager {
                     cache.put(jcrSession, states);
                 }
             }
-            synchronized (states) {
-                // update cache
-                for (Map.Entry<String, NodeState> nodes : dirty.entrySet()) {
-                    states.put(nodes.getKey(), nodes.getValue());
-                }
 
-                // remove stale entries
-                Iterator<Map.Entry<String, NodeState>> cacheIter = states.entrySet().iterator();
-                while (cacheIter.hasNext()) {
-                    Map.Entry<String, NodeState> entry = cacheIter.next();
-                    try {
-                        if (!jcrSession.itemExists(entry.getKey())) {
-                            cacheIter.remove();
-                        }
-                    } catch (RepositoryException ex) {
-                        log.warn("Could not determine whether " + entry.getKey() + " exists", ex);
+            // update cache
+            for (Map.Entry<String, NodeState> nodes : dirty.entrySet()) {
+                states.put(nodes.getKey(), nodes.getValue());
+            }
+
+            // remove stale entries
+            Iterator<Map.Entry<String, NodeState>> cacheIter = states.entrySet().iterator();
+            while (cacheIter.hasNext()) {
+                Map.Entry<String, NodeState> entry = cacheIter.next();
+                try {
+                    if (!jcrSession.itemExists(entry.getKey())) {
+                        cacheIter.remove();
                     }
+                } catch (RepositoryException ex) {
+                    log.warn("Could not determine whether " + entry.getKey() + " exists", ex);
                 }
             }
         } else {
             log.error("No session found");
         }
     }
-
 
     private void cleanup() {
         synchronized (listeners) {

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,8 +64,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private final static Logger log = LoggerFactory.getLogger(JcrListener.class);
     
     private final static int MAX_EVENTS = Integer.getInteger("hippoecm.observation.maxevents", 10000);
-    
-    private final Map<Session, Map<String, NodeState>> cache;
+
+    private final Map<String, NodeState> stateCache;
     
     private String path;
     private int eventTypes;
@@ -83,9 +82,9 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     private FacetRootsObserver fro;
     private WeakReference<UserSession> sessionRef;
 
-    JcrListener(ReferenceQueue<EventListener> listenerQueue, Map<Session, Map<String, NodeState>> cache, UserSession userSession, EventListener upstream) {
+    JcrListener(ReferenceQueue<EventListener> listenerQueue, Map<String, NodeState> stateCache, UserSession userSession, EventListener upstream) {
         super(upstream, listenerQueue);
-        this.cache = cache;
+        this.stateCache = stateCache;
         sessionRef = new WeakReference<UserSession>(userSession);
     }
 
@@ -151,7 +150,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         this.nodeTypes = nodeTypes;
         this.noLocal = noLocal;
 
-        this.isvirtual = isVirtual(getRoot());
+        this.isvirtual = JcrHelper.isVirtualNode(getRoot());
 
         session = getSession().getJcrSession();
 
@@ -284,24 +283,6 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         }
     }
 
-    private boolean isVirtual(Node node) throws RepositoryException {
-        if (node instanceof HippoNode) {
-            try {
-                Node canonical = ((HippoNode) node).getCanonicalNode();
-                if (canonical == null) {
-                    return true;
-                }
-                if (!canonical.isSame(node)) {
-                    return true;
-                }
-            } catch (ItemNotFoundException e) {
-                log.debug("Item not found, assuming node was virtual: " + e.getMessage());
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean isVisible(Node node) {
         try {
             String path = node.getPath();
@@ -320,15 +301,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         return false;
     }
 
-    private NodeState getNodeState(Session session, String path) {
-        synchronized (cache) {
-            Map<String, NodeState> states = cache.get(session);
-            if (states == null) {
-                states = new HashMap<String, NodeState>();
-                cache.put(session, states);
-            }
-            return states.get(path);
-        }
+    private NodeState getNodeState(String path) {
+        return stateCache.get(path);
     }
     
     private void addVisibleNodes(NodeIterator pending, Set<Node> nodes) {
@@ -348,7 +322,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 ItemVisitor visitor = new TraversingItemVisitor() {
                     public void visit(Node node) throws RepositoryException {
                         // do not traverse into virtual paths
-                        if(!(node instanceof HippoNode) || node.isSame(((HippoNode)node).getCanonicalNode())) {
+                        if(!JcrHelper.isVirtualNode(node)) {
                             super.visit(node);
                         }
                     }
@@ -416,24 +390,11 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
         // check node types
         if (nodeTypes != null) {
-            NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
-            Set<NodeType> eventTypes = new HashSet<NodeType>();
-            eventTypes.add(parent.getPrimaryNodeType());
-            if (parent.hasProperty("jcr:mixinTypes")) {
-                Value[] mixins = parent.getProperty("jcr:mixinTypes").getValues();
-                for (Value mixin : mixins) {
-                    eventTypes.add(ntMgr.getNodeType(mixin.getString()));
-                }
-            }
+
             boolean match = false;
-            for (int i = 0; i < nodeTypes.length && !match; i++) {
-                for (NodeType nodeType : eventTypes) {
-                    if (nodeType.isNodeType(nodeTypes[i])) {
-                        match = true;
-                        break;
-                    }
-                }
-                if (match) {
+            for (String nodeType : nodeTypes) {
+                if (parent.isNodeType(nodeType)) {
+                    match = true;
                     break;
                 }
             }
@@ -449,7 +410,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
         }
         return !match;
     }
-
+    
     private String getEventParentPath(String eventPath) {
         eventPath = eventPath.substring(0, eventPath.lastIndexOf('/'));
         if (eventPath.equals("")) {
@@ -607,7 +568,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
 
                 // only create new state if the old state is cached
                 NodeState newState = null;
-                NodeState oldState = getNodeState(session, path);
+                NodeState oldState = getNodeState(path);
                 if (oldState != null) {
                     if (dirty.containsKey(path)) {
                         newState = dirty.get(path);
@@ -701,7 +662,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private void addNodeStateEvents(final List<Event> events, final String path, final NodeState newState) throws RepositoryException {
-        NodeState oldState = getNodeState(session, path);
+        NodeState oldState = getNodeState(path);
         if (oldState != null) {
             Iterator<Event> iter = oldState.getEvents(newState);
             while (iter.hasNext()) {
