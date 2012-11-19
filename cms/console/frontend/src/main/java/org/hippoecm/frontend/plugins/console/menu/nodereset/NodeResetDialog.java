@@ -23,6 +23,7 @@ import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -34,6 +35,7 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.ReferenceWorkspace;
+import org.hippoecm.repository.util.JcrUtils;
 
 public class NodeResetDialog extends AbstractDialog<Node> {
 
@@ -97,10 +99,10 @@ public class NodeResetDialog extends AbstractDialog<Node> {
 
     @Override
     protected void onOk() {
-        reload();
+        reset();
     }
 
-    private void reload() {
+    private void reset() {
         Session session = null;
         try {
 
@@ -121,7 +123,7 @@ public class NodeResetDialog extends AbstractDialog<Node> {
 
             Node parent = getModelObject().getParent();
             getModelObject().remove();
-            copy(reference, parent);
+            JcrUtils.copy(reference, reference.getName(), parent);
 
             if (parent.getPrimaryNodeType().hasOrderableChildNodes()) {
                 order(reference, parent);
@@ -137,32 +139,6 @@ public class NodeResetDialog extends AbstractDialog<Node> {
             if (session != null) {
                 session.logout();
             }
-        }
-    }
-
-    private void copy(final Node reference, Node parent) throws RepositoryException {
-        if (JcrHelper.isVirtualNode(reference)) {
-            return;
-        }
-        final Node node = parent.addNode(reference.getName(), reference.getPrimaryNodeType().getName());
-        for (NodeType nodeType : reference.getMixinNodeTypes()) {
-            node.addMixin(nodeType.getName());
-        }
-        final PropertyIterator properties = reference.getProperties();
-        while (properties.hasNext()) {
-            final Property property = properties.nextProperty();
-            if (!property.getDefinition().isProtected()) {
-                if (property.isMultiple()) {
-                    node.setProperty(property.getName(), property.getValues());
-                } else {
-                    node.setProperty(property.getName(), property.getValue());
-                }
-            }
-        }
-        final NodeIterator children = reference.getNodes();
-        while (children.hasNext()) {
-            final Node child = children.nextNode();
-            copy(child, node);
         }
     }
 
