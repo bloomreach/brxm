@@ -34,6 +34,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.VersionManager;
 
@@ -427,6 +428,48 @@ public class JcrUtils {
     }
 
     /**
+     * Copies {@link Node} {@code srcNode} to {@code destParentNode} with name {@code sestNodeName}.
+     *
+     * @param srcNode the node to copy
+     * @param destNodeName  the name of the to be newly created node
+     * @param destParentNode  the parent of the to be newly created node.
+     * @throws RepositoryException
+     */
+    public static void copy(final Node srcNode, final String destNodeName, final Node destParentNode) throws RepositoryException {
+        if (isVirtual(srcNode)) {
+            return;
+        }
+        final Node destNode;
+        if (!isAutoCreatedNode(srcNode.getName(), destParentNode)) {
+            destNode = destParentNode.addNode(destNodeName, srcNode.getPrimaryNodeType().getName());
+        } else {
+            destNode = destParentNode.getNode(destNodeName);
+        }
+
+        for (NodeType nodeType : srcNode.getMixinNodeTypes()) {
+            destNode.addMixin(nodeType.getName());
+        }
+
+        final PropertyIterator properties = srcNode.getProperties();
+        while (properties.hasNext()) {
+            final Property property = properties.nextProperty();
+            if (!property.getDefinition().isProtected()) {
+                if (property.isMultiple()) {
+                    destNode.setProperty(property.getName(), property.getValues(), property.getType());
+                } else {
+                    destNode.setProperty(property.getName(), property.getValue());
+                }
+            }
+        }
+
+        final NodeIterator nodes = srcNode.getNodes();
+        while (nodes.hasNext()) {
+            final Node child = nodes.nextNode();
+            copy(child, child.getName(), destNode);
+        }
+    }
+
+    /**
      * Serialize the given <code>object</code> into a binary JCR value.
      *
      * @param session to use
@@ -500,32 +543,33 @@ public class JcrUtils {
         }
     }
 
-    private static void copy(final Node srcNode, final String destNodeName, final Node destParentNode) throws RepositoryException {
-        if (srcNode instanceof HippoNode && ((HippoNode)srcNode).isVirtual()) {
-            return;
-        }
-        final Node destNode = destParentNode.addNode(destNodeName, srcNode.getPrimaryNodeType().getName());
-        for (NodeType nodeType : srcNode.getMixinNodeTypes()) {
-            destNode.addMixin(nodeType.getName());
-        }
+    /**
+     * @param node the node to check
+     * @return whether the node is virtual
+     * @throws RepositoryException
+     */
+    public static boolean isVirtual(Node node) throws RepositoryException {
+        return node instanceof HippoNode && ((HippoNode) node).isVirtual();
+    }
 
-        final PropertyIterator properties = srcNode.getProperties();
-        while (properties.hasNext()) {
-            final Property property = properties.nextProperty();
-            if (!property.getDefinition().isProtected()) {
-                if (property.isMultiple()) {
-                    destNode.setProperty(property.getName(), property.getValues());
-                } else {
-                    destNode.setProperty(property.getName(), property.getValue());
+    private static boolean isAutoCreatedNode(final String childName, Node parent) throws RepositoryException {
+        for (NodeDefinition nodeDefinition : parent.getPrimaryNodeType().getChildNodeDefinitions()) {
+            if (childName.equals(nodeDefinition.getName())) {
+                if (nodeDefinition.isAutoCreated()) {
+                    return true;
                 }
             }
         }
-
-        final NodeIterator nodes = srcNode.getNodes();
-        while (nodes.hasNext()) {
-            final Node child = nodes.nextNode();
-            copy(child, child.getName(), destNode);
+        for (NodeType nodeType : parent.getMixinNodeTypes()) {
+            for (NodeDefinition nodeDefinition : nodeType.getChildNodeDefinitions()) {
+                if (childName.equals(nodeDefinition.getName())) {
+                    if (nodeDefinition.isAutoCreated()) {
+                        return true;
+                    }
+                }
+            }
         }
+        return false;
     }
 
     private static byte[] objectToBytes(Object o) throws RepositoryException {

@@ -357,6 +357,7 @@ test/src/test/java/org/hippoecm/repository/logging/WorkflowEventLoggerWorkflowIm
 test/src/test/java/org/hippoecm/repository/test/MirrorPerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTest.java -text
 test/src/test/java/org/hippoecm/repository/test/TraversePerfTestCase.java -text
+test/src/test/java/org/hippoecm/repository/util/JcrUtilsTest.java -text
 test/src/test/resources/org/hippoecm/repository/HREPTWO4837Test.xml svneol=native#text/plain
 test/src/test/resources/org/hippoecm/repository/concurrent/action/Hippo.pdf -text
 test/src/test/resources/org/hippoecm/repository/updater/cnd1.cnd -text
