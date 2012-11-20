@@ -40,6 +40,11 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
         this.iframeCompletion = [];
 
+        this.windowUnloaded = false;
+        Ext.EventManager.on(window, 'unload', function() {
+            this.windowUnloaded = true;
+        }, this);
+
         this.iframeResourceCache = this._populateIFrameResourceCache();
 
         this.addEvents(
@@ -456,7 +461,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
         iFrame.purgeListeners();
         iFrame.on('message', this.handleFrameMessages, this);
         iFrame.on('unload', function () {
-            this._lock();
+            if (!this.windowUnloaded) {
+                this._lock();
+            }
         }, this);
         iFrame.on('documentloaded', function(frm) {
             var uri = frm.getDocumentURI();
