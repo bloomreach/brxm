@@ -1,11 +1,11 @@
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
 import org.apache.wicket.Application;
-import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AbstractBehavior;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.markup.html.IHeaderResponse;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 
-public class TemplateComposerApiResourceBehavior extends AbstractBehavior {
+public class TemplateComposerApiResourceBehavior implements IHeaderContributor {
 
     private static final long serialVersionUID = 1L;
 
@@ -20,14 +20,15 @@ public class TemplateComposerApiResourceBehavior extends AbstractBehavior {
     private static final String ALL_JAVASCRIPT = "template-composer-api-all.js";
 
     @Override
-    public void bind(Component component) {
+    public void renderHead(final IHeaderResponse response) {
         if (Application.get().getDebugSettings().isAjaxDebugModeEnabled()) {
             for (String jsFile : JAVASCRIPT_FILES) {
-                component.add(JavascriptPackageResource.getHeaderContribution(TemplateComposerApiResourceBehavior.class, jsFile));
+                IHeaderContributor contributor = JavascriptPackageResource.getHeaderContribution(TemplateComposerApiResourceBehavior.class, jsFile);
+                contributor.renderHead(response);
             }
         } else {
-            component.add(JavascriptPackageResource.getHeaderContribution(TemplateComposerApiResourceBehavior.class, ALL_JAVASCRIPT));
+            IHeaderContributor contributor =JavascriptPackageResource.getHeaderContribution(TemplateComposerApiResourceBehavior.class, ALL_JAVASCRIPT);
+            contributor.renderHead(response);
         }
     }
-
 }

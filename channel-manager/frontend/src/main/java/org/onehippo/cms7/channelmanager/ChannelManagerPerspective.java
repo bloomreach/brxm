@@ -27,6 +27,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
 import org.hippoecm.frontend.perspectives.common.ErrorMessagePanel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -60,7 +61,8 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         // When site service is null most probably the site is down
         siteIsUp = (siteService != null);
 
-        add(new TemplateComposerApiResourceBehavior());
+        context.registerService(new TemplateComposerApiResourceBehavior(), ExtWidgetRegistry.EXT_WIDGET_SERVICE_ID);
+
         add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css"));
 
         if (siteIsUp) {

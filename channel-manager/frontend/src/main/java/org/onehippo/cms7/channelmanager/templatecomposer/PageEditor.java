@@ -146,6 +146,7 @@ public class PageEditor extends ExtPanel {
     @SuppressWarnings("unused")
     private String channelId;
     private boolean refreshIFrame;
+    private List<ToolbarPlugin> toolbarPlugins;
 
     public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
         this.context = context;
@@ -320,6 +321,17 @@ public class PageEditor extends ExtPanel {
     }
 
     @Override
+    protected void onBeforeRender() {
+        if (toolbarPlugins == null) {
+            toolbarPlugins = context.getServices(ToolbarPlugin.SERVICE_ID, ToolbarPlugin.class);
+            for (ToolbarPlugin plugin : toolbarPlugins) {
+                add(plugin);
+            }
+        }
+        super.onBeforeRender();
+    }
+
+    @Override
     protected void onRenderProperties(final JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         RequestCycle rc = RequestCycle.get();
@@ -357,7 +369,6 @@ public class PageEditor extends ExtPanel {
     private JSONArray createToolbarPluginConfigs() throws JSONException {
         final JSONArray configs = new JSONArray();
 
-        final List<ToolbarPlugin> toolbarPlugins = context.getServices(ToolbarPlugin.SERVICE_ID, ToolbarPlugin.class);
         for (ToolbarPlugin plugin : toolbarPlugins) {
             JSONObject config = new JSONObject();
             config.put("xtype", plugin.getXType());
