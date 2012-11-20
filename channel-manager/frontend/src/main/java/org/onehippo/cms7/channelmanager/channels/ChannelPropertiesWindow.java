@@ -39,6 +39,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.hst.configuration.channel.Channel;
+import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
 import org.hippoecm.hst.core.parameters.DropDownList;
 import org.hippoecm.hst.core.parameters.FieldGroup;
@@ -280,7 +281,19 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
             return Collections.emptyList();
         }
 
-        ChannelInfoClassInfo channelInfoClassInfo = channelStore.getChannelInfoClassInfo(channel);
+        final ChannelInfoClassInfo channelInfoClassInfo;
+        try {
+            channelInfoClassInfo = channelStore.getChannelInfoClassInfo(channel);
+        } catch (ChannelException ce) {
+            if (log.isDebugEnabled()) {
+                log.warn("Failed to retrieve channel info class for channel with id '" + channel.getId() + "'", ce);
+            } else {
+                log.warn("Failed to retrieve channel info class for channel with id '{}' - {}", channel.getId(), ce.toString());
+            }
+
+            return Collections.emptyList();
+        }
+
         if (channelInfoClassInfo == null) {
             return Collections.emptyList();
         }

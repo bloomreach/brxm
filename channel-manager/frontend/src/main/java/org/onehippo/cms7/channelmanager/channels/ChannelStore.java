@@ -399,7 +399,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
      * @return the ChannelInfo class for the given channel, or <code>null</code> if the channel does not have a custom
      *         ChannelInfo class or the channel manager could not be loaded (e.g. because the site is down).
      */
-    public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) {
+    public ChannelInfoClassInfo getChannelInfoClassInfo(Channel channel) throws ChannelException {
         ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
         return channelService.getChannelInfoClassInfo(channel.getId());
     }
@@ -431,7 +431,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             return;
         }
 
-        List<Channel> channelsList = Collections.emptyList();
+        List<Channel> channelsList;
         try {
             channelsList = channelService.getChannels();
         } catch (ChannelException ce) {
