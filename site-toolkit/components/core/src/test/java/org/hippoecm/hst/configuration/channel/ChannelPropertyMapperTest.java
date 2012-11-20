@@ -161,10 +161,15 @@ public class ChannelPropertyMapperTest extends AbstractHstTestCase {
         // @Parameter(name = "test-integer")
         assertEquals(0, integerProperty.getLong());
     }
-    
-    @Test(expected = IllegalArgumentException.class)
+
+    @Test
     public void testUnsupportedReturnType() {
-         List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoUnsupportedReturnType.class);
+        try {
+            List<HstPropertyDefinition> definitions = ChannelInfoClassProcessor.getProperties(TestInfoUnsupportedReturnType.class);
+            assertTrue(definitions.isEmpty());
+        } catch (Throwable e) {
+            fail("Unsupported return type should be ignored and not throw exception");
+        }
     }
 
     @Test
