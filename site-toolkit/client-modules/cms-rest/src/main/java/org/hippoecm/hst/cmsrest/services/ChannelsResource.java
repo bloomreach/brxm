@@ -128,20 +128,32 @@ public class ChannelsResource extends BaseResource implements ChannelService {
      * @see org.hippoecm.hst.rest.ChannelService#getChannel(String id)
      */
     @Override
-    public Channel getChannel(String id) {
+    public Channel getChannel(String id) throws ChannelException {
         try {
+            validate();
             return channelManager.getChannelById(id);
+        } catch (ResourceRequestValidationException rrve) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while processing channels resource request of retrieving a channel with id '" + id + "'", rrve);
+            } else {
+                log.warn("Error while processing channels resource request of retrieving a channel with id,'{}' - {}", id
+                        ,  rrve.toString());
+
+            }
+
+            throw new ChannelException("Validation error while retrieving details of channel with id '" + id + "'."
+                    + " Details: " + rrve.getMessage()
+                    , rrve , ChannelException.Type.SERVER_ERROR);
+
         } catch (ChannelException ce) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve a channel with id '" + id + "'", ce);
             } else {
                 log.warn("Failed to retrieve a channel with id '{}' - {}", id, ce.toString());
             }
-        }
 
-        // Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
-        // HST, CMS and services!
-        return null;
+            throw ce;
+        }
     }
 
     /* (non-Javadoc)

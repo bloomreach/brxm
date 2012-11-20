@@ -62,7 +62,7 @@ public interface ChannelService {
     @GET
     @Path("/{id}/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Channel getChannel(@PathParam("id") String id);
+    public Channel getChannel(@PathParam("id") String id) throws ChannelException;
 
     /**
      * Save channel properties.  If the URL path of the new channel is not empty, all
