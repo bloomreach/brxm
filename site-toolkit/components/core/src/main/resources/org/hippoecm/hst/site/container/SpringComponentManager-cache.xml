@@ -43,7 +43,7 @@
   </bean>
   
   <bean id="abstractBlockingEhCache" abstract="true" parent="abstractEhCacheBase" class="org.hippoecm.hst.site.container.BlockingEhCacheFactoryBean">
-    <property name="timeoutMillis" value="10000"/>
+    <property name="timeoutMillis" value="${default.blocking.cache.timeout}"/>
   </bean>
 
   <bean id="defaultBinariesCache" class="org.hippoecm.hst.cache.ehcache.HstCacheEhCacheImpl">
