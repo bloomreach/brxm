@@ -134,6 +134,6 @@ public interface ChannelService {
     @Path("/{id}#resourcevalue")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Properties getChannelResourceValues(@PathParam("id") String id, @QueryParam("language") String language);
+    public Properties getChannelResourceValues(@PathParam("id") String id, @QueryParam("language") String language) throws ChannelException;
 
 }

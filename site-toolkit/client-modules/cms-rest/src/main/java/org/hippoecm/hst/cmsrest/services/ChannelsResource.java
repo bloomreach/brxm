@@ -210,21 +210,40 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     }
 
     @Override
-    public Properties getChannelResourceValues(String id, String language) {
+    public Properties getChannelResourceValues(String id, String language) throws ChannelException {
         try {
+            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
+            // TODO - We should use a proper validation framework!
+            validate();
             Channel channel = channelManager.getChannelById(id);
             return InformationObjectsBuilder.buildResourceBundleProperties(channelManager.getResourceBundle(channel, new Locale(language)));
+        } catch (ResourceRequestValidationException rrve) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while processing channels resource request of retrieving resource values of channel with id '" + id + "'"
+                        + " for language '" + language + "'", rrve);
+
+            } else {
+                log.warn("Error while processing channels resource request of retrieving resource values of channel with id '{}' for language '{}' - {}"
+                        , new String[] {id, language, rrve.toString()});
+
+            }
+
+            throw new ChannelException("Validation error while retrieving resource values of channel with id '" + id + "'"
+                    + " for language '" + language + "'. "+ "Details: " + rrve.getMessage()
+                    , rrve , ChannelException.Type.SERVER_ERROR);
+
         } catch (ChannelException ce) {
             if (log.isDebugEnabled()) {
-                log.warn("Failed to retrieve channel resource values channel with id '" + id + "'", ce);
-            } else {
-                log.warn("Failed to retrieve channel resource values for channel with id '{}' - {}", id, ce.toString());
-            }
-        }
+                log.warn("Failed to retrieve channel resource values for channel with id '" + id + "'"
+                        + " for language '" + language + "'", ce);
 
-        // Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
-        // HST, CMS and services!        
-        return null;
+            } else {
+                log.warn("Failed to retrieve channel resource values for channel with id '{}' for language '{}' - {}"
+                        , new String[] {id, language, ce.toString()});
+            }
+
+            throw ce;
+        }
     }
 
 }
