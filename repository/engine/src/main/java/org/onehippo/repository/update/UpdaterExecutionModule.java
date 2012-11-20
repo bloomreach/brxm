@@ -187,8 +187,13 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
                 session.refresh(false);
 
                 final String srcPath = node.getPath();
-                long index = session.getNode(UPDATE_HISTORY_PATH).getNodes(node.getName() + "*").getSize();
-                final String destPath = UPDATE_HISTORY_PATH + "/" + node.getName() + "-" + index;
+                final Node history = session.getNode(UPDATE_HISTORY_PATH);
+                String name = node.getName();
+                int count = 2;
+                while (history.hasNode(name)) {
+                    name = node.getName() + "-" + count++;
+                }
+                final String destPath = UPDATE_HISTORY_PATH + "/" + name;
                 session.move(srcPath, destPath);
                 session.save();
             } catch (RepositoryException e) {

@@ -15,12 +15,26 @@
  */
 package org.onehippo.repository.update;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import javax.jcr.Binary;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
+import org.apache.tika.io.IOUtils;
+import org.apache.xmlbeans.impl.common.IOUtil;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyCodeSource;
@@ -29,6 +43,8 @@ import groovy.lang.GroovyCodeSource;
  * Encapsulates meta data for running an {@link NodeUpdateVisitor}
  */
 class UpdaterInfo {
+
+    private static final Logger log = LoggerFactory.getLogger(UpdaterInfo.class);
 
     private static final int DEFAULT_THROTTLE = 1000;
     private static final int DEFAULT_BATCH_SIZE = 10;
@@ -45,6 +61,7 @@ class UpdaterInfo {
     private final boolean dryRun;
     private final String startedBy;
     private final NodeUpdateVisitor updater;
+    private final Binary updatedNodes;
 
     /**
      * @param node  a node of type <code>hipposys:updaterinfo</code> carrying the meta data of the {@link NodeUpdateVisitor}
@@ -97,6 +114,7 @@ class UpdaterInfo {
             throw new IllegalArgumentException("Class must implement " + NodeUpdateVisitor.class.getName());
         }
         updater = (NodeUpdateVisitor) o;
+        updatedNodes = JcrUtils.getBinaryProperty(node, HippoNodeType.HIPPOSYS_UPDATED, null);
     }
 
     /**
@@ -122,6 +140,7 @@ class UpdaterInfo {
         if ((path == null || path.isEmpty()) && (query == null || query.isEmpty())) {
             throw new IllegalArgumentException("Either path or query property must be defined");
         }
+        this.updatedNodes = null;
     }
 
     /**
@@ -167,11 +186,11 @@ class UpdaterInfo {
     }
 
     /**
-     * @return either <code>update</code> or <code>revert</code> depending on
+     * @return either <code>doUpdate</code> or <code>undoUpdate</code> depending on
      * the value of {@link #isRevert()}
      */
     String getMethod() {
-        return isRevert() ? "revert" : "update";
+        return isRevert() ? "doUpdate" : "undoUpdate";
     }
 
     /**
@@ -207,5 +226,56 @@ class UpdaterInfo {
      */
     String getStartedBy() {
         return startedBy;
+    }
+
+    Iterator<String> getUpdatedNodes() {
+        if (updatedNodes != null) {
+            try {
+                final BufferedReader reader = new BufferedReader(new InputStreamReader(updatedNodes.getStream()));
+                return new Iterator<String>() {
+
+                    private String next;
+                    private boolean closed;
+
+                    private void fetchNext() {
+                        if (next == null && !closed) {
+                            try {
+                                next = reader.readLine();
+                            } catch (IOException e) {
+                                log.error("Failed to read next line of updated paths", e);
+                            }
+                            if (next == null) {
+                                IOUtils.closeQuietly(reader);
+                                closed = true;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public boolean hasNext() {
+                        fetchNext();
+                        return next != null;
+                    }
+
+                    @Override
+                    public String next() {
+                        if (hasNext()) {
+                            final String result = next;
+                            next = null;
+                            return result;
+                        }
+                        throw new NoSuchElementException();
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            } catch (RepositoryException e) {
+                log.error("Failed to read updated nodes property", e);
+            }
+        }
+        return Collections.<String>emptyList().iterator();
     }
 }

@@ -27,6 +27,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.ItemVisitor;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -108,8 +109,12 @@ public class UpdaterExecutor implements EventListener {
             }
             updater.initialize(session);
             report.start();
-            runPathVisitor();
-            runQueryVisitor();
+            if (updaterInfo.isRevert()) {
+                runRevertVisitor();
+            } else {
+                runPathVisitor();
+                runQueryVisitor();
+            }
         } catch (RepositoryException e) {
             error("Unexpected exception while executing updater", e);
         } finally {
@@ -186,7 +191,7 @@ public class UpdaterExecutor implements EventListener {
                     }
                 }
             } catch (UnsupportedOperationException e) {
-                warn("Cannot run updater: " + updaterInfo.getMethod() + " is not implemented");
+                warn("Cannot run updater: doUpdate is not implemented");
             } catch (RepositoryException e) {
                 error("Unexpected exception while running updater path visitor", e);
             }
@@ -219,7 +224,7 @@ public class UpdaterExecutor implements EventListener {
                     try {
                         executeUpdater(node);
                     } catch (UnsupportedOperationException e) {
-                        warn("Cannot run updater: " + (updaterInfo.isRevert() ? "revert" : "update") + " is not implemented");
+                        warn("Cannot run updater: doUpdate is not implemented");
                         break;
                     }
                     commitBatchIfNeeded();
@@ -278,6 +283,32 @@ public class UpdaterExecutor implements EventListener {
         }
     }
 
+    private void runRevertVisitor() throws RepositoryException {
+        Iterator<String> updatedNodes = updaterInfo.getUpdatedNodes();
+        while (updatedNodes.hasNext()) {
+            if (cancelled) {
+                info("UndoUpdate cancelled");
+                return;
+            }
+            String path = updatedNodes.next();
+            Node node = null;
+            try {
+                node = session.getNode(path);
+            } catch (PathNotFoundException e) {
+                debug("Node no longer exists: " + path);
+            }
+            if (node != null) {
+                try {
+                    executeUpdater(node);
+                } catch (UnsupportedOperationException e) {
+                    warn("Cannot run updater: undoUpdate is not implemented");
+                    break;
+                }
+                commitBatchIfNeeded();
+            }
+        }
+    }
+
     @Override
     public void onEvent(final EventIterator events) {
         while (events.hasNext()) {
@@ -321,7 +352,7 @@ public class UpdaterExecutor implements EventListener {
             }
             identifiers.add(new NodeId(node.getIdentifier()));
             visitChildren(node);
-            if (count++ % PROGRESS_REPORT_INTERVAL == 0) {
+            if (++count % PROGRESS_REPORT_INTERVAL == 0) {
                 info("Loaded " + count + " nodes");
             }
         }
@@ -406,7 +437,7 @@ public class UpdaterExecutor implements EventListener {
                 node.setProperty(HippoNodeType.HIPPOSYS_FINISHTIME, report.getFinishTime());
                 setBinaryProperty(node, HippoNodeType.HIPPOSYS_UPDATED, report.getUpdatedFile());
                 setBinaryProperty(node, HippoNodeType.HIPPOSYS_FAILED, report.getFailedFile());
-                setBinaryProperty(node, HippoNodeType.HIPPOSYS_FAILED, report.getSkippedFile());
+                setBinaryProperty(node, HippoNodeType.HIPPOSYS_SKIPPED, report.getSkippedFile());
                 setBinaryProperty(node, HippoNodeType.HIPPOSYS_LOG, report.getLogFile());
             }
             session.save();
