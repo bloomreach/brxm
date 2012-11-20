@@ -43,10 +43,10 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 	 * @see org.hippoecm.hst.rest.ChannelService#getChannels()
 	 */
 	@Override
-	public List<Channel> getChannels() {
+	public List<Channel> getChannels() throws ChannelException {
 		try {
 			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-			// We should use a proper validation framework!
+			// TODO - We should use a proper validation framework!
 			validate();
 	        return Collections.unmodifiableList(new ArrayList<Channel>(channelManager.getChannels().values()));
 		} catch (ResourceRequestValidationException rrve) {
@@ -55,16 +55,11 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 		    } else {
 		        log.warn("Error while processing channels resource request - {}", rrve.toString());
 		    }
-			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			// For now return empty list
-			// throw rrve;
-			return Collections.emptyList();
+
+            throw new ChannelException("Validation error while retrieving channels. Details: " + rrve.getMessage(), rrve, ChannelException.Type.SERVER_ERROR);
 		} catch (ChannelException ce) {
 		    log.warn("Error while retrieving channels - {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
-			// This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-			// For now return empty list
-			// throw ce;
-			return Collections.emptyList();
+			throw ce;
 		}
 	}
 

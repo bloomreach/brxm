@@ -28,6 +28,7 @@ public class ChannelException extends Exception {
     public enum Type {
 
         UNKNOWN("unknown"),
+        SERVER_ERROR("server.error"),
         MOUNT_EXISTS("mount.exists"),
         MOUNT_NOT_FOUND("mount.not.found"),
         CANNOT_CREATE_CONTENT("cannot.create.content"),
