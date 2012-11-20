@@ -32,8 +32,18 @@ public class UpdaterRegistryEditor extends UpdaterEditor {
     }
 
     @Override
+    protected boolean isUndoButtonVisible() {
+        return false;
+    }
+
+    @Override
     protected boolean isSaveButtonEnabled() {
         return isUpdater();
+    }
+
+    @Override
+    protected boolean isUndoButtonEnabled() {
+        return false;
     }
 
     @Override

@@ -15,10 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.cms.dev.updater;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 
 public class UpdaterHistoryEditor extends UpdaterEditor {
 
@@ -43,6 +48,24 @@ public class UpdaterHistoryEditor extends UpdaterEditor {
 
     @Override
     protected boolean isExecuteButtonVisible() {
+        return false;
+    }
+
+    @Override
+    protected boolean isUndoButtonVisible() {
+        return true;
+    }
+
+    @Override
+    protected boolean isUndoButtonEnabled() {
+        final Node node = (Node) getDefaultModelObject();
+        if (node != null) {
+            try {
+                boolean isRevertRun = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_REVERT, false);
+                boolean isDryRun = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_DRYRUN, false);
+                return !isRevertRun && !isDryRun;
+            } catch (RepositoryException ignore) {}
+        }
         return false;
     }
 

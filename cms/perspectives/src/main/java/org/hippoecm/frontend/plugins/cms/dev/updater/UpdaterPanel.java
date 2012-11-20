@@ -84,6 +84,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
     private final JcrTreeModel treeModel;
 
     private Component editor;
+    private String path;
 
     public UpdaterPanel(final String componentId, final IBreadCrumbModel breadCrumbModel, final IPluginContext context) {
         super(componentId, breadCrumbModel);
@@ -105,10 +106,8 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
             @Override
             protected TreeModelEvent newTreeModelEvent(final Event event) throws RepositoryException {
-                if (event.getType() == Event.NODE_MOVED) {
-                    final String destAbsPath = (String) event.getInfo().get("destAbsPath");
-                    final Session session = UserSession.get().getJcrSession();
-                    UpdaterPanel.this.setDefaultModel(new JcrNodeModel(session.getNode(destAbsPath)));
+                if (event.getPath().equals(getNodePath())) {
+                    setDefaultModel(getDefaultModel());
                 }
                 return super.newTreeModelEvent(event);
             }
@@ -126,6 +125,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
             @Override
             public void breadCrumbRemoved(final IBreadCrumbParticipant breadCrumbParticipant) {
+                System.out.println("breadCrumbRemoved");
                 if (breadCrumbParticipant == UpdaterPanel.this) {
                     breadCrumbModel.removeListener(this);
                     context.unregisterService(treeModel, IObserver.class.getName());
@@ -235,6 +235,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         super.onModelChanged();
         expandAndSelectNodeInTree();
         updateEditor();
+        path = null;
         AjaxRequestTarget.get().addComponent(this);
     }
 
@@ -272,12 +273,12 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         final Node node = (Node) getDefaultModelObject();
         try {
             if (node != null) {
-                return node.getPath();
+                path = node.getPath();
             }
         } catch (RepositoryException e) {
             log.error("Error while getting node path", e);
         }
-        return "";
+        return path != null ? path : "";
     }
 
     public String getUpdaterName() {

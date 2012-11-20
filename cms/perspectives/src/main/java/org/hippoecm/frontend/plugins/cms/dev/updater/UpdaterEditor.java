@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.dev.updater;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 
@@ -38,6 +39,7 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.dev.codemirror.CodeMirrorEditor;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +51,7 @@ public class UpdaterEditor extends Panel {
     protected static final String UPDATE_PATH = "/hippo:configuration/hippo:update";
     protected static final String UPDATE_QUEUE_PATH = UPDATE_PATH + "/hippo:queue";
     protected static final String UPDATE_REGISTRY_PATH = UPDATE_PATH + "/hippo:registry";
+    protected static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
 
     private static final long DEFAULT_BATCH_SIZE = 10l;
     private static final long DEFAULT_THOTTLE = 1000l;
@@ -98,6 +101,26 @@ public class UpdaterEditor extends Panel {
         };
         executeButton.setOutputMarkupId(true);
         form.add(executeButton);
+
+        final AjaxButton undoButton = new AjaxButton("undo-button") {
+            @Override
+            protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
+                executeUndo();
+                AjaxRequestTarget.get().addComponent(feedback);
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return isUndoButtonEnabled();
+            }
+
+            @Override
+            public boolean isVisible() {
+                return isUndoButtonVisible();
+            }
+        };
+        undoButton.setOutputMarkupId(true);
+        form.add(undoButton);
 
         final AjaxButton dryRunButton = new AjaxButton("dryrun-button") {
             @Override
@@ -269,7 +292,7 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(dryRunCheckBox);
 
-        script = getStringProperty("hipposys:script", null);
+        script = getStringProperty(HippoNodeType.HIPPOSYS_SCRIPT, null);
 
         final TextArea<String> scriptEditor = new CodeMirrorEditor("script-editor", new PropertyModel<String>(this, "script"));
         form.add(scriptEditor);
@@ -285,23 +308,23 @@ public class UpdaterEditor extends Panel {
     }
 
     protected void loadProperties() {
-        script = getStringProperty("hipposys:script", null);
+        script = getStringProperty(HippoNodeType.HIPPOSYS_SCRIPT, null);
         if (isUpdater()) {
             name = getName();
         } else {
             name = null;
         }
-        visitorPath = getStringProperty("hipposys:path", null);
-        visitorQuery = getStringProperty("hipposys:query", null);
-        batchSize = String.valueOf(getLongProperty("hipposys:batchsize", DEFAULT_BATCH_SIZE));
-        throttle = String.valueOf(getLongProperty("hipposys:throttle", DEFAULT_THOTTLE));
+        visitorPath = getStringProperty(HippoNodeType.HIPPOSYS_PATH, null);
+        visitorQuery = getStringProperty(HippoNodeType.HIPPOSYS_QUERY, null);
+        batchSize = String.valueOf(getLongProperty(HippoNodeType.HIPPOSYS_BATCHSIZE, DEFAULT_BATCH_SIZE));
+        throttle = String.valueOf(getLongProperty(HippoNodeType.HIPPOSYS_THROTTLE, DEFAULT_THOTTLE));
         if (visitorQuery != null) {
             method = "query";
         }
         if (visitorPath != null) {
             method = "path";
         }
-        dryRun = getBooleanProperty("hipposys:dryrun", false);
+        dryRun = getBooleanProperty(HippoNodeType.HIPPOSYS_DRYRUN, false);
     }
 
     private String getName() {
@@ -388,25 +411,25 @@ public class UpdaterEditor extends Panel {
                 if (!validateVisitorPath()) {
                     return false;
                 }
-                node.setProperty("hipposys:path", visitorPath);
-                node.setProperty("hipposys:query", (String) null);
+                node.setProperty(HippoNodeType.HIPPOSYS_PATH, visitorPath);
+                node.setProperty(HippoNodeType.HIPPOSYS_QUERY, (String) null);
             } else {
                 if (!validateVisitorQuery()) {
                     return false;
                 }
-                node.setProperty("hipposys:query", visitorQuery);
-                node.setProperty("hipposys:path", (String) null);
+                node.setProperty(HippoNodeType.HIPPOSYS_QUERY, visitorQuery);
+                node.setProperty(HippoNodeType.HIPPOSYS_PATH, (String) null);
             }
-            node.setProperty("hipposys:dryrun", dryRun);
+            node.setProperty(HippoNodeType.HIPPOSYS_DRYRUN, dryRun);
             if (!validateBatchSize()) {
                 return false;
             }
-            node.setProperty("hipposys:batchsize", Long.valueOf(batchSize));
+            node.setProperty(HippoNodeType.HIPPOSYS_BATCHSIZE, Long.valueOf(batchSize));
             if (!validateThrottle()) {
                 return false;
             }
-            node.setProperty("hipposys:throttle", Long.valueOf(throttle));
-            node.setProperty("hipposys:script", script);
+            node.setProperty(HippoNodeType.HIPPOSYS_THROTTLE, Long.valueOf(throttle));
+            node.setProperty(HippoNodeType.HIPPOSYS_SCRIPT, script);
             if (!node.getName().equals(name)) {
                 rename();
             }
@@ -516,7 +539,36 @@ public class UpdaterEditor extends Panel {
                     final String destPath = UPDATE_QUEUE_PATH + "/" + node.getName();
                     JcrUtils.copy(session, srcPath, destPath);
                     final Node queuedNode = session.getNode(destPath);
-                    queuedNode.setProperty("hipposys:startedby", session.getUserID());
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_STARTEDBY, session.getUserID());
+                    session.save();
+                    container.setDefaultModel(new JcrNodeModel(queuedNode));
+                }
+            } catch (RepositoryException e) {
+                final String message = "An unexpected error occurred: " + e.getMessage();
+                error(message);
+                log.error(message, e);
+            }
+        }
+    }
+
+    private void executeUndo() {
+        final Node node = (Node) getDefaultModelObject();
+        final Session session = UserSession.get().getJcrSession();
+        if (node != null) {
+            try {
+                final String srcPath = node.getPath();
+                if (srcPath.startsWith(UPDATE_HISTORY_PATH)) {
+                    final String destPath = UPDATE_QUEUE_PATH + "/undo-" + node.getName();
+                    JcrUtils.copy(session, srcPath, destPath);
+                    final Node queuedNode = session.getNode(destPath);
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_STARTEDBY, session.getUserID());
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_REVERT, true);
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_SKIPPED, (Value) null);
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_SKIPPEDCOUNT, -1l);
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_FAILED, (Value) null);
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_FAILEDCOUNT, -1l);
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_LOG, (Value) null);
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_LOGTAIL, (String) null);
                     session.save();
                     container.setDefaultModel(new JcrNodeModel(queuedNode));
                 }
@@ -533,8 +585,8 @@ public class UpdaterEditor extends Panel {
         final Session session = UserSession.get().getJcrSession();
         if (node != null) {
             try {
-                node.setProperty("hipposys:cancelled", true);
-                node.setProperty("hipposys:cancelledby", session.getUserID());
+                node.setProperty(HippoNodeType.HIPPOSYS_CANCELLED, true);
+                node.setProperty(HippoNodeType.HIPPOSYS_CANCELLEDBY, session.getUserID());
                 session.save();
             } catch (RepositoryException e) {
                 final String message = "An unexpected error occurred: " + e.getMessage();
@@ -556,6 +608,10 @@ public class UpdaterEditor extends Panel {
         return true;
     }
 
+    protected boolean isUndoButtonVisible() {
+        return true;
+    }
+
     protected boolean isDeleteButtonVisible() {
         return true;
     }
@@ -569,6 +625,10 @@ public class UpdaterEditor extends Panel {
     }
 
     protected boolean isExecuteButtonEnabled() {
+        return true;
+    }
+
+    protected boolean isUndoButtonEnabled() {
         return true;
     }
 
