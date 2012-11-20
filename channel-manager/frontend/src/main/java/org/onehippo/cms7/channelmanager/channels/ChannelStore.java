@@ -426,7 +426,15 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             return;
         }
 
-        List<Channel> channelsList = channelService.getChannels();
+        List<Channel> channelsList = Collections.emptyList();
+        try {
+            channelsList = channelService.getChannels();
+        } catch (ChannelException ce) {
+            log.error("Failed to retrieve channels", ce);
+            channels = Collections.emptyMap();
+            return;
+        }
+
         channels = new HashMap<String, Channel>(channelsList.size());
         for (Channel channel : channelsList) {
             if (StringUtils.isEmpty(channel.getType())) {
