@@ -96,7 +96,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     public String persist(String blueprintId, Channel channel) throws ChannelException {
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-            // We should use a proper validation framework!
+            // TODO - We should use a proper validation framework!
             validate();
             return channelManager.persist(blueprintId, channel);
         } catch (ResourceRequestValidationException rrve) {
@@ -105,18 +105,16 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             } else {
                 log.warn("Error while processing channels resource request for channel '{}' - {}", channel.getId(), rrve.toString());
             }
-            // This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-            // For now return empty list
-            // throw rrve;
-            // I know returning 'null' is not clean at all but thats *only* for now!
+
+            throw new ChannelException("Validation error while persisting channel with id '" + channel.getId() + "'"
+                    + " using blueprint with id '" + blueprintId + "'."
+                    + " Details: " + rrve.getMessage()
+                    , rrve, ChannelException.Type.SERVER_ERROR);
+
         } catch (ChannelException ce) {
             log.warn("Error while persisting a new channel - Channel: {} - {} : {}", new Object[] {channel, ce.getClass().getName(), ce.toString()});
             throw ce;
         }
-
-        log.warn("Unknown error while persisting a new channel - Channel: {} - Blueprint-Id: '{}'", new Object[] {channel, blueprintId});
-        throw new ChannelException("Could not persist a channel using blueprint-id: '" + blueprintId
-                + "' for an unknown reason please check with your system administrator", ChannelException.Type.UNKNOWN);
     }
 
     /* (non-Javadoc)
