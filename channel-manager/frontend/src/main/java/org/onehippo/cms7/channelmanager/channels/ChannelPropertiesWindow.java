@@ -103,10 +103,21 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
 
         @Override
         public String getDisplayValue(final String object) {
-            Properties resourcesPorps = channelStore.getChannelResourceValues(channel);
-            if (resourcesPorps != null) {
-                return resourcesPorps.getProperty(key + "/" + object);
+            try {
+                Properties resourcesPorps = channelStore.getChannelResourceValues(channel);
+                if (resourcesPorps != null) {
+                    return resourcesPorps.getProperty(key + "/" + object);
+                }
+            } catch (ChannelException ce) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Could not get display value of '" + object + "' for channel with id '" + channel.getId() + "'", ce);
+                } else {
+                    log.warn("Could not get display value of '{}' for channel with id '{}' - {}",
+                            new String[] {object, channel.getId(), ce.toString()});
+
+                }
             }
+
             return null;
         }
 

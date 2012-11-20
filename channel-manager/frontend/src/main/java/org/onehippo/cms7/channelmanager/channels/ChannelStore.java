@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -302,11 +303,24 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         // Custom channel property; translations are provided by the resource bundle of the custom ChannelInfo class
         Properties properties;
 
-        for (Channel channel : getChannels()) {
-            properties = getChannelResourceValues(channel);
-            String header = properties.getProperty(fieldName);
-            if (header != null) {
-                return header;
+        Channel channel = null;
+        try {
+            for (Iterator<Channel> channels = getChannels().iterator(); channels.hasNext();) {
+                channel = channels.next();
+                properties = getChannelResourceValues(channel);
+                String header = properties.getProperty(fieldName);
+                if (header != null) {
+                    return header;
+                }
+            }
+        } catch (ChannelException ce) {
+            final String channelId = (channel == null) ? "" : channel.getId();
+            if (log.isDebugEnabled()) {
+                log.warn("Could not get localized value of field '" + fieldName + "' for channel with id '" + channelId + "'", ce);
+            } else {
+                log.warn("Could not get localized value of field '{}' for channel with id '{}' - {}"
+                        , new String[] {fieldName, channelId, ce.toString()});
+
             }
         }
 
@@ -379,7 +393,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return channelService.getChannelPropertyDefinitions(channel.getId());
     }
 
-    public Properties getChannelResourceValues(Channel channel) {
+    public Properties getChannelResourceValues(Channel channel) throws ChannelException {
         ChannelService channelService = restProxyService.createRestProxy(ChannelService.class);
         return channelService.getChannelResourceValues(channel.getId(), Session.get().getLocale().toString());
     }
