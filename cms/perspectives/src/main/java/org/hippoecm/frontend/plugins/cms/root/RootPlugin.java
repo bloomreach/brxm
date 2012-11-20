@@ -18,11 +18,11 @@ package org.hippoecm.frontend.plugins.cms.root;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
 import org.hippoecm.frontend.js.GlobalJsResourceBehavior;
+import org.hippoecm.frontend.js.HippoFutureResourceBehavior;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.root.BrowserSpecificStylesheetsBehavior.Browser;
@@ -90,7 +90,9 @@ public class RootPlugin extends TabsPlugin {
         add(new ExtResourcesBehaviour());
         add(new ExtHippoThemeBehavior());
 
-        extWidgetRegistry = new ExtWidgetRegistry("extWidgetRegistry", getPluginContext());
+        add(new HippoFutureResourceBehavior());
+
+        extWidgetRegistry = new ExtWidgetRegistry(getPluginContext());
         add(extWidgetRegistry);
 
         addExtensionPoint("top");
@@ -101,16 +103,6 @@ public class RootPlugin extends TabsPlugin {
 
         get("tabs:panel-container").add(new UnitBehavior("center"));
         get("tabs:tabs-container").add(new UnitBehavior("left"));
-    }
-
-
-    @Override
-    public void renderHead(final HtmlHeaderContainer container) {
-        // Force the rendering of the Ext widget registry before other head contributions to ensure that the
-        // the configuration of Ext widgets is rendered and registered before other Ext objects are instantiated.
-        // This way Ext widgets are always accessible to normal Ext components.
-        extWidgetRegistry.renderHead(container);
-        super.renderHead(container);
     }
 
     @Override

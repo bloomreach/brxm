@@ -3,7 +3,7 @@ package org.hippoecm.frontend.extjs;
 import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.json.JSONObject;
-import org.wicketstuff.js.ext.ExtComponent;
+import org.wicketstuff.js.ext.ExtObservable;
 import org.wicketstuff.js.ext.util.ExtProperty;
 
 /**
@@ -93,7 +93,7 @@ import org.wicketstuff.js.ext.util.ExtProperty;
  * </pre>
  * </p>
  */
-public abstract class ExtWidget extends ExtComponent implements IPlugin {
+public abstract class ExtWidget extends ExtObservable implements IPlugin {
 
     private static final String EXT_WIDGET_REGISTRY_CLASS = "Hippo.ExtWidgets";
 
@@ -108,7 +108,6 @@ public abstract class ExtWidget extends ExtComponent implements IPlugin {
     private final IPluginContext context;
 
     public ExtWidget(final String xtype, final IPluginContext context) {
-        super("item");
         this.xtype = xtype;
         this.context = context;
     }
