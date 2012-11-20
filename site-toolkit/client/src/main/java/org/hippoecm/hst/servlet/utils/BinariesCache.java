@@ -113,19 +113,26 @@ public class BinariesCache {
         cache.put(element);
     }
 
+    /**
+     * @deprecated Use {@link #clearBlockingLock(String)} instead.
+     * @param page
+     */
     public void clearBlockingLock(BinaryPage page) {
-        if (log.isDebugEnabled()) {
-            log.debug("Clear lock for {}", page.getResourcePath());
-        }
-        CacheElement element = cache.createElement(page.getResourcePath(), null);
-        cache.put(element);
+        clearBlockingLock(page.getResourcePath());
     }
 
-    public void clearBlockingLock(String resourcePath) {
+    /**
+     * {@link net.sf.ehcache.constructs.blocking.BlockingCache#get(Object)} never releases its acquired lock
+     * when the method throws an exception or returns null
+     * until <code>put(new Element(key, null));</code> to release the lock acquired.
+     * Therefore, the caller code is responsible for calling this method to release the acquired lock.
+     * @param resourcePathKey
+     */
+    public void clearBlockingLock(String resourcePathKey) {
         if (log.isDebugEnabled()) {
-            log.debug("Clear lock for {}", resourcePath);
+            log.debug("Clear lock for {}", resourcePathKey);
         }
-        CacheElement element = cache.createElement(resourcePath, null);
+        CacheElement element = cache.createElement(resourcePathKey, null);
         cache.put(element);
     }
 
