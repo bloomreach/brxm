@@ -692,7 +692,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     createPropertiesWindow : function(mountId) {
         var width, window;
 
-        width = Ext.isDefined(this.variantsUuid) ? 470 : 400;
+        width = Ext.isDefined(this.variantsUuid) ? 530 : 400;
         window = new Hippo.ux.window.FloatingWindow({
             id: 'componentPropertiesWindow',
             title: this.resources['properties-window-default-title'],
