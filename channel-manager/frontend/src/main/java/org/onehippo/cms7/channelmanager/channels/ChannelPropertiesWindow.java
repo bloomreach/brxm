@@ -49,6 +49,7 @@ import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.rest.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.rest.beans.FieldGroupInfo;
+import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.onehippo.cms7.channelmanager.model.AbsoluteRelativePathModel;
@@ -60,10 +61,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtBoxComponent;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
+import org.wicketstuff.js.ext.data.ActionFailedException;
 import org.wicketstuff.js.ext.form.ExtFormPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtEventListener;
-import org.hippoecm.hst.rest.beans.HstPropertyDefinitionInfo;
 
 @ExtClass(ChannelPropertiesWindow.EXT_CLASS)
 public class ChannelPropertiesWindow extends ExtFormPanel {
@@ -201,13 +202,20 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         addEventListener(EVENT_SAVE_CHANNEL, new ExtEventListener() {
             @Override
             public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
-                save();
+                try {
+                    save();
+                } catch (ActionFailedException e) {
+                    target.appendJavascript("(function(instance) {Hippo.Msg.alert(instance.resources['channel-properties-editor-error'], instance.resources['could-not-save-changes'], function(id) {\n" +
+                            "                instance.pageContainer.refreshIframe();\n" +
+                            "            }, instance); })(Hippo.ChannelManager.TemplateComposer.Instance)");
+                }
+
                 channelStore.reload();
                 target.prependJavascript("Hippo.ChannelManager.TemplateComposer.Instance.refreshIframe();");
             }
         });
     }
-    
+
     private Component getWidget(IPluginContext context, Channel channel, HstPropertyDefinitionInfo propDefInfo, String key) {
         final HstValueType propType = propDefInfo.getValueType();
 
@@ -249,7 +257,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         return channelPropertiesContainerClass;
     }
 
-    private void save() {
+    private void save() throws ActionFailedException {
         if (channel == null) {
             return;
         }

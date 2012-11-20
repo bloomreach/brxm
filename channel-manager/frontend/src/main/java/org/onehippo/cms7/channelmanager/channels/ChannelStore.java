@@ -384,9 +384,14 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         return channelService.getChannelResourceValues(channel.getId(), Session.get().getLocale().toString());
     }
 
-    public void saveChannel(Channel channel) {
+    public void saveChannel(Channel channel) throws ActionFailedException {
         ChannelService channelService = restProxyService.createSecureRestProxy(ChannelService.class);
-        channelService.save(channel);
+
+        try {
+            channelService.save(channel);
+        } catch (ChannelException ce) {
+            throw createActionFailedException(ce, channel);
+        }
     }
 
     /**
