@@ -65,7 +65,9 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
             "/formdata",
             "/jcr:system",
             "/hippo:configuration/hippo:initialize",
-            "/hippo:configuration/hippo:modules/brokenlinks/hippo:moduleconfig/hippo:request"
+            "/hippo:configuration/hippo:modules/brokenlinks/hippo:moduleconfig/hippo:request",
+            "/hippo:configuration/hippo:update/hippo:queue",
+            "/hippo:configuration/hippo:udpate/hippo:history"
     };
 
     private final Label diff;
