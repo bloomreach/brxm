@@ -131,6 +131,8 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     @Override
     public Channel getChannel(String id) throws ChannelException {
         try {
+            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
+            // TODO - We should use a proper validation framework!
             validate();
             return channelManager.getChannelById(id);
         } catch (ResourceRequestValidationException rrve) {
@@ -169,10 +171,13 @@ public class ChannelsResource extends BaseResource implements ChannelService {
      * @see org.hippoecm.hst.rest.ChannelService#getChannelInfoClassInfo(String id)
      */
     @Override
-    public ChannelInfoClassInfo getChannelInfoClassInfo(String id) {
+    public ChannelInfoClassInfo getChannelInfoClassInfo(String id) throws ChannelException {
         ChannelInfoClassInfo channelInfoClassInfo = null;
 
         try {
+            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
+            // TODO - We should use a proper validation framework!
+            validate();
             Class<? extends ChannelInfo> channelInfoClass = channelManager.getChannelInfoClass(id);
 
             if (channelInfoClass != null) {
@@ -180,17 +185,28 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             }
 
             return channelInfoClassInfo;
+        } catch (ResourceRequestValidationException rrve) {
+            if (log.isDebugEnabled()) {
+                log.warn("Error while processing channels resource request of retrieving information of channel with id '" + id + "'", rrve);
+            } else {
+                log.warn("Error while processing channels resource request of retrieving information of channel with id,'{}' - {}", id
+                        ,  rrve.toString());
+
+            }
+
+            throw new ChannelException("Validation error while retrieving information of channel with id '" + id + "'."
+                    + " Details: " + rrve.getMessage()
+                    , rrve , ChannelException.Type.SERVER_ERROR);
+
         } catch (ChannelException ce) {
             if (log.isDebugEnabled()) {
                 log.warn("Failed to retrieve channel info class for channel with id '" + id + "'", ce);
             } else {
                 log.warn("Failed to retrieve channel info class for channel with id '{}' - {}", id, ce.toString());
             }
-        }
 
-        // Bad, JAX-RS and exception handling and mapping should be leveraged and standardized across
-        // HST, CMS and services!        
-        return null;
+            throw ce;
+        }
     }
 
     @Override

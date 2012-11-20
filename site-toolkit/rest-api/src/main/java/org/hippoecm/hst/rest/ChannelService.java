@@ -121,7 +121,7 @@ public interface ChannelService {
 	@GET
 	@Path("/{id}#infoClassInfo")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ChannelInfoClassInfo getChannelInfoClassInfo(@PathParam("id") String id);
+	public ChannelInfoClassInfo getChannelInfoClassInfo(@PathParam("id") String id) throws ChannelException;
 
     /**
      * Retrieve a {@link ResourceBundle} converted to {@link Properties} of {@link Channel} identified by an Id
