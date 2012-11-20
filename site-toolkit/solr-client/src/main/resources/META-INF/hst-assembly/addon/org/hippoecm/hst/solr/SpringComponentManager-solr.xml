@@ -16,14 +16,9 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-                           http://www.springframework.org/schema/lang http://www.springframework.org/schema/beans/spring-lang-3.0.xsd
-                           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <bean id="org.hippoecm.hst.solr.HippoSolrManager" class="org.hippoecm.hst.solr.HippoSolrManagerImpl" init-method="start"
-      destroy-method="stop">
-      <property name="solrUrl" value="http://localhost:8080/solr"/>
-      <property name="repository" ref="javax.jcr.Repository"/>
-      <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader"/>
+  <bean id="org.hippoecm.hst.solr.HippoSolrManager" class="org.hippoecm.hst.solr.HippoSolrManagerImpl">
+      <property name="solrUrl" value="${solr.url}"/>
     </bean>
 </beans>
