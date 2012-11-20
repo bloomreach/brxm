@@ -77,7 +77,7 @@ public interface ChannelService {
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-    public void save(Channel channel);
+    public void save(Channel channel) throws ChannelException;
 
 	/**
 	 * Persist a new {@link Channel} object instance based on {@link Blueprint} identified by an Id

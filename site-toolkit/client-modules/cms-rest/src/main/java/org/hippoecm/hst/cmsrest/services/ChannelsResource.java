@@ -56,7 +56,9 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 		        log.warn("Error while processing channels resource request - {}", rrve.toString());
 		    }
 
-            throw new ChannelException("Validation error while retrieving channels. Details: " + rrve.getMessage(), rrve, ChannelException.Type.SERVER_ERROR);
+            throw new ChannelException("Validation error while retrieving channels. Details: " + rrve.getMessage()
+                    , rrve, ChannelException.Type.SERVER_ERROR);
+
 		} catch (ChannelException ce) {
 		    log.warn("Error while retrieving channels - {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
 			throw ce;
@@ -67,12 +69,11 @@ public class ChannelsResource extends BaseResource implements ChannelService {
      * @see org.hippoecm.hst.rest.ChannelService#save(Channel channel)
      */
     @Override
-    public void save(Channel channel) {
+    public void save(Channel channel) throws ChannelException {
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-            // We should use a proper validation framework!
+            // TODO - We should use a proper validation framework!
             validate();
-            // This is only test data
             channelManager.save(channel);
         } catch (ResourceRequestValidationException rrve) {
             if (log.isDebugEnabled()) {
@@ -80,12 +81,14 @@ public class ChannelsResource extends BaseResource implements ChannelService {
             } else {
                 log.warn("Error while processing channels resource request for channel '{}' - {}", channel.getId(), rrve.toString());
             }
-            // This line of code is commented out intentionally. I want to know how exceptions are handled with HST REST services
-            // For now return empty list
-            // throw rrve;
-            // I know returning 'null' is not clean at all but thats *only* for now!
+
+            throw new ChannelException("Validation error while saving channel with id '" + channel.getId() + "'."
+                    + " Details: " + rrve.getMessage()
+                    , rrve, ChannelException.Type.SERVER_ERROR);
+
         } catch (ChannelException ce) {
             log.warn("Error while saving a channel - Channel: {} - {} : {}", new Object[] {channel, ce.getClass().getName(), ce.toString()});
+            throw ce;
         }
     }
 
