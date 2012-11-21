@@ -95,10 +95,10 @@ public class RememberMeLoginPlugin extends LoginPlugin {
         too safe to begin with.
     */
     private static final String ALGORITHM = "MD5";
+    private static final String EDITION_PROPERTY = "edition";
 
     private final String REMEMBERME_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.REMEMBERME_COOKIE_BASE_NAME);
     private final String HIPPO_AUTO_LOGIN_COOKIE_NAME = WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME);
-    private final String EDITION;
 
     public RememberMeLoginPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -108,18 +108,15 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             add(new BrowserCheckBehavior(supported));
         }
 
-        EDITION = config.getString("edition", "community").toLowerCase();
-        // Regardless which edition we use add the login_ce.css
-        add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(RememberMeLoginPlugin.class, "login_ce.css")));
-        if (!EDITION.equalsIgnoreCase("community")) {
-            // In case of using a different edition than the community one add extra CSS rules to show the required styling
-            add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(RememberMeLoginPlugin.class, "login_ee.css")));
-        }
-    }
+        add(CSSPackageResource.getHeaderContribution(new CompressedResourceReference(RememberMeLoginPlugin.class, "login.css")));
 
-    @Override    
-    public String getVariation() {
-        return EDITION.equalsIgnoreCase("community") ? "" : "ee";
+        if(config.containsKey(EDITION_PROPERTY)) {
+            String edition = config.getString(EDITION_PROPERTY);
+            // In case of using a different edition, add extra CSS rules to show the required styling
+            add(CSSPackageResource.getHeaderContribution(
+                    new CompressedResourceReference(RememberMeLoginPlugin.class, "login_" + edition + ".css")));
+        }
+
     }
 
     // Determine whether to try to auto-login or not
