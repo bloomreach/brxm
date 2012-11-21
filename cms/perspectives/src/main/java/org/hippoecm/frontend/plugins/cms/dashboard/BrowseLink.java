@@ -34,11 +34,11 @@ public class BrowseLink extends Panel {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(BrowseLink.class);
+    private static final Logger log = LoggerFactory.getLogger(BrowseLink.class);
 
     public BrowseLink(final IPluginContext context, final IPluginConfig config, String id,
-            IModel<BrowseLinkTarget> model, IModel<String> labelModel) {
-        super(id, model);
+            final BrowseLinkTarget browseLinkTarget, IModel<String> labelModel) {
+        super(id);
 
         AjaxLink<Void> link = new AjaxLink<Void>("link") {
             private static final long serialVersionUID = 1L;
@@ -46,7 +46,7 @@ public class BrowseLink extends Panel {
             @SuppressWarnings("unchecked")
             @Override
             public void onClick(AjaxRequestTarget target) {
-                final JcrNodeModel nodeModel = ((BrowseLinkTarget) BrowseLink.this.getDefaultModelObject()).getBrowseModel();
+                final JcrNodeModel nodeModel = browseLinkTarget.getBrowseModel();
                 String browserId = config.getString("browser.id");
                 IBrowseService browseService = context.getService(browserId, IBrowseService.class);
                 if (browseService != null) {
@@ -65,7 +65,7 @@ public class BrowseLink extends Panel {
 
             @Override
             public boolean isEnabled() {
-                return ((BrowseLinkTarget) BrowseLink.this.getDefaultModelObject()).getBrowseModel() != null;
+                return browseLinkTarget.getBrowseModel() != null;
             }
         };
         add(link);
@@ -74,7 +74,8 @@ public class BrowseLink extends Panel {
         linkLabel.setEscapeModelStrings(false);
         link.add(linkLabel);
 
-        link.add(new AttributeModifier("title", true, new PropertyModel(getDefaultModel(), "displayPath")));
+        link.add(new AttributeModifier("title", true, new PropertyModel(browseLinkTarget, "displayPath")));
     }
+
 
 }

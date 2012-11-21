@@ -30,7 +30,6 @@ import org.apache.wicket.model.IComponentAssignedModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IWrapModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +48,14 @@ public class EventModel implements IComponentAssignedModel<String> {
     private static final Logger log = LoggerFactory.getLogger(EventModel.class);
 
     private DateFormat dateFormat;
-    private String time;
+    private String timeKey;
+    private Long time;
     private String method;
     private String user;
     private IModel<String> nameModel;
 
     public EventModel(JcrNodeModel eventNode) {
-        this(eventNode, null, DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT));
+        this(eventNode, null, DateFormat.getDateInstance(DateFormat.SHORT));
     }
 
     public EventModel(JcrNodeModel eventNode, IModel<String> nameModel, DateFormat dateFormat) {
@@ -67,7 +67,8 @@ public class EventModel implements IComponentAssignedModel<String> {
 
             this.dateFormat = dateFormat;
 
-            this.time = relativeTime(node.getProperty("hippolog:timestamp").getLong());
+            this.time = node.getProperty("hippolog:timestamp").getLong();
+            this.timeKey = getRelativeTimeKey(time);
 
             // add eventClass to resolve workflow resource bundle
             this.method = node.getProperty("hippolog:eventMethod").getString() + ",class="
@@ -101,7 +102,7 @@ public class EventModel implements IComponentAssignedModel<String> {
         }
     }
 
-    private String relativeTime(final long then) {
+    private String getRelativeTimeKey(final long then) {
 
         final long now = System.currentTimeMillis();
 
@@ -153,7 +154,7 @@ public class EventModel implements IComponentAssignedModel<String> {
             return "yesterday";
         }
 
-        return dateFormat.format(new Date(then));
+        return null;
     }
 
     private class AssignmentWrapper implements IWrapModel<String> {
@@ -173,7 +174,6 @@ public class EventModel implements IComponentAssignedModel<String> {
         @Override
         public String getObject() {
             try {
-                final String timeString = new StringResourceModel(time, component, null).getString();
                 StringResourceModel operationModel;
                 if (nameModel != null) {
                     String name = nameModel.getObject();
@@ -187,10 +187,17 @@ public class EventModel implements IComponentAssignedModel<String> {
                 } else {
                     operationModel = new StringResourceModel(method, component, null, new Object[]{user});
                 }
-                return timeString + operationModel.getString();
+                return getTimeString() + operationModel.getString();
             } catch (MissingResourceException mre) {
                 return "Warning: could not translate Workflow operation " + method;
             }
+        }
+
+        private String getTimeString() {
+            if (timeKey != null) {
+                return new StringResourceModel(timeKey, component, null).getString();
+            }
+            return new StringResourceModel("on", component, null, new Object[] { dateFormat.format(new Date(time)) }).getString();
         }
 
         @Override

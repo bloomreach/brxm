@@ -86,8 +86,8 @@ public class ReportPlugin extends Plugin {
         Node node = null;
         try {
             if (reportId != null) {
-                Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
-                node = session.getNodeByUUID(reportId);
+                Session session = UserSession.get().getJcrSession();
+                node = session.getNodeByIdentifier(reportId);
                 if (!node.isNodeType(ReportingNodeTypes.NT_REPORT)) {
                     node = null;
                 }

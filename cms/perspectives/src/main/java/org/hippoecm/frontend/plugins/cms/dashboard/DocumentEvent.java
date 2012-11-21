@@ -52,74 +52,73 @@ public class DocumentEvent {
         this.node = node;
         try {
             Session session = node.getSession();
-
-            // Best effort algoritm to create a 'browse' link to a document.
-
-            sourceVariant = null;
-            sourceVariantExists = false;
-            if (node.hasProperty("hippolog:eventDocument")) {
-                sourceVariant = node.getProperty("hippolog:eventDocument").getString();
-                sourceVariantExists = session.itemExists(sourceVariant);
-            }
-
-            targetVariant = null;
-            targetVariantExists = false;
-            if (node.hasProperty("hippolog:eventReturnValue")) {
-                targetVariant = node.getProperty("hippolog:eventReturnValue").getString();
-                Matcher matcher = pattern.matcher(targetVariant);
-                if (matcher.matches()) {
-                    for (int i = 1; i <= matcher.groupCount(); i++) {
-                        String patternElement = matcher.group(i);
-                        if (patternElement.startsWith("/")) {
-                            targetVariant = patternElement;
-                        } else {
-                            String path = uuid2Path(patternElement);
-                            if (path != null && !path.isEmpty()) {
-                                if (targetVariantExists = session.itemExists(path)) {
-                                    targetVariant = path;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                } else if (targetVariant.startsWith("/")) {
-                    try {
-                        targetVariantExists = session.itemExists(targetVariant);
-                    } catch (RepositoryException e) {
-                        targetVariantExists = false;
-                    }
-                } else {
-                    targetVariant = null;
-                    targetVariantExists = false;
-                }
-
-                if (targetVariantExists) {
-                    Node target = session.getNode(targetVariant);
-                    if (target instanceof Version) {
-                        Version version = (Version) target;
-                        VersionHistory containingHistory = version.getContainingHistory();
-                        String versionableIdentifier = containingHistory.getVersionableUUID();
-                        String path = uuid2Path(versionableIdentifier);
-                        if (path != null && !path.isEmpty()) {
-                            if (targetVariantExists = session.itemExists(path)) {
-                                targetVariant = path;
-                            }
-                        } else {
-                            targetVariantExists = false;
-                            targetVariant = null;
-                        }
-                    }
-                }
-            } else if (sourceVariantExists && node.getProperty("hippolog:eventMethod").getString().equals("delete")
-                    && node.hasProperty("hippolog:eventArguments")
-                    && node.getProperty("hippolog:eventArguments").getValues().length > 0) {
-                targetVariant = sourceVariant + "/"
-                        + node.getProperty("hippolog:eventArguments").getValues()[0].getString();
-                targetVariantExists = false;
-            }
+            initSourceVariant(node, session);
+            initTargetVariant(node, session);
         } catch (RepositoryException e) {
             log.error(e.getMessage(), e);
         }
+    }
+
+    private void initTargetVariant(final Node node, final Session session) throws RepositoryException {
+        targetVariant = JcrUtils.getStringProperty(node, "hippolog:eventReturnValue", null);
+        targetVariantExists = false;
+        if (targetVariant != null) {
+            Matcher matcher = pattern.matcher(targetVariant);
+            if (matcher.matches()) {
+                for (int i = 1; i <= matcher.groupCount(); i++) {
+                    String patternElement = matcher.group(i);
+                    if (patternElement.startsWith("/")) {
+                        targetVariant = patternElement;
+                    } else {
+                        String path = uuid2Path(patternElement);
+                        if (path != null && !path.isEmpty()) {
+                            if (targetVariantExists = session.itemExists(path)) {
+                                targetVariant = path;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else if (targetVariant.startsWith("/")) {
+                try {
+                    targetVariantExists = session.itemExists(targetVariant);
+                } catch (RepositoryException e) {
+                    targetVariantExists = false;
+                }
+            } else {
+                targetVariant = null;
+                targetVariantExists = false;
+            }
+
+            if (targetVariantExists) {
+                Node target = session.getNode(targetVariant);
+                if (target instanceof Version) {
+                    Version version = (Version) target;
+                    VersionHistory containingHistory = version.getContainingHistory();
+                    String versionableIdentifier = containingHistory.getVersionableIdentifier();
+                    String path = uuid2Path(versionableIdentifier);
+                    if (path != null && !path.isEmpty()) {
+                        if (targetVariantExists = session.itemExists(path)) {
+                            targetVariant = path;
+                        }
+                    } else {
+                        targetVariantExists = false;
+                        targetVariant = null;
+                    }
+                }
+            }
+        } else if (sourceVariantExists && node.getProperty("hippolog:eventMethod").getString().equals("delete")
+                && node.hasProperty("hippolog:eventArguments")
+                && node.getProperty("hippolog:eventArguments").getValues().length > 0) {
+            targetVariant = sourceVariant + "/"
+                    + node.getProperty("hippolog:eventArguments").getValues()[0].getString();
+            targetVariantExists = false;
+        }
+    }
+
+    private void initSourceVariant(final Node node, final Session session) throws RepositoryException {
+        sourceVariant = JcrUtils.getStringProperty(node, "hippolog:eventDocument", null);
+        sourceVariantExists = sourceVariant != null && session.itemExists(sourceVariant);
     }
 
     public String getMethod() {
@@ -131,7 +130,7 @@ public class DocumentEvent {
         }
     }
 
-    public String getArgument(int index) {
+    private String getArgument(int index) {
         try {
             if (node.hasProperty("hippolog:eventArguments")
                     && node.getProperty("hippolog:eventArguments").getValues().length > index) {

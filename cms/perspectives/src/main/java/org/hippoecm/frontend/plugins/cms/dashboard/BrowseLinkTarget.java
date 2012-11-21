@@ -20,17 +20,19 @@ import java.util.Iterator;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservationContext;
 import org.hippoecm.frontend.model.ocm.JcrObject;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,21 +40,20 @@ public class BrowseLinkTarget extends JcrObject {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(BrowseLinkTarget.class);
+    private static final Logger log = LoggerFactory.getLogger(BrowseLinkTarget.class);
 
     public BrowseLinkTarget(String path) {
-        super(resolvePath(path));
+        super(resolveModel(path));
     }
 
     public String getName() {
-        return (String) new NodeTranslator(getNodeModel()).getNodeName().getObject();
+        return new NodeTranslator(getNodeModel()).getNodeName().getObject();
     }
 
     public String getDisplayPath() {
         String path;
         try {
-            Node node = getNode();
-            path = node.getPath();
+            path = getNode().getPath();
         } catch (ItemNotFoundException e) {
             path = getNodeModel().getItemModel().getPath();
         } catch (RepositoryException e) {
@@ -80,37 +81,31 @@ public class BrowseLinkTarget extends JcrObject {
 
     @Override
     protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
-        // not implemented
     }
 
-    static JcrNodeModel resolvePath(String docPath) {
-        JcrNodeModel model = new JcrNodeModel(docPath);
-        Node node = model.getNode();
-        if (node != null) {
-            try {
-                while (!node.isNodeType(HippoNodeType.NT_HANDLE) && !node.isNodeType("hippostd:folder")
-                        && !node.isNodeType("nt:version") && !node.getPath().equals("/")) {
-                    node = node.getParent();
-                }
-                if (node.isNodeType("nt:version")) {
-                    Node frozen = node.getNode("jcr:frozenNode");
-                    Node result = node.getSession().getRootNode();
-                    // use hippo:paths to find handle; then use the matching variant 
-                    if (frozen.hasProperty(HippoNodeType.HIPPO_PATHS)) {
-                        Value[] paths = frozen.getProperty(HippoNodeType.HIPPO_PATHS).getValues();
-                        if (paths.length > 1) {
-                            String handleUuid = paths[1].getString();
-                            result = node.getSession().getNodeByUUID(handleUuid);
-                        }
-                    }
-                    node = result;
-                }
+    private static IModel<Node> resolveModel(String docPath) {
+        try {
+            Node node = JcrUtils.getNodeIfExists(docPath, UserSession.get().getJcrSession());
+            if (node != null) {
+                node = findFirstBrowsableAncestor(node);
                 return new JcrNodeModel(node);
-            } catch (RepositoryException e) {
-                log.error(e.getMessage(), e);
             }
+        } catch (RepositoryException e) {
+            log.error("Failed to resolve browse link target model", e);
         }
-        return model;
+
+        return new JcrNodeModel(docPath);
+    }
+
+    private static Node findFirstBrowsableAncestor(Node node) throws RepositoryException {
+        while (!isBrowsableNode(node)) {
+            node = node.getParent();
+        }
+        return node;
+    }
+
+    private static boolean isBrowsableNode(final Node node) throws RepositoryException {
+        return node.isNodeType(HippoNodeType.NT_HANDLE) || node.isNodeType("hippostd:folder") || node.getPath().equals("/");
     }
 
 }

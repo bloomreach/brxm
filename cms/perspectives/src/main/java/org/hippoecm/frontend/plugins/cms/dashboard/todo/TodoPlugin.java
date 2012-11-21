@@ -28,13 +28,8 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.event.IEvent;
-import org.hippoecm.frontend.model.event.IObservationContext;
-import org.hippoecm.frontend.model.ocm.JcrObject;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLink;
@@ -47,7 +42,7 @@ public class TodoPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(TodoPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(TodoPlugin.class);
 
     public TodoPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -95,51 +90,40 @@ public class TodoPlugin extends RenderPlugin {
                 log.warn("unable to find path", e);
             }
             BrowseLinkTarget target = new BrowseLinkTarget(path);
-            item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", new Model(target),
-                    new PropertyModel(target, "name")));
+            item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", target,
+                    new PropertyModel<String>(target, "name")));
 
-            Request request = new Request((JcrNodeModel) item.getModel(), TodoPlugin.this);
+            Request request = new Request((Node)item.getModelObject(), this);
             item.add(new Label("request-description", new PropertyModel(request, "localType")));
             item.add(new Label("request-owner", new PropertyModel(request, "username")));
         }
     }
 
-    static class Request extends JcrObject {
-        private static final long serialVersionUID = 1L;
+    private static class Request {
 
-        private Component container;
+        private final Node node;
+        private final Component container;
 
-        Request(JcrNodeModel model, Component container) {
-            super(model);
+        private Request(Node node, Component container) {
+            this.node = node;
             this.container = container;
-        }
-
-        public String getType() {
-            try {
-                return getNode().getProperty("hippostdpubwf:type").getString();
-            } catch (RepositoryException e) {
-            }
-            return null;
         }
 
         public String getLocalType() {
             try {
-                return new StringResourceModel(getNode().getProperty("hippostdpubwf:type").getString(), container, null).getString();
-            } catch (RepositoryException e) {
+                return new StringResourceModel(node.getProperty("hippostdpubwf:type").getString(), container, null).getString();
+            } catch (RepositoryException ignored) {
             }
             return null;
         }
 
         public String getUsername() {
             try {
-                return getNode().getProperty("hippostdpubwf:username").getString();
-            } catch (RepositoryException e) {
+                return node.getProperty("hippostdpubwf:username").getString();
+            } catch (RepositoryException ignored) {
             }
             return null;
         }
 
-        @Override
-        protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
-        }
     }
 }

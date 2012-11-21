@@ -27,7 +27,6 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -57,39 +56,24 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         redraw();
     }
 
-    private class CurrentActivityView extends RefreshingView<Node> {
+    private class CurrentActivityView extends RefreshingView {
         private static final long serialVersionUID = 1L;
 
         private final DateFormat dateFormat;
 
         public CurrentActivityView(String id, IModel model) {
             super(id, model);
-            dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, getSession().getLocale());
+            dateFormat = DateFormat.getDateInstance(DateFormat.SHORT, getSession().getLocale());
         }
 
         @Override
-        protected Iterator<IModel<Node>> getItemModels() {
-            final IDataProvider<Node> dataProvider = (IDataProvider<Node>) getDefaultModel();
-            final Iterator<? extends Node> iter = dataProvider.iterator(0, 0);
-            return new Iterator<IModel<Node>>() {
-
-                public boolean hasNext() {
-                    return iter.hasNext();
-                }
-
-                public IModel<Node> next() {
-                    return dataProvider.model(iter.next());
-                }
-
-                public void remove() {
-                    iter.remove();
-                }
-
-            };
+        protected Iterator getItemModels() {
+            final IDataProvider dataProvider = (IDataProvider) getDefaultModel();
+            return dataProvider.iterator(0, 0);
         }
 
         @Override
-        protected void populateItem(final Item<Node> item) {
+        protected void populateItem(final Item item) {
             // Add even/odd row css styling
             item.add(new AttributeModifier("class", true, new AbstractReadOnlyModel() {
                 private static final long serialVersionUID = 1L;
@@ -100,17 +84,16 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                 }
             }));
 
-            final DocumentEvent documentEvent = new DocumentEvent(item.getModelObject());
+            final DocumentEvent documentEvent = new DocumentEvent((Node) item.getModelObject());
             final IModel<String> nameModel = documentEvent.getName();
+            final EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel, dateFormat);
             String path = documentEvent.getDocumentPath();
             if (path != null) {
                 path = fixPathForRequests(path);
-                EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel, dateFormat);
                 BrowseLinkTarget target = new BrowseLinkTarget(path);
-                BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", new Model<BrowseLinkTarget>(target), label);
+                BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", target, label);
                 item.add(link);
             } else {
-                EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel, dateFormat);
                 Label entryLabel = new Label("entry", label);
                 entryLabel.setEscapeModelStrings(false);
                 item.add(entryLabel);

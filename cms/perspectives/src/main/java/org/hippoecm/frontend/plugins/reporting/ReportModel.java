@@ -51,7 +51,7 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
 
     public static final int UNKNOWN_SIZE = -1;
 
-    static final Logger log = LoggerFactory.getLogger(ReportModel.class);
+    private static final Logger log = LoggerFactory.getLogger(ReportModel.class);
 
     private JcrFrontendListener listener;
     private IObservationContext obContext;
@@ -192,11 +192,11 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof ReportModel == false) {
-            return false;
-        }
         if (this == object) {
             return true;
+        }
+        if (!(object instanceof ReportModel)) {
+            return false;
         }
         ReportModel reportModel = (ReportModel) object;
         return new EqualsBuilder().append(nodeModel, reportModel.nodeModel).isEquals();
