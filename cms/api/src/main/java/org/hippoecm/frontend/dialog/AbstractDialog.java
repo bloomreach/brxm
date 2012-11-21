@@ -240,7 +240,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         container = new Container(IDialogService.DIALOG_WICKET_ID);
         container.add(this);
 
-        feedback = new ExceptionFeedbackPanel("feedback");
+        feedback = newFeedbackPanel("feedback");
         feedback.setOutputMarkupId(true);
         add(feedback);
 
