@@ -52,7 +52,6 @@
         <property name="cacheName" value="binariesCache" />
         <!-- time to live in seconds. default 1 day -->
         <property name="timeToLive" value="86400" />
-        <property name="blocking" value="true" />
       </bean>
     </constructor-arg>
     <property name="statisticsEnabled" value="${default.binaries.cache.statistics.enabled}"/>
@@ -65,7 +64,6 @@
         <property name="maxElementsInMemory" value="1000"/>
         <!-- time to live in seconds. default 1 hour -->
         <property name="timeToLive" value="3600" />
-        <property name="blocking" value="true" />
       </bean>
     </constructor-arg>
     <property name="statisticsEnabled" value="${default.binaries.cache.statistics.enabled}"/>
