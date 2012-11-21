@@ -221,10 +221,6 @@ public class PageCachingValve extends AbstractValve {
                     return pageCache.createUncacheableElement(keyPage, pageInfo);
                 }
             }
-
-            private CacheElement createEmptyElement(Object key) {
-                return pageCache.createElement(key, null);
-            }
         });
         return (PageInfo) element.getContent();
     }
