@@ -202,7 +202,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
 
     @Override
     public boolean equals(Object object) {
-        if (object instanceof JcrTreeNode == false) {
+        if (!(object instanceof JcrTreeNode)) {
             return false;
         }
         if (this == object) {
