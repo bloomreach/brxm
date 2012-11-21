@@ -118,7 +118,7 @@
     <wicket-extjs.version>0.16-SNAPSHOT</wicket-extjs.version>
     <yui.sources.version>1.01.10</yui.sources.version>
     <nekohtml.version>1.9.13</nekohtml.version>
-    <cxf.version>2.4.0</cxf.version>
+    <cxf.version>2.6.3</cxf.version>
     <jackson.version>1.9.5</jackson.version>
     <dom4j.version>1.6.1</dom4j.version>
     <httpclient.version>4.1.1</httpclient.version>
