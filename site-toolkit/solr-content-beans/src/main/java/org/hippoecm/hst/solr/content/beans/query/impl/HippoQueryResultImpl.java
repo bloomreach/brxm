@@ -18,10 +18,8 @@ package org.hippoecm.hst.solr.content.beans.query.impl;
 import java.util.List;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocumentList;
-import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
-import org.hippoecm.hst.solr.HippoSolrManager;
+import org.hippoecm.hst.solr.HippoSolrClient;
 import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
 import org.hippoecm.hst.solr.content.beans.query.HitIterator;
@@ -31,15 +29,15 @@ public class HippoQueryResultImpl implements HippoQueryResult {
     private final QueryResponse queryResponse;
     private final DocumentObjectBinder binder;
 
-    // HippoSolrManager and ContentBeanBinder are not serializable hence transient
-    private final transient HippoSolrManager manager;
+    // HippoSolrClient and ContentBeanBinder are not serializable hence transient
+    private final transient HippoSolrClient client;
     private transient List<ContentBeanBinder> contentBeanBinders;
 
     public HippoQueryResultImpl(final QueryResponse queryResponse, final DocumentObjectBinder binder,
-                                final HippoSolrManager manager) {
+                                final HippoSolrClient client) {
         this.queryResponse = queryResponse;
         this.binder = binder;
-        this.manager = manager;
+        this.client = client;
     }
 
 
@@ -62,12 +60,12 @@ public class HippoQueryResultImpl implements HippoQueryResult {
     }
 
     @Override
-    public void bindHits() {
-        this.contentBeanBinders = manager.getContentBeanBinders();
+    public void setContentBeanBinders() {
+        this.contentBeanBinders = client.getContentBeanBinders();
     }
 
     @Override
-    public void bindHits(final List<ContentBeanBinder> binders) {
+    public void setContentBeanBinders(final List<ContentBeanBinder> binders) {
         this.contentBeanBinders = binders;
     }
 

@@ -16,8 +16,10 @@
 package org.hippoecm.hst.solr.beans;
 
 
+import org.hippoecm.hst.content.beans.index.Indexable;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
+@Indexable
 public class TestBaseContentBean implements IdentifiableContentBean {
     
     private String identifier;

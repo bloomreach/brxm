@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.Indexable;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetChildNavigationBean;
@@ -30,6 +31,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Indexable(ignore = true)
 @Node(jcrType="hippofacnav:facetnavigation")
 public class HippoFacetNavigation extends HippoFolder implements HippoFacetNavigationBean {
     

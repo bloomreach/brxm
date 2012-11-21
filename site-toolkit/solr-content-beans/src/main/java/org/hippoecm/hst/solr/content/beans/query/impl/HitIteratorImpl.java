@@ -63,7 +63,7 @@ public class HitIteratorImpl implements HitIterator {
     public void skip(int skipNum) {
         position += skipNum;
         if (position >= getSize()) {
-            position = getSize() - 1;
+            throw new NoSuchElementException("No more element at position " + position);
         }
     }
 

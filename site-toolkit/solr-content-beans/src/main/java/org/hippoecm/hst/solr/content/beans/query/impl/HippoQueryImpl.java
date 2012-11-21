@@ -23,9 +23,8 @@ import java.util.List;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocumentList;
 import org.hippoecm.hst.solr.DocumentObjectBinder;
-import org.hippoecm.hst.solr.HippoSolrManager;
+import org.hippoecm.hst.solr.HippoSolrClient;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
 import org.slf4j.LoggerFactory;
@@ -34,13 +33,13 @@ public class HippoQueryImpl implements HippoQuery {
     
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HippoQueryImpl.class);
 
-    private HippoSolrManager manager;
+    private HippoSolrClient client;
 
     private SolrQuery solrQuery;
 
 
-    public HippoQueryImpl(HippoSolrManager manager, String query) {
-        this.manager = manager;
+    public HippoQueryImpl(HippoSolrClient client, String query) {
+        this.client = client;
         this.solrQuery = new SolrQuery();
         if (query == null) {
             solrQuery.setQuery("*:*");
@@ -109,7 +108,7 @@ public class HippoQueryImpl implements HippoQuery {
         }
 
         long start = System.currentTimeMillis();
-        QueryResponse rsp = manager.getSolrServer().query(solrQuery);
+        QueryResponse rsp = client.getSolrServer().query(solrQuery);
 
         try {
             log.info("Execution took: '{}' ms. SOLR query = '{}'", (System.currentTimeMillis() - start) , URLDecoder.decode(solrQuery.toString(), "UTF-8"));
@@ -117,7 +116,7 @@ public class HippoQueryImpl implements HippoQuery {
             new SolrServerException(e);
         }
 
-        return new HippoQueryResultImpl(rsp, new DocumentObjectBinder(), manager);
+        return new HippoQueryResultImpl(rsp, new DocumentObjectBinder(), client);
     }
 
 
@@ -160,7 +159,7 @@ public class HippoQueryImpl implements HippoQuery {
         for (String scope : scopes) {
             log.debug("Add scope to search below '{}'", scope);
             // escape chars like ':'
-            String escapedScope = manager.getQueryParser().escape(scope);
+            String escapedScope = client.getQueryParser().escape(scope);
             if (scopeFilterQuery.length() == 0) {
                 scopeFilterQuery.append(fqField).append(":").append(escapedScope);
             } else {

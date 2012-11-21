@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.Indexable;
 
 /**
  * This is a useful bean for finding available translations of one and the same bean (folder or document). Because there is already also 
@@ -28,6 +29,7 @@ import org.hippoecm.hst.content.beans.Node;
  * that might be unexpected wrt to its backing primary node type name, namely  'hippotranslation:translations'
  *
  */
+@Indexable(ignore = true)
 @Node(jcrType="hippotranslation:translations")
 public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem implements HippoAvailableTranslationsBean<K> {
 

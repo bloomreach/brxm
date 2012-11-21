@@ -19,8 +19,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocumentList;
-import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 
 /**
@@ -46,8 +44,8 @@ public interface HippoQueryResult extends Serializable {
 
     /**
      * <p>
-     *  binds the IdentifiableContentBean's in the {@link Hit}s to their {@link org.hippoecm.hst.solr.content.beans.ContentBeanBinder
-     *  if there is a binder for the hit. The default available {@link org.hippoecm.hst.solr.HippoSolrManager#getContentBeanBinders()}
+     *  sets the binders for the IdentifiableContentBean's in the {@link Hit}s to their {@link org.hippoecm.hst.solr.content.beans.ContentBeanBinder
+     *  if there is a binder for the hit. The default available {@link org.hippoecm.hst.solr.HippoSolrClient#getContentBeanBinders()}
      *  are used as binders.
      * </p>
      * <p>
@@ -59,14 +57,14 @@ public interface HippoQueryResult extends Serializable {
      *     Thus, if you can use the search result without binders, this will be always faster
      * </p>
      */
-    void bindHits();
+    void setContentBeanBinders();
 
     /**
-     * See {@link #bindHits()} only now, the <code>binders</code> in the argument are used instead of the 
-     * default binders from the {@link org.hippoecm.hst.solr.HippoSolrManager}
-     * @see #bindHits() 
+     * See {@link #setContentBeanBinders} only now, the <code>binders</code> in the argument are used instead of the
+     * default binders from the {@link org.hippoecm.hst.solr.HippoSolrClient}
+     * @see #setContentBeanBinders
      * @param binders the <code>binders</code> to use for binding the hits
      */
-    void bindHits(List<ContentBeanBinder> binders);
+    void setContentBeanBinders(List<ContentBeanBinder> binders);
 
 }

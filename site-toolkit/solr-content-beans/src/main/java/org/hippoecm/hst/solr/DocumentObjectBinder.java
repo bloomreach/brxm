@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +41,8 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.util.DateUtil;
-import org.hippoecm.hst.content.beans.index.IgnoreForCompoundBean;
 import org.hippoecm.hst.content.beans.index.IndexField;
+import org.hippoecm.hst.content.beans.index.Indexable;
 import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
@@ -54,6 +55,8 @@ import org.slf4j.LoggerFactory;
 public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.DocumentObjectBinder {
 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(DocumentObjectBinder.class);
+
+    static final String NOOP_EMPTY_DOC_ID = "noop_empty_doc_id";
 
     private final Map<Class, List<DocField>> infocache = new ConcurrentHashMap<Class, List<DocField>>();
     private final Map<Class, Map<String,DocField>> infocacheMap = new ConcurrentHashMap<Class, Map<String, DocField>>();
@@ -153,6 +156,11 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                     " is missing.");
         }
 
+        if (NOOP_EMPTY_DOC_ID.equals(doc.getFieldValue("id"))) {
+            doc.setField(HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME, obj.getClass().getName());
+            return doc;
+        }
+
         // default field name we always add:
         doc.setField(HIPPO_CONTENT_BEAN_FQN_CLAZZ_NAME, obj.getClass().getName());
         setClassHierarchyField(doc, obj.getClass());
@@ -197,6 +205,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         return doc;
     }
 
+
     /**
      * This method recursively creates a flattened Solr input document from a
      * possibly hierarchical IdentifiableContentBean (with sub beans in it) object
@@ -206,14 +215,18 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
     private SolrInputDocument createSolrInputDocument(final Object obj, boolean isCompound) {
         List<DocField> fields = getDocFields(obj.getClass());
         if (fields.isEmpty()) {
-            throw new IllegalArgumentException("class: " + obj.getClass() + " does not define any indexable fields.");
+            SolrInputDocument empty =  new SolrInputDocument();
+            if (!isCompound) {
+               empty.addField("id", NOOP_EMPTY_DOC_ID);
+            }
+            return empty;
         }
 
         SolrInputDocument doc = new SolrInputDocument();
         for (DocField field : fields) {
-            if (isCompound && field.ignoreForCompoundBean) {
+            if (isCompound && field.ignoreInCompound) {
                 // we are indexing a compound bean, that has indication for the current
-                // DocField that is should ignore the field for indexing the compound
+                // DocField that it should ignore the field for indexing the compound
                 continue;
             }
             Object value = field.get(obj);
@@ -286,6 +299,10 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                                       final Class<? extends Object> clazz, final boolean multiValued) {
 
         for (String fieldName : compound.getFieldNames()) {
+            if ("id".equals(fieldName)) {
+                // ignore id from compound
+                continue;
+            }
             Collection<Object> values = compound.getFieldValues(fieldName);
 
             // check whether fieldName OWN its own extension ( _txt, _dt, etc)
@@ -350,6 +367,14 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
     }
 
     private List<DocField> collectInfo(Class clazz) {
+        if (clazz.isAnnotationPresent(Indexable.class)) {
+            final Indexable indexable = (Indexable) clazz.getAnnotation(Indexable.class);
+            if (indexable.ignore()) {
+                log.debug("Class '{}' is marked to not be indexed", clazz.getName());
+                return Collections.emptyList();
+            }
+        }
+
         List<DocField> fields = new ArrayList<DocField>();
         // SEARCH for public getter annotated with IndexField
         for (Method method : clazz.getMethods()) {
@@ -358,12 +383,8 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
                 if (Modifier.isPublic(method.getModifiers())) {
                     // check whether there is somewhere in the class hierarchy also for the method
                     // an indication that it should be ignored for compound beans
-                    boolean ignoreForCompoundBean =  false;
-                    if (doGetAnnotatedMethod(method, IgnoreForCompoundBean.class) != null) {
-                        // there is an annotation that indicates that compound beans should ignore the method for indexing
-                        ignoreForCompoundBean = true;
-                    }
-                    fields.add(new DocField(annotatedIndexFieldMethod, ignoreForCompoundBean));
+                    final IndexField indexField = annotatedIndexFieldMethod.getAnnotation(IndexField.class);
+                    fields.add(new DocField(annotatedIndexFieldMethod, indexField.ignoreInCompound()));
                 } else {
                     log.warn("Skipping member '{}' which does have an 'IndexField' annotation but it is not accessible.", method.toString());
                 }
@@ -488,7 +509,7 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         private Method getter;
         private Method setter;
         private Class type;
-        private boolean ignoreForCompoundBean = false;
+        private boolean ignoreInCompound = false;
         private boolean isArray = false, isList = false;
 
         /*
@@ -498,9 +519,9 @@ public class DocumentObjectBinder extends org.apache.solr.client.solrj.beans.Doc
         */
         boolean isContainedInMap = false;
 
-        public DocField(Method method, final boolean ignoreForCompoundBean) {
+        public DocField(Method method, final boolean ignoreInCompound) {
             getter = method;
-            this.ignoreForCompoundBean = ignoreForCompoundBean;
+            this.ignoreInCompound = ignoreInCompound;
             IndexField annotation = method.getAnnotation(IndexField.class);
             storeName(annotation);
             storeType();

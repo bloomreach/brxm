@@ -16,26 +16,11 @@
 
 package org.hippoecm.hst.solr;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.util.DateUtil;
-import org.hippoecm.hst.content.beans.index.IndexField;
-import org.hippoecm.hst.solr.DocumentObjectBinder;
 import org.hippoecm.hst.solr.beans.TestContentBeanWithCompositeCompound;
-import org.hippoecm.hst.solr.beans.TestContentBeanWithCompounds;
-import org.hippoecm.hst.solr.beans.compound.TestAddress;
 import org.hippoecm.hst.solr.beans.compound.TestCompositeAddress;
-import org.hippoecm.hst.solr.beans.compound.TestExplicitFieldEndingsAddress;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 public class TestCompositeCompoundDocumentObjectBinder {
@@ -51,7 +36,7 @@ public class TestCompositeCompoundDocumentObjectBinder {
         TestCompositeAddress level0 = new TestCompositeAddress("oosteinde", 0, level1);
 
         TestContentBeanWithCompositeCompound bean = new TestContentBeanWithCompositeCompound("/foo/bar", level0);
-;
+
         /*
          * We now have a TestContentBeanWithCompositeCompound bean now with a composite compound in it:
          *

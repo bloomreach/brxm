@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
-import org.hippoecm.hst.content.beans.index.IgnoreForCompoundBean;
 import org.hippoecm.hst.content.beans.index.IndexField;
 
 /**
@@ -38,8 +37,7 @@ public interface IdentifiableContentBean extends ContentBean {
      * @return the identifier for this {@link IdentifiableContentBean}
      */
     // the identifier is used as index id, hence add name="id"
-    @IgnoreForCompoundBean
-    @IndexField(name="id")
+    @IndexField(name="id", ignoreInCompound = true)
     String getIdentifier();
 
     /**

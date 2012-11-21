@@ -41,8 +41,7 @@ public class TestIgnoredSuperFieldsCompoundDocumentObjectBinder {
 
 
         /* the TestIgnoredSuperFieldsAddress implements IdentifiableContentBean, which contains:
-        * @IgnoreForCompoundBean
-        * @IndexField(name="id")
+        * @IndexField(name="id", ignoreInCompound=true)
         * String getIdentifier();
         *
         * Hence, the compound TestIgnoredSuperFieldsAddress should get its supertype getPath IGNORED for indexing, thus
@@ -58,13 +57,13 @@ public class TestIgnoredSuperFieldsCompoundDocumentObjectBinder {
         assertTrue(addressAsDoc.getFieldValue("number").equals(11));
 
 
-        // now, "id" from compound doc should be skipped due to @IgnoreForCompoundBean
+        // now, "id" from compound doc should be skipped due to @IndexField(ignoreInCompound=true)
         SolrInputDocument addressAsCompoundDoc = binder.toSolrInputDocument(compoundBean);
 
         assertTrue(addressAsCompoundDoc.getFieldValue("address_street_compound_t").equals("oosteinde"));
         assertTrue(addressAsCompoundDoc.getFieldValue("address_number_compound_i").equals(11));
 
-        assertNull("There should be no field for address_id_compound_t because of @IgnoreForCompoundBean",
+        assertNull("There should be no field for address_id_compound_t because of @IndexField(ignoreInCompound=true)",
                 addressAsCompoundDoc.getFieldValue("address_id_compound_t"));
 
     }

@@ -19,11 +19,13 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.index.Indexable;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Indexable(ignore = true)
 @Node(jcrType="hippo:mirror")
 public class HippoMirror extends HippoFolder implements HippoMirrorBean {
 

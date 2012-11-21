@@ -56,6 +56,69 @@ import java.lang.annotation.Target;
  * </pre>
  *
  * would result in a index field 'writer'
+ *
+ * <p>
+ * <b>Expert</b>
+ * </p>
+ * <p>
+ * Adding ignoreInCompound = true Makes it possible to annotate a method that should not be indexed for compound {@link org.hippoecm.hst.content.beans.standard.ContentBean}s.
+ * For example when you have the bean structure below, you do not need the getPath, canonicalUUID, etc etc from the Author to be indexed.
+ * By adding this (ignoreInCompound = true) to the IndexField annotation, the method will be skipped when indexing a compound bean into its container bean
+ * Default, ignoreInCompound is false when not specified
+ * </p>
+ * <pre>
+ * <code>
+ *     public class NewsBean implements IdendifiableContentBean {
+ *
+ *         public  String getPath() {
+ *             // return path
+ *         }
+ *
+ *        public  void setPath(String path) {
+ *            // set path
+ *        }
+ *        @IndexField
+ *        public Author getAuthor() {
+ *            // return author
+ *        }
+ *
+ *     }
+ *
+ *     // the Compound
+ *     public class Author implements IdendifiableContentBean {
+ *
+ *         public  String getPath() {
+ *             // return path
+ *         }
+ *
+ *         public  void setPath(String path) {
+ *            // set path
+ *         }
+ *
+ *         @IndexField
+ *         public String getName() {
+ *             // return name
+ *         }
+ *
+ *     }
+ *
+ *
+ *     public interface IdendifiableContentBean {
+ *
+ *        @IndexField(name="id", ignoreInCompound = true)
+ *        public String getPath();
+ *
+ *        public void setPath(String path);
+ *
+ *     }
+ *
+ * </code>
+ * </pre>
+ *
+ * In the above example, when indexing getAuthor for NewsBean, it won't index the getPath for author in that
+ * case because of the ignoreInCompound = true
+ *
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
@@ -68,4 +131,6 @@ public @interface IndexField {
      * @return Returns the field name.
      */
     String name() default DEFAULT;
+
+    boolean ignoreInCompound() default false;
 }

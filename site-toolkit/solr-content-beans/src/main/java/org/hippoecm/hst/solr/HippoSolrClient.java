@@ -24,7 +24,7 @@ import org.hippoecm.hst.solr.content.beans.ContentBeanBinder;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryParser;
 
-public interface HippoSolrManager {
+public interface HippoSolrClient {
 
     /**
      * @return the {@link SolrServer}

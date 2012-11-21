@@ -16,10 +16,12 @@
 package org.hippoecm.hst.content.beans.standard.facetnavigation;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.Indexable;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
 import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.repository.api.HippoNodeType;
 
+@Indexable(ignore = true)
 @Node(jcrType="hippo:facetresult")
 public class HippoFacetResult extends HippoFolder implements HippoResultSetBean {
 

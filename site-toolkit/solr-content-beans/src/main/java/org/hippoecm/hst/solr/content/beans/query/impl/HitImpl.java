@@ -68,20 +68,28 @@ public class HitImpl implements Hit {
             if (contentBeanBinders == null) {
                 return identifiableContentBean;
             }
+            boolean binded = false;
             for (ContentBeanBinder contentBeanBinder : contentBeanBinders) {
-                if (contentBeanBinder.getBindableClasses().contains(identifiableContentBean.getClass())) {
-
-                    try {
-                        contentBeanBinder.callbackHandler(identifiableContentBean);
-                    } catch (BindingException e) {
-                        if (log.isDebugEnabled()) {
-                            // Log stacktrace in debug mode
-                            log.warn("Could not bind bean to provider", e);
-                        } else {
-                            log.warn("Could not bind bean to provider", e.getMessage());
-                        }
+                if (!contentBeanBinder.canBind(identifiableContentBean.getClass())) {
+                    continue;
+                }
+                try {
+                    contentBeanBinder.bind(identifiableContentBean);
+                    binded = true;
+                    break;
+                } catch (BindingException e) {
+                    if (log.isDebugEnabled()) {
+                        // Log stacktrace in debug mode
+                        log.warn("Could not bind bean to provider", e);
+                    } else {
+                        log.warn("Could not bind bean to provider", e.getMessage());
                     }
                 }
+                
+            }
+            if (!binded) {
+                log.warn("Could not bind bean of type '{}' to its dataprovider as no suitable content binder found.",
+                        identifiableContentBean.getClass().getName());
             }
             return identifiableContentBean;
         } catch (Exception e) {

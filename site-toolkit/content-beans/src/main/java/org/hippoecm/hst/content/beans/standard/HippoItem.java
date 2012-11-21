@@ -28,7 +28,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.index.IgnoreForCompoundBean;
 import org.hippoecm.hst.content.beans.index.IndexField;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
@@ -89,9 +88,8 @@ public class HippoItem implements HippoBean {
     public void setIdentifier(String identifier) {
         this.canonicalUUID = identifier;
     }
-    
-    @IgnoreForCompoundBean
-    @IndexField
+
+    @IndexField(ignoreInCompound = true)
     public String getName() {
         if (name != null) {
             return name;
@@ -106,8 +104,7 @@ public class HippoItem implements HippoBean {
         this.name = name;
     }
 
-    @IgnoreForCompoundBean
-    @IndexField
+    @IndexField(ignoreInCompound = true)
     public String getLocalizedName() {
         if (localizedName != null) {
             return localizedName;
@@ -137,9 +134,7 @@ public class HippoItem implements HippoBean {
         this.path = path;
     }
 
-
-    @IgnoreForCompoundBean
-    @IndexField
+    @IndexField(ignoreInCompound = true)
     public String getComparePath() {
         if (comparePath != null) {
             return comparePath;

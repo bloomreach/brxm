@@ -16,8 +16,10 @@
 package org.hippoecm.hst.content.beans.standard.facetnavigation;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.index.Indexable;
 import org.hippoecm.hst.content.beans.standard.HippoFolder;
 
+@Indexable(ignore = true)
 @Node(jcrType="hippo:facetsearch")
 public class HippoFacetSearch extends HippoFolder{
 

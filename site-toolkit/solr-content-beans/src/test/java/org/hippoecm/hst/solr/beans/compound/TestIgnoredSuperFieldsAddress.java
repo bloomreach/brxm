@@ -43,7 +43,7 @@ public class TestIgnoredSuperFieldsAddress implements IdentifiableContentBean {
     }
 
     @Override
-    // note that the IdentifiableContentBean#getPath is marked with @IgnoreForCompoundBean
+    // note that the IdentifiableContentBean#getPath is marked with @IndexField(ignoreInCompound=true)
     public String getIdentifier() {
         return identifier;
     }

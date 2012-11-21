@@ -17,7 +17,6 @@ package org.hippoecm.hst.solr;
 
 import java.net.MalformedURLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.ItemNotFoundException;
@@ -36,10 +35,10 @@ import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryParser;
 import org.hippoecm.hst.solr.content.beans.query.impl.HippoQueryImpl;
 
-public class HippoSolrManagerImpl implements HippoSolrManager {
+public class HippoSolrClientImpl implements HippoSolrClient {
 
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(HippoSolrManagerImpl.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(HippoSolrClientImpl.class);
 
 
     private static final String DEFAULT_SOLR_URL = "http://localhost:8983/solr";
@@ -75,25 +74,27 @@ public class HippoSolrManagerImpl implements HippoSolrManager {
     public class JcrContentBeanBinder implements ContentBeanBinder {
 
         @Override
-        public List<Class<? extends IdentifiableContentBean>> getBindableClasses() {
-            return Collections.emptyList();
+        public boolean canBind(final Class<? extends IdentifiableContentBean> clazz) {
+            return (HippoBean.class.isAssignableFrom(clazz));
         }
 
         @Override
-        public void callbackHandler(final IdentifiableContentBean identifiableContentBean) throws BindingException {
-            if (identifiableContentBean instanceof HippoBean) {
-                HippoBean bean = (HippoBean) identifiableContentBean;
-                if (RequestContextProvider.get() == null) {
-                    log.warn("Cannot bind '{}' to its backing jcr node because there is no hst request context. Return unbinded bean", bean.getClass().getName(), bean.getIdentifier());
-                }
-                try {
-                    Node node = RequestContextProvider.get().getSession().getNodeByIdentifier(bean.getIdentifier());
-                    bean.setNode(node);
-                } catch (ItemNotFoundException e) {
-                    log.warn("Cannot bind '{}' to its backing jcr node because the uuid '{}' does not exist (anymore). Return unbinded bean", bean.getClass().getName(), bean.getIdentifier());
-                } catch (RepositoryException e) {
-                    throw new BindingException("RepositoryException during binding to jcr node", e);
-                }
+        public void bind(final IdentifiableContentBean identifiableContentBean) throws BindingException {
+            if (!(identifiableContentBean instanceof HippoBean)) {
+                log.warn("Cannot bind '{}' to a jcr node because the bean is not of (sub)type HippoBean. Return unbinded bean", identifiableContentBean.getClass().getName(), identifiableContentBean.getIdentifier());
+                return;
+            }
+            HippoBean bean = (HippoBean) identifiableContentBean;
+            if (RequestContextProvider.get() == null) {
+                log.warn("Cannot bind '{}' to its backing jcr node because there is no hst request context. Return unbinded bean", bean.getClass().getName(), bean.getIdentifier());
+            }
+            try {
+                Node node = RequestContextProvider.get().getSession().getNodeByIdentifier(bean.getIdentifier());
+                bean.setNode(node);
+            } catch (ItemNotFoundException e) {
+                log.warn("Cannot bind '{}' to its backing jcr node because the uuid '{}' does not exist (anymore). Return unbinded bean", bean.getClass().getName(), bean.getIdentifier());
+            } catch (RepositoryException e) {
+                throw new BindingException("RepositoryException during binding to jcr node", e);
             }
         }
     }
