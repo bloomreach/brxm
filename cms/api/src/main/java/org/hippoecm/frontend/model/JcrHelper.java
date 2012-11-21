@@ -166,10 +166,7 @@ public class JcrHelper {
      * @return  whether the node is a virtual node or not
      */
     public static boolean isVirtualNode(Node node) throws RepositoryException {
-        if (node == null || !(node instanceof HippoNode)) {
-            return false;
-        }
-        return ((HippoNode) node).isVirtual();
+        return node instanceof HippoNode && ((HippoNode) node).isVirtual();
     }
 
     /**
