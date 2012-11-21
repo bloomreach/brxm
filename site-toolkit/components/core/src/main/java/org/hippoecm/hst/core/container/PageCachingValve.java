@@ -61,10 +61,10 @@ public class PageCachingValve extends AbstractValve {
      * The cache holding the web pages. Ensure that all threads for a given
      * cache name are using the same instance of this.
      */
-    protected HstCache cache;
+    protected HstCache pageCache;
 
-    public void setCache(HstCache cache) {
-        this.cache = cache;
+    public void setPageCache(HstCache pageCache) {
+        this.pageCache = pageCache;
     }
 
 
@@ -117,11 +117,7 @@ public class PageCachingValve extends AbstractValve {
 
     private boolean isRequestCacheable(final ValveContext context) throws ContainerException {
         if (!context.getPageCacheContext().isCacheable()) {
-            if (context.getPageCacheContext().getReasonsUncacheable().isEmpty()) {
-              log.debug("Request '{}' is not cacheable because PageCacheContext is marked to not cache this request: ", context.getServletRequest().getRequestURI());
-            } else {
-              log.debug("Request '{}' is not cacheable because PageCacheContext is marked to not cache this request: {} ", context.getServletRequest().getRequestURI(), context.getPageCacheContext().getReasonsUncacheable());
-            }
+            log.debug("Request '{}' is not cacheable because PageCacheContext is marked to not cache this request: {} ", context.getServletRequest().getRequestURI(), context.getPageCacheContext().getReasonsUncacheable());
             return false;
         }
 
@@ -190,7 +186,7 @@ public class PageCachingValve extends AbstractValve {
         final HttpServletRequest request = context.getServletRequest();
         // Implementers should differentiate between GET and HEAD requests otherwise blank pages
         //  can result.
-        pageCacheKey.append(String.valueOf(request.getMethod()));
+        pageCacheKey.append(request.getMethod());
         pageCacheKey.append(HstRequestUtils.getFarthestRequestHost(request));
         pageCacheKey.append(request.getRequestURI());
         pageCacheKey.append(request.getQueryString());
@@ -207,7 +203,7 @@ public class PageCachingValve extends AbstractValve {
      */
     protected PageInfo buildPageInfo(final ValveContext context) throws Exception {
         final PageCacheKey keyPage = context.getPageCacheContext().getPageCacheKey();
-        CacheElement element = cache.get(keyPage, new Callable<CacheElement>() {
+        CacheElement element = pageCache.get(keyPage, new Callable<CacheElement>() {
             @Override
             public CacheElement call() throws Exception {
                 PageInfo pageInfo = buildPage(context);
@@ -215,19 +211,19 @@ public class PageCachingValve extends AbstractValve {
                     if (isNoCacheHeaderPresent(pageInfo, context)) {
                         log.debug("Creating uncacheable element for page '{}' with keyPage '{}' because contains no cache header.",
                                 context.getServletRequest().getRequestURI(), keyPage);
-                        return cache.createUncacheableElement(keyPage, pageInfo);
+                        return pageCache.createUncacheableElement(keyPage, pageInfo);
                     } else {
                         log.debug("Caching request '{}' with keyPage '{}'", context.getServletRequest().getRequestURI(), keyPage);
-                        return cache.createElement(keyPage, pageInfo);
+                        return pageCache.createElement(keyPage, pageInfo);
                     }
                 } else {
                     log.debug("PageInfo was not ok(200). Putting null into cache with keyPage {} ", keyPage);
-                    return cache.createUncacheableElement(keyPage, pageInfo);
+                    return pageCache.createUncacheableElement(keyPage, pageInfo);
                 }
             }
 
             private CacheElement createEmptyElement(Object key) {
-                return cache.createElement(key, null);
+                return pageCache.createElement(key, null);
             }
         });
         return (PageInfo) element.getContent();
@@ -278,7 +274,7 @@ public class PageCachingValve extends AbstractValve {
             context.invokeNext();
             responseWrapper.flush();
 
-            long timeToLiveSeconds = cache.getTimeToLiveSeconds();
+            long timeToLiveSeconds = pageCache.getTimeToLiveSeconds();
 
             // Return the page info
             boolean storeGzipped = false;

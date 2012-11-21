@@ -116,7 +116,7 @@
   </bean>
 
   <bean id="pageCachingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageCachingValve">
-     <property name="cache" ref="pageCache"/>
+     <property name="pageCache" ref="pageCache"/>
   </bean>
 
   <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
