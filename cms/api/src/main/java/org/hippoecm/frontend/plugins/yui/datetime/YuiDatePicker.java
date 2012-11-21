@@ -188,7 +188,7 @@ public class YuiDatePicker extends AbstractYuiBehavior {
      * @throws UnableToDetermineFormatException
      *             if this date picker is unable to determine a format.
      */
-    private final void checkComponentProvidesDateFormat(Component component)
+    private void checkComponentProvidesDateFormat(Component component)
     {
         if (getDatePattern() == null)
         {
