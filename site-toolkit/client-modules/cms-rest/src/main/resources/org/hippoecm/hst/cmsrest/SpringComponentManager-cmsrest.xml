@@ -160,6 +160,7 @@
           <property name="cleanupValves">
             <list>
               <ref bean="cleanupValve" />
+              <ref bean="diagnosticReportingValve" />
             </list>
           </property>
         </bean>
