@@ -142,7 +142,9 @@ public interface VirtualHost {
      */
     boolean isVersionInPreviewHeader();
 
-
-    boolean isCachable();
+    /**
+     * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached.
+     */
+    boolean isCacheable();
 
 }

@@ -58,7 +58,7 @@ public interface HstNodeTypes {
     static final String GENERAL_PROPERTY_PAGE_NOT_FOUND = "hst:pagenotfound";
     static final String GENERAL_PROPERTY_LOCALE = "hst:locale";
     static final String GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER =  "hst:versioninpreviewheader" ;
-    static final String GENERAL_PROPERTY_CACHABLE = "hst:cachable";
+    static final String GENERAL_PROPERTY_CACHEABLE = "hst:cacheable";
     
     static final String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     static final String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";

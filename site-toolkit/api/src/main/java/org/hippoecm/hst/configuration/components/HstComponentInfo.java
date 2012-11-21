@@ -69,11 +69,11 @@ public interface HstComponentInfo {
 
     /**
      * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached. Note that
-     * a {@link HstComponentConfiguration} by default is cachable unless configured not to be cachable. A {@link HstComponentConfiguration}
-     * is only cachable if and only if <b>all</b> its descendant {@link HstComponentConfiguration}s for the request are cachable : <b>Note</b>
+     * a {@link HstComponentConfiguration} by default is cacheable unless configured not to be cacheable. A {@link HstComponentConfiguration}
+     * is only cacheable if and only if <b>all</b> its descendant {@link HstComponentConfiguration}s for the request are cacheable : <b>Note</b>
      * explicitly for 'the request', thus {@link HstComponentConfiguration} that are {@link HstComponentConfiguration#isAsync()}
-     * and its descendants can be uncachable while an ancestor {@link HstComponentConfiguration} can stay cachable
+     * and its descendants can be uncacheable while an ancestor {@link HstComponentConfiguration} can stay cacheable
      */
-    boolean isCompositeCachable();
+    boolean isCompositeCacheable();
 
 }

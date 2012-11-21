@@ -20,16 +20,16 @@ import java.util.List;
 
 public interface PageCacheContext {
 
-    boolean isCachable();
+    boolean isCacheable();
 
-    void markUnCachable();
+    void markUncacheable();
 
-    void markUnCachable(String reasonUncachable);
+    void markUncacheable(String reasonUncacheable);
 
     /**
-     * @return reasons for not being cachable and Empty list in case no reasons
+     * @return reasons for not being cacheable and Empty list in case no reasons
      */
-    List<String> getReasonsUncachable();
+    List<String> getReasonsUncacheable();
     
     PageCacheKey getPageCacheKey();
 }

@@ -318,7 +318,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
-        public boolean isCachable() {
+        public boolean isCacheable() {
             return false;
         }
 
@@ -629,7 +629,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
-        public boolean isCachable() {
+        public boolean isCacheable() {
             return false;
         }
 

@@ -69,12 +69,12 @@ public class HstCacheEhCacheImpl implements HstCache {
                         "return null for key '{}'",valueLoader.getClass().getName(), key);
             }
         } finally {
-            // if exceptions (also unchecked) happened or the CacheElement is uncachable, we put an empty element (createElement(key,null))
+            // if exceptions (also unchecked) happened or the CacheElement is uncacheable, we put an empty element (createElement(key,null))
             // to make sure that if a blocking cache is used, the lock on the key is freed. Also see ehcache BlockingCache
             if (element == null){
                 element = createElement(key, null);
                 put(element);
-            } else if (!element.isCachable()){
+            } else if (!element.isCacheable()){
                 put(createElement(key, null));
             } else {
                 put(element);
@@ -105,7 +105,7 @@ public class HstCacheEhCacheImpl implements HstCache {
         return new CacheElementEhCacheImpl(key, content);
     }
 
-    public CacheElement createUncachableElement(Object key, Object content) {
+    public CacheElement createUncacheableElement(Object key, Object content) {
         return new CacheElementEhCacheImpl(key, content, false);
     }
 

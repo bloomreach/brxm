@@ -213,7 +213,7 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public boolean isCachable() {
+        public boolean isCacheable() {
             return false;
         }
 

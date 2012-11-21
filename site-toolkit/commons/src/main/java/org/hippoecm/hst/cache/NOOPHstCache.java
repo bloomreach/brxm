@@ -28,7 +28,7 @@ public class NOOPHstCache implements HstCache {
     }
 
     @Override
-    public CacheElement createUncachableElement(final Object key, final Object content) {
+    public CacheElement createUncacheableElement(final Object key, final Object content) {
         return new NOOPCacheElement(key, content, false);
     }
 
@@ -75,12 +75,12 @@ public class NOOPHstCache implements HstCache {
         
         private Object key;
         private Object content;
-        private boolean cachable;
+        private boolean cacheable;
         
-        private NOOPCacheElement(Object key, Object content, boolean cachable) {
+        private NOOPCacheElement(Object key, Object content, boolean cacheable) {
             this.key = key;
             this.content = content;
-            this.cachable = cachable;
+            this.cacheable = cacheable;
         }
         
         public Object getContent() {
@@ -113,8 +113,8 @@ public class NOOPHstCache implements HstCache {
         }
 
         @Override
-        public boolean isCachable() {
-            return cachable;
+        public boolean isCacheable() {
+            return cacheable;
         }
     }
 }

@@ -28,9 +28,9 @@ public interface HstCache {
     CacheElement createElement(Object key, Object content);
 
     /**
-     * @return a {@link CacheElement} that is marked to be uncachable
+     * @return a {@link CacheElement} that is marked to be uncacheable
      */
-    CacheElement createUncachableElement(Object key, Object content);
+    CacheElement createUncacheableElement(Object key, Object content);
     
     void put(CacheElement object);
 

@@ -303,28 +303,28 @@ public class HstSitePipeline implements Pipeline
     private final static class PageCacheContextImpl implements PageCacheContext {
 
         private final PageCacheKey pageCacheKey = new PageCacheKeyImpl();
-        private boolean cachable = true;
-        private List<String> reasonsUncachable = new ArrayList<String>();
+        private boolean cacheable = true;
+        private List<String> reasonsUncacheable = new ArrayList<String>();
 
         @Override
-        public boolean isCachable() {
-            return cachable;
+        public boolean isCacheable() {
+            return cacheable;
         }
 
         @Override
-        public void markUnCachable() {
-            cachable = false;
+        public void markUncacheable() {
+            cacheable = false;
         }
 
         @Override
-        public void markUnCachable(String reasonUncachable) {
-            cachable = false;
-            reasonsUncachable.add(reasonUncachable);
+        public void markUncacheable(String reasonUncacheable) {
+            cacheable = false;
+            reasonsUncacheable.add(reasonUncacheable);
         }
 
         @Override
-          public List<String> getReasonsUncachable() {
-            return reasonsUncachable;
+          public List<String> getReasonsUncacheable() {
+            return reasonsUncacheable;
         }
 
         @Override

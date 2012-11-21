@@ -41,6 +41,6 @@ public interface CacheElement {
     /**
      * @return <code>true</code> is this element is suited to be cached
      */
-    boolean isCachable();
+    boolean isCacheable();
     
 }

@@ -125,7 +125,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String postfix; 
     private String extension;
     private String prefix;
-    private final boolean cachable;
+    private final boolean cacheable;
     
     public HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
@@ -322,12 +322,12 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         
         namedPipeline = StringPool.get(namedPipeline);
 
-        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHABLE)) {
-            this.cachable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHABLE);
+        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
+            this.cacheable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
         } else if(this.parentItem != null) {
-            this.cachable = parentItem.isCachable();
+            this.cacheable = parentItem.isCacheable();
         } else {
-            this.cachable = mount.isCachable();
+            this.cacheable = mount.isCacheable();
         }
 
         for(HstNode child : node.getNodes()) {
@@ -450,8 +450,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     }
 
     @Override
-    public boolean isCachable() {
-        return cachable;
+    public boolean isCacheable() {
+        return cacheable;
     }
 
     public HstSiteMapItem getParentItem() {

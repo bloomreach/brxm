@@ -72,7 +72,7 @@ public class PageCachingValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException
     {
 
-        if (!isRequestCachable(context)) {
+        if (!isRequestCacheable(context)) {
             context.invokeNext();
             return;
         }
@@ -115,50 +115,50 @@ public class PageCachingValve extends AbstractValve {
 
     }
 
-    private boolean isRequestCachable(final ValveContext context) throws ContainerException {
-        if (!context.getPageCacheContext().isCachable()) {
-            if (context.getPageCacheContext().getReasonsUncachable().isEmpty()) {
-              log.debug("Request '{}' is not cachable because PageCacheContext is marked to not cache this request: ", context.getServletRequest().getRequestURI());
+    private boolean isRequestCacheable(final ValveContext context) throws ContainerException {
+        if (!context.getPageCacheContext().isCacheable()) {
+            if (context.getPageCacheContext().getReasonsUncacheable().isEmpty()) {
+              log.debug("Request '{}' is not cacheable because PageCacheContext is marked to not cache this request: ", context.getServletRequest().getRequestURI());
             } else {
-              log.debug("Request '{}' is not cachable because PageCacheContext is marked to not cache this request: {} ", context.getServletRequest().getRequestURI(), context.getPageCacheContext().getReasonsUncachable());
+              log.debug("Request '{}' is not cacheable because PageCacheContext is marked to not cache this request: {} ", context.getServletRequest().getRequestURI(), context.getPageCacheContext().getReasonsUncacheable());
             }
             return false;
         }
 
         HstRequestContext requestContext = context.getRequestContext();
         if (requestContext.isCmsRequest()) {
-            log.debug("Request '{}' is not cachable because request is cms request", context.getServletRequest().getRequestURI());
+            log.debug("Request '{}' is not cacheable because request is cms request", context.getServletRequest().getRequestURI());
             return false;
         }
         if (requestContext.getResolvedMount().getMount().isPreview()) {
-            log.debug("Request '{}' is not cachable because request is preview request", context.getServletRequest().getRequestURI());
+            log.debug("Request '{}' is not cacheable because request is preview request", context.getServletRequest().getRequestURI());
             return false;
         }
 
         ResolvedSiteMapItem resolvedSitemapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSitemapItem != null) {
-            if(!isSiteMapItemAndComponentConfigCachable(resolvedSitemapItem, context)) {
+            if(!isSiteMapItemAndComponentConfigCacheable(resolvedSitemapItem, context)) {
                 return false;
             }
-        } else if (!requestContext.getResolvedMount().getMount().isCachable()) {
-            log.debug("Request '{}' is not cachable because mount '{}' is not cachable.", context.getServletRequest().getRequestURI(),
+        } else if (!requestContext.getResolvedMount().getMount().isCacheable()) {
+            log.debug("Request '{}' is not cacheable because mount '{}' is not cacheable.", context.getServletRequest().getRequestURI(),
                     requestContext.getResolvedMount().getMount().getName());
             return false;
         }
         return true;
     }
 
-    private boolean isSiteMapItemAndComponentConfigCachable(final ResolvedSiteMapItem resolvedSitemapItem,
-                                                            final ValveContext context) throws ContainerException {
-        if (!resolvedSitemapItem.getHstSiteMapItem().isCachable()) {
-            log.debug("Request '{}' is not cachable because hst sitemapitem '{}' is not cachable.", context.getServletRequest().getRequestURI(),
+    private boolean isSiteMapItemAndComponentConfigCacheable(final ResolvedSiteMapItem resolvedSitemapItem,
+                                                             final ValveContext context) throws ContainerException {
+        if (!resolvedSitemapItem.getHstSiteMapItem().isCacheable()) {
+            log.debug("Request '{}' is not cacheable because hst sitemapitem '{}' is not cacheable.", context.getServletRequest().getRequestURI(),
                     resolvedSitemapItem.getHstSiteMapItem().getId());
             return false;
         }
 
 
         // check whether component rendering is true: For component rendering, we need to check whether the specific sub
-        // component (tree) is cachable
+        // component (tree) is cacheable
         String componentRenderingWindowReferenceNamespace = context.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace();
         if (componentRenderingWindowReferenceNamespace != null) {
             HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), componentRenderingWindowReferenceNamespace);
@@ -167,17 +167,17 @@ public class PageCachingValve extends AbstractValve {
                 return false;
             }
             if (window.getComponentInfo().isStandalone()) {
-                return window.getComponentInfo().isCompositeCachable();
+                return window.getComponentInfo().isCompositeCacheable();
             }
             // normally component rendering is standalone, however, if not standalone, than also the
-            // ancestors need to be cachable because all components will be rendered
-            if (!resolvedSitemapItem.getHstComponentConfiguration().isCompositeCachable()) {
-                log.debug("Request '{}' is not cachable because hst component '{}' is not cachable.", context.getServletRequest().getRequestURI(),
+            // ancestors need to be cacheable because all components will be rendered
+            if (!resolvedSitemapItem.getHstComponentConfiguration().isCompositeCacheable()) {
+                log.debug("Request '{}' is not cacheable because hst component '{}' is not cacheable.", context.getServletRequest().getRequestURI(),
                         resolvedSitemapItem.getHstComponentConfiguration().getId());
                 return false;
             }
-        } else if (!resolvedSitemapItem.getHstComponentConfiguration().isCompositeCachable()) {
-            log.debug("Request '{}' is not cachable because hst component '{}' is not cachable.", context.getServletRequest().getRequestURI(),
+        } else if (!resolvedSitemapItem.getHstComponentConfiguration().isCompositeCacheable()) {
+            log.debug("Request '{}' is not cacheable because hst component '{}' is not cacheable.", context.getServletRequest().getRequestURI(),
                     resolvedSitemapItem.getHstComponentConfiguration().getId());
             return false;
         }
@@ -213,16 +213,16 @@ public class PageCachingValve extends AbstractValve {
                 PageInfo pageInfo = buildPage(context);
                 if (pageInfo.isOk()) {
                     if (isNoCacheHeaderPresent(pageInfo, context)) {
-                        log.debug("Creating uncachable element for page '{}' with keyPage '{}' because contains no cache header.",
+                        log.debug("Creating uncacheable element for page '{}' with keyPage '{}' because contains no cache header.",
                                 context.getServletRequest().getRequestURI(), keyPage);
-                        return cache.createUncachableElement(keyPage, pageInfo);
+                        return cache.createUncacheableElement(keyPage, pageInfo);
                     } else {
                         log.debug("Caching request '{}' with keyPage '{}'", context.getServletRequest().getRequestURI(), keyPage);
                         return cache.createElement(keyPage, pageInfo);
                     }
                 } else {
                     log.debug("PageInfo was not ok(200). Putting null into cache with keyPage {} ", keyPage);
-                    return cache.createUncachableElement(keyPage, pageInfo);
+                    return cache.createUncacheableElement(keyPage, pageInfo);
                 }
             }
 

@@ -112,7 +112,7 @@ public interface ValveContext
     /**
      * Returns the {@link PageCacheContext} for this valve context. Individual {@link Valve}s can access this {@link PageCacheContext}
      * and append key information to the {@link PageCacheContext#getPageCacheKey()} or indicate
-     * that the request cannot be cached at all through {@link PageCacheContext#markUnCachable()}
+     * that the request cannot be cached at all through {@link PageCacheContext#markUncacheable()}
      * @return the PageCacheContext for this valve context and never <code>null</code>
      */
     PageCacheContext getPageCacheContext();

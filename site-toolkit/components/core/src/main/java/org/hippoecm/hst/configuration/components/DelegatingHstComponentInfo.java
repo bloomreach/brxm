@@ -68,7 +68,7 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
     }
 
     @Override
-    public boolean isCompositeCachable() {
-        return delegatee.isCompositeCachable();
+    public boolean isCompositeCacheable() {
+        return delegatee.isCompositeCacheable();
     }
 }

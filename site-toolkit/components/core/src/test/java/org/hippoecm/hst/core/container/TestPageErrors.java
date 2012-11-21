@@ -158,7 +158,7 @@ public class TestPageErrors {
             return false;
         }
         @Override
-        public boolean isCompositeCachable() {
+        public boolean isCompositeCacheable() {
             return false;
         }
     }

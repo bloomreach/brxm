@@ -229,7 +229,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     
     private boolean sessionStateful;
 
-    private final boolean cachable;
+    private final boolean cacheable;
 
     private String formLoginPage;
     private ChannelInfo channelInfo;
@@ -478,12 +478,12 @@ public class MountService implements ContextualizableMount, MutableMount {
             this.formLoginPage = parent.getFormLoginPage();
         }
 
-        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHABLE)) {
-            this.cachable = mount.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHABLE);
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
+            this.cacheable = mount.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
         } else if(parent != null) {
-            this.cachable = parent.isCachable();
+            this.cacheable = parent.isCacheable();
         } else {
-            this.cachable =  virtualHost.isCachable();
+            this.cacheable =  virtualHost.isCacheable();
         }
 
         this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
@@ -810,8 +810,8 @@ public class MountService implements ContextualizableMount, MutableMount {
     }
 
     @Override
-    public boolean isCachable() {
-        return cachable;
+    public boolean isCacheable() {
+        return cacheable;
     }
     
     public Map<String, String> getMountProperties() {

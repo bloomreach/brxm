@@ -82,7 +82,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private String scheme;
     private String cmsLocation;
     private Integer defaultPort;
-    private final boolean cachable;
+    private final boolean cacheable;
 
     public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, int defaultPort, HstManagerImpl hstManager) throws ServiceException {
        
@@ -189,12 +189,12 @@ public class VirtualHostService implements MutableVirtualHost {
             }
         }
 
-        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHABLE)) {
-            this.cachable = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHABLE);
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
+            this.cacheable = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
         } else if(parentHost != null) {
-            this.cachable = parentHost.isCachable();
+            this.cacheable = parentHost.isCacheable();
         } else {
-            this.cachable =  virtualHosts.isCachable();
+            this.cacheable =  virtualHosts.isCacheable();
         }
         
         String fullName = virtualHostNode.getValueProvider().getName();
@@ -300,7 +300,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.contextPathInUrl = parent.contextPathInUrl;
         this.onlyForContextPath = parent.onlyForContextPath;
         this.showPort = parent.showPort;
-        this.cachable = parent.cachable;
+        this.cacheable = parent.cacheable;
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
@@ -418,8 +418,8 @@ public class VirtualHostService implements MutableVirtualHost {
 
 
     @Override
-    public boolean isCachable() {
-        return cachable;
+    public boolean isCacheable() {
+        return cacheable;
     }
 
 

@@ -413,7 +413,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
-        public boolean isCachable() {
+        public boolean isCacheable() {
             return false;
         }
 
@@ -743,7 +743,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
-        public boolean isCachable() {
+        public boolean isCacheable() {
             return false;
         }
 

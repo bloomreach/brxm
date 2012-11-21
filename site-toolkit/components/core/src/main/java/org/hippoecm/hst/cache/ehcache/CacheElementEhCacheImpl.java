@@ -26,21 +26,21 @@ import org.hippoecm.hst.cache.CacheElement;
 class CacheElementEhCacheImpl implements CacheElement {
     
     final Element element;
-    private final boolean cachable;
+    private final boolean cacheable;
     
     CacheElementEhCacheImpl(final Element element) {
         this.element = element;
-        cachable = true;
+        cacheable = true;
     }
     
     CacheElementEhCacheImpl(final Object key, final Object value) {
         this.element = new Element(key, value);
-        cachable = true;
+        cacheable = true;
     }
 
-    public CacheElementEhCacheImpl(final Object key, final Object value, final boolean cachable) {
+    public CacheElementEhCacheImpl(final Object key, final Object value, final boolean cacheable) {
         this.element = new Element(key, value);
-        this.cachable = cachable;
+        this.cacheable = cacheable;
     }
 
     public Object getKey() {
@@ -76,8 +76,8 @@ class CacheElementEhCacheImpl implements CacheElement {
     }
 
     @Override
-    public boolean isCachable() {
-        return cachable;
+    public boolean isCacheable() {
+        return cacheable;
     }
 
 }

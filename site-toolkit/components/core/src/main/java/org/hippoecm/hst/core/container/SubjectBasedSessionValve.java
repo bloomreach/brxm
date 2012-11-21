@@ -52,16 +52,16 @@ public class SubjectBasedSessionValve extends AbstractValve {
                 log.debug("Subject based session cannot be set because no subject is found.");
             } else {
                 // we could include the session userId in the cachekey, but instead we mark the
-                // request as uncachable for subjectbased request rendering
-                markRequestUncachable(context);
+                // request as uncacheable for subjectbased request rendering
+                markRequestUncacheable(context);
                 setSubjectSession(context, requestContext, sessionStateful);
             }
         }
         context.invokeNext();
     }
 
-    private void markRequestUncachable(final ValveContext context) {
-        context.getPageCacheContext().markUnCachable("Page response marked as uncachable " +
+    private void markRequestUncacheable(final ValveContext context) {
+        context.getPageCacheContext().markUncacheable("Page response marked as uncacheable " +
                 "because subjectBasedSession request rendering.");
     }
 

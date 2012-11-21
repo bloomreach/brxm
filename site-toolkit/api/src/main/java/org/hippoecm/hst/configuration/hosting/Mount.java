@@ -443,5 +443,5 @@ public interface Mount {
     /**
      * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached.
      */
-    boolean isCachable();
+    boolean isCacheable();
 }
