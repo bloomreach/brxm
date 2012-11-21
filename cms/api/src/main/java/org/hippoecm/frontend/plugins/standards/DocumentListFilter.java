@@ -15,7 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.standards;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Vector;
 
@@ -29,10 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DocumentListFilter implements IClusterable {
-    private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(DocumentListFilter.class);
 
-    String currentState = "";
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(DocumentListFilter.class);
+
+    private String currentState = "";
 
     private static class FilterDefinition implements IClusterable {
         private static final long serialVersionUID = 1L;
@@ -56,10 +59,10 @@ public class DocumentListFilter implements IClusterable {
         }
 
         boolean match(String currentState, Node node) throws RepositoryException {
-            if (!currentState.equals("") && !state.equals("") && !currentState.equals(state)) {
+            if (!currentState.isEmpty() && !state.isEmpty() && !currentState.equals(state)) {
                 return false;
             }
-            if (!path.equals("")) {
+            if (!path.isEmpty()) {
                 if (path.startsWith("/")) {
                     if (!path.equals(node.getPath())) {
                         return false;
@@ -68,20 +71,20 @@ public class DocumentListFilter implements IClusterable {
                     return false;
                 }
             }
-            if (!parent.equals("") && (node.getDepth() == 0 || !node.getParent().isNodeType(parent))) {
+            if (!parent.isEmpty() && (node.getDepth() == 0 || !node.getParent().isNodeType(parent))) {
                 return false;
             }
-            if (!child.equals("") && !node.isNodeType(child)) {
+            if (!child.isEmpty() && !node.isNodeType(child)) {
                 return false;
             }
             return true;
         }
     }
 
-    Vector<FilterDefinition> filters;
+    private List<FilterDefinition> filters;
 
     public DocumentListFilter(IPluginConfig config) {
-        filters = new Vector<FilterDefinition>();
+        filters = new ArrayList<FilterDefinition>();
 
         IPluginConfig filterConfig = config.getPluginConfig("filters");
         if (filterConfig != null) {
@@ -91,7 +94,7 @@ public class DocumentListFilter implements IClusterable {
                                                 filter.getString("parent", ""),
                                                 filter.getString("child", ""),
                                                 filter.getString("target", ""),
-                                                filter.containsKey("display") ? filter.getBoolean("display") : true,
+                                                filter.getBoolean("display"),
                                                 filter.getString("name", "")));
             }
         }
@@ -119,8 +122,7 @@ public class DocumentListFilter implements IClusterable {
                 try {
                     while (iter.hasNext() && nextNode == null) {
                         Node candidate = iter.nextNode();
-                        for (Iterator<FilterDefinition> iter = filters.iterator(); iter.hasNext(); ) {
-                            FilterDefinition def = iter.next();
+                        for (FilterDefinition def : filters) {
                             if (def.match(currentState, candidate)) {
                                 if (!def.targetDisplay) {
                                     candidate = null;
@@ -132,17 +134,16 @@ public class DocumentListFilter implements IClusterable {
                             nextNode = candidate;
                         }
                     }
-                } catch (RepositoryException ex) {
-                    // delibate ignore
+                } catch (RepositoryException ignored) {
                 }
             }
 
             public Node nextNode() {
                 if (nextNode == null) {
                     fillNextNode();
-                    if (nextNode == null) {
-                        throw new NoSuchElementException();
-                    }
+                }
+                if (nextNode == null) {
+                    throw new NoSuchElementException();
                 }
                 Node rtValue = nextNode;
                 nextNode = null;
@@ -174,9 +175,9 @@ public class DocumentListFilter implements IClusterable {
             public boolean hasNext() {
                 if (nextNode == null) {
                     fillNextNode();
-                    if (nextNode == null) {
-                        return false;
-                    }
+                }
+                if (nextNode == null) {
+                    return false;
                 }
                 return true;
             }
@@ -185,10 +186,9 @@ public class DocumentListFilter implements IClusterable {
 
     public String getDisplayName(Node node) throws RepositoryException {
         String displayName = node.getName();
-        for (Iterator<FilterDefinition> iter = filters.iterator(); iter.hasNext(); ) {
-            FilterDefinition def = iter.next();
+        for (FilterDefinition def : filters) {
             if (def.match(currentState, node)) {
-                if (!def.targetName.equals("")) {
+                if (!def.targetName.isEmpty()) {
                     displayName = def.targetName;
                 }
                 break;
