@@ -157,7 +157,8 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
                     }
                 }
             } catch (NoSuchItemStateException e) {
-                final String message = "Unable to add add handles for modified state " + state.getId() + " because an item could not be found.";
+                final String message = "Unable to add handles for modified state '" + state.getId() + "' because an item could not be found.";
+
                 if (log.isDebugEnabled()) {
                     log.info(message, e);
                 } else {
