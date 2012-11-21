@@ -61,6 +61,8 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
         // When site service is null most probably the site is down
         siteIsUp = (siteService != null);
 
+        // TODO use proper dependency management. This is a very fragile dependency management workaround.
+        // It depends on the channel manager being rendered before the widget.
         context.registerService(new TemplateComposerApiResourceBehavior(), ExtWidgetRegistry.EXT_WIDGET_SERVICE_ID);
 
         add(CSSPackageResource.getHeaderContribution(ChannelManagerPerspective.class, "ChannelManagerPerspective.css"));
