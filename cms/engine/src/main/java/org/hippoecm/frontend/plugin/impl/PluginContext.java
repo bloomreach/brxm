@@ -52,6 +52,7 @@ public class PluginContext implements IPluginContext, IDetachable {
     private IPlugin plugin;
     private Map<String, List<IClusterable>> services;
     private Map<IClusterable, ServiceRegistration> registrations;
+    private List<ServiceRegistration> registrationOrder;
     private Map<IServiceFactory<IClusterable>, IClusterable> instances;
     private Map<String, List<IServiceTracker<? extends IClusterable>>> listeners;
     private Map<String, ClusterControl> children;
@@ -68,6 +69,7 @@ public class PluginContext implements IPluginContext, IDetachable {
 
         this.services = new HashMap<String, List<IClusterable>>();
         this.registrations = new IdentityHashMap<IClusterable, ServiceRegistration>();
+        this.registrationOrder = new LinkedList<ServiceRegistration>();
         this.instances = new IdentityHashMap<IServiceFactory<IClusterable>, IClusterable>();
         this.listeners = new LinkedHashMap<String, List<IServiceTracker<? extends IClusterable>>>();
         this.children = new TreeMap<String, ClusterControl>();
@@ -203,6 +205,7 @@ public class PluginContext implements IPluginContext, IDetachable {
                 } else {
                     registration = manager.registerService(service, name);
                     registrations.put(service, registration);
+                    registrationOrder.add(registration);
                 }
             } else {
                 ServiceRegistration registration = manager.registerService(service, name);
@@ -292,9 +295,10 @@ public class PluginContext implements IPluginContext, IDetachable {
             }
 
             log.debug("registering services for plugin {}", plugin != null ? plugin.getClass().getName() : "unknown");
-            for (ServiceRegistration registration : registrations.values()) {
+            for (ServiceRegistration registration : registrationOrder) {
                 registration.notifyTrackers();
             }
+            registrationOrder = null;
             registrations.clear();
 
             if (plugin != null) {
@@ -358,9 +362,10 @@ public class PluginContext implements IPluginContext, IDetachable {
                     }
                 }
             } else {
-                for (ServiceRegistration registration : registrations.values()) {
+                for (ServiceRegistration registration : registrationOrder) {
                     registration.cleanup();
                 }
+                registrationOrder = null;
                 registrations.clear();
             }
             services.clear();
