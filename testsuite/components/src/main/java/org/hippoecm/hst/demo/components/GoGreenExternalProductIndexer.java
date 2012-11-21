@@ -38,7 +38,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.demo.beans.GoGreenProductBean;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.solr.HippoSolrManager;
+import org.hippoecm.hst.solr.HippoSolrClient;
 
 public class GoGreenExternalProductIndexer extends BaseHstComponent{
 
@@ -181,10 +181,10 @@ public class GoGreenExternalProductIndexer extends BaseHstComponent{
 
         if (!gogreenBeans.isEmpty()) {
             // add them now to solr
-            HippoSolrManager solrManager = HstServices.getComponentManager().getComponent(HippoSolrManager.class.getName(), SOLR_MODULE_NAME);
+            HippoSolrClient solrClient = HstServices.getComponentManager().getComponent(HippoSolrClient.class.getName(), SOLR_MODULE_NAME);
             try {
-                solrManager.getSolrServer().addBeans(gogreenBeans);
-                UpdateResponse commit =  solrManager.getSolrServer().commit();
+                solrClient.getSolrServer().addBeans(gogreenBeans);
+                UpdateResponse commit =  solrClient.getSolrServer().commit();
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (SolrServerException e) {

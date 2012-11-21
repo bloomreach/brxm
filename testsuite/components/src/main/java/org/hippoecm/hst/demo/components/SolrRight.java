@@ -21,7 +21,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.demo.components.solrutil.SolrSearchParams;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.solr.HippoSolrManager;
+import org.hippoecm.hst.solr.HippoSolrClient;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
 
@@ -36,11 +36,11 @@ public class SolrRight extends AbstractSearchComponent {
             return;
         }
 
-        HippoSolrManager solrManager = HstServices.getComponentManager().getComponent(HippoSolrManager.class.getName(), SOLR_MODULE_NAME);
+        HippoSolrClient solrClient = HstServices.getComponentManager().getComponent(HippoSolrClient.class.getName(), SOLR_MODULE_NAME);
         String suggest = request.getParameter("suggestquery");
         try {
 
-            HippoQuery hippoQuery = solrManager.createQuery(suggest);
+            HippoQuery hippoQuery = solrClient.createQuery(suggest);
 
             // we want to get suggestions/autocompletion/didyoumean only!
             hippoQuery.getSolrQuery().setQueryType("suggest");

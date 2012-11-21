@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -27,7 +25,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.demo.components.solrutil.SolrSearchParams;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.solr.HippoSolrManager;
+import org.hippoecm.hst.solr.HippoSolrClient;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
 
@@ -44,13 +42,13 @@ public class SolrFaceting extends AbstractSearchComponent {
     @Override
     public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
 
-        HippoSolrManager solrManager = HstServices.getComponentManager().getComponent(HippoSolrManager.class.getName(), SOLR_MODULE_NAME);
+        HippoSolrClient solrClient = HstServices.getComponentManager().getComponent(HippoSolrClient.class.getName(), SOLR_MODULE_NAME);
         SolrSearchParams params = new SolrSearchParams(request);
 
         params.setParamsOnRequestAttr();
         try {
             // set the free text query
-            HippoQuery hippoQuery = solrManager.createQuery(params.getQuery());
+            HippoQuery hippoQuery = solrClient.createQuery(params.getQuery());
 
             SolrQuery solrQuery = hippoQuery.getSolrQuery();
 
@@ -67,7 +65,7 @@ public class SolrFaceting extends AbstractSearchComponent {
                     while (i < constraints.length) {
                         String facetField = constraints[i];
                         String facetValue = constraints[i+1];
-                        solrQuery.addFilterQuery(facetField + ":" + solrManager.getQueryParser().escape(facetValue));
+                        solrQuery.addFilterQuery(facetField + ":" + solrClient.getQueryParser().escape(facetValue));
                         i+=2;
                     }
                 }
