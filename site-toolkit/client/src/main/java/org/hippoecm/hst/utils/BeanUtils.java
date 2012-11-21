@@ -58,73 +58,7 @@ public class BeanUtils {
 
     private static final String DISPOSABLE_SESSION_KEY_PREFIX = BeanUtils.class.getName() + ";disposableSession";
     
-    /**
-     * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
-     * 
-     * You need to add a <code>linkPath</code>: this is that path, that the incoming beans use to link to the HippoDocumentBean {@code bean}. For example, with '/myproject:link/@hippo:docbase' or even 'wildcard/@hippo:docbase' or 
-     * 'wildcard/wildcard/@hippo:docbase' where wildcard = *
-     * 
-     * @deprecated use {@link ContentBeanUtils#createIncomingBeansQuery(HippoDocumentBean, HippoBean, String, ObjectConverter, Class, boolean)} instead. 
-     * The objectConverter can be fetched from {@link BaseHstComponent#getObjectConverter()}
-     */
-    @Deprecated
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, 
-            String linkPath, BaseHstComponent component,
-            Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
 
-        return ContentBeanUtils.createIncomingBeansQuery(bean, scope, linkPath, component.getObjectConverter(), beanMappingClass, includeSubTypes);
-    }
-    
-    /**
-     * Returns a HstQuery for incoming beans (incoming beans within scope {@code scope}). You can add filters and ordering to the query before executing it 
-     * 
-     * The depth indicates how many child nodes deep is searched for a link to the HippoDocumentBean {@code bean}. The depth is allowed to range from 0 (direct hippo:docbase) to 4 (at most 4 levels deep searching is done)
-     * 
-     * 
-     * @deprecated use {@link ContentBeanUtils#createIncomingBeansQuery(HippoDocumentBean, HippoBean, int, ObjectConverter, Class, boolean)} instead. 
-     * The objectConverter can be fetched from {@link BaseHstComponent#getObjectConverter()}
-     */
-    @Deprecated
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope, int depth,
-            BaseHstComponent component, Class<? extends HippoBean> beanMappingClass,
-            boolean includeSubTypes) throws QueryException{
-       
-        return ContentBeanUtils.createIncomingBeansQuery(bean, scope, depth, component.getObjectConverter(), beanMappingClass, includeSubTypes);
-    }
-    
-   
-    /**
-     * Returns a HstQuery for incoming beans. You can add filters and ordering to the query before executing it 
-     * 
-     * List<String> linkPaths is the list of paths that are searched that might have a link to the HippoDocumentBean {@code bean}. For example {/myproject:link/@hippo:docbase, /myproject:body/hippostd:content/@hippo:docbase}
-     * 
-     * @deprecated use {@link ContentBeanUtils#createIncomingBeansQuery(HippoDocumentBean, HippoBean, List, ObjectConverter, Class, boolean)} instead. 
-     * The objectConverter can be fetched from {@link BaseHstComponent#getObjectConverter()}
-     */
-    @Deprecated
-    public static HstQuery createIncomingBeansQuery(HippoDocumentBean bean, HippoBean scope,
-            List<String> linkPaths, BaseHstComponent component,
-            Class<? extends HippoBean> beanMappingClass, boolean includeSubTypes) throws QueryException{
-
-        return ContentBeanUtils.createIncomingBeansQuery(bean, scope, linkPaths, component.getObjectConverter(), beanMappingClass, includeSubTypes);
-        
-    }
-    
-    /**
-     * Returns a list of beans of type T (the same type as {@code beanMappingClass}) that have a (facet)link to the HippoDocumentBean {@code bean}. If no incoming beans are found, 
-     * an <code>empty</code> list will be returned. 
-     * 
-     * List<String> linkPaths is the list of paths that are searched that might have a link to the HippoDocumentBean {@code bean}. For example {/myproject:link/@hippo:docbase, /myproject:body/hippostd:content/@hippo:docbase}
-     * 
-     * @deprecated use {@link ContentBeanUtils#getIncomingBeans(HstQuery, Class)} instead
-     */
-    @Deprecated
-    public static <T extends HippoBean> List<T> getIncomingBeans(HstQuery query,
-            Class<? extends HippoBean> beanMappingClass) throws QueryException {
-
-        return ContentBeanUtils.getIncomingBeans(query, beanMappingClass);
-    }
-    
     /**
      * <p>
      * Returns the {@link HippoFacetNavigationBean} for this {@link HstRequest} and <code>relPath</code> where it is accounted for the free text <code>query</code>. When <code>query</code> is <code>null</code> or
