@@ -20,7 +20,6 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
-<hst:defineObjects/>
 
 <hst:headContribution keyHint="title"><title><c:out value="${document.title}" /></title></hst:headContribution>
 <hst:element name="script" var="yui3Elem">

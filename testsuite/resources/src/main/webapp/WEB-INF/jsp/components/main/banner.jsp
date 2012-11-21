@@ -18,14 +18,14 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/xml" prefix="x" %>
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst' %>
 
-<hst:defineObjects/>
+
 <div style="border: 1px solid ${borderColor};margin-top: 20px;">
-    <c:choose>
-        <c:when test="${not empty content}">
-            <span>Banner content: ${content}</span>
-        </c:when>
-        <c:otherwise>
-            <span>Banner: ${myName}</span>
-        </c:otherwise>
-    </c:choose>
+  <c:choose>
+    <c:when test="${not empty content}">
+      <span>Banner content: ${content}</span>
+    </c:when>
+    <c:otherwise>
+      <span>Banner: ${myName}</span>
+    </c:otherwise>
+  </c:choose>
 </div>
