@@ -15,9 +15,6 @@
  */
 package org.hippoecm.hst.demo.components;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,7 +26,6 @@ import java.util.Set;
 
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.util.DateUtil;
-import org.hippoecm.hst.content.beans.standard.ContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -41,7 +37,7 @@ import org.hippoecm.hst.demo.beans.TextBean;
 import org.hippoecm.hst.demo.beans.WikiBean;
 import org.hippoecm.hst.demo.components.solrutil.SolrSearchParams;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.solr.HippoSolrManager;
+import org.hippoecm.hst.solr.HippoSolrClient;
 import org.hippoecm.hst.solr.content.beans.query.HippoQuery;
 import org.hippoecm.hst.solr.content.beans.query.HippoQueryResult;
 
@@ -70,7 +66,7 @@ public class SolrSearch extends AbstractSearchComponent {
             return;
         }
 
-        HippoSolrManager solrManager = HstServices.getComponentManager().getComponent(HippoSolrManager.class.getName(), SOLR_MODULE_NAME);
+        HippoSolrClient solrClient = HstServices.getComponentManager().getComponent(HippoSolrClient.class.getName(), SOLR_MODULE_NAME);
 
         String query = params.getQuery();
         if (query == null) {
@@ -135,7 +131,7 @@ public class SolrSearch extends AbstractSearchComponent {
                 query = "{!"+localParams.toString()+"}" + query;
             }
 
-            HippoQuery hippoQuery = solrManager.createQuery(query);
+            HippoQuery hippoQuery = solrClient.createQuery(query);
 
             // ************************ CHECK SCOPED SEARCHING *********************************** //
             if ("external".equals(params.getSearchIn())){
@@ -189,7 +185,7 @@ public class SolrSearch extends AbstractSearchComponent {
                     while (i < constraints.length) {
                         String facetField = constraints[i];
                         String facetValue = constraints[i+1];
-                        hippoQuery.getSolrQuery().addFilterQuery(facetField + ":" + solrManager.getQueryParser().escape(facetValue));
+                        hippoQuery.getSolrQuery().addFilterQuery(facetField + ":" + solrClient.getQueryParser().escape(facetValue));
                         i+=2;
                     }
                 }
@@ -247,7 +243,7 @@ public class SolrSearch extends AbstractSearchComponent {
             HippoQueryResult result = hippoQuery.execute();
 
             // we bind the results to their providers to make sure we have the jcr nodes attached again
-            result.bindHits();
+            result.setContentBeanBinders();
 
             request.setAttribute("result", result);
 

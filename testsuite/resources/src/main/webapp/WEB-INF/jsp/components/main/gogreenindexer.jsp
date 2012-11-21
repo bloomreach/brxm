@@ -19,18 +19,16 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 
-<hst:headContribution keyHint="title"><title>Faceted Navigation Add Products</title></hst:headContribution>
+<hst:headContribution keyHint="title"><title>Gogreen indexer</title></hst:headContribution>
 
 <div id="yui-u">
-    <c:if test="${not empty message}">
-        <h2>${message}</h2>
-    </c:if>
 
-    <h1>Index GOGREEN REST product Documents</h1>
+    <h1>Index external GOGREEN REST product Documents</h1>
     <p>
       Fill in an REST product folder url displaying 'documents' hrefs from GOGREEN, for example 
       <br/>
-      <b>http://www.demo.onehippo.com/restapi/products/food/2011/11./documents?_type=xml</b>
+      <b>http://www.demo.onehippo.com
+        /restapi/products/food/2011/11./documents?_type=xml</b>
     </p>
     <form action="<hst:actionURL/>" method="get">
        <input name="url" size="25" value="http://www.demo.onehippo.com/restapi/products/food/2011/11./documents?_type=xml"/>

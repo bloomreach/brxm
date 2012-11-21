@@ -185,8 +185,6 @@ public class GoGreenExternalProductIndexer extends BaseHstComponent{
             try {
                 solrManager.getSolrServer().addBeans(gogreenBeans);
                 UpdateResponse commit =  solrManager.getSolrServer().commit();
-                System.out.println(commit.getResponse());
-                System.out.println(commit.getResponseHeader());
             } catch (IOException e) {
                 e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             } catch (SolrServerException e) {

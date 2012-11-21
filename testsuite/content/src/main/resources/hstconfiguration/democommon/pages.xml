@@ -207,6 +207,7 @@
       </sv:property>
     </sv:node>
   </sv:node>
+
   <sv:node sv:name="solrfacetingpage">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:component</sv:value>
@@ -268,6 +269,23 @@
       </sv:property>
       <sv:property sv:name="hst:referencecomponent" sv:type="String">
         <sv:value>hst:components/bodywikipedia</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+
+  <sv:node sv:name="solrindexer">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:component</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:referencecomponent" sv:type="String">
+      <sv:value>hst:pages/standard</sv:value>
+    </sv:property>
+    <sv:node sv:name="body">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:component</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:referencecomponent" sv:type="String">
+        <sv:value>hst:components/bodysolrindexer</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
