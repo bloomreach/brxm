@@ -529,6 +529,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                 if (this._hasFocus()) {
                     Hippo.Msg.alert(this.resources['page-context-initialization-failed-title'], this.resources['page-context-initialization-failed-message'], this);
                 }
+                this._complete();
             }
         }, this);
         this.pageContext.initialize(frm, this.canEdit);
