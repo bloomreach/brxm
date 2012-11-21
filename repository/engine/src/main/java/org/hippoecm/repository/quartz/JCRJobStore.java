@@ -230,7 +230,7 @@ public class JCRJobStore extends AbstractJobStore {
                 session.save();
                 unlock(session, triggerNode.getPath());
             } catch (ItemNotFoundException e) {
-                log.warn("Trigger no longer exists: " + trigger.getName(), e);
+                log.info("Trigger no longer exists: " + trigger.getName());
             } catch (RepositoryException e) {
                 refreshSession(session);
                 final String message = "Failed to release acquired trigger";
@@ -279,7 +279,7 @@ public class JCRJobStore extends AbstractJobStore {
                     session.save();
                 }
             } catch (ItemNotFoundException e) {
-                log.warn("Trigger no longer exists: " + trigger.getName());
+                log.info("Trigger no longer exists: " + trigger.getName());
             } catch (RepositoryException e) {
                 refreshSession(session);
                 final String message = "Failed to finalize job: " + ((JCRJobDetail) jobDetail).getIdentifier();
