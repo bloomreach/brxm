@@ -24,8 +24,11 @@ import java.io.Serializable;
 public interface PageCacheKey extends Serializable {
 
     /**
-     * @param keyFragment the fragment that will be added to the key.
+     * All the combined <code>keyFragment</code> will make up the key. Make sure that your added keyFragment object
+     * have a decent {@link #hashCode()} and {@link #equals(Object)} implementation that is also efficient as it will
+     * be used when storing objects in a cache with key {@link PageCacheKey}
+     * @param keyFragment the fragment that will be added to the key. 
      */
-    void append(String keyFragment);
+    void append(Serializable keyFragment);
 
 }

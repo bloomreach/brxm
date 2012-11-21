@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -335,14 +336,14 @@ public class HstSitePipeline implements Pipeline
     
     private final static class PageCacheKeyImpl implements PageCacheKey {
         
-        private List<String> keyFragments = new ArrayList<String>();
+        private List<Serializable> keyFragments = new ArrayList<Serializable>();
         // we keep the hashcode as instance variable for efficiency
-        private int hashCode = keyFragments.hashCode();
+        private int hashCode;
 
         @Override
-        public void append(final String keyFragment) {
+        public void append(final Serializable keyFragment) {
             keyFragments.add(keyFragment);
-            hashCode = keyFragments.hashCode();
+            hashCode = 0;
         }
 
         @Override
@@ -354,7 +355,7 @@ public class HstSitePipeline implements Pipeline
                 return false;
             }
             final PageCacheKeyImpl cacheKey = (PageCacheKeyImpl) o;
-            if (hashCode != cacheKey.hashCode) {
+            if (hashCode() != cacheKey.hashCode()) {
                 return false;
             }
             return keyFragments.equals(cacheKey.keyFragments);
@@ -362,6 +363,9 @@ public class HstSitePipeline implements Pipeline
 
         @Override
         public int hashCode() {
+            if (hashCode == 0) {
+                hashCode = keyFragments.hashCode();
+            }
             return hashCode;
         }
 
