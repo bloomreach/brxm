@@ -298,7 +298,7 @@ public class PluginContext implements IPluginContext, IDetachable {
             for (ServiceRegistration registration : registrationOrder) {
                 registration.notifyTrackers();
             }
-            registrationOrder = null;
+            registrationOrder.clear();
             registrations.clear();
 
             if (plugin != null) {
@@ -365,7 +365,7 @@ public class PluginContext implements IPluginContext, IDetachable {
                 for (ServiceRegistration registration : registrationOrder) {
                     registration.cleanup();
                 }
-                registrationOrder = null;
+                registrationOrder.clear();
                 registrations.clear();
             }
             services.clear();
