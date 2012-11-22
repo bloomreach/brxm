@@ -51,7 +51,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     @Override
     public void onComponentTag(final ComponentTag tag) {
         super.onComponentTag(tag);
-        tag.append("class", "perspective", ",");
+        tag.append("class", "perspective", " ");
     }
 
     public ResourceReference getIcon(IconSize size) {

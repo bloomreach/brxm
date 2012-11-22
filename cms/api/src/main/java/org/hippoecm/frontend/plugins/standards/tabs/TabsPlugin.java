@@ -243,7 +243,6 @@ public class TabsPlugin extends RenderPlugin {
                     "   }"+
                     "   var decorator = document.getElementById('"+tabbie.getDecoratorId()+"');"+
                     "   fireEvent(decorator, 'readystatechange', true);"+
-                    "   decorator.setAttribute('class', 'activePerspective');"+
                     "   window.Hippo = window.Hippo || {};"+
                     "   window.Hippo.activePerspective = decorator"+
                     "   } catch (e) {" +
