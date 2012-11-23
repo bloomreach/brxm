@@ -51,9 +51,6 @@
       <sv:property sv:name="show.captcha.after.how.many.times" sv:type="Long">
         <sv:value>3</sv:value>
       </sv:property>
-      <sv:property sv:name="edition" sv:type="String">
-        <sv:value>community</sv:value>
-      </sv:property>
       <sv:property sv:name="console.privileges" sv:type="String">
         <sv:value>hippo:admin</sv:value>
       </sv:property>
