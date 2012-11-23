@@ -21,6 +21,7 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
@@ -61,9 +62,10 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public static final String PING_SERVICE_TIMEOUT = "ping.service.timeout";
 
     private static final long serialVersionUID = 1L;
-    private static final List<Object> PROVIDERS;
+    private static final JacksonJaxbJsonProvider defaultJJJProvider;
 
-    private final int pingServiceTimeout;
+    private final static int PING_SERVLET_TIMEOUT = 1000;
+    private final static int MAX_CONNECTIONS = 50;
     private final String pingServiceUri;
     private boolean siteIsAlive;
     private final String restUri;
@@ -77,9 +79,17 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         SimpleModule cmsRestJacksonJsonModule = new SimpleModule("CmsRestJacksonJsonModule", Version.unknownVersion());
         cmsRestJacksonJsonModule.addDeserializer(Annotation.class, new AnnotationJsonDeserializer());
         objectMapper.registerModule(cmsRestJacksonJsonModule);
-        JacksonJaxbJsonProvider jjjProvider = new JacksonJaxbJsonProvider();
-        jjjProvider.setMapper(objectMapper);
-        PROVIDERS = Collections.unmodifiableList(Arrays.asList((Object) jjjProvider));
+        defaultJJJProvider = new JacksonJaxbJsonProvider();
+        defaultJJJProvider.setMapper(objectMapper);
+    }
+
+    protected static HttpClient httpClient = null;
+    static {
+        MultiThreadedHttpConnectionManager mgr = new MultiThreadedHttpConnectionManager();
+        mgr.getParams().setDefaultMaxConnectionsPerHost(MAX_CONNECTIONS);
+        mgr.getParams().setMaxTotalConnections(MAX_CONNECTIONS);
+        mgr.getParams().setConnectionTimeout(PING_SERVLET_TIMEOUT);
+        httpClient = new HttpClient(mgr);
     }
 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
@@ -100,10 +110,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         pingServiceUri = (restUri + config.getString(PING_SERVICE_URI, "/sites/#areAlive")).replaceAll("^://", "/");
         log.debug("Using ping REST uri '{}'", pingServiceUri);
 
-        pingServiceTimeout = config.getAsInteger(PING_SERVICE_TIMEOUT, 1000);
-        log.debug("Using ping timeout {}", pingServiceTimeout);
-
-        siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
+        siteIsAlive = checkSiteIsAlive(pingServiceUri);
     }
 
     @Override
@@ -132,7 +139,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         // Check whether the site is up and running or not
         if (!siteIsAlive) {
             log.info("It appears that the site might be down. Pinging site one more time!");
-            siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
+            siteIsAlive = checkSiteIsAlive(pingServiceUri);
             if (!siteIsAlive) {
                 log.warn("It appears that site is still down. Please check with your administrator!");
                 return null;
@@ -162,7 +169,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         // Check whether the site is up and running or not
         if (!siteIsAlive) {
             log.info("It appears that the site might be down. Pinging site one more time!");
-            siteIsAlive = checkSiteIsAlive(pingServiceTimeout, pingServiceUri);
+            siteIsAlive = checkSiteIsAlive(pingServiceUri);
             if (!siteIsAlive) {
                 log.warn("It appears that site is still down. Please check with your administrator!");
                 return null;
@@ -209,13 +216,12 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         return credentialCipher.getEncryptedString(CREDENTIAL_CIPHER_KEY, subjectCredentials);
     }
 
-    protected boolean checkSiteIsAlive(int pingServiceTimeout, final String pingServiceUri) {
+    protected boolean checkSiteIsAlive(final String pingServiceUri) {
         boolean siteIsAlive;
         String normalizedPingServiceUri = "";
 
         // Check whether the site is up and running or not
         HttpMethod method = null;
-        final HttpClient httpClient = new HttpClient();
         try {
             // Make sure that it is URL encoded correctly, except for the '/' and ':' characters
             normalizedPingServiceUri = URLEncoder.encode(pingServiceUri, Charset.defaultCharset().name())
@@ -223,10 +229,8 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
             // Set the timeout for the HTTP connection in milliseconds, if the configuration parameter is missing or not set
             // use default value of 1 second
-            httpClient.getParams().setParameter("http.socket.timeout", pingServiceTimeout);
             method = new GetMethod(normalizedPingServiceUri);
             final int responceCode = httpClient.executeMethod(method);
-
             siteIsAlive = (responceCode == HttpStatus.SC_OK);
         } catch (HttpException httpex) {
             if (log.isDebugEnabled()) {
@@ -262,14 +266,12 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     }
 
     protected List<Object> getProviders(final List<Object> additionalProviders) {
+        List<Object> providers = new ArrayList<Object>();
+        providers.add(defaultJJJProvider);
         if (additionalProviders != null) {
-            List<Object> providers = new ArrayList<Object>(PROVIDERS.size() + additionalProviders.size());
-            providers.addAll(PROVIDERS);
             providers.addAll(additionalProviders);
-            return providers;
         }
-
-        return PROVIDERS;
+        return providers;
     }
 
 }
