@@ -44,7 +44,6 @@ import javax.jcr.Session;
 import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
-import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
@@ -312,10 +311,10 @@ public class WorkflowManagerImpl implements WorkflowManager {
     public Workflow getWorkflow(WorkflowDescriptor descriptor) throws RepositoryException {
         WorkflowDescriptorImpl descriptorImpl = (WorkflowDescriptorImpl)descriptor;
         try {
-            Node node = session.getNodeByUUID(descriptorImpl.uuid);
-            return getWorkflow(descriptorImpl.category, node);
+            Node node = session.getNodeByUUID(descriptorImpl.getUuid());
+            return getWorkflow(descriptorImpl.getCategory(), node);
         } catch (PathNotFoundException ex) {
-            log.debug("Workflow no longer available "+descriptorImpl.uuid);
+            log.debug("Workflow no longer available "+descriptorImpl.getUuid());
             return null;
         }
     }

@@ -15,8 +15,8 @@
  */
 package org.hippoecm.repository.impl;
 
-import java.lang.reflect.Array;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -39,15 +39,16 @@ import org.hippoecm.repository.api.WorkflowException;
 
 final class WorkflowDescriptorImpl implements WorkflowDescriptor {
 
-    String uuid;
-    String category;
-    protected String displayName;
-    protected Map<String, String> attributes;
-    protected String serviceName;
-    protected Map<String, Serializable> hints;
+    private final WorkflowManagerImpl manager;
+    private final String uuid;
+    private final String category;
+    private final String displayName;
+    private final Map<String, String> attributes;
+    private final String serviceName;
+    private Map<String, Serializable> hints = null;
 
     WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Document document) throws RepositoryException {
-        this(manager, category, node, document.getIdentity());    
+        this(manager, category, node, document.getIdentity());
     }
 
     WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, Node item) throws RepositoryException {
@@ -55,6 +56,7 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     }
 
     private WorkflowDescriptorImpl(WorkflowManagerImpl manager, String category, Node node, String uuid) throws RepositoryException {
+        this.manager = manager;
         this.category = category;
         this.uuid = uuid;
         try {
@@ -66,16 +68,16 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
                 throw new RepositoryException("workflow specification corrupt", ex);
             }
 
-            attributes = new HashMap<String,String>();
+            attributes = new HashMap<String, String>();
             for (PropertyIterator attributeIter = node.getProperties(); attributeIter.hasNext(); ) {
                 Property p = attributeIter.nextProperty();
                 if (!p.getName().startsWith("hippo:") && !p.getName().startsWith("hipposys:")) {
-                    if(!p.getDefinition().isMultiple()) {
+                    if (!p.getDefinition().isMultiple()) {
                         attributes.put(p.getName(), p.getString());
                     }
                 }
             }
-            for (NodeIterator  attributeIter = node.getNodes(); attributeIter.hasNext(); ) {
+            for (NodeIterator attributeIter = node.getNodes(); attributeIter.hasNext(); ) {
                 Node n = attributeIter.nextNode();
                 if (!n.getName().startsWith("hippo:") && !n.getName().startsWith("hipposys:")) {
                     attributes.put(n.getName(), n.getPath());
@@ -85,14 +87,6 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
             WorkflowManagerImpl.log.error("Workflow specification corrupt on node " + uuid);
             throw new RepositoryException("workflow specification corrupt", ex);
         }
-
-        try {
-            hints = manager.getWorkflow(this).hints();
-        } catch(WorkflowException ex) {
-            throw new RepositoryException("Workflow hints corruption", ex);
-        } catch(RemoteException ex) {
-            throw new RepositoryException("Workflow hints corruption", ex);
-        }
     }
 
     public String getDisplayName() {
@@ -100,13 +94,10 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     }
 
     public String getAttribute(String key) throws RepositoryException {
-        if(key == null) {
-            StringBuffer sb = null;
-            for(String k : attributes.keySet()) {
-                if(sb == null)
-                    sb = new StringBuffer();
-                else
-                    sb.append(" ");
+        if (key == null) {
+            StringBuilder sb = new StringBuilder();
+            for (String k : attributes.keySet()) {
+                sb.append(" ");
                 sb.append(k);
             }
             return sb.toString();
@@ -117,21 +108,37 @@ final class WorkflowDescriptorImpl implements WorkflowDescriptor {
     public Class<Workflow>[] getInterfaces() throws ClassNotFoundException, RepositoryException {
         Class impl = Class.forName(serviceName);
         List<Class<Workflow>> interfaces = new LinkedList<Class<Workflow>>();
-        for(Class cls : impl.getInterfaces()) {
-            if(Workflow.class.isAssignableFrom(cls)) {
+        for (Class cls : impl.getInterfaces()) {
+            if (Workflow.class.isAssignableFrom(cls)) {
                 interfaces.add(cls);
             }
         }
         return interfaces.toArray((Class<Workflow>[]) Array.newInstance(Class.class, interfaces.size()));
     }
 
-    public Map<String,Serializable> hints() {
-        return hints;
+    public Map<String, Serializable> hints() throws RepositoryException {
+        if (this.hints == null) {
+            try {
+                this.hints = manager.getWorkflow(this).hints();
+            } catch (WorkflowException ex) {
+                throw new RepositoryException("Workflow hints corruption", ex);
+            } catch (RemoteException ex) {
+                throw new RepositoryException("Workflow hints corruption", ex);
+            }
+        }
+        return this.hints;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getUuid() {
+        return uuid;
     }
 
     public String toString() {
-        return getClass().getName() + "[node=" + uuid + ",category=" + category + ",service=" + serviceName
-                + ",attributes=" + attributes.toString() + "]";
+        return getClass().getName() + "[node=" + uuid + ",category=" + category + ",service=" + serviceName + ",attributes=" + attributes.toString() + "]";
     }
 
 }
