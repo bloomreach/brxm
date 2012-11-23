@@ -28,7 +28,7 @@
   <packaging>jar</packaging>
 
   <artifactId>hippo-cms7-commons</artifactId>
-  <version>1.02.01</version>
+  <version>1.02.02-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
@@ -44,9 +44,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/tags/hippo-cms7-commons-1.02.01</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/commons/tags/hippo-cms7-commons-1.02.01</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/tags/hippo-cms7-commons-1.02.01</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/commons/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/commons/trunk</url>
   </scm>
 
   <repositories>
