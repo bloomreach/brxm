@@ -37,16 +37,16 @@
   </scm>
 
   <properties>
-    <hippo.release.version>7.8.0</hippo.release.version>
+    <hippo.release.version>7.8.1-SNAPSHOT</hippo.release.version>
     <hippo.commons.version>1.02.01</hippo.commons.version>
     <hippo.services.version>3</hippo.services.version>
     <hippo.utilities.version>1.01.02</hippo.utilities.version>
-    <hippo.repository.version>2.24.00</hippo.repository.version>
-    <hippo.cms.version>2.24.00</hippo.cms.version>
+    <hippo.repository.version>2.24.01-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.24.01-SNAPSHOT</hippo.cms.version>
     <hippo.addon-hst-configuration-editor.version>1.11.00</hippo.addon-hst-configuration-editor.version>
-    <hippo.addon-channel-manager.version>2.24.00</hippo.addon-channel-manager.version>
-    <hippo.packages.version>2.24.00</hippo.packages.version>
-    <hippo.hst.version>2.26.00</hippo.hst.version>
+    <hippo.addon-channel-manager.version>2.24.01-SNAPSHOT</hippo.addon-channel-manager.version>
+    <hippo.packages.version>2.24.01-SNAPSHOT</hippo.packages.version>
+    <hippo.hst.version>2.26.01-SNAPSHOT</hippo.hst.version>
 
     <forge.dashboard-document-wizard.version>1.03.09</forge.dashboard-document-wizard.version>
     <forge.gallerypicker.version>1.10.01</forge.gallerypicker.version>
