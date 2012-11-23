@@ -21,20 +21,20 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite</artifactId>
-    <version>1.04.00</version>
+    <version>1.04.01-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Test Suite CMS</name>
   <description>Hippo Test Suite CMS</description>
   <artifactId>hippo-testsuite-cms</artifactId>
-  <version>1.04.00</version>
+  <version>1.04.01-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-testsuite-cms-dependencies</artifactId>
-      <version>1.04.00</version>
+      <version>1.04.01-SNAPSHOT</version>
       <type>pom</type>
     </dependency>
   </dependencies>
