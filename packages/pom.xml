@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>15-SNAPSHOT</version>
+    <version>15</version>
   </parent>
 
   <name>Hippo Product Packages</name>
@@ -36,9 +36,10 @@
   </scm>
 
   <properties>
-    <hippo.utilities.version>1.01.02-SNAPSHOT</hippo.utilities.version>
-    <hippo.repository.version>2.23.05-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.23.05-SNAPSHOT</hippo.cms.version>
+    <hippo.utilities.version>1.01.02</hippo.utilities.version>
+    <hippo.repository.version>2.24.00</hippo.repository.version>
+    <hippo.cms.version>2.24.00</hippo.cms.version>
+    <hippo.hst.version>2.26.00</hippo.hst.version>
 
     <commons-lang.version>2.4</commons-lang.version>
 
@@ -47,7 +48,6 @@
     <atomikos.version>3.1.4</atomikos.version>
 
     <easymock.version>2.4</easymock.version>
-    <hippo.hst.version>2.25.05-SNAPSHOT</hippo.hst.version>
   </properties>
 
   <repositories>
