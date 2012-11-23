@@ -25,7 +25,7 @@
   <name>Repository</name>
   <description>Hippo Repository</description>
   <artifactId>hippo-repository</artifactId>
-  <version>2.23.05</version>
+  <version>2.23.06-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <repositories>
@@ -101,9 +101,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.23.05</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.23.05</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/tags/hippo-repository-2.23.05</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/repository/trunk</url>
   </scm>
 
   <build>
