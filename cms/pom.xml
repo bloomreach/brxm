@@ -131,7 +131,6 @@
     <drewnoakes-extractor.version>2.4.0-beta-1</drewnoakes-extractor.version>
 
     <hippo.htmlcleaner.version>1.02.07</hippo.htmlcleaner.version>
-    <guava.version>10.0.1</guava.version>
     <hippo.jcrdiff.version>1.01.02</hippo.jcrdiff.version>
     <sanselan.version>0.97-incubator</sanselan.version>
 
@@ -486,11 +485,6 @@
         <groupId>org.codehaus.jackson</groupId>
         <artifactId>jackson-xc</artifactId>
         <version>${jackson.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.guava</groupId>
-        <artifactId>guava</artifactId>
-        <version>${guava.version}</version>
       </dependency>
 
       <dependency>
