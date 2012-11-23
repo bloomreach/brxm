@@ -48,6 +48,7 @@
     <module>provider</module>
     <module>engine</module>
     <module>modules</module>
+    <module>translationmodule</module>
     <module>upgrade</module>
     <module>utilities</module>
     <module>wfdropbox</module>

@@ -43,6 +43,10 @@ import org.hippoecm.repository.dataprovider.ViewNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * deprecated since 2.24.01
+ */
+@Deprecated
 public class TranslationVirtualProvider extends HippoVirtualProvider {
 
     private static final Logger log = LoggerFactory.getLogger(TranslationVirtualProvider.class);
@@ -75,111 +79,111 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
         super.initialize(stateMgr);
         this.facetedEngine = stateMgr.getFacetedEngine();
         this.facetedContext = stateMgr.getFacetedContext();
+        log.warn("TranslationVirtualProvider is deprecated since repository 2.24.01 and should not be used");
+
     }
 
+    /**
+     * deprecated since 2.24.01
+     */
+    @Deprecated
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
-        long start = System.currentTimeMillis();
-        try {
+        if (subNodesProvider == null) {
+            subNodesProvider = getDataProviderContext().lookupProvider(resolveName(HippoNodeType.NT_MIRROR));
             if (subNodesProvider == null) {
-                subNodesProvider = getDataProviderContext().lookupProvider(resolveName(HippoNodeType.NT_MIRROR));
-                if (subNodesProvider == null) {
-                    return super.populate(context, state);
-                }
-            }
-    
-            final NodeId parentId = state.getParentId();
-    
-            final NodeId docId = getCanonicalId(parentId);
-            if (docId == null) {
                 return super.populate(context, state);
             }
-    
-            final String id = getTranslationId(docId);
-            if (id == null) {
-                return super.populate(context, state);
-            }
-    
-            boolean singledView = false;
-            LinkedHashMap<Name, String> view = null;
-            LinkedHashMap<Name, String> order = null;
-    
-            FacetedNavigationEngine.Result facetedResult = facetedEngine.query(
-                    "//element(*,hippotranslation:translated)[@hippotranslation:id='" + id + "']", facetedContext);
-            if (facetedResult.length() > 0) { // NPE if we don't check
-    
-                if (parentId instanceof IFilterNodeId) {
-                    IFilterNodeId filterNodeId = (IFilterNodeId) parentId;
-                    if (filterNodeId.getView() != null) {
-                        view = new LinkedHashMap<Name, String>(filterNodeId.getView());
-                    }
-                    if (filterNodeId.getOrder() != null) {
-                        order = new LinkedHashMap<Name, String>(filterNodeId.getOrder());
-                    }
-                    singledView = filterNodeId.isSingledView();
-                }
-    
-                ArrayList<ViewNodeId.Child> viewNodesOrdered = new ArrayList<ViewNodeId.Child>();
-                for (NodeId t9nDocId : facetedResult) {
-                    if (t9nDocId == null) {
-                        continue;
-                    }
-    
-                    String[] languages = getProperty(t9nDocId, localeName, null);
-                    if (languages == null || languages.length != 1) {
-                        continue;
-                    }
-                    Name name = resolveName(languages[0]);
-    
-                    ViewNodeId ard = new ViewNodeId(subNodesProvider, state.getNodeId(), null, t9nDocId, context, name, view,
-                            order, singledView);
-                    viewNodesOrdered.add(ard.new Child(name, ard));
-                }
-                ViewNodeId.Child[] childrenArray = viewNodesOrdered.toArray(new ViewNodeId.Child[viewNodesOrdered.size()]);
-                if (order != null) {
-                    Arrays.sort(childrenArray);
-                }
-    
-                Set<NodeId> handles = new TreeSet<NodeId>();
-                for (ViewNodeId.Child child : childrenArray) {
-                    NodeId t9nDocId = child.getValue().getCanonicalId();
-    
-                    NodeState t9nDocState = getCanonicalNodeState(t9nDocId);
-                    if (t9nDocState == null) {
-                        continue;
-                    }
-    
-                    NodeId t9nParentId = t9nDocState.getParentId();
-                    if (t9nParentId == null) {
-                        continue;
-                    }
-    
-                    NodeState t9nParentState = getNodeState(t9nParentId, context);
-                    if (t9nParentState.getNodeTypeName().equals(handleName)) {
-                        if ((singledView && handles.contains(t9nParentId))
-                                || (view != null && !match(view, t9nDocId))) {
-                            continue;
-                        }
-                        handles.add(t9nParentState.getNodeId());
-                    }
-    
-                    state.addChildNodeEntry(child.getValue().name, child.getValue());
-                }
-    
-                final int numberOfTranslations = state.getChildNodeEntries().size();
-                if (numberOfTranslations > MAX_TRANSLATIONS) {
-                    translationsSizeLog.warn("The translations node {} has {} translations which is more than {}. This usually " +
-                            "indicates a workflow misconfiguration.", new String[] {state.getNodeId().toString(), 
-                            String.valueOf(numberOfTranslations), String.valueOf(MAX_TRANSLATIONS) });
-    
-                }
-    
-            }
-    
-            return state;
-        } finally {
-            log.info("Populating translation node took {} ms.", String.valueOf(System.currentTimeMillis() - start));
         }
+
+        final NodeId parentId = state.getParentId();
+
+        final NodeId docId = getCanonicalId(parentId);
+        if (docId == null) {
+            return super.populate(context, state);
+        }
+
+        final String id = getTranslationId(docId);
+        if (id == null) {
+            return super.populate(context, state);
+        }
+
+        boolean singledView = false;
+        LinkedHashMap<Name, String> view = null;
+        LinkedHashMap<Name, String> order = null;
+
+        FacetedNavigationEngine.Result facetedResult = facetedEngine.query(
+                "//element(*,hippotranslation:translated)[@hippotranslation:id='" + id + "']", facetedContext);
+        if (facetedResult.length() > 0) { // NPE if we don't check
+
+            if (parentId instanceof IFilterNodeId) {
+                IFilterNodeId filterNodeId = (IFilterNodeId) parentId;
+                if (filterNodeId.getView() != null) {
+                    view = new LinkedHashMap<Name, String>(filterNodeId.getView());
+                }
+                if (filterNodeId.getOrder() != null) {
+                    order = new LinkedHashMap<Name, String>(filterNodeId.getOrder());
+                }
+                singledView = filterNodeId.isSingledView();
+            }
+
+            ArrayList<ViewNodeId.Child> viewNodesOrdered = new ArrayList<ViewNodeId.Child>();
+            for (NodeId t9nDocId : facetedResult) {
+                if (t9nDocId == null) {
+                    continue;
+                }
+
+                String[] languages = getProperty(t9nDocId, localeName, null);
+                if (languages == null || languages.length != 1) {
+                    continue;
+                }
+                Name name = resolveName(languages[0]);
+
+                ViewNodeId ard = new ViewNodeId(subNodesProvider, state.getNodeId(), null, t9nDocId, context, name, view,
+                        order, singledView);
+                viewNodesOrdered.add(ard.new Child(name, ard));
+            }
+            ViewNodeId.Child[] childrenArray = viewNodesOrdered.toArray(new ViewNodeId.Child[viewNodesOrdered.size()]);
+            if (order != null) {
+                Arrays.sort(childrenArray);
+            }
+
+            Set<NodeId> handles = new TreeSet<NodeId>();
+            for (ViewNodeId.Child child : childrenArray) {
+                NodeId t9nDocId = child.getValue().getCanonicalId();
+
+                NodeState t9nDocState = getCanonicalNodeState(t9nDocId);
+                if (t9nDocState == null) {
+                    continue;
+                }
+
+                NodeId t9nParentId = t9nDocState.getParentId();
+                if (t9nParentId == null) {
+                    continue;
+                }
+
+                NodeState t9nParentState = getNodeState(t9nParentId, context);
+                if (t9nParentState.getNodeTypeName().equals(handleName)) {
+                    if ((singledView && handles.contains(t9nParentId))
+                            || (view != null && !match(view, t9nDocId))) {
+                        continue;
+                    }
+                    handles.add(t9nParentState.getNodeId());
+                }
+
+                state.addChildNodeEntry(child.getValue().name, child.getValue());
+            }
+
+            final int numberOfTranslations = state.getChildNodeEntries().size();
+            if (numberOfTranslations > MAX_TRANSLATIONS) {
+                translationsSizeLog.warn("The translations node {} has {} translations which is more than {}. This usually " +
+                        "indicates a workflow misconfiguration.", new String[] {state.getNodeId().toString(),
+                        String.valueOf(numberOfTranslations), String.valueOf(MAX_TRANSLATIONS) });
+
+            }
+
+        }
+        return state;
     }
 
     private String getTranslationId(final NodeId docId) throws RepositoryException {

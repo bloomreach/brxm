@@ -38,6 +38,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * @deprecated  TranslationVirtualProvider is deprecated since 2.24.01
+ */
+@Deprecated
 public class TranslationVirtualProviderTest extends RepositoryTestCase {
 
     static final String DOCUMENT_T9N_ID = "700a09f1-eac5-482c-a09e-ec0a6a5d6abc";
