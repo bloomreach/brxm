@@ -19,6 +19,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.cxf.common.util.StringUtils;
@@ -213,16 +214,18 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         String normalizedPingServiceUri = "";
 
         // Check whether the site is up and running or not
+        HttpMethod method = null;
+        final HttpClient httpClient = new HttpClient();
         try {
             // Make sure that it is URL encoded correctly, except for the '/' and ':' characters
             normalizedPingServiceUri = URLEncoder.encode(pingServiceUri, Charset.defaultCharset().name())
                     .replaceAll("%2F", "/").replaceAll("%3A", ":");
 
-            final HttpClient httpClient = new HttpClient();
             // Set the timeout for the HTTP connection in milliseconds, if the configuration parameter is missing or not set
             // use default value of 1 second
             httpClient.getParams().setParameter("http.socket.timeout", pingServiceTimeout);
-            final int responceCode = httpClient.executeMethod(new GetMethod(normalizedPingServiceUri));
+            method = new GetMethod(normalizedPingServiceUri);
+            final int responceCode = httpClient.executeMethod(method);
 
             siteIsAlive = (responceCode == HttpStatus.SC_OK);
         } catch (HttpException httpex) {
@@ -249,6 +252,10 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             }
 
             siteIsAlive = false;
+        } finally {
+            if (method != null) {
+                method.releaseConnection();
+            }
         }
 
         return siteIsAlive;
