@@ -20,13 +20,13 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite-dependencies</artifactId>
-    <version>1.03.02-SNAPSHOT</version>
+    <version>1.04.00</version>
   </parent>
 
   <name>Hippo Test Suite Site Dependencies</name>
   <description>Hippo Test Suite Site Dependencies</description>
   <artifactId>hippo-testsuite-site-dependencies</artifactId>
-  <version>1.03.02-SNAPSHOT</version>
+  <version>1.04.00</version>
   <packaging>pom</packaging>
 
   <dependencies>

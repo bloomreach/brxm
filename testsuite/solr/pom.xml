@@ -13,21 +13,19 @@ distributed under the License is distributed on an "AS IS"
 BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-testsuite</artifactId>
-    <version>1.03.02-SNAPSHOT</version>
+    <version>1.04.00</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
   <name>Hippo Test Suite Solr</name>
   <artifactId>hippo-testsuite-solr</artifactId>
-  <version>1.03.02-SNAPSHOT</version>
+  <version>1.04.00</version>
   <packaging>war</packaging>
 
   <dependencies>
