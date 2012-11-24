@@ -15,10 +15,12 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.IClusterable;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -32,7 +34,22 @@ class PluginController implements IClusterable {
 
     private static final long serialVersionUID = 1L;
 
-    private List<IClusterControl> clusters;
+    private static class Cluster implements Serializable {
+        private final IClusterControl control;
+        private final ModelReference<?> modelService;
+
+        private Cluster(final IClusterControl control, final ModelReference<?> modelService) {
+            this.control = control;
+            this.modelService = modelService;
+        }
+
+        void stop() {
+            control.stop();
+            modelService.destroy();
+        }
+    }
+
+    private List<Cluster> clusters;
     private IPluginContext context;
     private IPluginConfig config;
     private String baseServiceName;
@@ -41,34 +58,39 @@ class PluginController implements IClusterable {
         this.context = context;
         this.config = config;
         this.baseServiceName = baseServiceName;
-        this.clusters = new LinkedList<IClusterControl>();
+        this.clusters = new LinkedList<Cluster>();
     }
     
     public void stopRenderers() {
-        for (IClusterControl control : clusters) {
+        for (Cluster control : clusters) {
             control.stop();
         }
         clusters.clear();
     }
     
-    public IRenderService startRenderer(IPluginConfig config) {
+    public IRenderService startRenderer(IPluginConfig config, WorkflowDescriptorModel wdm) {
         if (config == null) {
             return null;
         }
 
+        String wicketModelId = baseServiceName + "." + "model" + clusters.size();
+        ModelReference modelRef = new ModelReference(wicketModelId, wdm);
+        modelRef.init(context);
+
         JavaClusterConfig childClusterConfig = new JavaClusterConfig();
         IPluginConfig childPluginConfig = new JavaPluginConfig(new InheritingPluginConfig(config, this.config));
 
-        String serviceId = baseServiceName + "." + "id" + clusters.size();
-        childPluginConfig.put(RenderService.WICKET_ID, serviceId);
+        String wicketRenderId = baseServiceName + "." + "id" + clusters.size();
+        childPluginConfig.put(RenderService.WICKET_ID, wicketRenderId);
+        childPluginConfig.put(RenderService.MODEL_ID, wicketModelId);
         childClusterConfig.addPlugin(childPluginConfig);
 
         IClusterControl control = context.newCluster(childClusterConfig, null);
         control.start();
 
-        clusters.add(control);
+        clusters.add(new Cluster(control, modelRef));
 
-        return context.getService(serviceId, IRenderService.class);
+        return context.getService(wicketRenderId, IRenderService.class);
     }
 
 }

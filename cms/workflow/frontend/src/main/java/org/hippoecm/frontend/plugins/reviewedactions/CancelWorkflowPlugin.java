@@ -16,21 +16,15 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.util.JcrUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.ResourceReference;
-
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -39,6 +33,9 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
@@ -77,11 +74,7 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-    }
 
-    @Override
-    public void onModelChanged() {
-        super.onModelChanged();
         WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
         schedule = null;
         if (model != null) {

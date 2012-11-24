@@ -362,6 +362,14 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
+
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+        if (model != null) {
+            Map<String, Serializable> info = obtainWorkflowHints(model);
+            if (info != null) {
+                updateWorkflowVisibilities(info);
+            }
+        }
     }
 
     private JcrNodeModel getFolder() {
@@ -422,18 +430,6 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     IEditorManager getEditorManager() {
         return getPluginContext().getService(getPluginConfig().getString("editor.id"), IEditorManager.class);
-    }
-
-    @Override
-    public void onModelChanged() {
-        super.onModelChanged();
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
-        if (model != null) {
-            Map<String, Serializable> info = obtainWorkflowHints(model);
-            if (info != null) {
-                updateWorkflowVisibilities(info);
-            }
-        }
     }
 
     private Map<String, Serializable> obtainWorkflowHints(WorkflowDescriptorModel model) {

@@ -66,11 +66,7 @@ public class CommitTypeWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-    }
 
-    @Override
-    protected void onModelChanged() {
-        super.onModelChanged();
         try {
             WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getDefaultModelObject();

@@ -27,7 +27,6 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.UnlockWorkflow;
 import org.slf4j.Logger;
@@ -44,7 +43,9 @@ public class UnlockWorkflowPlugin extends RenderPlugin {
     public UnlockWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(unlockAction = new StdWorkflow<UnlockWorkflow>("unlock", new StringResourceModel("unlock", this, null).getString(), null, context, this) {
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+        add(unlockAction = new StdWorkflow<UnlockWorkflow>("unlock", new StringResourceModel("unlock", this, null),
+                                                           null, context, model) {
 
             @Override
             protected ResourceReference getIcon() {
@@ -57,16 +58,12 @@ public class UnlockWorkflowPlugin extends RenderPlugin {
                 return null;
             }
         });
-    }
 
-    @Override
-    public void onModelChanged() {
-        super.onModelChanged();
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
         if (model != null) {
             try {
                 Map<String, Serializable> hints = ((WorkflowDescriptor) model.getObject()).hints();
-                if (hints.containsKey("unlock") && (hints.get("unlock") instanceof Boolean) && !(Boolean) hints.get("unlock")) {
+                if (hints.containsKey("unlock") && (hints.get("unlock") instanceof Boolean) && !(Boolean) hints.get(
+                        "unlock")) {
                     unlockAction.setVisible(false);
                 }
             } catch (RepositoryException ex) {

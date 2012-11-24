@@ -107,10 +107,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
     public GalleryWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
         newItems = new LinkedList<String>();
-    }
 
-    @Override
-    public void onModelChanged() {
         AbstractView<StdWorkflow> add;
         addOrReplace(add = new AbstractView<StdWorkflow>("new", createListDataProvider()) {
             private static final long serialVersionUID = 1L;

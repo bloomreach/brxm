@@ -39,7 +39,7 @@ public class WhereUsedDialog extends AbstractDialog {
 
     static final Logger log = LoggerFactory.getLogger(WhereUsedDialog.class);
 
-    public WhereUsedDialog(WorkflowDescriptorModel<?> model, IEditorManager editorMgr) {
+    public WhereUsedDialog(WorkflowDescriptorModel model, IEditorManager editorMgr) {
         super(model);
 
         setOkVisible(false);

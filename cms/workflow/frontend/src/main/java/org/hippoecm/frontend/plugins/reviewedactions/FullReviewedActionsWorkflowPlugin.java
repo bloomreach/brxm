@@ -508,6 +508,8 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 return null;
             }
         });
+
+        hideInvalidActions();
     }
 
     private JcrNodeModel getFolder() {
@@ -544,9 +546,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
         return stringCodecFactory.getStringCodec("encoding.node");
     }
 
-    @Override
-    protected void onModelChanged() {
-        super.onModelChanged();
+    private void hideInvalidActions() {
         try {
             WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
             WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) getDefaultModel();

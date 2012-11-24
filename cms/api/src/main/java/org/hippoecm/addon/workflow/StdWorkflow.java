@@ -20,6 +20,8 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -41,15 +43,51 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
 
     private static final Logger log = LoggerFactory.getLogger(CompatibilityWorkflowPlugin.class);
 
-    private String name;
+    private IModel<String> name;
     private ResourceReference iconModel;
     private IPluginContext pluginContext;
-    private RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin;
+
+    @Deprecated
+    public StdWorkflow(String id, String name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, Model.of(name), null, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
+    }
+
+    @Deprecated
+    public StdWorkflow(String id, StringResourceModel name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, name, null, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
+    }
+
+    @Deprecated
+    public StdWorkflow(String id, StringResourceModel name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, name, iconModel, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
+    }
+
+    @Deprecated
+    public StdWorkflow(String id, String name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
+        this(id, Model.of(name), iconModel, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
+    }
 
     public StdWorkflow(String id, String name) {
-        super(id);
+        this(id, Model.of(name));
+    }
+
+    public StdWorkflow(String id, IModel<String> name) {
+        this(id, name, null, null, null);
+    }
+
+    public StdWorkflow(String id, IModel<String> name, IPluginContext pluginContext, WorkflowDescriptorModel model) {
+        this(id, name, null, pluginContext, model);
+    }
+
+    public StdWorkflow(String id, IModel<String> name, ResourceReference iconModel, IPluginContext pluginContext, WorkflowDescriptorModel model) {
+        super(id, model);
+
+        this.iconModel = iconModel;
+        this.pluginContext = pluginContext;
+
         this.name = name;
         this.iconModel = null;
+
         add(new ActionDisplay("text") {
             @Override
             protected void initialize() {
@@ -63,8 +101,12 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         add(new ActionDisplay("icon") {
             @Override
             protected void initialize() {
-                ResourceReference model = getIcon();
-                add(new Image("icon", model));
+                add(new Image("icon", new LoadableDetachableModel<ResourceReference>() {
+                    @Override
+                    protected ResourceReference load() {
+                        return getIcon();
+                    }
+                }));
             }
         });
 
@@ -75,34 +117,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         });
     }
 
-    public StdWorkflow(String id, String name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
-        this(id, name);
-        this.pluginContext = pluginContext;
-        this.enclosingPlugin = enclosingPlugin;
-    }
-
-    public StdWorkflow(String id, StringResourceModel name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
-        this(id, name.getObject());
-        this.pluginContext = pluginContext;
-        this.enclosingPlugin = enclosingPlugin;
-    }
-
-    public StdWorkflow(String id, StringResourceModel name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
-        this(id, name.getObject());
-        this.iconModel = iconModel;
-        this.pluginContext = pluginContext;
-        this.enclosingPlugin = enclosingPlugin;
-    }
-
-    public StdWorkflow(String id, String name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
-        this(id, name);
-        this.iconModel = iconModel;
-        this.pluginContext = pluginContext;
-        this.enclosingPlugin = enclosingPlugin;
-    }
-
     protected final String getName() {
-        return name;
+        return name.getObject();
     }
 
     protected IModel getTitle() {
@@ -118,15 +134,6 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
             return iconModel;
         } else {
             return new ResourceReference(StdWorkflow.class, "workflow-16.png");
-        }
-    }
-
-    @Override
-    protected IModel initModel() {
-        if (enclosingPlugin != null) {
-            return enclosingPlugin.getDefaultModel();
-        } else {
-            return super.initModel();
         }
     }
 
@@ -152,37 +159,39 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
                 execute();
             } catch (WorkflowException ex) {
                 log.info("Workflow call failed", ex);
-                pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(createResponseDialog(ex));
+                pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(
+                        createResponseDialog(ex));
             } catch (Exception ex) {
                 log.info("Workflow call failed", ex);
-                pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(createResponseDialog(ex));
+                pluginContext.getService(IDialogService.class.getName(), IDialogService.class).show(
+                        createResponseDialog(ex));
             }
         }
     }
 
     protected void execute() throws Exception {
-        execute((WorkflowDescriptorModel<T>)enclosingPlugin.getDefaultModel());
+        execute((WorkflowDescriptorModel) getDefaultModel());
     }
 
-    protected void execute(WorkflowDescriptorModel<T> model) throws Exception {
-        WorkflowDescriptor descriptor = (WorkflowDescriptor)model.getObject();
+    protected void execute(WorkflowDescriptorModel model) throws Exception {
+        WorkflowDescriptor descriptor = model.getObject();
         if (descriptor == null) {
             throw new MappingException("action no longer valid");
         }
-        WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
-        javax.jcr.Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+        WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+        javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
         session.refresh(true);
         session.save();
         session.refresh(true);
         Workflow workflow = manager.getWorkflow(descriptor);
-        String message = execute((T)workflow);
+        String message = execute((T) workflow);
         if (message != null) {
             throw new WorkflowException(message);
         }
 
         // workflow may have closed existing session
         // FIXME should be removed
-        UserSession us = (UserSession)org.apache.wicket.Session.get();
+        UserSession us = (UserSession) org.apache.wicket.Session.get();
         session = us.getJcrSession();
         session.refresh(false);
         us.getFacetRootsObserver().broadcastEvents();
@@ -191,4 +200,11 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     protected String execute(T workflow) throws Exception {
         throw new WorkflowException("unsupported operation");
     }
+
+    @Override
+    protected void onDetach() {
+        name.detach();
+        super.onDetach();
+    }
+
 }

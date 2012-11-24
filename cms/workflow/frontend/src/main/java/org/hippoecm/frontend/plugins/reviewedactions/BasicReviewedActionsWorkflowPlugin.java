@@ -269,7 +269,6 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
-
         add(whereUsedAction = new WorkflowAction("where-used", new StringResourceModel("where-used-label", this, null)
                 .getString(), null) {
             @Override
@@ -307,6 +306,8 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
                 return null;
             }
         });
+
+        hideInvalidActions();
     }
 
     private IEditorManager getEditorManager() {
@@ -336,9 +337,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
         }
     }
 
-    @Override
-    protected void onModelChanged() {
-        super.onModelChanged();
+    private void hideInvalidActions() {
         try {
             WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
             WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getDefaultModel();

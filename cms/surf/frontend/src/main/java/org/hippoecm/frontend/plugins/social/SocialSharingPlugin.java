@@ -76,12 +76,8 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
         for (ISocialMedium medium : socialMediaService.getAllSocialMedia()) {
             add(new ShareWorkflow(medium));
         }
-    }
 
-    @Override
-    protected void onModelChanged() {
-        super.onModelChanged();
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel)SocialSharingPlugin.this.getDefaultModel();
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
         if (model != null) {
             try {
                 Node node = model.getNode();

@@ -149,11 +149,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-    }
 
-    @Override
-    protected void onModelChanged() {
-        super.onModelChanged();
         try {
             WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getDefaultModelObject();

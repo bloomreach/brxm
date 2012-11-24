@@ -116,11 +116,7 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-    }
 
-    @Override
-    public void onModelChanged() {
-        super.onModelChanged();
         schedule = null;
         state = "unknown";
         try {

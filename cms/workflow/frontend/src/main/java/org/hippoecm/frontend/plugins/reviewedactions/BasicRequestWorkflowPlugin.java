@@ -22,16 +22,10 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.Model;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.ResourceReference;
-
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -41,6 +35,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
@@ -118,11 +114,7 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-    }
 
-    @Override
-    public void onModelChanged() {
-        super.onModelChanged();
         WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
         schedule = null;
         if (model != null) {

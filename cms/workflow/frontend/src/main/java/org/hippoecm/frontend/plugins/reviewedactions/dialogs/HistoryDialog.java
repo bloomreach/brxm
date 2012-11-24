@@ -41,7 +41,7 @@ public class HistoryDialog extends AbstractDialog {
 
     static final Logger log = LoggerFactory.getLogger(HistoryDialog.class);
 
-    public HistoryDialog(WorkflowDescriptorModel<?> model, final IEditorManager editorMgr) {
+    public HistoryDialog(WorkflowDescriptorModel model, final IEditorManager editorMgr) {
         super(model);
 
         setOkVisible(false);

@@ -20,13 +20,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.wicket.model.LoadableDetachableModel;
-
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 
-public class WorkflowDescriptorModel<T> extends LoadableDetachableModel {
+public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDescriptor> {
 
     private String uuid;
     private String relPath;
@@ -47,9 +46,9 @@ public class WorkflowDescriptorModel<T> extends LoadableDetachableModel {
         }
     }
 
-    protected Object load() {
+    protected WorkflowDescriptor load() {
         try {
-            Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             WorkflowManager workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
             return workflowManager.getWorkflowDescriptor(category, getNode(session));
         } catch (RepositoryException ex) {
@@ -59,7 +58,7 @@ public class WorkflowDescriptorModel<T> extends LoadableDetachableModel {
     
     /** @deprecated by design FIXME */
     public Node getNode() throws RepositoryException {
-        Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+        Session session = UserSession.get().getJcrSession();
         return getNode(session);
     }
 
@@ -74,9 +73,5 @@ public class WorkflowDescriptorModel<T> extends LoadableDetachableModel {
             return null;
         }
     }
-    
-    @Override
-    public T getObject() {
-        return (T) super.getObject();
-    }
+
 }

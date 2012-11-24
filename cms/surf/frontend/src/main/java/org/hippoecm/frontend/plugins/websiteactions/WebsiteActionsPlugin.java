@@ -101,12 +101,8 @@ public class WebsiteActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
             }
             
         });
-    }
 
-    @Override
-    protected void onModelChanged() {
-        super.onModelChanged();
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel)WebsiteActionsPlugin.this.getDefaultModel();
+        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
         if (model != null) {
             try {
                 Node node = model.getNode();

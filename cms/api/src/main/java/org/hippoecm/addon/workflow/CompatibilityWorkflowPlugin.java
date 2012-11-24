@@ -94,15 +94,15 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
     }
 
     @SuppressWarnings("unchecked")
-    public IModel<WorkflowDescriptor> getModel() {
-        return (IModel<WorkflowDescriptor>) getDefaultModel();
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) getDefaultModel();
     }
 
     @SuppressWarnings("unchecked")
     public WorkflowDescriptor getModelObject() {
         return (WorkflowDescriptor) getDefaultModelObject();
     }
-    
+
     /**
      * @deprecated Please directly extend from StdWorkflow, passing the enclosing RenderPlugin
      * and it's plugin context as final parameters to the constructor.
@@ -114,8 +114,13 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
             super(id, name, iconModel, CompatibilityWorkflowPlugin.this.getPluginContext(), CompatibilityWorkflowPlugin.this);
         }
 
+        @Deprecated
         public WorkflowAction(String id, StringResourceModel name) {
-            super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), CompatibilityWorkflowPlugin.this);
+            super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), getModel());
+        }
+
+        public WorkflowAction(String id, IModel<String> name) {
+            super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), getModel());
         }
 
         /** @deprecated Please extend directly from AbstractDialog */
@@ -166,7 +171,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
              * the action to be performed when the dialog's ok button is clicked.
              */
             protected final void execute() throws Exception {
-                WorkflowAction.this.execute((WorkflowDescriptorModel<T>) CompatibilityWorkflowPlugin.this.getDefaultModel());
+                WorkflowAction.this.execute((WorkflowDescriptorModel) CompatibilityWorkflowPlugin.this.getDefaultModel());
             }
         }
 
