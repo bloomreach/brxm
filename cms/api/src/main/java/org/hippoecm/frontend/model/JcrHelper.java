@@ -39,15 +39,14 @@ import org.slf4j.LoggerFactory;
 public class JcrHelper {
 
     private static final Logger log = LoggerFactory.getLogger(JcrHelper.class);
-    
+
     private JcrHelper() {
     }
 
     /**
-     * Determine whether node is of the specified type, by using the jcr:mixinTypes property.
-     * This is necessary when a mixin has been added to the node, but the node hasn't been
-     * saved yet.
-     * 
+     * Determine whether node is of the specified type, by using the jcr:mixinTypes property. This is necessary when a
+     * mixin has been added to the node, but the node hasn't been saved yet.
+     *
      * @param node
      * @param type
      * @return true when the node is of the specified type
@@ -86,10 +85,9 @@ public class JcrHelper {
     }
 
     /**
-     * Find the first checked-in version of the parent of a node that contains a particular
-     * version of the child.  I.e. given a version of a child, the oldest version of the parent
-     * that contains the child is returned.
-     * 
+     * Find the first checked-in version of the parent of a node that contains a particular version of the child.  I.e.
+     * given a version of a child, the oldest version of the parent that contains the child is returned.
+     *
      * @param version
      * @return
      * @throws ItemNotFoundException
@@ -113,7 +111,7 @@ public class JcrHelper {
         Node parent = node.getSession().getNodeByUUID(uuid);
         VersionHistory history = parent.getVersionHistory();
         Version best = null;
-        for (VersionIterator versionIter = history.getAllVersions(); versionIter.hasNext();) {
+        for (VersionIterator versionIter = history.getAllVersions(); versionIter.hasNext(); ) {
             Version candidate = versionIter.nextVersion();
             Calendar versionDate = candidate.getCreated();
             if (!versionDate.after(nodeCreated)) {
@@ -131,9 +129,9 @@ public class JcrHelper {
     }
 
     /**
-     * Retrieve the primary item of a node, according to the primary node type hierarchy.
-     * Plain JackRabbit only checks the declared items of a type, not the inherited ones.
-     * 
+     * Retrieve the primary item of a node, according to the primary node type hierarchy. Plain JackRabbit only checks
+     * the declared items of a type, not the inherited ones.
+     *
      * @param node
      * @return primary item
      * @throws ItemNotFoundException
@@ -158,12 +156,12 @@ public class JcrHelper {
         }
         return node.getSession().getItem(node.getPath() + "/" + primaryItemName);
     }
-    
+
     /**
      * Determine whether node in question is a virtual node.
-     * 
-     * @param node  the node to check for virtuality
-     * @return  whether the node is a virtual node or not
+     *
+     * @param node the node to check for virtuality
+     * @return whether the node is a virtual node or not
      */
     public static boolean isVirtualNode(Node node) throws RepositoryException {
         return node instanceof HippoNode && ((HippoNode) node).isVirtual();
@@ -177,6 +175,7 @@ public class JcrHelper {
      * @throws RepositoryException
      */
     public static boolean isVirtualRoot(final Node node) throws RepositoryException {
-        return node.isNodeType(HippoNodeType.NT_FACETSEARCH) || node.isNodeType("hippofacnav:facetnavigation");
+        return node.isNodeType("hippotranslation:translated") || node.isNodeType(
+                HippoNodeType.NT_FACETSEARCH) || node.isNodeType("hippofacnav:facetnavigation");
     }
 }
