@@ -14,17 +14,29 @@
   limitations under the License.
 --><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-
+  <!-- This module contains deprecated repository parts -->
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-repository</artifactId>
     <version>2.24.01-SNAPSHOT</version>
   </parent>
 
-  <name>Repository Translation Module</name>
-  <description>Hippo Repository Translation Module</description>
-  <artifactId>hippo-repository-translationmodule</artifactId>
+  <name>Repository Deprecated</name>
+  <description>Hippo Repository Deprecated</description>
+  <artifactId>hippo-repository-deprecated</artifactId>
   <packaging>jar</packaging>
+
+  <dependencies>
+
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-provider</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+
+  </dependencies>
 
   <build>
     <defaultGoal>install</defaultGoal>

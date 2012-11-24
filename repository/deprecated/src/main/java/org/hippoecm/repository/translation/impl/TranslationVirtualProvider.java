@@ -80,7 +80,6 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
         this.facetedEngine = stateMgr.getFacetedEngine();
         this.facetedContext = stateMgr.getFacetedContext();
         log.warn("TranslationVirtualProvider is deprecated since repository 2.24.01 and should not be used");
-
     }
 
     /**
