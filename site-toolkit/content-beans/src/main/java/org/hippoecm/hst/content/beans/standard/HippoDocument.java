@@ -24,6 +24,7 @@ import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean.NoopTranslationsBean;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +119,7 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     }
     
     public String getLocaleString() {
-        return getProperty("hippotranslation:locale");
+        return getProperty(HippoTranslationNodeType.LOCALE);
     }
     
     public Locale getLocale() {

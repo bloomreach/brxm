@@ -19,9 +19,23 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.index.Indexable;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a useful bean for finding available translations of one and the same bean (folder or document). Because there is already also 
@@ -33,6 +47,8 @@ import org.hippoecm.hst.content.beans.index.Indexable;
 @Node(jcrType="hippotranslation:translations")
 public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem implements HippoAvailableTranslationsBean<K> {
 
+    private static final Logger log = LoggerFactory.getLogger(HippoAvailableTranslations.class);
+    
     private Map<String, K> translations;
     private Class<K> beanMappingClass;
     
@@ -65,14 +81,15 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
             return;
         }
         // use LinkedHashMap as we want to keep the order of the locales
-        translations = new LinkedHashMap<String,K>();
-        List<K> childBeans ;
-        childBeans = getChildBeans(beanMappingClass);
-        for(K child : childBeans) {
-            // the child name is the locale
-            translations.put(child.getName(), child);
+        if (getNode() == null) {
+            log.debug("Cannot get translations for detached bean.");
+            return;
         }
-        
+        try {
+            getTranslations(getNode());
+        } catch(RepositoryException e) {
+            log.warn("Exception while trying to fetch translations for.", e);
+        }
     }
     
     /**
@@ -83,4 +100,46 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
     public void setBeanMappingClass(Class<K> beanMappingClass) {
         this.beanMappingClass = beanMappingClass;
      }
+
+    private void getTranslations(final javax.jcr.Node translationNode) throws RepositoryException {
+        javax.jcr.Node docNode = translationNode.getParent();
+        translations = new LinkedHashMap<String,K>();
+        if (!docNode.hasProperty(HippoTranslationNodeType.ID)) {
+            log.debug("No translations for '{}' since property '{}' not available", docNode.getPath(), HippoTranslationNodeType.ID);
+            return;
+        }
+        String id = docNode.getProperty(HippoTranslationNodeType.ID).getString();
+
+        String xpath = "//element(*,"+HippoTranslationNodeType.NT_TRANSLATED+")["+HippoTranslationNodeType.ID+" = '"+id+"']";
+
+        Query query = docNode.getSession().getWorkspace().getQueryManager().createQuery(xpath, "xpath");
+        final QueryResult result = query.execute();
+        final NodeIterator nodeIterator = result.getNodes();
+        while (nodeIterator.hasNext()) {
+            javax.jcr.Node translation = nodeIterator.nextNode();
+            if (translation == null) {
+                continue;
+            }
+            if (!translation.hasProperty(HippoTranslationNodeType.LOCALE)) {
+                log.debug("Skipping node '{}' because does not contain property '{}'", translation.getPath(), HippoTranslationNodeType.LOCALE);
+            }
+            String locale = translation.getProperty(HippoTranslationNodeType.LOCALE).getString();
+            try {
+                Object bean = this.objectConverter.getObject(translation);
+                if (bean != null) {
+                    if (beanMappingClass != null) {
+                        if(beanMappingClass.isAssignableFrom(bean.getClass())) {
+                            translations.put(locale,(K) bean);
+                        } else {
+                            log.debug("Skipping bean of type '{}' because not of beanMappingClass '{}'", bean.getClass().getName(), beanMappingClass.getName());
+                        }
+                    } else {
+                        translations.put(locale, (K) bean);
+                    }
+                }
+            } catch (ObjectBeanManagerException e) {
+                log.warn("Skipping bean: {}", e);
+            }
+        }
+    }
 }

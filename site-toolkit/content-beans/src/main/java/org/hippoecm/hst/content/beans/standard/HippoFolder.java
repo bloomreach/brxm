@@ -28,6 +28,7 @@ import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +39,7 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
     protected ArrayList<HippoDocumentBean> hippoDocuments;
 
     public String getLocaleString() {
-        return getProperty("hippotranslation:locale");
+        return getProperty(HippoTranslationNodeType.LOCALE);
     }
     
     public Locale getLocale() {
