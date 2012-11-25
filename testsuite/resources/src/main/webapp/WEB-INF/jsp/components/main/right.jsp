@@ -24,19 +24,19 @@
   <p><fmt:message key="key.available.languages"/>:</p>
   <br/>
   <c:forEach var="language" items="${crBean.availableTranslationsBean.translations}">
-      <hst:link var="flag" path="/images/icons/flag-16_${language.name}.png"/>
+      <hst:link var="flag" path="/images/icons/flag-16_${language.localeString}.png"/>
       <hst:link var="link" hippobean="${language}"/>
       <!-- the equal comparator can be used to check whether the translation is the current bean  -->
       <c:choose>
          <c:when test="${language.equalComparator[crBean]}">
            <div>
-             <img src="${flag}"/> ${language.name}  &nbsp;&nbsp;&nbsp;(current)
+             <img src="${flag}"/> ${language.localeString}  &nbsp;&nbsp;&nbsp;(current)
           </div>
          </c:when>
          <c:otherwise>
             <div>
               <a href="${link}" style="text-decoration:underline">
-               <img src="${flag}"/> ${language.name}
+               <img src="${flag}"/> ${language.localeString}
               </a>
             </div>
          </c:otherwise>
