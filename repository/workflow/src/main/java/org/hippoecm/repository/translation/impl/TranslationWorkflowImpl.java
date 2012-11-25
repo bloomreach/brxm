@@ -17,6 +17,7 @@ package org.hippoecm.repository.translation.impl;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -28,6 +29,11 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
@@ -80,6 +86,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
         // find target
         Node folderTranslation;
+        // TODO replace below with search
         Node folderTranslations = lclContainingFolder.getNode(HippoTranslationNodeType.TRANSLATIONS);
         if (!folderTranslations.hasNode(language)) {
             throw new WorkflowException("Folder was not translated to " + language);
@@ -218,29 +225,72 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         }
 
         Set<String> translations = new TreeSet<String>();
-        for (NodeIterator children = rootSubject.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes(); children
-                .hasNext();) {
-            Node child = children.nextNode();
-            translations.add(child.getName());
+        try {
+            if (rootSubject.hasProperty(HippoTranslationNodeType.ID)) {
+                translations = getTranslations(rootSubject);
+            }
+        } catch (RepositoryException ex) {
+            throw new WorkflowException("Exception during searching for available translations", ex);
         }
+        
         hints.put("locales", (Serializable) translations);
 
         Set<String> available = new TreeSet<String>();
-        for (Node container = getContainingFolder(); !container.isSame(rootSession.getRootNode()); container = container
-                .getParent()) {
-            if (container.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                for (NodeIterator iter = container.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes(); iter
-                        .hasNext();) {
-                    Node translation = iter.nextNode();
-                    available.add(translation.getName());
+        // for all the available translations we pick the highest ancestor of rootSubject of type HippoTranslationNodeType.NT_TRANSLATED,
+        // and take all the translations for that node
+        Node highestTranslatedNode = getFarthestTranslatedAncestor(rootSubject);
+        if (highestTranslatedNode != null) {
+            try {
+                if (highestTranslatedNode.hasProperty(HippoTranslationNodeType.ID)) {
+                    available = getTranslations(highestTranslatedNode);
                 }
+            } catch (RepositoryException ex) {
+                throw new WorkflowException("Exception during searching for available translations", ex);
             }
         }
-        hints.put("available", (Serializable) available);
 
+        hints.put("available", (Serializable) available);
         hints.put("locale", getLocale(userSubject));
         return hints;
     }
+
+
+    private Set<String> getTranslations(final Node translatedNode) throws RepositoryException {
+        final Set<String> available = new TreeSet<String>();
+        String id = translatedNode.getProperty(HippoTranslationNodeType.ID).getString();
+        Query query = translatedNode.getSession().getWorkspace().getQueryManager().createQuery(
+                "SELECT " + HippoTranslationNodeType.LOCALE
+                        + " FROM " + HippoTranslationNodeType.NT_TRANSLATED
+                        + " WHERE " + HippoTranslationNodeType.ID + "='" + id + "'",
+                Query.SQL);
+        final QueryResult result = query.execute();
+        final RowIterator rowIterator = result.getRows();
+        while (rowIterator.hasNext()) {
+            final Row row = rowIterator.nextRow();
+            final Value value = row.getValue(HippoTranslationNodeType.LOCALE);
+            available.add(value.getString());
+        }
+        return available;
+    }
+
+    /**
+     * returns farthest ancestor from rootSubject of type HippoTranslationNodeType.NT_TRANSLATED and returns null if all ancestors and rootSubject
+     * are not of type HippoTranslationNodeType.NT_TRANSLATED
+     *
+     */
+    private Node getFarthestTranslatedAncestor(final Node rootSubject) throws RepositoryException {
+        Node jcrRoot = rootSubject.getSession().getRootNode();
+        Node current = rootSubject;
+        Node highestAncestorOfTypeTranslated = null;
+        while (!current.isSame(jcrRoot)) {
+            if (current.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
+                highestAncestorOfTypeTranslated = current;
+            }
+            current = current.getParent();
+        }
+        return highestAncestorOfTypeTranslated;
+    }
+
 
     private String getLocale(Node node) throws RepositoryException {
         while (node.getDepth() != 0) {
