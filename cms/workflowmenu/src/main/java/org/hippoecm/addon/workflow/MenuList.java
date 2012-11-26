@@ -15,6 +15,9 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.List;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -23,6 +26,8 @@ import org.apache.wicket.markup.repeater.data.ListDataProvider;
 class MenuList extends Panel implements MenuComponent {
 
     private static final long serialVersionUID = 1L;
+    private final List<Component> list;
+    private final MenuHierarchy menu;
 
     MenuList(String id, ActionDescription wf, MenuHierarchy menu) {
         super(id);
@@ -52,11 +57,20 @@ class MenuList extends Panel implements MenuComponent {
             image.setVisible(false);
             add(image);
         }*/
-        add(new DataView("list", new ListDataProvider(menu.list(this))) {
-            public void populateItem(final Item item) {
-                MenuItem menuItem = (MenuItem)item.getModelObject();
+        this.menu = menu;
+        this.list = menu.list(this);
+
+        add(new DataView<Component>("list", new ListDataProvider<Component>(list)) {
+
+            public void populateItem(final Item<Component> item) {
+                Component menuItem = item.getModelObject();
                 item.add(menuItem);
             }
         });
+    }
+
+    public void update() {
+        this.list.clear();
+        this.list.addAll(menu.list(this));
     }
 }

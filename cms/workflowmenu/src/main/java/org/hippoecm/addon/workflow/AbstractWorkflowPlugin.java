@@ -30,7 +30,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
-import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -160,7 +159,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
         final WorkflowDescriptor descriptor = workflowMgr.getWorkflowDescriptor(category, documentNode);
         if (descriptor != null) {
             final String pluginRenderer = descriptor.getAttribute(FrontendNodeType.FRONTEND_RENDERER);
-            Panel plugin = null;
+            Panel plugin;
             WorkflowDescriptorModel pluginModel = new WorkflowDescriptorModel(descriptor, category, documentNode);
             try {
                 if (pluginRenderer == null || pluginRenderer.trim().equals("")) {
@@ -182,28 +181,24 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                         }
                     }
                 }
-                if (plugin != null) {
-                    final JcrNodeModel nodeModel = new JcrNodeModel(documentNode);
-                    IObserver<JcrNodeModel> observer = new IObserver<JcrNodeModel>() {
+                final JcrNodeModel nodeModel = new JcrNodeModel(documentNode);
+                IObserver<JcrNodeModel> observer = new IObserver<JcrNodeModel>() {
 
-                        public JcrNodeModel getObservable() {
-                            return nodeModel;
-                        }
+                    public JcrNodeModel getObservable() {
+                        return nodeModel;
+                    }
 
-                        public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
-                            modelChanged();
-                        }
+                    public void onEvent(Iterator<? extends IEvent<JcrNodeModel>> events) {
+                        modelChanged();
+                    }
 
-                    };
-                    observers.add(observer);
-                    context.registerService(observer, IObserver.class.getName());
+                };
+                observers.add(observer);
+                context.registerService(observer, IObserver.class.getName());
 
-                    plugin.beforeRender();
-
-                    plugin.visitChildren(new MenuVisitor(menu, category, pluginRenderer));
-                    plugin.setVisible(false);
-                    list.add(plugin);
-                }
+                plugin.visitChildren(new MenuVisitor(menu, category));
+                plugin.setVisible(false);
+                list.add(plugin);
             } catch (ClassNotFoundException ex) {
                 log.warn("Could not find plugin class '" + pluginRenderer + "' for category '" + category + "'", ex);
             } catch (NoSuchMethodException ex) {
@@ -215,28 +210,6 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
             } catch (InvocationTargetException ex) {
                 log.warn("Plugin '" + pluginRenderer + "' for category '" + category + "' threw exception while initializing", ex);
             }
-        }
-    }
-
-    private static class MenuVisitor implements IVisitor {
-
-        private final MenuHierarchy menu;
-        private final String category;
-        private final String pluginRenderer;
-
-        public MenuVisitor(final MenuHierarchy menu, final String category, final String pluginRenderer) {
-            this.menu = menu;
-            this.category = category;
-            this.pluginRenderer = pluginRenderer;
-        }
-
-        public Object component(Component component) {
-            if (component instanceof ActionDescription) {
-                menu.put(new String[] {category, pluginRenderer, ((ActionDescription)component).getId()}, (ActionDescription)component);
-            } else if (component instanceof MenuDescription) {
-                menu.put(category, (MenuDescription) component);
-            }
-            return IVisitor.CONTINUE_TRAVERSAL;
         }
     }
 

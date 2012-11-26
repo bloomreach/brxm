@@ -35,11 +35,11 @@ class MenuHierarchy {
     MenuHierarchy() {
     }
 
-    public void put(String[] classifiers, ActionDescription action) {
-        if (!submenus.containsKey(classifiers[0])) {
-            submenus.put(classifiers[0], new MenuHierarchy());
+    public void put(String category, ActionDescription action) {
+        if (!submenus.containsKey(category)) {
+            submenus.put(category, new MenuHierarchy());
         }
-        submenus.get(classifiers[0]).put(action);
+        submenus.get(category).put(action);
     }
 
     public void put(String category, MenuDescription menu) {
@@ -65,24 +65,24 @@ class MenuHierarchy {
                 } else if (action.getId().equals("edit")) {
                     put(action);
                 } else if (action.getId().equals("delete")) {
-                    put(new String[] { "document" }, action);
+                    put("document", action);
                 } else if (action.getId().equals("copy")) {
-                    put(new String[] { "document" }, action);
+                    put("document", action);
                 } else if (action.getId().equals("move")) {
-                    put(new String[] { "document" }, action);
+                    put("document", action);
                 } else if (action.getId().equals("rename")) {
-                    put(new String[] { "document" }, action);
+                    put("document", action);
                 } else if (action.getId().equals("where-used")) {
-                    put(new String[] { "document" }, action);
+                    put("document", action);
                 } else if (action.getId().equals("history")) {
-                    put(new String[] { "document" }, action);
+                    put("document", action);
                 } else if (action.getId().toLowerCase().contains("publi")) {
-                    put(new String[] { "publication" }, action);
+                    put("publication", action);
                 } else if (action.getId().equals("cancel") || action.getId().equals("accept")
                         || action.getId().equals("reject")) {
-                    put(new String[] { "request" }, action);
+                    put("request", action);
                 } else {
-                    put(new String[] { "miscellaneous" }, action);
+                    put("miscellaneous", action);
                 }
             }
         }
@@ -106,7 +106,7 @@ class MenuHierarchy {
         }
         if (submenus.containsKey("default")) {
             MenuHierarchy submenu = submenus.remove("default");
-            /* [AC] skipping spacer - not used anywhere yet and it causes esthetics problems with the workflow toolbar
+            /* [AC] skipping spacer - not used anywhere yet and it causes aesthetics problems with the workflow toolbar
             put(new ActionDescription("spacer") {
                 @Override
                 public void invoke() {
@@ -167,9 +167,14 @@ class MenuHierarchy {
             }
             for (Map.Entry<String, MenuHierarchy> submenu : submenus.entrySet()) {
                 if (menus.containsKey(submenu.getKey())) {
-                    list.add(new MenuButton("item", submenu.getKey(), submenu.getValue(), menus.get(submenu.getKey()).getLabel()));
+                    list.add(new MenuButton("item", submenu.getKey(), submenu.getValue(), menus.get(submenu.getKey())));
                 } else {
                     list.add(new MenuButton("item", submenu.getKey(), submenu.getValue()));
+                }
+            }
+            for (Map.Entry<String, MenuDescription> menu : menus.entrySet()) {
+                if (!submenus.containsKey(menu.getKey())) {
+                    list.add(new MenuButton("item", menu.getKey(), menus.get(menu.getKey())));
                 }
             }
             for (ActionDescription item : items) {
@@ -187,11 +192,9 @@ class MenuHierarchy {
         return list;
     }
 
-    int size(MenuComponent context) {
-        if (context instanceof MenuBar) {
-            return items.size() + submenus.size();
-        } else {
-            return items.size();
-        }
+    public void clear() {
+        items.clear();
+        menus.clear();
+        submenus.clear();
     }
 }

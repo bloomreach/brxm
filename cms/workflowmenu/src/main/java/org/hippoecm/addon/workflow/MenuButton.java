@@ -16,8 +16,10 @@
 package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -29,13 +31,17 @@ class MenuButton extends Panel implements IContextMenu {
 
     private static final long serialVersionUID = 1L;
 
-    private Panel content;
+    private MenuList content;
 
     MenuButton(String id, String name, final MenuHierarchy menu) {
         this(id, name, menu, null);
     }
 
-    MenuButton(String id, String name, final MenuHierarchy menu, Component label) {
+    public MenuButton(final String item, final String key, final MenuDescription menuDescription) {
+        this(item, key, new MenuHierarchy(), menuDescription);
+    }
+
+    MenuButton(String id, String name, final MenuHierarchy menu, final MenuDescription description) {
         super(id);
         setOutputMarkupId(true);
         add(content = new MenuList("item", null, menu));
@@ -43,28 +49,38 @@ class MenuButton extends Panel implements IContextMenu {
         content.setVisible(false);
 
         AbstractLink link;
-        add(link = new DualAjaxLink("link") {
+        add(link = new AjaxLink("link") {
             private static final long serialVersionUID = 1L;
+
+            void updateContent() {
+                if (description != null) {
+                    MarkupContainer descriptionContent = description.getContent();
+                    if (descriptionContent != null) {
+                        menu.clear();
+                        descriptionContent.visitChildren(new MenuVisitor(menu, "list"));
+                        menu.flatten();
+                        content.update();
+                    }
+                }
+            }
 
             @Override
             public void onClick(AjaxRequestTarget target) {
                 content.setVisible(!content.isVisible());
                 target.addComponent(MenuButton.this);
                 if (content.isVisible()) {
+                    updateContent();
                     IContextMenuManager manager = getContextMenuManager();
                     manager.showContextMenu(MenuButton.this);
                 }
             }
 
-            @Override
-            public void onRightClick(AjaxRequestTarget target) {
-                content.setVisible(!content.isVisible());
-                target.addComponent(MenuButton.this);
-                if (content.isVisible()) {
-                    getContextMenuManager().showContextMenu(MenuButton.this);
-                }
-            }
         });
+
+        Component label = null;
+        if (description != null) {
+            label = description.getLabel();
+        }
         if (label == null) {
             link.add(new Label("label", new StringResourceModel(name, MenuButton.this, null, name)));
         } else {

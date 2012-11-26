@@ -34,8 +34,8 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -46,7 +46,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.ActionDescription;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -90,6 +89,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
     private static final long serialVersionUID = 1L;
 
     private static Logger log = LoggerFactory.getLogger(TranslationWorkflowPlugin.class);
+    private final IModel<Boolean> canTranslateModel;
 
     private final class LanguageModel extends LoadableDetachableModel<String> {
         private static final long serialVersionUID = 1L;
@@ -99,7 +99,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
             if (wdm != null) {
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) wdm.getObject();
-                WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 try {
                     TranslationWorkflow translationWorkflow = (TranslationWorkflow) manager.getWorkflow(descriptor);
                     return (String) translationWorkflow.hints().get("locale");
@@ -245,6 +245,14 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         }
 
         @Override
+        public boolean isVisible() {
+            if (super.isVisible() && findPage() != null) {
+                return canTranslateModel.getObject();
+            }
+            return false;
+        }
+
+        @Override
         protected ResourceReference getIcon() {
             return iconModel.getObject();
         }
@@ -292,7 +300,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         }
 
         protected String executeNonAvailableTranslation(Workflow wf) throws Exception {
-            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            javax.jcr.Session session = UserSession.get().getJcrSession();
 
             for (int i = 0; i < (folders.size() - 1); i++) {
                 FolderTranslation folder = folders.get(i);
@@ -323,12 +331,13 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                         collectFields(null, primaryNodeTypeName, plainTextFields, richTextFields);
                         allTextFields.addAll(plainTextFields);
                         allTextFields.addAll(richTextFields);
-                        ((TranslateWorkflow)translateWorkflow).translate(language, allTextFields);
+                        ((TranslateWorkflow) translateWorkflow).translate(language, allTextFields);
                         try {
                             // FIXME: the validation or automatic correction of content ought to be a repository/workflow action.  But the configration
                             // needed for htmlcleaner isn't available cleanly outside of the cms.  Additionally the infrastructure for repository-side
                             // validation has been scoped out or abandoned.
-                            IHtmlCleanerService cmsSpecificCleaner = getPluginContext().getService(IHtmlCleanerService.class.getName(), IHtmlCleanerService.class);
+                            IHtmlCleanerService cmsSpecificCleaner = getPluginContext().getService(
+                                    IHtmlCleanerService.class.getName(), IHtmlCleanerService.class);
                             if (cmsSpecificCleaner != null && false == true) {
                                 Node node = session.getNodeByIdentifier(translation.getIdentity());
                                 node.refresh(false);
@@ -354,8 +363,9 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 if (browser != null) {
                     browser.browse(new JcrNodeModel(session.getNodeByUUID(translation.getIdentity())));
                 } else {
-                    log.warn("Cannot open newly created document - configured browser.id "
-                                     + getPluginConfig().getString("browser.id") + " is invalid.");
+                    log.warn(
+                            "Cannot open newly created document - configured browser.id " + getPluginConfig().getString(
+                                    "browser.id") + " is invalid.");
                 }
             }
             return null;
@@ -544,11 +554,32 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
 
         DocumentTranslationProvider docTranslationProvider = null;
         try {
-            docTranslationProvider = new DocumentTranslationProvider(new JcrNodeModel(getDocumentNode()), localeProvider);
+            docTranslationProvider = new DocumentTranslationProvider(new JcrNodeModel(getDocumentNode()),
+                                                                     localeProvider);
         } catch (RepositoryException e) {
             log.warn("Unable to find document node");
         }
         translationProvider = docTranslationProvider;
+
+        // lazily determine whether the document can be translated
+        canTranslateModel = new LoadableDetachableModel<Boolean>() {
+            @Override
+            protected Boolean load() {
+                WorkflowDescriptor descriptor = getModelObject();
+                if (descriptor != null) {
+                    try {
+                        Map<String, Serializable> hints = descriptor.hints();
+                        if (hints.containsKey("addTranslation") && hints.get("addTranslation").equals(Boolean.FALSE)) {
+                            return false;
+                        }
+
+                    } catch (RepositoryException e) {
+                        log.error("Failed to analyze hints for translations workflow", e);
+                    }
+                }
+                return true;
+            }
+        };
 
         add(new MenuDescription() {
             private static final long serialVersionUID = 1L;
@@ -563,46 +594,52 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 return fragment;
             }
 
-        });
-
-        add(new DataView<HippoLocale>("languages", new AvailableLocaleProvider(localeProvider)) {
-            private static final long serialVersionUID = 1L;
-
             @Override
-            protected void populateItem(Item<HippoLocale> item) {
-                final HippoLocale locale = item.getModelObject();
-                final String language = locale.getName();
-
-                item.add(new TranslationAction("language", new LoadableDetachableModel<String>() {
+            public MarkupContainer getContent() {
+                Fragment fragment = new Fragment("content", "languages", TranslationWorkflowPlugin.this);
+                fragment.add(new DataView<HippoLocale>("languages", new AvailableLocaleProvider(localeProvider)) {
+                    private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected String load() {
-                        String base = locale.getDisplayName(getLocale());
-                        if (!hasLocale(language)) {
-                            return base + "...";
-                        }
-                        return base;
+                    protected void populateItem(Item<HippoLocale> item) {
+                        final HippoLocale locale = item.getModelObject();
+                        final String language = locale.getName();
+
+                        item.add(new TranslationAction("language", new LoadableDetachableModel<String>() {
+
+                            @Override
+                            protected String load() {
+                                String base = locale.getDisplayName(getLocale());
+                                if (!hasLocale(language)) {
+                                    return base + "...";
+                                }
+                                return base;
+                            }
+                        }, new LoadableDetachableModel<ResourceReference>() {
+
+                            @Override
+                            protected ResourceReference load() {
+                                if (!hasLocale(language)) {
+                                    return locale.getIcon(IconSize.TINY, LocaleState.AVAILABLE);
+                                } else {
+                                    return locale.getIcon(IconSize.TINY, LocaleState.EXISTS);
+                                }
+                            }
+
+                        }, language, languageModel
+                        ));
                     }
-                }, new LoadableDetachableModel<ResourceReference>() {
 
                     @Override
-                    protected ResourceReference load() {
-                        if (!hasLocale(language)) {
-                            return locale.getIcon(IconSize.TINY, LocaleState.AVAILABLE);
-                        } else {
-                            return locale.getIcon(IconSize.TINY, LocaleState.EXISTS);
-                        }
+                    protected void onDetach() {
+                        languageModel.detach();
+                        super.onDetach();
                     }
-
-                }, language, languageModel));
-            }
-
-            @Override
-            protected void onDetach() {
-                languageModel.detach();
-                super.onDetach();
+                });
+                return fragment;
             }
         });
+
     }
 
     public boolean hasLocale(String locale) {
@@ -617,7 +654,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
         if (wdm != null) {
             WorkflowDescriptor descriptor = (WorkflowDescriptor) wdm.getObject();
-            WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+            WorkflowManager manager = UserSession.get().getWorkflowManager();
             try {
                 TranslationWorkflow translationWorkflow = (TranslationWorkflow) manager.getWorkflow(descriptor);
                 return (Set<String>) translationWorkflow.hints().get("available");
@@ -649,29 +686,6 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         return null;
     }
 
-    @Override
-    protected void onBeforeRender() {
-        super.onBeforeRender();
-        WorkflowDescriptor descriptor = getModelObject();
-        if (descriptor != null) {
-            try {
-                Map<String, Serializable> hints = descriptor.hints();
-                if (hints.containsKey("addTranslation") && hints.get("addTranslation").equals(Boolean.FALSE)) {
-                    this.visitChildren(ActionDescription.class, new IVisitor<ActionDescription>() {
-
-                        public Object component(ActionDescription component) {
-                            component.setVisible(false);
-                            return IVisitor.CONTINUE_TRAVERSAL_BUT_DONT_GO_DEEPER;
-                        }
-
-                    });
-                }
-            } catch (RepositoryException e) {
-                log.error("Failed to analyze hints for translations workflow", e);
-            }
-        }
-    }
-
     protected ILocaleProvider getLocaleProvider() {
         return getPluginContext().getService(
                 getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),
@@ -695,6 +709,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         if (translationProvider != null) {
             translationProvider.detach();
         }
+        this.canTranslateModel.detach();
         super.onDetach();
     }
 

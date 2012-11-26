@@ -15,6 +15,9 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.List;
+
+import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -34,7 +37,8 @@ class MenuDrop extends Panel implements MenuComponent {
         add(headerItem = new WebMarkupContainer("headerItem"));
         headerItem.add(new Label("header", new StringResourceModel("empty-menu", this, null)));
 
-        add(new DataView("list", new ListDataProvider(menu.list(this))) {
+        List<Component> components = menu.list(this);
+        add(new DataView("list", new ListDataProvider(components)) {
             private static final long serialVersionUID = 1L;
 
             @Override
@@ -44,7 +48,7 @@ class MenuDrop extends Panel implements MenuComponent {
             }
         });
 
-        if (menu.size(this) > 0) {
+        if (components.size() > 0) {
             headerItem.setVisible(false);
         }
     }
