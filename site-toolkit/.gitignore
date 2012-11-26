@@ -93,7 +93,9 @@ dependencies/client-dependencies/.project
 dependencies/client-dependencies/.settings
 dependencies/client-dependencies/hst-client-dependencies.iml
 dependencies/client-dependencies/target
+dependencies/cms-dependencies/target
 dependencies/dependencies.iml
+dependencies/repository-dependencies/target
 dependencies/server-dependencies/.project
 dependencies/server-dependencies/.settings
 dependencies/server-dependencies/hst-server-dependencies.iml
