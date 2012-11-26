@@ -6,8 +6,6 @@ import java.lang.annotation.Annotation;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -17,15 +15,18 @@ import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.CoreConnectionPNames;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -59,7 +60,6 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
     public static final String CONFIG_SERVICE_ID = "service.id";
     public static final String DEFAULT_SERVICE_ID = IRestProxyService.class.getName();
     public static final String PING_SERVICE_URI = "ping.service.uri";
-    public static final String PING_SERVICE_TIMEOUT = "ping.service.timeout";
 
     private static final long serialVersionUID = 1L;
     private static final JacksonJaxbJsonProvider defaultJJJProvider;
@@ -85,11 +85,14 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
     protected static HttpClient httpClient = null;
     static {
-        MultiThreadedHttpConnectionManager mgr = new MultiThreadedHttpConnectionManager();
-        mgr.getParams().setDefaultMaxConnectionsPerHost(MAX_CONNECTIONS);
-        mgr.getParams().setMaxTotalConnections(MAX_CONNECTIONS);
-        mgr.getParams().setConnectionTimeout(PING_SERVLET_TIMEOUT);
-        httpClient = new HttpClient(mgr);
+        ThreadSafeClientConnManager mgr = new ThreadSafeClientConnManager();
+        mgr.setDefaultMaxPerRoute(MAX_CONNECTIONS);
+        mgr.setMaxTotal(MAX_CONNECTIONS);
+        httpClient = new DefaultHttpClient(mgr);
+        // @see http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d5e399
+        httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, PING_SERVLET_TIMEOUT);
+        httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, PING_SERVLET_TIMEOUT);
+        httpClient.getParams().setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false);
     }
 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
@@ -221,7 +224,8 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         String normalizedPingServiceUri = "";
 
         // Check whether the site is up and running or not
-        HttpMethod method = null;
+        HttpGet httpGet = null;
+
         try {
             // Make sure that it is URL encoded correctly, except for the '/' and ':' characters
             normalizedPingServiceUri = URLEncoder.encode(pingServiceUri, Charset.defaultCharset().name())
@@ -229,17 +233,11 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
             // Set the timeout for the HTTP connection in milliseconds, if the configuration parameter is missing or not set
             // use default value of 1 second
-            method = new GetMethod(normalizedPingServiceUri);
-            final int responceCode = httpClient.executeMethod(method);
-            siteIsAlive = (responceCode == HttpStatus.SC_OK);
-        } catch (HttpException httpex) {
-            if (log.isDebugEnabled()) {
-                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, httpex);
-            } else {
-                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, httpex.toString());
-            }
-
-            siteIsAlive = false;
+            httpGet = new HttpGet(normalizedPingServiceUri);
+            // @see http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d5e639
+            final HttpContext httpContext = new BasicHttpContext();
+            final HttpResponse httpResponse = httpClient.execute(httpGet, httpContext);
+            siteIsAlive = (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
         } catch (UnsupportedEncodingException usence) {
             if (log.isDebugEnabled()) {
                 log.warn("Error while pinging site using URI " + normalizedPingServiceUri, usence);
@@ -257,8 +255,8 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
             siteIsAlive = false;
         } finally {
-            if (method != null) {
-                method.releaseConnection();
+            if (httpGet != null) {
+                httpGet.abort();
             }
         }
 
