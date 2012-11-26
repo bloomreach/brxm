@@ -19,11 +19,13 @@ import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 
@@ -51,6 +53,11 @@ class MenuButton extends Panel implements IContextMenu {
         AbstractLink link;
         add(link = new AjaxLink("link") {
             private static final long serialVersionUID = 1L;
+
+            @Override
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                return new EventStoppingDecorator(super.getAjaxCallDecorator());
+            }
 
             void updateContent() {
                 if (description != null) {

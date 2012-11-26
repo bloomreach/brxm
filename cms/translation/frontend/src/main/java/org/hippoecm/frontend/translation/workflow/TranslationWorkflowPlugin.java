@@ -38,6 +38,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
@@ -581,6 +582,8 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             }
         };
 
+        add(new EmptyPanel("content"));
+
         add(new MenuDescription() {
             private static final long serialVersionUID = 1L;
 
@@ -599,6 +602,10 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                 Fragment fragment = new Fragment("content", "languages", TranslationWorkflowPlugin.this);
                 fragment.add(new DataView<HippoLocale>("languages", new AvailableLocaleProvider(localeProvider)) {
                     private static final long serialVersionUID = 1L;
+
+                    {
+                        onPopulate();
+                    }
 
                     @Override
                     protected void populateItem(Item<HippoLocale> item) {
@@ -636,6 +643,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                         super.onDetach();
                     }
                 });
+                TranslationWorkflowPlugin.this.addOrReplace(fragment);
                 return fragment;
             }
         });
@@ -653,7 +661,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
     private Set<String> getAvailableLanguages() {
         WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
         if (wdm != null) {
-            WorkflowDescriptor descriptor = (WorkflowDescriptor) wdm.getObject();
+            WorkflowDescriptor descriptor = wdm.getObject();
             WorkflowManager manager = UserSession.get().getWorkflowManager();
             try {
                 TranslationWorkflow translationWorkflow = (TranslationWorkflow) manager.getWorkflow(descriptor);

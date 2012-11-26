@@ -15,6 +15,7 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +25,7 @@ import org.apache.wicket.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class MenuHierarchy {
+class MenuHierarchy implements Serializable {
 
     static final Logger log = LoggerFactory.getLogger(MenuHierarchy.class);
 
