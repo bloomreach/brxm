@@ -126,7 +126,6 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
                     success(this.globalVariantsStore);
                 }, {single : true});
                 this.globalVariantsStore.on('exception', fail, {single : true});
-                this.globalVariantsStore.load();
             }.createDelegate(this));
         } else {
             this.globalVariantsStore = new Ext.data.ArrayStore({
@@ -159,6 +158,10 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             'edit-document',
             'documents'
         ]);
+    },
+
+    areVariantsEnabled: function() {
+        return (this.globalVariantsStore instanceof Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore);
     },
 
     initUI : function(config) {
@@ -234,7 +237,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
             width:135,
             autoSelect: true,
             disabled: !this.pageContainer.previewMode,
-            hidden: (this.globalVariantsStore instanceof Ext.data.ArrayStore), // hide when only default is available
+            hidden: !this.areVariantsEnabled(), // hide when only default is available
             tpl: '<tpl for="."><div class="x-combo-list-item template-composer-variant-{id}">{name}</div></tpl>',
             listeners: {
                 scope: this,
@@ -295,7 +298,7 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
         return new Ext.Toolbar.TextItem({
             id: 'template-composer-toolbar-variants-label',
             text : this.resources['variants-combo-box-label'],
-            hidden : (this.globalVariantsStore instanceof Ext.data.ArrayStore) // hide when only default is available
+            hidden : !this.areVariantsEnabled() // hide when only default is available
         });
     },
 
@@ -757,7 +760,12 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     initComposer: function() {
-        this.pageContainer.initComposer.call(this.pageContainer);
+        var self = this;
+        this.pageContainer.initComposer.call(this.pageContainer, function() {
+            if (self.areVariantsEnabled()) {
+                self.globalVariantsStore.load();
+            }
+        });
     },
 
     browseTo: function(data) {

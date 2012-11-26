@@ -165,19 +165,7 @@ public class PageEditor extends ExtPanel {
         this.locale = Session.get().getLocale().toString();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
         this.canUnlockChannels = isUserAdministrator(UserSession.get().getJcrSession());
-        if (StringUtils.isNotEmpty(variantsPath)) {
-            try {
-                if (UserSession.get().getJcrSession().nodeExists(variantsPath)) {
-                    this.variantsUuid = UserSession.get().getJcrSession().getNode(variantsPath).getIdentifier();
-                } else {
-                    log.warn("No node at " + variantsPath + ": variants will not be available.");
-                }
-            } catch (RepositoryException e) {
-                log.error("Failed to retrieve variants node " + variantsPath, e);
-            }
-        } else {
-            log.info("Variants path not configured. Only default variant will be available.");
-        }
+        this.variantsUuid = getVariantsUuidOrNull(variantsPath);
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/vtabs/VerticalTabPanel.css"));
@@ -266,6 +254,24 @@ public class PageEditor extends ExtPanel {
                 }
             }
         });
+    }
+
+    private static String getVariantsUuidOrNull(final String variantsPath) {
+        if (StringUtils.isNotEmpty(variantsPath)) {
+            final javax.jcr.Session session = UserSession.get().getJcrSession();
+            try {
+                if (session.nodeExists(variantsPath)) {
+                    return session.getNode(variantsPath).getIdentifier();
+                } else {
+                    log.info("No node at '{}': variants will not be available.", variantsPath);
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to retrieve variants node '" + variantsPath + "'", e);
+            }
+        } else {
+            log.info("Variants path not configured. Only the default variant will be available.");
+        }
+        return null;
     }
 
     private void addDocumentObservers(final String uuid) {

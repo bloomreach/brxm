@@ -111,7 +111,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
     // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
-    initComposer : function() {
+    initComposer : function(callback) {
         if (typeof this.contextPath === 'undefined'
                 || typeof this.renderHost === 'undefined'
                 || this.renderHost.trim() === '') {
@@ -150,6 +150,9 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
             }
             iFrame.setSrc(iFrameUrl);
 
+            if (Ext.isFunction(callback)) {
+                callback();
+            }
         }.createDelegate(this));
     },
 
