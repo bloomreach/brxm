@@ -15,8 +15,14 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
   <wicket:panel>
-    <wicket:container wicket:id="channels">
-      <div wicket:id="view-channel">[View channel]</div>
-    </wicket:container>
+      <div wicket:id="content"/>
   </wicket:panel>
+  <wicket:fragment wicket:id="description">
+      <span wicket:id="label"></span>
+  </wicket:fragment>
+  <wicket:fragment wicket:id="actions">
+      <wicket:container wicket:id="channels">
+          <div wicket:id="view-channel">[View channel]</div>
+      </wicket:container>
+  </wicket:fragment>
 </html>

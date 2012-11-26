@@ -28,13 +28,20 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.ws.rs.WebApplicationException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.MenuDescription;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -66,6 +73,47 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
 
         restProxyService = loadService("REST proxy service", CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class);
         channelManagerService = loadService("channel manager service", CONFIG_CHANNEL_MANAGER_SERVICE_ID, IChannelManagerService.class);
+
+        final WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+        if (model != null) {
+            try {
+                Node node = model.getNode();
+                if (isVisibleInPreview(node)) {
+                    addMenuDescription(model);
+                }
+            } catch (RepositoryException e) {
+                log.error("Error getting document node from WorkflowDescriptorModel", e);
+            }
+        }
+        add(new EmptyPanel("content"));
+    }
+
+    private void addMenuDescription(final WorkflowDescriptorModel model) {
+        add(new MenuDescription() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Component getLabel() {
+                Fragment fragment = new Fragment("label", "description", ChannelActionsPlugin.this);
+                fragment.add(new Label("label", new StringResourceModel("label", ChannelActionsPlugin.this, null)));
+                return fragment;
+            }
+
+            @Override
+            public MarkupContainer getContent() {
+                Fragment fragment = new Fragment("content", "actions", ChannelActionsPlugin.this);
+                try {
+                    Node node = model.getNode();
+                    String handleUuid = node.getParent().getIdentifier();
+                    fragment.add(createMenu(handleUuid));
+                } catch (RepositoryException e) {
+                    log.warn("Unable to create channel menu", e);
+                    fragment.addOrReplace(new EmptyPanel("channels"));
+                }
+                ChannelActionsPlugin.this.addOrReplace(fragment);
+                return fragment;
+            }
+        });
     }
 
     private <T extends IClusterable> T loadService(final String name, final String configServiceId, final Class<T> clazz) {
@@ -81,65 +129,51 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
         return service;
     }
 
-    @Override
-    protected void onModelChanged() {
-        super.onModelChanged();
-        @SuppressWarnings("rawtypes")
-		WorkflowDescriptorModel model = (WorkflowDescriptorModel) ChannelActionsPlugin.this.getDefaultModel();
-        if (model != null) {
-            try {
-                Node node = model.getNode();
-                if (isVisibleInPreview(node)) {
-                    final String handleUuid = node.getParent().getIdentifier();
-                    createMenu(handleUuid);
-                }
-            } catch (RepositoryException e) {
-                log.error("Error getting document node from WorkflowDescriptorModel", e);
-            }
-        }
-    }
-
-    private void createMenu(String documentUuid) {
+    private MarkupContainer createMenu(String documentUuid) {
         final DocumentService documentService = restProxyService.createRestProxy(DocumentService.class);
-        if (documentService == null) {
+        if (documentService != null) {
+            try {
+                final List<ChannelDocument> channelDocuments = documentService.getChannels(documentUuid);
+                Collections.sort(channelDocuments, getChannelDocumentComparator());
+
+                final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
+                for (ChannelDocument channelDocument : channelDocuments) {
+                    idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
+                }
+
+                return new ListView<String>("channels", new LoadableDetachableModel<List<String>>() {
+
+                    @Override
+                    protected List<String> load() {
+                        List<String> names = new ArrayList<String>();
+                        names.addAll(idToChannelMap.keySet());
+                        return names;
+                    }
+
+                }) {
+
+                    {
+                        onPopulate();
+                    }
+
+                    @Override
+                    protected void populateItem(final ListItem<String> item) {
+                        final String channelId = item.getModelObject();
+                        ChannelDocument channel = idToChannelMap.get(channelId);
+                        item.add(new ViewChannelAction("view-channel", channel));
+                    }
+                };
+            } catch (WebApplicationException e) {
+                log.error("Could not initialize channel actions menu, REST proxy returned status code '{}'",
+                        e.getResponse().getStatus());
+
+                log.debug("REST proxy returned message: {}", e.getMessage());
+           }
+        } else {
             log.warn("The REST proxy service does provide a proxy for class '{}'. As a result, the 'View' menu cannot be populated with the channels for the document with UUID '{}'",
-                    DocumentService.class.getCanonicalName(), documentUuid);
-            return;
+                     DocumentService.class.getCanonicalName(), documentUuid);
         }
-
-        try {
-            final List<ChannelDocument> channelDocuments = documentService.getChannels(documentUuid);
-            Collections.sort(channelDocuments, getChannelDocumentComparator());
-
-            final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
-            for (ChannelDocument channelDocument : channelDocuments) {
-                idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
-            }
-
-            add(new ListView<String>("channels", new LoadableDetachableModel<List<String>>() {
-
-                @Override
-                protected List<String> load() {
-                    List<String> names = new ArrayList<String>();
-                    names.addAll(idToChannelMap.keySet());
-                    return names;
-                }
-
-            }) {
-
-                @Override
-                protected void populateItem(final ListItem<String> item) {
-                    final String channelId = item.getModelObject();
-                    ChannelDocument channel = idToChannelMap.get(channelId);
-                    item.add(new ViewChannelAction("view-channel", channel));
-                }
-            });
-        } catch (WebApplicationException e) {
-            log.error("Could not initialize channel actions menu, REST proxy returned status code '{}'",
-                    e.getResponse().getStatus());
-
-            log.debug("REST proxy returned message: {}", e.getMessage());
-        }
+        return new EmptyPanel("channels");
     }
 
     protected Comparator<ChannelDocument> getChannelDocumentComparator() {
