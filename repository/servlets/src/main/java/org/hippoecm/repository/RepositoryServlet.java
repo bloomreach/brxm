@@ -567,7 +567,7 @@ public class RepositoryServlet extends HttpServlet {
                 writer.println("  <ol>");
                 writer.println("    <li>");
                 try {
-                    Node n = session.getNodeByUUID(queryString);
+                    Node n = session.getNodeByIdentifier(queryString);
                     writer.println("Found node: " + n.getPath());
                 } catch (ItemNotFoundException e) {
                     writer.println("No node found for uuid " + queryString);
@@ -584,7 +584,7 @@ public class RepositoryServlet extends HttpServlet {
                 writer.println("UUID = " + queryString);
                 Node n = null;
                 try {
-                    n = session.getNodeByUUID(queryString);
+                    n = session.getNodeByIdentifier(queryString);
                     writer.println(" ( " + n.getPath() + " )");
                 } catch (RepositoryException e) {
                     writer.println(e.getMessage());
