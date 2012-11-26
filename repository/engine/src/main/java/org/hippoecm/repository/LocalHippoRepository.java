@@ -237,6 +237,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         protected FileSystem getFileSystem() {
             return super.getFileSystem();
         }
+
+        private boolean isClustered() {
+            return getRepositoryConfig().getClusterConfig() != null;
+        }
     }
 
     protected void initialize() throws RepositoryException {
@@ -418,10 +422,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     private void migrate(final Session jcrRootSession) throws RepositoryException {
         try {
             final Class<?> updaterEngineClass = Class.forName("org.hippoecm.repository.updater.UpdaterEngine");
-            final Method migrate = updaterEngineClass.getMethod("migrate", Session.class);
+            final Method migrate = updaterEngineClass.getMethod("migrate", Session.class, boolean.class);
             final Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(
                     jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
-            needsRestart = (Boolean) migrate.invoke(null, migrateSession);
+            needsRestart = (Boolean) migrate.invoke(null, migrateSession, jackrabbitRepository.isClustered());
             migrateSession.logout();
         } catch (ClassNotFoundException ignore) {
             log.debug("UpdaterEngine not found");

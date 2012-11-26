@@ -100,6 +100,7 @@ public class UpdaterEngine {
     Session session;
     UpdaterSession updaterSession;
     private Vector<ModuleRegistration> modules;
+    private boolean clustered;
 
     class ModuleRegistration implements UpdaterContext {
         String name;
@@ -149,6 +150,10 @@ public class UpdaterEngine {
         public void registerVisitor(ItemVisitor visitor) {
             try {
                 if (visitor instanceof UpdaterItemVisitor.NamespaceVisitor) {
+                    if (clustered) {
+                        log.error("Not executing visitor " + visitor.toString() + " because running in clustered environment.");
+                        return;
+                    }
                     UpdaterItemVisitor.NamespaceVisitor namespaceVisitor = (UpdaterItemVisitor.NamespaceVisitor) visitor;
                     if (namespaceVisitor.cndName == null && namespaceVisitor.cndReader == null) {
                         log.warn("no new definition of namespace "+namespaceVisitor.prefix+" found, ignoring registration of upgrading visitor");
@@ -352,11 +357,11 @@ public class UpdaterEngine {
         // for unit testing purposes only
     }
 
-    public UpdaterEngine(Session session) throws RepositoryException {
-        this(session, Modules.getModules());
+    public UpdaterEngine(Session session, boolean clustered) throws RepositoryException {
+        this(session, Modules.getModules(), clustered);
     }
 
-    public UpdaterEngine(Session session, Modules allModules) throws RepositoryException {
+    public UpdaterEngine(Session session, Modules allModules, boolean clustered) throws RepositoryException {
         this.session = session;
         this.modules = new Vector<ModuleRegistration>();
         for (UpdaterModule module : new Modules<UpdaterModule>(allModules, UpdaterModule.class)) {
@@ -366,6 +371,7 @@ public class UpdaterEngine {
         }
         session.refresh(false);
         updaterSession = new UpdaterSession(session);
+        this.clustered = clustered;
     }
 
     boolean prepare() throws RepositoryException {
@@ -621,7 +627,7 @@ public class UpdaterEngine {
         versionProperty.getParent().save();
     }
 
-    public static boolean migrate(Session session) throws RepositoryException {
+    public static boolean migrate(Session session, boolean clustered) throws RepositoryException {
         boolean needsRestart = false;
         try {
             if(!session.getRootNode().hasNode(HippoNodeType.CONFIGURATION_PATH) ||
@@ -632,7 +638,7 @@ public class UpdaterEngine {
             boolean updates;
             do {
                 Session subSession = session.impersonate(new SimpleCredentials("system", new char[] {}));
-                UpdaterEngine engine = new UpdaterEngine(subSession);
+                UpdaterEngine engine = new UpdaterEngine(subSession, clustered);
                 updates = engine.prepare();
                 if (updates) {
                     needsRestart = true;
@@ -681,7 +687,7 @@ public class UpdaterEngine {
         bareSession.postMountEnabled(false);
         subSession.refresh(false);
         try {
-            UpdaterEngine engine = new UpdaterEngine(subSession, modules);
+            UpdaterEngine engine = new UpdaterEngine(subSession, modules, false);
             engine.upgrade();
             engine.close();
             subSession.save();
