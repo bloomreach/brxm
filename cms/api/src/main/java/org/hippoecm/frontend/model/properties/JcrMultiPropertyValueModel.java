@@ -126,7 +126,7 @@ public class JcrMultiPropertyValueModel<T extends Serializable> implements IMode
         } else {
             List<Value> values = new ArrayList<Value>(objects.size());
             try {
-                ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
+                ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
                 for (int i = 0; i < objects.size(); i++) {
                     switch (type) {
                     case PropertyType.BOOLEAN:

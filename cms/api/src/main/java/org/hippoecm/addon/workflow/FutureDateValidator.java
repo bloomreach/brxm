@@ -69,7 +69,7 @@ public class FutureDateValidator extends AbstractValidator<Date> {
         if (date == null) {
             return map;
         }
-        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        UserSession session = UserSession.get();
         Locale locale = session.getLocale();
 
         DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.MEDIUM, locale);

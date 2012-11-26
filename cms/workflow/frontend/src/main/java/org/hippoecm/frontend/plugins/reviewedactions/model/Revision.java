@@ -83,7 +83,7 @@ public class Revision extends JcrObject {
                 try {
                     Document doc = workflow.retrieve(date);
                     if (doc != null) {
-                        versionModel = new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(
+                        versionModel = new JcrNodeModel(UserSession.get().getJcrSession().getNodeByUUID(
                                 doc.getIdentity()).getParent());
                     }
                 } catch (ItemNotFoundException e) {

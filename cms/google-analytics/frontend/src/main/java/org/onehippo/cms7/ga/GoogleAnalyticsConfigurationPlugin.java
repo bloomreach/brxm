@@ -48,7 +48,7 @@ public class GoogleAnalyticsConfigurationPlugin extends Plugin implements IGoogl
     }
     
     private void loadConfiguration() {
-        UserSession userSession = (UserSession) org.apache.wicket.Session.get();
+        UserSession userSession = UserSession.get();
         Session session = userSession.getJcrSession();
         try {
             Node node = session.getNode(CONFIG_NODE_PATH);

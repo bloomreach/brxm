@@ -69,7 +69,7 @@ public class Group implements Comparable<Group>, IClusterable {
     private transient Node node;
 
     public static QueryManager getQueryManager() throws RepositoryException {
-        return ((UserSession) Session.get()).getQueryManager();
+        return UserSession.get().getQueryManager();
     }
 
 
@@ -315,7 +315,7 @@ public class Group implements Comparable<Group>, IClusterable {
         relPath.append("/");
         relPath.append(NodeNameCodec.encode(getGroupname(), true));
 
-        node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), HippoNodeType.NT_GROUP);
+        node = UserSession.get().getRootNode().addNode(relPath.toString(), HippoNodeType.NT_GROUP);
         setOrRemoveStringProperty(node, PROP_DESCRIPTION, getDescription());
         // save parent when adding a node
         node.getParent().getSession().save();

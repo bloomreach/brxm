@@ -75,7 +75,7 @@ class UploadForm extends Form {
         } else {
             List<String> galleryTypes = null;
             try {
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow(this.uploadDialog
                         .getWorkflowCategory(), galleryNode);
                 if (workflow == null) {
@@ -138,7 +138,7 @@ class UploadForm extends Form {
                 String mimetype;
                 mimetype = upload.getContentType();
                 InputStream istream = upload.getInputStream();
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 HippoNode node = null;
                 try {
                     Node galleryNode = uploadDialog.getGalleryNode();
@@ -147,7 +147,7 @@ class UploadForm extends Form {
                     String nodeName = uploadDialog.getNodeNameCodec().encode(filename);
                     String localName = uploadDialog.getLocalizeCodec().encode(filename);
                     Document document = workflow.createGalleryItem(nodeName, type);
-                    node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(
+                    node = (HippoNode) UserSession.get().getJcrSession().getNodeByUUID(
                             document.getIdentity());
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                     if (!node.getLocalizedName().equals(localName)) {

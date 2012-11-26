@@ -30,7 +30,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugins.console.dialog.LookupDialog;
-import org.hippoecm.frontend.plugins.console.menu.MenuPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.api.HippoSession;
@@ -121,7 +120,7 @@ public class MoveDialog extends LookupDialog {
                 targetPath += name;
 
                 // The actual move
-                UserSession wicketSession = (UserSession) getSession();
+                UserSession wicketSession = getSession();
                 HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
                 String sourcePath = nodeModel.getNode().getPath();
                 jcrSession.move(sourcePath, targetPath);

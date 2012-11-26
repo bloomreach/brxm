@@ -219,7 +219,7 @@ public class LoginPlugin extends RenderPlugin {
         public void onDetach() {
             WebRequest webRequest = ((WebRequestCycle) RequestCycle.get()).getWebRequest();
             if (!webRequest.getHttpServletRequest().getMethod().equals("POST") && !webRequest.isAjax()) {
-                ((UserSession) getSession()).releaseJcrSession();
+                UserSession.get().releaseJcrSession();
             }
             super.onDetach();
         }

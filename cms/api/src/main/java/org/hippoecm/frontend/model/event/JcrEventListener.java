@@ -67,7 +67,7 @@ public class JcrEventListener implements EventListener, IClusterable {
     }
 
     public void start() {
-        UserSession session = (UserSession) Session.get();
+        UserSession session = UserSession.get();
         ObservationManager obMgr = session.getObservationManager();
         try {
             obMgr.addEventListener(this, eventTypes, absPath, isDeep, uuid, nodeTypeName, false);
@@ -79,7 +79,7 @@ public class JcrEventListener implements EventListener, IClusterable {
     }
 
     public void stop() {
-        UserSession session = (UserSession) Session.get();
+        UserSession session = UserSession.get();
         ObservationManager obMgr = session.getObservationManager();
         try {
             obMgr.removeEventListener(this);

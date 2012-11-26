@@ -77,7 +77,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         
         // password max age is defined on the /hippo:configuration/hippo:security node
         try {
-            Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(SECURITY_PATH);
+            Node securityNode = UserSession.get().getRootNode().getNode(SECURITY_PATH);
             if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
                 passwordMaxAge = (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONEDAYMS);
             }
@@ -86,7 +86,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             log.error("Failed to determine configured password maximum age", e);
         }
         
-        username = ((UserSession) Session.get()).getJcrSession().getUserID();
+        username = UserSession.get().getJcrSession().getUserID();
         
         user = new User(username);
 

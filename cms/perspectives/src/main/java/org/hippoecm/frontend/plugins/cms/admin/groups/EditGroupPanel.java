@@ -68,7 +68,7 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
                 try {
                     group.save();
                     log.info("Group '" + groupname + "' saved by "
-                            + ((UserSession) Session.get()).getJcrSession().getUserID());
+                            + UserSession.get().getJcrSession().getUserID());
                     Session.get().info(getString("group-saved", model));
                     // one up
                     List<IBreadCrumbParticipant> l = breadCrumbModel.allBreadCrumbParticipants();

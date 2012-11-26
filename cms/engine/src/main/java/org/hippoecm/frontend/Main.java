@@ -110,7 +110,7 @@ public class Main extends PluginApplication {
         getApplicationSettings().setClassResolver(new IClassResolver() {
             public Class resolveClass(String name) throws ClassNotFoundException {
                 if (Session.exists()) {
-                    UserSession session = (UserSession) Session.get();
+                    UserSession session = UserSession.get();
                     ClassLoader loader = session.getClassLoader();
                     if (loader != null) {
                         return session.getClassLoader().loadClass(name);
@@ -125,7 +125,7 @@ public class Main extends PluginApplication {
                     resources.add(iter.next());
                 }
                 if (Session.exists()) {
-                    UserSession session = (UserSession) Session.get();
+                    UserSession session = UserSession.get();
                     ClassLoader loader = session.getClassLoader();
                     if (loader != null) {
                         try {
@@ -162,7 +162,7 @@ public class Main extends PluginApplication {
                 String path = requestParameters.getPath().substring("binaries/".length());
                 path = urlDecodePathComponent(path);
                 try {
-                    javax.jcr.Session subSession = ((UserSession) Session.get()).getJcrSession();
+                    javax.jcr.Session subSession = UserSession.get().getJcrSession();
                     Node node = ((HippoWorkspace) subSession.getWorkspace()).getHierarchyResolver().getNode(
                             subSession.getRootNode(), path);
                     // YUCK: no exception!

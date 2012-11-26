@@ -61,7 +61,7 @@ public class SearchDocumentsProvider extends SortableDataProvider<Node> {
             entries = new LinkedList<Node>();
             BrowserSearchResult result = bsrModel.getObject();
             if (result != null && result.getQueryResult() != null) {
-                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                javax.jcr.Session session = UserSession.get().getJcrSession();
                 try {
                     RowIterator rows = result.getQueryResult().getRows();
                     while (rows.hasNext()) {

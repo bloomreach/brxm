@@ -82,7 +82,7 @@ public class BrokenLinksStore extends ExtJsonStore<Object> {
     }
 
     private void executeQuery() throws RepositoryException{
-        QueryManager queryManager = ((UserSession) org.apache.wicket.Session.get()).getJcrSession().getWorkspace().getQueryManager();
+        QueryManager queryManager = UserSession.get().getJcrSession().getWorkspace().getQueryManager();
 
         @SuppressWarnings("deprecation") // we have to use XPath
         Query jcrQuery = queryManager.createQuery(this.query, Query.XPATH);

@@ -39,7 +39,7 @@ public class ResetDialog extends AbstractDialog<Node> {
     public ResetDialog() {
         Component message;
         try {
-            HippoNode rootNode = (HippoNode) ((UserSession) Session.get()).getJcrSession().getRootNode();
+            HippoNode rootNode = (HippoNode) UserSession.get().getJcrSession().getRootNode();
             if (rootNode.getSession().hasPendingChanges()) {
                 hasPendingChanges = true;
                 StringBuffer buf;
@@ -67,7 +67,7 @@ public class ResetDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            Node rootNode = ((UserSession) Session.get()).getJcrSession().getRootNode();
+            Node rootNode = UserSession.get().getJcrSession().getRootNode();
             // always refresh regardless of the local changes, so external changes
             // can also be exposed.
             rootNode.refresh(false);

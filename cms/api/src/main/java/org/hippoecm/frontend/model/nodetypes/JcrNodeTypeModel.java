@@ -54,7 +54,7 @@ public class JcrNodeTypeModel extends LoadableDetachableModel<NodeType> {
         NodeType result = null;
         if (type != null) {
             try {
-                UserSession sessionProvider = (UserSession) Session.get();
+                UserSession sessionProvider = UserSession.get();
                 result = sessionProvider.getJcrSession().getWorkspace().getNodeTypeManager().getNodeType(type);
             } catch (RepositoryException e) {
                 log.warn("failed to load " + e.getMessage());

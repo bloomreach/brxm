@@ -110,7 +110,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
             }
             
             try {
-                Session session = ((UserSession) getSession()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 QueryManager qMgr = session.getWorkspace().getQueryManager();
                 Query query = null;
                 if (mode.equals(MODE_PUBLISH)) {
@@ -145,7 +145,7 @@ public class PublishAllShortcutPlugin extends RenderPlugin {
         @Override
         public void onOk() {
             try {
-                Session session = ((UserSession) getSession()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 for (String uuid : documents) {
                     try {

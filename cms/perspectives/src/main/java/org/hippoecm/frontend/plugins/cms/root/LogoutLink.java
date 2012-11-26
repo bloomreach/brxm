@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.root;
 
-import static org.hippoecm.frontend.util.WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME;
-
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -31,6 +29,8 @@ import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.frontend.util.WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME;
+
 public class LogoutLink extends MarkupContainer {
 
     private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public class LogoutLink extends MarkupContainer {
     public LogoutLink(String id) {
         super(id);
 
-        UserSession session = (UserSession) getSession();
+        UserSession session = UserSession.get();
         String userID = session.getJcrSession().getUserID();
         username = new User(userID).getDisplayName();
         
@@ -63,7 +63,7 @@ public class LogoutLink extends MarkupContainer {
         // Remove the Hippo Auto Login cookie
         WebApplicationHelper.clearCookie(WebApplicationHelper.getFullyQualifiedCookieName(HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME));
 
-        UserSession userSession = (UserSession)getSession();
+        UserSession userSession = UserSession.get();
         try {
             Session session = userSession.getJcrSession();
             if (session != null) {

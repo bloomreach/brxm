@@ -171,7 +171,7 @@ public class ContentImportDialog  extends AbstractDialog<Node> {
                 }
 
                 try {
-                    ((HippoSession)((UserSession) Session.get()).getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
+                    ((HippoSession)UserSession.get().getJcrSession()).importDereferencedXML(absPath, contentStream, uuidOpt, derefOpt, mergeOpt);
 
                     // TODO if we want the imported node to be selected in the browser tree, we need to get to the new imported (top) node
                     // modelReference.setModel(newNodeModel);

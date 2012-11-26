@@ -194,7 +194,7 @@ public class DocumentEvent {
             return null;
         }
         try {
-            Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             Node node = session.getNodeByIdentifier(uuid);
             return node.getPath();
         } catch (ItemNotFoundException ignore) {

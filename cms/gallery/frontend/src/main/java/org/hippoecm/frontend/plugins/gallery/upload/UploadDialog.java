@@ -103,7 +103,7 @@ public class UploadDialog extends AbstractDialog {
         Node node = null;
         try {
             if (modelObject != null && modelObject instanceof Node) {
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 Workflow workflow = manager.getWorkflow(getWorkflowCategory(), (Node) modelObject);
                 if (workflow instanceof GalleryWorkflow) {
                     return (Node) modelObject;
@@ -114,7 +114,7 @@ public class UploadDialog extends AbstractDialog {
                 while (location.startsWith("/")) {
                     location = location.substring(1);
                 }
-                javax.jcr.Session jcrSession = ((UserSession) Session.get()).getJcrSession();
+                javax.jcr.Session jcrSession = UserSession.get().getJcrSession();
                 if (jcrSession.getRootNode().hasNode(location)) {
                     node = jcrSession.getRootNode().getNode(location);
                 }

@@ -48,7 +48,7 @@ public class SearchingTranslatorPlugin extends AbstractTranslateService implemen
 
     public IModel getModel(Map<String, String> criteria) {
         try {
-            QueryManager qMgr = ((UserSession) Session.get()).getQueryManager();
+            QueryManager qMgr = UserSession.get().getQueryManager();
             String strQuery = "//element(*, " + HippoNodeType.NT_TRANSLATED+ ")[fn:name()='"
                     + ISO9075Helper.encodeLocalName(NodeNameCodec.encode(criteria.get(HippoNodeType.HIPPO_KEY)))
                     + "']/element(" + HippoNodeType.NT_TRANSLATION + ", " + HippoNodeType.HIPPO_TRANSLATION + ")[@" +

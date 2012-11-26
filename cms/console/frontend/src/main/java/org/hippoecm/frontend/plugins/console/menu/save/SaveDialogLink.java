@@ -52,7 +52,7 @@ public class SaveDialogLink extends DialogLink {
     }
 
     private boolean hasSessionChanges() {
-        Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        Session session = UserSession.get().getJcrSession();
         try {
             return session.hasPendingChanges();
         } catch (RepositoryException e) {

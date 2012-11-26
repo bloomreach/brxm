@@ -43,7 +43,6 @@ import org.hippoecm.frontend.plugin.IServiceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
@@ -95,7 +94,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
                 if (key.equals(category)) {
                     String path = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.WORKFLOWS_PATH + "/" + category;
                     try {
-                        Session session = ((UserSession) getSession()).getJcrSession();
+                        Session session = getSession().getJcrSession();
                         if (session.itemExists(path)) {
                             Node node = (Node) session.getItem(path);
                             if (node.isNodeType(HippoNodeType.NT_TRANSLATED)) {

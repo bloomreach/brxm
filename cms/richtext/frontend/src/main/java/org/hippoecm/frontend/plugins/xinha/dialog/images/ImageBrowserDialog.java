@@ -260,7 +260,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
 
                         mimetype = upload.getContentType();
                         InputStream istream = upload.getInputStream();
-                        WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                        WorkflowManager manager = UserSession.get().getWorkflowManager();
                         HippoNode node = null;
                         try {
                             //Get the selected folder from the folderReference Service
@@ -272,7 +272,7 @@ public class ImageBrowserDialog extends AbstractBrowserDialog<XinhaImage> implem
                             String localName = getLocalizeCodec().encode(filename);
                             List<String> galleryTypes = workflow.getGalleryTypes();
                             Document document = workflow.createGalleryItem(nodeName, galleryTypes.get(0));
-                            node = (HippoNode) (((UserSession) Session.get())).getJcrSession().getNodeByUUID(document.getIdentity());
+                            node = (HippoNode) UserSession.get().getJcrSession().getNodeByUUID(document.getIdentity());
                             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                             if (!node.getLocalizedName().equals(localName)) {
                                 defaultWorkflow.localizeName(localName);

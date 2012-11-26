@@ -24,7 +24,7 @@ public class SessionClassLoaderModel extends LoadableDetachableModel<ClassLoader
 
     @Override
     protected ClassLoader load() {
-        return ((UserSession) Session.get()).getClassLoader();
+        return UserSession.get().getClassLoader();
     }
 
 }

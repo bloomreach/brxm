@@ -195,7 +195,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     public void setMode(Mode mode) throws EditorException {
         IModel<Node> editorModel = getEditorModel();
         if (mode != getMode() && editorModel != null) {
-            WorkflowManager wflMgr = ((UserSession) Session.get()).getWorkflowManager();
+            WorkflowManager wflMgr = UserSession.get().getWorkflowManager();
             try {
                 Workflow workflow = wflMgr.getWorkflow("default", editorModel.getObject());
                 if (workflow instanceof EditableWorkflow) {
@@ -262,7 +262,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
      * @throws EditorException Unable to save the document.
      */
     public void save() throws EditorException {
-        UserSession session = (UserSession) Session.get();
+        UserSession session = UserSession.get();
         String docPath = null;
 
         try {
@@ -300,7 +300,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     public void revert() throws EditorException {
         try {
-            UserSession session = (UserSession) Session.get();
+            UserSession session = UserSession.get();
 
             WorkflowManager manager = session.getWorkflowManager();
             Node docNode = getEditorModel().getObject();
@@ -352,7 +352,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     public void done() throws EditorException {
 
-        UserSession session = (UserSession) Session.get();
+        UserSession session = UserSession.get();
         String docPath = null;
         try {
             Node documentNode = getEditorModel().getObject();
@@ -392,7 +392,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     public void discard() throws EditorException {
         try {
-            UserSession session = (UserSession) Session.get();
+            UserSession session = UserSession.get();
 
             WorkflowManager manager = session.getWorkflowManager();
             Node docNode = getEditorModel().getObject();
@@ -446,7 +446,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         editorModel = getEditorModel();
         if (getMode() == Mode.EDIT) {
             try {
-	        UserSession session = (UserSession) Session.get();
+	        UserSession session = UserSession.get();
                 session.getObservationManager().addEventListener(this,
                         Event.NODE_ADDED | Event.NODE_MOVED | Event.NODE_REMOVED |
                                 Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED,
@@ -478,7 +478,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         super.stop();
         if (getMode() == Mode.EDIT) {
             try {
-	        UserSession session = (UserSession) Session.get();
+	        UserSession session = UserSession.get();
                 session.getObservationManager().removeEventListener(this);
                 modified = false;
             } catch (RepositoryException e) {
@@ -571,7 +571,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     static WorkflowState getWorkflowState(Node handleNode) throws EditorException {
         WorkflowState wfState = new WorkflowState();
         try {
-            String user = ((UserSession) Session.get()).getJcrSession().getUserID();
+            String user = UserSession.get().getJcrSession().getUserID();
             wfState.setUser(user);
             if (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                 throw new EditorException("Invalid node, not of type " + HippoNodeType.NT_HANDLE);

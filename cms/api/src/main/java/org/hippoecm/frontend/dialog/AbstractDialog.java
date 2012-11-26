@@ -57,6 +57,7 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -357,6 +358,11 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
      */
     protected boolean isFullscreenEnabled() {
         return false;
+    }
+
+    @Override
+    public UserSession getSession() {
+        return UserSession.get();
     }
 
     @Override

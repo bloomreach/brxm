@@ -24,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.session.UserSession;
@@ -78,7 +77,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
             if (parent != null) {
                 Node node;
                 if (prototype != null) {
-                    HippoSession session = (HippoSession) ((UserSession) Session.get()).getJcrSession();
+                    HippoSession session = (HippoSession) UserSession.get().getJcrSession();
                     node = session.copy(prototype.getNode(), parent.getPath() + "/" + descriptor.getPath());
                 } else {
                     log.info("No prototype available to initialize child node for field {} with type {}", descriptor

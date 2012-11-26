@@ -66,7 +66,7 @@ public class JcrTypeStore extends AbstractJcrTypeStore implements IDetachable {
      * Retrieves the JCR session from the Wicket session.
      */
     protected Session getJcrSession() {
-        return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        return UserSession.get().getJcrSession();
     }
 
 }

@@ -33,7 +33,7 @@ public final class DetachableGroup extends LoadableDetachableModel<Group> {
     private String path;
 
     protected Node getRootNode() throws RepositoryException {
-        return ((UserSession) Session.get()).getJcrSession().getRootNode();
+        return UserSession.get().getJcrSession().getRootNode();
     }
 
     public DetachableGroup() {

@@ -74,7 +74,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 if (emWorkflow != null) {
                     String path = emWorkflow.edit();
                     try {
-                        Node node = ((UserSession) Session.get()).getJcrSession().getRootNode().getNode(path.substring(1));
+                        Node node = UserSession.get().getJcrSession().getRootNode().getNode(path.substring(1));
                         JcrItemModel itemModel = new JcrItemModel(node);
                         if (path != null) {
                             IEditorManager editorMgr = context.getService(config.getString(IEditorManager.EDITOR_ID), IEditorManager.class);
@@ -118,7 +118,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     EditmodelWorkflow workflow = (EditmodelWorkflow) wf;
                     if (workflow != null) {
                         String path = workflow.copy(name);
-                        ((UserSession) Session.get()).getJcrSession().refresh(true);
+                        UserSession.get().getJcrSession().refresh(true);
 
                         JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
                         if (path != null) {
@@ -151,7 +151,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
 
         try {
-            WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+            WorkflowManager manager = UserSession.get().getWorkflowManager();
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getDefaultModelObject();
             if (workflowDescriptor != null) {
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);

@@ -49,7 +49,7 @@ public class LogoutLink extends Panel {
                 // Remove the Hippo Auto Login cookie
                 WebApplicationHelper.clearCookie(WebApplicationHelper.getFullyQualifiedCookieName(WebApplicationHelper.HIPPO_AUTO_LOGIN_COOKIE_BASE_NAME));
 
-                UserSession userSession = (UserSession) getSession();
+                UserSession userSession = UserSession.get();
                 try {
                     Node rootNode = userSession.getRootNode();
                     if (rootNode != null && rootNode.getSession().hasPendingChanges()) {

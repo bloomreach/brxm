@@ -126,7 +126,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
             String mimetype = upload.getContentType();
             InputStream is = upload.getInputStream();
 
-            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+            WorkflowManager manager = UserSession.get().getWorkflowManager();
             HippoNode node = null;
             try {
                 WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
@@ -229,7 +229,7 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
     private Dialog createDialog() {
         List<String> galleryTypes = null;
         try {
-            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+            WorkflowManager manager = UserSession.get().getWorkflowManager();
             WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) GalleryWorkflowPlugin.this
                     .getDefaultModel();
             GalleryWorkflow workflow = (GalleryWorkflow) manager

@@ -68,7 +68,7 @@ public class CommitTypeWorkflowPlugin extends CompatibilityWorkflowPlugin {
         });
 
         try {
-            WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+            WorkflowManager manager = UserSession.get().getWorkflowManager();
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getDefaultModelObject();
             if (workflowDescriptor != null) {
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);

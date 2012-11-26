@@ -74,7 +74,7 @@ public class JcrObservationManager implements ObservationManager {
             String[] nodeTypeName, boolean noLocal) throws RepositoryException {
         cleanup();
 
-        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        UserSession session = UserSession.get();
         if (session != null) {
 
             Session jcrSession = session.getJcrSession();
@@ -165,7 +165,7 @@ public class JcrObservationManager implements ObservationManager {
     public void refreshSession() {
         cleanup();
 
-        UserSession session = (UserSession) org.apache.wicket.Session.get();
+        UserSession session = UserSession.get();
         if (session != null) {
             // copy set of listeners; don't synchronize on map while notifying observers
             // as it may need to be modified as a result of the event.

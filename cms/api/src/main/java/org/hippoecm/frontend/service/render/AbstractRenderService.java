@@ -53,6 +53,7 @@ import org.hippoecm.frontend.service.IFocusListener;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ITranslateService;
 import org.hippoecm.frontend.service.ServiceTracker;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -438,6 +439,11 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         } catch (NoSuchAlgorithmException ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    @Override
+    public UserSession getSession() {
+        return UserSession.get();
     }
 
     public void bind(IRenderService parent, String wicketId) {

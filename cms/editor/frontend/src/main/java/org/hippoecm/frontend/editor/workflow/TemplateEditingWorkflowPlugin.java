@@ -144,7 +144,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
     }
 
     void doSave() throws Exception {
-        ((UserSession) Session.get()).getJcrSession().save();
+        UserSession.get().getJcrSession().save();
     }
 
     void doRevert() throws Exception {

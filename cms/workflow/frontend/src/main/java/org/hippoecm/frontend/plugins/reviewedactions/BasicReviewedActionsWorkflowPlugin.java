@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
@@ -115,8 +116,9 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
-                ((UserSession) getSession()).getJcrSession().refresh(true);
-                Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
+                Session session = UserSession.get().getJcrSession();
+                session.refresh(true);
+                Node docNode = session.getNodeByUUID(docRef.getIdentity());
                 IEditorManager editorMgr = getPluginContext().getService(
                         getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                 if (editorMgr != null) {
@@ -339,7 +341,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
 
     private void hideInvalidActions() {
         try {
-            WorkflowManager manager = ((UserSession)org.apache.wicket.Session.get()).getWorkflowManager();
+            WorkflowManager manager = getSession().getWorkflowManager();
             WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getDefaultModel();
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getDefaultModelObject();
             if(workflowDescriptor != null) {

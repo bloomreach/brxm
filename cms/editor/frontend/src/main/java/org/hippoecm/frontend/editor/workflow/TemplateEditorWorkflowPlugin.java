@@ -63,7 +63,7 @@ public class TemplateEditorWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 TemplateEditorWorkflow workflow = (TemplateEditorWorkflow) wf;
                 String nsPath = workflow.createNamespace(prefix, url);
 
-                Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 if (session.itemExists(nsPath + "/basedocument")) {
                     Node baseDocNode = session.getNode(nsPath + "/basedocument");
                     NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();

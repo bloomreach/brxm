@@ -64,7 +64,7 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
         List<String> mixins = new LinkedList<String>();
 
         try {
-            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            javax.jcr.Session session = UserSession.get().getJcrSession();
             QueryManager qMgr = session.getWorkspace().getQueryManager();
             Query query = qMgr.createQuery("//element(*, " + HippoNodeType.NT_NODETYPE + ")[@"
                     + HippoNodeType.HIPPO_MIXIN + "='true']", Query.XPATH);
@@ -188,7 +188,7 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
      */
     @SuppressWarnings("deprecation")
     protected Node getTemplateNode(ITypeDescriptor type, boolean create) throws RepositoryException, StoreException {
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        javax.jcr.Session session = UserSession.get().getJcrSession();
 
         String typeName = type.getName();
         String prefix;
@@ -276,7 +276,7 @@ public class JcrTemplateStore implements ITemplateStore, IDetachable {
         Value[] values = new Value[list.size()];
         int i = 0;
         for (String override : list) {
-            values[i++] = ((UserSession) org.apache.wicket.Session.get()).getJcrSession().getValueFactory()
+            values[i++] = UserSession.get().getJcrSession().getValueFactory()
                     .createValue(override);
         }
         return values;

@@ -50,7 +50,7 @@ public class NamespaceDialog extends AbstractDialog<Node> {
         }
 
         try {
-            final NamespaceRegistry namespaceRegistry = ((UserSession) Session.get()).getJcrSession().getWorkspace().getNamespaceRegistry();
+            final NamespaceRegistry namespaceRegistry = UserSession.get().getJcrSession().getWorkspace().getNamespaceRegistry();
             try {
                 final String existingUri = namespaceRegistry.getURI(prefix);
                 if (uri.equals(existingUri)) {

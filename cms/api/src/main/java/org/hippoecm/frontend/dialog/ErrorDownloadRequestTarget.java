@@ -38,14 +38,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.wicket.Application;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.RequestCycle;
-import org.apache.wicket.Session;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebResponse;
 import org.apache.wicket.util.time.Time;
 import org.hippoecm.frontend.Home;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.RepoUtils;
 import org.slf4j.Logger;
@@ -250,7 +248,7 @@ public class ErrorDownloadRequestTarget implements IRequestTarget {
         // set filename
         response.setAttachmentHeader(FILE_NAME);
 
-        UserSession session = (UserSession) Session.get();
+        UserSession session = UserSession.get();
 
         try {
             tempFile = File.createTempFile("error-" + Time.now().toString() + "-", ".xml");

@@ -58,7 +58,7 @@ public class LinkPickerDialog extends AbstractDialog<String> {
                 try {
                     String uuid = getModelObject();
                     if (uuid != null && !"".equals(uuid)) {
-                        return new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByUUID(uuid));
+                        return new JcrNodeModel(UserSession.get().getJcrSession().getNodeByUUID(uuid));
                     }
                 } catch (RepositoryException ex) {
                     log.error(ex.getMessage());

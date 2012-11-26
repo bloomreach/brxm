@@ -53,8 +53,8 @@ public class AutoEditPlugin extends Plugin {
             final IEditorManager editService = context.getService(config.getString("editor.id"), IEditorManager.class);
             if (editService != null) {
                 try {
-                    final String user = ((UserSession) Session.get()).getJcrSession().getUserID();
-                    QueryManager qMgr = ((UserSession) Session.get()).getJcrSession().getWorkspace().getQueryManager();
+                    final String user = UserSession.get().getJcrSession().getUserID();
+                    QueryManager qMgr = UserSession.get().getJcrSession().getWorkspace().getQueryManager();
                     // FIXME wrong knowledge in use here
                     Query query = qMgr.createQuery("select * from " + HippoStdNodeType.NT_PUBLISHABLE
                         + " where " + HippoStdNodeType.HIPPOSTD_STATE + "='" + HippoStdNodeType.DRAFT + "' "

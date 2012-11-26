@@ -36,7 +36,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 
 class ReferenceEditor extends Panel {
@@ -51,7 +50,7 @@ class ReferenceEditor extends Panel {
         try {
             stringValue = valueModel.getValue().getString();
             isProtected = propertyModel.getProperty().getDefinition().isProtected();
-            Session session = ((UserSession) getSession()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             Node targetNode = session.getNodeByIdentifier(stringValue);
 
             // link to referenced node

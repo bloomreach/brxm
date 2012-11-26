@@ -57,7 +57,7 @@ public class JcrValueList<T> extends AbstractList<T> implements IDetachable {
     public void add(int index, T element) {
         try {
             Value[] values;
-            Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             if (property.getItemModel().exists()) {
                 values = property.getProperty().getValues();
             } else {

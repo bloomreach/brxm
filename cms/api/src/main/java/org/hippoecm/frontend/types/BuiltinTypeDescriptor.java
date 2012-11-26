@@ -60,7 +60,7 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
             setIsNode(false);
         } else {
             try {
-                Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
                 ntMgr.getNodeType(type);
             } catch (NoSuchNodeTypeException ex) {
@@ -95,7 +95,7 @@ public class BuiltinTypeDescriptor extends JavaTypeDescriptor implements IDetach
             fields = new LinkedHashMap<String, IFieldDescriptor>();
             declaredFields = new LinkedHashMap<String, IFieldDescriptor>();
             try {
-                Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
                 nt = ntMgr.getNodeType(type);
 

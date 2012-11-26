@@ -56,7 +56,7 @@ public class PluginFactory implements IClusterable {
             message = "No plugin classname configured, please set plugin configuration parameter " + IPlugin.CLASSNAME;
         } else {
             className = className.trim();
-            ClassLoader loader = ((UserSession) Session.get()).getClassLoader();
+            ClassLoader loader = UserSession.get().getClassLoader();
             if (loader == null) {
                 log.info("Unable to retrieve repository classloader, falling back to default classloader.");
                 loader = getClass().getClassLoader();

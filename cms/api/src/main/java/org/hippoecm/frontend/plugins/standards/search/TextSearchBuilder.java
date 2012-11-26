@@ -231,7 +231,7 @@ public class TextSearchBuilder implements IClusterable {
     }
 
     private StringBuilder getScope() {
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        javax.jcr.Session session = UserSession.get().getJcrSession();
 
         StringBuilder sb = new StringBuilder();
         boolean haveTypeRestriction = false;

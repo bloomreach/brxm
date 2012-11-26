@@ -101,7 +101,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                     name = "";
                 }
                 documents = new HashSet<String>();
-                Session session = ((UserSession)getSession()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 Query query = null;
                 try {
                     QueryManager qMgr = session.getWorkspace().getQueryManager();
@@ -119,7 +119,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
             @Override
             protected void execute(WorkflowDescriptorModel model) throws Exception {
-                Session session = ((UserSession) getSession()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 for (String uuid : documents) {
                     try {
@@ -175,7 +175,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                     name = "";
                 }
                 documents = new HashSet<String>();
-                Session session = ((UserSession)getSession()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 Query query = null;
                 try {
                     QueryManager qMgr = session.getWorkspace().getQueryManager();
@@ -193,7 +193,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
 
             @Override
             protected void execute(WorkflowDescriptorModel model) throws Exception {
-                Session session = ((UserSession) getSession()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 WorkflowManager wfMgr = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
                 for (String uuid : documents) {
                     try {

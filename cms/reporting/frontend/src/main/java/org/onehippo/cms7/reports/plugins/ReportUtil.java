@@ -60,7 +60,7 @@ public final class ReportUtil {
      */
     public static String substituteVariables(String s) {
         if (StringUtils.contains(s, VAR_USER)) {
-            final String currentUserId = ((UserSession) org.apache.wicket.Session.get()).getJcrSession().getUserID();
+            final String currentUserId = UserSession.get().getJcrSession().getUserID();
             return StringUtils.replace(s, VAR_USER, currentUserId);
         }
         return s;

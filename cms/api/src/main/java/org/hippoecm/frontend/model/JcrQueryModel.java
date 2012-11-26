@@ -66,7 +66,7 @@ public class JcrQueryModel extends LoadableDetachableModel implements IDataProvi
     @Override
     protected Object load() {
         try {
-            QueryManager qmgr = ((UserSession) Session.get()).getJcrSession().getWorkspace().getQueryManager();
+            QueryManager qmgr = UserSession.get().getJcrSession().getWorkspace().getQueryManager();
             Query query = qmgr.createQuery(statement, language);
             return query.execute();
         } catch (RepositoryException ex) {

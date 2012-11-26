@@ -345,7 +345,7 @@ public abstract class NodePickerController implements IDetachable {
             try {
                 Node node = lastModelVisited.getObject();
                 if (settings.hasLastVisitedNodeTypes()) {
-                    Node root = ((UserSession) Session.get()).getJcrSession().getRootNode();
+                    Node root = UserSession.get().getJcrSession().getRootNode();
                     while (!node.isSame(root)) {
                         for (String nodeType : settings.getLastVisitedNodeTypes()) {
                             if (node.isNodeType(nodeType)) {

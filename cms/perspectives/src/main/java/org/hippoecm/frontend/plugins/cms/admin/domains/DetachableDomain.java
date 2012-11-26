@@ -33,7 +33,7 @@ public final class DetachableDomain extends LoadableDetachableModel<Domain> {
     private final String path;
 
     protected Node getRootNode() throws RepositoryException {
-        return ((UserSession) Session.get()).getJcrSession().getRootNode();
+        return UserSession.get().getJcrSession().getRootNode();
     }
 
     /**

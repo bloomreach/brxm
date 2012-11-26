@@ -85,7 +85,7 @@ public class BuiltinTypeStore implements ITypeStore {
         if (criteria.containsKey("supertype")) {
             Set<String> types = new HashSet<String>((List<String>) criteria.get("supertype"));
             try {
-                Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                Session session = UserSession.get().getJcrSession();
                 NodeTypeManager ntMgr = session.getWorkspace().getNodeTypeManager();
                 NodeTypeIterator ntIter = ntMgr.getAllNodeTypes();
                 while (ntIter.hasNext()) {

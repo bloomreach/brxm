@@ -59,7 +59,7 @@ public class LogoutDialog extends AbstractDialog {
     @Override
     public void onClose() {
         if (logout) {
-            UserSession userSession = (UserSession) getSession();
+            UserSession userSession = getSession();
             try {
                 userSession.getJcrSession().refresh(false);
             } catch (RepositoryException e) {

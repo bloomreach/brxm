@@ -171,7 +171,7 @@ public class Domain implements Comparable<Domain>, IClusterable {
 
     public static Domain forName(String domainName) {
         String pathToDomain = DOMAINS_BASE_LOCATION + "/" + domainName;
-        Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        Session session = UserSession.get().getJcrSession();
         try {
             if (!session.nodeExists(pathToDomain)) {
                 throw new IllegalArgumentException("Domain with name {} does not exist.".replace("{}", domainName));

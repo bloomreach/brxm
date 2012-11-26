@@ -21,6 +21,9 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
+
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -80,7 +83,10 @@ public class BrokenLinksListPanel extends ReportPanel {
 
         updateText = null;
         try {
-            for (NodeIterator brokenlinksConfigs = (((UserSession)org.apache.wicket.Session.get()).getJcrSession()).getWorkspace().getQueryManager().createQuery("SELECT * FROM [brokenlinks:config]", Query.JCR_SQL2).execute().getNodes(); brokenlinksConfigs.hasNext();) {
+            QueryManager queryManager = UserSession.get().getJcrSession().getWorkspace().getQueryManager();
+            QueryResult queryResult = queryManager.createQuery("SELECT * FROM [brokenlinks:config]",
+                                                           Query.JCR_SQL2).execute();
+            for (NodeIterator brokenlinksConfigs = queryResult.getNodes(); brokenlinksConfigs.hasNext();) {
                 Node brokenlinksConfig = brokenlinksConfigs.nextNode();
                 if (brokenlinksConfig.isNodeType(HippoNodeType.NT_DOCUMENT) && brokenlinksConfig.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
                     brokenlinksConfig = brokenlinksConfig.getParent();
@@ -116,7 +122,7 @@ public class BrokenLinksListPanel extends ReportPanel {
 
     private Node getNode(String path) {
         try {
-            Session session = ((UserSession) getSession()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             return session.getNode(path);
         } catch (RepositoryException e) {
             log.warn("Unable to get the node " + path, e);

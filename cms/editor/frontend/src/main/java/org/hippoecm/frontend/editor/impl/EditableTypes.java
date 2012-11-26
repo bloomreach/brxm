@@ -55,7 +55,7 @@ class EditableTypes extends AbstractList implements Serializable, IObservable {
 
     List<String> load() {
         List<String> editableTypes = new ArrayList<String>();
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        javax.jcr.Session session = UserSession.get().getJcrSession();
         try {
             QueryManager qMgr = session.getWorkspace().getQueryManager();
             Query query = qMgr.createQuery("//element(*, " + EditorNodeType.NT_EDITABLE + ")", Query.XPATH);

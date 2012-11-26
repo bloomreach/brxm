@@ -91,7 +91,7 @@ public class UnpublishedReferenceProvider implements ISortableDataProvider<Strin
     protected void load() {
         if (entries == null) {
             entries = new ArrayList<String>();
-            Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             Iterator<String> upstream = wrapped.iterator(0, wrapped.size());
             try {
                 while (upstream.hasNext()) {

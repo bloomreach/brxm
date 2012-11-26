@@ -200,7 +200,7 @@ public class SystemInfoDataProvider implements IDataProvider {
     }
 
     public String getRepositoryVersion() {
-        Repository repository = ((UserSession) Session.get()).getJcrSession().getRepository();
+        Repository repository = UserSession.get().getJcrSession().getRepository();
         if (repository != null) {
             return repository.getDescriptor(Repository.REP_VERSION_DESC);
         } else {
@@ -209,7 +209,7 @@ public class SystemInfoDataProvider implements IDataProvider {
     }
     
     public String getRepositoryVendor() {
-        Repository repository = ((UserSession) Session.get()).getJcrSession().getRepository();
+        Repository repository = UserSession.get().getJcrSession().getRepository();
         if (repository != null) {
             return repository.getDescriptor(Repository.REP_NAME_DESC);
         } else {

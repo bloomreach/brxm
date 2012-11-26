@@ -90,7 +90,7 @@ public class SearchBehavior extends AutoCompleteBehavior {
     }
 
     private String[] getSearchPaths(String[] basePaths) {
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        javax.jcr.Session session = UserSession.get().getJcrSession();
 
         List<String> paths = new LinkedList<String>();
         for (String path : basePaths) {

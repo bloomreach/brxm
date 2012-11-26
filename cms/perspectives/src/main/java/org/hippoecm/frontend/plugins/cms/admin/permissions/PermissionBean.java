@@ -109,7 +109,7 @@ public class PermissionBean implements Serializable {
     }
 
     private static NodeIterator obtainNodeIteratorForQueryString(final String queryString) {
-        QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
+        QueryManager queryManager = UserSession.get().getQueryManager();
         try {
             @SuppressWarnings("deprecation") Query query = queryManager.createQuery(queryString, Query.XPATH);
             QueryResult queryResult = query.execute();

@@ -131,7 +131,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 HippoNode node = (HippoNode) model.getNode();
                 String nodeName = getNodeNameCodec().encode(uriName);
                 String localName = getLocalizeCodec().encode(targetName);
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 FolderWorkflow folderWorkflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
                 if (!((WorkflowDescriptorModel)getDefaultModel()).getNode().getName().equals(nodeName)) {
@@ -159,7 +159,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
 
             @Override
             protected void execute(WorkflowDescriptorModel model) throws Exception {
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow((WorkflowDescriptor) model.getObject());
                 workflow.reorder(order);
             }
@@ -241,7 +241,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 // and there is some logic here to look up the parent.  The real solution is
                 // in the visual component to merge two workflows.
                 Node node = model.getNode();
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
                 workflow.delete(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""));
             }
@@ -253,7 +253,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                 WorkflowDescriptorModel descriptorModel = (WorkflowDescriptorModel) getDefaultModel();
                 List<StdWorkflow> list = new LinkedList<StdWorkflow>();
                 WorkflowDescriptor descriptor = (WorkflowDescriptor) model.getObject();
-                WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 Workflow workflow = manager.getWorkflow(descriptor);
                 if(workflow instanceof FolderWorkflow) {
                     FolderWorkflow folderWorkflow = (FolderWorkflow) workflow;
@@ -322,11 +322,11 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                                     }
 
                                     String path = workflow.add(category, prototype, arguments);
-                                    ((UserSession) Session.get()).getJcrSession().refresh(true);
+                                    UserSession.get().getJcrSession().refresh(true);
                                     JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
                                     select(nodeModel);
                                     if(!nodeName.equals(localName)) {
-                                        WorkflowManager workflowMgr = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+                                        WorkflowManager workflowMgr = UserSession.get().getWorkflowManager();
                                         DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", nodeModel.getNode());
                                         defaultWorkflow.localizeName(localName);
                                     }
@@ -383,7 +383,7 @@ public class FolderWorkflowPlugin extends CompatibilityWorkflowPlugin<FolderWork
                         if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                             editNodeModelNode = editNodeModelNode.getNode(editNodeModelNode.getName());
                         }
-                        javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                        javax.jcr.Session session = UserSession.get().getJcrSession();
                         WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace())
                                 .getWorkflowManager();
                         Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);

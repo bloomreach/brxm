@@ -147,6 +147,6 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
     }
     
     private Session getJcrSession() {
-        return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        return UserSession.get().getJcrSession();
     }
 }

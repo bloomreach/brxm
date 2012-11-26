@@ -561,7 +561,7 @@ public class ObservationTest extends PluginTest {
 
         // emulate separate workflow operation
         session.refresh(false);
-        ((UserSession) org.apache.wicket.Session.get()).getFacetRootsObserver().broadcastEvents();
+        UserSession.get().getFacetRootsObserver().broadcastEvents();
 
         home.processEvents();
 

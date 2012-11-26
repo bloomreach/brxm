@@ -53,7 +53,7 @@ public final class UnpublishedReferenceNodeProvider implements ISortableDataProv
 
             public Node next() {
                 String uuid = upstream.next();
-                javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+                javax.jcr.Session session = UserSession.get().getJcrSession();
                 try {
                     return session.getNodeByIdentifier(uuid);
                 } catch (ItemNotFoundException e) {

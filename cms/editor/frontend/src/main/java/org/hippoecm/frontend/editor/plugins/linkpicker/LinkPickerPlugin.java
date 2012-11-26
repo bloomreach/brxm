@@ -65,7 +65,7 @@ public class LinkPickerPlugin extends RenderPlugin<String> {
                     return EMPTY_LINK_TEXT;
                 }
                 try {
-                    return ((UserSession) Session.get()).getJcrSession().getNodeByUUID(docbaseUUID).getPath();
+                    return UserSession.get().getJcrSession().getNodeByUUID(docbaseUUID).getPath();
                 } catch (ValueFormatException e) {
                     log.warn("Invalid value format for docbase " + e.getMessage());
                     log.debug("Invalid value format for docbase ", e);
@@ -121,7 +121,7 @@ public class LinkPickerPlugin extends RenderPlugin<String> {
                 @Override
                 public void onClear() {
                     try {
-                        valueModel.setObject(((UserSession) Session.get()).getJcrSession().getRootNode().getUUID());
+                        valueModel.setObject(UserSession.get().getJcrSession().getRootNode().getUUID());
                     } catch (RepositoryException e) {
                         log.error("Unable to reset docbase to rootnode uuid", e);
                     }

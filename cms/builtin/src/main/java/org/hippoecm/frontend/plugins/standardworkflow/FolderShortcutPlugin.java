@@ -108,7 +108,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
 
         if (!defaultDropLocation.equals("")) {
             try {
-                Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                Session jcrSession = UserSession.get().getJcrSession();
                 while (defaultDropLocation.startsWith(SLASH)) {
                     defaultDropLocation = defaultDropLocation.substring(1);
                 }
@@ -162,7 +162,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                         if (editNodeModelNode.isNodeType(HippoNodeType.NT_HANDLE)) {
                             editNodeModelNode = editNodeModelNode.getNode(editNodeModelNode.getName());
                         }
-                        WorkflowManager workflowManager = ((UserSession) org.apache.wicket.Session.get())
+                        WorkflowManager workflowManager = UserSession.get()
                                 .getWorkflowManager();
                         Workflow workflow = workflowManager.getWorkflow("editing", editNodeModelNode);
                         try {
@@ -170,7 +170,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                                 EditableWorkflow editableWorkflow = (EditableWorkflow) workflow;
                                 Document editableDocument = editableWorkflow.obtainEditableInstance();
                                 if (editableDocument != null) {
-                                    Session jcrSession = ((UserSession) org.apache.wicket.Session.get())
+                                    Session jcrSession = UserSession.get()
                                             .getJcrSession();
                                     jcrSession.refresh(true);
                                     editNodeModel = new JcrNodeModel(jcrSession.getNodeByUUID(editableDocument
@@ -259,7 +259,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                     IEditorManager.class));
 
             String workflowCategory = config.getString("workflow.categories");
-            Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            Session jcrSession = UserSession.get().getJcrSession();
             WorkflowDescriptor folderWorkflowDescriptor = null;
             try {
                 if (folder == null) {
@@ -468,7 +468,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
             try {
                 IModel model = getModel();
                 if (model != null && model instanceof WorkflowDescriptorModel) {
-                    Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+                    Session jcrSession = UserSession.get().getJcrSession();
                     WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
                     FolderWorkflow workflow = (FolderWorkflow) manager
                             .getWorkflow((WorkflowDescriptor) ((WorkflowDescriptorModel) model).getObject());
@@ -495,7 +495,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                         String path = workflow.add(templateCategory, prototype, arguments);
                         Node node = jcrSession.getNode(path);
                         if (!nodeName.equals(localName)) {
-                            WorkflowManager workflowMgr = ((UserSession) org.apache.wicket.Session.get())
+                            WorkflowManager workflowMgr = UserSession.get()
                                     .getWorkflowManager();
                             DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", node);
                             defaultWorkflow.localizeName(localName);

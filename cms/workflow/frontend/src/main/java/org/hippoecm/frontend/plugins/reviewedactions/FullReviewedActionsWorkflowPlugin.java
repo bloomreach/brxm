@@ -22,10 +22,10 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -142,8 +142,9 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
             protected String execute(Workflow wf) throws Exception {
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
                 Document docRef = workflow.obtainEditableInstance();
-                ((UserSession) getSession()).getJcrSession().refresh(true);
-                Node docNode = ((UserSession) getSession()).getJcrSession().getNodeByUUID(docRef.getIdentity());
+                Session session = UserSession.get().getJcrSession();
+                session.refresh(true);
+                Node docNode = session.getNodeByUUID(docRef.getIdentity());
                 IEditorManager editorMgr = getPluginContext().getService(
                         getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                 if (editorMgr != null) {
@@ -323,7 +324,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 if ("".equals(nodeName)) {
                     throw new IllegalArgumentException("You need to enter a name");
                 }
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                     ((FullReviewedActionsWorkflow) wf).rename(nodeName);
@@ -381,7 +382,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
                 JcrNodeModel resultModel = new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName);
                 Node result = resultModel.getNode();
 
-                WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", result.getNode(nodeName));
                 defaultWorkflow.localizeName(getLocalizeCodec().encode(name));
 
@@ -548,7 +549,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
 
     private void hideInvalidActions() {
         try {
-            WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+            WorkflowManager manager = UserSession.get().getWorkflowManager();
             WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel) getDefaultModel();
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) getDefaultModelObject();
             if (workflowDescriptor != null) {
@@ -631,7 +632,7 @@ public class FullReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlug
      */
     private void browseTo(JcrNodeModel nodeModel) throws RepositoryException {
         //refresh session before IBrowseService.browse is called
-        ((UserSession) org.apache.wicket.Session.get()).getJcrSession().refresh(false);
+        UserSession.get().getJcrSession().refresh(false);
 
         getPluginContext().getService(getPluginConfig().getString(IBrowseService.BROWSER_ID), IBrowseService.class)
                 .browse(nodeModel);

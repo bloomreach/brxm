@@ -49,7 +49,7 @@ class StdWorkflowPlugin extends Panel {
                         protected void invoke() {
                             try {
                                 WorkflowDescriptor descriptor = (WorkflowDescriptor) StdWorkflowPlugin.this.getDefaultModelObject();
-                                Session session = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+                                Session session = UserSession.get().getJcrSession();
                                 WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
                                 session.save();
                                 session.refresh(true);

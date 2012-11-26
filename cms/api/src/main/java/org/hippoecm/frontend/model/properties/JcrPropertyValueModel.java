@@ -277,7 +277,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
             return;
         }
         try {
-            ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
+            ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
             int type = getType();
             switch (type) {
             case PropertyType.BOOLEAN:
@@ -333,7 +333,7 @@ public class JcrPropertyValueModel<T extends Serializable> implements IModel<T>,
     }
 
     private Value createNullValue() throws UnsupportedRepositoryOperationException, RepositoryException {
-        ValueFactory factory = ((UserSession) Session.get()).getJcrSession().getValueFactory();
+        ValueFactory factory = UserSession.get().getJcrSession().getValueFactory();
         int propertyType = getType();
         return factory.createValue("", (propertyType == PropertyType.UNDEFINED ? PropertyType.STRING : propertyType));
     }

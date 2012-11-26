@@ -64,7 +64,7 @@ public class ReportsPerspective extends PanelPluginPerspective {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 try {
-                    Session session = ((UserSession) getSession()).getJcrSession();
+                    Session session = UserSession.get().getJcrSession();
                     session.save();
                     session.refresh(false);
                     lastRefreshDateLabel.setDefaultModel(new Model<Date>(new Date()));

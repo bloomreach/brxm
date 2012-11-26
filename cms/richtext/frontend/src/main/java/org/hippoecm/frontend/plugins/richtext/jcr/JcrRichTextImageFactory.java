@@ -70,7 +70,7 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
                 name = path.substring(0, path.indexOf('/'));
                 relPath = path.substring(path.indexOf('/') + 1);
             }
-            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            javax.jcr.Session session = UserSession.get().getJcrSession();
             Node root = nodeModel.getNode();
             if (root.hasNode(name)) {
                 Node link = root.getNode(name);

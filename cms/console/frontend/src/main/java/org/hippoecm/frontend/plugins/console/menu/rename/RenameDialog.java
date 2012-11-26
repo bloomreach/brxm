@@ -73,7 +73,7 @@ public class RenameDialog extends AbstractDialog<Node> {
                     newPath += "/";
                 }
                 newPath += getName();
-                Session jcrSession = ((UserSession) getSession()).getJcrSession();
+                Session jcrSession = UserSession.get().getJcrSession();
                 jcrSession.move(oldPath, newPath);
 
                 JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));

@@ -16,6 +16,23 @@
 
 package org.hippoecm.frontend.plugins.development.content;
 
+import java.io.Serializable;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.wicket.IClusterable;
 import org.hippoecm.frontend.plugins.development.content.names.Names;
 import org.hippoecm.frontend.plugins.development.content.names.NamesFactory;
@@ -31,22 +48,6 @@ import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import java.io.Serializable;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 
 public class ContentBuilder implements IClusterable {
 
@@ -303,7 +304,7 @@ public class ContentBuilder implements IClusterable {
             e1.printStackTrace();
         }
         if(path != null) {
-            Session jcrSession = ((UserSession)org.apache.wicket.Session.get()).getJcrSession();
+            Session jcrSession = UserSession.get().getJcrSession();
             Node newNode = null;
             try {
                 newNode = jcrSession.getRootNode().getNode(path.substring(1));
@@ -443,7 +444,7 @@ public class ContentBuilder implements IClusterable {
 
     private FolderWorkflow getFolderWorkflow(String folderUUID) {
         updateFolder(folderUUID);
-        Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        Session jcrSession = UserSession.get().getJcrSession();
         WorkflowDescriptor folderWorkflowDescriptor = null;
         Node node = null;
 
@@ -465,7 +466,7 @@ public class ContentBuilder implements IClusterable {
     }
 
     private String uuid2path(String uuid) {
-        Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        Session jcrSession = UserSession.get().getJcrSession();
         try {
             Node node = jcrSession.getNodeByUUID(uuid);
             return node.getPath();
@@ -483,7 +484,7 @@ public class ContentBuilder implements IClusterable {
         }
         //WorkflowManager manager = ((HippoWorkspace) (jcrSession.getWorkspace())).getWorkflowManager();
         //manager.getSession().save();
-        Session jcrSession = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        Session jcrSession = UserSession.get().getJcrSession();
         try {
             if (jcrSession.getRootNode().hasNode(path)) {
                 Node node = jcrSession.getRootNode().getNode(path);

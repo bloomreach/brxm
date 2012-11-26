@@ -282,7 +282,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
                 String localName = getLocalizeCodec().encode(name);
                 if (!node.getLocalizedName().equals(localName)) {
-                    WorkflowManager manager = ((UserSession) Session.get()).getWorkflowManager();
+                    WorkflowManager manager = UserSession.get().getWorkflowManager();
                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
                     defaultWorkflow.localizeName(localName);
                 }
@@ -456,7 +456,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     }
 
     private static UserSession obtainUserSession() {
-        return ((UserSession) Session.get());
+        return UserSession.get();
     }
 
     private void updateWorkflowVisibilities(Map<String, Serializable> workflowHints) {

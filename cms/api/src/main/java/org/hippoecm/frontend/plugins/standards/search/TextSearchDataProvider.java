@@ -57,7 +57,7 @@ public class TextSearchDataProvider implements IDataProvider<TextSearchMatch> {
             return Collections.EMPTY_LIST.iterator();
         }
         try {
-            javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+            javax.jcr.Session session = UserSession.get().getJcrSession();
 
             List<TextSearchMatch> resultList = new LinkedList<TextSearchMatch>();
             boolean hasExcerpt = false;

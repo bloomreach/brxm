@@ -116,7 +116,7 @@ public class JcrPrototypeStore implements IPrototypeStore<Node>, IDetachable {
     }
 
     private Session getJcrSession() {
-        return ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        return UserSession.get().getJcrSession();
     }
 
     private String getLocation(String type) {

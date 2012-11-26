@@ -62,7 +62,7 @@ public class PortalPanel extends ExtPanel {
     @Override
     protected void onBeforeRender() {
         try {
-            Session session = ((UserSession) getSession()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             session.save();
             session.refresh(false);
         } catch (RepositoryException repositoryException) {

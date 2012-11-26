@@ -150,7 +150,7 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
         }
         log.debug("Executing query: {}", sqlQuery);
         try {
-            UserSession session = (UserSession) Session.get();
+            UserSession session = UserSession.get();
             @SuppressWarnings("deprecation") Query listQuery =
                     session.getQueryManager().createQuery(sqlQuery.toString(), Query.SQL);
             NodeIterator iter = listQuery.execute().getNodes();

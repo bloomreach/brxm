@@ -68,7 +68,7 @@ public class NewDocumentTypeAction extends Action {
     @Override
     protected Dialog createRequestDialog() {
         WorkflowDescriptor descriptor = (WorkflowDescriptor) plugin.getDefaultModel().getObject();
-        WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
+        WorkflowManager manager = UserSession.get().getWorkflowManager();
         try {
             NamespaceWorkflow namespaceWorkflow = (NamespaceWorkflow) manager.getWorkflow(descriptor);
             documentTypes = (List<String>) namespaceWorkflow.hints().get("documentTypes");

@@ -41,9 +41,9 @@ public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
     @Override
     protected QueryResult load() {
         QueryResult result = null;
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        javax.jcr.Session session = UserSession.get().getJcrSession();
         try {
-            QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
+            QueryManager queryManager = UserSession.get().getQueryManager();
             HippoQuery hippoQuery = (HippoQuery) queryManager.createQuery(query, "xpath");
             session.refresh(true);
             if (limit > 0 && limit < LIMIT) {

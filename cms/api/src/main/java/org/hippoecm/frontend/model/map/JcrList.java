@@ -45,7 +45,7 @@ public class JcrList extends AbstractList<IHippoMap> implements IDetachable {
 
     protected Node getNode() throws PathNotFoundException, RepositoryException {
         if (node == null) {
-            UserSession sessionProvider = (UserSession) Session.get();
+            UserSession sessionProvider = UserSession.get();
             node = (Node) sessionProvider.getJcrSession().getItem(path);
         }
         return node;

@@ -135,7 +135,7 @@ public class CopyDialog extends LookupDialog {
                 targetPath += name;
 
                 // The actual copy
-                UserSession wicketSession = (UserSession) getSession();
+                UserSession wicketSession = UserSession.get();
                 HippoSession jcrSession = (HippoSession) wicketSession.getJcrSession();
                 jcrSession.copy(nodeModel.getNode(), targetPath);
 

@@ -32,7 +32,7 @@ public final class DetachableUser extends LoadableDetachableModel<User> {
     private String path;
 
     protected Node getRootNode() throws RepositoryException {
-        return ((UserSession) Session.get()).getJcrSession().getRootNode();
+        return UserSession.get().getJcrSession().getRootNode();
     }
 
     public DetachableUser() {

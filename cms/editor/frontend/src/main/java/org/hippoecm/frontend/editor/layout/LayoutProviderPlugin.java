@@ -38,7 +38,7 @@ public class LayoutProviderPlugin extends Plugin {
 
             @Override
             protected ClassLoader load() {
-                return ((UserSession) Session.get()).getClassLoader();
+                return UserSession.get().getClassLoader();
             }
 
         });

@@ -123,7 +123,7 @@ public class User implements Comparable<User>, IClusterable {
      * @throws RepositoryException
      */
     public static QueryManager getQueryManager() throws RepositoryException {
-        return ((UserSession) Session.get()).getQueryManager();
+        return UserSession.get().getQueryManager();
     }
 
     /**
@@ -335,7 +335,7 @@ public class User implements Comparable<User>, IClusterable {
             }
         }
 
-        Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(
+        Node securityNode = UserSession.get().getRootNode().getNode(
                 HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
         if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
             passwordMaxAge = (long) (securityNode.getProperty(
@@ -432,7 +432,7 @@ public class User implements Comparable<User>, IClusterable {
         relPath.append("/");
         relPath.append(NodeNameCodec.encode(getUsername(), true));
 
-        node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), NT_USER);
+        node = UserSession.get().getRootNode().addNode(relPath.toString(), NT_USER);
         setOrRemoveStringProperty(node, PROP_EMAIL, getEmail());
         setOrRemoveStringProperty(node, PROP_FIRSTNAME, getFirstName());
         setOrRemoveStringProperty(node, PROP_LASTNAME, getLastName());
@@ -512,7 +512,7 @@ public class User implements Comparable<User>, IClusterable {
             } else {
                 newValues = new Value[1];
             }
-            newValues[0] = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(oldPassword);
+            newValues[0] = UserSession.get().getJcrSession().getValueFactory().createValue(oldPassword);
             node.setProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS, newValues);
         }
 

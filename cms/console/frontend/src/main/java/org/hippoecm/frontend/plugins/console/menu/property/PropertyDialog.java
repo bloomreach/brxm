@@ -309,7 +309,7 @@ public class PropertyDialog extends AbstractDialog<Node> {
     }
 
     private ValueFactory getValueFactory() throws RepositoryException {
-        return ((UserSession) Session.get()).getJcrSession().getValueFactory();
+        return UserSession.get().getJcrSession().getValueFactory();
     }
 
     @Override

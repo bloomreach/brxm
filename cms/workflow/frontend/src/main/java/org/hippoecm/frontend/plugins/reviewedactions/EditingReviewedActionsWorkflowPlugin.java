@@ -83,7 +83,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
                         null, new Object[]{df.format(new Date())}).getString());
                 showFeedback();
 
-                UserSession session = (UserSession) Session.get();
+                UserSession session = UserSession.get();
                 session.getJcrSession().refresh(false);
 
                 // get new instance of the workflow, previous one may have invalidated itself
@@ -111,7 +111,7 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
 
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
-                ((UserSession) Session.get()).getJcrSession().refresh(true);
+                UserSession.get().getJcrSession().refresh(true);
                 return null;
             }
         });

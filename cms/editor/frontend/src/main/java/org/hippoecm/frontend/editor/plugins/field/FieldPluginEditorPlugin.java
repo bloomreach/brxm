@@ -167,7 +167,7 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
             if (edit && edited.getPluginConfig("cluster.options") == null) {
                 edited.put("cluster.options", new JavaPluginConfig());
                 try {
-                    ((UserSession) Session.get()).getJcrSession().save();
+                    UserSession.get().getJcrSession().save();
                 } catch (RepositoryException ex) {
                     log.error("failed to add child node to plugin config", ex);
                 }

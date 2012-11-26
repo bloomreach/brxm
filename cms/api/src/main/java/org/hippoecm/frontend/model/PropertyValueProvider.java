@@ -245,7 +245,7 @@ public class PropertyValueProvider extends AbstractProvider<Property, JcrPropert
     }
 
     private Value createValue() throws UnsupportedRepositoryOperationException, RepositoryException {
-        javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
+        javax.jcr.Session session = UserSession.get().getJcrSession();
         ValueFactory factory = session.getValueFactory();
         int propertyType = PropertyType.valueFromName(type.getType());
         switch (propertyType) {

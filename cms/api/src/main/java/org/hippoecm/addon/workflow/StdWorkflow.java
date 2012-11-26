@@ -178,8 +178,8 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         if (descriptor == null) {
             throw new MappingException("action no longer valid");
         }
-        WorkflowManager manager = ((UserSession) org.apache.wicket.Session.get()).getWorkflowManager();
-        javax.jcr.Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+        WorkflowManager manager = UserSession.get().getWorkflowManager();
+        javax.jcr.Session session = UserSession.get().getJcrSession();
         session.refresh(true);
         session.save();
         session.refresh(true);
@@ -191,7 +191,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
 
         // workflow may have closed existing session
         // FIXME should be removed
-        UserSession us = (UserSession) org.apache.wicket.Session.get();
+        UserSession us = UserSession.get();
         session = us.getJcrSession();
         session.refresh(false);
         us.getFacetRootsObserver().broadcastEvents();

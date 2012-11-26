@@ -108,7 +108,7 @@ public class ReportModel extends NodeModelWrapper<Void> implements IDataProvider
                 Node reportNode = nodeModel.getObject();
                 if (reportNode.isNodeType(ReportingNodeTypes.NT_REPORT)) {
                     Node queryNode = reportNode.getNode(ReportingNodeTypes.QUERY);
-                    QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
+                    QueryManager queryManager = UserSession.get().getQueryManager();
                     HippoQuery query = (HippoQuery) queryManager.getQuery(queryNode);
 
                     Map<String, String> arguments = new HashMap<String, String>();
