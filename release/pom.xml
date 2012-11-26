@@ -206,6 +206,11 @@
         <artifactId>hippo-repository-utilities</artifactId>
         <version>${hippo.repository.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-deprecated</artifactId>
+        <version>${hippo.repository.version}</version>
+      </dependency>
 
       <!-- All Hippo CMS artifacts -->
       <dependency>
