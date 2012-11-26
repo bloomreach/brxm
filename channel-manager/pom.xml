@@ -22,7 +22,7 @@
     <hippo.addon-hst-configuration-editor.version>1.11.00</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>
 
-    <cxf.version>2.4.0</cxf.version>
+    <cxf.version>2.6.3</cxf.version>
     <jackson.version>1.9.5</jackson.version>
 
     <!-- test related -->
