@@ -19,16 +19,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.jcr.query.Row;
-import javax.jcr.query.RowIterator;
 
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
@@ -86,9 +81,9 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
             return;
         }
         try {
-            getTranslations(getNode());
+            populateTranslations(getNode());
         } catch(RepositoryException e) {
-            log.warn("Exception while trying to fetch translations for.", e);
+            log.warn("Exception while trying to fetch translations.", e);
         }
     }
     
@@ -101,7 +96,7 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
         this.beanMappingClass = beanMappingClass;
      }
 
-    private void getTranslations(final javax.jcr.Node translationNode) throws RepositoryException {
+    private void populateTranslations(final javax.jcr.Node translationNode) throws RepositoryException {
         javax.jcr.Node docNode = translationNode.getParent();
         translations = new LinkedHashMap<String,K>();
         if (!docNode.hasProperty(HippoTranslationNodeType.ID)) {
@@ -122,6 +117,7 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
             }
             if (!translation.hasProperty(HippoTranslationNodeType.LOCALE)) {
                 log.debug("Skipping node '{}' because does not contain property '{}'", translation.getPath(), HippoTranslationNodeType.LOCALE);
+                continue;
             }
             String locale = translation.getProperty(HippoTranslationNodeType.LOCALE).getString();
             try {
