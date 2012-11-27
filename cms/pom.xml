@@ -121,7 +121,7 @@
     <cxf.version>2.6.3</cxf.version>
     <jackson.version>1.9.5</jackson.version>
     <dom4j.version>1.6.1</dom4j.version>
-    <httpclient.version>4.1.1</httpclient.version>
+    <httpclient.version>4.2.2</httpclient.version>
 
     <joda-time.version>1.6</joda-time.version>
     <json-lib.version>2.2.2</json-lib.version>
