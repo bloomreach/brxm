@@ -232,16 +232,14 @@ public class Group implements Comparable<Group>, IClusterable {
             //noinspection deprecation
             query = getQueryManager().createQuery(queryString, Query.SQL);
         } catch (RepositoryException e) {
-            throw new IllegalStateException("Cannot get the Query Manager", e);
+            throw new IllegalStateException("Cannot create the Query", e);
         }
-        NodeIterator iterator;
         try {
             QueryResult queryResult = query.execute();
-            iterator = queryResult.getNodes();
+            return queryResult.getNodes();
         } catch (RepositoryException e) {
             throw new IllegalStateException("Cannot execute query due to a repository error", e);
         }
-        return iterator;
     }
 
     public static Group forName(final String groupName) {
