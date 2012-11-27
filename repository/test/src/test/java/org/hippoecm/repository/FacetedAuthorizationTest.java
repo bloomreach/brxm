@@ -844,6 +844,29 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testQueryFilterIsInvalidated() throws RepositoryException {
+        // make sure the authorization filter is loaded
+        {
+            QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+            Query query = queryManager.createQuery("//element(*,hippo:ntunstructured) order by @jcr:score", Query.XPATH);
+            query.execute().getNodes();
+        }
+
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        testData.getNode("nothing0").setProperty("authtest", "canread");
+        session.save();
+
+        userSession.logout();
+        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+        Query query = queryManager.createQuery("//element(*,hippo:ntunstructured) order by @jcr:score", Query.XPATH);
+        NodeIterator iter = query.execute().getNodes();
+        assertEquals(13L, iter.getSize());
+        assertEquals(13L, ((HippoNodeIterator) iter).getTotalSize());
+    }
+
+    @Test
     public void testQuerySQL2() throws RepositoryException {
         QueryManager queryManager = userSession.getWorkspace().getQueryManager();
         // XPath doesn't like the query from the root

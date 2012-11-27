@@ -18,7 +18,6 @@ package org.hippoecm.repository.query.lucene;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 
 import org.apache.jackrabbit.core.id.NodeId;
@@ -28,7 +27,6 @@ import org.apache.jackrabbit.core.query.lucene.FieldSelectors;
 import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexSearcher;
 import org.apache.jackrabbit.core.query.lucene.ScoreNode;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
@@ -93,27 +91,27 @@ public class HippoSortedLuceneQueryHits extends AbstractQueryHits {
      */
     private int numHits;
 
-    private final BitSet authorizationBitSet;
+    private final AuthorizationFilter authorizationFilter;
 
     /**
      * Creates a new <code>QueryHits</code> instance wrapping <code>hits</code>.
      *
      *
      * @param reader          the IndexReader in use.
-     * @param abs
+     * @param authorizationFilter
      *@param searcher        the index searcher.
      * @param query           the query to execute.
      * @param sort            the sort criteria.
      * @param resultFetchHint a hint on how many results should be fetched.     @throws java.io.IOException if an error occurs while reading from the index.
      */
     public HippoSortedLuceneQueryHits(IndexReader reader,
-                                      BitSet abs,
+                                      AuthorizationFilter authorizationFilter,
                                       JackrabbitIndexSearcher searcher,
                                       Query query,
                                       Sort sort,
                                       long resultFetchHint) throws IOException {
         this.reader = reader;
-        this.authorizationBitSet = abs;
+        this.authorizationFilter = authorizationFilter;
         this.searcher = searcher;
         this.query = query;
         this.sort = sort;
@@ -164,13 +162,8 @@ public class HippoSortedLuceneQueryHits extends AbstractQueryHits {
     private void getHits() throws IOException {
         TopFieldDocCollector collector = new TopFieldDocCollector(reader, sort, numHits);
 
-        if (authorizationBitSet != null) {
-            searcher.search(query, new Filter() {
-                @Override
-                public BitSet bits(final IndexReader reader) throws IOException {
-                    return authorizationBitSet;
-                }
-            }, collector);
+        if (authorizationFilter != null) {
+            searcher.search(query, authorizationFilter, collector);
         } else {
             searcher.search(query, collector);
         }

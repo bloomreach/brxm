@@ -16,7 +16,6 @@
 package org.hippoecm.repository.query.lucene;
 
 import java.io.IOException;
-import java.util.BitSet;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.query.lucene.JackrabbitIndexSearcher;
@@ -31,12 +30,12 @@ import org.apache.lucene.search.Sort;
 public class HippoIndexSearcher extends JackrabbitIndexSearcher {
 
     private final IndexReader reader;
-    private final BitSet authorizationBitSet;
+    private final AuthorizationFilter authorizationFilter;
 
-    public HippoIndexSearcher(SessionImpl s, IndexReader r, ItemStateManager ism, final BitSet abs) {
+    public HippoIndexSearcher(SessionImpl s, IndexReader r, ItemStateManager ism, final AuthorizationFilter abs) {
         super(s, r, ism);
         reader = r;
-        authorizationBitSet = abs;
+        authorizationFilter = abs;
     }
 
     @Override
@@ -47,10 +46,13 @@ public class HippoIndexSearcher extends JackrabbitIndexSearcher {
             hits = ((JackrabbitQuery) query).execute(this, getSession(), sort);
         }
         if (hits == null) {
-            if (sort.getSort().length == 0) {
+            boolean sortedSearch = sort.getSort().length == 0;
+            if (sortedSearch && authorizationFilter == null) {
                 hits = new LuceneQueryHits(reader, this, query);
+            } else if (sortedSearch) {
+                hits = new HippoLuceneQueryHits(reader, authorizationFilter, this, query);
             } else {
-                hits = new HippoSortedLuceneQueryHits(reader, authorizationBitSet, this, query, sort, resultFetchHint);
+                hits = new HippoSortedLuceneQueryHits(reader, authorizationFilter, this, query, sort, resultFetchHint);
             }
         }
         return hits;

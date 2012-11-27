@@ -20,9 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.QueryResult;
@@ -74,9 +73,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.QueryWrapperFilter;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
@@ -98,8 +96,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      */
     private Element indexingConfiguration;
 
-    private final ConcurrentHashMap<String, AuthorizationBitSet> authorizationBitSets = new ConcurrentHashMap<String, AuthorizationBitSet>();
-    private final ConcurrentHashMap<String, Object> userIdMutexs = new ConcurrentHashMap<String, Object>();
+    private final ConcurrentHashMap<String, AuthorizationFilter> authorizationBitSets = new ConcurrentHashMap<String, AuthorizationFilter>();
 
     /**
      * Simple zero argument constructor.
@@ -112,36 +109,30 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      * @return the authorization bitset and <code>null</code> when every bit is allowed to be read
      * @throws IOException
      */
-    private BitSet getAuthorizationBitSet(final InternalHippoSession session, final IndexReader reader) throws IOException {
+    private AuthorizationFilter getAuthorizationFilter(final Session session) throws IOException {
+        if (!(session instanceof InternalHippoSession)) {
+            return null;
+        }
         if (session.getUserID().equals("system")) {
             return null;
         }
-        BitSet bits;
+
         String userId = session.getUserID();
-        AuthorizationBitSet authorizationBitSet = authorizationBitSets.get(userId);
-        if (authorizationBitSet == null || !authorizationBitSet.isValid(reader)) {
-            Object userIdMutex = userIdMutexs.get(userId);
-            if(userIdMutex == null) {
-                userIdMutex = new Object();
-                userIdMutexs.put(userId, userIdMutex);
-            }
-            synchronized (userIdMutex) {
-                // we synchronize on userIdMutex to avoid stampeding herds for the same userId and index reader
-                authorizationBitSet = authorizationBitSets.get(userId);
-                if (authorizationBitSet == null || !authorizationBitSet.isValid(reader)) {
-                    long start = System.currentTimeMillis();
-                    Filter filter = new QueryWrapperFilter(session.getAuthorizationQuery().getQuery());
-                    bits = filter.bits(reader);
-                    authorizationBitSets.put(session.getUserID(), new AuthorizationBitSet(reader, bits));
-                    log.info("Creating authorization bitset for user '{}' took {} ms.", session.getUserID(), String.valueOf(System.currentTimeMillis() - start));
-                } else {
-                    bits = authorizationBitSet.bits;
-                }
-            }
-        } else {
-            bits = authorizationBitSet.bits;
+        AuthorizationFilter filter = authorizationBitSets.get(userId);
+        InternalHippoSession internalHippoSession = (InternalHippoSession) session;
+        BooleanQuery query = internalHippoSession.getAuthorizationQuery().getQuery();
+        if (filter != null && !filter.getQuery().equals(query)) {
+            authorizationBitSets.remove(userId);
+            filter = null;
         }
-        return bits;
+        if (filter == null) {
+            filter = new AuthorizationFilter(query);
+            AuthorizationFilter existing = authorizationBitSets.putIfAbsent(session.getUserID(), filter);
+            if (existing != null) {
+                filter = existing;
+            }
+        }
+        return filter;
     }
 
     /**
@@ -168,12 +159,9 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         checkOpen();
         Sort sort = new Sort(createSortFields(orderProps, orderSpecs));
         final IndexReader reader = getIndex().getIndexReader();
-        // an authorizationBitSet that is equal to null means: no filter for bitset
-        BitSet authorizationBitSet = null;
-        if (session instanceof InternalHippoSession) {
-            authorizationBitSet = getAuthorizationBitSet((InternalHippoSession) session, reader);
-        }
-        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationBitSet);
+        // an authorizationFilter that is equal to null means: no filter for bitset
+        AuthorizationFilter authorizationFilter = getAuthorizationFilter(session);
+        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationFilter);
         searcher.setSimilarity(getSimilarity());
         return new FilterMultiColumnQueryHits(
                 searcher.execute(query, sort, resultFetchHint,
@@ -206,11 +194,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         checkOpen();
 
         final IndexReader reader = getIndex().getIndexReader();
-        BitSet authorizationBitSet = null;
-        if (session instanceof InternalHippoSession) {
-            authorizationBitSet = getAuthorizationBitSet((InternalHippoSession) session, reader);
-        }
-        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationBitSet);
+        AuthorizationFilter authorizationFilter = getAuthorizationFilter(session);
+        final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationFilter);
         searcher.setSimilarity(getSimilarity());
         return new FilterMultiColumnQueryHits(
                 query.execute(searcher, orderings, resultFetchHint)) {
@@ -636,32 +621,5 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     }
 
-    private static class AuthorizationBitSet {
-
-        private final WeakReference<IndexReader> reader;
-        private final BitSet bits;
-
-        /*
-         * when all bits from the constructor are set to one, we set the bits variable to null: null
-         * means just no filter
-         */
-        private AuthorizationBitSet(final IndexReader reader, final BitSet bits) {
-            this.reader = new WeakReference<IndexReader>(reader);
-
-            if (bits.cardinality() == bits.length()) {
-                // every bit is 1 , set bits just to null
-                this.bits = null;
-            } else {
-                this.bits = bits;
-            }
-        }
-
-        private boolean isValid(IndexReader reader) {
-            if (this.reader.get() != reader) {
-                return false;
-            }
-            return true;
-        }
-    }
 
 }
