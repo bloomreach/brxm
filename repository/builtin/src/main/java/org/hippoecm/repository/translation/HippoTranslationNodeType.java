@@ -23,11 +23,17 @@ public interface HippoTranslationNodeType {
     String NS = "http://www.onehippo.org/jcr/hippotranslation/nt/1.0";
     
     String NT_TRANSLATED = "hippotranslation:translated";
+
+    /** use {@link HippoTranslatedNode} to find the same node in other languages */
+    @Deprecated
     String NT_TRANSLATIONS = "hippotranslation:translations";
 
     String ID = "hippotranslation:id";
     String LOCALE = "hippotranslation:locale";
     String SOURCELOCALE = "hippotranslation:sourcelocale";
+
+    /** use {@link HippoTranslatedNode} to find the same node in other languages */
+    @Deprecated
     String TRANSLATIONS = "hippotranslation:translations";
 
 }

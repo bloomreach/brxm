@@ -17,27 +17,18 @@ package org.hippoecm.repository.translation.impl;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.Row;
-import javax.jcr.query.RowIterator;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
@@ -46,10 +37,15 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
 import org.hippoecm.repository.standardworkflow.CopyWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.translation.HippoTranslatedNode;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWorkflow {
+
+    static final Logger log = LoggerFactory.getLogger(TranslationWorkflowImpl.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -74,32 +70,21 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
     public Document addTranslation(String language, String name) throws WorkflowException, MappingException,
             RepositoryException, RemoteException {
-        Node translations = rootSubject.getNode(HippoTranslationNodeType.TRANSLATIONS);
-        if (translations.hasNode(language)) {
-            throw new WorkflowException("Translation already exists");
-        }
+        HippoTranslatedNode translatedNode = new HippoTranslatedNode(rootSubject);
 
-        Node lclContainingFolder = getContainingFolder();
+        Node lclContainingFolder = translatedNode.getContainingFolder();
         if (!lclContainingFolder.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
             throw new WorkflowException("No translated ancestor found");
         }
 
-        // find target
-        Node folderTranslation;
-        // TODO replace below with search
-        Node folderTranslations = lclContainingFolder.getNode(HippoTranslationNodeType.TRANSLATIONS);
-        if (!folderTranslations.hasNode(language)) {
-            throw new WorkflowException("Folder was not translated to " + language);
-        }
-        folderTranslation = ((HippoNode) folderTranslations.getNode(language)).getCanonicalNode();
-        if (folderTranslation == null) {
-            throw new WorkflowException("Could not find canonical equivalent of translated folder");
-        }
+        HippoTranslatedNode translatedFolder = new HippoTranslatedNode(lclContainingFolder);
+        Node folderTranslation = translatedFolder.getTranslation(language);
         Document targetFolder = new Document(folderTranslation.getUUID());
         Node copiedDoc = null;
         if (userSubject.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
             Workflow defaultWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("translation-copy",
-                    new Document(rootSubject.getUUID()));
+                                                                                            new Document(
+                                                                                                    rootSubject.getUUID()));
             if (defaultWorkflow instanceof CopyWorkflow) {
                 ((CopyWorkflow) defaultWorkflow).copy(targetFolder, name);
             } else {
@@ -122,7 +107,8 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         } else {
             Workflow internalWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("internal", targetFolder);
             if (!(internalWorkflow instanceof FolderWorkflow)) {
-                throw new WorkflowException("Target folder does not have a folder workflow in the category 'internal'.");
+                throw new WorkflowException(
+                        "Target folder does not have a folder workflow in the category 'internal'.");
             }
             Map<String, Set<String>> prototypes = (Map<String, Set<String>>) internalWorkflow.hints().get("prototypes");
             if (prototypes == null) {
@@ -161,8 +147,8 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             if (!copiedDoc.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
                 copiedDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
             }
-            copiedDoc.setProperty(HippoTranslationNodeType.ID, userSubject.getProperty(HippoTranslationNodeType.ID)
-                    .getString());
+            copiedDoc.setProperty(HippoTranslationNodeType.ID,
+                                  userSubject.getProperty(HippoTranslationNodeType.ID).getString());
         }
 
         copiedDoc.setProperty(HippoTranslationNodeType.LOCALE, language);
@@ -175,7 +161,8 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
     public void addTranslation(String language, Document document) throws WorkflowException, MappingException,
             RepositoryException, RemoteException {
-        if (userSubject.getNode(HippoTranslationNodeType.TRANSLATIONS).hasNode(language)) {
+        HippoTranslatedNode translatedNode = new HippoTranslatedNode(rootSubject);
+        if (translatedNode.hasTranslation(language)) {
             throw new WorkflowException("Language already exists");
         }
 
@@ -224,11 +211,10 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             }
         }
 
-        Set<String> translations = new TreeSet<String>();
+        HippoTranslatedNode translatedNode = new HippoTranslatedNode(rootSubject);
+        Set<String> translations;
         try {
-            if (rootSubject.hasProperty(HippoTranslationNodeType.ID)) {
-                translations = getTranslations(rootSubject);
-            }
+            translations = translatedNode.getTranslations();
         } catch (RepositoryException ex) {
             throw new WorkflowException("Exception during searching for available translations", ex);
         }
@@ -238,85 +224,19 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         Set<String> available = new TreeSet<String>();
         // for all the available translations we pick the highest ancestor of rootSubject of type HippoTranslationNodeType.NT_TRANSLATED,
         // and take all the translations for that node
-        Node highestTranslatedNode = getFarthestTranslatedAncestor(rootSubject);
+        Node highestTranslatedNode = translatedNode.getFarthestTranslatedAncestor();
         if (highestTranslatedNode != null) {
             try {
-                if (highestTranslatedNode.hasProperty(HippoTranslationNodeType.ID)) {
-                    available = getTranslations(highestTranslatedNode);
-                }
+                available = new HippoTranslatedNode(highestTranslatedNode).getTranslations();
             } catch (RepositoryException ex) {
                 throw new WorkflowException("Exception during searching for available translations", ex);
             }
         }
 
         hints.put("available", (Serializable) available);
-        hints.put("locale", getLocale(userSubject));
+        hints.put("locale", translatedNode.getLocale());
         return hints;
     }
 
-
-    private Set<String> getTranslations(final Node translatedNode) throws RepositoryException {
-        final Set<String> available = new TreeSet<String>();
-        String id = translatedNode.getProperty(HippoTranslationNodeType.ID).getString();
-        Query query = translatedNode.getSession().getWorkspace().getQueryManager().createQuery(
-                "SELECT " + HippoTranslationNodeType.LOCALE
-                        + " FROM " + HippoTranslationNodeType.NT_TRANSLATED
-                        + " WHERE " + HippoTranslationNodeType.ID + "='" + id + "'",
-                Query.SQL);
-        final QueryResult result = query.execute();
-        final RowIterator rowIterator = result.getRows();
-        while (rowIterator.hasNext()) {
-            final Row row = rowIterator.nextRow();
-            final Value value = row.getValue(HippoTranslationNodeType.LOCALE);
-            available.add(value.getString());
-        }
-        return available;
-    }
-
-    /**
-     * returns farthest ancestor from rootSubject of type HippoTranslationNodeType.NT_TRANSLATED and returns null if all ancestors and rootSubject
-     * are not of type HippoTranslationNodeType.NT_TRANSLATED
-     *
-     */
-    private Node getFarthestTranslatedAncestor(final Node rootSubject) throws RepositoryException {
-        Node jcrRoot = rootSubject.getSession().getRootNode();
-        Node current = rootSubject;
-        Node highestAncestorOfTypeTranslated = null;
-        while (!current.isSame(jcrRoot)) {
-            if (current.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                highestAncestorOfTypeTranslated = current;
-            }
-            current = current.getParent();
-        }
-        return highestAncestorOfTypeTranslated;
-    }
-
-
-    private String getLocale(Node node) throws RepositoryException {
-        while (node.getDepth() != 0) {
-            if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                if (node.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                    return node.getProperty(HippoTranslationNodeType.LOCALE).getString();
-                }
-            }
-            node = node.getParent();
-        }
-        return null;
-    }
-
-    private Node getContainingFolder() throws ItemNotFoundException, AccessDeniedException, RepositoryException,
-            WorkflowException {
-        Node parent = rootSubject.getParent();
-        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-            parent = parent.getParent();
-        }
-        while (!parent.isSame(rootSession.getRootNode())) {
-            if (parent.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                return parent;
-            }
-            parent = parent.getParent();
-        }
-        return null;
-    }
 
 }
