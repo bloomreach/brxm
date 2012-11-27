@@ -29,7 +29,6 @@ import java.util.TreeSet;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
@@ -79,6 +78,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
+import org.hippoecm.repository.translation.HippoTranslatedNode;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
 import org.onehippo.translate.TranslateWorkflow;
@@ -135,12 +135,9 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         }
 
         TranslatedFolder getSibling(String locale) throws RepositoryException {
-            NodeIterator siblings = node.getNode(HippoTranslationNodeType.TRANSLATIONS).getNodes();
-            while (siblings.hasNext()) {
-                HippoNode sibling = (HippoNode) siblings.nextNode();
-                if (locale.equals(sibling.getName())) {
-                    return new TranslatedFolder(sibling.getCanonicalNode());
-                }
+            HippoTranslatedNode translatedNode = new HippoTranslatedNode(node);
+            if (translatedNode.hasTranslation(locale)) {
+                return new TranslatedFolder(translatedNode.getTranslation(locale));
             }
             return null;
         }
@@ -281,9 +278,9 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                     try {
                         node = wdm.getNode();
                         if (node != null) {
-                            Node translations = node.getNode(HippoTranslationNodeType.TRANSLATIONS);
-                            HippoNode translation = (HippoNode) translations.getNode(language);
-                            browser.browse(new JcrNodeModel(translation.getCanonicalNode().getParent()));
+                            HippoTranslatedNode translatedNode = new HippoTranslatedNode(node);
+                            Node translation = translatedNode.getTranslation(language);
+                            browser.browse(new JcrNodeModel(translation.getParent()));
                         } else {
                             log.error("No node found for document");
                         }
