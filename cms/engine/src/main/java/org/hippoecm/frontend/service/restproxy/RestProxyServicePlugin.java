@@ -22,8 +22,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
@@ -85,7 +86,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
     protected static HttpClient httpClient = null;
     static {
-        ThreadSafeClientConnManager mgr = new ThreadSafeClientConnManager();
+        PoolingClientConnectionManager mgr = new PoolingClientConnectionManager();
         mgr.setDefaultMaxPerRoute(MAX_CONNECTIONS);
         mgr.setMaxTotal(MAX_CONNECTIONS);
         httpClient = new DefaultHttpClient(mgr);
@@ -93,6 +94,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT, PING_SERVLET_TIMEOUT);
         httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, PING_SERVLET_TIMEOUT);
         httpClient.getParams().setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, false);
+        httpClient.getParams().setBooleanParameter(ClientPNames.HANDLE_AUTHENTICATION, false);
     }
 
     public RestProxyServicePlugin(IPluginContext context, IPluginConfig config) {
@@ -255,8 +257,8 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
 
             siteIsAlive = false;
         } finally {
-            if (httpGet != null) {
-                httpGet.abort();
+            if ((httpGet != null) && (!httpGet.isAborted())) {
+                httpGet.reset();
             }
         }
 
