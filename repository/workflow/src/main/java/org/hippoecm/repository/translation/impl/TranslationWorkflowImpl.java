@@ -40,12 +40,11 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.hippoecm.repository.translation.HippoTranslatedNode;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWorkflow {
-
-    static final Logger log = LoggerFactory.getLogger(TranslationWorkflowImpl.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -60,8 +59,8 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         this.workflowContext = context;
         this.userSession = userSession;
         this.rootSession = rootSession;
-        this.userSubject = this.userSession.getNodeByUUID(subject.getUUID());
-        this.rootSubject = rootSession.getNodeByUUID(subject.getUUID());
+        this.userSubject = userSession.getNodeByIdentifier(subject.getIdentifier());
+        this.rootSubject = rootSession.getNodeByIdentifier(subject.getIdentifier());
 
         if (!userSubject.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
             throw new RepositoryException("Node is not of type " + HippoTranslationNodeType.NT_TRANSLATED);
@@ -79,12 +78,11 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
         HippoTranslatedNode translatedFolder = new HippoTranslatedNode(lclContainingFolder);
         Node folderTranslation = translatedFolder.getTranslation(language);
-        Document targetFolder = new Document(folderTranslation.getUUID());
+        Document targetFolder = new Document(folderTranslation.getIdentifier());
         Node copiedDoc = null;
         if (userSubject.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-            Workflow defaultWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("translation-copy",
-                                                                                            new Document(
-                                                                                                    rootSubject.getUUID()));
+            Workflow defaultWorkflow = workflowContext.getWorkflowContext(null).
+                    getWorkflow("translation-copy", new Document(rootSubject.getIdentifier()));
             if (defaultWorkflow instanceof CopyWorkflow) {
                 ((CopyWorkflow) defaultWorkflow).copy(targetFolder, name);
             } else {
@@ -101,9 +99,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
                 throw new WorkflowException("Could not locate handle for document after copying");
             }
             copiedDoc = copiedDoc.getNode(copiedDoc.getName());
-            if (!copiedDoc.isCheckedOut()) {
-                copiedDoc.checkout();
-            }
+            JcrUtils.ensureIsCheckedOut(copiedDoc, false);
         } else {
             Workflow internalWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("internal", targetFolder);
             if (!(internalWorkflow instanceof FolderWorkflow)) {
@@ -141,9 +137,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             } else {
                 throw new WorkflowException("No category found to use for adding translation to target folder");
             }
-            if (!copiedDoc.isCheckedOut()) {
-                copiedDoc.checkout();
-            }
+            JcrUtils.ensureIsCheckedOut(copiedDoc, false);
             if (!copiedDoc.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
                 copiedDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
             }
@@ -152,7 +146,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         }
 
         copiedDoc.setProperty(HippoTranslationNodeType.LOCALE, language);
-        Document copy = new Document(copiedDoc.getUUID());
+        Document copy = new Document(copiedDoc.getIdentifier());
 
         rootSession.save();
         rootSession.refresh(false);
@@ -166,10 +160,8 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             throw new WorkflowException("Language already exists");
         }
 
-        Node copiedDocNode = rootSession.getNodeByUUID(document.getIdentity());
-        if (!copiedDocNode.isCheckedOut()) {
-            copiedDocNode.checkout();
-        }
+        Node copiedDocNode = rootSession.getNodeByIdentifier(document.getIdentity());
+        JcrUtils.ensureIsCheckedOut(copiedDocNode, false);
         if (!copiedDocNode.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
             copiedDocNode.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         }
