@@ -305,12 +305,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-cms-resources</artifactId>
-        <version>${hippo.cms.version}</version>
-        <type>war</type>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-search</artifactId>
         <version>${hippo.cms.version}</version>
       </dependency>
@@ -318,7 +312,6 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-skin</artifactId>
         <version>${hippo.cms.version}</version>
-        <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
@@ -395,13 +388,11 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-richtext-resources</artifactId>
         <version>${hippo.cms.version}</version>
-        <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-cms-richtext-test</artifactId>
         <version>${hippo.cms.version}</version>
-        <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
