@@ -71,11 +71,10 @@ public class DocumentEvent {
                         targetVariant = patternElement;
                     } else {
                         String path = uuid2Path(patternElement);
-                        if (path != null && !path.isEmpty()) {
-                            if (targetVariantExists = session.itemExists(path)) {
-                                targetVariant = path;
-                                break;
-                            }
+                        if (!StringUtils.isEmpty(path) && session.itemExists(path)) {
+                            targetVariantExists = true;
+                            targetVariant = path;
+                            break;
                         }
                     }
                 }
@@ -97,10 +96,9 @@ public class DocumentEvent {
                     VersionHistory containingHistory = version.getContainingHistory();
                     String versionableIdentifier = containingHistory.getVersionableIdentifier();
                     String path = uuid2Path(versionableIdentifier);
-                    if (path != null && !path.isEmpty()) {
-                        if (targetVariantExists = session.itemExists(path)) {
-                            targetVariant = path;
-                        }
+                    if (!StringUtils.isEmpty(path) && session.itemExists(path)) {
+                        targetVariantExists = true;
+                        targetVariant = path;
                     } else {
                         targetVariantExists = false;
                         targetVariant = null;
@@ -118,7 +116,7 @@ public class DocumentEvent {
 
     private void initSourceVariant(final Node node, final Session session) throws RepositoryException {
         sourceVariant = JcrUtils.getStringProperty(node, "hippolog:eventDocument", null);
-        sourceVariantExists = sourceVariant != null && session.itemExists(sourceVariant);
+        sourceVariantExists = !StringUtils.isEmpty(sourceVariant) && session.itemExists(sourceVariant);
     }
 
     public String getMethod() {
