@@ -35,6 +35,7 @@ public class BinaryPage implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private final String path;
+    private String repositoryPath;
     private int status = HttpServletResponse.SC_NOT_FOUND;
     private String mimeType = null;
     private String fileName = null;
@@ -58,11 +59,30 @@ public class BinaryPage implements Serializable {
     }
 
     /**
-     * Get the absolute path of the repository.
+     *
      * @return the absolute path
      */
     public String getResourcePath() {
         return path;
+    }
+
+    /**
+     * Gets the absolute path of the repository. Note that this can be different than {@link #getResourcePath()} in case
+     * when there are resourceContainers that modify the resourcePath to a different repository path
+     *
+     * @return the absolute repository path
+     */
+    public String getRepositoryPath() {
+        return repositoryPath;
+    }
+
+    /**
+     * Sets the absolute path of the repository. Note that this can be a different path than {@link #getResourcePath()} in case
+     * when there are resourceContainers that modify the resourcePath to a different repository path
+     *
+     */
+    public void setRepositoryPath(final String repositoryPath) {
+        this.repositoryPath = repositoryPath;
     }
 
     /**
@@ -181,7 +201,7 @@ public class BinaryPage implements Serializable {
 
     /**
      * Set the (un-encoded) file name for the Content-Disposition header.
-     * @param mimeType
+     * @param fileName
      */
     public void setFileName(String fileName) {
         this.fileName = fileName;
@@ -223,6 +243,7 @@ public class BinaryPage implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("path=").append(getResourcePath());
+        sb.append("repositoryPath=").append(getRepositoryPath());
         sb.append(" status=").append(getStatus());
         sb.append(" mimetype=").append(getMimeType());
         sb.append(" filename=").append(getFileName());

@@ -295,11 +295,10 @@ public class BinariesServlet extends HttpServlet {
      * @throws RepositoryException
      */
     protected InputStream getRepositoryResourceStream(Session session, BinaryPage page) throws RepositoryException {
-        Node resourceNode = ResourceUtils.lookUpResource(session, page.getResourcePath(), prefix2ResourceContainer,
-                allResourceContainers);
-        if(resourceNode == null) {
+        if (!session.nodeExists(page.getRepositoryPath())) {
             return null;
         }
+        Node resourceNode = session.getNode(page.getRepositoryPath());
         return resourceNode.getProperty(binaryDataPropName).getBinary().getStream();
     }
 
@@ -386,6 +385,8 @@ public class BinariesServlet extends HttpServlet {
             return;
         }
 
+        page.setRepositoryPath(resourceNode.getPath());
+
         if (!ResourceUtils.hasValideType(resourceNode, binaryResourceNodeType)) {
             page.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
             return;
@@ -409,11 +410,11 @@ public class BinariesServlet extends HttpServlet {
         page.setLength(ResourceUtils.getDataLength(resourceNode, binaryDataPropName));
 
         if (binariesCache.isBinaryDataCacheable(page)) {
-            storeBinaryPageToCache(page, resourceNode);
+            storeResourceOnBinaryPage(page, resourceNode);
         }
     }
 
-    protected void storeBinaryPageToCache(BinaryPage page, Node resourceNode) {
+    protected void storeResourceOnBinaryPage(BinaryPage page, Node resourceNode) {
         try {
             InputStream input = resourceNode.getProperty(binaryDataPropName).getBinary().getStream();
             page.loadDataFromStream(input);
