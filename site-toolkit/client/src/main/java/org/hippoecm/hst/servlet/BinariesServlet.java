@@ -287,11 +287,10 @@ public class BinariesServlet extends HttpServlet {
     }
 
     /**
-     * Return the input stream for a looked up binary for {@link BinaryPage#getResourcePath()} and return <code>null</code> if 
-     * there is not found a binary
      * @param session
      * @param page
-     * @return
+     * @return the input stream for a looked up binary for {@link BinaryPage#getResourcePath()}, or <code>null</code> if
+     * no binary could be found.
      * @throws RepositoryException
      */
     protected InputStream getRepositoryResourceStream(Session session, BinaryPage page) throws RepositoryException {

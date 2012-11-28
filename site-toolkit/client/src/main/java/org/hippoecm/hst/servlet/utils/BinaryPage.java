@@ -59,7 +59,6 @@ public class BinaryPage implements Serializable {
     }
 
     /**
-     *
      * @return the absolute path
      */
     public String getResourcePath() {
