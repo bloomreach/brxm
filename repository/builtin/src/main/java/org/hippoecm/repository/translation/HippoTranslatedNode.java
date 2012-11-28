@@ -18,6 +18,7 @@ package org.hippoecm.repository.translation;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public final class HippoTranslatedNode {
 
-    static final Logger log = LoggerFactory.getLogger(HippoTranslatedNode.class);
+    private static final Logger log = LoggerFactory.getLogger(HippoTranslatedNode.class);
 
     private final Node node;
 
@@ -72,7 +73,7 @@ public final class HippoTranslatedNode {
         final QueryResult result = query.execute();
         NodeIterator nodes = result.getNodes();
         if (!nodes.hasNext()) {
-            throw new RepositoryException("Folder was not translated to " + language);
+            throw new ItemNotFoundException("Folder was not translated to " + language);
         }
         if (nodes.getSize() > 1) {
             log.warn("More than one translated variant found for node " + id + " in language " + language);
@@ -113,9 +114,6 @@ public final class HippoTranslatedNode {
     public Node getContainingFolder() throws RepositoryException {
         Node jcrRoot = node.getSession().getRootNode();
         Node parent = node.getParent();
-        if (parent.isNodeType(HippoNodeType.NT_HANDLE)) {
-            parent = parent.getParent();
-        }
         while (!parent.isSame(jcrRoot)) {
             if (parent.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                 return parent;
@@ -126,16 +124,7 @@ public final class HippoTranslatedNode {
     }
 
     public String getLocale() throws RepositoryException {
-        Node cursor = node;
-        while (cursor.getDepth() != 0) {
-            if (cursor.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
-                if (cursor.hasProperty(HippoTranslationNodeType.LOCALE)) {
-                    return cursor.getProperty(HippoTranslationNodeType.LOCALE).getString();
-                }
-            }
-            cursor = cursor.getParent();
-        }
-        return null;
+        return node.getProperty(HippoTranslationNodeType.LOCALE).getString();
     }
 
 }
