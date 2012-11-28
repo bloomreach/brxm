@@ -80,7 +80,7 @@ public class TestHttpClient implements HttpClient {
 
     @Override
     public HttpResponse execute(final HttpUriRequest request, final HttpContext context) throws IOException, ClientProtocolException {
-        return fail();
+        return execute(request);
     }
 
     @Override
