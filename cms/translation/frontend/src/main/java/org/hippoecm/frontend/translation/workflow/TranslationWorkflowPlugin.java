@@ -136,10 +136,11 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
 
         TranslatedFolder getSibling(String locale) throws RepositoryException {
             HippoTranslatedNode translatedNode = new HippoTranslatedNode(node);
-            if (translatedNode.hasTranslation(locale)) {
+            try {
                 return new TranslatedFolder(translatedNode.getTranslation(locale));
+            } catch (ItemNotFoundException e) {
+                return null;
             }
-            return null;
         }
 
         @Override
