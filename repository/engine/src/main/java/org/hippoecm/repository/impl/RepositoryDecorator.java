@@ -71,7 +71,7 @@ public class RepositoryDecorator extends org.hippoecm.repository.decorating.Repo
             try {
                 Manifest manifest = RepoUtils.getManifest(getClass());
                 if (manifest != null) {
-                    return manifest.getMainAttributes().getValue("Implementation-Version") + " build " + manifest.getMainAttributes().getValue("Implementation-Build");
+                    return manifest.getMainAttributes().getValue("Implementation-Version");
                 } else {
                     return null;
                 }
