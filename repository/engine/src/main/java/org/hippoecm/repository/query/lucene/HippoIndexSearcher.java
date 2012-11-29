@@ -32,10 +32,10 @@ public class HippoIndexSearcher extends JackrabbitIndexSearcher {
     private final IndexReader reader;
     private final AuthorizationFilter authorizationFilter;
 
-    public HippoIndexSearcher(SessionImpl s, IndexReader r, ItemStateManager ism, final AuthorizationFilter abs) {
+    public HippoIndexSearcher(SessionImpl s, IndexReader r, ItemStateManager ism, final AuthorizationFilter authorizationFilter) {
         super(s, r, ism);
         reader = r;
-        authorizationFilter = abs;
+        this.authorizationFilter = authorizationFilter;
     }
 
     @Override
@@ -46,10 +46,10 @@ public class HippoIndexSearcher extends JackrabbitIndexSearcher {
             hits = ((JackrabbitQuery) query).execute(this, getSession(), sort);
         }
         if (hits == null) {
-            boolean sortedSearch = sort.getSort().length == 0;
-            if (sortedSearch && authorizationFilter == null) {
+            boolean noSort = sort.getSort().length == 0;
+            if (noSort && authorizationFilter == null) {
                 hits = new LuceneQueryHits(reader, this, query);
-            } else if (sortedSearch) {
+            } else if (noSort) {
                 hits = new HippoLuceneQueryHits(reader, authorizationFilter, this, query);
             } else {
                 hits = new HippoSortedLuceneQueryHits(reader, authorizationFilter, this, query, sort, resultFetchHint);

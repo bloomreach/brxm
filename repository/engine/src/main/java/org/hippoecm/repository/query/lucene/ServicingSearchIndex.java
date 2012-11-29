@@ -96,7 +96,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      */
     private Element indexingConfiguration;
 
-    private final ConcurrentHashMap<String, AuthorizationFilter> authorizationBitSets = new ConcurrentHashMap<String, AuthorizationFilter>();
+    private final ConcurrentHashMap<String, AuthorizationFilter> authorizationFilters = new ConcurrentHashMap<String, AuthorizationFilter>();
 
     /**
      * Simple zero argument constructor.
@@ -118,16 +118,16 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
 
         String userId = session.getUserID();
-        AuthorizationFilter filter = authorizationBitSets.get(userId);
+        AuthorizationFilter filter = authorizationFilters.get(userId);
         InternalHippoSession internalHippoSession = (InternalHippoSession) session;
         BooleanQuery query = internalHippoSession.getAuthorizationQuery().getQuery();
         if (filter != null && !filter.getQuery().equals(query)) {
-            authorizationBitSets.remove(userId);
+            authorizationFilters.remove(userId);
             filter = null;
         }
         if (filter == null) {
             filter = new AuthorizationFilter(query);
-            AuthorizationFilter existing = authorizationBitSets.putIfAbsent(session.getUserID(), filter);
+            AuthorizationFilter existing = authorizationFilters.putIfAbsent(session.getUserID(), filter);
             if (existing != null) {
                 filter = existing;
             }

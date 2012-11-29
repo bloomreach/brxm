@@ -49,22 +49,22 @@ public class AuthorizationFilter extends Filter {
             return new DocIdSetIterator() {
 
                 int docOffset = 0;
-                int indexReaderIndex = -1;
-                DocIdSetIterator upstreamIterator;
+                int docIdSetIndex = -1;
+                DocIdSetIterator currentDocIdSetIterator;
 
                 @Override
                 public int doc() {
-                    return docOffset + upstreamIterator.doc();
+                    return docOffset + currentDocIdSetIterator.doc();
                 }
 
                 @Override
                 public boolean next() throws IOException {
-                    while (upstreamIterator == null || !upstreamIterator.next()) {
+                    while (currentDocIdSetIterator == null || !currentDocIdSetIterator.next()) {
                         if (!nextIterator()) {
                             return false;
                         }
-                        if (!upstreamIterator.next()) {
-                            upstreamIterator = null;
+                        if (!currentDocIdSetIterator.next()) {
+                            currentDocIdSetIterator = null;
                         } else {
                             return true;
                         }
@@ -73,15 +73,15 @@ public class AuthorizationFilter extends Filter {
                 }
 
                 private boolean nextIterator() {
-                    upstreamIterator = null;
-                    if (docIdSets.length == (indexReaderIndex + 1)) {
+                    currentDocIdSetIterator = null;
+                    if (docIdSets.length == (docIdSetIndex + 1)) {
                         return false;
                     }
-                    if (indexReaderIndex >= 0) {
-                        docOffset += maxDocs[indexReaderIndex];
+                    if (docIdSetIndex >= 0) {
+                        docOffset += maxDocs[docIdSetIndex];
                     }
-                    indexReaderIndex++;
-                    upstreamIterator = docIdSets[indexReaderIndex].iterator();
+                    docIdSetIndex++;
+                    currentDocIdSetIterator = docIdSets[docIdSetIndex].iterator();
                     return true;
                 }
 
@@ -110,8 +110,8 @@ public class AuthorizationFilter extends Filter {
             Filter filter = new QueryWrapperFilter(query);
             this.bits = filter.getDocIdSet(reader);
 
-            long bitsetCreationTime = System.currentTimeMillis() - start;
-            log.info("Creating authorization bitset took {} ms.", String.valueOf(bitsetCreationTime));
+            long docIdSetCreationTime = System.currentTimeMillis() - start;
+            log.info("Creating authorization doc id set took {} ms.", String.valueOf(docIdSetCreationTime));
         }
 
         private boolean isValid(IndexReader reader) {
@@ -123,10 +123,7 @@ public class AuthorizationFilter extends Filter {
             new WeakHashMap<IndexReader, IndexReaderFilter>());
     private final Query query;
 
-    /*
-     * when all bits from the constructor are set to one, we set the bits variable to null: null
-     * means just no filter
-     */
+
     public AuthorizationFilter(final Query query) {
         this.query = query;
     }
@@ -156,7 +153,7 @@ public class AuthorizationFilter extends Filter {
 
     private DocIdSet getIndexReaderDocIdSet(final IndexReader reader) throws IOException {
         IndexReaderFilter filter = cache.get(reader);
-        if (filter == null || !filter.isValid(reader)) {
+        if (filter == null) {
             filter = createFilter(reader);
         }
         return filter.bits;
