@@ -112,9 +112,6 @@ public class AuthorizationFilter extends Filter {
             log.info("Creating authorization doc id set took {} ms.", String.valueOf(docIdSetCreationTime));
         }
 
-        private boolean isValid(IndexReader reader) {
-            return reader.maxDoc() == maxDoc;
-        }
     }
 
     private final Map<IndexReader, IndexReaderFilter> cache = Collections.synchronizedMap(
@@ -159,11 +156,9 @@ public class AuthorizationFilter extends Filter {
 
     private synchronized IndexReaderFilter createFilter(IndexReader reader) throws IOException {
         IndexReaderFilter filter;
-        if (cache.containsKey(reader)) {
-            filter = cache.get(reader);
-            if (filter.isValid(reader)) {
-                return filter;
-            }
+        filter = cache.get(reader);
+        if (filter != null) {
+           return filter;
         }
         filter = new IndexReaderFilter(reader);
         cache.put(reader, filter);
