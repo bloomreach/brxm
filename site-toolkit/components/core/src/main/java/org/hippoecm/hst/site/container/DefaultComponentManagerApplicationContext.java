@@ -28,6 +28,10 @@ import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.web.context.ServletConfigAware;
+import org.springframework.web.context.ServletContextAware;
+import org.springframework.web.context.support.ServletContextAwareProcessor;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class DefaultComponentManagerApplicationContext extends ClassPathXmlApplicationContext implements BeanPostProcessor, ComponentManagerAware {
 
@@ -66,6 +70,16 @@ public class DefaultComponentManagerApplicationContext extends ClassPathXmlAppli
     @Override
     protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         beanFactory.addBeanPostProcessor(this);
+        // copied from org.springframework.web.context.support.AbstractRefreshableWebApplicationContext
+        if (componentManager != null && componentManager instanceof SpringComponentManager && ((SpringComponentManager)componentManager).getServletContext() != null) {
+            SpringComponentManager scm = (SpringComponentManager)componentManager;
+            beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(scm.getServletContext(), scm.getServletConfig()));
+            beanFactory.ignoreDependencyInterface(ServletContextAware.class);
+            beanFactory.ignoreDependencyInterface(ServletConfigAware.class);
+
+            WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, scm.getServletContext());
+            WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, scm.getServletContext(), scm.getServletConfig());
+        }
     }
 
     @Override

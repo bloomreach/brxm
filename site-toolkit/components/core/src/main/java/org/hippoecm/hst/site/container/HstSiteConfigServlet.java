@@ -317,7 +317,7 @@ public class HstSiteConfigServlet extends HttpServlet {
             log.info(INIT_START_MSG);
             
             log.info("HstSiteConfigServlet attempting to create the Component manager...");
-            componentManager = new SpringComponentManager(this.configuration);
+            componentManager = new SpringComponentManager(config, this.configuration);
             log.info("HSTSiteServlet attempting to start the Component Manager...");
             
             if (assemblyOverridesConfigurations != null && assemblyOverridesConfigurations.length > 0) {

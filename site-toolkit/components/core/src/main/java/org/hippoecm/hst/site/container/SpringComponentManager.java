@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.ArrayUtils;
@@ -68,6 +71,9 @@ public class SpringComponentManager implements ComponentManager {
     private Map<String, ModuleInstance> addonModuleInstancesMap;
     private List<ModuleInstance> addonModuleInstancesList;
 
+    private ServletConfig servletConfig;
+    private ServletContext servletContext;
+
     private EventBus containerEventBus = new EventBus();
 
     public SpringComponentManager() {
@@ -77,6 +83,35 @@ public class SpringComponentManager implements ComponentManager {
     public SpringComponentManager(Configuration configuration) {
         this.configuration = configuration;
         this.containerConfiguration = new ContainerConfigurationImpl(this.configuration);
+    }
+
+    public SpringComponentManager(ServletConfig servletConfig, Configuration configuration) {
+        this(configuration);
+        setServletConfig(servletConfig);
+    }
+
+    public SpringComponentManager(ServletContext servletContext, Configuration configuration) {
+        this(configuration);
+        setServletContext(servletContext);
+    }
+
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.servletConfig = servletConfig;
+        if (servletConfig != null) {
+            setServletContext(servletConfig.getServletContext());
+        }
+    }
+
+    public ServletConfig getServletConfig() {
+        return this.servletConfig;
+    }
+
+    public void setServletContext(ServletContext servletContext) {
+        this.servletContext = servletContext;
+    }
+
+    public ServletContext getServletContext() {
+        return this.servletContext;
     }
     
     public void initialize() {
