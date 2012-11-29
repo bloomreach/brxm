@@ -97,22 +97,21 @@ public class AuthorizationFilter extends Filter {
     }
 
     private class IndexReaderFilter {
-        private final int maxDoc;
-        private final DocIdSet bits;
+
+        private final DocIdSet docIdSet;
 
         IndexReaderFilter(IndexReader reader) throws IOException {
-            maxDoc = reader.maxDoc();
-
             long start = System.currentTimeMillis();
 
             Filter filter = new QueryWrapperFilter(query);
-            this.bits = filter.getDocIdSet(reader);
-
+            docIdSet = filter.getDocIdSet(reader);
             long docIdSetCreationTime = System.currentTimeMillis() - start;
+
             log.info("Creating authorization doc id set took {} ms.", String.valueOf(docIdSetCreationTime));
         }
-
     }
+
+
 
     private final Map<IndexReader, IndexReaderFilter> cache = Collections.synchronizedMap(
             new WeakHashMap<IndexReader, IndexReaderFilter>());
@@ -151,7 +150,7 @@ public class AuthorizationFilter extends Filter {
         if (filter == null) {
             filter = createFilter(reader);
         }
-        return filter.bits;
+        return filter.docIdSet;
     }
 
     private synchronized IndexReaderFilter createFilter(IndexReader reader) throws IOException {
