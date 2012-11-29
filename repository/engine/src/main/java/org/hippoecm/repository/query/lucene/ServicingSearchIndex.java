@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.PathNotFoundException;
@@ -38,6 +39,9 @@ import javax.jcr.query.QueryResult;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.id.NodeId;
@@ -96,8 +100,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      */
     private Element indexingConfiguration;
 
-    private final ConcurrentHashMap<String, AuthorizationFilter> authorizationFilters = new ConcurrentHashMap<String, AuthorizationFilter>();
-
+    private final Cache<String, AuthorizationFilter> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
     /**
      * Simple zero argument constructor.
      */
@@ -118,19 +121,20 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         }
 
         String userId = session.getUserID();
-        AuthorizationFilter filter = authorizationFilters.get(userId);
+        AuthorizationFilter filter = cache.getIfPresent(userId);
         InternalHippoSession internalHippoSession = (InternalHippoSession) session;
         BooleanQuery query = internalHippoSession.getAuthorizationQuery().getQuery();
         if (filter != null && !filter.getQuery().equals(query)) {
-            authorizationFilters.remove(userId);
+            cache.invalidate(userId);
             filter = null;
         }
         if (filter == null) {
+            // since this method can be invoked concurrently for the same userID it might be that we store
+            // the same filter twice or more: This only happens for the first unique userID or after a change in
+            // authorization. Any way, storing it needlessly twice or more only for the same userID under concurrency is
+            // much preferable over introducing synchronization
             filter = new AuthorizationFilter(query);
-            AuthorizationFilter existing = authorizationFilters.putIfAbsent(session.getUserID(), filter);
-            if (existing != null) {
-                filter = existing;
-            }
+            cache.put(session.getUserID(), filter);
         }
         return filter;
     }
