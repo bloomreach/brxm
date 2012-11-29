@@ -49,8 +49,8 @@ public class AuthorizationFilter extends Filter {
             return new DocIdSetIterator() {
 
                 int docOffset = 0;
-                int docIdSetIndex = -1;
-                DocIdSetIterator currentDocIdSetIterator;
+                int docIdSetIndex = 0;
+                DocIdSetIterator currentDocIdSetIterator = docIdSets[0].iterator();
 
                 @Override
                 public int doc() {
@@ -59,30 +59,28 @@ public class AuthorizationFilter extends Filter {
 
                 @Override
                 public boolean next() throws IOException {
-                    while (currentDocIdSetIterator == null || !currentDocIdSetIterator.next()) {
-                        if (!nextIterator()) {
-                            return false;
-                        }
-                        if (!currentDocIdSetIterator.next()) {
-                            currentDocIdSetIterator = null;
-                        } else {
+                    while (currentDocIdSetIterator != null) {
+                        if (currentDocIdSetIterator.next()) {
                             return true;
                         }
+                        pointCurrentToNextIterator();
                     }
-                    return true;
+                    return false;
                 }
 
-                private boolean nextIterator() {
+                /**
+                 * if there is no next iterator, currentDocIdSetIterator becomes null
+                 */
+                private void pointCurrentToNextIterator() {
                     currentDocIdSetIterator = null;
                     if (docIdSets.length == (docIdSetIndex + 1)) {
-                        return false;
+                        return;
                     }
                     if (docIdSetIndex >= 0) {
                         docOffset += maxDocs[docIdSetIndex];
                     }
                     docIdSetIndex++;
                     currentDocIdSetIterator = docIdSets[docIdSetIndex].iterator();
-                    return true;
                 }
 
                 @Override
