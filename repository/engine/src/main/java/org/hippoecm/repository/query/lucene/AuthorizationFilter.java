@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class AuthorizationFilter extends Filter {
 
-    static final Logger log = LoggerFactory.getLogger(AuthorizationFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthorizationFilter.class);
 
     private static class MultiDocIdSet extends DocIdSet {
 
@@ -100,7 +100,7 @@ public class AuthorizationFilter extends Filter {
 
         private final DocIdSet docIdSet;
 
-        IndexReaderFilter(IndexReader reader) throws IOException {
+        private IndexReaderFilter(IndexReader reader) throws IOException {
             long start = System.currentTimeMillis();
 
             Filter filter = new QueryWrapperFilter(query);
