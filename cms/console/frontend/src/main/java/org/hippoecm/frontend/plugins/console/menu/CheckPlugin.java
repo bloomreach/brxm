@@ -61,7 +61,7 @@ public class CheckPlugin extends RenderPlugin {
             }
         });
 
-        UserSession session = getSession();
+        UserSession session = UserSession.get();
         /* Uncommented at this time, the console can always show this plugin */
         if (session.getApplication().getConfigurationType().equals(Application.DEPLOYMENT)) {
             setVisible(false);
@@ -70,14 +70,14 @@ public class CheckPlugin extends RenderPlugin {
 
     private String check() {
         try {
-            Session session = getSession().getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             check(session);
         } catch (RepositoryException ex) {
             log.error("error during user consistency check", ex);
             return "error";
         }
         try {
-            Session session = getSession().getJcrSession().getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
+            Session session = UserSession.get().getJcrSession().getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
             check(session);
             session.logout();
         } catch (RepositoryException ex) {

@@ -341,7 +341,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
 
     private void hideInvalidActions() {
         try {
-            WorkflowManager manager = getSession().getWorkflowManager();
+            WorkflowManager manager = UserSession.get().getWorkflowManager();
             WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getDefaultModel();
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getDefaultModelObject();
             if(workflowDescriptor != null) {
