@@ -249,24 +249,6 @@
       </plugin>
    </plugins>
   </build>
-  <reporting>
-   <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>findbugs-maven-plugin</artifactId>
-        <version>1.2</version>
-        <configuration>
-          <xmlOutput>true</xmlOutput>
-          <xdocsOutput>true</xdocsOutput>
-          <emacsOutput>true</emacsOutput>
-          <threshold>High</threshold>
-          <effort>Max</effort>
-          <excludeFilterFile>src/site/findbugs-exclude.xml</excludeFilterFile>
-          <relaxed>true</relaxed>
-        </configuration>
-      </plugin>
-   </plugins>
-  </reporting>
 
   <profiles>
     <profile>
