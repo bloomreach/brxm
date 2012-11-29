@@ -50,7 +50,7 @@ public class AuthorizationFilter extends Filter {
 
                 int docOffset = 0;
                 int docIdSetIndex = 0;
-                DocIdSetIterator currentDocIdSetIterator = docIdSets[0].iterator();
+                DocIdSetIterator currentDocIdSetIterator = (docIdSets.length == 0) ? null : docIdSets[0].iterator();
 
                 @Override
                 public int doc() {
