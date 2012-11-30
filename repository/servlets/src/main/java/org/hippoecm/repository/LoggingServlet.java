@@ -143,7 +143,6 @@ public class LoggingServlet extends HttpServlet {
         String lastLogger = req.getParameter("logger");
         String lastLevel = req.getParameter("level");
         SortedMap<String, String> loggerLevelMap = getLoggerLevelMap();
-        printForm(writer, loggerLevelMap, lastLogger, lastLevel);
         printLoggerLevels(writer, loggerLevelMap);
 
         writer.println("</p>");
@@ -212,70 +211,44 @@ public class LoggingServlet extends HttpServlet {
         }
     }
 
-    private void printForm(PrintWriter writer, Map<String, String> loggerLevelMap, String lastLogger, String lastLevel) {
-        writer.println("  <form action=\".\" method=\"POST\" enctype=\"application/x-www-form-urlencoded\">");
-        writer.println("    <table>");
-        writer.println("      <tr>");
-        writer.println("        <td>");
-        writer.println("Logger: <select name=\"logger\">");
-        for (Iterator<String> iter = loggerLevelMap.keySet().iterator(); iter.hasNext();) {
-            String loggerName = iter.next();
-            String escapedName = StringEscapeUtils.escapeHtml(loggerName);
-            if (loggerName.equals(lastLogger)) {
-                writer.println("<option label=\"" + escapedName + "\" value=\"" + escapedName
-                        + "\" selected=\"selected\">" + escapedName + "</option>");
-            } else {
-                writer.println("<option label=\"" + escapedName + "\" value=\"" + escapedName + "\">" + escapedName
-                        + "</option>");
-            }
-        }
-        writer.println("</select>");
-        writer.println("        </td>");
-        writer.println("        <td>");
-        writer.println("level: <select name=\"level\">");
-        if (isJDK14Log) {
-            for (int i = 0; i < jdk14Levels.length; i++) {
-                if (jdk14Levels[i].equals(lastLevel)) {
-                    writer.println("<option label=\"" + jdk14Levels[i] + "\" value=\"" + jdk14Levels[i]
-                            + "\" selected=\"selected\">" + jdk14Levels[i] + "</option>");
-                } else {
-                    writer.println("<option label=\"" + jdk14Levels[i] + "\" value=\"" + jdk14Levels[i] + "\">"
-                            + jdk14Levels[i] + "</option>");
-                }
-            }
-        } else if (isLog4jLog) {
-            for (int i = 0; i < log4jLevels.length; i++) {
-                if (log4jLevels[i].equals(lastLevel)) {
-                    writer.println("<option label=\"" + log4jLevels[i] + "\" value=\"" + log4jLevels[i]
-                            + "\" selected=\"selected\">" + log4jLevels[i] + "</option>");
-
-                } else {
-                    writer.println("<option label=\"" + log4jLevels[i] + "\" value=\"" + log4jLevels[i] + "\">"
-                            + log4jLevels[i] + "</option>");
-                }
-            }
-        }
-        writer.println("</select>");
-        writer.println("        </td>");
-        writer.println("        <td><input type=\"submit\" name=\"submit\" value=\"Apply\"></td>");
-        writer.println("      </tr>");
-        writer.println("    </table>");
-        writer.println("  </form>");
-
-    }
-
     private void printLoggerLevels(PrintWriter writer, Map<String, String> loggerLevelMap) {
         writer.println("    <table>");
-        writer.println("      <tr><th>logger</th><th>level</th></tr>");
+        writer.println("      <tr><th>logger</th><th>level</th><th>change</th></tr>");
         for (Iterator<Map.Entry<String, String>> iter = loggerLevelMap.entrySet().iterator(); iter.hasNext();) {
             Map.Entry<String, String> logMap = iter.next();
             writer.print("      <tr><td><tt>");
-            writer.print(StringEscapeUtils.escapeHtml(logMap.getKey()));
+            String escapedName = StringEscapeUtils.escapeHtml(logMap.getKey());
+            writer.print("<a id=\""+escapedName+"\">");
+            writer.print(escapedName);
+            writer.print("</a>");
             writer.print("</tt></td><td>");
             writer.print(logMap.getValue());
+            writer.print("</td><td>");
+            printChangeLevelForm(writer, logMap.getKey());
             writer.println("</td></tr>");
         }
         writer.println("    </table>");
+    }
+
+    private void printChangeLevelForm(final PrintWriter writer, final String loggerName) {
+        String escapedName = StringEscapeUtils.escapeHtml(loggerName);
+        writer.println("<form action=\"#"+escapedName+"\" method=\"POST\" enctype=\"application/x-www-form-urlencoded\">");
+        writer.println("<input type=\"hidden\" name=\"logger\" value=\""+escapedName+"\">");
+        writer.println("level: <select name=\"level\">");
+        if (isJDK14Log) {
+            for (int i = 0; i < jdk14Levels.length; i++) {
+                writer.println("<option label=\"" + jdk14Levels[i] + "\" value=\"" + jdk14Levels[i] + "\">"
+                        + jdk14Levels[i] + "</option>");
+            }
+        } else if (isLog4jLog) {
+            for (int i = 0; i < log4jLevels.length; i++) {
+                writer.println("<option label=\"" + log4jLevels[i] + "\" value=\"" + log4jLevels[i] + "\">"
+                        + log4jLevels[i] + "</option>");
+            }
+        }
+        writer.println("</select>");
+        writer.println("<input type=\"submit\" name=\"submit\" value=\"Apply\">");
+        writer.println("  </form>");
     }
 
     public void destroy() {
