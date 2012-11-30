@@ -214,8 +214,7 @@ public class LoggingServlet extends HttpServlet {
     private void printLoggerLevels(PrintWriter writer, Map<String, String> loggerLevelMap) {
         writer.println("    <table>");
         writer.println("      <tr><th>logger</th><th>level</th><th>change</th></tr>");
-        for (Iterator<Map.Entry<String, String>> iter = loggerLevelMap.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry<String, String> logMap = iter.next();
+        for (Map.Entry<String, String> logMap : loggerLevelMap.entrySet()) {
             writer.print("      <tr><td><tt>");
             String escapedName = StringEscapeUtils.escapeHtml(logMap.getKey());
             writer.print("<a id=\""+escapedName+"\">");
