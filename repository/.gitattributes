@@ -189,6 +189,7 @@ engine/src/test/java/org/hippoecm/repository/DocumentViewExportTest.java -text
 engine/src/test/java/org/hippoecm/repository/ExportCndTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/FreeTextSearchTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/OrderByNodeNameTest.java svneol=native#text/plain
+engine/src/test/java/org/hippoecm/repository/PdfExtractedTextWithLineBreaksAreIndexedCorrectlyTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/PdfExtractionAndIndexingTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/SearchOnNodeNameTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/StandardHippoAnalyzerTest.java svneol=native#text/plain
@@ -235,6 +236,7 @@ engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/skip-fixture.xm
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/skip-merge.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/jackrabbit/xml/skip-result.xml svneol=native#text/plain
 engine/src/test/resources/org/hippoecm/repository/unittest.pdf -text
+engine/src/test/resources/org/hippoecm/repository/words_on_new_line_without_spaces.pdf -text
 engine/src/test/resources/repository-test.cnd -text
 engine/src/test/resources/role-jcrread.xml svneol=native#text/plain
 jca/pom.xml svneol=native#text/plain
