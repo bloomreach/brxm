@@ -127,7 +127,7 @@
     <json-lib.version>2.2.2</json-lib.version>
 
     <jackrabbit.version>2.2.12-h1</jackrabbit.version>
-    <tika.version>0.8</tika.version>
+    <tika.version>0.9</tika.version>
     <drewnoakes-extractor.version>2.4.0-beta-1</drewnoakes-extractor.version>
 
     <hippo.htmlcleaner.version>1.02.07</hippo.htmlcleaner.version>
