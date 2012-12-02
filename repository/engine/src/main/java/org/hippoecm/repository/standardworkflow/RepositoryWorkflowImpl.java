@@ -63,15 +63,4 @@ public class RepositoryWorkflowImpl implements RepositoryWorkflow, InternalWorkf
         }
     }
 
-    public void consistency(String argument) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        if (argument.equals("versionHistoryReport") || argument.equals("versionHistoryCleanup")) {
-            VersionHistoryCleanup cleanup = new VersionHistoryCleanup();
-            cleanup.traverse(session);
-            cleanup.process();
-            cleanup.report(session);
-            if (argument.equals("versionHistoryCleanup")) {
-                cleanup.repair(session);
-            }
-        }
-    }
 }

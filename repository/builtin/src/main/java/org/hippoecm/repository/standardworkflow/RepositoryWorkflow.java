@@ -31,21 +31,4 @@ public interface RepositoryWorkflow extends Workflow {
     public void createNamespace(String prefix, String namespace) throws WorkflowException, MappingException,
             RepositoryException, RemoteException;
 
-    /**
-     * Performs an on-line consistency check and or repair on selected items in the persisted state of the repository.
-     * The actual actions performed depend on the free-form argument that is passed.  In addition the test may either
-     * be performed synchronously or a-synchronously.
-     * Currently supported operations passed as argument include:
-     * <dl>
-     * <dt>versionHistoryCleanup</dt><dd>Cleans up any version history bundles that are no longer referenced</dd>
-     * <dt>versionHistoryReport</dt><dd>Only reports on the version bundles that can be cleaned up</dd>
-     * </dl>
-     * @param argument the checks that need to be performed
-     * @throws WorkflowException in case the repository currently cannot handle a consistency check
-     * @throws MappingException in case the passed argument cannot fully be parsed
-     * @throws RepositoryException in case of generic errors.
-     * @throws RemoteException in case of a communication problem with the repository
-     */
-    public void consistency(String argument)
-            throws WorkflowException, MappingException, RepositoryException, RemoteException;
 }
