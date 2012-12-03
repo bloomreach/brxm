@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -246,6 +247,9 @@ public class UpdaterExecutionModule implements DaemonModule, EventListener {
                     log.debug("Updater queue is empty. Nothing to execute");
                     return null;
                 }
+            } catch(PathNotFoundException e) {
+                log.debug("No updater queue");
+                return null;
             } catch (RepositoryException e) {
                 log.error("Failed to get nodes in the updater queue", e);
                 return null;
