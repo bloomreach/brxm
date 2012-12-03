@@ -56,8 +56,8 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
     public List<String> getGalleryTypes() throws RemoteException, RepositoryException {
         List<String> list = new LinkedList<String>();
         Value[] values = subject.getProperty("hippostd:gallerytype").getValues();
-        for(int i=0; i<values.length; i++) {
-            list.add(values[i].getString());
+        for (final Value value : values) {
+            list.add(value.getString());
         }
         return list;
     }
@@ -98,7 +98,7 @@ public class GalleryWorkflowImpl implements InternalWorkflow, GalleryWorkflow
                 node = node.getNode(primaryItemName);
             }
             node.setProperty("jcr:data", "");
-            node.setProperty("jcr:mimeType", "text/plain");
+            node.setProperty("jcr:mimeType", "application/octet-stream");
             node.setProperty("jcr:lastModified", timestamp);
         } else {
             throw new ItemNotFoundException("No primary item definition found");
