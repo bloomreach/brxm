@@ -47,21 +47,41 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
     private ResourceReference iconModel;
     private IPluginContext pluginContext;
 
+    /**
+     * @deprecated Old-style constructor
+     *    Use a constructor with explicit model argument.
+     *    The WorkflowDescriptorModel is available in workflow plugin constructor..
+     */
     @Deprecated
     public StdWorkflow(String id, String name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
         this(id, Model.of(name), null, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
     }
 
+    /**
+     * @deprecated Old-style constructor
+     *    Use a constructor with explicit model argument.
+     *    The WorkflowDescriptorModel is available in workflow plugin constructor..
+     */
     @Deprecated
     public StdWorkflow(String id, StringResourceModel name, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
         this(id, name, null, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
     }
 
+    /**
+     * @deprecated Old-style constructor
+     *    Use a constructor with explicit model argument.
+     *    The WorkflowDescriptorModel is available in workflow plugin constructor..
+     */
     @Deprecated
     public StdWorkflow(String id, StringResourceModel name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
         this(id, name, iconModel, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
     }
 
+    /**
+     * @deprecated Old-style constructor
+     *    Use a constructor with explicit model argument.
+     *    The WorkflowDescriptorModel is available in workflow plugin constructor..
+     */
     @Deprecated
     public StdWorkflow(String id, String name, ResourceReference iconModel, IPluginContext pluginContext, RenderPlugin<? extends WorkflowDescriptor> enclosingPlugin) {
         this(id, Model.of(name), iconModel, pluginContext, (WorkflowDescriptorModel) enclosingPlugin.getModel());
