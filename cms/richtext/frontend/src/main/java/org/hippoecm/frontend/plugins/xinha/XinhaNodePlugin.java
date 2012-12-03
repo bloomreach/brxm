@@ -312,7 +312,7 @@ public class XinhaNodePlugin extends AbstractXinhaPlugin {
                             if (node.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                                 String uuid = node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                                 javax.jcr.Session s = getSession().getJcrSession();
-                                node = s.getNodeByUUID(uuid);
+                                node = s.getNodeByIdentifier(uuid);
                                 browser.browse(new JcrNodeModel(node));
                             }
                         }
