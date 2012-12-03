@@ -33,7 +33,6 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
@@ -120,7 +119,7 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
         schedule = null;
         state = "unknown";
         try {
-            WorkflowManager manager = UserSession.get().getWorkflowManager();
+            WorkflowManager manager = getSession().getWorkflowManager();
             WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getDefaultModel();
             WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getDefaultModelObject();
             if (workflowDescriptor != null) {

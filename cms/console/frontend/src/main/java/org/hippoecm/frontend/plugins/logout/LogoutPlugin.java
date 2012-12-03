@@ -32,7 +32,8 @@ public class LogoutPlugin extends RenderPlugin {
     public LogoutPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        username = UserSession.get().getJcrSession().getUserID();
+        UserSession session = getSession();
+        username = session.getJcrSession().getUserID();
 
         add(new Label("username", new PropertyModel(this, "username")));
         add(new LogoutLink("logout-link", context));

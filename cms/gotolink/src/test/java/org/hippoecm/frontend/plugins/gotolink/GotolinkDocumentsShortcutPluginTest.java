@@ -16,14 +16,13 @@
  */
 package org.hippoecm.frontend.plugins.gotolink;
 
-import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.tester.TestPanelSource;
-import org.apache.wicket.util.tester.WicketTester;
-
+import org.hippoecm.frontend.HippoTester;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -31,7 +30,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IRenderService;
-
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createMock;
@@ -76,7 +74,7 @@ public class GotolinkDocumentsShortcutPluginTest {
 
         replay(mockBrowseService, mockRenderService, mockModelReference, mockModel, mockPluginContext);
 
-        WicketTester tester = new WicketTester(new HippoWebApplication());
+        HippoTester tester = new HippoTester(new Main());
 
         TestPanelSource testPanelSource = createTestPanelSource();
         tester.startPanel(testPanelSource);
@@ -102,16 +100,4 @@ public class GotolinkDocumentsShortcutPluginTest {
         };
     }
 
-    public class HippoWebApplication extends WicketTester.DummyWebApplication {
-        @Override
-        public String getConfigurationType() {
-            // suppress development mode warning from test output
-            return Application.DEPLOYMENT;
-        }
-
-        @Override
-        public Class getHomePage() {
-            return MyHomePage.class;
-        }
-    }
 }

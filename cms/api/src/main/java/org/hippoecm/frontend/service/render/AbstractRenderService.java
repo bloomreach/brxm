@@ -441,6 +441,11 @@ public abstract class AbstractRenderService<T> extends Panel implements IObserve
         }
     }
 
+    @Override
+    public UserSession getSession() {
+        return UserSession.get();
+    }
+
     public void bind(IRenderService parent, String wicketId) {
         this.parent = parent;
         this.wicketId = wicketId;
