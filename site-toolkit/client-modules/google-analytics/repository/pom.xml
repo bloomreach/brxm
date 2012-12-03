@@ -56,8 +56,8 @@
     </dependency>
     <dependency>
       <groupId>com.google.gdata</groupId>
-      <artifactId>gdata-core</artifactId>
-      <version>1.0</version>
+      <artifactId>core</artifactId>
+      <version>1.47.1</version>
     </dependency>
   </dependencies>
 
