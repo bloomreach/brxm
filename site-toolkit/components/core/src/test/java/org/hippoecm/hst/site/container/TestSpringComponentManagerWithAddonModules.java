@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008 - 2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
@@ -38,6 +40,7 @@ import org.onehippo.repository.testutils.ExecuteOnLogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockServletContext;
 
 public class TestSpringComponentManagerWithAddonModules {
     
@@ -332,6 +335,33 @@ public class TestSpringComponentManagerWithAddonModules {
         } catch (ModuleNotFoundException mnfe) {
             // Expected exception because the module instance should have been removed.
         }
+
+        componentManager.stop();
+        componentManager.close();
+    }
+
+    @Test
+    public void testServletContextAwareModuleInstances() throws Exception {
+        ServletContext servletContext = new MockServletContext();
+        Configuration configuration = new PropertiesConfiguration();
+        final SpringComponentManager componentManager = new SpringComponentManager(servletContext, configuration);
+        componentManager.setConfigurationResources(new String [] { WITH_ADDON_MODULES });
+
+        // addon module definitions
+        List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
+
+        // build and add analytics module definition
+        ModuleDefinition def1 = new ModuleDefinition();
+        def1.setName("org.example.servletctxawaremodulebeans");
+        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/servletctxawaremodulebeans/*.xml"));
+        addonModuleDefs.add(def1);
+
+        componentManager.setAddonModuleDefinitions(addonModuleDefs);
+        componentManager.initialize();
+
+        MyServletContextAwareSpringBean servletContextAwareBean =  componentManager.getComponent("servletContextAwareBean", "org.example.servletctxawaremodulebeans");
+
+        assertTrue(servletContextAwareBean.getServletContext() == servletContext);
 
         componentManager.stop();
         componentManager.close();

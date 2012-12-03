@@ -18,7 +18,14 @@ package org.hippoecm.hst.core.container;
 import javax.servlet.ServletContext;
 
 /**
+ * <p>
  * Interface to be implemented by a {@link ComponentManager} object that wishes to be notified of the ServletContext that it runs in.
+ * </p>
+ * <p>
+ * Note that this {@link ServletContextAware} is meant to make a  {@link ComponentManager} object ServletContext aware and <b>not</b>
+ * its containing Spring beans! To make a spring bean {@link ServletContext} aware, such a spring bean need to implement 
+ * org.springframework.web.context.ServletContextAware
+ * </p>
  * @version $Id$
  */
 public interface ServletContextAware {

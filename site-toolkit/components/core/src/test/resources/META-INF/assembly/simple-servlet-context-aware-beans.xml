@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2012 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -17,17 +17,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+  
 
-  <bean id="greetingTemplate" class="java.lang.String">
-    <constructor-arg value="Hello, {0}!"/>
-  </bean>
-
-  <bean id="sessionIdStore" class="java.util.LinkedList">
-  </bean>
-
-  <bean class="org.hippoecm.hst.site.container.session.SessionIdStoringApplicationListener"
-        init-method="init" destroy-method="destroy">
-    <constructor-arg ref="sessionIdStore" />
+  <bean id="servletContextAwareBean" class="org.hippoecm.hst.site.container.MyServletContextAwareSpringBean">
   </bean>
 
 </beans>

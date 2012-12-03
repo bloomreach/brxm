@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008 - 2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,11 @@
  */
 package org.hippoecm.hst.site.container;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.ServletContext;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -33,6 +29,14 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockServletContext;
+import org.springframework.web.context.ServletContextAware;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class TestSpringComponentManager {
     
@@ -42,6 +46,7 @@ public class TestSpringComponentManager {
     private static final String SIMPLE_BEANS_4 = "/META-INF/assembly/simple-beans-4.xml";
     private static final String NON_EXISTING_BEANS = "/META-INF/assembly/non-existing-ones/*.xml";
     private static final String SIMPLE_BEANS_WITH_LISTENERS = "/META-INF/assembly/simple-beans-with-listeners.xml";
+    private static final String SIMPLE_SERVLET_CONTEXT_AWARE_BEANS = "/META-INF/assembly/simple-servlet-context-aware-beans.xml";
     
     private static Logger log = LoggerFactory.getLogger(TestSpringComponentManager.class);
     
@@ -228,4 +233,24 @@ public class TestSpringComponentManager {
         componentManager.stop();
         componentManager.close();
     }
+
+    @Test
+    public void testServletContextAwareBeans() {
+        ServletContext servletContext = new MockServletContext();
+        SpringComponentManager componentManager = new SpringComponentManager(servletContext, new PropertiesConfiguration());
+        String [] configurationResources = new String [] { SIMPLE_SERVLET_CONTEXT_AWARE_BEANS };
+        componentManager.setConfigurationResources(configurationResources);
+
+        componentManager.initialize();
+        componentManager.start();
+
+        MyServletContextAwareSpringBean servletContextAwareBean =  componentManager.getComponent("servletContextAwareBean");
+        assertTrue(servletContextAwareBean.getServletContext() == servletContext);
+
+        componentManager.stop();
+        componentManager.close();
+    }
+
+
+
 }

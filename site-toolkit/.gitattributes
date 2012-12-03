@@ -644,6 +644,7 @@ components/core/src/test/java/org/hippoecm/hst/core/logging/TestSlf4jLogger.java
 components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/AlwaysFailingOnStartBean.java -text
+components/core/src/test/java/org/hippoecm/hst/site/container/MyServletContextAwareSpringBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestHstSiteConfigServlet.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestModuleDescriptorUtils.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestResourceFactoryBean.java -text
@@ -669,6 +670,7 @@ components/core/src/test/resources/META-INF/assembly/simple-beans-3.xml svneol=n
 components/core/src/test/resources/META-INF/assembly/simple-beans-4.xml svneol=native#text/plain
 components/core/src/test/resources/META-INF/assembly/simple-beans-with-listeners.xml -text
 components/core/src/test/resources/META-INF/assembly/simple-config.properties svneol=native#text/plain
+components/core/src/test/resources/META-INF/assembly/simple-servlet-context-aware-beans.xml -text
 components/core/src/test/resources/META-INF/assembly/with-addon-modules-config.properties -text
 components/core/src/test/resources/META-INF/assembly/with-addon-modules.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/failing-module.xml -text
@@ -684,6 +686,8 @@ components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analy
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics2/reports/base.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analytics2/statistics/base.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/failing/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/servletctxawaremodulebeans/base.xml -text
+components/core/src/test/resources/META-INF/hst-assembly/addon/servletctxaware-module.xml -text
 components/core/src/test/resources/log4j.xml -text
 components/core/src/test/resources/org/hippoecm/hst/cache/ehcache/TestHstCache.xml -text
 components/core/src/test/resources/org/hippoecm/hst/configuration/TestMatchHostAndURL.xml svneol=native#text/plain
