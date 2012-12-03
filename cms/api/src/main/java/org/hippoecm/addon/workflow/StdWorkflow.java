@@ -86,7 +86,6 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         this.pluginContext = pluginContext;
 
         this.name = name;
-        this.iconModel = null;
 
         add(new ActionDisplay("text") {
             @Override
