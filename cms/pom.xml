@@ -115,7 +115,7 @@
     <xerces.version>2.8.1</xerces.version>
     <cglib.version>2.1_3</cglib.version>
     <wicket.version>1.4.21-h2</wicket.version>
-    <wicket-extjs.version>0.16</wicket-extjs.version>
+    <wicket-extjs.version>0.16-SNAPSHOT</wicket-extjs.version>
     <yui.sources.version>1.01.10</yui.sources.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <cxf.version>2.6.3</cxf.version>
