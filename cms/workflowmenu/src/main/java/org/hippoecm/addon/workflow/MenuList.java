@@ -29,34 +29,8 @@ class MenuList extends Panel implements MenuComponent {
     private final List<Component> list;
     private final MenuHierarchy menu;
 
-    MenuList(String id, ActionDescription wf, MenuHierarchy menu) {
+    MenuList(String id, MenuHierarchy menu) {
         super(id);
-        /*if (wf != null) {
-            Component fragment = wf.get("text");
-            if (fragment instanceof ActionDescription.ActionDisplay) {
-                ((ActionDescription.ActionDisplay)fragment).substantiate();
-                add(fragment);
-            } else if (fragment instanceof Fragment) {
-                add(fragment);
-            } else {
-                // wf.setVisible(true);
-            }
-
-            fragment = wf.get("icon");
-            if (fragment instanceof ActionDescription.ActionDisplay) {
-                ((ActionDescription.ActionDisplay)fragment).substantiate();
-                add(fragment);
-            } else if (fragment instanceof Fragment) {
-                add(fragment);
-            }
-        } else {
-            Label label = new Label("text");
-            label.setVisible(false);
-            add(label);
-            Image image = new Image("icon");
-            image.setVisible(false);
-            add(image);
-        }*/
         this.menu = menu;
         this.list = menu.list(this);
 

@@ -46,7 +46,7 @@ class MenuButton extends Panel implements IContextMenu {
     MenuButton(String id, String name, final MenuHierarchy menu, final MenuDescription description) {
         super(id);
         setOutputMarkupId(true);
-        add(content = new MenuList("item", null, menu));
+        add(content = new MenuList("item", menu));
         content.setOutputMarkupId(true);
         content.setVisible(false);
 
