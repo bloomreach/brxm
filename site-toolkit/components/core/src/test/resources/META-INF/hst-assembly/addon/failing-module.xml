@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="http://www.onehippo.org/schema/hst/hst-addon-module_1_0.xsd">
-  <name>org.example.analytics2</name>
+  <name>org.example.failing</name>
   <config-locations>
     <config-location>classpath*:META-INF/hst-assembly/addon/org/example/failing/*.xml</config-location>
   </config-locations>
