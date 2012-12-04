@@ -95,6 +95,10 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         final JcrResourceStream resource = new JcrResourceStream(model);
         Fragment fragment = new Fragment(id, "unknown", this);
         try {
+            if (resource.length() == 0) {
+                return fragment;
+            }
+
             Node node = getModelObject();
             final String filename;
             if (node.getDefinition().getName().equals("*")) {
