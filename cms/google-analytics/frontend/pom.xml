@@ -27,16 +27,12 @@
   <artifactId>hippo-cms-google-analytics-frontend</artifactId>
   <packaging>jar</packaging>
 
-  <properties>
-    <gdata.version>2.1</gdata.version>
-  </properties>
-
   <dependencies>
     
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
-      <version>${project.version}</version>
+      <version>${google.gdata.analytics}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -48,12 +44,12 @@
     <dependency>
       <groupId>com.google.gdata</groupId>
       <artifactId>gdata-analytics</artifactId>
-      <version>${gdata.version}</version>
+      <version>${google.gdata.analytics}</version>
     </dependency>
     <dependency>
       <groupId>com.google.gdata</groupId>
       <artifactId>core</artifactId>
-      <version>1.47.1</version>
+      <version>${google.gdata.core}</version>
     </dependency>
 
   </dependencies>

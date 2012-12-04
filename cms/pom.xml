@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>15</version>
+    <version>16-SNAPSHOT</version>
   </parent>
 
   <artifactId>hippo-cms</artifactId>
@@ -118,8 +118,6 @@
     <wicket-extjs.version>0.17-SNAPSHOT</wicket-extjs.version>
     <yui.sources.version>1.01.10</yui.sources.version>
     <nekohtml.version>1.9.13</nekohtml.version>
-    <cxf.version>2.6.3</cxf.version>
-    <jackson.version>1.9.5</jackson.version>
     <dom4j.version>1.6.1</dom4j.version>
     <httpclient.version>4.2.2</httpclient.version>
 
