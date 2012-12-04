@@ -20,7 +20,7 @@
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <hippotranslation='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
 
-[hippotranslation:translations]
+[hippotranslation:translations] // deprecated
 + * (hippo:document) multiple
 
 [hippotranslation:translated] mixin
