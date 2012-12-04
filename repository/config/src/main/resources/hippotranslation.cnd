@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Hippo
+ * Copyright 2012 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -27,4 +27,4 @@
 - hippotranslation:id (string) mandatory
 - hippotranslation:locale (string) mandatory
 - hippotranslation:sourcelocale (string)
-+ hippotranslation:translations (hippotranslation:translations) = hippotranslation:translations mandatory autocreated
++ hippotranslation:translations (hippotranslation:translations) = hippotranslation:translations // deprecated
