@@ -219,24 +219,29 @@ public class TabsPlugin extends RenderPlugin {
         if (tabbie.getDecoratorId() != null) {
             final StringBuilder fireEventJS = new StringBuilder();
             fireEventJS.append("(function(window, document) {\n" +
-                    "  try {"+
                     "  var fireEvent = function(element, eventName, active) {" +
-                    "      var event;\n" +
-                    "      if (document.createEvent) {\n" +
-                    "          event = document.createEvent('HTMLEvents');\n" +
-                    "          event.initEvent(eventName, true, true);\n" +
-                    "      } else {\n" +
-                    "          event = document.createEventObject();\n" +
-                    "          event.eventType = eventName\n" +
-                    "      }\n" +
-                    "      event.eventName = eventName;\n" +
-                    "      event.tabId = element.id ? element.id : element.name;"+
-                    "      event.active = active;"+
-                    "      if (document.createEvent) {"+
-                    "           element.dispatchEvent(event);\n" +
-                    "      } else if (element.fireEvent) {\n" +
-                    "          element.fireEvent('on' + event.eventType, event); \n" +
-                    "      }\n" +
+                    "      try {"+
+                    "           var event;\n" +
+                    "           if (document.createEvent) {\n" +
+                    "               event = document.createEvent('HTMLEvents');\n" +
+                    "               event.initEvent(eventName, true, true);\n" +
+                    "           } else {\n" +
+                    "               event = document.createEventObject();\n" +
+                    "               event.eventType = eventName;\n" +
+                    "           }\n" +
+                    "           event.eventName = eventName;\n" +
+                    "           event.tabId = element.id ? element.id : element.name;"+
+                    "           event.active = active;"+
+                    "           if (document.createEvent) {"+
+                    "               element.dispatchEvent(event);\n" +
+                    "           } else if (element.fireEvent) {\n" +
+                    "               element.fireEvent('on' + event.eventType, event); \n" +
+                    "           }\n" +
+                    "      } catch (e) {" +
+                    "          if (console) { "+
+                    "               console.log('Error firing tab selection event on element: '+element.id+', '+e);"+
+                    "          }"+
+                    "      }"+
                     "   };"+
                     "   if (window.Hippo && window.Hippo.activePerspective) {"+
                     "       fireEvent(window.Hippo.activePerspective, 'readystatechange', false);"+
@@ -244,12 +249,9 @@ public class TabsPlugin extends RenderPlugin {
                     "   var decorator = document.getElementById('"+tabbie.getDecoratorId()+"');"+
                     "   fireEvent(decorator, 'readystatechange', true);"+
                     "   window.Hippo = window.Hippo || {};"+
-                    "   window.Hippo.activePerspective = decorator"+
-                    "   } catch (e) {" +
-                    "       console.log('Error firing tab selection event: '+e);"+
-                    "   }"+
+                    "   window.Hippo.activePerspective = decorator;"+
                     "})(window, document);");
-            target.appendJavascript(fireEventJS.toString());
+             target.appendJavascript(fireEventJS.toString());
         }
 
     }
