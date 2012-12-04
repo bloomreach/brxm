@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
@@ -287,23 +288,27 @@ public class HstManagerImpl implements MutableHstManager {
             synchronized(this) {
                 if (virtualHosts == null) {
                     try {
-                        buildSites();
-                    } catch (ModelLoadingException e) {
-                        // since the model has changed during loading, we try a complete rebuild (invalidateAll). If that one fails again, we return a ContainerException
-                        // and it will be tried during the next request
-                        if (log.isDebugEnabled()) {
-                            log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches.", e);
-                        } else {
-                            log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches. Reason : {} ", e.toString());
+                        try {
+                            buildSites();
+                        } catch (ModelLoadingException e) {
+                            // since the model has changed during loading, we try a complete rebuild (invalidateAll). If that one fails again, we return a ContainerException
+                            // and it will be tried during the next request
+                            if (log.isDebugEnabled()) {
+                                log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches.", e);
+                            } else {
+                                log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches. Reason : {} ", e.toString());
+                            }
+                            retryCleanBuildSites();
+                        } catch (ContainerException e) {
+                            if (log.isDebugEnabled()) {
+                                log.warn("During building the HST model an error occured. A total rebuild will be done now after flushing all caches.", e);
+                            } else {
+                                log.warn("During building the HST model an error occured. A total rebuild will be done now after flushing all caches. Reason : {} ", e.toString());
+                            }
+                            retryCleanBuildSites();
                         }
-                        retryCleanBuildSites();
-                    } catch (ContainerException e) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("During building the HST model an error occured. A total rebuild will be done now after flushing all caches.", e);
-                        } else {
-                            log.warn("During building the HST model an error occured. A total rebuild will be done now after flushing all caches. Reason : {} ", e.toString());
-                        }
-                        retryCleanBuildSites();
+                    } catch (LoginException e) {
+                        throw new ContainerException("Could not build hst model because user 'configuser' could not login to the repository.");
                     }
                 }
                 currentHosts = virtualHosts;
@@ -314,7 +319,7 @@ public class HstManagerImpl implements MutableHstManager {
         return currentHosts;
     }
 
-    private void retryCleanBuildSites() throws ContainerException  {
+    private void retryCleanBuildSites() throws ContainerException, LoginException {
         invalidateAll();
         try {
             buildSites();
@@ -325,7 +330,7 @@ public class HstManagerImpl implements MutableHstManager {
         }
     }
 
-    private void buildSites() throws ContainerException {
+    private void buildSites() throws ContainerException, LoginException {
         log.info("Start building in memory hst configuration model");
         long start = System.currentTimeMillis();
         
@@ -436,9 +441,16 @@ public class HstManagerImpl implements MutableHstManager {
 
             this.channelManager.load(virtualHosts, session);
 
+        } catch (LoginException e) {
+            throw e;
         } catch (PathNotFoundException e) {
             throw new ContainerException("PathNotFoundException during building HST model", e);
         } catch (RepositoryException e) {
+            if (e.getCause() instanceof LoginException) {
+                // because LazyMultipleRepositoryImpl#login wraps any exception during login in a RepositoryException,
+                // we need to inspect the cause
+                throw (LoginException)e.getCause();
+            }
             throw new ContainerException("RepositoryException during building HST model", e);
         } catch (RuntimeRepositoryException e) {
             throw new ContainerException("RepositoryException during building HST model", e);
