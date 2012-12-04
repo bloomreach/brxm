@@ -32,7 +32,7 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-cms-api</artifactId>
-      <version>${google.gdata.analytics}</version>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
