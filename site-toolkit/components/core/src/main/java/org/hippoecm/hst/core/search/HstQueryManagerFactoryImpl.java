@@ -23,7 +23,7 @@ import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory{
+public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory {
 
     private static final Logger log = LoggerFactory.getLogger(HstQueryManagerFactoryImpl.class);
 
