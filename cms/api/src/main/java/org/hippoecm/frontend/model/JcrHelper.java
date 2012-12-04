@@ -169,15 +169,14 @@ public class JcrHelper {
     }
 
     /**
-     * Determine whether the node is a virtual root node (facet search, facet navigation, or a translation)
+     * Determine whether the node is a virtual root node (facet search or facet navigation)
      *
      * @param node
      * @return
      * @throws RepositoryException
      */
     public static boolean isVirtualRoot(final Node node) throws RepositoryException {
-        return node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
-                || node.isNodeType(HippoNodeType.NT_FACETSEARCH)
-                || node.isNodeType("hippofacnav:facetnavigation");
+        return node.isNodeType(HippoNodeType.NT_FACETSEARCH) || node.isNodeType("hippofacnav:facetnavigation");
     }
+
 }
