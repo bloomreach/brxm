@@ -60,6 +60,19 @@
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <guava.version>12.0.1</guava.version>
 
+    <!-- 
+        Below are only the defined versions of some dependencies that are used in multiple projects.
+        Note that there is *no* dependency management for the version properties below.           
+    -->
+    <google.gdata.analytics>2.1</google.gdata.analytics>
+    <google.gdata.core>1.47.1</google.gdata.core>
+    <cxf.version>2.6.3</cxf.version>
+    <jackson.version>1.9.5</jackson.version>
+    <spring.version>3.0.7.RELEASE</spring.version>
+    <spring.js.version>2.0.5.RELEASE</spring.js.version>
+    
+    <!-- END properties versions with dependency management -->
+
     <maven.plugin.antrun.version>1.6</maven.plugin.antrun.version>
     <maven.plugin.assembly.version>2.2.1</maven.plugin.assembly.version>
     <maven.plugin.buildnumber.version>1.0</maven.plugin.buildnumber.version>
