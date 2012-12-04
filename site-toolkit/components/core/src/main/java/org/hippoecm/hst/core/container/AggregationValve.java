@@ -338,10 +338,7 @@ public class AggregationValve extends AbstractValve {
                         // we are done with this component because one of its ancestors is loaded async
                         continue;
                     }
-                    HstURLFactory urlFactory = request.getRequestContext().getURLFactory();
-                    HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE,
-                            window.getReferenceNamespace(), null,
-                            request.getRequestContext());
+                    HstURL url = response.createComponentRenderingURL();
                     Element hiddenDiv = response.createElement("div");
                     hiddenDiv.setAttribute("id", url.toString());
                     hiddenDiv.setAttribute("class", OBFUSCATED_ASYNC_VAR);
