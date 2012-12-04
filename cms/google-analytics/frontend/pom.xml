@@ -50,6 +50,12 @@
       <groupId>com.google.gdata</groupId>
       <artifactId>core</artifactId>
       <version>${google.gdata.core}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>jetty</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
   </dependencies>
