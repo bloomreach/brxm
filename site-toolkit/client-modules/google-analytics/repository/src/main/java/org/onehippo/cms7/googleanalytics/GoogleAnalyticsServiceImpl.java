@@ -21,9 +21,6 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
-import com.google.gdata.client.analytics.AnalyticsService;
-import com.google.gdata.util.AuthenticationException;
-
 import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;

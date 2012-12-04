@@ -35,26 +35,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-utilities</artifactId>
     </dependency>
-    <!-- google analytics dependencies-->
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gdata</groupId>
-      <artifactId>gdata-analytics</artifactId>
-      <version>${google.gdata.analytics}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gdata</groupId>
-      <artifactId>gdata-analytics-meta</artifactId>
-      <version>${google.gdata.analytics}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gdata</groupId>
-      <artifactId>core</artifactId>
-      <version>${google.gdata.core}</version>
-    </dependency>
   </dependencies>
 
   <build>
