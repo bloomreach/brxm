@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>15</version>
+    <version>16-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -81,8 +81,7 @@
     <ehcache-core.version>2.6.0</ehcache-core.version>
     <ehcache-web.version>2.0.4</ehcache-web.version>
     <freemarker.version>2.3.16</freemarker.version>
-    
-    <spring.version>3.0.7.RELEASE</spring.version>
+
     <aspectj.version>1.6.9</aspectj.version>
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
@@ -93,18 +92,14 @@
     <hippo.services.version>3</hippo.services.version>
 
     <htmlcleaner.version>2.2</htmlcleaner.version>
-    
-    <spring.js.version>2.0.5.RELEASE</spring.js.version>
-    
+
     <jsr311.version>1.1</jsr311.version>
     
     <geronimo-stax-api_1.2_spec.version>1.1</geronimo-stax-api_1.2_spec.version>
     <stax.version>1.2.0</stax.version>
     <stax2-api.version>3.1.1</stax2-api.version>
     <woodstox.version>4.1.1</woodstox.version>
-    
-    <cxf.version>2.6.3</cxf.version>
-    <jackson.version>1.9.5</jackson.version>
+
     <mime4j.version>0.6</mime4j.version>
     <atomikos.version>3.1.4</atomikos.version>
     <maven.plugin.site.version>3.0-beta-3</maven.plugin.site.version>
