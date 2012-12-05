@@ -64,8 +64,8 @@
         Below are only the defined versions of some dependencies that are used in multiple projects.
         Note that there is *no* dependency management for the version properties below.           
     -->
-    <google.gdata.analytics>2.1</google.gdata.analytics>
-    <google.gdata.core>1.47.1</google.gdata.core>
+    <google.gdata.analytics.version>2.1</google.gdata.analytics.version>
+    <google.gdata.core.version>1.47.1</google.gdata.core.version>
     <cxf.version>2.6.3</cxf.version>
     <jackson.version>1.9.5</jackson.version>
     <spring.version>3.0.7.RELEASE</spring.version>
