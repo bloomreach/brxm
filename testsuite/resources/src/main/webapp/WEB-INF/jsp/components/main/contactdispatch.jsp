@@ -27,7 +27,6 @@ Also, this example page might give hints to make bridge solutions for various we
 <%@ page import="org.hippoecm.hst.core.linking.HstLinkCreator" %>
 <%@ page import="org.hippoecm.hst.configuration.sitemap.HstSiteMap" %>
 <%@ page import="org.hippoecm.hst.core.linking.HstLink" %>
-<%@ page import="org.hippoecm.hst.component.support.forms.BaseFormHstComponent" %>
 <%@ page import="org.hippoecm.hst.component.support.forms.FormMap" %>
 <%@ page import="org.hippoecm.hst.configuration.sitemap.HstSiteMapItem" %>
 <%@ page import="org.hippoecm.hst.core.component.HstComponentException" %>
