@@ -47,22 +47,6 @@ public class HstSitePipeline implements Pipeline
     }
 
     /**
-     * @param initializationValves
-     * @deprecated use {@link #setInitializationValves(Valve[])} instead
-     */
-    @Deprecated
-    public void setPreInvokingValves(Valve [] initializationValves) {
-        log.warn("preInvokingValves is deprecated. Use initializationValves instead");
-        if (initializationValves == null) {
-            this.initializationValves = null;
-        } else {
-            this.initializationValves = new Valve[initializationValves.length];
-            System.arraycopy(initializationValves, 0, this.initializationValves, 0, initializationValves.length);
-        }
-        mergedProcessingValves = null;
-    }
-    
-    /**
      * 
      * @param initializationValves
      */
@@ -75,18 +59,7 @@ public class HstSitePipeline implements Pipeline
         }
         mergedProcessingValves = null;
     }
-    
-    /**
-     * @param initializationValve
-     * @deprecated use {@link #addInitializationValve(Valve)} instead
-     */
-    @Deprecated
-    public void addPreInvokingValve(Valve initializationValve) {
-        log.warn("addPreInvokingValve is deprecated. Use addInitializationValve instead");
-        initializationValves = add(initializationValves, initializationValve);
-        mergedProcessingValves = null;
-    }
-    
+
     /**
      * @param initializationValve
      */
@@ -94,23 +67,7 @@ public class HstSitePipeline implements Pipeline
         initializationValves = add(initializationValves, initializationValve);
         mergedProcessingValves = null;
     }
-    
-    /**
-     * @param processingValves
-     * @deprecated use {@link #setProcessingValves(Valve[])} instead
-     */
-    @Deprecated
-    public void setInvokingValves(Valve [] processingValves) {
-        log.warn("invokingValves is deprecated. Use processingValves instead");
-        if (processingValves == null) {
-            this.processingValves = null;
-        } else {
-            this.processingValves = new Valve[processingValves.length];
-            System.arraycopy(processingValves, 0, this.processingValves, 0, processingValves.length);
-        }
-        mergedProcessingValves = null;
-    }
-    
+
     /**
      * 
      * @param processingValves
@@ -124,18 +81,7 @@ public class HstSitePipeline implements Pipeline
         }
         mergedProcessingValves = null;
     }
-    
-    /**
-     * @param processingValve
-     * @deprecated use {@link #addProcessingValve(Valve)} instead
-     */
-    @Deprecated
-    public void addInvokingValve(Valve processingValve) {
-        log.warn("addInvokingValve is deprecated. Use addProcessingValve instead");
-        processingValves = add(processingValves, processingValve);
-        mergedProcessingValves = null;
-    }
-    
+
     /**
      * 
      * @param processingValve
@@ -144,22 +90,7 @@ public class HstSitePipeline implements Pipeline
         processingValves = add(processingValves, processingValve);
         mergedProcessingValves = null;
     }
-    
-    /**
-     * @param cleanupValves
-     * @deprecated use {@link #setCleanupValves(Valve[])} instead
-     */
-    @Deprecated
-    public void setPostInvokingValves(Valve [] cleanupValves) {
-        log.warn("postInvokingValves is deprecated. Use cleanupValves instead");
-        if (cleanupValves == null) {
-            this.cleanupValves = null;
-        } else {
-            this.cleanupValves = new Valve[cleanupValves.length];
-            System.arraycopy(cleanupValves, 0, this.cleanupValves, 0, cleanupValves.length);
-        }
-    }
-    
+
     /**
      * 
      * @param cleanupValve
