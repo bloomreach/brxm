@@ -392,10 +392,8 @@ commons/src/main/java/org/hippoecm/hst/core/component/WrapperElementImpl.java -t
 commons/src/main/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualCmsHostAugmenter.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualHostAugmenter.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/AsynchronousDispatchingEventListener.java -text svneol=unset#text/plain
-commons/src/main/java/org/hippoecm/hst/core/jcr/DelegatingEventListener.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/EventListenerItemImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/EventListenersContainerImpl.java svneol=native#text/plain
-commons/src/main/java/org/hippoecm/hst/core/jcr/RewindableEventIterator.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/linking/AbstractResourceContainer.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/AbstractMenu.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/sitemenu/AbstractMenuItem.java svneol=native#text/plain
@@ -436,7 +434,6 @@ commons/src/test/java/org/hippoecm/hst/core/component/TestHstParameterInfoProxyF
 commons/src/test/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualhostAugmenterTest.java -text
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenerImpl.java -text svneol=unset#text/plain
 commons/src/test/java/org/hippoecm/hst/core/jcr/TestEventListenersContainerImpl.java svneol=native#text/plain
-commons/src/test/java/org/hippoecm/hst/core/jcr/TestRewindableEventIterator.java svneol=native#text/plain
 commons/src/test/java/org/hippoecm/hst/diagnosis/TestHDC.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestAnnotationsScanner.java -text
 commons/src/test/java/org/hippoecm/hst/util/TestHeadElementUtils.java -text
