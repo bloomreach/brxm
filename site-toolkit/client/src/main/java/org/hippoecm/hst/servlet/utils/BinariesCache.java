@@ -114,9 +114,10 @@ public class BinariesCache {
     }
 
     /**
-     * @deprecated Use {@link #clearBlockingLock(String)} instead.
+     * @deprecated deprecated since 2.26.00 Use {@link #clearBlockingLock(String)} instead.
      * @param page
      */
+    @Deprecated
     public void clearBlockingLock(BinaryPage page) {
         clearBlockingLock(page.getResourcePath());
     }
