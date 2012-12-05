@@ -252,9 +252,6 @@ public class MockHstResponseBase implements HttpServletResponse {
         return url;
     }
 
-    /**
-     * @deprecated
-     */
     public String encodeRedirectUrl(String url) {
         return encodeRedirectURL(url);
     }
@@ -263,9 +260,6 @@ public class MockHstResponseBase implements HttpServletResponse {
         return url;
     }
 
-    /**
-     * @deprecated
-     */
     public String encodeUrl(String url) {
         return encodeURL(url);
     }
