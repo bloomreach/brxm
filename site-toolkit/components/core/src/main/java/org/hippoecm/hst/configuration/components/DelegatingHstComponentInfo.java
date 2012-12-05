@@ -25,15 +25,7 @@ public class DelegatingHstComponentInfo implements HstComponentInfo {
     
     private HstComponentInfo delegatee;
     private String componentName;
-    
-    /**
-     * @deprecated Use {@link #DelegatingHstComponentInfo(HstComponentInfo, String)} instead.
-     * @param delegatee
-     */
-    public DelegatingHstComponentInfo(HstComponentInfo delegatee) {
-        this(delegatee, null);
-    }
-    
+
     /**
      * HST Component Info constructor with delegatee and component name arguments.
      * Normally, the component name can be full qualified class name which also can be retrieved from HstComponentWindow.
