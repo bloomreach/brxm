@@ -208,7 +208,6 @@ public abstract class AbstractJaxrsService implements JAXRSService {
     /**
      * Returns the content HippoBean for the current request.
      * @param requestContext
-     * @param beanMappingClass 
      * @return the HippoBean where the relative contentpath of the sitemap item points to or <code>null</code> when not found, or no relative content path is present, or no resolved sitemap item
      */
     public HippoBean getRequestContentBean(HstRequestContext requestContext) {
@@ -300,16 +299,7 @@ public abstract class AbstractJaxrsService implements JAXRSService {
 
     	private String requestURI;
     	private String requestURL;
-        
-    	/**
-    	 * @deprecated use {@link PathsAdjustedHttpServletRequestWrapper(HttpServletRequest, String, String) instead} 
-    	 */
-    	@Deprecated
-    	public PathsAdjustedHttpServletRequestWrapper(HstRequestContext requestContext, HttpServletRequest request, String servletPath, String requestPath) {
-    	    this(request, servletPath, requestPath);
-    	    log.warn("PathsAdjustedHttpServletRequestWrapper constructor with HstRequestContext is deprecated. Use PathsAdjustedHttpServletRequestWrapper(HttpServletRequest, String, String) instead");
-    	}
-    	
+
         public PathsAdjustedHttpServletRequestWrapper(HttpServletRequest request, String servletPath, String requestPath) {
             super(request);
             setServletPath(servletPath);
