@@ -316,7 +316,6 @@ client/pom.xml svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/ClientComponentManager.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/SimpleDispatcherHstComponent.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/bean/BaseHstComponent.java svneol=native#text/plain
-client/src/main/java/org/hippoecm/hst/component/support/forms/BaseFormHstComponent.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/forms/FormField.java -text
 client/src/main/java/org/hippoecm/hst/component/support/forms/FormMap.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/forms/FormUtils.java -text svneol=unset#text/plain
