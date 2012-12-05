@@ -714,7 +714,6 @@ components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/InvokerPreprocessor.ja
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/PersistableAnnotationInvokerPostprocessor.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/PersistableAnnotationInvokerPreprocessor.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/QueryStringReplacingInterceptor.java -text
-components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/SecuredJAXRSInvoker.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/cxf/SecurityAnnotationInvokerPreprocessor.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/AbstractDataset.java -text
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/model/content/AbstractNodeRepresentationDataset.java -text
