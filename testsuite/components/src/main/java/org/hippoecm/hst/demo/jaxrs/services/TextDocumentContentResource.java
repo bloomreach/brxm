@@ -87,7 +87,7 @@ public class TextDocumentContentResource extends BaseDocumentContentResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
 
             // first fetch the TextDocument through the persistence jcr session of wpm (wpm is backed by 
             // a jcr session with userID sitewriter): Otherwise it tries to invoke

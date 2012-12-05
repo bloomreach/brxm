@@ -87,7 +87,7 @@ public class NewsDocumentContentResource extends BaseDocumentContentResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             final BaseDocumentRepresentation documentRepresentationInput = documentRepresentation;
             
             wpm.update(newsBean, new ContentNodeBinder() {

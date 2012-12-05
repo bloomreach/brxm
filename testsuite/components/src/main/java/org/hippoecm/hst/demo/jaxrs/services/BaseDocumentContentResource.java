@@ -89,7 +89,7 @@ public class BaseDocumentContentResource extends AbstractContentResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             final BaseDocumentRepresentation documentRepresentationInput = documentRepresentation;
             
             wpm.update(baseBean, new ContentNodeBinder() {
