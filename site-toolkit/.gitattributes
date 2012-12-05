@@ -872,7 +872,6 @@ content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/facetnavigat
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/facetnavigation/HippoFacetSearch.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/facetnavigation/HippoFacetSubNavigation.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/facetnavigation/HippoFacetsAvailableNavigation.java svneol=native#text/plain
-content-beans/src/main/java/org/hippoecm/hst/provider/jcr/JCRUtilities.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/provider/jcr/JCRValueProviderImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/provider/jcr/PropertyMapImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/proxy/NamespacedBeanMethodInvoker.java svneol=native#text/plain
