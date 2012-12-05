@@ -35,8 +35,8 @@ import javax.servlet.jsp.tagext.VariableInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -422,14 +422,6 @@ public class HstLinkTag extends ParamContainerTag {
         return this.subPath;
     }
 
-    /**
-     * @deprecated use {@link #isFullyQualified()} instead
-     */
-    @Deprecated
-    public boolean isExternal(){
-        return this.fullyQualified;
-    }
-    
     public void setLink(HstLink hstLink) {
         if(linkForAttributeSet) {
            log.warn("Incorrect usage of hst:link tag. Not allowed to specifcy two of the attributes 'link', 'hippobean', 'path' or 'siteMapItemRefId' at same time. Ignore the attr link '{}'", link);
@@ -437,15 +429,6 @@ public class HstLinkTag extends ParamContainerTag {
         } 
         linkForAttributeSet = true;
         this.link = hstLink;
-    }
-    
-    /**
-     * @deprecated use {@link #setFullyQualified(boolean)} instead
-     */
-    @Deprecated
-    public void setExternal(boolean external) {
-        log.warn("The attribute 'external' on the hst:link tag has been deprecated. Use 'fullyQualified' instead");
-        this.fullyQualified = external;
     }
 
     public void setFullyQualified(boolean fullyQualified) {
