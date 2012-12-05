@@ -44,12 +44,12 @@
     <dependency>
       <groupId>com.google.gdata</groupId>
       <artifactId>gdata-analytics</artifactId>
-      <version>${google.gdata.analytics}</version>
+      <version>${google.gdata.analytics.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.gdata</groupId>
       <artifactId>core</artifactId>
-      <version>${google.gdata.core}</version>
+      <version>${google.gdata.core.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.mortbay.jetty</groupId>
