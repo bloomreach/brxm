@@ -275,63 +275,6 @@ public class LazyMultipleRepositoryImpl extends MultipleRepositoryImpl {
         return session;
     }
 
-    /**
-     * @deprecated Won't be supported any more.
-     * @see {@link #getSessionFromRepositoryCreatedOnDemand(CredentialsWrapper)}
-     * @param credentialsWrapper
-     * @return
-     * @throws Exception
-     */
-    protected synchronized Repository createRepositoryOnDemand(CredentialsWrapper credentialsWrapper) throws Exception {
-        PoolingRepository repository = (PoolingRepository) repositoryMap.get(credentialsWrapper);
-        
-        if (repository != null) {
-            return repository;
-        }
-        
-        Map<String, String> configMap = new HashMap<String, String>(defaultConfigMap);
-        String userID = credentialsWrapper.getUserID();
-        configMap.put("defaultCredentialsUserID", userID);
-        configMap.put("defaultCredentialsPassword", credentialsWrapper.getPassword());
-        
-        if (poolingRepositoryFactory == null) {
-            poolingRepositoryFactory = new BasicPoolingRepositoryFactory();
-        }
-        
-        repository = poolingRepositoryFactory.getObjectInstanceByConfigMap(configMap);
-        
-        if (repository instanceof MultipleRepositoryAware) {
-            ((MultipleRepositoryAware) repository).setMultipleRepository(this);
-        }
-        
-        ResourceLifecycleManagement resourceLifecycleManagement = repository.getResourceLifecycleManagement();
-        
-        if (resourceLifecycleManagement != null) {
-            resourceLifecycleManagement.setAlwaysActive(pooledSessionLifecycleManagementActive);
-        }
-
-        String credentialsDomain = StringUtils.substringAfter(userID, credentialsDomainSeparator);
-        Map<String, PoolingRepository> credsDomainRepos = repositoriesMapByCredsDomain.get(credentialsDomain);
-        
-        if (credsDomainRepos == null) {
-            credsDomainRepos = Collections.synchronizedMap(new HashMap<String, PoolingRepository>());
-        }
-        
-        credsDomainRepos.put(userID, repository);
-        
-        repositoriesMapByCredsDomain.put(credentialsDomain, credsDomainRepos);
-        
-        lazyResourceLifecycleManagements = null;
-        repositoryMap.put(credentialsWrapper, repository);
-        
-        if (timeBetweenEvictionRunsMillis > 0L && inactiveRepositoryDisposer == null) {
-            inactiveRepositoryDisposer = new InactiveRepositoryDisposer();
-            inactiveRepositoryDisposer.start();
-        }
-        
-        return repository;
-    }
-    
     private class DelegatingResourceLifecycleManagements implements ResourceLifecycleManagement {
 
         public boolean isActive() {
