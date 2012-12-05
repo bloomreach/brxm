@@ -16,7 +16,7 @@
 package org.hippoecm.hst.servlet;
 
 /**
- * @deprecated use {@link org.onehippo.cms7.utilities.servlet.ResourceServlet} instead
+ * @deprecated since 2.25.04 use {@link org.onehippo.cms7.utilities.servlet.ResourceServlet} instead
  */
 @Deprecated
 public class ResourceServlet extends org.onehippo.cms7.utilities.servlet.ResourceServlet {}
