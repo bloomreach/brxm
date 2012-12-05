@@ -57,40 +57,6 @@ public class NodeUtils {
         } 
         return node;
     }
-    
-   
-    /**
-     * Returns the canonical version of this node, and <code>defaultNode</code> when there is no canonical node
-     * 
-     * @param node
-     * @param defaultNode
-     * @return  the canonical version of this node, and <code>defaultNode</code> when there is no canonical node.
-     * @throws java.lang.RuntimeException when the repository throws a general repository exception
-     * @deprecated use {@link #getCanonicalNode(Node)} instead
-     */
-    @Deprecated
-    public static Node getCanonicalNode(Node node, Node defaultNode) {
-        if (node == null) {
-            throw new IllegalArgumentException("Node should be not null in finding canonical node.");
-        }
-        
-        Node canonicalNode = null;
-        
-        if (node instanceof HippoNode) {
-            try {
-                canonicalNode = ((HippoNode) node).getCanonicalNode();
-                
-                if(canonicalNode == null) {
-                    HstServices.getLogger(LOGGER_CATEGORY_NAME).debug("Cannot get canonical node for '{}'. This means there is no phyiscal equivalence of the " +
-                            "virtual node. Return null", node.getPath());
-                }
-            } catch (RepositoryException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        
-        return (canonicalNode != null ? canonicalNode : defaultNode);
-    }
 
     /**
      * Checks if the <code>node</code> is dereferenceable.
