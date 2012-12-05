@@ -52,26 +52,7 @@ public abstract class AbstractContentResource extends AbstractResource {
     protected String getRequestContentPath(HstRequestContext requestContext) {
     	return (String) requestContext.getAttribute(JAXRSService.REQUEST_CONTENT_PATH_KEY);
     }
-    
-    /**
-     * @deprecated Use {@link #getRequestContentBean(HstRequestContext)} instead.
-     * @param requestContext
-     * @return
-     */
-    protected Node getRequestContentNode(HstRequestContext requestContext) {
-    	try {
-    	    HippoBean bean = getRequestContentBean(requestContext);
-            return (bean == null) ? null : bean.getNode(); 
-        } catch (ObjectBeanManagerException e) {
-            if(log.isDebugEnabled()) {
-                log.warn("Could not get request content node.", e);
-            } else {
-                log.warn("Could not get request content node '{}'", e.toString());
-            }
-            return null;
-        }
-    }
-    
+
     protected String deleteContentResource(HttpServletRequest servletRequest, HippoBean baseBean, String relPath) throws RepositoryException, ObjectBeanPersistenceException {
         HippoBean child = baseBean.getBean(relPath);
         
@@ -162,7 +143,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             final String html = htmlRepresentation.getContent();
             final String htmlRelPath = PathUtils.normalizePath(htmlBean.getPath().substring(hippoBean.getPath().length()));
             wpm.update(hippoBean, new ContentNodeBinder() {
@@ -257,7 +238,7 @@ public abstract class AbstractContentResource extends AbstractResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             final String html = htmlContent;
             final String htmlRelPath = PathUtils.normalizePath(htmlBean.getPath().substring(hippoBean.getPath().length()));
             wpm.update(hippoBean, new ContentNodeBinder() {

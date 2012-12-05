@@ -166,19 +166,7 @@ public abstract class AbstractResource {
     public void setContentRewriter(ContentRewriter<String> contentRewriter) {
         this.contentRewriter = contentRewriter;
     }
-    
-    /**
-     * @deprecated Use {@link #getPersistableSession(HstRequestContext)} with {@link org.hippoecm.hst.content.annotations.Persistable} annotation on the method, or 
-     *                 {@link #getPersistenceManager(HstRequestContext, Session)} with {@link #getPersistableSession(HstRequestContext)} argument instead.
-     * @param requestContext
-     * @return
-     * @throws RepositoryException
-     */
-    protected ObjectBeanPersistenceManager getContentPersistenceManager(HstRequestContext requestContext) throws RepositoryException {
-        Session persistableSession = getPersistableSession(requestContext);
-        return getPersistenceManager(requestContext, persistableSession);
-    }
-    
+
     /**
      * Creates and returns a persistence manager with the default session of the requestContext.
      * <P>
@@ -233,7 +221,6 @@ public abstract class AbstractResource {
     /**
      * Returns the content HippoBean for the current request. 
      * @param requestContext
-     * @param beanMappingClass 
      * @throws ObjectBeanManagerException when there cannot be returned a bean
      * @return the HippoBean where the relative contentpath of the sitemap item points to
      */
@@ -288,7 +275,7 @@ public abstract class AbstractResource {
     
     protected String deleteHippoBean(HttpServletRequest servletRequest, HippoBean hippoBean) throws RepositoryException, ObjectBeanPersistenceException {
         String path = hippoBean.getPath();
-        ObjectBeanPersistenceManager obpm = getContentPersistenceManager(getRequestContext(servletRequest));
+        ObjectBeanPersistenceManager obpm = getPersistenceManager(getRequestContext(servletRequest));
         obpm.remove(hippoBean);
         obpm.save();
         return path;

@@ -105,7 +105,7 @@ public class TextPageContentResource extends AbstractContentResource {
         }
         
         try {
-            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getContentPersistenceManager(requestContext);
+            WorkflowPersistenceManager wpm = (WorkflowPersistenceManager) getPersistenceManager(requestContext);
             final TextPageRepresentation textPageRepresentationInput = textPageRepresentation;
             
             wpm.update(textPage, new ContentNodeBinder() {
