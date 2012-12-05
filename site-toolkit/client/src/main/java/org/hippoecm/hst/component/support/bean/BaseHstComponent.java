@@ -506,18 +506,7 @@ public class BaseHstComponent extends GenericHstComponent {
         
         return objectConverter;
     }
-    
-    /**
-     * If you want other fallbacktypes, override {@link #getObjectConverter()} method instead.
-     * This method just returns the default fallback primary node types by using {@link ObjectConverterUtils#getDefaultFallbackNodeTypes()}.
-     * @return String array containing the fallback types
-     * @deprecated
-     */
-    @Deprecated
-    protected String[] getFallBackJcrNodeTypes() {
-        return ObjectConverterUtils.getDefaultFallbackNodeTypes();
-    }
-    
+
     /**
      * when you want to inject specific component only custom annotated classes override this method
      * 
