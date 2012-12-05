@@ -157,16 +157,5 @@ public class FormMap {
         this.sealed = sealed;
     }
 
-    /**
-     * Override this method if you need a different prefix
-     *
-     * @return the message prefix.
-     */
-    @Deprecated
-    public String getMessageKeyPrefix() {
-        return "msg-key::";
-    }
-
-
 }
 
