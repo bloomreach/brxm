@@ -46,12 +46,12 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
     public static final String CONTAINER_ATTR_NAME_PREFIXES_PROP_KEY = HstRequest.class.getName() + ".containerAttributeNamePrefixes"; 
 
     /**
-     * @deprecated never used.
+     * @deprecated since 2.25.02 never used.
      */
     public static final String CONTAINER_USER_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".userPrincipalClassName";
 
     /**
-     * @deprecated never used.
+     * @deprecated since 2.25.02  never used.
      */
     public static final String CONTAINER_ROLE_PRINCIPAL_CLASSNAME_PROP_KEY = HstRequest.class.getName() + ".rolePrincipalClassName";
 
