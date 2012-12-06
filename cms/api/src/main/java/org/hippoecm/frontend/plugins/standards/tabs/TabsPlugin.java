@@ -15,12 +15,15 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
@@ -35,6 +38,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -83,6 +87,7 @@ public class TabsPlugin extends RenderPlugin {
     public static final String TAB_ID = "tabs";
     public static final String MAX_TAB_TITLE_LENGTH = "title.maxlength";
     public static final String TAB_ICON_SIZE = "icon.size";
+    public static final String TABS_PLUGIN_FIRE_EVENT_JS = "TabsPlugin-fireEvent.js";
 
     private final TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
@@ -217,43 +222,28 @@ public class TabsPlugin extends RenderPlugin {
         onSelectTab(tabs.indexOf(tabbie));
 
         if (tabbie.getDecoratorId() != null) {
-            final StringBuilder fireEventJS = new StringBuilder();
-            fireEventJS.append("(function(window, document) {\n" +
-                    "  var fireEvent = function(element, eventName, active) {" +
-                    "      try {"+
-                    "           var event;\n" +
-                    "           if (document.createEvent) {\n" +
-                    "               event = document.createEvent('HTMLEvents');\n" +
-                    "               event.initEvent(eventName, true, true);\n" +
-                    "           } else {\n" +
-                    "               event = document.createEventObject();\n" +
-                    "               event.eventType = eventName;\n" +
-                    "           }\n" +
-                    "           event.eventName = eventName;\n" +
-                    "           event.tabId = element.id ? element.id : element.name;"+
-                    "           event.active = active;"+
-                    "           if (document.createEvent) {"+
-                    "               element.dispatchEvent(event);\n" +
-                    "           } else if (element.fireEvent) {\n" +
-                    "               element.fireEvent('on' + event.eventType, event); \n" +
-                    "           }\n" +
-                    "      } catch (e) {" +
-                    "          if (console) { "+
-                    "               console.log('Error firing tab selection event on element: '+element.id+', '+e);"+
-                    "          }"+
-                    "      }"+
-                    "   };"+
-                    "   if (window.Hippo && window.Hippo.activePerspective) {"+
-                    "       fireEvent(window.Hippo.activePerspective, 'readystatechange', false);"+
-                    "   }"+
-                    "   var decorator = document.getElementById('"+tabbie.getDecoratorId()+"');"+
-                    "   fireEvent(decorator, 'readystatechange', true);"+
-                    "   window.Hippo = window.Hippo || {};"+
-                    "   window.Hippo.activePerspective = decorator;"+
-                    "})(window, document);");
-             target.appendJavascript(fireEventJS.toString());
+            String tabId = tabbie.getDecoratorId();
+            final String fireEventJS = readFireEventJavascript(tabId);
+            target.appendJavascript(fireEventJS);
         }
+    }
 
+    private String readFireEventJavascript(String tabId) {
+        InputStream stream = TabsPlugin.class.getResourceAsStream(TABS_PLUGIN_FIRE_EVENT_JS);
+        if (stream == null) {
+            log.error("Cannot find resource '" + TABS_PLUGIN_FIRE_EVENT_JS + "', tab selection will not fire any events");
+            return StringUtils.EMPTY;
+        }
+        try {
+            String script = IOUtils.toString(stream);
+            script = StringUtils.replace(script, "REPLACE_WITH_TAB_ID", tabId);
+            return script;
+        } catch (IOException e) {
+            log.error("Error reading resource '" + TABS_PLUGIN_FIRE_EVENT_JS + "', tab selection will not fire any events");
+            return StringUtils.EMPTY;
+        } finally {
+            IOUtils.closeQuietly(stream);
+        }
     }
 
     /**
