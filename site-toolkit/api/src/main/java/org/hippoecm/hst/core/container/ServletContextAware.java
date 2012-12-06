@@ -26,6 +26,7 @@ import javax.servlet.ServletContext;
  * its containing Spring beans! To make a spring bean {@link ServletContext} aware, such a spring bean need to implement 
  * org.springframework.web.context.ServletContextAware
  * </p>
+ * @deprecated as of HST 2.26 this interface and its usage is 'merged' with the ComponentManager interface itself so no longer is needed
  * @version $Id$
  */
 public interface ServletContextAware {

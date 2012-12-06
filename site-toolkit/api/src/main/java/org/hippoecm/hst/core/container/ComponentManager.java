@@ -18,6 +18,9 @@ package org.hippoecm.hst.core.container;
 import java.util.EventObject;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+
 /**
  * ComponentManager interface.
  * This is responsible for initializing, starting, stopping and closing container components.
@@ -32,13 +35,35 @@ public interface ComponentManager
      * @param configurationResources
      */
     void setConfigurationResources(String [] configurationResources);
-    
+
     /**
      * Returns configuration resources for components assembly
      * @param configurationResource
      */
     String [] getConfigurationResources();
-    
+
+    /**
+     * Set the ServletConfig that this object runs in.
+     * @param servletConfig
+     */
+    void setServletConfig(ServletConfig servletConfig);
+
+    /**
+     * @return the ServletConfig that this object runs in.
+     */
+    ServletConfig getServletConfig();
+
+    /**
+     * Set the ServletContext that this object runs in.
+     * @param servletContext
+     */
+    void setServletContext(ServletContext servletContext);
+
+    /**
+     * @return the ServletContext that this object runs in
+     */
+    ServletContext getServletContext();
+
     /**
      * Initializes the component manager and container components.
      */

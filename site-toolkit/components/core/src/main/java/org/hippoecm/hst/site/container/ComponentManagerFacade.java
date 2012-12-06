@@ -18,6 +18,9 @@ package org.hippoecm.hst.site.container;
 import java.util.EventObject;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -37,6 +40,22 @@ public class ComponentManagerFacade implements ComponentManagerAware, ComponentM
 
     public ComponentManager getComponentManager() {
         return this.componentManager;
+    }
+
+    public void setServletConfig(ServletConfig servletConfig) {
+        this.componentManager.setServletConfig(servletConfig);
+    }
+
+    public ServletConfig getServletConfig() {
+        return this.componentManager.getServletConfig();
+    }
+
+    public void setServletContext(ServletContext servletContext) {
+        this.componentManager.setServletContext(servletContext);
+    }
+
+    public ServletContext getServletContext() {
+        return this.componentManager.getServletContext();
     }
 
     public void close() {

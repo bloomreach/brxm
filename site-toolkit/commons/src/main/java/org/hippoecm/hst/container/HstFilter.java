@@ -51,7 +51,6 @@ import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ContainerNotFoundException;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
-import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.internal.MountDecorator;
@@ -167,9 +166,7 @@ public class HstFilter implements Filter {
             if (clientComponentManagerClassName != null && clientComponentManagerConfigurations != null && clientComponentManagerConfigurations.length > 0) {
                 clientComponentManager = (ComponentManager) Thread.currentThread().getContextClassLoader().loadClass(clientComponentManagerClassName).newInstance();
 
-                if (clientComponentManager instanceof ServletContextAware) {
-                    ((ServletContextAware) clientComponentManager).setServletContext(config.getServletContext());
-                }
+                clientComponentManager.setServletContext(config.getServletContext());
 
                 clientComponentManager.setConfigurationResources(clientComponentManagerConfigurations);
                 clientComponentManager.initialize();

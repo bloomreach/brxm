@@ -17,6 +17,7 @@ package org.hippoecm.hst.site.container;
 
 import java.util.Properties;
 
+import org.hippoecm.hst.component.support.ClientComponentManager;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
@@ -39,23 +40,44 @@ public class DefaultComponentManagerApplicationContext extends ClassPathXmlAppli
     private ComponentManager componentManager;
 
     public DefaultComponentManagerApplicationContext() {
-        this(null);
+        this(null, null, null);
     }
-    
+
     public DefaultComponentManagerApplicationContext(ContainerConfiguration containerConfiguration) {
         this(containerConfiguration, null);
     }
-    
+
+    public DefaultComponentManagerApplicationContext(ComponentManager componentManager) {
+        this(componentManager, null, null);
+    }
+
+    public DefaultComponentManagerApplicationContext(ComponentManager componentManager, ContainerConfiguration containerConfiguration) {
+        this(componentManager, containerConfiguration, null);
+    }
+
     public DefaultComponentManagerApplicationContext(ContainerConfiguration containerConfiguration, ApplicationContext parentApplicationContext) {
+        this(null, containerConfiguration, parentApplicationContext);
+    }
+
+    public DefaultComponentManagerApplicationContext(ComponentManager componentManager, ContainerConfiguration containerConfiguration, ApplicationContext parentApplicationContext) {
         super(parentApplicationContext);
-        
+
+        this.componentManager = componentManager;
         this.containerConfiguration = containerConfiguration;
-        
+
+        boolean isClientComponentManager = componentManager != null && componentManager instanceof ClientComponentManager;
+
         if (this.containerConfiguration != null && !this.containerConfiguration.isEmpty()) {
             Properties initProps = this.containerConfiguration.toProperties();
             PropertyPlaceholderConfigurer ppc = new OverridingByAttributesPropertyPlaceholderConfigurer();
-            ppc.setIgnoreUnresolvablePlaceholders(this.containerConfiguration.getBoolean(SpringComponentManager.IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
-            ppc.setSystemPropertiesMode(this.containerConfiguration.getInt(SpringComponentManager.SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
+            if (isClientComponentManager) {
+                ppc.setIgnoreUnresolvablePlaceholders(this.containerConfiguration.getBoolean(ClientComponentManager.IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
+                ppc.setSystemPropertiesMode(this.containerConfiguration.getInt(ClientComponentManager.SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
+            }
+            else {
+                ppc.setIgnoreUnresolvablePlaceholders(this.containerConfiguration.getBoolean(SpringComponentManager.IGNORE_UNRESOLVABLE_PLACE_HOLDERS, true));
+                ppc.setSystemPropertiesMode(this.containerConfiguration.getInt(SpringComponentManager.SYSTEM_PROPERTIES_MODE, PropertyPlaceholderConfigurer.SYSTEM_PROPERTIES_MODE_FALLBACK));
+            }
             ppc.setProperties(initProps);
             addBeanFactoryPostProcessor(ppc);
         }
@@ -71,14 +93,15 @@ public class DefaultComponentManagerApplicationContext extends ClassPathXmlAppli
     protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
         beanFactory.addBeanPostProcessor(this);
         // copied from org.springframework.web.context.support.AbstractRefreshableWebApplicationContext
-        if (componentManager != null && componentManager instanceof SpringComponentManager && ((SpringComponentManager)componentManager).getServletContext() != null) {
-            SpringComponentManager scm = (SpringComponentManager)componentManager;
-            beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(scm.getServletContext(), scm.getServletConfig()));
+        if (componentManager != null && componentManager.getServletContext() != null) {
+            beanFactory.addBeanPostProcessor(new ServletContextAwareProcessor(componentManager.getServletContext(), componentManager.getServletConfig()));
             beanFactory.ignoreDependencyInterface(ServletContextAware.class);
-            beanFactory.ignoreDependencyInterface(ServletConfigAware.class);
+            if (componentManager.getServletConfig() != null) {
+                beanFactory.ignoreDependencyInterface(ServletConfigAware.class);
+            }
 
-            WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, scm.getServletContext());
-            WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, scm.getServletContext(), scm.getServletConfig());
+            WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, componentManager.getServletContext());
+            WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, componentManager.getServletContext(), componentManager.getServletConfig());
         }
     }
 

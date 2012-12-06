@@ -313,7 +313,6 @@ client-modules/page-composer/src/test/resources/log4j.xml -text
 client-modules/pom.xml -text svneol=unset#text/plain
 client-modules/src/site/site.xml -text
 client/pom.xml svneol=native#text/plain
-client/src/main/java/org/hippoecm/hst/component/support/ClientComponentManager.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/SimpleDispatcherHstComponent.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/bean/BaseHstComponent.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/forms/FormField.java -text
@@ -447,6 +446,7 @@ components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.j
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/CacheElementEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/EhCacheManagerShuttingDownListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/HstCacheEhCacheImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/component/support/ClientComponentManager.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationViewUtilities.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AbstractHstPropertyDefinition.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/channel/AnnotationHstPropertyDefinition.java -text

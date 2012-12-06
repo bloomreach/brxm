@@ -115,11 +115,7 @@ public class SpringComponentManager implements ComponentManager {
     }
     
     public void initialize() {
-        applicationContext = new DefaultComponentManagerApplicationContext(containerConfiguration);
-        
-        if (applicationContext instanceof ComponentManagerAware) {
-            ((ComponentManagerAware) applicationContext).setComponentManager(this);
-        }
+        applicationContext = new DefaultComponentManagerApplicationContext(this, containerConfiguration);
         
         String [] checkedConfigurationResources = ApplicationContextUtils.getCheckedLocationPatterns(applicationContext, getConfigurationResources());
         
