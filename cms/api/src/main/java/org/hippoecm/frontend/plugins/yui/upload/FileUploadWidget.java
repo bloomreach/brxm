@@ -255,4 +255,10 @@ public class FileUploadWidget extends Panel {
     public String getAjaxIndicatorStopScript() {
         return "YAHOO.hippo.Upload.stopIndicator();";
     }
+
+    public String hasFileSelectedScript() {
+        return isFlashUpload() ?
+                "YAHOO.hippo.Upload.latest.hasFilesSelected()" :
+                "YAHOO.util.Dom.getElementsByClassName ('wicket-mfu-row', 'div', '" + getMarkupId() + "')).length > 0";
+    }
 }

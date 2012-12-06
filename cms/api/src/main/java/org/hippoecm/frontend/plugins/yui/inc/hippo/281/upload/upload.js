@@ -389,6 +389,13 @@ if (!YAHOO.hippo.Upload) {
                 this.datatable.deleteRow(oRecord._sId);
             },
 
+            hasFilesSelected : function() {
+                if (!Lang.isUndefined(this.datatable) && this.datatable != null) {
+                    return this.datatable.getRecordSet().getLength() > 0;
+                }
+                return false;
+            },
+
             _getRecordById : function(id) {
                 var recordSet = this.datatable.getRecordSet();
                 for (var j = 0; j < recordSet.getLength(); j++) {

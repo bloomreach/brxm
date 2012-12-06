@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.Form;
@@ -49,7 +50,6 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
     protected MultiFileUploadDialog(IPluginContext pluginContext, IPluginConfig pluginConfig) {
         setOutputMarkupId(true);
 
-        setNonAjaxSubmit();
         setMultiPart(true);
         setOkEnabled(false);
         setOkVisible(false);
@@ -58,13 +58,37 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                //TODO: add AjaxBusyIndicator
-                target.appendJavascript(widget.getStartAjaxUploadScript());
-                target.addComponent(this);
+                if (widget.isFlashUpload()) {
+                    target.appendJavascript(widget.getStartAjaxUploadScript());
+                } else {
+                    handleSubmit();
+                    target.addComponent(MultiFileUploadDialog.this);
+                }
             }
+
+            @Override
+            protected IAjaxCallDecorator getAjaxCallDecorator() {
+                return new IAjaxCallDecorator() {
+                    @Override
+                    public CharSequence decorateScript(final CharSequence script) {
+                        return "if (" + widget.hasFileSelectedScript() + ") { this.disabled = true;" + script + "} return false;";
+                    }
+
+                    @Override
+                    public CharSequence decorateOnSuccessScript(final CharSequence script) {
+                        return "if (Wicket.$('\" + getMarkupId() + \"') != null) { Wicket.$('" + getMarkupId() + "').disabled = true; }" + script;
+                    }
+
+                    @Override
+                    public CharSequence decorateOnFailureScript(final CharSequence script) {
+                        return "if (Wicket.$('\" + getMarkupId() + \"') != null) { Wicket.$('\" + getMarkupId() + \"').disabled = false; }" + script;
+                    }
+                };
+            }
+
         };
-        ajaxButton.setEnabled(false);
-        ajaxButton.setVisible(false);
+        ajaxButton.setEnabled(true);
+        ajaxButton.setVisible(true);
         addButton(ajaxButton);
 
         closeButton = new AjaxButton(DialogConstants.BUTTON, new Model<String>("Close")) {
@@ -103,6 +127,10 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
             public void onFinishHtmlUpload() {
                 super.onFinishHtmlUpload();
                 handleErrors();
+
+                if (hasFeedbackMessage() || MultiFileUploadDialog.this.hasFeedbackMessage()) {
+                    transformIntoErrorDialog(AjaxRequestTarget.get());
+                }
             }
 
             @Override
@@ -111,44 +139,13 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
                 handleErrors();
 
                 if (hasFeedbackMessage() || MultiFileUploadDialog.this.hasFeedbackMessage()) {
-                    setCancelVisible(false);
-                    ajaxButton.setVisible(false);
-                    removeButton(ajaxButton);
-                    closeButton.setVisible(true);
-                    closeButton.setEnabled(true);
-                    setVisible(false);
-
-                    target.addComponent(MultiFileUploadDialog.this);
-                    target.appendJavascript(getAjaxIndicatorStopScript());
+                    transformIntoErrorDialog(target);
+                } else {
+                    MultiFileUploadDialog.super.handleSubmit();
                 }
-                MultiFileUploadDialog.super.handleSubmit();
+                target.appendJavascript(widget.getAjaxIndicatorStopScript());
             }
 
-            @Override
-            public void renderFlashUpload() {
-                super.renderFlashUpload();
-
-                ajaxButton.setEnabled(true);
-                ajaxButton.setVisible(true);
-
-                AjaxRequestTarget target = AjaxRequestTarget.get();
-                if (target != null) {
-                    target.addComponent(MultiFileUploadDialog.this);
-                }
-            }
-
-            @Override
-            public void renderJavascriptUpload() {
-                super.renderJavascriptUpload();
-
-                setOkEnabled(true);
-                setOkVisible(true);
-
-                AjaxRequestTarget target = AjaxRequestTarget.get();
-                if (target != null) {
-                    target.addComponent(MultiFileUploadDialog.this);
-                }
-            }
         };
         add(widget);
 
@@ -171,10 +168,24 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         add(fp);
     }
 
+    private void transformIntoErrorDialog(final AjaxRequestTarget target) {
+        setCancelVisible(false);
+        setOkVisible(false);
+        ajaxButton.setVisible(false);
+        ajaxButton.setEnabled(false);
+        closeButton.setVisible(true);
+        closeButton.setEnabled(true);
+        widget.setVisible(false);
+
+        if (target != null) {
+            target.addComponent(MultiFileUploadDialog.this);
+        }
+    }
+
     private void handleErrors() {
         if (errors.size() > 0) {
             for (String error : errors) {
-                MultiFileUploadDialog.this.error(error);
+                error(error);
             }
             errors.clear();
         }
