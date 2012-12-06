@@ -15,7 +15,11 @@
  */
 package org.hippoecm.frontend.editor.plugins.linkpicker;
 
-import org.apache.wicket.Session;
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -28,9 +32,6 @@ import org.hippoecm.frontend.plugins.standards.picker.NodePickerControllerSettin
 import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 public class LinkPickerDialog extends AbstractDialog<String> {
 
@@ -55,13 +56,16 @@ public class LinkPickerDialog extends AbstractDialog<String> {
 
             @Override
             protected IModel<Node> getInitialModel() {
+                final String uuid = getModelObject();
                 try {
-                    String uuid = getModelObject();
-                    if (uuid != null && !"".equals(uuid)) {
-                        return new JcrNodeModel(UserSession.get().getJcrSession().getNodeByUUID(uuid));
+                    if (StringUtils.isNotEmpty(uuid)) {
+                        return new JcrNodeModel(UserSession.get().getJcrSession().getNodeByIdentifier(uuid));
                     }
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage());
+                } catch (ItemNotFoundException e) {
+                    // valid case, node does not exist
+                    return null;
+                } catch (RepositoryException e) {
+                    log.error("Error while getting link picker model for the node with UUID '" + uuid + "'", e);
                 }
                 return null;
             }
@@ -115,7 +119,7 @@ public class LinkPickerDialog extends AbstractDialog<String> {
 
     protected void saveNode(Node node) {
         try {
-            getModel().setObject(node.getUUID());
+            getModel().setObject(node.getIdentifier());
         } catch (RepositoryException ex) {
             error(ex.getMessage());
         }
