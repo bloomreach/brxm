@@ -13,14 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
+(function () {
+    "use strict";
 
-if (typeof Hippo === 'undefined') {
-    Hippo = {};
-}
+    if (typeof Hippo === 'undefined') {
+        Hippo = {};
+    }
 
-if (typeof Hippo.Future === 'undefined') {
-    Hippo.Future = function(func) {
+    if (typeof Hippo.Future !== 'undefined') {
+        return;
+    }
+
+    var _Future = function (func) {
         this.success = false;
         this.completed = false;
         this.value = undefined;
@@ -29,16 +33,27 @@ if (typeof Hippo.Future === 'undefined') {
         this.failureHandlers = [];
 
         var self = this;
-        func.call(this, function(value) {
+        func.call(this, function (value) {
             self.onSuccess.call(self, value)
-        }, function(value) {
+        }, function (value) {
             self.onFailure.call(self, value)
         });
-    };
+    }
 
-    Hippo.Future.prototype = {
+    _Future.prototype = {
 
-        when: function(cb) {
+        /**
+         * Register a callback to be invoked when the future completes successfully.
+         * If the future has already completed and was successful, the callback is invoked immediately.
+         * Returns this, so this method can be used in a chain.
+         *
+         * @param cb
+         * @return {*}
+         */
+        when : function (cb) {
+            if (!cb) {
+                throw new TypeError('callback is undefined');
+            }
             if (!this.completed) {
                 this.successHandlers.push(cb);
             } else if (this.success) {
@@ -47,7 +62,15 @@ if (typeof Hippo.Future === 'undefined') {
             return this;
         },
 
-        otherwise: function(cb) {
+        /**
+         * Register a callback to be invoked when the future does NOT complete successfully.
+         * If the future has already completed and was not successful, the callback is invoked immediately.
+         * Returns this, so this method can be used in a chain.
+         *
+         * @param cb
+         * @return {*}
+         */
+        otherwise : function (cb) {
             if (!this.completed) {
                 this.failureHandlers.push(cb);
             } else if (!this.success) {
@@ -56,14 +79,111 @@ if (typeof Hippo.Future === 'undefined') {
             return this;
         },
 
-        get: function() {
+        /**
+         * Transform the result of the future.  A transformer can manipulate the value that will be received
+         * by callbacks.  A new future will be returned.
+         * <p>
+         *     Example:
+         * <code>
+         * future.transform(function(value) {
+         *   return 'Hello ' + value;
+         * }).when(function(result) {
+         *   console.log(result);
+         * });
+         * </code>
+         *     will log 'Hello Alice' to the console if this future completes with value 'Alice'.
+         * <p>
+         *     If the transformer throws an exception, the failure callbacks will be invoked.
+         *
+         * @param transformer
+         * @return {Hippo.Future}
+         */
+        transform : function (transformer) {
+            return new Hippo.Future(function (onSuccess, onFail) {
+                this.when(function (value) {
+                    var transformed;
+                    try {
+                        transformed = transformer(value);
+                    } catch (e) {
+                        onFail();
+                        return;
+                    }
+                    onSuccess(transformed);
+                }).otherwise(onFail);
+            }.bind(this));
+        },
+
+        /**
+         * Chain a future that depends on this future.  The future that is returned by this method will
+         * complete when the future, created by the factory, completes.  The factory creates a future with
+         * the result of this future.
+         * <p>
+         *     Example:
+         * <code>
+         * future.next(function(value) {
+         *   return new Future(function(onSuccess, onFail) {
+         *     onSuccess('Hello ' + value);
+         *   });
+         * }).when(function(result) {
+         *   console.log(result);
+         * });
+         * </code>
+         *     will log 'Hello Alice' to the console when this future completes with value 'Alice'.
+         *
+         * @param futureFactory
+         * @return {Hippo.Future}
+         */
+        next : function (futureFactory) {
+            return new Hippo.Future(function (onSuccess, onFail) {
+                this.when(function (value) {
+                    var future = futureFactory(value);
+                    future.when(onSuccess).otherwise(onFail);
+                }).otherwise(onFail);
+            }.bind(this));
+        },
+
+        /**
+         * Chain a future when this future fails.  This allows recovery with futures to be transparent.
+         * <p>
+         *     Example:
+         * <code>
+         * future.retry(function() {
+         *     return Future.constant('Hello Bob');
+         * }).when(function(result) {
+         *     console.log(result);
+         * });
+         * </code>
+         *     will log 'Hello Bob' to the console when this future fails.
+         *
+         * @param futureFactory
+         * @return {Hippo.Future}
+         */
+        retry : function (futureFactory) {
+            return new Hippo.Future(function (onSuccess, onFail) {
+                this.when(onSuccess)
+                    .otherwise(function () {
+                        var future = futureFactory();
+                        future.when(onSuccess).otherwise(onFail);
+                    });
+            }.bind(this));
+        },
+
+        /**
+         * Returns the value of the future.  Can only be invoked after the future completed successfully.
+         *
+         * @return {*}
+         */
+        get : function () {
             if (!this.completed) {
                 throw "Future has not completed yet";
+            }
+            if (!this.success) {
+                throw "Future completed unsuccessfully"
             }
             return this.value;
         },
 
-        onSuccess: function(value) {
+        onSuccess : function (value) {
             if (this.completed) {
                 return;
             }
@@ -76,7 +196,7 @@ if (typeof Hippo.Future === 'undefined') {
             this.cleanup();
         },
 
-        onFailure: function(value) {
+        onFailure : function (value) {
             if (this.completed) {
                 return;
             }
@@ -89,14 +209,55 @@ if (typeof Hippo.Future === 'undefined') {
             this.cleanup();
         },
 
-        cleanup: function() {
+        cleanup : function () {
             delete this.successHandlers;
             delete this.failureHandlers;
         }
 
     };
 
-    Hippo.Future.join = function() {
+    /**
+     * Future constructor.  Only exposes public methods.
+     *
+     * @param func
+     * @constructor
+     */
+    Hippo.Future = function (func) {
+        var _future = new _Future(func);
+        [ 'when', 'otherwise', 'get', 'next', 'retry', 'transform' ].forEach(function (member) {
+            this[member] = _future[member].bind(_future);
+        }.bind(this));
+    };
+
+    /**
+     * FAIL constant
+     *
+     * @type {Hippo.Future}
+     */
+    Hippo.Future.FAIL = new Hippo.Future(function (onSuccess, onFail) {
+        onFail();
+    });
+
+    /**
+     * Constant future whose value is already known.
+     *
+     * @param value
+     * @return {Hippo.Future}
+     */
+    Hippo.Future.constant = function (value) {
+        return new Hippo.Future(function (onSuccess, onFail) {
+            onSuccess(value);
+        });
+    };
+
+    /**
+     * Create a future whose success depends on a number of other futures.  Only if those other futures
+     * all complete successfully will the returned future also complete, successfully.  If any of the supplied
+     * futures fails, the returned future also fails.
+     *
+     * @return {Hippo.Future}
+     */
+    Hippo.Future.join = function () {
         var futures;
         if (arguments.length == 1) {
             futures = arguments[0];
@@ -105,10 +266,17 @@ if (typeof Hippo.Future === 'undefined') {
         }
 
         var value = null;
-        var join = new Hippo.Future(function(onSuccess, onFailure) {
-            var completed = false;
+        var join = new Hippo.Future(function (onSuccess, onFailure) {
             var togo = futures.length;
-            var failureHandler = function() {
+
+            // early exit if there are no actual futures to wait for
+            if (togo == 0) {
+                onSuccess.call(this, value);
+                return;
+            }
+
+            var completed = false;
+            var failureHandler = function () {
                 togo--;
                 if (completed) {
                     return;
@@ -117,7 +285,7 @@ if (typeof Hippo.Future === 'undefined') {
                 onFailure.call(this);
             };
             for (var i = 0; i < futures.length; i++) {
-                futures[i].when(function(result) {
+                futures[i].when(function (result) {
                     togo--;
                     if (!completed && togo === 0) {
                         completed = true;
@@ -126,9 +294,51 @@ if (typeof Hippo.Future === 'undefined') {
                 }).otherwise(failureHandler);
             }
         });
-        join.set = function(val) {
+        join.set = function (val) {
             value = val;
         };
         return join;
     };
-}
+
+    /**
+     * Create a future that will create an associative map of the results.  Based on a map of (key => future) pairs,
+     * it will complete with a map of values (key => value) when all futures have completed.
+     * <p>
+     * Note that this future will always complete successfully, even if the supplied futures fail.  The associated
+     * values will be undefined.
+     *
+     * @param map
+     * @return {Hippo.Future}
+     */
+    Hippo.Future.map = function (map) {
+        return new Hippo.Future(function (onSuccess, onFail) {
+            var value = {}, keys = Object.keys(map), togo = keys.length, completed = false;
+
+            if (togo === 0) {
+                onSuccess.call(this, value);
+                return;
+            }
+
+            function done() {
+                togo--;
+                if (!completed && togo === 0) {
+                    completed = true;
+                    onSuccess.call(this, value);
+                }
+            }
+
+            keys.forEach(function (key) {
+                var future = map[key];
+                future.when(function (val) {
+                    value[key] = val;
+                    done();
+                }).otherwise(function () {
+                    value[key] = undefined;
+                    done();
+                });
+            });
+        });
+    };
+
+
+})();
