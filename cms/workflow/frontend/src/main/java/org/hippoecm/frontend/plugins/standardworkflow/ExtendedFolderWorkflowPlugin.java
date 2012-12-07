@@ -99,7 +99,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    name = ((HippoNode)((WorkflowDescriptorModel)getDefaultModel()).getNode()).getLocalizedName();
+                    name = ((HippoNode) getModel().getNode()).getLocalizedName();
                 } catch(RepositoryException ex) {
                     name = "";
                 }
@@ -112,7 +112,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 } catch (RepositoryException ex) {
                     log.error("Error preparing to publish all documents: {}", ex);
                 }
-                return new ExtendedFolderWorkflowPlugin.ConfirmDialog(this,
+                return new ConfirmBulkWorkflowDialog(this,
                         new StringResourceModel("publish-all-title", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("publish-all-text", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("publish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
@@ -186,7 +186,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
                 } catch (RepositoryException ex) {
                     log.error("Error preparing to publish all documents: {}", ex);
                 }
-                return new ExtendedFolderWorkflowPlugin.ConfirmDialog(this,
+                return new ConfirmBulkWorkflowDialog(this,
                         new StringResourceModel("depublish-all-title", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("depublish-all-text", ExtendedFolderWorkflowPlugin.this, null),
                         new StringResourceModel("depublish-all-subtext", ExtendedFolderWorkflowPlugin.this, null),
@@ -238,12 +238,12 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
         });
     }
 
-    public class ConfirmDialog extends AbstractWorkflowDialog {
+    public class ConfirmBulkWorkflowDialog extends AbstractWorkflowDialog {
         private IModel title;
 
         private Label affectedComponent;
 
-        public ConfirmDialog(IWorkflowInvoker action, IModel dialogTitle, IModel dialogText, IModel dialogSubText, IModel folderName, Set<String> documents, Query query) {
+        public ConfirmBulkWorkflowDialog(IWorkflowInvoker action, IModel dialogTitle, IModel dialogText, IModel dialogSubText, IModel folderName, Set<String> documents, Query query) {
             super(ExtendedFolderWorkflowPlugin.this.getModel(), action);
             this.title = dialogTitle;
 
@@ -304,7 +304,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
         @Override
         protected void handleSubmit() {
             setOkVisible(false);
-            setCancelLabel(new StringResourceModel("done-label", ConfirmDialog.this, null));
+            setCancelLabel(new StringResourceModel("done-label", ConfirmBulkWorkflowDialog.this, null));
             onOk();
             affectedComponent.setDefaultModel(new Model<String>(Integer.toString(processed)));
             affectedComponent.setVisible(true);

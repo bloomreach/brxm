@@ -3113,6 +3113,7 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/wo
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/workflow-requestdelete-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/workflow-requestpublish-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/workflow-requestunpublish-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/queries-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl.properties svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl_fr.properties svneol=native#text/plain

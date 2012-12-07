@@ -1,0 +1,56 @@
+<!--
+  * Copyright 2008 Hippo
+  *
+  * Licensed under the Apache License, Version 2.0 (the  "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  * http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+-->
+<html xmlns:wicket="http://wicket.apache.org/">
+<wicket:extend>
+    <div class="query-folder-workflow-wrapper">
+        <div class="query-folder-workflow-list">
+            <!--<h3>Template Queries on folder: <span wicket:id="folder-name">Bibliotheek.nl</span></h3>
+            -->
+            <div class="query-folder-workflow-list-header">
+                <span class="list-header-category"><wicket:message key="header-category"/></span>
+                <span class="list-header-actions"><wicket:message key="header-actions"/></span>
+            </div>
+            <div class="query-folder-workflow-list-wrapper">
+                <div class="query-folder-workflow-list-item" wicket:id="list-item-repeater">
+                    <span class="list-item-category" wicket:id="list-item-category">Add new...</span>
+                    <wicket:container wicket:id="action-fragment"/>
+                </div>
+                <wicket:fragment wicket:id="remove-edit-actions">
+                    <div class="list-item-actions">
+                        <a class="list-item-remove" wicket:id="action-remove-link">
+                            <wicket:message key="action-remove-label"/>
+                        </a>
+                        <a class="list-item-edit" wicket:id="action-edit-link">
+                            <wicket:message key="action-edit-label"/>
+                        </a>
+                    </div>
+                </wicket:fragment>
+                <wicket:fragment wicket:id="remove-actions">
+                    <div class="list-item-actions">
+                        <a class="list-item-remove" wicket:id="action-remove-link">
+                            <wicket:message key="action-remove-label"/>
+                        </a>
+                    </div>
+                </wicket:fragment>
+            </div>
+        </div>
+        <div class="query-folder-workflow-template-add">
+            <h3><span wicket:id="title-query-add">Bibliotheek.nl</span></h3>
+            <select wicket:id="query-selection"></select>
+        </div>
+    </div>
+</wicket:extend>
+</html>
