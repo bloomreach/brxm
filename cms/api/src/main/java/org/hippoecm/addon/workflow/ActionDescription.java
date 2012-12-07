@@ -23,8 +23,9 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.repository.api.WorkflowException;
 
-public abstract class ActionDescription extends Panel {
+public abstract class ActionDescription extends Panel implements IWorkflowInvoker {
 
     private static final long serialVersionUID = 1L;
 
@@ -80,4 +81,8 @@ public abstract class ActionDescription extends Panel {
 
     protected abstract void invoke();
 
+    @Override
+    public void invokeWorkflow() throws Exception {
+        throw new WorkflowException("unsupported operation");
+    }
 }

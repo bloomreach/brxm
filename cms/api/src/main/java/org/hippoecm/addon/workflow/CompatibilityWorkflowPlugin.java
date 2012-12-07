@@ -116,11 +116,11 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
         @Deprecated
         public WorkflowAction(String id, StringResourceModel name) {
-            super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), getModel());
+            super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), CompatibilityWorkflowPlugin.this.getModel());
         }
 
         public WorkflowAction(String id, IModel<String> name) {
-            super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), getModel());
+            super(id, name, CompatibilityWorkflowPlugin.this.getPluginContext(), CompatibilityWorkflowPlugin.this.getModel());
         }
 
         /** @deprecated Please extend directly from AbstractDialog */

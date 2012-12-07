@@ -22,8 +22,8 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
@@ -33,7 +33,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DeleteDialog extends WorkflowAction.WorkflowDialog {
+public class DeleteDialog extends AbstractWorkflowDialog {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,14 +41,12 @@ public class DeleteDialog extends WorkflowAction.WorkflowDialog {
 
     private IModel title;
 
-    public DeleteDialog(IModel<String> title, IModel<String> message, CompatibilityWorkflowPlugin.WorkflowAction action,
-            IEditorManager editorMgr) {
-        action.super(message);
+    public DeleteDialog(IModel<String> title, WorkflowDescriptorModel wdm, IModel<String> message, IWorkflowInvoker action, IEditorManager editorMgr) {
+        super(wdm, message, action);
 
         this.title = title;
 
         try {
-            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) action.getDefaultModel();
             ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(wdm.getNode()), true);
             MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr) {
                 private static final long serialVersionUID = 1L;
@@ -63,10 +61,7 @@ public class DeleteDialog extends WorkflowAction.WorkflowDialog {
             throw new WicketRuntimeException("No document node present", e);
         }
         add(new CssClassAppender(new Model("hippo-delete-dialog")));
-    }
 
-    @Override
-    protected void init() {
         setFocusOnCancel();
     }
 

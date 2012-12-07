@@ -40,7 +40,8 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.i18n.model.NodeTranslator;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -61,7 +62,7 @@ import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog {
+class ReorderDialog extends AbstractWorkflowDialog {
 
     private static final long serialVersionUID = 1L;
 
@@ -382,9 +383,9 @@ class ReorderDialog extends CompatibilityWorkflowPlugin.WorkflowAction.WorkflowD
         }
     }
 
-    ReorderDialog(CompatibilityWorkflowPlugin.WorkflowAction action, IPluginConfig pluginConfig,
+    ReorderDialog(IWorkflowInvoker action, IPluginConfig pluginConfig,
             WorkflowDescriptorModel model, List<String> mapping) {
-        action.super();
+        super(model, action);
         this.mapping = mapping;
 
         String name;

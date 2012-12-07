@@ -95,6 +95,14 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
         this(id, name, null, null, null);
     }
 
+    public StdWorkflow(String id, IModel<String> name, WorkflowDescriptorModel model) {
+        this(id, name, null, null, model);
+    }
+
+    public StdWorkflow(String id, IModel<String> name, ResourceReference iconModel, WorkflowDescriptorModel model) {
+        this(id, name, iconModel, null, model);
+    }
+
     public StdWorkflow(String id, IModel<String> name, IPluginContext pluginContext, WorkflowDescriptorModel model) {
         this(id, name, null, pluginContext, model);
     }
@@ -134,6 +142,10 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
             protected void initialize() {
             }
         });
+    }
+
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) super.getDefaultModel();
     }
 
     protected final String getName() {
@@ -218,6 +230,11 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
 
     protected String execute(T workflow) throws Exception {
         throw new WorkflowException("unsupported operation");
+    }
+
+    @Override
+    public void invokeWorkflow() throws Exception {
+        execute();
     }
 
     @Override

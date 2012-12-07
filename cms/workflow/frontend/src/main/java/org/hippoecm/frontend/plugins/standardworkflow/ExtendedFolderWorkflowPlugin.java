@@ -35,6 +35,9 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -86,7 +89,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
     public ExtendedFolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("publishAll", new StringResourceModel("publish-all-label", this, null)) {
+        add(new StdWorkflow("publishAll", new StringResourceModel("publish-all-label", this, null), context, getModel()) {
 
             @Override
             protected ResourceReference getIcon() {
@@ -160,7 +163,7 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             }
         });
 
-        add(new WorkflowAction("depublishAll", new StringResourceModel("depublish-all-label", this, null)) {
+        add(new StdWorkflow("depublishAll", new StringResourceModel("depublish-all-label", this, null), context, getModel()) {
 
             @Override
             protected ResourceReference getIcon() {
@@ -235,17 +238,17 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
         });
     }
 
-    public class ConfirmDialog extends WorkflowAction.WorkflowDialog {
+    public class ConfirmDialog extends AbstractWorkflowDialog {
         private IModel title;
 
         private Label affectedComponent;
 
-        public ConfirmDialog(WorkflowAction action, IModel dialogTitle, IModel dialogText, IModel dialogSubText, IModel folderName, Set<String> documents, Query query) {
-            action.super();
+        public ConfirmDialog(IWorkflowInvoker action, IModel dialogTitle, IModel dialogText, IModel dialogSubText, IModel folderName, Set<String> documents, Query query) {
+            super(ExtendedFolderWorkflowPlugin.this.getModel(), action);
             this.title = dialogTitle;
 
             try {
-                Node folder = (ExtendedFolderWorkflowPlugin.this.getDefaultModel() instanceof WorkflowDescriptorModel ? ((WorkflowDescriptorModel)ExtendedFolderWorkflowPlugin.this.getDefaultModel()).getNode() : null);
+                Node folder = getWorkflowDescriptorModel().getNode();
                 if (query != null && folder != null) {
                     query.bindValue("basefolder", folder.getSession().getValueFactory().createValue(folder.getPath()));
                     QueryResult result = query.execute();
@@ -282,6 +285,10 @@ public class ExtendedFolderWorkflowPlugin extends FolderWorkflowPlugin {
             affectedComponent = new Label("affected");
             affectedComponent.setVisible(false);
             add(affectedComponent);
+        }
+
+        public WorkflowDescriptorModel getWorkflowDescriptorModel() {
+            return (WorkflowDescriptorModel) super.getModel();
         }
 
         @Override

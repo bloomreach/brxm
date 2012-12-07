@@ -40,7 +40,7 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
         } else {
             this.uuid = subject.getParent().getUUID();
             this.relPath = subject.getName();
-            if(subject.getIndex() > 1) {
+            if (subject.getIndex() > 1) {
                 this.relPath += "[" + subject.getIndex() + "]";
             }
         }
@@ -49,14 +49,13 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
     protected WorkflowDescriptor load() {
         try {
             Session session = UserSession.get().getJcrSession();
-            WorkflowManager workflowManager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
+            WorkflowManager workflowManager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
             return workflowManager.getWorkflowDescriptor(category, getNode(session));
         } catch (RepositoryException ex) {
             return null;
         }
     }
-    
-    /** @deprecated by design FIXME */
+
     public Node getNode() throws RepositoryException {
         Session session = UserSession.get().getJcrSession();
         return getNode(session);
@@ -65,11 +64,11 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
     private Node getNode(Session session) throws RepositoryException {
         try {
             Node node = session.getNodeByUUID(uuid);
-            if(relPath != null) {
+            if (relPath != null) {
                 node = node.getNode(relPath);
             }
             return node;
-        } catch(RepositoryException ex) {
+        } catch (RepositoryException ex) {
             return null;
         }
     }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
@@ -230,7 +231,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
     protected boolean cancelled = false;
 
     public AbstractDialog() {
-        this(null);
+        this((IModel<T>) null);
     }
 
     public AbstractDialog(IModel<T> model) {
