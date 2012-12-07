@@ -133,7 +133,7 @@
          * @param futureFactory
          * @return {Hippo.Future}
          */
-        next : function (futureFactory) {
+        chain : function (futureFactory) {
             return new Hippo.Future(function (onSuccess, onFail) {
                 this.when(function (value) {
                     var future = futureFactory(value);
