@@ -26,14 +26,16 @@ import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
-import org.apache.wicket.markup.html.resources.JavaScriptReference;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
+import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 
 public class DialogWindow extends ModalWindow implements IDialogService {
+
+    private static final String LINE_BREAKS_REGEX = "(\\r|\\n)";
     private static final long serialVersionUID = 1L;
 
     private class Callback implements ModalWindow.WindowClosedCallback {
@@ -120,14 +122,14 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         shown = null;
         setContent(new EmptyPanel(getContentId()));
         setWindowClosedCallback(null);
-        setTitle(new Model("title"));
+        setTitle(new Model<String>("title"));
     }
 
     private void internalShow(Dialog dialog) {
         shown = dialog;
         dialog.setDialogService(this);
         setContent(dialog.getComponent());
-        setTitle(dialog.getTitle());
+        setTitle(removeLineBreaks(dialog.getTitle()));
         setWindowClosedCallback(new Callback(dialog));
 
         IValueMap properties = dialog.getProperties();
@@ -142,6 +144,15 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             show((AjaxRequestTarget) target);
         }
+    }
+
+    private static IModel<String> removeLineBreaks(IModel<String> stringModel) {
+        final String s = stringModel.getObject();
+        final String withoutLineBreaks = s.replaceAll(LINE_BREAKS_REGEX, "");
+        if (s.equals(withoutLineBreaks)) {
+            return stringModel;
+        }
+        return new Model<String>(withoutLineBreaks);
     }
 
     /**
