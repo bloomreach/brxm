@@ -760,12 +760,11 @@ Hippo.ChannelManager.TemplateComposer.PageEditor = Ext.extend(Ext.Panel, {
     },
 
     initComposer: function() {
-        var self = this;
-        this.pageContainer.initComposer.call(this.pageContainer, function() {
-            if (self.areVariantsEnabled()) {
-                self.globalVariantsStore.load();
+        this.pageContainer.initComposer.call(this.pageContainer).when(function() {
+            if (this.areVariantsEnabled()) {
+                this.globalVariantsStore.load();
             }
-        });
+        }.createDelegate(this));
     },
 
     browseTo: function(data) {

@@ -111,48 +111,49 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
 
     // PUBLIC METHODS THAT CHANGE OR RELOAD THE iFrame
 
-    initComposer : function(callback) {
-        if (typeof this.contextPath === 'undefined'
-                || typeof this.renderHost === 'undefined'
-                || this.renderHost.trim() === '') {
-            console.error(this.resources['error-init-composer']);
-            this.fireEvent('fatalIFrameException', { msg : this.resources['error-init-composer'] });
-            return;
-        }
-
-        this.previewMode = true;
-
-        this._lock();
-
-        // do initial handshake with CmsSecurityValve of the composer mount and
-        // go ahead with the actual host which we want to edit (for which we need to be authenticated)
-        this._initializeHstSession(function() {
-            var iFrame, iFrameUrl;
-            iFrame = Ext.getCmp('Iframe');
-
-            iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
-
-            this._initIFrameListeners();
-            iFrameUrl = this.contextPath;
-            if (iFrameUrl === '/') {
-                iFrameUrl = '';
+    initComposer : function() {
+        return new Hippo.Future(function(success, failure) {
+            if (typeof this.contextPath === 'undefined'
+                    || typeof this.renderHost === 'undefined'
+                    || this.renderHost.trim() === '') {
+                console.error(this.resources['error-init-composer']);
+                this.fireEvent('fatalIFrameException', { msg : this.resources['error-init-composer'] });
+                failure();
+                return;
             }
-            if (this.cmsPreviewPrefix) {
-                iFrameUrl += '/'+this.cmsPreviewPrefix;
-            }
-            if (this.renderPathInfo) {
-                iFrameUrl += this.renderPathInfo;
-            }
-            if (iFrameUrl === this.contextPath) {
-                // The best practice for proxy pass rules is to match on <context path>/ to delegate to the site webapp.
-                // The iframe url should therefore end with '/'.
-                iFrameUrl += '/';
-            }
-            iFrame.setSrc(iFrameUrl);
 
-            if (Ext.isFunction(callback)) {
-                callback();
-            }
+            this.previewMode = true;
+
+            this._lock();
+
+            // do initial handshake with CmsSecurityValve of the composer mount and
+            // go ahead with the actual host which we want to edit (for which we need to be authenticated)
+            this._initializeHstSession(function() {
+                var iFrame, iFrameUrl;
+                iFrame = Ext.getCmp('Iframe');
+
+                iFrame.frameEl.isReset = false; // enable domready get's fired workaround, we haven't set defaultSrc on the first place
+
+                this._initIFrameListeners();
+                iFrameUrl = this.contextPath;
+                if (iFrameUrl === '/') {
+                    iFrameUrl = '';
+                }
+                if (this.cmsPreviewPrefix) {
+                    iFrameUrl += '/'+this.cmsPreviewPrefix;
+                }
+                if (this.renderPathInfo) {
+                    iFrameUrl += this.renderPathInfo;
+                }
+                if (iFrameUrl === this.contextPath) {
+                    // The best practice for proxy pass rules is to match on <context path>/ to delegate to the site webapp.
+                    // The iframe url should therefore end with '/'.
+                    iFrameUrl += '/';
+                }
+                iFrame.setSrc(iFrameUrl);
+
+                success();
+            }.createDelegate(this));
         }.createDelegate(this));
     },
 
@@ -363,7 +364,7 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         } else {
                             console.error('The mount is already locked.');
                             Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
-                                self.initComposer.call(self, null);
+                                self.initComposer.call(self);
                             });
                         }
                     },
@@ -390,12 +391,12 @@ Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observ
                         var jsonData = Ext.util.JSON.decode(result.responseText);
                         if (jsonData.data == 'locked') {
                             Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
-                                self.initComposer.call(self, null);
+                                self.initComposer.call(self);
                             });
                         } else {
                             console.error(self.resources['preview-hst-config-creation-failed'] + ' ' + jsonData.message);
                             Hippo.Msg.alert(self.resources['preview-hst-config-creation-failed-title'], self.resources['preview-hst-config-creation-failed'], function() {
-                                self.initComposer.call(self, null);
+                                self.initComposer.call(self);
                             });
                         }
                     }
