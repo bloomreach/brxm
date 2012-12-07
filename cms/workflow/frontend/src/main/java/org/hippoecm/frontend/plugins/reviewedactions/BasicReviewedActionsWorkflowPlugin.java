@@ -29,7 +29,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -50,6 +49,7 @@ import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
@@ -62,7 +62,7 @@ import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class BasicReviewedActionsWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -74,14 +74,14 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
 
     private StdWorkflow infoAction;
     private StdWorkflow infoEditAction;
-    private WorkflowAction editAction;
-    private WorkflowAction publishAction;
-    private WorkflowAction depublishAction;
-    private WorkflowAction deleteAction;
-    private WorkflowAction schedulePublishAction;
-    private WorkflowAction scheduleDepublishAction;
-    private WorkflowAction whereUsedAction;
-    private WorkflowAction historyAction;
+    private StdWorkflow editAction;
+    private StdWorkflow publishAction;
+    private StdWorkflow depublishAction;
+    private StdWorkflow deleteAction;
+    private StdWorkflow schedulePublishAction;
+    private StdWorkflow scheduleDepublishAction;
+    private StdWorkflow whereUsedAction;
+    private StdWorkflow historyAction;
 
     public BasicReviewedActionsWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -90,7 +90,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
         add(infoAction = new StdWorkflow("info", "info") {
             @Override
             protected IModel getTitle() {
-                return translator.getValueName(HippoStdNodeType.HIPPOSTD_STATESUMMARY, new PropertyModel(BasicReviewedActionsWorkflowPlugin.this, "stateSummary"));
+                return translator.getValueName(HippoStdNodeType.HIPPOSTD_STATESUMMARY, new PropertyModel<String>(BasicReviewedActionsWorkflowPlugin.this, "stateSummary"));
             }
             @Override
             protected void invoke() {
@@ -107,18 +107,19 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
-        add(editAction = new WorkflowAction("edit", new StringResourceModel("edit", this, null).getString(), null) {
+        add(editAction = new StdWorkflow<BasicReviewedActionsWorkflow>("edit", new StringResourceModel("edit", this, null), getModel()) {
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "edit-16.png");
             }
+
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
+            protected String execute(BasicReviewedActionsWorkflow workflow) throws Exception {
                 Document docRef = workflow.obtainEditableInstance();
                 Session session = UserSession.get().getJcrSession();
                 session.refresh(true);
-                Node docNode = session.getNodeByUUID(docRef.getIdentity());
+                Node docNode = session.getNodeByIdentifier(docRef.getIdentity());
                 IEditorManager editorMgr = getPluginContext().getService(
                         getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                 if (editorMgr != null) {
@@ -134,7 +135,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
-        add(publishAction = new WorkflowAction("requestPublication", new StringResourceModel("request-publication", this, null).getString(), null) {
+        add(publishAction = new StdWorkflow("requestPublication", new StringResourceModel("request-publication", this, null), context, getModel()) {
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "workflow-requestpublish-16.png");
@@ -164,7 +165,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
-        add(depublishAction = new WorkflowAction("requestDepublication", new StringResourceModel("request-depublication", this, null).getString(), null) {
+        add(depublishAction = new StdWorkflow("requestDepublication", new StringResourceModel("request-depublication", this, null), context, getModel()) {
 
             @Override
             protected ResourceReference getIcon() {
@@ -174,11 +175,11 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             @Override
             protected Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
-                IModel title = new StringResourceModel("depublish-title", BasicReviewedActionsWorkflowPlugin.this, null,
+                IModel<String> title = new StringResourceModel("depublish-title", BasicReviewedActionsWorkflowPlugin.this, null,
                         new Object[] { docName });
-                IModel message = new StringResourceModel("depublish-message", BasicReviewedActionsWorkflowPlugin.this,
+                IModel<String> message = new StringResourceModel("depublish-message", BasicReviewedActionsWorkflowPlugin.this,
                         null, new Object[] { docName });
-                return new DepublishDialog(title, message, this, getEditorManager());
+                return new DepublishDialog(title, message, getModel(), this, getEditorManager());
             }
 
             @Override
@@ -189,7 +190,8 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
-        add(deleteAction = new WorkflowAction("delete", new StringResourceModel("request-delete", this, null).getString(), null) {
+        add(deleteAction = new StdWorkflow("delete", new StringResourceModel("request-delete", this, null), context, getModel()) {
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "workflow-requestdelete-16.png");
@@ -201,7 +203,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
                         BasicReviewedActionsWorkflowPlugin.this, null, new Object[] { getDocumentName() });
                 IModel<String> title = new StringResourceModel("delete-title", BasicReviewedActionsWorkflowPlugin.this,
                         null, new Object[] { getDocumentName() });
-                return new DeleteDialog(title, message, this, getEditorManager());
+                return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 
             @Override
@@ -212,17 +214,19 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
-        add(schedulePublishAction = new WorkflowAction("schedulePublish", new StringResourceModel("schedule-publish-label", this, null).getString(), null) {
+        add(schedulePublishAction = new StdWorkflow("schedulePublish", new StringResourceModel("schedule-publish-label", this, null), context, getModel()) {
             public Date date = new Date();
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "publish-schedule-16.png");
             }
+
             @Override
             protected Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                WorkflowDescriptorModel wdm = getModel();
                 try {
-                    return new SchedulePublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel(this, "date"), getEditorManager());
+                    return new SchedulePublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
                 } catch (RepositoryException ex) {
                     log.warn("could not retrieve node for scheduling publish", ex);
                 }
@@ -241,8 +245,9 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
-        add(scheduleDepublishAction = new WorkflowAction("scheduleDepublish", new StringResourceModel("schedule-depublish-label", this, null).getString(), null) {
+        add(scheduleDepublishAction = new StdWorkflow("scheduleDepublish", new StringResourceModel("schedule-depublish-label", this, null), context, getModel()) {
             public Date date = new Date();
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "unpublish-scheduled-16.png");
@@ -252,7 +257,7 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             protected Dialog createRequestDialog() {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
-                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel(this, "date"), getEditorManager());
+                    return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()), new PropertyModel<Date>(this, "date"), getEditorManager());
                 } catch (RepositoryException e) {
                     log.warn("could not retrieve node for scheduling depublish", e);
                 }
@@ -271,8 +276,8 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
-        add(whereUsedAction = new WorkflowAction("where-used", new StringResourceModel("where-used-label", this, null)
-                .getString(), null) {
+        add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "where-used-16.png");
@@ -290,8 +295,8 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
             }
         });
 
-        add(historyAction = new WorkflowAction("history", new StringResourceModel("history-label", this, null)
-                .getString(), null) {
+        add(historyAction = new StdWorkflow("history", new StringResourceModel("history-label", this, null), context, getModel()) {
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "revision-16.png");
@@ -312,11 +317,15 @@ public class BasicReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlu
         hideInvalidActions();
     }
 
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) super.getDefaultModel();
+    }
+
     private IEditorManager getEditorManager() {
         return getPluginContext().getService(getPluginConfig().getString("editor.id"), IEditorManager.class);
     }
 
-    protected void hideOrDisable(WorkflowAction action, Map<String, Serializable> info, String key) {
+    protected void hideOrDisable(StdWorkflow action, Map<String, Serializable> info, String key) {
         if (info.containsKey(key)) {
             if (info.get(key) instanceof Boolean && !(Boolean) info.get(key)) {
                 action.setEnabled(false);

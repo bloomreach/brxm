@@ -46,8 +46,8 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.MenuDescription;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -59,6 +59,7 @@ import org.hippoecm.frontend.plugins.richtext.IHtmlCleanerService;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.IconSize;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.translation.DocumentTranslationProvider;
 import org.hippoecm.frontend.translation.ILocaleProvider;
@@ -85,7 +86,7 @@ import org.onehippo.translate.TranslateWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public final class TranslationWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -221,7 +222,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         }
     }
 
-    private final class TranslationAction extends WorkflowAction {
+    private final class TranslationAction extends StdWorkflow<TranslationWorkflow> {
         private static final long serialVersionUID = 1L;
 
         private final String language;
@@ -236,7 +237,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         private final IModel<String> title;
 
         private TranslationAction(String id, IModel<String> name, IModel<ResourceReference> iconModel, String language, IModel<String> languageModel) {
-            super(id, name);
+            super(id, name, getPluginContext(), (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getModel());
             this.language = language;
             this.title = name;
             this.languageModel = languageModel;
@@ -262,7 +263,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
         }
 
         @Override
-        protected String execute(Workflow wf) throws Exception {
+        protected String execute(TranslationWorkflow wf) throws Exception {
             if (hasLocale(language)) {
                 return executeAvailableTransaction(wf);
             } else {
@@ -270,7 +271,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             }
         }
 
-        private String executeAvailableTransaction(Workflow wf) throws Exception {
+        private String executeAvailableTransaction(TranslationWorkflow wf) throws Exception {
             IBrowseService<JcrNodeModel> browser = getBrowserService();
             if (browser != null) {
                 WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
@@ -298,7 +299,7 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             return null;
         }
 
-        protected String executeNonAvailableTranslation(Workflow wf) throws Exception {
+        protected String executeNonAvailableTranslation(TranslationWorkflow workflow) throws Exception {
             javax.jcr.Session session = UserSession.get().getJcrSession();
 
             for (int i = 0; i < (folders.size() - 1); i++) {
@@ -315,7 +316,6 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
             this.name = docTranslation.getNamefr();
             this.url = docTranslation.getUrlfr();
 
-            TranslationWorkflow workflow = (TranslationWorkflow) wf;
             Document translation = workflow.addTranslation(language, url);
             try {
                 WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
@@ -372,6 +372,9 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
 
         @Override
         protected Dialog createRequestDialog() {
+            if (hasLocale(language)) {
+                return null;
+            }
             try {
                 Node docNode = ((WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel()).getNode();
                 url = docNode.getName();
@@ -400,11 +403,10 @@ public final class TranslationWorkflowPlugin extends CompatibilityWorkflowPlugin
                     }
                 }
 
-                return new DocumentTranslationDialog(TranslationWorkflowPlugin.this,
-                                                     getPluginContext().getService(ISettingsService.SERVICE_ID,
-                                                                                   ISettingsService.class), this,
-                                                     new StringResourceModel("translate-title",
-                                                                             TranslationWorkflowPlugin.this, null),
+                ISettingsService settingsService = getPluginContext().getService(ISettingsService.SERVICE_ID,
+                                                                         ISettingsService.class);
+                StringResourceModel titleModel = new StringResourceModel("translate-title", TranslationWorkflowPlugin.this, null);
+                return new DocumentTranslationDialog(settingsService, this, titleModel,
                                                      folders, autoTranslateModel, languageModel.getObject(), language,
                                                      getLocaleProvider());
             } catch (Exception e) {

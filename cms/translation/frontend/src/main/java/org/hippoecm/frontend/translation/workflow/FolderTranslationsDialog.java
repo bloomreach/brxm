@@ -23,7 +23,8 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.components.folder.FolderTranslationView;
@@ -34,30 +35,28 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FolderTranslationsDialog extends WorkflowAction.WorkflowDialog {
+public class FolderTranslationsDialog extends AbstractWorkflowDialog<Node> {
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(FolderTranslationsDialog.class);
 
-    private IModel<Node> folderModel;
     private IModel<String> title;
 
     private IModel<T9Node> t9NodeModel;
 
-    public FolderTranslationsDialog(WorkflowAction action, IModel<String> title, IModel<Node> folderModel,
+    public FolderTranslationsDialog(IWorkflowInvoker action, IModel<String> title, IModel<Node> folderModel,
             ILocaleProvider provider) {
-        action.super();
+        super(folderModel, action);
 
         this.title = title;
-        this.folderModel = folderModel;
 
         IModel<T9Tree> treeModel = new LoadableDetachableModel<T9Tree>() {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected T9Tree load() {
-                return new JcrT9Tree(FolderTranslationsDialog.this.folderModel.getObject());
+                return new JcrT9Tree(FolderTranslationsDialog.this.getModelObject());
             }
         };
         try {
@@ -74,7 +73,7 @@ public class FolderTranslationsDialog extends WorkflowAction.WorkflowDialog {
 
     @Override
     protected void onOk() {
-        Node node = folderModel.getObject();
+        Node node = getModelObject();
         if (node != null) {
             try {
                 node.setProperty(HippoTranslationNodeType.ID, t9NodeModel.getObject().getT9id());
@@ -102,7 +101,6 @@ public class FolderTranslationsDialog extends WorkflowAction.WorkflowDialog {
     @Override
     protected void onDetach() {
         title.detach();
-        folderModel.detach();
         super.onDetach();
     }
 }

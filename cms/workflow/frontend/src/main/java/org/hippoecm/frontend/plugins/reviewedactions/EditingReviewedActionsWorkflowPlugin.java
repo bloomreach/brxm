@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
@@ -29,10 +28,12 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.ActionDescription;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
+import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.feedback.YuiFeedbackPanel;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
@@ -42,7 +43,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.BasicReviewedActionsWorkflow;
 
-public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,8 +67,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
     public EditingReviewedActionsWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("save", new StringResourceModel("save", this, null, "Save").getString(),
-                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png")) {
+        add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
+                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png"), getModel()) {
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 validate();
@@ -100,8 +102,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
             }
         });
 
-        add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(),
-                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-saveclose-16.png")) {
+        add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
+                new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-saveclose-16.png"), getModel()) {
+
             @Override
             public String execute(Workflow wf) throws Exception {
                 validate();
@@ -121,6 +124,9 @@ public class EditingReviewedActionsWorkflowPlugin extends CompatibilityWorkflowP
         add(new Feedback());
     }
 
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) getDefaultModel();
+    }
 
     protected void showFeedback() {
         YuiFeedbackPanel yfp = (YuiFeedbackPanel) feedbackContainer.get("feedback");

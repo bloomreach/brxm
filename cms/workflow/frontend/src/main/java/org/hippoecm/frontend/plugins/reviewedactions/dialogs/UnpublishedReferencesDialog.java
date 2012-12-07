@@ -21,20 +21,20 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction.WorkflowDialog;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UnpublishedReferencesDialog extends WorkflowDialog  {
+public class UnpublishedReferencesDialog extends AbstractWorkflowDialog {
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(UnpublishedReferencesDialog.class);
 
-    public UnpublishedReferencesDialog(CompatibilityWorkflowPlugin.WorkflowAction base, ISortableDataProvider<Node> provider, IEditorManager mgr) {
-        base.super();
+    public UnpublishedReferencesDialog(IWorkflowInvoker invoker, ISortableDataProvider<Node> provider, IEditorManager mgr) {
+        super(null, invoker);
 
         setOutputMarkupId(true);
 

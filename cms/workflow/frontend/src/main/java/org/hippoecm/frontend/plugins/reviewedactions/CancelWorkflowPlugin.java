@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -25,11 +26,11 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
@@ -37,36 +38,42 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class CancelWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
     private static Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
+    private final DateFormat dateFormatFull = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL, getSession().getLocale());
+
     private String state = "unknown";
     private Date schedule = null;
 
-    WorkflowAction cancelAction;
+    StdWorkflow cancelAction;
 
     public CancelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         add(new StdWorkflow("info", "info") {
+
             @Override
             protected IModel getTitle() {
                 return new StringResourceModel("state-"+state, this, null,
                     new Object[] {  (schedule!=null ? dateFormatFull.format(schedule) : "??") }, "unknown");
             }
+
             @Override
             protected void invoke() {
             }
         });
 
-        add(cancelAction = new WorkflowAction("cancel", new StringResourceModel("cancel-request", this, null).getString(), null) {
+        add(cancelAction = new StdWorkflow("cancel", new StringResourceModel("cancel-request", this, null), getModel()) {
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "delete-16.png");
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 BasicRequestWorkflow workflow = (BasicRequestWorkflow) wf;
@@ -75,7 +82,7 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+        WorkflowDescriptorModel model = getModel();
         schedule = null;
         if (model != null) {
             try {
@@ -101,6 +108,10 @@ public class CancelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 log.error(ex.getClass().getName() + ": " + ex.getMessage());
             }
         }
+    }
+
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) getDefaultModel();
     }
 
     @Deprecated

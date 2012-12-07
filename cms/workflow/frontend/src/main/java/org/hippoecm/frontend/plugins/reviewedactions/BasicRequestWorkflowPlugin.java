@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -26,50 +27,58 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class BasicRequestWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
     private static Logger log = LoggerFactory.getLogger(BasicReviewedActionsWorkflowPlugin.class);
 
+    private final DateFormat dateFormatFull = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL,
+                                                                             getSession().getLocale());
+
     private String state = "unknown";
     private Date schedule = null;
     private boolean cancelable = true;
 
-    WorkflowAction cancelAction;
-    WorkflowAction infoAction;
+    StdWorkflow cancelAction;
+    StdWorkflow infoAction;
 
     public BasicRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         add(new StdWorkflow("info", "info") {
+
             @Override
             protected IModel getTitle() {
                 return new StringResourceModel("state-"+state, this, null,
                     new Object[] {  (schedule!=null ? dateFormatFull.format(schedule) : "??") }, "unknown");
             }
+
             @Override
             protected void invoke() {
             }
         });
 
-        add(cancelAction = new WorkflowAction("cancel", new StringResourceModel("cancel-request", this, null).getString(), null) {
+        add(cancelAction = new StdWorkflow("cancel", new StringResourceModel("cancel-request", this, null), context, getModel()) {
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "delete-16.png");
             }
+
             @Override
             protected IModel getTitle() {
                 if (state.equals("rejected")) {
@@ -78,17 +87,16 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     return new StringResourceModel("cancel-request", BasicRequestWorkflowPlugin.this, null);
                 }
             }
+
             @Override
             protected Dialog createRequestDialog() {
                 if (state.equals("rejected")) {
                     IModel reason = null;
                     try {
-                        if (getModel() instanceof WorkflowDescriptorModel) {
-                            WorkflowDescriptorModel model = (WorkflowDescriptorModel)getModel();
-                            Node node = (model != null ? model.getNode() : null);
-                            if (node != null && node.hasProperty("hippostdpubwf:reason")) {
-                                reason = new Model(node.getProperty("hippostdpubwf:reason").getString());
-                            }
+                        WorkflowDescriptorModel model = getModel();
+                        Node node = (model != null ? model.getNode() : null);
+                        if (node != null && node.hasProperty("hippostdpubwf:reason")) {
+                            reason = Model.of(node.getProperty("hippostdpubwf:reason").getString());
                         }
                     } catch(RepositoryException ex) {
                         log.warn(ex.getMessage(), ex);
@@ -96,13 +104,17 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     if (reason == null) {
                         reason = new StringResourceModel("rejected-request-unavailable", BasicRequestWorkflowPlugin.this, null);
                     }
-                    return new WorkflowAction.ConfirmDialog(new StringResourceModel("rejected-request-title",
-                                                                                    BasicRequestWorkflowPlugin.this, null),
-                                                            new StringResourceModel("rejected-request-text",
-                                                                                    BasicRequestWorkflowPlugin.this, null),
-                                                            reason,
-                                                            new StringResourceModel("rejected-request-question",
-                                                                                    BasicRequestWorkflowPlugin.this, null));
+                    return new ConfirmDialog(
+                            new StringResourceModel("rejected-request-title", BasicRequestWorkflowPlugin.this, null),
+                            new StringResourceModel("rejected-request-text", BasicRequestWorkflowPlugin.this, null),
+                            reason,
+                            new StringResourceModel("rejected-request-question", BasicRequestWorkflowPlugin.this,
+                                                    null)) {
+                        @Override
+                        public void invokeWorkflow() throws Exception {
+                            cancelAction.invokeWorkflow();
+                        }
+                    };
                 } else {
                     return super.createRequestDialog();
                 }
@@ -115,25 +127,28 @@ public class BasicRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+        WorkflowDescriptorModel model = getModel();
         schedule = null;
-        if (model != null) {
-            try {
-                Node node = model.getNode();
-                state = node.getProperty("hippostdpubwf:type").getString();
-                if (node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
-                    schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
-                } else if (node.hasProperty("hippostdpubwf:reqdate")) {
-                    schedule = new Date(node.getProperty("hippostdpubwf:reqdate").getLong());
-                }
-                Map<String, Serializable> hints = ((WorkflowDescriptor)model.getObject()).hints();
-                if (hints.containsKey("cancelRequest") && !((Boolean)hints.get("cancelRequest")).booleanValue()) {
-                    cancelAction.setVisible(false);
-                }
-            } catch (RepositoryException ex) {
-                // status unknown, maybe there are legit reasons for this, so don't emit a warning
-                log.info(ex.getClass().getName() + ": " + ex.getMessage());
+        try {
+            Node node = model.getNode();
+            state = node.getProperty("hippostdpubwf:type").getString();
+            if (node.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
+                schedule = node.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+            } else if (node.hasProperty("hippostdpubwf:reqdate")) {
+                schedule = new Date(node.getProperty("hippostdpubwf:reqdate").getLong());
             }
+            Map<String, Serializable> hints = ((WorkflowDescriptor)model.getObject()).hints();
+            if (hints.containsKey("cancelRequest") && !((Boolean)hints.get("cancelRequest")).booleanValue()) {
+                cancelAction.setVisible(false);
+            }
+        } catch (RepositoryException ex) {
+            // status unknown, maybe there are legit reasons for this, so don't emit a warning
+            log.info(ex.getClass().getName() + ": " + ex.getMessage());
         }
     }
+
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) getDefaultModel();
+    }
+
 }

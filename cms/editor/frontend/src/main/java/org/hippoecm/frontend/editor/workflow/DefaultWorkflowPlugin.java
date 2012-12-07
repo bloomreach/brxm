@@ -20,11 +20,11 @@ import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -38,7 +38,8 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.time.Duration;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -57,6 +58,7 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ISettingsService;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -75,7 +77,7 @@ import static org.apache.commons.io.FilenameUtils.getBaseName;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 import static org.apache.commons.io.FilenameUtils.isExtension;
 
-public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class DefaultWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -95,7 +97,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
     );
     private static final String NUMBER_EXPRESSION = "[0-9]*";
 
-    public DefaultWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+    public DefaultWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         add(new StdWorkflow("info", "info") {
@@ -111,7 +113,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
         onModelChanged();
 
-        add(editAction = new WorkflowAction("edit", new StringResourceModel("edit", this, null).getString(), null) {
+        add(editAction = new StdWorkflow("edit", new StringResourceModel("edit", this, null), getModel()) {
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "edit-16.png");
@@ -119,7 +121,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                Node docNode = ((WorkflowDescriptorModel) DefaultWorkflowPlugin.this.getDefaultModel()).getNode();
+                Node docNode = getModel().getNode();
                 IEditorManager editorMgr = getPluginContext().getService(
                         getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
                 if (editorMgr != null) {
@@ -137,7 +139,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(renameAction = new WorkflowAction("rename", new StringResourceModel("rename-label", this, null)) {
+        add(renameAction = new StdWorkflow("rename", new StringResourceModel("rename-label", this, null), context, getModel()) {
             public String targetName;
             public String uriName;
 
@@ -149,9 +151,8 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 try {
-                    uriName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
-                    targetName = ((HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode())
-                            .getLocalizedName();
+                    uriName = getModel().getNode().getName();
+                    targetName = ((HippoNode) getModel().getNode()).getLocalizedName();
                 } catch (RepositoryException ex) {
                     uriName = targetName = "";
                 }
@@ -164,7 +165,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 if (targetName == null || targetName.trim().equals("")) {
                     throw new WorkflowException("No name for destination given");
                 }
-                HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                HippoNode node = (HippoNode) getModel().getNode();
                 String nodeName = getNodeNameCodec().encode(uriName);
                 String localName = getLocalizeCodec().encode(targetName);
                 if ("".equals(nodeName)) {
@@ -172,7 +173,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 }
                 WorkflowManager manager = obtainUserSession().getWorkflowManager();
                 DefaultWorkflow defaultWorkflow = (DefaultWorkflow) manager.getWorkflow("core", node);
-                if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
+                if (!getModel().getNode().getName().equals(nodeName)) {
                     ((DefaultWorkflow) wf).rename(nodeName);
                 }
                 if (!node.getLocalizedName().equals(localName)) {
@@ -182,7 +183,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(copyAction = new WorkflowAction("copy", new StringResourceModel("copy-label", this, null)) {
+        add(copyAction = new StdWorkflow("copy", new StringResourceModel("copy-label", this, null), context, getModel()) {
             NodeModelWrapper destination = null;
             String name = null;
 
@@ -196,7 +197,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 destination = new NodeModelWrapper(getFolder()) {
                 };
                 try {
-                    HippoNode node = (HippoNode) ((WorkflowDescriptorModel) getDefaultModel()).getNode();
+                    HippoNode node = (HippoNode) getModel().getNode();
                     String nodeName = node.getLocalizedName().toLowerCase();
 
                     if (isExtension(nodeName, KNOWN_IMAGE_EXTENSIONS)) {
@@ -209,12 +210,17 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 } catch (RepositoryException ex) {
                     return new ExceptionDialog(ex);
                 }
-                return new WorkflowAction.DestinationDialog(
+                return new DestinationDialog(
                         new StringResourceModel("copy-title", DefaultWorkflowPlugin.this, null),
                         new StringResourceModel("copy-name", DefaultWorkflowPlugin.this, null),
-                        new PropertyModel(this, "name"), destination) {
+                        new PropertyModel(this, "name"), destination, context, config) {
                     {
                         setOkEnabled(true);
+                    }
+
+                    @Override
+                    public void invokeWorkflow() throws Exception {
+                        copyAction.invokeWorkflow();
                     }
                 };
             }
@@ -291,7 +297,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(moveAction = new WorkflowAction("move", new StringResourceModel("move-label", this, null)) {
+        add(moveAction = new StdWorkflow("move", new StringResourceModel("move-label", this, null), context, getModel()) {
             public NodeModelWrapper destination = null;
 
             @Override
@@ -303,8 +309,13 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             protected Dialog createRequestDialog() {
                 destination = new NodeModelWrapper(getFolder()) {
                 };
-                return new WorkflowAction.DestinationDialog(new StringResourceModel("move-title",
-                        DefaultWorkflowPlugin.this, null), null, null, destination);
+                return new DestinationDialog(new StringResourceModel("move-title",
+                        DefaultWorkflowPlugin.this, null), null, null, destination, context, config) {
+                    @Override
+                    public void invokeWorkflow() throws Exception {
+                        moveAction.invokeWorkflow();
+                    }
+                };
             }
 
             @Override
@@ -313,15 +324,15 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 if (destination != null) {
                     folderModel = destination.getNodeModel();
                 }
-                String nodeName = ((WorkflowDescriptorModel) getDefaultModel()).getNode().getName();
+                String nodeName = getModel().getNode().getName();
                 DefaultWorkflow workflow = (DefaultWorkflow) wf;
                 workflow.move(new Document(folderModel.getNode().getUUID()), nodeName);
                 return null;
             }
         });
 
-        add(deleteAction = new WorkflowAction("delete",
-                new StringResourceModel("delete-label", this, null).getString(), null) {
+        add(deleteAction = new StdWorkflow("delete",
+                new StringResourceModel("delete-label", this, null), context, getModel()) {
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "delete-16.png");
@@ -334,7 +345,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         new Object[]{docName});
                 IModel<String> title = new StringResourceModel("delete-title", DefaultWorkflowPlugin.this, null,
                         new Object[]{docName});
-                return new DeleteDialog(title, message, this, getEditorManager());
+                return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 
             @Override
@@ -344,8 +355,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(whereUsedAction = new WorkflowAction("where-used", new StringResourceModel("where-used-label", this, null)
-                .getString(), null) {
+        add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this, null), context, getModel()) {
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "where-used-16.png");
@@ -353,7 +363,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+                WorkflowDescriptorModel wdm = getModel();
                 return new WhereUsedDialog(wdm, getEditorManager());
             }
 
@@ -363,7 +373,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+        WorkflowDescriptorModel model = getModel();
         if (model != null) {
             Map<String, Serializable> info = obtainWorkflowHints(model);
             if (info != null) {
@@ -372,10 +382,14 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
         }
     }
 
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) getDefaultModel();
+    }
+
     private JcrNodeModel getFolder() {
         JcrNodeModel folderModel = new JcrNodeModel("/");
         try {
-            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+            WorkflowDescriptorModel wdm = getModel();
             if (wdm != null) {
                 HippoNode node = (HippoNode) wdm.getNode();
                 if (node != null) {
@@ -417,11 +431,10 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
     IModel<String> getDocumentName() {
         try {
-            return (new NodeTranslator(new JcrNodeModel(((WorkflowDescriptorModel) getDefaultModel()).getNode())))
-                    .getNodeName();
+            return (new NodeTranslator(new JcrNodeModel(getModel().getNode()))).getNodeName();
         } catch (RepositoryException ex) {
             try {
-                return new Model<String>(((WorkflowDescriptorModel) getDefaultModel()).getNode().getName());
+                return new Model<String>(getModel().getNode().getName());
             } catch (RepositoryException e) {
                 return new StringResourceModel("unknown", this, null);
             }
@@ -439,7 +452,7 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             if (documentNode != null) {
                 caption = new NodeTranslator(new JcrNodeModel(documentNode)).getNodeName();
             }
-            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor) model.getObject();
+            WorkflowDescriptor workflowDescriptor = model.getObject();
             if (workflowDescriptor != null) {
                 WorkflowManager manager = obtainUserSession().getWorkflowManager();
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
@@ -468,14 +481,14 @@ public class DefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
         whereUsedAction.setVisible(Boolean.TRUE.equals(workflowHints.get("status")));
     }
 
-    public class RenameDocumentDialog extends WorkflowAction.WorkflowDialog {
+    public class RenameDocumentDialog extends AbstractWorkflowDialog {
         private IModel title;
         private TextField nameComponent;
         private TextField uriComponent;
         private boolean uriModified;
 
-        public RenameDocumentDialog(WorkflowAction action, IModel title) {
-            action.super();
+        public RenameDocumentDialog(StdWorkflow action, IModel title) {
+            super(DefaultWorkflowPlugin.this.getModel(), action);
             this.title = title;
 
             final PropertyModel<String> nameModel = new PropertyModel<String>(action, "targetName");

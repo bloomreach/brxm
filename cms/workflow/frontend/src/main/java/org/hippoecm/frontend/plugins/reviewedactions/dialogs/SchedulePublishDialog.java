@@ -15,29 +15,47 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
+import java.util.Calendar;
+import java.util.Date;
+
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.FutureDateValidator;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.UnpublishedReferenceNodeProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.ReferenceProvider;
 import org.hippoecm.frontend.plugins.reviewedactions.model.UnpublishedReferenceProvider;
+import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
 import org.hippoecm.frontend.service.IEditorManager;
 
-public class SchedulePublishDialog extends WorkflowAction.DateDialog {
+public class SchedulePublishDialog extends AbstractWorkflowDialog {
 
     private static final long serialVersionUID = 1L;
 
-    public SchedulePublishDialog(WorkflowAction action, JcrNodeModel nodeModel, PropertyModel dateModel,
+    public SchedulePublishDialog(IWorkflowInvoker action, JcrNodeModel nodeModel, IModel<Date> dateModel,
             IEditorManager editorMgr) {
-        action.super(new ResourceModel("schedule-publish-text"), dateModel);
+        super(nodeModel, action);
 
         UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(
                 new UnpublishedReferenceProvider(new ReferenceProvider(nodeModel)));
         add(new UnpublishedReferencesView("links", provider, editorMgr));
+
+        Calendar minimum = Calendar.getInstance();
+        minimum.setTime(dateModel.getObject());
+        minimum.set(Calendar.SECOND, 0);
+        minimum.set(Calendar.MILLISECOND, 0);
+        // if you want to round upwards, the following ought to be executed: minimum.add(Calendar.MINUTE, 1);
+        dateModel.setObject(minimum.getTime());
+        add(new Label("question", new ResourceModel("schedule-publish-text")));
+        YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
+        ydtf.add(new FutureDateValidator());
+        add(ydtf);
+        setFocusOnCancel();
     }
 
     @Override

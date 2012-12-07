@@ -22,19 +22,18 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
 import org.hippoecm.frontend.editor.workflow.dialog.ReferringDocumentsView;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.service.ITitleDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DepublishDialog extends WorkflowAction.WorkflowDialog {
+public class DepublishDialog extends AbstractWorkflowDialog {
 
     private static final long serialVersionUID = 1L;
 
@@ -42,14 +41,13 @@ public class DepublishDialog extends WorkflowAction.WorkflowDialog {
 
     private IModel title;
 
-    public DepublishDialog(IModel/*<String>*/title, IModel/*<String>*/ message,CompatibilityWorkflowPlugin.WorkflowAction action,
-            IEditorManager editorMgr) {
-        action.super(message);
+    public DepublishDialog(IModel<String>title, IModel<String> message,
+            WorkflowDescriptorModel wdm, IWorkflowInvoker action, IEditorManager editorMgr) {
+        super(wdm, message, action);
 
         this.title = title;
 
         try {
-            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) action.getDefaultModel();
             ReferringDocumentsProvider provider = new ReferringDocumentsProvider(new JcrNodeModel(wdm.getNode()));
             MarkupContainer rdv = new ReferringDocumentsView("links", provider, editorMgr) {
                 private static final long serialVersionUID = 1L;
@@ -63,11 +61,8 @@ public class DepublishDialog extends WorkflowAction.WorkflowDialog {
         } catch (RepositoryException e) {
             throw new WicketRuntimeException("No document node present", e);
         }
-        add(new CssClassAppender(new Model("hippo-depublish-dialog")));
-    }
+        add(new CssClassAppender(Model.of("hippo-depublish-dialog")));
 
-    @Override
-    protected void init() {
         setFocusOnOk();
     }
 
@@ -81,4 +76,9 @@ public class DepublishDialog extends WorkflowAction.WorkflowDialog {
         return title;
     }
 
+    @Override
+    protected void onDetach() {
+        title.detach();
+        super.onDetach();
+    }
 }

@@ -15,28 +15,44 @@
  */
 package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 
+import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.FutureDateValidator;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.editor.workflow.dialog.ReferringDocumentsView;
 import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
 import org.hippoecm.frontend.service.IEditorManager;
 
-public class ScheduleDepublishDialog extends WorkflowAction.DateDialog {
+public class ScheduleDepublishDialog extends AbstractWorkflowDialog {
 
     private static final long serialVersionUID = 1L;
 
-    public ScheduleDepublishDialog(WorkflowAction action, JcrNodeModel nodeModel, PropertyModel<Date> dateModel, IEditorManager editorMgr) {
-        action.super(new ResourceModel("schedule-depublish-text"), dateModel);
+    public ScheduleDepublishDialog(IWorkflowInvoker action, JcrNodeModel nodeModel, IModel<Date> dateModel, IEditorManager editorMgr) {
+        super(nodeModel, action);
 
         ReferringDocumentsProvider provider = new ReferringDocumentsProvider(nodeModel, false);
         add(new ReferringDocumentsView("refs", provider, editorMgr));
+
+        Calendar minimum = Calendar.getInstance();
+        minimum.setTime(dateModel.getObject());
+        minimum.set(Calendar.SECOND, 0);
+        minimum.set(Calendar.MILLISECOND, 0);
+        // if you want to round upwards, the following ought to be executed: minimum.add(Calendar.MINUTE, 1);
+        dateModel.setObject(minimum.getTime());
+        add(new Label("question", new ResourceModel("schedule-depublish-text")));
+        YuiDateTimeField ydtf = new YuiDateTimeField("value", dateModel);
+        ydtf.add(new FutureDateValidator());
+        add(ydtf);
+        setFocusOnCancel();
     }
 
     @Override

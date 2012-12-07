@@ -22,15 +22,16 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
+import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.service.IEditor.Mode;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
@@ -38,7 +39,7 @@ import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class EditingDefaultWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -57,7 +58,7 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
 
             public Object preClose() {
                 try {
-                    ((WorkflowDescriptorModel) getDefaultModel()).getNode().save();
+                    getModel().getNode().save();
                     return new Object();
                 } catch (RepositoryException ex) {
                     log.info(ex.getMessage());
@@ -66,21 +67,21 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         }, context.getReference(editor).getServiceId());
 
-        add(new WorkflowAction("save", new StringResourceModel("save", this, null, "Save").getString(),
-                new ResourceReference(EditingDefaultWorkflowPlugin.class, "document-save-16.png")) {
+        add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
+                new ResourceReference(EditingDefaultWorkflowPlugin.class, "document-save-16.png"), getModel()) {
             @Override
             protected String execute(Workflow wf) throws Exception {
                 validate();
                 if (!isValid()) {
                     return null;
                 }
-                ((WorkflowDescriptorModel) getDefaultModel()).getNode().save();
+                getModel().getNode().save();
                 return null;
             }
         });
 
-        add(new WorkflowAction("done", new StringResourceModel("done", this, null, "Done").getString(),
-                new ResourceReference(getClass(), "document-saveclose-16.png")) {
+        add(new StdWorkflow("done", new StringResourceModel("done", this, null, "Done"),
+                new ResourceReference(getClass(), "document-saveclose-16.png"), getModel()) {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
@@ -107,8 +108,12 @@ public class EditingDefaultWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
     }
-    
-     void validate() throws ValidationException {
+
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) getDefaultModel();
+    }
+
+    void validate() throws ValidationException {
         isValid = true;
         List<IValidationService> validators = getPluginContext().getServices(
                 getPluginConfig().getString(IValidationService.VALIDATE_ID), IValidationService.class);

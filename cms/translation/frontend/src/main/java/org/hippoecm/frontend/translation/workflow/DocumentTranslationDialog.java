@@ -18,12 +18,12 @@ package org.hippoecm.frontend.translation.workflow;
 import java.util.List;
 
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin.WorkflowAction;
+import org.hippoecm.addon.workflow.AbstractWorkflowDialog;
+import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.hippoecm.frontend.translation.components.document.DocumentTranslationView;
@@ -32,28 +32,20 @@ import org.hippoecm.frontend.widgets.BooleanFieldWidget;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
 
-public class DocumentTranslationDialog extends WorkflowAction.WorkflowDialog {
+public class DocumentTranslationDialog extends AbstractWorkflowDialog<Void> {
 
     private static final long serialVersionUID = 1L;
 
-    private final TranslationWorkflowPlugin translationWorkflowPlugin;
-
     private IModel<String> title;
-    private TextField<String> nameComponent;
-    private TextField<String> uriComponent;
-    private boolean uriModified;
-    private List<FolderTranslation> folders;
     private ISettingsService settingsService;
 
-    public DocumentTranslationDialog(TranslationWorkflowPlugin translationWorkflowPlugin, ISettingsService settings,
-            WorkflowAction action, IModel<String> title, List<FolderTranslation> folders, IModel<Boolean> autoTranslateContent,
+    public DocumentTranslationDialog(ISettingsService settings,
+            IWorkflowInvoker action, IModel<String> title, List<FolderTranslation> folders, IModel<Boolean> autoTranslateContent,
             String sourceLanguage, String targetLanguage,
             ILocaleProvider provider) {
-        action.super();
-        this.translationWorkflowPlugin = translationWorkflowPlugin;
+        super(null, action);
         this.settingsService = settings;
         this.title = title;
-        this.folders = folders;
 
         DocumentTranslationView dtv = new DocumentTranslationView("grid", folders,
                 sourceLanguage, targetLanguage,

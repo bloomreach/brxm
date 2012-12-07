@@ -18,19 +18,19 @@ package org.hippoecm.frontend.translation.workflow;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
+import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class FolderTranslationsWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public final class FolderTranslationsWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
 
@@ -41,15 +41,16 @@ public final class FolderTranslationsWorkflowPlugin extends CompatibilityWorkflo
     public FolderTranslationsWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        add(new WorkflowAction("folder-translations", new StringResourceModel("folder-translations", this, null)
-                .getObject(), new ResourceReference(FolderTranslationsWorkflowPlugin.class, "translations-16.png")) {
+        add(new StdWorkflow("folder-translations", new StringResourceModel("folder-translations", this, null),
+                            new ResourceReference(FolderTranslationsWorkflowPlugin.class, "translations-16.png"),
+                            context, (WorkflowDescriptorModel) getDefaultModel()) {
             private static final long serialVersionUID = 1L;
 
             @Override
             protected Dialog createRequestDialog() {
-                IModel workflowModel = FolderTranslationsWorkflowPlugin.this.getModel();
+                WorkflowDescriptorModel workflowModel = getModel();
                 try {
-                    JcrNodeModel nodeModel = new JcrNodeModel(((WorkflowDescriptorModel) workflowModel).getNode());
+                    JcrNodeModel nodeModel = new JcrNodeModel(workflowModel.getNode());
                     return new FolderTranslationsDialog(this, new StringResourceModel("folder-translations-title",
                             FolderTranslationsWorkflowPlugin.this, null), nodeModel, getLocaleProvider());
                 } catch (RepositoryException e) {

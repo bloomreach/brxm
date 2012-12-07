@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.reviewedactions;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.text.DateFormat;
 import java.util.Date;
 import java.util.Map;
 
@@ -27,47 +28,56 @@ import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.StdWorkflow;
+import org.hippoecm.addon.workflow.TextDialog;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
 
-public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
+public class FullRequestWorkflowPlugin extends RenderPlugin {
 
     private static final long serialVersionUID = 1L;
+
+    private final DateFormat dateFormatFull = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.FULL,
+                                                                             getSession().getLocale());
 
     private String state = "unknown";
     private Date schedule = null;
 
-    WorkflowAction acceptAction;
-    WorkflowAction rejectAction;
-    WorkflowAction cancelAction;
+    private final StdWorkflow acceptAction;
+    private final StdWorkflow rejectAction;
+    private final StdWorkflow cancelAction;
     
     public FullRequestWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
         add(new StdWorkflow("info", "info") {
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("state-"+state, this, null,
-                    new Object[] { (schedule!=null ? dateFormatFull.format(schedule) : "??") }, "unknown");
+                return new StringResourceModel("state-" + state, this, null,
+                                               new Object[]{(schedule != null ? dateFormatFull.format(
+                                                       schedule) : "??")}, "unknown");
             }
+
             @Override
             protected void invoke() {
             }
         });
 
-        add(acceptAction = new WorkflowAction("accept", new StringResourceModel("accept-request", this, null).getString(), null) {
+        add(acceptAction = new StdWorkflow("accept", new StringResourceModel("accept-request", this, null), getModel()) {
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "workflow-accept-16.png");
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
@@ -76,7 +86,7 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(rejectAction = new WorkflowAction("reject", new StringResourceModel("reject-request", this, null).getString(), null) {
+        add(rejectAction = new StdWorkflow("reject", new StringResourceModel("reject-request", this, null), context, getModel()) {
             public String reason;
 
             @Override
@@ -85,11 +95,15 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
             @Override
             protected Dialog createRequestDialog() {
-                return new WorkflowAction.TextDialog(new StringResourceModel("reject-request-title",
-                                                                             FullRequestWorkflowPlugin.this, null),
-                                                     new StringResourceModel("reject-request-text",
-                                                                             FullRequestWorkflowPlugin.this, null),
-                                                     new PropertyModel(this, "reason"));
+                return new TextDialog(
+                        new StringResourceModel("reject-request-title", FullRequestWorkflowPlugin.this, null),
+                        new StringResourceModel("reject-request-text", FullRequestWorkflowPlugin.this, null),
+                        new PropertyModel<String>(this, "reason")) {
+                    @Override
+                    public void invokeWorkflow() throws Exception {
+                        rejectAction.invokeWorkflow();
+                    }
+                };
             }
             @Override
             protected String execute(Workflow wf) throws Exception {
@@ -99,15 +113,18 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
         });
 
-        add(cancelAction = new WorkflowAction("cancel", new StringResourceModel("cancel-request", this, null).getString(), null) {
+        add(cancelAction = new StdWorkflow("cancel", new StringResourceModel("cancel-request", this, null), getModel()) {
+
             @Override
             protected ResourceReference getIcon() {
                 return new ResourceReference(getClass(), "delete-16.png");
             }
+
             @Override
             protected IModel getTitle() {
                 return new StringResourceModel("cancel-request", FullRequestWorkflowPlugin.this, null);
             }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
                 FullRequestWorkflow workflow = (FullRequestWorkflow) wf;
@@ -120,8 +137,8 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
         state = "unknown";
         try {
             WorkflowManager manager = getSession().getWorkflowManager();
-            WorkflowDescriptorModel workflowDescriptorModel = (WorkflowDescriptorModel)getDefaultModel();
-            WorkflowDescriptor workflowDescriptor = (WorkflowDescriptor)getDefaultModelObject();
+            WorkflowDescriptorModel workflowDescriptorModel = getModel();
+            WorkflowDescriptor workflowDescriptor = workflowDescriptorModel.getObject();
             if (workflowDescriptor != null) {
                 Node documentNode = workflowDescriptorModel.getNode();
 
@@ -153,5 +170,9 @@ public class FullRequestWorkflowPlugin extends CompatibilityWorkflowPlugin {
          } catch (RepositoryException ex) {
             // unknown, maybe there are legit reasons for this, so don't emit a warning
         }
+    }
+
+    public WorkflowDescriptorModel getModel() {
+        return (WorkflowDescriptorModel) getDefaultModel();
     }
 }
