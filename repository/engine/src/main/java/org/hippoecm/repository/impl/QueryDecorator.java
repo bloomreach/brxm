@@ -172,6 +172,7 @@ public class QueryDecorator extends org.hippoecm.repository.decorating.QueryDeco
     }
 
     static String mangleArguments(String statement) {
+        if (statement == null ) throw new IllegalArgumentException("Query statement is null");
         for (int position = statement.indexOf("$"); position >= 0; position = statement.indexOf("$", position)) {
             int endPosition = position + 1;
             if (Character.isJavaIdentifierStart(statement.charAt(endPosition))) {
