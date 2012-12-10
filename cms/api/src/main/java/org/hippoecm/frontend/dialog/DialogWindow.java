@@ -147,6 +147,9 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     }
 
     private static IModel<String> removeLineBreaks(IModel<String> stringModel) {
+        if (stringModel == null) {
+            return stringModel;
+        }
         final String s = stringModel.getObject();
         final String withoutLineBreaks = s.replaceAll(LINE_BREAKS_REGEX, "");
         if (s.equals(withoutLineBreaks)) {
