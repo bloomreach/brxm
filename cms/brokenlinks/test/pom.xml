@@ -64,27 +64,10 @@
       <version>${hippo.repository.version}</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-testutils</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-modules</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.onehippo.cms7</groupId>
-      <artifactId>hippo-repository-connector</artifactId>
-      <version>${hippo.repository.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
@@ -98,6 +81,21 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-testutils</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-dependencies</artifactId>
+      <version>${hippo.repository.version}</version>
+      <scope>test</scope>
+      <type>pom</type>
+    </dependency>
+
   </dependencies>
 
   <build>
