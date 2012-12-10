@@ -16,6 +16,8 @@
 package org.hippoecm.hst.core.container;
 
 
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+
 /**
  * CmsHostContextValve sets an attribute on the request that indicates it is a request from a CMS host context
  */
@@ -25,6 +27,8 @@ public class CmsHostContextValve extends AbstractValve {
     public void invoke(ValveContext context) throws ContainerException {
 
         context.getServletRequest().setAttribute(ContainerConstants.CMS_HOST_CONTEXT, Boolean.TRUE);
+        ((HstMutableRequestContext)context.getRequestContext()).setCmsRequest(true);
+        // from 2.28.00 and onwards, this REQUEST_COMES_FROM_CMS attr won't be set any more
         context.getServletRequest().setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS, Boolean.TRUE);
         context.invokeNext();
 

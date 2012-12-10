@@ -127,4 +127,10 @@ public interface HstMutableRequestContext extends HstRequestContext {
      * @param renderHost the host to be used for rendering
      */
     public void setRenderHost(String renderHost);
+
+    /**
+     * @param cmsRequest when the request is a cmsRequest have this parameter equal to <code>true</code>
+     * @see {@link #isCmsRequest()}
+     */
+    public void setCmsRequest(boolean cmsRequest);
 }

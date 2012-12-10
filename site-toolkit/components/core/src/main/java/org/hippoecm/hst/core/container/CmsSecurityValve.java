@@ -155,7 +155,7 @@ public class CmsSecurityValve extends AbstractValve {
 
         // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
         // if another thread flushes this session. 
-        if(Boolean.TRUE.equals(servletRequest.getAttribute(ContainerConstants.CMS_HOST_CONTEXT))) {
+        if(requestContext.isCmsRequest()) {
             // we are in a request for the REST template composer 
             synchronized (session) {
                 LazySession lazySession = null;

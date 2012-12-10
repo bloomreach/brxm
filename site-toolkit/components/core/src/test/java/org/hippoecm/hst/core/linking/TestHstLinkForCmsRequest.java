@@ -273,7 +273,9 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
         request.setQueryString(queryString);
         request.setRequestURI("/site" + requestURI);
 
+        requestContext.setCmsRequest(true);
         // set the magic attributes that are used to indicate that some request is triggered by cms (channel manager)
+        //  since 2.24.11 / 2.26.01  unused and replaced by requestContext.setCmsRequest(true);
         request.setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS, Boolean.TRUE);
         if (renderingHost != null) {
             request.setParameter(ContainerConstants.RENDERING_HOST, renderingHost);
@@ -282,7 +284,6 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
             request.setParameter("FORCE_CLIENT_HOST", "true");
         }
         VirtualHosts vhosts = hstManager.getVirtualHosts();
-        System.out.println(HstRequestUtils.getFarthestRequestHost(request));
         ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath(), HstRequestUtils.getRequestPath(request));
         return hstURLFactory.getContainerURLProvider().parseURL(request, response, mount);
     }

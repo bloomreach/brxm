@@ -27,6 +27,7 @@ import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -184,6 +185,19 @@ public class DocumentsResource implements DocumentService {
             }
         }
 
+        if (requestContext.isCmsRequest()) {
+            // although this is a cms request, the links that are requested now are links meant to share, like in
+            // 'twitter', 'facebook', 'linkedin' or for example the news letter manager. Hence, during url creation, we
+            // temporarily switch off that the request is a cms request
+            try {
+                ((HstMutableRequestContext)requestContext).setCmsRequest(false);
+                return bestLink.toUrlForm(requestContext, true);
+            } finally {
+                // switch it back
+                ((HstMutableRequestContext)requestContext).setCmsRequest(true);
+            }
+
+        }
         return bestLink.toUrlForm(requestContext, true);
     }
 
