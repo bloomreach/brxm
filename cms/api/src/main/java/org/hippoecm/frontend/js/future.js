@@ -223,10 +223,13 @@
      * @constructor
      */
     Hippo.Future = function (func) {
-        var _future = new _Future(func);
-        [ 'when', 'otherwise', 'transform', 'chain', 'retry', 'get' ].forEach(function (member) {
-            this[member] = _future[member].bind(_future);
-        }.bind(this));
+        var _future = new _Future(func),
+            publicMembers = [ 'when', 'otherwise', 'transform', 'chain', 'retry', 'get' ],
+            i, len;
+        // use a for-loop to be compatible with IE8
+        for (i = 0, len = publicMembers.length; i < len; i++) {
+            this[publicMembers[i]] = _future[publicMembers[i]].bind(_future);
+        }
     };
 
     /**
