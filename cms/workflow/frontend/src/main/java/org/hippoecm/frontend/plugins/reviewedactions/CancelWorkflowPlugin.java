@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.model.IModel;
@@ -32,7 +33,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.reviewedactions.BasicRequestWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -49,8 +49,6 @@ public class CancelWorkflowPlugin extends RenderPlugin {
     private String state = "unknown";
     private Date schedule = null;
 
-    StdWorkflow cancelAction;
-
     public CancelWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -58,8 +56,9 @@ public class CancelWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("state-"+state, this, null,
-                    new Object[] {  (schedule!=null ? dateFormatFull.format(schedule) : "??") }, "unknown");
+                final String resourceKey = "state-"+state;
+                final String parameter = schedule!=null ? dateFormatFull.format(schedule) : "??";
+                return new StringResourceModel(resourceKey, this, null, new Object[] { parameter }, "state-unknown");
             }
 
             @Override
@@ -67,6 +66,7 @@ public class CancelWorkflowPlugin extends RenderPlugin {
             }
         });
 
+        final StdWorkflow cancelAction;
         add(cancelAction = new StdWorkflow("cancel", new StringResourceModel("cancel-request", this, null), getModel()) {
 
             @Override
@@ -86,13 +86,17 @@ public class CancelWorkflowPlugin extends RenderPlugin {
         schedule = null;
         if (model != null) {
             try {
-                final Node jobNode = model.getNode();
-                if (jobNode.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
-                    state = JcrUtils.getStringProperty(jobNode, "hipposched:methodName", null);
-                    if (state == null) {
-                        state = deprecatedStateLookupMethod(jobNode);
-                    }
-                } else {
+                Node jobNode = model.getNode();
+                final String refId = JcrUtils.getStringProperty(jobNode, "hippopubwf:refId", null);
+                if (refId != null) {
+                    final Session session = jobNode.getSession();
+                    jobNode = session.getNodeByIdentifier(refId);
+                }
+                state = JcrUtils.getStringProperty(jobNode, "hipposched:methodName", null);
+                if (state == null) {
+                    state = deprecatedStateLookupMethod(jobNode);
+                }
+                if (state == null) {
                     state = "unknown";
                 }
                 if(jobNode.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
@@ -100,7 +104,7 @@ public class CancelWorkflowPlugin extends RenderPlugin {
                 } else if (jobNode.hasProperty("hippostdpubwf:reqdate")) {
                     schedule = new Date(jobNode.getProperty("hippostdpubwf:reqdate").getLong());
                 }
-                Map<String, Serializable> hints = ((WorkflowDescriptor)model.getObject()).hints();
+                final Map<String, Serializable> hints = model.getObject().hints();
                 if (hints.containsKey("cancelRequest") && !(Boolean) hints.get("cancelRequest")) {
                     cancelAction.setVisible(false);
                 }
@@ -123,7 +127,7 @@ public class CancelWorkflowPlugin extends RenderPlugin {
         } else if(data.contains("publish")) {
             return "publish";
         } else {
-            return "unknown";
+            return null;
         }
     }
 }
