@@ -53,6 +53,7 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionManager;
 
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
@@ -115,8 +116,21 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         info.put("copy", Boolean.valueOf(true));
         info.put("duplicate", Boolean.valueOf(true));
         info.put("move", Boolean.valueOf(true));
-        info.put("reorder", Boolean.valueOf(subject.getPrimaryNodeType().hasOrderableChildNodes()));
         info.put("prototypes", (Serializable) prototypes());
+
+        if (subject.getPrimaryNodeType().hasOrderableChildNodes()) {
+
+            NodeIterator nodes = subject.getNodes();
+            boolean isEnabled = false;
+            while (nodes.hasNext()) {
+                Node node = nodes.nextNode();
+                if (node.isNodeType(HippoNodeType.NT_HANDLE) || node.isNodeType(HippoStdNodeType.NT_FOLDER)) {
+                    isEnabled = true;
+                    break;
+                }
+            }
+            info.put("reorder", Boolean.valueOf(isEnabled));
+        }
         return info;
     }
 
