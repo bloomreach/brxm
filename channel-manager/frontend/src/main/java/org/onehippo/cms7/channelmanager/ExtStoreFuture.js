@@ -13,26 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+(function() {
+    "use strict";
 
-Ext.namespace('Hippo.ChannelManager');
+    Ext.namespace('Hippo.ChannelManager');
 
-Hippo.ChannelManager.ExtStoreFuture = Ext.extend(Hippo.Future, {
+    Hippo.ChannelManager.ExtStoreFuture = Ext.extend(Hippo.Future, {
 
-    constructor: function(config) {
-         Hippo.ChannelManager.ExtStoreFuture.superclass.constructor.call(this, function(success, fail) {
-            config.store.on('load', function() {
-                success({
-                    store: config.store
-                });
-            }, this, {single: true});
-            config.store.on('exception', function() {
-                fail();
-            }, this, {single: true});
-            config.store.load();
-        }.createDelegate(this));
-    }
+        constructor: function(config) {
+            Hippo.ChannelManager.ExtStoreFuture.superclass.constructor.call(this, function(success, fail) {
+                config.store.on('load', function() {
+                    success({
+                        store: config.store
+                    });
+                }, this, {single: true});
+                config.store.on('exception', function() {
+                    fail();
+                }, this, {single: true});
+                config.store.load();
+            }.createDelegate(this));
+        }
 
-});
+    });
 
-Ext.reg('Hippo.ChannelManager.ExtStoreFuture', Hippo.ChannelManager.ExtStoreFuture);
+    Ext.reg('Hippo.ChannelManager.ExtStoreFuture', Hippo.ChannelManager.ExtStoreFuture);
+
+}());

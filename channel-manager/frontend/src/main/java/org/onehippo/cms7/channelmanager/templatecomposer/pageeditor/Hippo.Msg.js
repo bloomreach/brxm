@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
 
 /**
  * Hippo.Msg is decorating Ext.Msg and makes alert, confirm and prompt blocking.
@@ -21,19 +20,22 @@
  * (e. g. important for asynchronous requests which could trigger hide while we are waiting for user input).
  */
 Hippo.Msg = (function() {
-    var msgQueue = [];
+    "use strict";
 
-    var blockingType = [],
+    var msgQueue = [],
+    blockingType = [],
     blocked = false,
-    waitTimeout;
-    blockingType['alert'] = true;
-    blockingType['confirm'] = true;
-    blockingType['prompt'] = true;
-    blockingType['show'] = false;
-    blockingType['wait'] = false;
-    blockingType['hide'] = false;
+    waitTimeout,
+    func;
 
-    var func = function(type, args) {
+    blockingType.alert = true;
+    blockingType.confirm = true;
+    blockingType.prompt = true;
+    blockingType.show = false;
+    blockingType.wait = false;
+    blockingType.hide = false;
+
+    func = function(type, args) {
         if (blocked) {
             if (blockingType[type]) {
                 msgQueue.push(function() {
@@ -61,7 +63,7 @@ Hippo.Msg = (function() {
                         nextMessage = msgQueue.shift();
                         nextMessage();
                     }
-                }
+                };
             }
         }
         Ext.Msg[type].apply(Ext.Msg, args);
@@ -97,5 +99,5 @@ Hippo.Msg = (function() {
             }
             func('hide', arguments);
         }
-    }
-})();
+    };
+}());

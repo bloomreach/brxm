@@ -13,32 +13,36 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
-Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+(function() {
+    "use strict";
 
-Hippo.ChannelManager.TemplateComposer.PlainVariantAdder = Ext.extend(Hippo.ChannelManager.TemplateComposer.VariantAdder, {
+    Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-    initComponent: function () {
-        var comboBox = new Ext.form.ComboBox({
-            store : this.getGlobalVariantsStore(),
-            valueField : 'id',
-            displayField : 'name',
-            triggerAction : 'all'
-        });
+    Hippo.ChannelManager.TemplateComposer.PlainVariantAdder = Ext.extend(Hippo.ChannelManager.TemplateComposer.VariantAdder, {
 
-        this.items = [ comboBox ];
-        this.buttons = [
-            {
-                text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-add-variant'],
-                handler: function() {
-                    var variant = comboBox.getValue();
-                    this.saveVariant(variant);
-                },
-                scope: this
-            }
-        ];
+        initComponent: function() {
+            var comboBox = new Ext.form.ComboBox({
+                store: this.getGlobalVariantsStore(),
+                valueField: 'id',
+                displayField: 'name',
+                triggerAction: 'all'
+            });
 
-        Hippo.ChannelManager.TemplateComposer.PlainVariantAdder.superclass.initComponent.apply(this, arguments);
-    }
+            this.items = [ comboBox ];
+            this.buttons = [
+                {
+                    text: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-button-add-variant'],
+                    handler: function() {
+                        var variant = comboBox.getValue();
+                        this.saveVariant(variant);
+                    },
+                    scope: this
+                }
+            ];
 
-});
+            Hippo.ChannelManager.TemplateComposer.PlainVariantAdder.superclass.initComponent.apply(this, arguments);
+        }
+
+    });
+
+}());

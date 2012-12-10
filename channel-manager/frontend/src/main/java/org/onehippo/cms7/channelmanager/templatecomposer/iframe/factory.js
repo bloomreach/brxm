@@ -13,17 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
 (function($) {
-    var jQuery = $;
+    "use strict";
+
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
+
+    var Main, Factory;
 
     if (!Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory) {
 
-        var Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+        Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
 
         // TODO refactor, this is a module
-        var Factory = function() {
+        Factory = function() {
             this.objects = {};
             this.registry = {};
 
@@ -101,7 +103,7 @@
 
                 //Not very sexy this..
                 xtype = hstContainerMetaData[HST.ATTR.XTYPE];
-                if (typeof xtype === 'undefined' || xtype == null || xtype == '') {
+                if (typeof xtype === 'undefined' || xtype === null || xtype === '') {
                     if (type === HST.CONTAINER) {
                         xtype = 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base';
                     } else if (type === HST.CONTAINERITEM) {
@@ -159,32 +161,31 @@
             },
 
             getContainerMetaData : function(element) {
-                var exception, childNodes, children, i, descendants, j, len, hstMetaData, tmpElement;
+                var exception, childNodes, children, i, descendants, j, len, childrenLen, descendantsLen, hstMetaData, tmpElement;
                 exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
                 if (element.className === HST.CLASS.ITEM) {
-                    if (element.tagName == 'TR') {
+                    if (element.tagName === 'TR') {
                         children = element.childNodes;
                         childNodes = [];
-                        for (i = 0; i < children.length; i++) {
-                            if (children[i].tagName != 'TD') {
-                                continue;
-                            }
-                            descendants = children[i].childNodes;
-                            for (j = 0; j < descendants.length; j++) {
-                                childNodes.push(descendants[j]);
+                        for (i = 0, childrenLen = children.length; i < childrenLen; i++) {
+                            if (children[i].tagName === 'TD') {
+                                descendants = children[i].childNodes;
+                                for (j = 0, descendantsLen = descendants.length; j < descendantsLen; j++) {
+                                    childNodes.push(descendants[j]);
+                                }
                             }
                         }
                     } else {
                         childNodes = element.childNodes;
                     }
-                    for (i=0, len=childNodes.length; i<len; i++) {
+                    for (i = 0, len = childNodes.length; i < len; i++) {
                         try {
                             hstMetaData = this.convertToHstMetaData(childNodes[i]);
                             if (hstMetaData !== null) {
                                 return hstMetaData;
                             }
-                        } catch (exception) {
-                            exception(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, Hippo.Util.getElementPath(element)) + ' ' + exception);
+                        } catch (e) {
+                            exception(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, Hippo.Util.getElementPath(element)) + ' ' + e);
                         }
                     }
                 } else if (element.className === HST.CLASS.CONTAINER) {
@@ -196,8 +197,8 @@
                             if (hstMetaData !== null) {
                                 return hstMetaData;
                             }
-                        } catch (exception) {
-                            exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + exception);
+                        } catch (ex) {
+                            exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + ex);
                         }
                     }
                 }
@@ -209,10 +210,10 @@
                 if (element.nodeType !== 8) {
                     return null;
                 }
-                if (!element.data || element.data.length == 0
-                        || !element.data.indexOf(HST.ATTR.ID) === -1
-                        || !element.data.indexOf(HST.ATTR.TYPE) === -1
-                        || !element.data.indexOf(HST.ATTR.XTYPE) === -1) {
+                if (!element.data || element.data.length === 0
+                        || element.data.indexOf(HST.ATTR.ID) === -1
+                        || element.data.indexOf(HST.ATTR.TYPE) === -1
+                        || element.data.indexOf(HST.ATTR.XTYPE) === -1) {
                     return null;
                 }
                 commentJsonObject = JSON.parse(element.data);
@@ -229,4 +230,4 @@
 
         Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory = new Factory();
     }
-})(jQuery);
+}(jQuery));

@@ -42,7 +42,7 @@ Ext.ux.ColorField = Ext.extend(Ext.form.TriggerField,  {
         if (this.disabled) {
             return;
         }
-        if (this.menu == null) {
+        if (this.menu === null) {
             this.menu = new Ext.ux.ColorMenu({
                 hideOnClick: false,
                 fallback: this.fallback
@@ -77,7 +77,7 @@ Ext.ux.ColorField = Ext.extend(Ext.form.TriggerField,  {
             if (!this.value) {
                 value = 'FFFFFF';
             } else {
-                h2d = function(d){ return parseInt(d, 16); }
+                h2d = function(d){ return parseInt(d, 16); };
                 value = [
                     h2d(this.value.slice(1, 3)),
                     h2d(this.value.slice(3, 5)),
@@ -142,14 +142,14 @@ Ext.ux.ColorMenu.prototype.wheelImage = (function() {
     wheelImage.onload = Ext.emptyFn;
     wheelImage.src = 'resources/org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle/colorfield/images/wheel.png';
     return wheelImage;
-})();
+}());
 
 Ext.ux.ColorMenu.prototype.gradientImage = (function() {
     var gradientImage = new Image();
     gradientImage.onload = Ext.emptyFn;
     gradientImage.src = 'resources/org.onehippo.cms7.channelmanager.templatecomposer.plugins.PluginsBundle/colorfield/images/gradient.png';
     return gradientImage;
-})();
+}());
 
 Ext.ux.ColorPicker = function(config) {
     Ext.ux.ColorPicker.superclass.constructor.call(this, config);
@@ -245,13 +245,13 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
         
         try {
             data = context.getImageData(coords[0], coords[1], 1, 1);
-        } catch(e) { return; } // The user selected an area outside the <canvas>
+        } catch(exception) { return; } // The user selected an area outside the <canvas>
         
         // Disallow selecting transparent regions
-        if (data.data[3] == 0) {
+        if (data.data[3] === 0) {
             context = this.gradient.getContext('2d');
             data = context.getImageData(coords[0], coords[1], 1, 1);
-            if (data.data[3] == 0) {
+            if (data.data[3] === 0) {
                 return;
             }
             
@@ -274,7 +274,7 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
             this.gradient.setAttribute('width', '200');
             this.gradient.setAttribute('height', '200');
             this.gradient.setAttribute('class', 'x-color-picker-gradient');
-            if (typeof G_vmlCanvasManager != 'undefined') {
+            if (typeof G_vmlCanvasManager !== 'undefined') {
                 this.gradient = G_vmlCanvasManager.initElement(this.gradient);
             }
             Ext.get(this.gradient).on('click', this.select, this);
@@ -300,9 +300,9 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
     hexValue : function(r, g, b) {
         var chars = '0123456789ABCDEF';
         return '#'+(
-            chars[parseInt(r/16)] + chars[parseInt(r%16)] +
-            chars[parseInt(g/16)] + chars[parseInt(g%16)] +
-            chars[parseInt(b/16)] + chars[parseInt(b%16)]
+            chars[parseInt(r/16, 10)] + chars[parseInt(r%16, 10)] +
+            chars[parseInt(g/16, 10)] + chars[parseInt(g%16, 10)] +
+            chars[parseInt(b/16, 10)] + chars[parseInt(b%16, 10)]
         );
     },
     

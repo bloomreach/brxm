@@ -13,16 +13,17 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
 (function($) {
+    "use strict";
 
-    var jQuery = $;
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
 
-    var Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
-    var Factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
+    var Main, Factory, page;
 
-    var page = {
+    Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+    Factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
+
+    page = {
         overlay : null,
         current : null,
         containers : {},
@@ -106,7 +107,7 @@
 
         retrieve : function(id) {
             var o = Factory.getById.call(Factory, id);
-            if (o == null) {
+            if (o === null) {
                 Main.exception(this.resources['manager-object-not-found'].format(id));
             }
             return o;
@@ -130,9 +131,9 @@
         select: function(id) {
             console.log('this.current = this.retrieve(element);');
             var selection = this.retrieve(id);
-            if (this.current == selection) {
+            if (this.current === selection) {
                 return;
-            } else if (this.current != null) {
+            } else if (this.current !== null) {
                 this.current.deselect();
             }
             this.current = selection;
@@ -141,7 +142,7 @@
         },
 
         deselect : function() {
-            if (this.current != null) {
+            if (this.current !== null) {
                 this.current.deselect();
                 this.current = null;
                 sendMessage({}, 'deselect');
@@ -166,12 +167,12 @@
             id = element.getAttribute(HST.ATTR.ID);
             xtype = element.getAttribute(HST.ATTR.XTYPE);
 
-            if (type == HST.CONTAINERITEM) {
+            if (type === HST.CONTAINERITEM) {
                 container = this.containers[id];
                 if(!!container && container.removeItem(id)) {
                     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.deleteObjectRef(id);
                 }
-            } else if (type == HST.CONTAINER) {
+            } else if (type === HST.CONTAINER) {
                 container = this.containers[id];
                 if (!!container) {
                     container.remove();
@@ -183,7 +184,7 @@
         },
 
         onDragStart : function(ui, container) {
-            if(this.dropIndicator == null) {
+            if(this.dropIndicator === null) {
                 this.dropIndicator = $('<div id="hst-drop-indicator"/>').appendTo(document.body);
                 this.dropIndicator.css('position', 'absolute');
             }
@@ -194,7 +195,7 @@
         },
 
         onDrag : function(ui, container) {
-            var c = this.currentContainer == null ? container : this.currentContainer;
+            var c = this.currentContainer === null ? container : this.currentContainer;
             c.drawDropIndicator(ui, this.dropIndicator);
         },
 
@@ -204,7 +205,7 @@
         },
 
         onDragStop : function() {
-            if(this.dropIndicator != null) {
+            if(this.dropIndicator !== null) {
                 this.dropIndicator.remove();
                 this.dropIndicator = null;
             }
@@ -272,4 +273,4 @@
 
     Main.subscribe('initialize', page.init, page);
 
-})(jQuery);
+}(jQuery));

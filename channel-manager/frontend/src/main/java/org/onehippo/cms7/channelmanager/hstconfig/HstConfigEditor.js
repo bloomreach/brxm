@@ -13,34 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+(function() {
+    "use strict";
 
-Ext.namespace('Hippo.ChannelManager.HstConfigEditor');
+    Ext.namespace('Hippo.ChannelManager.HstConfigEditor');
 
-/**
- * @class Hippo.ChannelManager.HstConfigEditor
- * @extends Ext.Panel
- */
-Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
-    constructor: function(config) {
-        this.resources = config.resources;
+    /**
+     * @class Hippo.ChannelManager.HstConfigEditor
+     * @extends Ext.Panel
+     */
+    Hippo.ChannelManager.HstConfigEditor.Container = Ext.extend(Ext.Panel, {
+        constructor: function(config) {
+            this.resources = config.resources;
 
-        this.title = config.title;
-        config.header = false;
+            this.title = config.title;
+            config.header = false;
 
-        Hippo.ChannelManager.HstConfigEditor.Container.superclass.constructor.call(this, config);
+            Hippo.ChannelManager.HstConfigEditor.Container.superclass.constructor.call(this, config);
 
 
-        this.on('titlechange', function(panel, title) {
-            this.title = title;
-        });
-    },
+            this.on('titlechange', function(panel, title) {
+                this.title = title;
+            });
+        },
 
-    initEditor: function() {
-        Ext.getCmp('rootPanel').showConfigEditor();
-        document.getElementById('Hippo.ChannelManager.HstConfigEditor.Instance').className = 'x-panel';
-    }
+        initEditor: function() {
+            Ext.getCmp('rootPanel').showConfigEditor();
+            document.getElementById('Hippo.ChannelManager.HstConfigEditor.Instance').className = 'x-panel';
+        }
 
-});
+    });
 
-Ext.reg('Hippo.ChannelManager.HstConfigEditor.Container', Hippo.ChannelManager.HstConfigEditor.Container);
+    Ext.reg('Hippo.ChannelManager.HstConfigEditor.Container', Hippo.ChannelManager.HstConfigEditor.Container);
+
+}());

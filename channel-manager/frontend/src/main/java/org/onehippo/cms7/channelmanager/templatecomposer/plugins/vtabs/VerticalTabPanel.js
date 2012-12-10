@@ -2,7 +2,7 @@
  * @class Ext.ux.tot2ivn.VrTabPanel
  * @version		0.21		Tested working with ExtJS 3.2+ on IE6+, FireFox 2+, Chrome 4+, Opera 9.6+, Safari 4+
  * @author	Anh Nguyen (Totti)
- * @description		Vertical TabPanel implements the same set of features as those of Ext.TabPanel. 
+ * @description		Vertical TabPanel implements the same set of features as those of Ext.TabPanel.
  *	Tab position defaults to 'left'. Position 'right' is not supported.
  *	Auto-scrolling currently not implemented.
  *  Three config properties users would want to config are :
@@ -10,7 +10,7 @@
 	@cfg tabWidth
 	@cfg tabMarginTop
 	See description of config properties below.
-	
+
  * @extends Ext.Panel
  * @constructor
  * @param {Object} config The configuration options
@@ -36,7 +36,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
      * @cfg {Number} tabMarginTop The initial top margin in pixels of the tab strip. (defaults to 15).
      */
 	tabMarginTop : 15,
-	
+
 	/**
      * @cfg {Boolean} layoutOnTabChange
      * Set to true to force a layout of the active tab when the tab is changed. Defaults to false.
@@ -50,7 +50,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
     /**
      * @cfg {Boolean} deferredRender
      */
-    deferredRender : true,    
+    deferredRender : true,
     /**
      * @cfg {Number} minTabWidth The minimum width in pixels for each tab when {@link #resizeTabs} = true (defaults to 30).
      */
@@ -94,12 +94,12 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
      * <tt>tabPosition: 'top'</tt>. Config property internally remained 'top' to reuse Ext.TabPanel styles.
      */
     tabPosition : 'top',
-    
+
 	/**
      * @cfg {String} baseCls The base CSS class applied to the panel (defaults to <tt>'x-tab-panel'</tt>).
      */
     baseCls : 'x-tab-panel x-tot2ivn-vr-tab-panel',
-    
+
 	/**
      * @cfg {Boolean} autoTabs
      */
@@ -154,7 +154,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
     initComponent : function(){
         this.frame = false;
         Ext.ux.tot2ivn.VrTabPanel.superclass.initComponent.call(this);
-		
+
 		// Add border
 		if (this.border) {
 			this.style = 'border: 1px solid #99BBE8; ' + this.style;
@@ -199,7 +199,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
             deferredRender: this.deferredRender
         }, this.layoutConfig)));
 
-        if (this.tabPosition == 'top') {
+        if (this.tabPosition === 'top') {
             this.elements += ',header';
             this.stripTarget = 'header';
         } else {
@@ -214,12 +214,12 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
 
     // private
     onRender : function(ct, position) {
-        var st, beforeEl, tt;
+        var st, beforeEl, tt, pos;
         Ext.ux.tot2ivn.VrTabPanel.superclass.onRender.call(this, ct, position);
 
         if (this.plain) {
-            var pos = this.tabPosition == 'top' ? 'header' : 'footer';
-            this[pos].addClass('x-tab-panel-'+pos+'-plain');
+            pos = this.tabPosition === 'top' ? 'header' : 'footer';
+            this[pos].addClass('x-tab-panel-' + pos + '-plain');
         }
 
         st = this[this.stripTarget];
@@ -234,7 +234,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
             }
         });
 
-        beforeEl = (this.tabPosition=='bottom' ? this.stripWrap : null);
+        beforeEl = (this.tabPosition === 'bottom' ? this.stripWrap : null);
         st.createChild({cls:'x-tab-strip-spacer x-tot2ivn-vr-tab-strip-spacer'}, beforeEl);
         this.strip = new Ext.Element(this.stripWrap.dom.firstChild);
 
@@ -330,7 +330,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
             }
             return;
         }
-        if (t.item && t.item != this.activeTab) {
+        if (t.item && t.item !== this.activeTab) {
             this.setActiveTab(t.item);
         }
     },
@@ -451,7 +451,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
         if (this.rendered) {
             items = this.items;
             this.initTab(c, items.indexOf(c));
-            if (items.getCount() == 1) {
+            if (items.getCount() === 1) {
                 this.syncSize();
             }
             this.delegateUpdates();
@@ -488,7 +488,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
         c.un('titlechange', this.onItemTitleChanged, this);
         c.un('iconchange', this.onItemIconChanged, this);
         c.un('beforeshow', this.onBeforeShowItem, this);
-        if (!this.removingAll && c == this.activeTab) {
+        if (!this.removingAll && c === this.activeTab) {
             next = this.stack.next();
             if (next) {
                 this.setActiveTab(next);
@@ -511,7 +511,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
 
     // private
     onBeforeShowItem : function(item) {
-        if (item != this.activeTab) {
+        if (item !== this.activeTab) {
             this.setActiveTab(item);
             return false;
         }
@@ -656,7 +656,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
     autoSizeTabs : function() {
         var count, ce, ow, aw, each, lis, i, len, li, inner, tw, iw;
         count = this.items.length;
-        ce = this.tabPosition != 'bottom' ? 'header' : 'footer';
+        ce = this.tabPosition !== 'bottom' ? 'header' : 'footer';
         ow = this[ce].dom.offsetWidth;
         aw = this[ce].dom.clientWidth;
 
@@ -710,7 +710,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
             this.activeTab = item;
             return;
         }
-        if (this.activeTab != item) {
+        if (this.activeTab !== item) {
             if (this.activeTab) {
                 oldEl = this.getTabEl(this.activeTab);
                 if (oldEl) {
@@ -753,7 +753,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
 
     // private
     autoScrollTabs : function() {
-        this.pos = this.tabPosition=='bottom' ? this.footer : this.header;
+        this.pos = this.tabPosition === 'bottom' ? this.footer : this.header;
         var count = this.items.length,
             ow = this.pos.dom.offsetHeight,
             tw = this.pos.dom.clientHeight,
@@ -913,7 +913,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
         sw = this.getScrollHeight()-this.getScrollArea();
 
         s = Math.max(0, Math.min(sw, newpos));
-        if (s != pos) {
+        if (s !== pos) {
             this.scrollTo(s, false);
         }
     },
@@ -923,7 +923,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
         var sw = this.getScrollHeight()-this.getScrollArea(),
             pos = this.getScrollPos(),
             s = Math.min(sw, pos + this.getScrollIncrement());
-        if (s != pos) {
+        if (s !== pos) {
             this.scrollTo(s, this.animScroll);
         }
     },
@@ -932,7 +932,7 @@ Ext.ux.tot2ivn.VrTabPanel = Ext.extend(Ext.Panel,  {
     onscrollTop : function(){
         var pos = this.getScrollPos(),
             s = Math.max(0, pos - this.getScrollIncrement());
-        if (s != pos) {
+        if (s !== pos) {
             this.scrollTo(s, this.animScroll);
         }
     },
@@ -1026,7 +1026,7 @@ Ext.ux.tot2ivn.VrTabPanel.AccessStack = function(){
             var s, i, len;
             s = [];
             for (i = 0, len = items.length; i < len; i++) {
-                if (items[i] != item){
+                if (items[i] !== item){
                     s.push(items[i]);
                 }
             }

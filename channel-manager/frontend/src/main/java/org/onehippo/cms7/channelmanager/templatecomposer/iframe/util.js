@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
 (function($) {
-    var jQuery = $;
+    "use strict";
+
     $.namespace('Hippo.Util');
 
     Hippo.Util.Map = Class.extend({
@@ -49,7 +49,7 @@
                 delete this.values[key];
                 return v;
             } else {
-                throw new Error('Remove failed: No entry found for key ' + key)
+                throw new Error('Remove failed: No entry found for key ' + key);
             }
         },
 
@@ -106,7 +106,7 @@
         updateOrder : function (order) {
             var old = this.keys;
             this.keys = order;
-            return order != old;
+            return order !== old;
         }
     });
 
@@ -142,10 +142,10 @@
                     top: src.offset.top
                 };
 
-                if(direction == HST.DIR.VERTICAL) {
+                if(direction === HST.DIR.VERTICAL) {
                     ind.width -= (ind.width  * opts.thresholdLow);
                     ind.height = opts.min > 0 ? opts.min : ind.height - (ind.height * opts.thresholdHigh);
-                } else if(direction == HST.DIR.HORIZONTAL) {
+                } else if(direction === HST.DIR.HORIZONTAL) {
                     ind.height -= (ind.height * opts.thresholdLow);
                     ind.width = opts.min > 0 ? opts.min : ind.width - (ind.width * opts.thresholdHigh);
                 }
@@ -171,10 +171,10 @@
 
         after : function(source, el, direction, opts) {
             this._draw('after', source, el, function(data) {
-                if(direction == HST.DIR.VERTICAL) {
+                if(direction === HST.DIR.VERTICAL) {
                     data.ind.left += (data.src.width-data.ind.width) / 2;
                     data.ind.top  += data.src.height + this.config.afterOffset;
-                } else if(direction == HST.DIR.HORIZONTAL) {
+                } else if(direction === HST.DIR.HORIZONTAL) {
                     data.ind.left += data.src.width + this.config.afterOffset;
                     data.ind.top -= this.config.afterOffset;
                 }
@@ -183,10 +183,10 @@
 
         before : function(source, el, direction, opts) {
             this._draw('before', source, el, function(data) {
-                if(direction == HST.DIR.VERTICAL) {
+                if(direction === HST.DIR.VERTICAL) {
                     data.ind.left += (data.src.width - data.ind.width) / 2;
                     data.ind.top -= this.config.beforeOffset;
-                } else if(direction == HST.DIR.HORIZONTAL) {
+                } else if(direction === HST.DIR.HORIZONTAL) {
                     data.ind.left -= this.config.beforeOffset;
                     data.ind.top -= this.config.beforeOffset;
                 }
@@ -199,11 +199,11 @@
             this._draw('between', prev, el, function(data) {
 
                 nextPosition = next.offset();
-                if(direction == HST.DIR.VERTICAL) {
+                if(direction === HST.DIR.VERTICAL) {
                     data.ind.left += (data.src.width - data.ind.width) / 2;
                     bottom = data.ind.top + data.src.height;
                     data.ind.top = bottom + ((nextPosition.top - bottom) / 2) - (data.ind.height/2);
-                } else if(direction == HST.DIR.HORIZONTAL) {
+                } else if(direction === HST.DIR.HORIZONTAL) {
                     data.ind.left += data.src.width;
                 }
 
@@ -217,7 +217,7 @@
     
     Hippo.Util.getElementPath = function(element) {
         var path = "", nodeString = "", node = element;
-        while (node.parentNode != null) {
+        while (node.parentNode !== null) {
             nodeString = node.tagName;
             if (node.id) {
                 nodeString += "[id="+node.id+"]";
@@ -245,12 +245,12 @@
         if (str === "true") {
             return true;
         } else if (str === "false") {
-            return false
+            return false;
         }
         return null;
     };
 
-})(jQuery);
+}(jQuery));
 
 
 //Copied from http://ejohn.org/blog/javascript-array-remove/

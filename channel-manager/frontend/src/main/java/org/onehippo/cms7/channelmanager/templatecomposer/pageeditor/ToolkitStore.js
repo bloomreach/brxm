@@ -13,37 +13,37 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
+(function() {
+    "use strict";
 
-Hippo.ChannelManager.TemplateComposer.ToolkitStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
+    Hippo.ChannelManager.TemplateComposer.ToolkitStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
-    constructor : function(config) {
-        var proxy, cfg;
-        proxy = new Ext.data.HttpProxy({
-            api: {
-                read     : config.composerRestMountUrl + '/' +config.mountId + './toolkit?FORCE_CLIENT_HOST=true'
-                ,create  : '#'
-                ,update  : '#'
-                ,destroy : '#'
-            }
-        });
+        constructor: function(config) {
+            var proxy, cfg;
+            proxy = new Ext.data.HttpProxy({
+                api: {
+                    read: config.composerRestMountUrl + '/' + config.mountId + './toolkit?FORCE_CLIENT_HOST=true', create: '#', update: '#', destroy: '#'
+                }
+            });
 
-        cfg = {
-            id: 'ToolkitStore',
-            proxy: proxy,
-            prototypeRecord :  [
-                {name: 'id', mapping: 'id'},
-                {name: 'name', mapping: 'name'},
-                {name: 'label', mapping: 'label'},
-                {name: 'iconURL', mapping: 'iconURL'},
-                {name: 'componentClassName', mapping: 'componentClassName'},
-                {name: 'template', mapping: 'template'},
-                {name: 'xtype', mapping: 'xtype'}
-            ]
-        };
+            cfg = {
+                id: 'ToolkitStore',
+                proxy: proxy,
+                prototypeRecord: [
+                    {name: 'id', mapping: 'id'},
+                    {name: 'name', mapping: 'name'},
+                    {name: 'label', mapping: 'label'},
+                    {name: 'iconURL', mapping: 'iconURL'},
+                    {name: 'componentClassName', mapping: 'componentClassName'},
+                    {name: 'template', mapping: 'template'},
+                    {name: 'xtype', mapping: 'xtype'}
+                ]
+            };
 
-        Ext.apply(config, cfg);
+            Ext.apply(config, cfg);
 
-        Hippo.ChannelManager.TemplateComposer.ToolkitStore.superclass.constructor.call(this, config);
-    }
-});
+            Hippo.ChannelManager.TemplateComposer.ToolkitStore.superclass.constructor.call(this, config);
+        }
+    });
+
+}());

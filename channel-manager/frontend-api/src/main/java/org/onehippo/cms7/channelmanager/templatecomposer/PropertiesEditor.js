@@ -13,26 +13,28 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
-Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+(function() {
+    "use strict";
 
-Hippo.ChannelManager.TemplateComposer.PropertiesEditor = Ext.extend(Ext.Panel, {
+    Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-    componentId: null,
-    variant: null,
-    propertiesForm: null,
+    Hippo.ChannelManager.TemplateComposer.PropertiesEditor = Ext.extend(Ext.Panel, {
 
-    constructor: function(config) {
-        Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.constructor.call(this, config);
-        this.componentId = config.componentId;
-        this.variant = config.variant;
-        this.propertiesForm = config.propertiesForm;
-    },
+        componentId: null,
+        variant: null,
+        propertiesForm: null,
 
-    load: function() {
-        return this.propertiesForm.load();
-    }
+        constructor: function(config) {
+            Hippo.ChannelManager.TemplateComposer.PropertiesEditor.superclass.constructor.call(this, config);
+            this.componentId = config.componentId;
+            this.variant = config.variant;
+            this.propertiesForm = config.propertiesForm;
+        },
 
-});
+        load: function() {
+            return this.propertiesForm.load();
+        }
 
+    });
 
+}());

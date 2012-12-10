@@ -145,22 +145,36 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <configuration>
+          <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
+          <disallowInsecureCharsInRegExp>false</disallowInsecureCharsInRegExp>
+          <excludes>
+            <exclude>org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/**/*.js</exclude>
+          </excludes>
+          <predefinedVars>
+            ActiveXObject,
+            Class,
+            Ext,
+            G_vmlCanvasManager,
+            Hippo,
+            HST,
+            jQuery,
+            onhostmessage,
+            sendMessage,
+            XPathResult,
+            YAHOO,
+            window
+          </predefinedVars>
+          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <tolerateEval>true</tolerateEval>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
-        <version>1.2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compress</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
-          <excludes>
-            <exclude>**/*.html</exclude>
-            <exclude>**/*.css</exclude>
-            <exclude>**/*.properties</exclude>
-          </excludes>
           <aggregations>
             <!-- iframe bundle -->
             <aggregation>

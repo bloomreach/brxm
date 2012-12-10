@@ -31,22 +31,21 @@
     </resources>
     <plugins>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <configuration>
+          <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
+          <predefinedVars>
+            Ext,
+            Hippo
+          </predefinedVars>
+          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>net.alchim31.maven</groupId>
         <artifactId>yuicompressor-maven-plugin</artifactId>
-        <version>1.2</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compress</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
-          <excludes>
-            <exclude>**/*.html</exclude>
-            <exclude>**/*.css</exclude>
-            <exclude>**/*.properties</exclude>
-          </excludes>
           <aggregations>
             <!-- template composer API bundle -->
             <aggregation>

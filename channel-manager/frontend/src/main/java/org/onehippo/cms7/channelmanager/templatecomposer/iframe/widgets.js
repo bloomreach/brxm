@@ -13,10 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
 (function($) {
+    "use strict";
 
-    var jQuery = $;
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem');
 
     var Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
@@ -84,10 +83,10 @@
 
             parentOverlay = $.isFunction(parent.getOverlay) ? parent.getOverlay() : document.body;
             overlay = $('<div/>').addClass(this.cls.overlay.base).appendTo(parentOverlay);
-            if(this.cls.overlay.mark != null) {
+            if(this.cls.overlay.mark !== null) {
                 overlay.addClass(this.cls.overlay.mark);
             }
-            if(this.cls.overlay.custom != null) {
+            if(this.cls.overlay.custom !== null) {
                 overlay.addClass(this.cls.overlay.custom);
             }
             if (this.el.attr(HST.ATTR.INHERITED)) {
@@ -251,7 +250,7 @@
             };
 
             //workaround: set to opposite to evoke this.sync() to render an initially correct UI
-            this.isEmpty = $(this.sel.itemWrapper).size() == 0;
+            this.isEmpty = $(this.sel.itemWrapper).size() === 0;
 
             var self = this;
             $(this.sel.itemWrapper).each(function() {
@@ -284,11 +283,13 @@
         },
 
         _insertNewItem : function(element, exists, index) {
-            var item = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.createOrRetrieve(element);
+            var item, itemElement;
+
+            item = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.createOrRetrieve(element);
             if (item !== null) {
                 this.items.put(item.id, item, index);
                 if(!exists) {
-                    var itemElement = this.createItemElement(item.element);
+                    itemElement = this.createItemElement(item.element);
                     this.appendItem(itemElement, index);
                 }
             }
@@ -301,13 +302,15 @@
 
         //if container is empty, make sure it still has a size so items form a different container can be dropped
         _checkEmpty : function() {
-            if(this.items.size() == 0) {
+            var tmpCls, item;
+
+            if(this.items.size() === 0) {
                 if(!this.el.hasClass(this.cls.emptyContainer)) {
                     this.el.addClass(this.cls.emptyContainer);
                     this.overlay.addClass(this.cls.emptyContainer);
-                    var tmpCls = this.cls.item;
+                    tmpCls = this.cls.item;
                     this.cls.item = this.cls.emptyItem;
-                    var item = this.createItemElement($('<div class="empty-container-placeholder">Drop Component Here</div>').hide()[0]);
+                    item = this.createItemElement($('<div class="empty-container-placeholder">Drop Component Here</div>').hide()[0]);
                     this.appendItem(item);
                     this.cls.item = tmpCls;
                 }
@@ -395,7 +398,7 @@
             self = this;
             $(this.sel.sort.items).each(function(index) {
                 itemId = $(this).attr(HST.ATTR.ID);
-                if (itemId == id) {
+                if (itemId === id) {
                     item.onDragStop(event, ui);
                     item.destroy();
                     self.add(item.element, index);
@@ -417,7 +420,7 @@
 
         drawDropIndicator : function(ui, el) {
             var prev, next, getEl, original;
-            if (ui.placeholder.siblings().length == 0) {
+            if (ui.placeholder.siblings().length === 0) {
                 //draw indicator inside empty container
                 this.draw.inside(this.el, el, this.direction);
             } else {
@@ -427,12 +430,12 @@
                     return Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory.getById(_el.attr(HST.ATTR.ID)).el;
                 };
                 original = ui.item[0];
-                if(prev[0] == original || (next.length > 0 && next[0] == original)) {
+                if(prev[0] === original || (next.length > 0 && next[0] === original)) {
                     this.draw.inside(getEl(ui.item), el, this.direction);
                 } else {
-                    if(prev.length == 0) {
+                    if(prev.length === 0) {
                         this.draw.before(getEl(next), el, this.direction);
-                    } else if (next.length == 0) {
+                    } else if (next.length === 0) {
                         this.draw.after(getEl(prev), el, this.direction);
                     } else {
                         this.draw.between(getEl(prev), getEl(next), el, this.direction);
@@ -576,11 +579,11 @@
         },
 
         appendItem : function(item, index) {
-            if ($(this.sel.append.item).size() == 0) {
+            if ($(this.sel.append.item).size() === 0) {
                 $(this.sel.append.container).append(item);
             } else {
                 if(index > -1) {
-                    if(index == 0) {
+                    if(index === 0) {
                         item.insertBefore(this.sel.append.insertAt + ':eq(0)');
                     } else {
                         item.insertAfter(this.sel.append.insertAt + ':eq(' + (index-1) + ')');
@@ -843,12 +846,12 @@
 
         orderChanged : function(test) {
             var i;
-            if(test.length != this.previousOrder.length) {
+            if(test.length !== this.previousOrder.length) {
                 return true;
             }
 
             for (i=0; i<test.length; i++) {
-                if(test[i] != this.previousOrder[i]) {
+                if(test[i] !== this.previousOrder[i]) {
                     return true;
                 }
             }
@@ -862,4 +865,4 @@
         }
     };
 
-})(jQuery);
+}(jQuery));

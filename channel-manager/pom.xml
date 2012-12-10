@@ -22,6 +22,9 @@
     <hippo.addon-hst-configuration-editor.version>1.11.00</hippo.addon-hst-configuration-editor.version>
     <commons-lang.version>2.1</commons-lang.version>
 
+    <jslint.plugin.version>1.0.1</jslint.plugin.version>
+    <yuicompressor.plugin.version>1.3.2</yuicompressor.plugin.version>
+
     <!-- test related -->
     <junit.version>4.5</junit.version>
     <easymock.version>3.0</easymock.version>
@@ -105,5 +108,47 @@
     <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</developerConnection>
     <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/addons/addon-channel-manager/trunk</url>
   </scm>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jslint-maven-plugin</artifactId>
+          <version>${jslint.plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>jslint</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>net.alchim31.maven</groupId>
+          <artifactId>yuicompressor-maven-plugin</artifactId>
+          <version>${yuicompressor.plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>compress</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <excludes>
+              <exclude>**/*.html</exclude>
+              <exclude>**/*.css</exclude>
+              <exclude>**/*.properties</exclude>
+            </excludes>
+            <jswarn>false</jswarn>
+            <nocompress>true</nocompress>
+            <nosuffix>true</nosuffix>
+            <statistics>false</statistics>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
 </project>

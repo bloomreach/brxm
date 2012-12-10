@@ -23,7 +23,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
     //TODO: handle horizontal position
     initComponent: function() {
         var w = 0, t, region, marginX, marginY;
-        if (typeof window.innerWidth  === 'number') {
+        if (typeof window.innerWidth === 'number') {
             //Non-IE
             w = window.innerWidth;
         } else if (document.documentElement && document.documentElement.clientWidth) {
@@ -37,10 +37,10 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
         t = Ext.getBody().getScroll().top;
 
         region = Ext.isEmpty(this.initialConfig.initRegion) ? 'center' : this.initialConfig.initRegion;
-        if (region != 'center') {
+        if (region !== 'center') {
             marginX = Ext.isEmpty(this.initialConfig.x) ? 0 : this.initialConfig.x;
             marginY = Ext.isEmpty(this.initialConfig.y) ? 0 : this.initialConfig.y;
-            if (region == 'right') {
+            if (region === 'right') {
                 this.initialConfig.x = w - (this.initialConfig.width + marginX + Ext.getScrollBarWidth());
                 this.initialConfig.y += t;
             }
@@ -72,7 +72,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
     /**
      * Restore the window position to the relative stored position
      */
-    restoreRelativePosition : function() {
+    restoreRelativePosition: function() {
         var active, anim, cb;
         //Moving a selected window using animation creates a shadow artifact that drags behind the window
         //during the animation. I tried creating the animation without the el.shift helper function
@@ -90,7 +90,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
 //        a.animate();
 
         active = Ext.WindowMgr.getActive();
-        if (active != null) {
+        if (active !== null) {
             active.setActive(false);
         }
         anim = {activateTimeout: null};
@@ -99,7 +99,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
             this.el.stopFx();
         }
         cb = function() {
-            if (this.activateTimeout != null) {
+            if (this.activateTimeout !== null) {
                 window.clearTimeout(this.activateTimeout);
             }
             this.activateTimeout = window.setTimeout(function() {
@@ -112,7 +112,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
             x: this.relPos[0],
             y: this.relPos[1] + Ext.getBody().getScroll().top,
             easing: 'easeOut',
-            duration: .35,
+            duration: 0.35,
             callback: cb
         });
     },
@@ -120,7 +120,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
     /**
      * Override and instantiate custom DD
      */
-    initDraggable : function() {
+    initDraggable: function() {
         var del;
         this.dd = new Hippo.ux.window.FloatingWindow.DD(this);
 
@@ -128,7 +128,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
         Ext.EventManager.on(window, 'scroll',
                 del,
                 window, {buffer: 50}
-                );
+        );
         this.on('beforeclose', function() {
             Ext.EventManager.un(window, 'scroll', del);
         });

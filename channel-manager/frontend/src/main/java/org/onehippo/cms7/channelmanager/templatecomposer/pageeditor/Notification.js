@@ -13,51 +13,54 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
+(function() {
+    "use strict";
 
-Ext.namespace('Hippo.ChannelManager.TemplateComposer');
+    Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
-Hippo.ChannelManager.TemplateComposer.Notification = Ext.extend(Ext.Window, {
+    Hippo.ChannelManager.TemplateComposer.Notification = Ext.extend(Ext.Window, {
 
-    constructor: function(config) {
-        Ext.apply(this, {
-            cls: 'x-notification',
-            autoHeight: true,
-            plain: false,
-            draggable: false,
-            hidden: true,
-            closable: false,
-            hideBorders: true,
-            resizable: false,
-            border: false,
-            shadow: false
-        });
-        Hippo.ChannelManager.TemplateComposer.Notification.superclass.constructor.apply(this, arguments);
-    },
+        constructor: function(config) {
+            Ext.apply(this, {
+                cls: 'x-notification',
+                autoHeight: true,
+                plain: false,
+                draggable: false,
+                hidden: true,
+                closable: false,
+                hideBorders: true,
+                resizable: false,
+                border: false,
+                shadow: false
+            });
+            Hippo.ChannelManager.TemplateComposer.Notification.superclass.constructor.apply(this, arguments);
+        },
 
-    initComponent: function() {
-        var self = this;
-        this.on('afterrender', function() {
-            var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
-            YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
-                self.setWidth(arguments[0].body.w-30);
-            }, true);
-        }, this, {single: true});
+        initComponent: function() {
+            var self = this;
+            this.on('afterrender', function() {
+                var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
+                YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
+                    self.setWidth(arguments[0].body.w - 30);
+                }, true);
+            }, this, {single: true});
 
-        Hippo.ChannelManager.TemplateComposer.Notification.superclass.initComponent.apply(this, arguments);
-    },
+            Hippo.ChannelManager.TemplateComposer.Notification.superclass.initComponent.apply(this, arguments);
+        },
 
-    setMessage: function(msg) {
-        this.message = msg;
-        this.body.update(msg);
-    },
+        setMessage: function(msg) {
+            this.message = msg;
+            this.body.update(msg);
+        },
 
-    show: function() {
-        Hippo.ChannelManager.TemplateComposer.Notification.superclass.show.apply(this, arguments);
-        this.body.update(this.message);
-        this.el.alignTo(Ext.getCmp(this.alignToElementId).getEl(), "tl-bl", [10, 0]);
-    }
+        show: function() {
+            Hippo.ChannelManager.TemplateComposer.Notification.superclass.show.apply(this, arguments);
+            this.body.update(this.message);
+            this.el.alignTo(Ext.getCmp(this.alignToElementId).getEl(), "tl-bl", [10, 0]);
+        }
 
-});
+    });
 
-Ext.reg('Hippo.ChannelManager.TemplateComposer.Notification', Hippo.ChannelManager.TemplateComposer.Notification);
+    Ext.reg('Hippo.ChannelManager.TemplateComposer.Notification', Hippo.ChannelManager.TemplateComposer.Notification);
+
+}());

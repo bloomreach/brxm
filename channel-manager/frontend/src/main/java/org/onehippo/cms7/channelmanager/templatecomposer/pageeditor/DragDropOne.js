@@ -13,8 +13,8 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
 Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
+    "use strict";
 
     var pageContext;
 
@@ -29,32 +29,31 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
         },
 
         onRender: function() {
-            var miframePanel, miframe, self;
+            var miframePanel, self;
+
             miframePanel = Ext.getCmp('Iframe');
-            miframe = miframePanel.getFrame();
+            self = this;
 
             this.iFramePosition = miframePanel.getPosition();
-
             this.boxs = [];
             this.nodeOverRecord = null;
-            self = this;
 
             this.dragZone = new Ext.grid.GridDragZone(this, {
                 containerScroll: true,
                 ddGroup: 'blabla',
 
-                onInitDrag : function() {
+                onInitDrag: function() {
                     var framePanel, frmDoc;
                     framePanel = Ext.getCmp('Iframe');
                     frmDoc = framePanel.getFrameDocument();
                     framePanel.getFrame().sendMessage({groups: 'dropzone'}, 'highlight');
                     pageContext.stores.pageModel.each(function(record) {
                         var type, id, el, box;
-                        type = record.get('type')
+                        type = record.get('type');
                         if (record.get('type') === HST.CONTAINER) {
                             id = record.get('id');
                             el = frmDoc.getElementById(id + '-overlay');
-                            if (el != null && !frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
+                            if (el !== null && !frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
                                 box = Ext.Element.fly(el).getBox();
                                 self.boxs.push({record: record, box: box});
                             }
@@ -63,26 +62,25 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                     Ext.ux.ManagedIFrame.Manager.showShims();
                 },
 
-                onEndDrag : function() {
+                onEndDrag: function() {
                     self.boxs = [];
                     Ext.ux.ManagedIFrame.Manager.hideShims();
                     Ext.getCmp('Iframe').getFrame().sendMessage({groups: 'dropzone'}, 'unhighlight');
                 }
             });
 
-            var containerItemsGrid = this;
             this.dropZone = new Ext.dd.DropZone(miframePanel.body.dom, {
                 ddGroup: 'blabla',
 
                 //If the mouse is over a grid row, return that node. This is
                 //provided as the "target" parameter in all "onNodeXXXX" node event handling functions
-                getTargetFromEvent : function(e) {
+                getTargetFromEvent: function(e) {
                     return e.getTarget();
                 },
 
                 //While over a target node, return the default drop allowed class which
                 //places a "tick" icon into the drag proxy.
-                onNodeOver : function(target, dd, e, data) {
+                onNodeOver: function(target, dd, e, data) {
                     var curX, curY, i, item, box;
                     curX = dd.lastPageX + dd.deltaX - self.iFramePosition[0];
                     curY = dd.lastPageY + dd.deltaY - self.iFramePosition[1];
@@ -90,7 +88,8 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                     curY -= 77;
 
                     for (i = 0; i < self.boxs.length; i++) {
-                        item = self.boxs[i], box = item.box;
+                        item = self.boxs[i];
+                        box = item.box;
                         if (curX >= box.x && curX <= box.right && curY >= box.y && curY <= box.bottom) {
                             self.nodeOverRecord = item.record;
                             return Ext.dd.DropZone.prototype.dropAllowed;
@@ -105,7 +104,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                 //In this case, it is a Record in the GridPanel's Store.
                 //We can use the data set up by the DragZone's getDragData method to read
                 //any data we decided to attach in the DragZone's getDragData method.
-                onNodeDrop : function(target, dd, e, data) {
+                onNodeDrop: function(target, dd, e, data) {
                     //                    var rowIndex = this.getView().findRowIndex(target);
                     //                    var r = this.getStore().getAt(rowIndex);
                     //                    Ext.Msg.alert('Drop gesture', 'Dropped Record id ' + data.draggedRecord.id +
@@ -114,7 +113,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                         var pageContainer, selections, pmRecord, parentId, pmStore, offset, at, i, record, newRecord;
                         pageContainer = pageContext.getPageContainer();
 
-                        selections = containerItemsGrid.getSelectionModel().getSelections();
+                        selections = self.getSelectionModel().getSelections();
 
                         pmRecord = self.nodeOverRecord;
                         parentId = pmRecord.get('id');
@@ -129,16 +128,16 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                                 //we set the id of new types to the id of their prototype, this allows use
                                 //to change the rest-api url for the create method, which should contain this
                                 //id
-                                id : record.get('id'),
+                                id: record.get('id'),
                                 name: null,
                                 type: HST.CONTAINERITEM,
                                 template: record.get('template'),
-                                componentClassName : record.get('componentClassName'),
+                                componentClassName: record.get('componentClassName'),
                                 xtype: record.get('xtype'),
                                 isRoot: false,
                                 children: []
                             };
-                            pmStore.on('write', function() { pageContainer.refreshIframe.call(pageContainer); }, this, {single: true});
+                            pmStore.on('write', pageContainer.refreshIframe, pageContainer, {single: true});
                             pmStore.insert(at + i, new pmStore.recordType(newRecord));
                         }
                         return true;
@@ -149,4 +148,4 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
         }
     };
 
-})();
+}());

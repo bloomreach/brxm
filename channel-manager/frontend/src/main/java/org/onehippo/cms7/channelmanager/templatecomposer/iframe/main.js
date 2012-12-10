@@ -13,9 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-"use strict";
 (function($) {
-    var jQuery = $;
+    "use strict";
+
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame');
 
     var Main = (function() {
@@ -65,7 +65,7 @@
                return false;
             }
         };
-    })();
+    }());
 
     onhostmessage(function(msg) {
         Main.publish('initialize', msg.data);
@@ -73,4 +73,4 @@
 
     Hippo.ChannelManager.TemplateComposer.IFrame.Main = Main;
 
-})(jQuery);
+}(jQuery));

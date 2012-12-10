@@ -13,88 +13,91 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+(function() {
+    "use strict";
 
-Ext.namespace('Hippo.ChannelManager');
+    Ext.namespace('Hippo.ChannelManager');
 
-/**
- * @class Hippo.ChannelManager.ChannelOverview
- * @extends Ext.Panel
- */
-Hippo.ChannelManager.ChannelOverview = Ext.extend(Ext.Panel, {
+    /**
+     * @class Hippo.ChannelManager.ChannelOverview
+     * @extends Ext.Panel
+     */
+    Hippo.ChannelManager.ChannelOverview = Ext.extend(Ext.Panel, {
 
-    constructor: function(config) {
-        this.resources = config.resources;
+        constructor: function(config) {
+            this.resources = config.resources;
 
-        this.canModifyChannels = config.canModifyChannels;
-        this.blueprintsAvailable = config.blueprintsAvailable;
+            this.canModifyChannels = config.canModifyChannels;
+            this.blueprintsAvailable = config.blueprintsAvailable;
 
-        var toolbar = new Ext.Toolbar({
-            height: 28,
-            cls: 'channel-manager-toolbar',
-            items: []
-        });
-        if (this.canModifyChannels && this.blueprintsAvailable) {
-            toolbar.add({
-                text: config.resources['action.add.channel'],
-                handler: function() {
-                    this.fireEvent('add-channel');
-                },
-                allowDepress: false,
-                scope: this,
-                iconCls: 'add-channel'
+            var toolbar = new Ext.Toolbar({
+                height: 28,
+                cls: 'channel-manager-toolbar',
+                items: []
             });
-        };
+            if (this.canModifyChannels && this.blueprintsAvailable) {
+                toolbar.add({
+                    text: config.resources['action.add.channel'],
+                    handler: function() {
+                        this.fireEvent('add-channel');
+                    },
+                    allowDepress: false,
+                    scope: this,
+                    iconCls: 'add-channel'
+                });
+            }
 
-        toolbar.add('->');
-        toolbar.add({
-            handler: function() {
-                this.selectCard(0);
-            },
-            toggleGroup: 'channelViewGrouping',
-            enableToggle: true,
-            pressed: true,
-            scope: this,
-            iconCls: 'icon-view'
-        });
-        toolbar.add({
-            handler: function() {
-                this.selectCard(1);
-            },
-            toggleGroup: 'channelViewGrouping',
-            enableToggle: true,
-            scope: this,
-            iconCls: 'list-view'
-        });
+            toolbar.add('->');
+            toolbar.add({
+                handler: function() {
+                    this.selectCard(0);
+                },
+                toggleGroup: 'channelViewGrouping',
+                enableToggle: true,
+                pressed: true,
+                scope: this,
+                iconCls: 'icon-view'
+            });
+            toolbar.add({
+                handler: function() {
+                    this.selectCard(1);
+                },
+                toggleGroup: 'channelViewGrouping',
+                enableToggle: true,
+                scope: this,
+                iconCls: 'list-view'
+            });
 
-        Ext.apply(config, {
-            id: 'channelOverview',
-            layout: 'card',
-            activeItem: 0,
-            layoutOnCardChange: true,
-            deferredRender: true,
-            viewConfig: {
-                forceFit: true
-            },
-            border: false,
-            tbar: toolbar
-        });
+            Ext.apply(config, {
+                id: 'channelOverview',
+                layout: 'card',
+                activeItem: 0,
+                layoutOnCardChange: true,
+                deferredRender: true,
+                viewConfig: {
+                    forceFit: true
+                },
+                border: false,
+                tbar: toolbar
+            });
 
-        Hippo.ChannelManager.ChannelOverview.superclass.constructor.call(this, config);
-    },
+            Hippo.ChannelManager.ChannelOverview.superclass.constructor.call(this, config);
+        },
 
-    selectCard: function(itemId) {
-        if (itemId) {
-            this.layout.setActiveItem(itemId);
-        } else {
-            this.layout.setActiveItem(0);
+        selectCard: function(itemId) {
+            if (itemId) {
+                this.layout.setActiveItem(itemId);
+            } else {
+                this.layout.setActiveItem(0);
+            }
+        },
+
+        update: function(config) {
+            this.selectCard(config.activeItem);
         }
-    },
 
-    update: function(config) {
-        this.selectCard(config.activeItem);
-    }
+    });
 
-});
+    Ext.reg('Hippo.ChannelManager.ChannelOverview', Hippo.ChannelManager.ChannelOverview);
 
-Ext.reg('Hippo.ChannelManager.ChannelOverview', Hippo.ChannelManager.ChannelOverview);
+}());

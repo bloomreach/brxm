@@ -13,13 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-"use strict";
 (function($) {
+    "use strict";
 
-    var Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+    var Main, surfandedit;
 
-    var surfandedit = {
+    Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+
+    surfandedit = {
 
         init : function (data) {
             this.resources = data.resources;
@@ -46,7 +47,7 @@
                         hstMetaData = this.convertToHstMetaData(element);
                         if (hstMetaData !== null) {
                             links.push(hstMetaData[HST.ATTR.ID]);
-                            this._createLink(element, hstMetaData)
+                            this._createLink(element, hstMetaData);
                         }
                     }
                 } else {
@@ -151,4 +152,4 @@
 
     onhostmessage(surfandedit.showLinks, surfandedit, false, 'showlinks');
 
-})(jQuery);
+}(jQuery));
