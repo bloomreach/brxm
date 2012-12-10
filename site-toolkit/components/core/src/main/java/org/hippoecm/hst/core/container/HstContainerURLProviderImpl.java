@@ -186,8 +186,12 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     
     public HstContainerURL createURL(Mount mount, HstContainerURL baseContainerURL, String pathInfo) {
         HstContainerURLImpl url = new HstContainerURLImpl();
-        
-        url.setContextPath(baseContainerURL.getContextPath());
+
+        if (mount.isContextPathInUrl()) {
+            url.setContextPath(baseContainerURL.getContextPath());
+        } else {
+            url.setContextPath("");
+        }
         url.setCharacterEncoding(baseContainerURL.getCharacterEncoding());
         
         // if the Mount is port agnostic, in other words, has port = 0, we take the port from the baseContainerURL
