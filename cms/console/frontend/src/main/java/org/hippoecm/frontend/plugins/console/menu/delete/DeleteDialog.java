@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.console.menu.delete;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -67,16 +68,16 @@ public class DeleteDialog extends AbstractDialog<Node> {
     @Override
     public void onOk() {
         try {
-            JcrNodeModel nodeModel = (JcrNodeModel) getModel();
-            JcrNodeModel parentModel = nodeModel.getParentModel();
+            Node node = ((JcrNodeModel) getModel()).getNode();
+            Node siblingOrParent = getSiblingOrParent(node);
 
-            nodeModel.getNode().remove();
+            node.remove();
 
             if (immediateSave) {
-                nodeModel.getNode().getSession().save();
+                node.getSession().save();
             }
 
-            modelReference.setModel(parentModel);
+            modelReference.setModel(new JcrNodeModel(siblingOrParent));
         } catch (RepositoryException ex) {
             log.error("Error while deleting document", ex);
             error("Error while deleting document " + ex.getMessage());
@@ -90,6 +91,24 @@ public class DeleteDialog extends AbstractDialog<Node> {
     @Override
     public IValueMap getProperties() {
         return DialogConstants.SMALL;
+    }
+
+    private Node getSiblingOrParent(Node node) throws RepositoryException {
+        final Node parent = node.getParent();
+        final NodeIterator nodes = parent.getNodes();
+        Node sibling = null;
+        while (nodes.hasNext()) {
+            final Node nextNode = nodes.nextNode();
+            if (node.isSame(nextNode)) {
+                if (nodes.hasNext()) {
+                    return nodes.nextNode();
+                } else if (sibling != null) {
+                    return sibling;
+                }
+            }
+            sibling = nextNode;
+        }
+        return parent;
     }
 
 }
