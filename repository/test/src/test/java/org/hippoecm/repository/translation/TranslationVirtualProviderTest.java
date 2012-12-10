@@ -77,7 +77,6 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         origDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         origDoc.setProperty(HippoTranslationNodeType.LOCALE, "en");
         origDoc.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
-        origDoc.addNode("hippotranslation:translations", "hippotranslation:translations");
 
         session.save();
         session.refresh(false);
@@ -99,7 +98,6 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         txnDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         txnDoc.setProperty(HippoTranslationNodeType.LOCALE, "nl");
         txnDoc.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
-        txnDoc.addNode("hippotranslation:translations", "hippotranslation:translations");
 
         session.save();
         session.refresh(false);
@@ -138,7 +136,6 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         txnDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         txnDoc.setProperty(HippoTranslationNodeType.LOCALE, "nl");
         txnDoc.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
-        txnDoc.addNode("hippotranslation:translations", "hippotranslation:translations");
 
         ((HippoSession) session).copy(txnDoc.getParent(), txnDoc.getParent().getPath());
 
@@ -165,12 +162,10 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         docsFolder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         docsFolder.setProperty(HippoTranslationNodeType.LOCALE, "nl");
         docsFolder.setProperty(HippoTranslationNodeType.ID, FOLDER_T9N_ID);
-        docsFolder.addNode("hippotranslation:translations", "hippotranslation:translations");
 
         Node txnDoc = session.getRootNode().getNode("test/docs/txn/txn");
         txnDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         txnDoc.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
-        txnDoc.addNode("hippotranslation:translations", "hippotranslation:translations");
 
         session.save();
         session.refresh(false);
@@ -188,7 +183,6 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         txnDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         txnDoc.setProperty(HippoTranslationNodeType.LOCALE, "nl");
         txnDoc.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
-        txnDoc.addNode("hippotranslation:translations", "hippotranslation:translations");
 
         Node filter = session.getRootNode().getNode("test").addNode("filter", "hippo:facetselect");
         filter.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
@@ -234,7 +228,6 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         docsFolder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         docsFolder.setProperty(HippoTranslationNodeType.LOCALE, "nl");
         docsFolder.setProperty(HippoTranslationNodeType.ID, FOLDER_T9N_ID);
-        docsFolder.addNode("hippotranslation:translations", "hippotranslation:translations");
 
         Node filter = session.getRootNode().getNode("test").addNode("filter", "hippo:facetselect");
         filter.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
@@ -254,7 +247,6 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         txnDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         txnDoc.setProperty(HippoTranslationNodeType.LOCALE, "nl");
         txnDoc.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
-        txnDoc.addNode("hippotranslation:translations", "hippotranslation:translations");
 
         Node filter = session.getRootNode().getNode("test").addNode("filter", "hippo:facetselect");
         filter.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
