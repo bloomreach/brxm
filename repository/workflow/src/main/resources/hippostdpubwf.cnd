@@ -30,8 +30,9 @@
 - hippostdpubwf:publicationDate (Date)
 
 [hippostdpubwf:request] > hippo:request
-- hippostdpubwf:type (String) mandatory < 'rejected', 'publish', 'depublish', 'scheduledpublish', 'scheduleddepublish', 'delete'
+- hippostdpubwf:type (String) < 'rejected', 'publish', 'depublish', 'scheduledpublish', 'scheduleddepublish', 'delete'
 - hippostdpubwf:reason (String)
 - hippostdpubwf:reqdate (Date)
 - hippostdpubwf:username (String)
 - hippostdpubwf:document (Reference)
+- hippostdpubwf:refId (String)
