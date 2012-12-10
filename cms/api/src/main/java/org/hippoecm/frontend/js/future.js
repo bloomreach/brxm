@@ -24,7 +24,7 @@
         return;
     }
 
-    var _Future = function (func) {
+    var _Future = function(func) {
         this.success = false;
         this.completed = false;
         this.value = undefined;
@@ -33,9 +33,9 @@
         this.failureHandlers = [];
 
         var self = this;
-        func.call(this, function (value) {
+        func.call(this, function(value) {
             self.onSuccess.call(self, value)
-        }, function (value) {
+        }, function(value) {
             self.onFailure.call(self, value)
         });
     }
@@ -224,7 +224,7 @@
      */
     Hippo.Future = function (func) {
         var _future = new _Future(func);
-        [ 'when', 'otherwise', 'get', 'next', 'retry', 'transform' ].forEach(function (member) {
+        [ 'when', 'otherwise', 'transform', 'chain', 'retry', 'get' ].forEach(function (member) {
             this[member] = _future[member].bind(_future);
         }.bind(this));
     };
