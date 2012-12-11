@@ -100,16 +100,10 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         protected String load() {
             WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
             if (wdm != null) {
-                WorkflowDescriptor descriptor = (WorkflowDescriptor) wdm.getObject();
-                WorkflowManager manager = UserSession.get().getWorkflowManager();
                 try {
-                    TranslationWorkflow translationWorkflow = (TranslationWorkflow) manager.getWorkflow(descriptor);
-                    return (String) translationWorkflow.hints().get("locale");
+                    Node documentNode = wdm.getNode();
+                    return documentNode.getProperty(HippoTranslationNodeType.LOCALE).getString();
                 } catch (RepositoryException ex) {
-                    log.error(ex.getMessage(), ex);
-                } catch (RemoteException ex) {
-                    log.error(ex.getMessage(), ex);
-                } catch (WorkflowException ex) {
                     log.error(ex.getMessage(), ex);
                 }
             }

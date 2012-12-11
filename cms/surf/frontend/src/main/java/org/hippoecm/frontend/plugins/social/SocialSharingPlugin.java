@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
  * "document.url.service.id". The document URL can be shared on all media supported by the {@link ISocialMediaService}
  * specified by the property "social.media.service.id".
  */
-@SuppressWarnings("deprecation")
 public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
 
     private static final String CONFIG_DOCUMENT_URL_SERVICE_ID = "document.url.service.id";
@@ -50,7 +49,8 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
 
     private IDocumentUrlService documentUrlService;
     private final ISocialMediaService socialMediaService;
-    private String documentUrl;
+    private final IModel<String> documentUrlModel;
+    private boolean isPublished;
 
     public SocialSharingPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -71,8 +71,6 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
                     + CONFIG_SOCIAL_MEDIA_SERVICE_ID + "'");
         }
 
-        documentUrl = null;
-
         for (ISocialMedium medium : socialMediaService.getAllSocialMedia()) {
             add(new ShareWorkflow(medium));
         }
@@ -81,20 +79,41 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
         if (model != null) {
             try {
                 Node node = model.getNode();
-                if (isPublished(node)) {
-                    documentUrl = documentUrlService.getUrl(node);
-                } else {
-                    documentUrl = null;
-                }
+                isPublished = isPublished(node);
             } catch (RepositoryException e) {
                 log.error("Error getting document node from WorkflowDescriptorModel", e);
             }
         }
+
+        documentUrlModel = new LoadableDetachableModel<String>() {
+
+            @Override
+            protected String load() {
+                if (isPublished) {
+                    WorkflowDescriptorModel model = (WorkflowDescriptorModel) getDefaultModel();
+                    if (model != null) {
+                        try {
+                            Node node = model.getNode();
+                            return documentUrlService.getUrl(node);
+                        } catch (RepositoryException e) {
+                            log.error("Error getting document node from WorkflowDescriptorModel", e);
+                        }
+                    }
+                }
+                return null;
+            }
+        };
+    }
+
+    @Override
+    protected void onDetach() {
+        documentUrlModel.detach();
+        super.onDetach();
     }
 
     private static boolean isPublished(Node documentNode) {
         try {
-            if(documentNode.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
+            if (documentNode.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
                 final String state = documentNode.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
                 return HippoStdNodeType.PUBLISHED.equals(state);
             }
@@ -116,7 +135,7 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
 
         @Override
         public boolean isVisible() {
-            return documentUrl != null;
+            return isPublished;
         }
 
         @Override
@@ -138,7 +157,7 @@ public class SocialSharingPlugin extends CompatibilityWorkflowPlugin<Workflow> {
 
         @Override
         protected void invoke() {
-            medium.shareUrl(documentUrl);
+            medium.shareUrl(documentUrlModel.getObject());
         }
 
     }
