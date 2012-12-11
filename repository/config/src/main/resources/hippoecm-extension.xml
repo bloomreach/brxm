@@ -532,4 +532,20 @@
       <sv:value>11.0</sv:value>
     </sv:property>
   </sv:node>
+
+  <sv:node sv:name="fix-corederiveddatafunction-classname-78">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippo:initializeitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:sequence" sv:type="Double">
+      <sv:value>0.1</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentpropset" sv:type="String">
+      <sv:value>org.hippoecm.repository.deriveddata.CoreDerivedDataFunction</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:contentroot" sv:type="String">
+      <sv:value>/hippo:configuration/hippo:derivatives/hippo:corederivatives/hipposys:classname</sv:value>
+    </sv:property>
+  </sv:node>
+
 </sv:node>
