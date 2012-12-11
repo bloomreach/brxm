@@ -48,8 +48,9 @@ public interface DocumentService {
     List<ChannelDocument> getChannels(@PathParam("uuid") String uuid);
 
     /**
-     * Returns a fully qualified URL for a document in a mount of a certain type. The document is identified by its UUID.
-     * When the type parameter is null or empty, the value 'live' is used.
+     * Returns a fully qualified URL in SITE context for a document in a mount of a certain type. The document is identified by its UUID.
+     * When the type parameter is null or empty, the value 'live' is used. Note that this method thus returns a fully qualified
+     * URL for the host through which the site(s) are visited, and not through the cms host, which can be a different host
      *
      * Note that only one link is returned, even when the document is available in multiple channels (i.e. under
      * multiple mounts). When multiple mounts match, we use the one that has the closest canonical content path to the
