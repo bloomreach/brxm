@@ -49,6 +49,7 @@ import org.apache.wicket.request.target.coding.AbstractRequestTargetUrlCodingStr
 import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
 import org.apache.wicket.resource.loader.IStringResourceLoader;
 import org.apache.wicket.session.ISessionStore;
+import org.apache.wicket.session.pagemap.LeastRecentlyAccessedEvictionStrategy;
 import org.apache.wicket.settings.IExceptionSettings;
 import org.apache.wicket.settings.IResourceSettings;
 import org.apache.wicket.util.lang.Bytes;
@@ -96,6 +97,8 @@ public class Main extends PluginApplication {
 
         getPageSettings().setVersionPagesByDefault(false);
         getPageSettings().setAutomaticMultiWindowSupport(false);
+
+        getSessionSettings().setPageMapEvictionStrategy(new LeastRecentlyAccessedEvictionStrategy(1));
 
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         try {
