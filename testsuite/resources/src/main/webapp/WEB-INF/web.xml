@@ -92,14 +92,12 @@
       set the spring configuration files properly. The spring
       configuration resources are loaded by the context classloader.
     -->
-    <!--
-      <init-param> <param-name>clientComponentManagerClass</param-name>
-      <param-value>org.hippoecm.hst.component.support.ClientComponentManager</param-value>
-      </init-param> <init-param>
-      <param-name>clientComponentManagerConfigurations</param-name>
-      <param-value>/META-INF/client-assembly/*.xml</param-value>
-      </init-param>
-    -->
+    <init-param> <param-name>clientComponentManagerClass</param-name>
+    <param-value>org.hippoecm.hst.component.support.ClientComponentManager</param-value>
+    </init-param> <init-param>
+    <param-name>clientComponentManagerConfigurations</param-name>
+    <param-value>/META-INF/client-assembly/*.xml</param-value>
+    </init-param>
   </filter>
   
   <filter>

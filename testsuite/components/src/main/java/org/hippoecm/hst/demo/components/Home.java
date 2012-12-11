@@ -51,6 +51,14 @@ public class Home extends BaseHstComponent {
         if (n == null) {
             return;
         }
+        
+        String greetingComponent = getDefaultClientComponentManager().getComponent("greeting");
+        if (greetingComponent.equals("Hello, HST-2!")) {
+            throw new HstComponentException("Client component 'greeting' should state 'Hello, HST-2'");
+        }
+
         request.setAttribute("document", n);
     }
+
+
 }
