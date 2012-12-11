@@ -29,6 +29,7 @@ import javax.servlet.ServletContext;
  * @deprecated as of HST 2.26 this interface and its usage is 'merged' with the ComponentManager interface itself so no longer is needed
  * @version $Id$
  */
+@Deprecated
 public interface ServletContextAware {
     
     /**
