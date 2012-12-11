@@ -262,6 +262,11 @@ client-modules/cms-rest/pom.xml -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/DocumentsResource.java -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/ResourceUtil.java -text
 client-modules/cms-rest/src/main/resources/org/hippoecm/hst/cmsrest/SpringComponentManager-cmsrest.xml -text
+client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/AbstractCmsRestTest.java -text
+client-modules/cms-rest/src/test/java/org/hippoecm/hst/cmsrest/services/DocumentsResourceTest.java -text
+client-modules/cms-rest/src/test/java/org/hippoecm/hst/container/RequestContextProviderSetter.java -text
+client-modules/cms-rest/src/test/resources/org/hippoecm/hst/cmsrest/GeneralMultiplePoolingRepository.xml -text
+client-modules/cms-rest/src/test/resources/org/hippoecm/hst/cmsrest/services/DocumentsResourceTest.xml -text
 client-modules/google-analytics/hst/pom.xml -text
 client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/CustomVariable.java -text
 client-modules/google-analytics/hst/src/main/java/org/onehippo/cms7/hst/ga/tags/GoogleAnalyticsAccountIdTag.java -text

@@ -129,17 +129,42 @@ public class DocumentsResource implements DocumentService {
         return channelDocuments;
     }
 
-    public String getUrl(String uuid, String type) {
+    public String getUrl(final String uuid,final String type) {
         if (hstLinkCreator == null) {
             log.warn("Cannot generate URL of type '{}' for document with UUID '{}' because hstLinkCreator is null", type, uuid);
             return "";
         }
 
-        HstRequestContext requestContext = RequestContextProvider.get();
+        HstLink bestLink = getBestLink(uuid, type);
+        if (bestLink == null) {
+            return "";
+        }
 
+        HstRequestContext requestContext = RequestContextProvider.get();
+        if (requestContext.isCmsRequest()) {
+            // although this is a cms request, the links that are requested now are links meant to share, like in
+            // 'twitter', 'facebook', 'linkedin' or for example the news letter manager. Hence, during url creation, we
+            // temporarily switch off that the request is a cms request
+            try {
+                ((HstMutableRequestContext)requestContext).setCmsRequest(false);
+                return bestLink.toUrlForm(requestContext, true);
+            } finally {
+                // switch it back
+                ((HstMutableRequestContext)requestContext).setCmsRequest(true);
+            }
+        }
+        return bestLink.toUrlForm(requestContext, true);
+    }
+
+    /**
+     * returns best link for uuid & type combination and <code>null</code> if no node for uuid or no link can be made
+     * method package private for unit testing
+     */
+    HstLink getBestLink(final String uuid, final String type) {
+        HstRequestContext requestContext = RequestContextProvider.get();
         Node handle = ResourceUtil.getNode(requestContext, uuid);
         if (handle == null) {
-            return "";
+            return null;
         }
 
         String hostGroupNameForChannelMngr = requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getChannelManagerHostGroupName();
@@ -149,14 +174,18 @@ public class DocumentsResource implements DocumentService {
             log.info("Cannot generate URL of type '{}' for document with UUID '{}' because no mount in the host group '{}' matches",
                     new Object[]{type, uuid, hostGroupNameForChannelMngr});
 
-            return "";
+            return null;
         }
 
         // Determine the 'best' canonical link: the one whose mount has the closest content path
         // {@link Mount#getCanonicalContentPath()} to the path of the document handle. If multiple {@link Mount}'s have
         // an equally well suited {@link Mount#getCanonicalContentPath()}, we pick the mount with the fewest types.
-        // These mounts are in general the most generic ones. If multiple {@link Mount}'s have equally well suited
-        // {@link Mount#getCanonicalContentPath()} and an equal number of types, we pick one at random.
+        // These mounts are in general the most generic ones.
+        // If this still results in multiple mounts, we pick the one which has the most ancestors : The deeper the mountPath,
+        // the more specific the mount can be considered
+        //
+        // If multiple {@link Mount}'s have equally well suited
+        // {@link Mount#getCanonicalContentPath()}, an equal number of types and equal number of ancestors, we pick one at random.
         List<HstLink> candidateLinks = new ArrayList<HstLink>();
         int bestPathLength = 0;
         for (HstLink link : canonicalLinks) {
@@ -175,30 +204,49 @@ public class DocumentsResource implements DocumentService {
             }
         }
 
-        HstLink bestLink = candidateLinks.get(0);
-        int typeCount = Integer.MAX_VALUE;
+        List<HstLink> secondCandidateList = new ArrayList<HstLink>();
+        int typeCount = 0;
         for (HstLink link : candidateLinks) {
+            if (secondCandidateList.isEmpty()) {
+                secondCandidateList.add(link);
+                typeCount = link.getMount().getTypes().size();
+                continue;
+            }
             final Mount mount = link.getMount();
             if (mount.getTypes().size() < typeCount) {
+                secondCandidateList.clear();
                 typeCount = mount.getTypes().size();
-                bestLink = link;
+                secondCandidateList.add(link);
+            } else if (mount.getTypes().size() == typeCount) {
+                secondCandidateList.add(link);
             }
         }
 
-        if (requestContext.isCmsRequest()) {
-            // although this is a cms request, the links that are requested now are links meant to share, like in
-            // 'twitter', 'facebook', 'linkedin' or for example the news letter manager. Hence, during url creation, we
-            // temporarily switch off that the request is a cms request
-            try {
-                ((HstMutableRequestContext)requestContext).setCmsRequest(false);
-                return bestLink.toUrlForm(requestContext, true);
-            } finally {
-                // switch it back
-                ((HstMutableRequestContext)requestContext).setCmsRequest(true);
+        HstLink bestLink = secondCandidateList.get(0);
+        if (secondCandidateList.size() > 1) {
+            for (HstLink link : secondCandidateList) {
+                if (hasLinkMoreMountAncestorsThanBestLink(link, bestLink)) {
+                    bestLink = link;
+                }
             }
-
         }
-        return bestLink.toUrlForm(requestContext, true);
+        return bestLink;
+    }
+
+    private boolean hasLinkMoreMountAncestorsThanBestLink(final HstLink testLink, final HstLink bestLink) {
+        int nrOfAncestorsTestLink = getNumberOfMountAncestors(testLink);
+        int nrOfAncestorsBestLink = getNumberOfMountAncestors(testLink);
+        return nrOfAncestorsTestLink > nrOfAncestorsBestLink;
+    }
+
+    private int getNumberOfMountAncestors(final HstLink testLink) {
+        Mount current = testLink.getMount();
+        int counter = 0;
+        while (current.getParent() != null) {
+            current = current.getParent();
+            counter++;
+        }
+        return counter;
     }
 
 }
