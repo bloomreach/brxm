@@ -228,11 +228,12 @@
         },
 
         selectVariant : function(id, variant) {
-            var o = this.retrieve(id);
+            var o = this.retrieve(id),
+                self = this;
             o.selectVariant(variant, function() {
-                this.requestSync();
-                this.sync();
-            }.bind(this));
+                self.requestSync();
+                self.sync();
+            });
         },
 
         checkStateChanges : function() {
