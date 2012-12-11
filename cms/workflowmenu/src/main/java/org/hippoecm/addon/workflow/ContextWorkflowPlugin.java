@@ -25,13 +25,14 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.service.ServiceContext;
 
 public final class ContextWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
 
     public ContextWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(new ServiceContext(context), config);
         Component menu;
         add(menu = new Label("menu"));
         Component v;
@@ -41,6 +42,13 @@ public final class ContextWorkflowPlugin extends AbstractWorkflowPlugin {
         v.setOutputMarkupId(true);
         menu.setOutputMarkupId(true);
         setOutputMarkupId(true);
+    }
+
+    @Override
+    protected void onRemove() {
+        super.onRemove();
+        final ServiceContext context = (ServiceContext) getPluginContext();
+        context.stop();
     }
 
     @Override
