@@ -23,9 +23,14 @@ import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class TextDialog extends AbstractDialog implements IWorkflowInvoker {
+
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(TextDialog.class);
+
 
     private IModel<String> title;
 
@@ -44,6 +49,15 @@ public abstract class TextDialog extends AbstractDialog implements IWorkflowInvo
     @Override
     public IModel<String> getTitle() {
         return title;
+    }
+
+    @Override
+    protected void onOk() {
+        try {
+            invokeWorkflow();
+        } catch (Exception e) {
+            log.error("Invoking workflow failed", e);
+        }
     }
 
     @Override
