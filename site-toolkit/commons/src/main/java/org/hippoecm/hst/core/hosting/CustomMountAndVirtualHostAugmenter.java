@@ -190,9 +190,9 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
             int i = position;
             while (i > -1) {
                 if (hostName != null) {
-                    hostName = hostSegments[position] + "." + hostName;
+                    hostName = hostName + "." + hostSegments[i];
                 } else {
-                    hostName = hostSegments[position];
+                    hostName = hostSegments[i];
                 }
                 i--;
             }
