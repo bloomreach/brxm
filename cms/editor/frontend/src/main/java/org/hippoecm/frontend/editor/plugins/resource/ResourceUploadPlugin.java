@@ -36,6 +36,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidget;
 import org.hippoecm.frontend.plugins.yui.upload.FileUploadWidgetSettings;
+import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,9 +80,11 @@ public class ResourceUploadPlugin extends RenderPlugin {
         public FileUploadForm(String name) {
             super(name);
 
+            String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.asset.validation");
+            FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
             FileUploadWidgetSettings settings = new FileUploadWidgetSettings(getPluginConfig());
 
-            add(widget = new FileUploadWidget("multifile", settings) {
+            add(widget = new FileUploadWidget("multifile", settings, validator) {
 
                 @Override
                 protected void onFileUpload(FileUpload fileUpload) {

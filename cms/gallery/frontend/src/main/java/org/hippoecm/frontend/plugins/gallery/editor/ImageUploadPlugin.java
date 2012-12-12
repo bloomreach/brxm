@@ -69,7 +69,7 @@ public class ImageUploadPlugin extends RenderPlugin {
         public FileUploadForm(String name) {
             super(name);
 
-            String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.validation.image");
+            String serviceId = getPluginConfig().getString(FileUploadValidationService.VALIDATE_ID, "service.gallery.image.validation");
             FileUploadValidationService validator = getPluginContext().getService(serviceId, FileUploadValidationService.class);
             FileUploadWidgetSettings settings = new FileUploadWidgetSettings(getPluginConfig());
 

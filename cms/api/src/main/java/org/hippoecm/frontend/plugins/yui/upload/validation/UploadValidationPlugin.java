@@ -25,7 +25,7 @@ public class UploadValidationPlugin extends Plugin {
     public UploadValidationPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final String id = config.getString(FileUploadValidationService.VALIDATE_ID, "upload.validation.service");
+        final String id = config.getString(FileUploadValidationService.VALIDATE_ID, "service.upload.validation");
         context.registerService(createValidator(), id);
     }
 
