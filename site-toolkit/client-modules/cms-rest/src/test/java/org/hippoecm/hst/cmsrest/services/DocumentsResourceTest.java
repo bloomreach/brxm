@@ -112,7 +112,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
          */
         HstLink bestLink = documentsResource.getBestLink(homePageNodeId, "live");
         String url =  bestLink.toUrlForm(RequestContextProvider.get(), true);
-        // NOTE url is site host and NOT cms 127.0.0.1 host!
+        // NOTE url only contains an absolute path
         assertEquals("/site/examplecontextpathonly", url);
     }
 
