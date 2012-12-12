@@ -364,6 +364,7 @@ public class UpdaterEngine {
     public UpdaterEngine(Session session, Modules allModules, boolean clustered) throws RepositoryException {
         this.session = session;
         this.modules = new Vector<ModuleRegistration>();
+        this.clustered = clustered;
         for (UpdaterModule module : new Modules<UpdaterModule>(allModules, UpdaterModule.class)) {
             ModuleRegistration registration = new ModuleRegistration(module);
             module.register(registration);
@@ -371,7 +372,6 @@ public class UpdaterEngine {
         }
         session.refresh(false);
         updaterSession = new UpdaterSession(session);
-        this.clustered = clustered;
     }
 
     boolean prepare() throws RepositoryException {
