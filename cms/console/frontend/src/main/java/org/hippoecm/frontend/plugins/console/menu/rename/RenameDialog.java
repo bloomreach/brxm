@@ -67,13 +67,14 @@ public class RenameDialog extends AbstractDialog<Node> {
 
             if (nodeModel.getParentModel() != null) {
                 JcrNodeModel parentModel = nodeModel.getParentModel();
+                Node parentNode = parentModel.getNode();
 
-                //This will be used to position the renamed node exactly where it was before the rename (because the rename action also positions the renamed node last)
-                String nextSiblingPath = findNextSiblingPath(nodeModel.getNode());
+                //This will be used to position the renamed node exactly where it was before the rename
+                String nextSiblingPath = parentNode.getPrimaryNodeType().hasOrderableChildNodes() ? findNextSiblingPath(nodeModel.getNode()) : null;
 
                 //The actual JCR move
                 String oldPath = nodeModel.getNode().getPath();
-                String newPath = parentModel.getNode().getPath();
+                String newPath = parentNode.getPath();
                 if (!newPath.endsWith("/")) {
                     newPath += "/";
                 }
@@ -85,12 +86,9 @@ public class RenameDialog extends AbstractDialog<Node> {
 
                 //Re-order (because the rename action also positioned the renamed node last)
                 if (nextSiblingPath != null) {
+                    String nextSiblingRelPath = StringUtils.substringAfterLast(nextSiblingPath, "/");
                     try {
-                        Node node = newNodeModel.getNode();
-                        Node parentNode = node.getParent();
-                        if (node != null && node.getDepth() > 0 && parentNode.getPrimaryNodeType().hasOrderableChildNodes()) {
-                            parentNode.orderBefore(getName(), StringUtils.substringAfterLast(nextSiblingPath, "/"));
-                        }
+                        parentNode.orderBefore(getName(), nextSiblingRelPath);
                     } catch (RepositoryException e) {
                         log.error(e.getMessage(), e);
                     }
