@@ -25,7 +25,6 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
@@ -149,17 +148,14 @@ public class GalleryWorkflowPlugin extends CompatibilityWorkflowPlugin<GalleryWo
                 GalleryWorkflowPlugin.log.error(ex.getMessage());
                 throw new GalleryException("Repository failed", ex);
             }
-            if (node != null) {
-                try {
-                    getGalleryProcessor().makeImage(node, is, mimetype, filename);
-                    node.getSession().save();
-                    newItems.add(node.getPath());
-                } catch (GalleryException ex) {
-                    throw new GalleryException(new StringResourceModel("upload-failed-named-label", GalleryWorkflowPlugin.this, null, new Object[] {filename}).getString(), ex);
-                } catch (Exception ex) {
-                    remove(manager, node);
-                    throw new GalleryException(new StringResourceModel("upload-failed-named-label", GalleryWorkflowPlugin.this, null, new Object[] {filename}).getString(), ex);
-                }
+
+            try {
+                getGalleryProcessor().makeImage(node, is, mimetype, filename);
+                node.getSession().save();
+                newItems.add(node.getPath());
+            } catch (Exception ex) {
+                remove(manager, node);
+                throw new GalleryException(new StringResourceModel("upload-failed-named-label", GalleryWorkflowPlugin.this, null, new Object[] {filename}).getString(), ex);
             }
         } catch (IOException ex) {
             GalleryWorkflowPlugin.log.info("upload of image truncated");
