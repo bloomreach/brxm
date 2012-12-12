@@ -45,7 +45,9 @@ public class ComponentRenderingValve extends AbstractValve {
                 }
                 return;
             }
-
+            if (context.getRequestContext().isCmsRequest()) {
+                setNoCacheHeaders(context.getServletResponse());
+            }
             if(window.getComponentInfo().isStandalone()) {
                 // set the current window as the root window because the backing componentInfo is standalone
                 context.setRootComponentWindow(window);
@@ -57,4 +59,11 @@ public class ComponentRenderingValve extends AbstractValve {
         }
         context.invokeNext();
     }
+
+    private static void setNoCacheHeaders(final HttpServletResponse response) {
+        response.setDateHeader("Expires", -1);
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Cache-Control", "no-cache");
+    }
+
 }
