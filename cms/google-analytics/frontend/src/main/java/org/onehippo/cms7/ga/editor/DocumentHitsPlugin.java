@@ -46,7 +46,6 @@ import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.onehippo.cms7.ga.IGoogleAnalyticsConfigurationService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.googleanalytics.GoogleAnalyticsService;
 import org.slf4j.Logger;

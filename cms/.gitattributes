@@ -1752,8 +1752,6 @@ gallery/repository/src/main/resources/gallerytemplate-images-i18n.xml -text svne
 gallery/repository/src/main/resources/hippoecm-extension.xml svneol=native#text/plain
 gallery/repository/src/main/resources/image-validator.xml -text
 google-analytics/frontend/pom.xml -text
-google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/GoogleAnalyticsConfigurationPlugin.java -text
-google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/IGoogleAnalyticsConfigurationService.java -text
 google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin.html -text
 google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin.java -text
 google-analytics/frontend/src/main/java/org/onehippo/cms7/ga/editor/DocumentHitsPlugin.properties -text
