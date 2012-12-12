@@ -16,9 +16,11 @@
 package org.hippoecm.frontend.plugins.console.menu.rename;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -66,6 +68,9 @@ public class RenameDialog extends AbstractDialog<Node> {
             if (nodeModel.getParentModel() != null) {
                 JcrNodeModel parentModel = nodeModel.getParentModel();
 
+                //This will be used to position the renamed node exactly where it was before the rename (because the rename action also positions the renamed node last)
+                String nextSiblingPath = findNextSiblingPath(nodeModel.getNode());
+
                 //The actual JCR move
                 String oldPath = nodeModel.getNode().getPath();
                 String newPath = parentModel.getNode().getPath();
@@ -77,11 +82,39 @@ public class RenameDialog extends AbstractDialog<Node> {
                 jcrSession.move(oldPath, newPath);
 
                 JcrNodeModel newNodeModel = new JcrNodeModel(parentModel.getNode().getNode(getName()));
+
+                //Re-order (because the rename action also positioned the renamed node last)
+                if (nextSiblingPath != null) {
+                    try {
+                        Node node = newNodeModel.getNode();
+                        Node parentNode = node.getParent();
+                        if (node != null && node.getDepth() > 0 && parentNode.getPrimaryNodeType().hasOrderableChildNodes()) {
+                            parentNode.orderBefore(getName(), StringUtils.substringAfterLast(nextSiblingPath, "/"));
+                        }
+                    } catch (RepositoryException e) {
+                        log.error(e.getMessage(), e);
+                    }
+                }
+
                 modelReference.setModel(newNodeModel);
             }
         } catch (RepositoryException ex) {
             error(ex.getMessage());
         }
+    }
+
+    protected String findNextSiblingPath(Node node) {
+        try {
+            Node parentNode = node.getParent();
+            for (NodeIterator siblings = parentNode.getNodes(); siblings.hasNext(); ) {
+                if (siblings.nextNode().isSame(node)) {
+                    return siblings.hasNext() ? siblings.nextNode().getPath() : null;
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     public IModel getTitle() {
@@ -95,7 +128,7 @@ public class RenameDialog extends AbstractDialog<Node> {
     public void setName(String name) {
         this.name = name;
     }
-    
+
     @Override
     public IValueMap getProperties() {
         return DialogConstants.SMALL;
