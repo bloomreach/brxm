@@ -453,6 +453,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUp
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent_it.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/delete-small-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/image-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/AssetUploadValidationPlugin.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/DefaultUploadValidationService.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/DefaultUploadValidationService.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/DefaultUploadValidationService_de.properties -text
@@ -1744,6 +1745,7 @@ gallery/frontend/src/main/java/org/hippoecm/repository/gallery/impl/GalleryWorkf
 gallery/pom.xml svneol=native#text/plain
 gallery/repository/pom.xml svneol=native#text/plain
 gallery/repository/src/main/resources/asset-processor.xml svneol=native#text/plain
+gallery/repository/src/main/resources/asset-validator.xml -text
 gallery/repository/src/main/resources/gallery-processor.xml svneol=native#text/plain
 gallery/repository/src/main/resources/gallery-workflows-frontend.xml svneol=native#text/plain
 gallery/repository/src/main/resources/gallerytemplate-files-i18n.xml -text svneol=unset#text/plain

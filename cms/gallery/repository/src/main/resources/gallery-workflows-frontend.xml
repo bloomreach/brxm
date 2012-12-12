@@ -90,6 +90,9 @@
       <sv:property sv:name="gallery.processor.id" sv:type="String">
         <sv:value>asset.gallery.processor</sv:value>
       </sv:property>
+      <sv:property sv:name="validator.id" sv:type="String">
+        <sv:value>service.gallery.asset.validation</sv:value>
+      </sv:property>
       <sv:property sv:name="fileupload.maxItems" sv:type="String">
         <sv:value>25</sv:value>
       </sv:property>
