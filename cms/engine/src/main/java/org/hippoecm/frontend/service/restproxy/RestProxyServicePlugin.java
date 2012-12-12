@@ -240,19 +240,19 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             final HttpContext httpContext = new BasicHttpContext();
             final HttpResponse httpResponse = httpClient.execute(httpGet, httpContext);
             siteIsAlive = (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
-        } catch (UnsupportedEncodingException usence) {
+        } catch (UnsupportedEncodingException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, usence);
+                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, e);
             } else {
-                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, usence.toString());
+                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, e.toString());
             }
 
             siteIsAlive = false;
-        } catch (IOException ioe) {
+        } catch (IOException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, ioe);
+                log.warn("Error while pinging site using URI " + normalizedPingServiceUri, e);
             } else {
-                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, ioe.toString());
+                log.warn("Error while pinging site using URI {} - {}", normalizedPingServiceUri, e.toString());
             }
 
             siteIsAlive = false;
