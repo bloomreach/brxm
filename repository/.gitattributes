@@ -239,14 +239,6 @@ engine/src/test/resources/org/hippoecm/repository/unittest.pdf -text
 engine/src/test/resources/org/hippoecm/repository/words_on_new_line_without_spaces.pdf -text
 engine/src/test/resources/repository-test.cnd -text
 engine/src/test/resources/role-jcrread.xml svneol=native#text/plain
-jca/pom.xml svneol=native#text/plain
-jca/src/main/rar/META-INF/ra.xml svneol=native#text/plain
-jca/src/main/rar/repository.xml svneol=native#text/plain
-jca/src/main/resources/log4j.xml svneol=native#text/plain
-jca/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml svneol=native#text/plain
-jca/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
-jca/src/site/apt/index.apt -text
-jca/src/site/site.xml svneol=native#text/plain
 ldap/src/main/resources/hippoldap.cnd -text
 modules/pom.xml svneol=native#text/plain
 modules/src/main/java/org/hippoecm/repository/jackrabbit/FacetResultSetProvider.java -text
