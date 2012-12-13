@@ -1,4 +1,6 @@
 * text=auto !eol
+/LICENSE -text
+/NOTICE -text
 /pom.xml -text
 src/main/java/org/hippoecm/hst/servlet/ResourceServlet.java -text
 src/main/java/org/onehippo/cms7/utilities/io/CircularBufferOutputStream.java -text
