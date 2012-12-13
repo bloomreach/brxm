@@ -112,7 +112,7 @@
         <sv:value>org.hippoecm.frontend.plugins.cms.admin.AdminPerspective</sv:value>
       </sv:property>
     </sv:node>
-    <sv:node sv:name="exclude-groovy-perspective">
+    <sv:node sv:name="exclude-dev-perspective">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>hipposys:facetrule</sv:value>
       </sv:property>
