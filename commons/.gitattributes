@@ -1,4 +1,6 @@
 * text=auto !eol
+/LICENSE -text
+/NOTICE -text
 /pom.xml -text
 src/main/java/org/onehippo/cms7/event/HippoEvent.java -text
 src/main/java/org/onehippo/cms7/event/HippoEventConstants.java -text
