@@ -21,10 +21,6 @@ import org.hippoecm.hst.util.TaskLogFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-/**
- * DiagnosticReportingValve
- */
 public class DiagnosticReportingValve extends AbstractValve {
 
     private static Logger log = LoggerFactory.getLogger(DiagnosticReportingValve.class);
