@@ -487,7 +487,16 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
 
         this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
-       
+
+        defaultSiteMapItemHandlerIds = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS);
+        if(defaultSiteMapItemHandlerIds == null && parent != null) {
+            defaultSiteMapItemHandlerIds = parent.getDefaultSiteMapItemHandlerIds();
+        }
+
+        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
+            channelPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
+        }
+
         // We do recreate the HstSite object, even when inherited from parent, such that we do not share the same HstSite object. This might be
         // needed in the future though, for example for performance reasons
         if(mountPoint == null ){
@@ -543,11 +552,6 @@ public class MountService implements ContextualizableMount, MutableMount {
                 previewContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
             }
         }
-
-        if (mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH)) {
-            channelPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_CHANNELPATH);
-        }
-
         // check whether there are child Mounts now for this Mount
         
         for(HstNode childMount : mount.getNodes()) {
@@ -560,10 +564,6 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
         }
 
-        defaultSiteMapItemHandlerIds = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS);
-        if(defaultSiteMapItemHandlerIds == null && parent != null) {
-            defaultSiteMapItemHandlerIds = parent.getDefaultSiteMapItemHandlerIds();
-        }
         // add this Mount to the maps in the VirtualHostsService
         ((VirtualHostsService)virtualHost.getVirtualHosts()).addMount(this);
     }
