@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.IClusterable;
@@ -88,6 +89,7 @@ public class TabsPlugin extends RenderPlugin {
     public static final String MAX_TAB_TITLE_LENGTH = "title.maxlength";
     public static final String TAB_ICON_SIZE = "icon.size";
     public static final String TABS_PLUGIN_FIRE_EVENT_JS = "TabsPlugin-fireEvent.js";
+    public static final String TABS_PLUGIN_PUSH_URL_JS = "TabsPlugin-pushUrl.js";
 
     private final TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
@@ -178,6 +180,9 @@ public class TabsPlugin extends RenderPlugin {
         for (Tab tabbie : tabs) {
             tabbie.renderer.render(target);
         }
+        if (tabs.isEmpty()) {
+            showPathInUrl("");
+        }
     }
 
     @Override
@@ -223,23 +228,23 @@ public class TabsPlugin extends RenderPlugin {
 
         if (tabbie.getDecoratorId() != null) {
             String tabId = tabbie.getDecoratorId();
-            final String fireEventJS = readFireEventJavascript(tabId);
+            final String fireEventJS = readJavascript(TABS_PLUGIN_FIRE_EVENT_JS, "REPLACE_WITH_TAB_ID", tabId);
             target.appendJavascript(fireEventJS);
         }
     }
 
-    private String readFireEventJavascript(String tabId) {
-        InputStream stream = TabsPlugin.class.getResourceAsStream(TABS_PLUGIN_FIRE_EVENT_JS);
+    private String readJavascript(String resourceName, String replaceToken, String replacement) {
+        InputStream stream = TabsPlugin.class.getResourceAsStream(resourceName);
         if (stream == null) {
-            log.error("Cannot find resource '" + TABS_PLUGIN_FIRE_EVENT_JS + "', tab selection will not fire any events");
+            log.error("Cannot find resource '" + resourceName + "', tab selection will not fire any events");
             return StringUtils.EMPTY;
         }
         try {
             String script = IOUtils.toString(stream);
-            script = StringUtils.replace(script, "REPLACE_WITH_TAB_ID", tabId);
+            script = StringUtils.replace(script, replaceToken, replacement);
             return script;
         } catch (IOException e) {
-            log.error("Error reading resource '" + TABS_PLUGIN_FIRE_EVENT_JS + "', tab selection will not fire any events");
+            log.error("Error reading resource '" + resourceName + "', tab selection will not fire any events");
             return StringUtils.EMPTY;
         } finally {
             IOUtils.closeQuietly(stream);
@@ -283,9 +288,30 @@ public class TabsPlugin extends RenderPlugin {
      * @param index Index of the tab
      */
     protected void onSelectTab(int index) {
+        Tab tab = tabs.get(index);
+        if (tab.isEditorTab()) {
+            IModel<Node> nodeModel = tabs.get(index).getModel();
+            showPathInUrl(nodeModel);
+        }
     }
 
-     /**
+    private void showPathInUrl(final IModel<Node> nodeModel) {
+        try {
+            showPathInUrl(nodeModel.getObject().getPath());
+        } catch (RepositoryException e) {
+            log.warn("Could not retrieve path of node model, path to the node will not be shown in the URL");
+        }
+    }
+
+    private void showPathInUrl(final String path) {
+        AjaxRequestTarget requestTarget = AjaxRequestTarget.get();
+        if (requestTarget != null) {
+            final String pushUrlJS = readJavascript(TABS_PLUGIN_PUSH_URL_JS, "REPLACE_WITH_PATH", path);
+            requestTarget.appendJavascript(pushUrlJS);
+        }
+    }
+
+    /**
      * Closes all tabs except the ignoredTab tab
      *
      * @param ignoredTab    the tab to exclude from closing, pass null to close all the tabs.
@@ -670,8 +696,6 @@ public class TabsPlugin extends RenderPlugin {
 
     private static class OnCloseDialog extends AbstractDialog {
         private static final long serialVersionUID = 1L;
-
-        static final Logger log = LoggerFactory.getLogger(OnCloseDialog.class);
 
         public interface Actions extends IClusterable {
 
