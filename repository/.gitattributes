@@ -20,9 +20,6 @@ api/src/main/java/org/hippoecm/repository/ext/WorkflowManagerRegister.java -text
 api/src/main/java/org/onehippo/repository/update/BaseNodeUpdateVisitor.java -text
 api/src/main/java/org/onehippo/repository/update/NodeUpdateVisitor.java -text
 api/src/main/resources/org/hippoecm/repository/api/package.jdo -text
-api/src/site/apt/index.apt -text
-api/src/site/findbugs-exclude.xml svneol=native#text/plain
-api/src/site/site.xml svneol=native#text/plain
 api/src/test/java/org/hippoecm/repository/api/UriEncodingTest.java -text
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflow.java -text
@@ -35,8 +32,6 @@ builtin/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflow.java
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/RepositoryWorkflow.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflow.java -text
 builtin/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventsWorkflow.java -text
-builtin/src/site/apt/index.apt -text
-builtin/src/site/site.xml svneol=native#text/plain
 config/pom.xml svneol=native#text/plain
 config/src/main/resources/domain-defaultread-security.xml -text
 config/src/main/resources/domain-defaultread.xml -text svneol=unset#text/plain
@@ -66,8 +61,6 @@ config/src/main/resources/role-jcrread.xml -text svneol=unset#text/plain
 config/src/main/resources/shortcuts-workflows.xml svneol=native#text/plain
 config/src/main/resources/updater-configuration.xml -text
 config/src/main/resources/versioning-workflows.xml -text
-config/src/site/apt/index.apt -text
-config/src/site/site.xml svneol=native#text/plain
 config/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 config/src/test/resources/repository-test.cnd -text
 connector/pom.xml -text
@@ -180,9 +173,6 @@ engine/src/main/resources/org/hippoecm/repository/BootstrapHippoRepository.xml s
 engine/src/main/resources/org/hippoecm/repository/configuration.xml svneol=native#text/plain
 engine/src/main/resources/org/hippoecm/repository/impl/reference-workspace.xml -text
 engine/src/main/resources/plugin.xml svneol=native#text/plain
-engine/src/site/apt/index.apt -text
-engine/src/site/findbugs-exclude.xml svneol=native#text/plain
-engine/src/site/site.xml svneol=native#text/plain
 engine/src/test/fixtures/dump.zip -text
 engine/src/test/java/org/hippoecm/repository/DereferencedExportImportTest.java svneol=native#text/plain
 engine/src/test/java/org/hippoecm/repository/DocumentViewExportTest.java -text
@@ -271,14 +261,6 @@ resources/pom.xml svneol=native#text/plain
 resources/src/main/resources/org/hippoecm/repository/query/lucene/indexing_configuration.xml svneol=native#text/plain
 resources/src/main/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
 servlets/pom.xml svneol=native#text/plain
-src/site/CMS_logo.png -text
-src/site/apt/index.apt -text
-src/site/apt/integration_testing svneol=native#text/plain
-src/site/apt/releasing svneol=native#text/plain
-src/site/findbugs-exclude.xml svneol=native#text/plain
-src/site/hippo_logo.png -text
-src/site/site.css svneol=native#text/css
-src/site/site.xml svneol=native#text/plain
 test/README -text
 test/config/h2-repository.xml -text
 test/config/mysql-repository-clusternode1.xml -text
