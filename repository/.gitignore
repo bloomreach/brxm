@@ -49,6 +49,8 @@ dependencies/*.iml
 dependencies/.project
 dependencies/.settings
 dependencies/target
+deprecated/*.iml
+deprecated/target
 engine/*.tmp
 engine/.classpath
 engine/.pom.xml.swp
