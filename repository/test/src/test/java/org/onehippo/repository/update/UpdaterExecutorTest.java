@@ -74,16 +74,6 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testRunPathVisitorRevert() throws Exception {
-        testRunPathVisitor(true, false);
-    }
-
-    @Test
-    public void testRunQueryVisitorRevert() throws Exception {
-        testRunQueryVisitor(true, false);
-    }
-
-    @Test
     public void testDryRunDoesNotSaveChanges() throws Exception {
         testRunQueryVisitor(false, true);
     }

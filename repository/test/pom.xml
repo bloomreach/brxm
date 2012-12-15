@@ -100,6 +100,13 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-workflow</artifactId>
+      <scope>test</scope>
+      <version>${project.version}</version>
+    </dependency>
+
     <!-- Testing needs a JTA implementation -->
     <dependency>
       <groupId>com.atomikos</groupId>
