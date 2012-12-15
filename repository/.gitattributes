@@ -246,8 +246,6 @@ modules/src/main/java/org/hippoecm/repository/logging/EventLogCleanupModule.java
 modules/src/main/java/org/hippoecm/repository/logging/RepositoryLogger.java -text
 modules/src/main/resources/META-INF/MANIFEST.MF -text
 modules/src/main/resources/hippobroadcast.cnd -text
-modules/src/site/apt/index.apt -text
-modules/src/site/site.xml svneol=native#text/plain
 modules/src/test/java/org/hippoecm/repository/jackrabbit/FacetSearchEntryCompareTest.java -text svneol=unset#text/plain
 modules/src/test/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetNavigationEntryCompareTest.java -text svneol=unset#text/plain
 provider/src/main/java/org/hippoecm/repository/FacetFilters.java svneol=native#text/plain
