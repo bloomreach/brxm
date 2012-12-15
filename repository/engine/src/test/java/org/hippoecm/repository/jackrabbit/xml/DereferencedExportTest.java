@@ -22,9 +22,13 @@ public class DereferencedExportTest extends RepositoryTestCase {
         build(session, content);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ((HippoSession) session).exportDereferencedView("/test", out, false, false);
-        ByteArrayOutputStream expected = new ByteArrayOutputStream();
-        IOUtils.copy(getClass().getClassLoader().getResourceAsStream("export/expected.xml"), expected);
-        assertEquals(new String(expected.toByteArray()), new String(out.toByteArray()));
+        String actual = normalize(new String(out.toByteArray()));
+        String expected = normalize(IOUtils.toString(getClass().getClassLoader().getResourceAsStream("export/expected.xml")));
+        assertEquals(expected, actual);
+    }
+
+    private String normalize(final String s) {
+        return s.replace("\n", "").replace("\r","");
     }
 
 }
