@@ -140,11 +140,11 @@ public class TranslationVirtualProvider extends HippoVirtualProvider {
 
                 ViewNodeId ard = new ViewNodeId(subNodesProvider, state.getNodeId(), null, t9nDocId, context, name, view,
                         order, singledView);
-                viewNodesOrdered.add(ard.new Child(name, ard));
+                viewNodesOrdered.add(ard.new Child(name));
             }
             ViewNodeId.Child[] childrenArray = viewNodesOrdered.toArray(new ViewNodeId.Child[viewNodesOrdered.size()]);
-            if (order != null) {
-                Arrays.sort(childrenArray);
+            if (order != null && childrenArray.length > 0) {
+                Arrays.sort(childrenArray, childrenArray[0].getValue().new ChildComparator());
             }
 
             Set<NodeId> handles = new TreeSet<NodeId>();

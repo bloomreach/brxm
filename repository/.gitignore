@@ -45,6 +45,7 @@ connector/tm.out.lck
 connector/tmlog.lck
 connector/wdbp-error-log.txt
 /datanucleus.log
+/debuglog
 dependencies/*.iml
 dependencies/.project
 dependencies/.settings

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.dataprovider;
 
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -43,13 +44,11 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
         this.parentName = parentName;
     }
 
-    public class Child implements Comparable<Child> {
+    public class Child {
         Name name;
-        ViewNodeId nodeId;
 
-        public Child(Name name, ViewNodeId viewNodeId) {
+        public Child(Name name) {
             this.name = name;
-            this.nodeId = viewNodeId;
         }
 
         public Name getKey() {
@@ -60,11 +59,33 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
             return ViewNodeId.this;
         }
 
-        public int compareTo(Child o) {
-            if (o == null) {
+    }
+
+    public LinkedHashMap<Name, String> getOrder() {
+        if (this.order != null) {
+            return new LinkedHashMap<Name, String>(this.order);
+        }
+        return null;
+    }
+
+    public LinkedHashMap<Name, String> getView() {
+        if (this.view != null) {
+            return new LinkedHashMap<Name, String>(this.view);
+        }
+        return null;
+    }
+
+    public boolean isSingledView() {
+        return this.singledView;
+    }
+
+    public class ChildComparator implements Comparator<Child> {
+        @Override
+        public int compare(final Child o1, final Child o2) {
+            if (o1 == null || o2 == null) {
                 throw new NullPointerException();
             }
-            if (o.equals(this)) {
+            if (o2.equals(o1)) {
                 return 0;
             }
             if (order != null) {
@@ -86,7 +107,7 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
                         }
 
                         int otherFacetValueIndex = -1;
-                        String[] otherFacetValues = provider.getProperty(o.getValue().getCanonicalId(), facet, null);
+                        String[] otherFacetValues = provider.getProperty(o2.getValue().getCanonicalId(), facet, null);
                         if (otherFacetValues != null) {
                             for (int i = 0; i < otherFacetValues.length; i++) {
                                 if (otherFacetValues[i].equals(value)) {
@@ -113,33 +134,14 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
             }
             // document nodes are always ordered before anything else
             // (we make use of the fact that document nodes always have the same name as their handles)
-            if (nodeId.parentName != null && nodeId.parentName.equals(name)) {
+            if (o1.getValue().parentName != null && o1.getValue().parentName.equals(o1.name)) {
                 return -1;
             }
-            if (o.nodeId.parentName != null && o.nodeId.parentName.equals(o.name)) {
+            if (o2.getValue().parentName != null && o2.getValue().parentName.equals(o2.name)) {
                 return 1;
             }
 
-            // never return 0 (See Comparable api)
             return -1;
         }
-    }
-
-    public LinkedHashMap<Name, String> getOrder() {
-        if (this.order != null) {
-            return new LinkedHashMap<Name, String>(this.order);
-        }
-        return null;
-    }
-
-    public LinkedHashMap<Name, String> getView() {
-        if (this.view != null) {
-            return new LinkedHashMap<Name, String>(this.view);
-        }
-        return null;
-    }
-
-    public boolean isSingledView() {
-        return this.singledView;
     }
 }

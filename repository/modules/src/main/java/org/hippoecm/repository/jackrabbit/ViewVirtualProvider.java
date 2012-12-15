@@ -15,9 +15,11 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
@@ -149,18 +151,18 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
             }
             if (order != null && isHandle) {
                 // since the order is not null, we first have to sort all childs according the order. We only order below a handle
-                Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
-                for (Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext();) {
-                    ChildNodeEntry entry = (ChildNodeEntry)iter.next();
+                List<ViewNodeId.Child> children = new ArrayList<ViewNodeId.Child>();
+                for (ChildNodeEntry entry : dereference.getChildNodeEntries()) {
                     ViewNodeId childNodeId = subProvider.newViewNodeId(state.getNodeId(), parentName, entry.getId(), context, entry.getName(), view, order, singledView);
-                    children.add(childNodeId.new Child(entry.getName(), childNodeId));
+                    children.add(childNodeId.new Child(entry.getName()));
                 }
                 childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
-                Arrays.sort(childrenArray);
+                if (childrenArray.length > 0) {
+                    Arrays.sort(childrenArray, childrenArray[0].getValue().new ChildComparator());
+                }
             } else {
-                Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
-                for (Iterator iter = dereference.getChildNodeEntries().iterator(); iter.hasNext();) {
-                    ChildNodeEntry entry = (ChildNodeEntry)iter.next();
+                List<ViewNodeId.Child> children = new ArrayList<ViewNodeId.Child>();
+                for (ChildNodeEntry entry : dereference.getChildNodeEntries()) {
                     // filtering is only applied on handles
                     if (!isHandle || subProvider.match(view, entry.getId())) {
                         if (isHandle && singledView && (entry.getName().equals(requestName))) {
@@ -169,13 +171,13 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                             // note that below we also add entries that have a getName() equal to translationName! The translation should never be skipped!
                             // The for loops below will make sure the translation node is added at the last child entries
                             ViewNodeId childNodeId = subProvider.newViewNodeId(state.getNodeId(), parentName, entry.getId(), context, entry.getName(), view, order, singledView);
-                            children.add(childNodeId.new Child(entry.getName(), childNodeId));
+                            children.add(childNodeId.new Child(entry.getName()));
                         }
                     }
                 }
                 childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
-                if (isHandle) {
-                    Arrays.sort(childrenArray);
+                if (isHandle && childrenArray.length > 0) {
+                    Arrays.sort(childrenArray, childrenArray[0].getValue().new ChildComparator());
                 }
             }
             boolean appendTranslationEntry = false;
@@ -190,20 +192,20 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
                 }
             }
-            for (int i=0; i<childrenArray.length; i++) {
-                if (childrenArray[i].getKey().equals(requestName) || childrenArray[i].getKey().equals(translationName)) {
-                    if (!childrenArray[i].getValue().getCanonicalId().equals(state.getId())) {
-                        if(getCanonicalNodeState(childrenArray[i].getValue().getCanonicalId()) == null) {
+            for (final ViewNodeId.Child aChildrenArray : childrenArray) {
+                if (aChildrenArray.getKey().equals(requestName) || aChildrenArray.getKey().equals(translationName)) {
+                    if (!aChildrenArray.getValue().getCanonicalId().equals(state.getId())) {
+                        if (getCanonicalNodeState(aChildrenArray.getValue().getCanonicalId()) == null) {
                             continue;
                         }
                     }
-                    if(isHandle && childrenArray[i].getKey().equals(translationName)) {
+                    if (isHandle && aChildrenArray.getKey().equals(translationName)) {
                         // we only append below a handle the translation node to a handle when there is at least a hippo:document added
-                        if(appendTranslationEntry) {
-                            state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());  
+                        if (appendTranslationEntry) {
+                            state.addChildNodeEntry(aChildrenArray.getKey(), aChildrenArray.getValue());
                         }
                     } else {
-                        state.addChildNodeEntry(childrenArray[i].getKey(), childrenArray[i].getValue());
+                        state.addChildNodeEntry(aChildrenArray.getKey(), aChildrenArray.getValue());
                     }
                 }
             }
@@ -248,15 +250,14 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
             // we only need the parentName when referring to a handle
             parentName = getNodeName(state, context);
         }
-        Vector<ViewNodeId.Child> children = new Vector<ViewNodeId.Child>();
+        List<ViewNodeId.Child> children = new ArrayList<ViewNodeId.Child>();
         // The translation child will be present as a child when there is a translation child in the upstream and one of the criteria's below is met:
         // 1) viewId.singledView = false
         // 2) viewId.singledView = true AND at least one other child entry is present in the new children Vector
         ViewNodeId translationChildId = null;
         boolean appending = true;
-        for (Iterator iter = upstream.getChildNodeEntries().iterator(); iter.hasNext();) {
-            ChildNodeEntry entry = (ChildNodeEntry)iter.next();
-            if(getCanonicalNodeState(entry.getId()) == null) {
+        for (ChildNodeEntry entry : upstream.getChildNodeEntries()) {
+            if (getCanonicalNodeState(entry.getId()) == null) {
                 continue;
             }
             if (!isHandle || viewId.view == null || match(viewId.view, entry.getId())) {
@@ -270,11 +271,10 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     if (entry.getName().equals(requestName)) {
                         continue;
                     } else if (entry.getName().equals(translationName)) {
-                        translationChildId = newViewNodeId(nodeId, parentName, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);;
-                        continue;
-                    } else if (appending || (parentName != null && parentName.equals(entry.getName()))){
+                        translationChildId = newViewNodeId(nodeId, parentName, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);
+                    } else if (appending || (parentName != null && parentName.equals(entry.getName()))) {
                         ViewNodeId childNodeId = newViewNodeId(nodeId, parentName, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);
-                        children.add(childNodeId.new Child(entry.getName(), childNodeId));
+                        children.add(childNodeId.new Child(entry.getName()));
                         // stop appending after first match because single hippo document view, and not using sorted set
                         // note that we continue the for loop because we might get a translation child entry which needs to be appended to the children
                         if (viewId.order == null) {
@@ -283,13 +283,13 @@ public class ViewVirtualProvider extends MirrorVirtualProvider {
                     }
                 } else {
                     ViewNodeId childNodeId = newViewNodeId(nodeId, parentName, entry.getId(), context, entry.getName(), viewId.view, viewId.order, viewId.singledView);
-                    children.add(childNodeId.new Child(entry.getName(), childNodeId));
+                    children.add(childNodeId.new Child(entry.getName()));
                 }
             }
         }
         ViewNodeId.Child[] childrenArray = children.toArray(new ViewNodeId.Child[children.size()]);
-        if (isHandle) {
-            Arrays.sort(childrenArray);
+        if (isHandle && childrenArray.length > 0) {
+            Arrays.sort(childrenArray, childrenArray[0].getValue().new ChildComparator());
         }
         for (int i = 0; i < childrenArray.length && (i == 0 || !(viewId.singledView && isHandle)); i++) {
             if(getCanonicalNodeState(childrenArray[i].getValue().getCanonicalId()) == null) {
