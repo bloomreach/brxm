@@ -37,6 +37,9 @@ public class DropboxTest extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp(true);
         Node node = session.getRootNode().getNode("hippo:configuration/hippo:workflows");
+        if (node.hasNode("test")) {
+            node.getNode("test").remove();
+        }
         node = node.addNode("test");
         node = node.addNode("test","hipposys:workflow");
         node.setProperty("hipposys:nodetype", "hippo:document");
