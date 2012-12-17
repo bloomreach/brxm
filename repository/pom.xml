@@ -92,7 +92,7 @@
     <lucene.version>2.2.0</lucene.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <jetty.version>6.1.22</jetty.version>
-    <jackrabbit.version>2.2.13-h4</jackrabbit.version>
+    <jackrabbit.version>2.2.13-h5</jackrabbit.version>
     <quartz.version>1.8.5</quartz.version>
     <json-lib.version>2.2.2</json-lib.version>
     <dom4j.version>1.6.1</dom4j.version>
