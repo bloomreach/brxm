@@ -200,7 +200,7 @@ Xinha.getHTML = function(root, outputRoot, editor) {
 			return strn;
 		});
 		//IE drops  all </li>,</dt>,</dd> tags in a list except the last one
-		if(Xinha.is_ie) {
+		if (Xinha.is_ie) {
 			html = html.replace(/<(li|dd|dt)( [^>]*)?>/g,'</$1><$1$2>').
 				replace(/(<[uod]l[^>]*>[\s\S]*?)<\/(li|dd|dt)>/g, '$1').
 				replace(/\s*<\/(li|dd|dt)>(\s*<\/(li|dd|dt)>)+/g, '</$1>').
@@ -214,6 +214,8 @@ Xinha.getHTML = function(root, outputRoot, editor) {
         }
 		//Cleanup redundant whitespace before </li></dd></dt> in IE and Mozilla
 		html = html.replace(/\s*(<\/(li|dd|dt)>)/g, '$1');
+        // remove white space which was carried over
+        html = html.replace(/^(<p[^>]*>)[\r\n]*(<a[^>]*>)/g, '$1$2');
 		if (outputRoot) {
 			html += "</" + root_tag + ">";
 		}
