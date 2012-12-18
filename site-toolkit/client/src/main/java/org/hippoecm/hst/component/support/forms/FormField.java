@@ -2,7 +2,7 @@ package org.hippoecm.hst.component.support.forms;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,7 +61,7 @@ public class FormField {
             return;
         }
         if (values == null) {
-            values = new HashMap<String,String>();
+            values = new LinkedHashMap<String, String>();
         }
         values.put(value,value);
     }
