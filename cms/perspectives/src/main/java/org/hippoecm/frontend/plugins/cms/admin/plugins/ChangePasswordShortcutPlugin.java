@@ -56,7 +56,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     private static final String SECURITY_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
     private static final long ONEDAYMS = 1000 * 3600 * 24;
     
-    private static final IValueMap DIALOG_PROPERTIES = new ValueMap("width=380,height=380").makeImmutable();
+    private static final IValueMap DIALOG_PROPERTIES = new ValueMap("width=400,height=380").makeImmutable();
 
     private final long notificationPeriod;
     private long passwordMaxAge = -1l;
