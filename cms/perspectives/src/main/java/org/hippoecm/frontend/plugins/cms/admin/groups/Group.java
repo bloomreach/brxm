@@ -51,7 +51,7 @@ public class Group implements Comparable<Group>, IClusterable {
     private static final Logger log = LoggerFactory.getLogger(Group.class);
 
     private final static String PROP_DESCRIPTION = "hipposys:description";
-    private final static String QUERY_ALL_LOCAL = "select * from hipposys:group where hipposys:securityprovider='internal'";
+    private final static String QUERY_ALL_LOCAL = "select * from hipposys:group where hipposys:securityprovider='internal' and (hipposys:system <> 'true' or hipposys:system IS NULL)";
     private final static String QUERY_ALL = "select * from hipposys:group";
     private final static String QUERY_ALL_ROLES = "select * from hipposys:role";
     private final static String QUERY_GROUP_EXISTS = "SELECT * FROM hipposys:group WHERE fn:name()='{}'";
