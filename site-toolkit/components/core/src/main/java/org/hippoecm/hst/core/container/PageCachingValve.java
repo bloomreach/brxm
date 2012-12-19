@@ -21,12 +21,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,7 +43,6 @@ import net.sf.ehcache.constructs.web.AlreadyGzippedException;
 import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 import net.sf.ehcache.constructs.web.Header;
 import net.sf.ehcache.constructs.web.PageInfo;
-import net.sf.ehcache.constructs.web.SerializableCookie;
 
 public class PageCachingValve extends AbstractValve {
     
@@ -418,18 +415,12 @@ public class PageCachingValve extends AbstractValve {
 
     protected void writeContent(final HttpServletResponse response, final PageInfo pageInfo)
             throws IOException {
-        byte[] body;
 
-        if (pageInfo.getStatusCode() == HttpServletResponse.SC_NO_CONTENT ||
-                pageInfo.getStatusCode() == HttpServletResponse.SC_NOT_MODIFIED) {
-            body = new byte[0];
-        } else {
-            body = pageInfo.getUngzippedBody();
-        }
-        response.setContentLength(body.length);
-        OutputStream out = new BufferedOutputStream(response.getOutputStream());
-        out.write(body);
-        out.flush();
+            byte[] body = pageInfo.getUngzippedBody();
+            response.setContentLength(body != null ? body.length : 0);
+            OutputStream out = new BufferedOutputStream(response.getOutputStream());
+            out.write(body);
+            out.flush();
     }
 
 }
