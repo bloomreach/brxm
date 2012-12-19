@@ -312,7 +312,6 @@ public class PageCachingValve extends AbstractValve {
 
         setStatus(response, pageInfo);
         setContentType(response, pageInfo);
-        setCookies(pageInfo, response);
         setHeaders(pageInfo, response);
         writeContent(response, pageInfo);
     }
@@ -328,23 +327,6 @@ public class PageCachingValve extends AbstractValve {
         String contentType = pageInfo.getContentType();
         if (contentType != null && contentType.length() > 0) {
             response.setContentType(contentType);
-        }
-    }
-
-    /**
-     * Set the serializableCookies
-     *
-     * @param pageInfo
-     * @param response
-     */
-    protected void setCookies(final PageInfo pageInfo,
-                              final HttpServletResponse response) {
-
-        final Collection cookies = pageInfo.getSerializableCookies();
-        for (Iterator iterator = cookies.iterator(); iterator.hasNext();) {
-            final Cookie cookie = ((SerializableCookie) iterator.next())
-                    .toCookie();
-            response.addCookie(cookie);
         }
     }
 
