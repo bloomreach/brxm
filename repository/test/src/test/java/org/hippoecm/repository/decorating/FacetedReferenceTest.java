@@ -144,11 +144,11 @@ public class FacetedReferenceTest extends RepositoryTestCase {
         assertTrue(iter.hasNext());
         node = iter.nextNode();
         assertNotNull(node);
-        assertEquals("dutch", node.getProperty("language").getString());
+        assertEquals("english", node.getProperty("language").getString());
         assertTrue(iter.hasNext());
         node = iter.nextNode();
         assertNotNull(node);
-        assertEquals("english", node.getProperty("language").getString());
+        assertEquals("dutch", node.getProperty("language").getString());
         assertFalse(iter.hasNext());
 
         node = traverse(session, "/test/prefer/articles/the-invisible-man");
@@ -167,7 +167,7 @@ public class FacetedReferenceTest extends RepositoryTestCase {
         assertTrue(iter.hasNext());
         node = iter.nextNode();
         assertNotNull(node);
-        assertEquals("dutch", node.getProperty("language").getString());
+        assertEquals("english", node.getProperty("language").getString());
         assertFalse(iter.hasNext());
 
         node = traverse(session, "/test/preferonce/articles/the-invisible-man");
@@ -182,7 +182,7 @@ public class FacetedReferenceTest extends RepositoryTestCase {
     @Test
     public void testPreferSingleDirectOnHandle() throws Exception {
         HippoNode n = (HippoNode)session.getItem("/test/preferonce_onhandle");
-        assertEquals( n.getNode("nineteeneightyfour").getProperty("language").getString(), "dutch" );
+        assertEquals( n.getNode("nineteeneightyfour").getProperty("language").getString(), "english" );
     }
     
     @Test
@@ -193,7 +193,7 @@ public class FacetedReferenceTest extends RepositoryTestCase {
          * This is a test for this scenario
          */
         HippoNode n = (HippoNode)session.getItem("/test/preferonce/articles/war-of-the-worlds/war-of-the-worlds");
-        assertEquals("dutch", n.getProperty("language").getString());
+        assertEquals("english", n.getProperty("language").getString());
         assertNotNull(n.getCanonicalNode());
         Node dutchNodeCanonical = n.getCanonicalNode();
         Node mirror = dutchNodeCanonical.addNode("mirror","hippo:facetselect");
@@ -206,7 +206,7 @@ public class FacetedReferenceTest extends RepositoryTestCase {
         session.refresh(false);
         HippoNode n2 = (HippoNode)session.getItem("/test/preferonce/articles/war-of-the-worlds/war-of-the-worlds");
         n2.getNode("mirror/nineteeneightyfour").getProperty("language").getString();
-        assertEquals("dutch", n2.getNode("mirror/nineteeneightyfour").getProperty("language").getString());
+        assertEquals("english", n2.getNode("mirror/nineteeneightyfour").getProperty("language").getString());
     }
 
 }

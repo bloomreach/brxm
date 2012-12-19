@@ -21,6 +21,7 @@ import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.Name;
 
@@ -121,7 +122,7 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
                             return -1;
                         } else if (thisFacetValueIndex == -1 && otherFacetValueIndex != -1) {
                             return 1;
-                        } else if (value == null || value.equals("") || value.equals("*")) {
+                        } else if (StringUtils.isEmpty(value) || value.equals("*")) {
                             if (thisFacetValues[thisFacetValueIndex].compareTo(otherFacetValues[otherFacetValueIndex]) != 0) {
                                 return thisFacetValues[thisFacetValueIndex]
                                         .compareTo(otherFacetValues[otherFacetValueIndex]);
@@ -132,16 +133,25 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
                 }
 
             }
+
+            if (o1.name.equals(o2.name)) {
+                return 0;
+            }
+
+            if (o1.getValue().parentName == null && o2.getValue().parentName == null) {
+                return 0;
+            }
+
             // document nodes are always ordered before anything else
             // (we make use of the fact that document nodes always have the same name as their handles)
-            if (o1.getValue().parentName != null && o1.getValue().parentName.equals(o1.name)) {
+            if (o1.getValue().parentName.equals(o1.name) && !o2.getValue().parentName.equals(o2.name)) {
                 return -1;
             }
-            if (o2.getValue().parentName != null && o2.getValue().parentName.equals(o2.name)) {
+            if (o2.getValue().parentName.equals(o2.name) && !o1.getValue().parentName.equals(o1.name)) {
                 return 1;
             }
 
-            return -1;
+            return 0;
         }
     }
 }
