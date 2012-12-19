@@ -83,7 +83,7 @@ public class PageCachingValve extends AbstractValve {
                 task = HDC.getCurrentTask().startSubtask("PageCachingValve");
             }
             appendRequestInfoToCacheKey(context);
-            PageInfo pageInfo = buildPageInfo(context);
+            PageInfo pageInfo = getPageInfoFromCacheOrBuild(context);
             if (pageInfo == null) {
                 throw new ContainerException("PageInfo null. ");
             }
@@ -98,7 +98,7 @@ public class PageCachingValve extends AbstractValve {
             if (pageInfo.isOk()) {
                 HttpServletResponse response = context.getServletResponse();
                 if (response.isCommitted()) {
-                    throw new ContainerException("Response already committed after doing buildPage"
+                    throw new ContainerException("Response already committed after doing buildPageInfo"
                                     + " but before writing response from PageInfo.");
                 }
                 writeResponse(response, pageInfo);
@@ -201,12 +201,12 @@ public class PageCachingValve extends AbstractValve {
     /**
      * Build page info either using the cache or building the page directly.
      */
-    protected PageInfo buildPageInfo(final ValveContext context) throws Exception {
+    protected PageInfo getPageInfoFromCacheOrBuild(final ValveContext context) throws Exception {
         final PageCacheKey keyPage = context.getPageCacheContext().getPageCacheKey();
         CacheElement element = pageCache.get(keyPage, new Callable<CacheElement>() {
             @Override
             public CacheElement call() throws Exception {
-                PageInfo pageInfo = buildPage(context);
+                PageInfo pageInfo = buildPageInfo(context);
                 if (pageInfo.isOk()) {
                     if (isNoCacheHeaderPresent(pageInfo, context)) {
                         log.debug("Creating uncacheable element for page '{}' with keyPage '{}' because contains no cache header.",
@@ -258,12 +258,12 @@ public class PageCachingValve extends AbstractValve {
      * @return a Serializable value object for the page or page fragment
      * @throws Exception
      */
-    protected PageInfo buildPage(final ValveContext context)
+    protected PageInfo buildPageInfo(final ValveContext context)
             throws Exception {
 
         final HttpServletResponse nonWrappedReponse = context.getServletResponse();
         try {
-            final ByteArrayOutputStream outstr = new ByteArrayOutputStream();
+            final ByteArrayOutputStream outstr = new ByteArrayOutputStream(4096);
             final GenericResponseWrapper responseWrapper = new GenericResponseWrapper(context.getServletResponse(), outstr);
 
             context.setHttpServletResponse(responseWrapper);
@@ -288,11 +288,11 @@ public class PageCachingValve extends AbstractValve {
     }
 
 
-    public class ForwardPlaceHolderPageInfo extends PageInfo {
+    private class ForwardPlaceHolderPageInfo extends PageInfo {
         
         private final String forwardPathInfo;
-        
-        public ForwardPlaceHolderPageInfo(String forwardPathInfo) throws AlreadyGzippedException {
+
+        private ForwardPlaceHolderPageInfo(String forwardPathInfo) throws AlreadyGzippedException {
             super(HttpServletResponse.SC_OK, null, null, null, false, 0, null);
             this.forwardPathInfo = forwardPathInfo;
         }
