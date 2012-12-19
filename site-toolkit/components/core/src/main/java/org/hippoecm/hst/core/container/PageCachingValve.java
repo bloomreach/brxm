@@ -212,6 +212,8 @@ public class PageCachingValve extends AbstractValve {
                         log.debug("Creating uncacheable element for page '{}' with keyPage '{}' because contains no cache header.",
                                 context.getServletRequest().getRequestURI(), keyPage);
                         return pageCache.createUncacheableElement(keyPage, pageInfo);
+                    } else if (pageInfo instanceof UncacheablePageInfo) {
+                        return pageCache.createUncacheableElement(keyPage, pageInfo);
                     } else {
                         log.debug("Caching request '{}' with keyPage '{}'", context.getServletRequest().getRequestURI(), keyPage);
                         return pageCache.createElement(keyPage, pageInfo);
@@ -279,6 +281,18 @@ public class PageCachingValve extends AbstractValve {
                String forwardPathInfo = (String) context.getServletRequest().getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
                return new ForwardPlaceHolderPageInfo(forwardPathInfo);
             }
+
+            if (responseWrapper.getCookies() != null && !responseWrapper.getCookies().isEmpty()) {
+                // we do not cache pages that contain cookies that are set during hst request rendering after the
+                // page caching valve
+                log.info("Response for '{}' contain cookies that are set after the page caching valve: Response won't be cached. " +
+                        "Better to mark the hst component that sets cookies as uncacheable or load it asynchronous.",
+                        context.getServletRequest().getRequestURI());
+                return new UncacheablePageInfo(responseWrapper.getStatus(), responseWrapper.getContentType(),
+                        responseWrapper.getCookies(), outstr.toByteArray(), storeGzipped,
+                        timeToLiveSeconds, responseWrapper.getAllHeaders());
+            }
+
             return new PageInfo(responseWrapper.getStatus(), responseWrapper.getContentType(),
                     responseWrapper.getCookies(), outstr.toByteArray(), storeGzipped,
                     timeToLiveSeconds, responseWrapper.getAllHeaders());
@@ -295,6 +309,16 @@ public class PageCachingValve extends AbstractValve {
         private ForwardPlaceHolderPageInfo(String forwardPathInfo) throws AlreadyGzippedException {
             super(HttpServletResponse.SC_OK, null, null, null, false, 0, null);
             this.forwardPathInfo = forwardPathInfo;
+        }
+    }
+
+    private class UncacheablePageInfo extends PageInfo {
+
+        private UncacheablePageInfo(final int statusCode, final String contentType,
+                                    final Collection cookies,
+                                    final byte[] body, boolean storeGzipped, long timeToLiveSeconds,
+                                    final Collection<Header<? extends Serializable>> headers) throws AlreadyGzippedException {
+            super(statusCode, contentType, cookies, body, storeGzipped, timeToLiveSeconds, headers);
         }
     }
 
