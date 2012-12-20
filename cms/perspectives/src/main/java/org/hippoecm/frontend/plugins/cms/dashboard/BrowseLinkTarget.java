@@ -42,7 +42,7 @@ public class BrowseLinkTarget extends JcrObject {
 
     private static final Logger log = LoggerFactory.getLogger(BrowseLinkTarget.class);
 
-    public BrowseLinkTarget(String path) {
+    public BrowseLinkTarget(String path) throws RepositoryException {
         super(resolveModel(path));
     }
 
@@ -83,17 +83,12 @@ public class BrowseLinkTarget extends JcrObject {
     protected void processEvents(IObservationContext context, Iterator<? extends IEvent> events) {
     }
 
-    private static IModel<Node> resolveModel(String docPath) {
-        try {
-            Node node = JcrUtils.getNodeIfExists(docPath, UserSession.get().getJcrSession());
-            if (node != null) {
-                node = findFirstBrowsableAncestor(node);
-                return new JcrNodeModel(node);
-            }
-        } catch (RepositoryException e) {
-            log.error("Failed to resolve browse link target model", e);
+    private static IModel<Node> resolveModel(String docPath) throws RepositoryException {
+        Node node = JcrUtils.getNodeIfExists(docPath, UserSession.get().getJcrSession());
+        if (node != null) {
+            node = findFirstBrowsableAncestor(node);
+            return new JcrNodeModel(node);
         }
-
         return new JcrNodeModel(docPath);
     }
 

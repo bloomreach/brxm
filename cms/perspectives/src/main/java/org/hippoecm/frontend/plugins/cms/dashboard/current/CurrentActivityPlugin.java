@@ -18,7 +18,9 @@ package org.hippoecm.frontend.plugins.cms.dashboard.current;
 import java.text.DateFormat;
 import java.util.Iterator;
 
+import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.basic.Label;
@@ -35,10 +37,13 @@ import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
 import org.hippoecm.frontend.plugins.cms.dashboard.DocumentEvent;
 import org.hippoecm.frontend.plugins.cms.dashboard.EventModel;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CurrentActivityPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
 
     public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -84,19 +89,23 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                 }
             }));
 
-            final DocumentEvent documentEvent = new DocumentEvent((Node) item.getModelObject());
-            final IModel<String> nameModel = documentEvent.getName();
-            final EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel, dateFormat);
-            String path = documentEvent.getDocumentPath();
-            if (path != null) {
-                path = fixPathForRequests(path);
-                BrowseLinkTarget target = new BrowseLinkTarget(path);
-                BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", target, label);
-                item.add(link);
-            } else {
-                Label entryLabel = new Label("entry", label);
-                entryLabel.setEscapeModelStrings(false);
-                item.add(entryLabel);
+            try {
+                final DocumentEvent documentEvent = new DocumentEvent((Node) item.getModelObject());
+                final IModel<String> nameModel = documentEvent.getName();
+                final EventModel label = new EventModel((JcrNodeModel) item.getModel(), nameModel, dateFormat);
+                String path = documentEvent.getDocumentPath();
+                if (path != null) {
+                    path = fixPathForRequests(path);
+                    BrowseLinkTarget target = new BrowseLinkTarget(path);
+                    BrowseLink link = new BrowseLink(getPluginContext(), getPluginConfig(), "entry", target, label);
+                    item.add(link);
+                } else {
+                    Label entryLabel = new Label("entry", label);
+                    entryLabel.setEscapeModelStrings(false);
+                    item.add(entryLabel);
+                }
+            } catch (RepositoryException e) {
+                log.error("Failed to create activity event item from log node", e);
             }
         }
 

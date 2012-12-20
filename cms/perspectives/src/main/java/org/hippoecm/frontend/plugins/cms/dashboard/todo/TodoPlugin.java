@@ -82,20 +82,18 @@ public class TodoPlugin extends RenderPlugin {
                 }
             }));
 
-            String path = "/";
             try {
                 Node node = (Node) item.getModelObject();
-                path = node.getPath();
-            } catch (RepositoryException e) {
-                log.warn("unable to find path", e);
-            }
-            BrowseLinkTarget target = new BrowseLinkTarget(path);
-            item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", target,
-                    new PropertyModel<String>(target, "name")));
+                BrowseLinkTarget target = new BrowseLinkTarget(node.getPath());
+                item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", target,
+                        new PropertyModel<String>(target, "name")));
 
-            Request request = new Request((Node)item.getModelObject(), this);
-            item.add(new Label("request-description", new PropertyModel(request, "localType")));
-            item.add(new Label("request-owner", new PropertyModel(request, "username")));
+                Request request = new Request((Node)item.getModelObject(), this);
+                item.add(new Label("request-description", new PropertyModel(request, "localType")));
+                item.add(new Label("request-owner", new PropertyModel(request, "username")));
+            } catch (RepositoryException e) {
+                log.error("Failed to create todo item from publication request node", e);
+            }
         }
     }
 

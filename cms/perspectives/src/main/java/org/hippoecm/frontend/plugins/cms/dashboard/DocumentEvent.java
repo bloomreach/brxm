@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentEvent {
 
-    private static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
     private static final Pattern pattern = Pattern.compile("document\\[(?:(?:(?:uuid=([0-9a-fA-F-]+))|(?:path='(/[^']*)')),?)*\\]");
 
     private final Node node;
@@ -48,15 +47,11 @@ public class DocumentEvent {
     private String targetVariant;
     private boolean targetVariantExists;
 
-    public DocumentEvent(Node node) {
+    public DocumentEvent(Node node) throws RepositoryException {
         this.node = node;
-        try {
-            Session session = node.getSession();
-            initSourceVariant(node, session);
-            initTargetVariant(node, session);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
-        }
+        Session session = node.getSession();
+        initSourceVariant(node, session);
+        initTargetVariant(node, session);
     }
 
     private void initTargetVariant(final Node node, final Session session) throws RepositoryException {
@@ -119,28 +114,19 @@ public class DocumentEvent {
         sourceVariantExists = !StringUtils.isEmpty(sourceVariant) && session.itemExists(sourceVariant);
     }
 
-    public String getMethod() {
-        try {
-            return JcrUtils.getStringProperty(node, "hippolog:eventMethod", null);
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-            return null;
-        }
+    public String getMethod() throws RepositoryException {
+        return JcrUtils.getStringProperty(node, "hippolog:eventMethod", null);
     }
 
-    private String getArgument(int index) {
-        try {
-            if (node.hasProperty("hippolog:eventArguments")
-                    && node.getProperty("hippolog:eventArguments").getValues().length > index) {
-                return node.getProperty("hippolog:eventArguments").getValues()[index].getString();
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
+    private String getArgument(int index) throws RepositoryException {
+        if (node.hasProperty("hippolog:eventArguments")
+                && node.getProperty("hippolog:eventArguments").getValues().length > index) {
+            return node.getProperty("hippolog:eventArguments").getValues()[index].getString();
         }
         return null;
     }
 
-    public IModel<String> getName() {
+    public IModel<String> getName() throws RepositoryException {
         final String argument = getArgument(0);
         final String method = getMethod();
         if ("delete".equals(method) && argument != null) {
@@ -187,7 +173,7 @@ public class DocumentEvent {
         return null;
     }
 
-    private String uuid2Path(String uuid) {
+    private String uuid2Path(String uuid) throws RepositoryException {
         if (uuid == null || uuid.isEmpty()) {
             return null;
         }
@@ -196,8 +182,6 @@ public class DocumentEvent {
             Node node = session.getNodeByIdentifier(uuid);
             return node.getPath();
         } catch (ItemNotFoundException ignore) {
-        } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
         }
         return null;
     }
