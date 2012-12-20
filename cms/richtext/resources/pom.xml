@@ -33,6 +33,13 @@
       <resource>
         <directory>src/external</directory>
         <filtering>false</filtering>
+        <!-- exclude Xinha plugins with incompatible licenses -->
+        <excludes>
+          <exclude>xinha/plugins/Equation/**</exclude>
+          <exclude>xinha/plugins/InsertNote/**</exclude>
+          <exclude>xinha/plugins/PreserveScripts/**</exclude>
+          <exclude>xinha/plugins/UnsavedChanges/**</exclude>
+        </excludes>
       </resource>
       <resource>
         <directory>src/main/resources</directory>
