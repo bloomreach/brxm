@@ -19,16 +19,29 @@ import java.io.Serializable;
 
 /**
  * A {@link PageCacheKey} represents a key that can be used to qualify/categorize some request. Different {@link Valve}s can
- * contribute to this {@link PageCacheKey} through {@link #append}.
+ * contribute to this {@link PageCacheKey} through {@link #setAttribute}.
  */
 public interface PageCacheKey extends Serializable {
 
     /**
-     * All the combined <code>keyFragment</code> will make up the key. Make sure that your added keyFragment object
-     * have a decent {@link #hashCode()} and {@link #equals(Object)} implementation that is also efficient as it will
-     * be used when storing objects in a cache with key {@link PageCacheKey}
-     * @param keyFragment the fragment that will be added to the key. 
+     * <p>
+     *  All the combined attributes will make up the final {@link PageCacheKey}. Note that the <b>ORDER</b> in which the
+     *  attributes are set <b>DO</b> influence the final created cachekey. Make sure that your added keyFragment object
+     *  have a decent{@link #hashCode()} and {@link #equals(Object)} implementation that is also efficient as it will
+     *  be used when storing objects in a cache with key {@link PageCacheKey}.
+     * </p>
+     * <p>
+     *     The <code>subKey</code> can best be prefixed by namespacing (FQN of class calling the setAttribute) to
+     *     avoid collisions. For example
+     *     <pre>
+     *     <code>
+     *          PageCacheKey#setAttribute(MyValve.class.getName() + ".ip", ip-address);
+     *     </code>
+     *     </pre>
+     * </p>
+     * @param subKey the key to which the fragment belongs, not allowed to be <code>null</code>
+     * @param keyFragment the fragment for the subKey, not allowed to be <code>null</code>
      */
-    void append(Serializable keyFragment);
+    void setAttribute(String subKey, Serializable keyFragment);
 
 }

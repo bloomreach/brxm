@@ -17,7 +17,11 @@ package org.hippoecm.hst.core.container;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -155,7 +159,7 @@ public class HstSitePipeline implements Pipeline
     public void destroy() throws ContainerException {
     }    
     
-    private static final class Invocation implements ValveContext
+    static final class Invocation implements ValveContext
     {
 
         private final Valve[] valves;
@@ -266,14 +270,14 @@ public class HstSitePipeline implements Pipeline
     }
     
     private final static class PageCacheKeyImpl implements PageCacheKey {
-        
-        private List<Serializable> keyFragments = new ArrayList<Serializable>();
+
+        private Map<String, Serializable> linkedKeyFragments = new LinkedHashMap<String, Serializable>();
         // we keep the hashcode as instance variable for efficiency
         private int hashCode;
 
         @Override
-        public void append(final Serializable keyFragment) {
-            keyFragments.add(keyFragment);
+        public void setAttribute(final String subKey, final Serializable keyFragment) {
+            linkedKeyFragments.put(subKey, keyFragment);
             hashCode = 0;
         }
 
@@ -289,20 +293,43 @@ public class HstSitePipeline implements Pipeline
             if (hashCode() != cacheKey.hashCode()) {
                 return false;
             }
-            return keyFragments.equals(cacheKey.keyFragments);
+
+            // we *cannot* use LinkedHashMap equals impl here because the Cache key equals SHOULD involve
+            // the ORDER of the entries. Two LinkedHashMap's that contain the same entries in a different order
+            // return TRUE, which we do not want! For the cachekey, the ORDER DOES MATTER
+
+            final Set<Map.Entry<String,Serializable>> entries = linkedKeyFragments.entrySet();
+            final Set<Map.Entry<String,Serializable>> otherEntries = ((PageCacheKeyImpl)o).linkedKeyFragments.entrySet();
+
+            if (entries.size() != otherEntries.size()) {
+                return false;
+            }
+
+            final Iterator<Map.Entry<String, Serializable>> iterator = entries.iterator();
+            final Iterator<Map.Entry<String, Serializable>> otherIterator = otherEntries.iterator();
+
+            while (iterator.hasNext()) {
+                final Map.Entry<String, Serializable> next = iterator.next();
+                final Map.Entry<String, Serializable> otherNext = otherIterator.next();
+                if (!next.equals(otherNext)) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         @Override
         public int hashCode() {
             if (hashCode == 0) {
-                hashCode = keyFragments.hashCode();
+                hashCode = linkedKeyFragments.hashCode();
             }
             return hashCode;
         }
 
         @Override
         public String toString() {
-            return "PageCacheKey[" + keyFragments.toString() + "]";
+            return "PageCacheKey[" + linkedKeyFragments.toString() + "]";
         }
     }
 }

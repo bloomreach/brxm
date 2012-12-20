@@ -179,19 +179,23 @@ public class PageCachingValve extends AbstractValve {
     }
 
     private void appendRequestInfoToCacheKey(final ValveContext context) {
-        final PageCacheKey pageCacheKey = context.getPageCacheContext().getPageCacheKey();
+        StringBuilder requestInfo = new StringBuilder(256);
+        final char delim = '\uFFFF';
         final HttpServletRequest request = context.getServletRequest();
         // Implementers should differentiate between GET and HEAD requests otherwise blank pages
         //  can result.
-        pageCacheKey.append(request.getMethod());
-        pageCacheKey.append(HstRequestUtils.getFarthestRequestHost(request));
-        pageCacheKey.append(request.getRequestURI());
-        pageCacheKey.append(request.getQueryString());
+        requestInfo.append(request.getMethod()).append(delim);
+        requestInfo.append(HstRequestUtils.getFarthestRequestHost(request)).append(delim);
+        requestInfo.append(request.getRequestURI()).append(delim);
+        requestInfo.append(request.getQueryString()).append(delim);
 
         // AFter an internal HST FORWARD, all the above parts are the same because same http request,
         // but the base URL pathInfo has been changed. Hence, we need to account for pathInfo
         // to make sure that in a FORWARDED request we do not get the same cached entry
-        pageCacheKey.append(context.getRequestContext().getBaseURL().getPathInfo());
+        requestInfo.append(context.getRequestContext().getBaseURL().getPathInfo()).append(delim);
+        final PageCacheKey pageCacheKey = context.getPageCacheContext().getPageCacheKey();
+
+        pageCacheKey.setAttribute(PageCachingValve.class.getName() + ".reqInfo", requestInfo.toString());
     }
 
 
