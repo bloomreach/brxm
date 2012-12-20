@@ -35,7 +35,6 @@ import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 
 public class DialogWindow extends ModalWindow implements IDialogService {
 
-    private static final String LINE_BREAKS_REGEX = "(\\r|\\n)";
     private static final long serialVersionUID = 1L;
 
     private class Callback implements ModalWindow.WindowClosedCallback {
@@ -129,7 +128,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         shown = dialog;
         dialog.setDialogService(this);
         setContent(dialog.getComponent());
-        setTitle(removeLineBreaks(dialog.getTitle()));
+        setTitle(new StringWithoutLineBreaksModel(dialog.getTitle()));
         setWindowClosedCallback(new Callback(dialog));
 
         IValueMap properties = dialog.getProperties();
@@ -144,18 +143,6 @@ public class DialogWindow extends ModalWindow implements IDialogService {
         if (AjaxRequestTarget.class.isAssignableFrom(target.getClass())) {
             show((AjaxRequestTarget) target);
         }
-    }
-
-    private static IModel<String> removeLineBreaks(IModel<String> stringModel) {
-        if (stringModel == null) {
-            return stringModel;
-        }
-        final String s = stringModel.getObject();
-        final String withoutLineBreaks = s.replaceAll(LINE_BREAKS_REGEX, "");
-        if (s.equals(withoutLineBreaks)) {
-            return stringModel;
-        }
-        return new Model<String>(withoutLineBreaks);
     }
 
     /**
