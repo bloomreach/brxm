@@ -44,8 +44,8 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
             } else {
                 log.warn("No application nodes found");
             }
-        } catch (RepositoryException ex) {
-            log.error("error retrieving default application");
+        } catch (RepositoryException e) {
+            log.error("Failed to retrieve default application", e);
         }
         return null;
     }
@@ -57,10 +57,10 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
             if (applicationFolder != null && applicationFolder.hasNode(name)) {
                 return getApplication(applicationFolder.getNode(name));
             } else {
-                log.info("No application " + name + " found");
+                log.info("No application {} found", name);
             }
         } catch (RepositoryException e) {
-            log.error("Error retrieving application", e);
+            log.error("Failed to retrieve application", e);
         }
         return null;
     }
@@ -70,7 +70,7 @@ public class JcrApplicationFactory implements IApplicationFactory, IDetachable {
             Node clusterNode = applicationNode.getNodes().nextNode();
             return new JcrConfigServiceFactory(new JcrNodeModel(applicationNode), clusterNode.getName());
         } else {
-            log.error("Application configuration '" + applicationNode.getName() + "' contains no plugin cluster");
+            log.error("Application configuration '{}' contains no plugin cluster", applicationNode.getName());
         }
         return null;
     }

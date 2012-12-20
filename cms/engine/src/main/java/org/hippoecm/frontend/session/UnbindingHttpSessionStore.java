@@ -34,7 +34,7 @@ import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.collections.ConcurrentHashSet;
 
 /**
- * HTTP Session store that invokes {@link #unbind()} on the PluginUserSession when
+ * HTTP Session store that invokes {@link PluginUserSession#unbind()} when
  * the http session is invalidated.
  * 
  * TODO: use a {@link HttpSessionActivationListener} to get rid of WeakReferences

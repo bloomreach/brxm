@@ -158,7 +158,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
                 return userNode.getProperty("hipposys:system").getBoolean();
             }
         } catch (RepositoryException e) {
-            log.warn("Unable to determine is user is a system user: {}", e.getMessage());
+            log.warn("Unable to determine if user is a system user: {}", e.getMessage());
             log.debug("Error while determining system user status:", e);
         }
         return false;

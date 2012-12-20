@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.Request;
@@ -61,11 +62,7 @@ public class PluginUserSession extends UserSession {
 
     private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(UserSession.class);
-
-    public static final PluginUserSession get() {
-        return (PluginUserSession) UserSession.get();
-    }
+    private static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
     private static Session fallbackSession = null;
     private static final Map<UserSession, JcrSessionReference> jcrSessions = new WeakHashMap<UserSession, JcrSessionReference>();
@@ -76,12 +73,21 @@ public class PluginUserSession extends UserSession {
     private UserCredentials credentials;
     private Map<String, Integer> pluginComponentCounters = new HashMap<String, Integer>();
 
+    @SuppressWarnings("unused")
+    private boolean bound = false;
+    private String sessionId;
+
+
     public UserCredentials getUserCredentials() {
         return credentials;
     }
 
     public static void setCredentials(UserCredentials credentials) throws RepositoryException {
         fallbackSession = JcrSessionModel.login(credentials);
+    }
+
+    public static PluginUserSession get() {
+        return (PluginUserSession) UserSession.get();
     }
 
     public PluginUserSession(Request request) {
@@ -148,7 +154,7 @@ public class PluginUserSession extends UserSession {
                 return null;
             }
         };
-        login((UserCredentials) null, jcrSessionModel);
+        login(null, jcrSessionModel);
         //Calling the dirty() method causes this wicket session to be reset in the http session
         //so that it knows that the wicket session has changed (we've just added the jcr session model etc.)
         dirty();
@@ -175,7 +181,7 @@ public class PluginUserSession extends UserSession {
             if (fallbackSession == null) {
                 try {
                     main.getRepository(); // side effect of reinitializing fallback session
-                } catch (RepositoryException ex) {
+                } catch (RepositoryException ignored) {
                 }
             }
             session = fallbackSession;
@@ -190,7 +196,7 @@ public class PluginUserSession extends UserSession {
     private Session getJcrSessionInternal() {
         IModel<Session> sessionModel = getJcrSessionModel();
         if (sessionModel != null) {
-            Session result = getJcrSessionModel().getObject();
+            Session result = sessionModel.getObject();
             if (result != null && result.isLive()) {
                 return result;
             }
@@ -225,7 +231,7 @@ public class PluginUserSession extends UserSession {
 
         IApplicationFactory factory = getApplicationFactory();
         final IPluginConfigService application = factory.getApplication(getApplicationName());
-        if (!application.isSaveOnExitEnabled()) {
+        if (application != null && !application.isSaveOnExitEnabled()) {
             IModel<Session> sessionModel = getJcrSessionModel();
             if (sessionModel instanceof JcrSessionModel) {
                 ((JcrSessionModel) sessionModel).setSaveOnExit(false);
@@ -257,11 +263,7 @@ public class PluginUserSession extends UserSession {
         if (oldModel != null) {
             oldModel.detach();
         }
-        if (sessionModel.getObject() == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return sessionModel.getObject() != null;
     }
 
     public void logout() {
@@ -359,10 +361,6 @@ public class PluginUserSession extends UserSession {
         ((UnbindingHttpSessionStore) getSessionStore()).setClearPageMaps(sessionId);
     }
 
-    @SuppressWarnings("unused")
-    private boolean bound = false;
-    private String sessionId;
-
     void onBind(String sessionId) {
         this.bound = true;
         this.sessionId = sessionId;
@@ -401,10 +399,10 @@ public class PluginUserSession extends UserSession {
         }
         int componentNum = 0;
         if (pluginComponentCounters.containsKey(markupId)) {
-            componentNum = pluginComponentCounters.get(markupId).intValue();
+            componentNum = pluginComponentCounters.get(markupId);
         }
         ++componentNum;
-        pluginComponentCounters.put(markupId, Integer.valueOf(componentNum));
+        pluginComponentCounters.put(markupId, componentNum);
         return markupId + "_" + componentNum;
     }
 
@@ -413,7 +411,7 @@ public class PluginUserSession extends UserSession {
         Session session = getJcrSession();
         String userID = session.getUserID();
 
-        if (userID == null || userID.equals("") || userID.equalsIgnoreCase("anonymous")) {
+        if (StringUtils.isEmpty(userID) || userID.equalsIgnoreCase("anonymous")) {
             applicationName = "login";
         } else {
             applicationName = PluginApplication.get().getPluginApplicationName();
