@@ -136,6 +136,9 @@
   <bean id="diagnosticReportingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.DiagnosticReportingValve">
   </bean>
 
+  <bean id="diagnosticRetainingFIFOValve" parent="abstractValve" class="org.hippoecm.hst.core.container.DiagnosticRetainingFIFOValve">
+  </bean>
+
   <!-- Pipelines -->
   
   <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
@@ -159,8 +162,8 @@
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
                 <ref bean="siteMenusResolvingValve" />
                 <ref bean="actionValve" />
-                <ref bean="pageCachingValve"/>
                 <ref bean="resourceServingValve" />
+                <ref bean="pageCachingValve"/>
                 <ref bean="componentRenderingValve" />
                 <ref bean="aggregationValve" />
               </list>
@@ -169,6 +172,7 @@
               <list>
                 <ref bean="cleanupValve" />
                 <ref bean="diagnosticReportingValve" />
+                <ref bean="diagnosticRetainingFIFOValve" />
               </list>
             </property>
           </bean>
