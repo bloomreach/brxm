@@ -38,12 +38,16 @@ public class HippoRepositoryServer extends LocalHippoRepository {
     private Remote rmiRepository;
 
     public HippoRepositoryServer() throws RepositoryException {
-        super();
         initialize();
     }
 
     public HippoRepositoryServer(String location) throws RepositoryException {
+        this(location, null);
+    }
+
+    public HippoRepositoryServer(String location, String bindingAddress) throws RepositoryException {
         super(location);
+        this.bindingAddress = bindingAddress;
         initialize();
     }
 

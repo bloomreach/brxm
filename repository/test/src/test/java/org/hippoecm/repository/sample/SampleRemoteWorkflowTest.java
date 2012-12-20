@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.sample;
 
+import java.io.File;
 import java.io.IOException;
 
 import javax.jcr.Node;
@@ -64,10 +65,11 @@ public class SampleRemoteWorkflowTest {
 
     @Before
     public void setUp() throws Exception {
-        backgroundServer = new HippoRepositoryServer();
+        String bindingAddress = "rmi://localhost:1098/hipporepository";
+        backgroundServer = new HippoRepositoryServer(new File(System.getProperty("user.dir")).getAbsolutePath(), bindingAddress);
         backgroundServer.run(true);
         Thread.sleep(3000);
-        server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
+        server = HippoRepositoryFactory.getHippoRepository(bindingAddress);
     }
 
     @After
@@ -77,16 +79,8 @@ public class SampleRemoteWorkflowTest {
         Thread.sleep(3000);
     }
 
-    /**
-     * Create UserTransActionManger instance
-     * @return
-     */
-    public TransactionManager getTransactionManager() {
-        return new UserTransactionManager();
-    }
-
     @Test
-    public void testWorkflow() throws RepositoryException, WorkflowException, IOException, Exception {
+    public void testWorkflow() throws Exception {
         SampleWorkflowSetup.commonStart(backgroundServer);
         try {
 
