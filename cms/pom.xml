@@ -129,7 +129,7 @@
     <drewnoakes-extractor.version>2.4.0-beta-1</drewnoakes-extractor.version>
 
     <hippo.htmlcleaner.version>1.02.07</hippo.htmlcleaner.version>
-    <hippo.jcrdiff.version>1.01.02</hippo.jcrdiff.version>
+    <hippo.jcrdiff.version>1.01.03-SNAPSHOT</hippo.jcrdiff.version>
     <sanselan.version>0.97-incubator</sanselan.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
