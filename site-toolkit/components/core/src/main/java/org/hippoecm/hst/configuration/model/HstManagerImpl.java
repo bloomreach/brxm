@@ -310,10 +310,10 @@ public class HstManagerImpl implements MutableHstManager {
                     } catch (LoginException e) {
                         throw new ContainerException("Could not build hst model because user 'configuser' could not login to the repository.");
                     }
+                    pageCache.clear();
                 }
                 currentHosts = virtualHosts;
                 log.info("Flushing page cache after new model is loaded");
-                pageCache.clear();
             }
         }
         return currentHosts;
