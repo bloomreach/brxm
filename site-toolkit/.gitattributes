@@ -931,6 +931,7 @@ mock/src/main/java/org/hippoecm/hst/mock/core/component/MockHstRequestBase.java 
 mock/src/main/java/org/hippoecm/hst/mock/core/component/MockHstResponse.java -text
 mock/src/main/java/org/hippoecm/hst/mock/core/component/MockHstResponseBase.java -text
 mock/src/main/java/org/hippoecm/hst/mock/core/component/MockHstURL.java -text
+mock/src/main/java/org/hippoecm/hst/mock/core/container/MockComponentManager.java -text
 mock/src/main/java/org/hippoecm/hst/mock/core/container/MockContainerConfiguration.java -text
 mock/src/main/java/org/hippoecm/hst/mock/core/container/MockHstComponentWindow.java -text
 mock/src/main/java/org/hippoecm/hst/mock/core/linking/MockHstLink.java -text
