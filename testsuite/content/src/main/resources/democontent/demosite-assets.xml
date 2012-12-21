@@ -22,9 +22,6 @@
   <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
     <sv:value>hippo:harddocument</sv:value>
   </sv:property>
-  <sv:property sv:name="jcr:uuid" sv:type="String">
-    <sv:value>7b680d7b-d90f-48b9-bdc5-bac5ae01bba3</sv:value>
-  </sv:property>
   <sv:property sv:name="hippo:related___pathreference" sv:type="String"/>
   <sv:property sv:name="hippostd:foldertype" sv:type="String" sv:multiple="true">
     <sv:value>new-file-folder</sv:value>
@@ -39,9 +36,6 @@
     <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
       <sv:value>hippo:hardhandle</sv:value>
     </sv:property>
-    <sv:property sv:name="jcr:uuid" sv:type="String">
-      <sv:value>a8d38d9d-36e1-4cd6-99f0-ed61b3f1e194</sv:value>
-    </sv:property>
     <sv:property sv:name="hippo:discriminator" sv:type="String" sv:multiple="true"/>
     <sv:node sv:name="testpdf.pdf">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
@@ -49,9 +43,6 @@
       </sv:property>
       <sv:property sv:name="jcr:mixinTypes" sv:type="Name" sv:multiple="true">
         <sv:value>hippo:harddocument</sv:value>
-      </sv:property>
-      <sv:property sv:name="jcr:uuid" sv:type="String">
-        <sv:value>f86f9279-a72b-4c83-804a-9c51d40c48d3</sv:value>
       </sv:property>
       <sv:property sv:name="hippo:availability" sv:type="String" sv:multiple="true">
         <sv:value>live</sv:value>
