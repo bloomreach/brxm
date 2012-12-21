@@ -1,6 +1,10 @@
+Hippo CMS
+Copyright 1999-2012 Hippo B.V., Amsterdam, The Netherlands (http://www.onehippo.com/)
+
+
 This product includes software developed by:
 The Apache Software Foundation (http://www.apache.org/).
-Hippo B.V., Amsterdam, The Netherlands (http://www.onehippo.com/).
+
 
 NOTICE: Only our own original work is licensed under the terms of the
 Apache License Version 2.0. The licenses of some libraries might impose
@@ -8,59 +12,18 @@ different redistribution or general licensing terms than those stated in the
 Apache License. Users and redistributors are hereby requested to verify these
 conditions and agree upon them.
 
-===============================================================================
-Copyright 2007, Google Inc.
-===============================================================================
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
- 1. Redistributions of source code must retain the above copyright notice,
-    this list of conditions and the following disclaimer.
- 2. Redistributions in binary form must reproduce the above copyright notice,
-    this list of conditions and the following disclaimer in the documentation
-    and/or other materials provided with the distribution.
- 3. Neither the name of Google Inc. nor the names of its contributors may be
-    used to endorse or promote products derived from this software without
-    specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
-WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
-OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
-OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-Sets up google.gears.*, which is *the only* supported way to access Gears.
-
-Circumvent this file at your own risk!
-
-In the future, Gears may automatically define google.gears.* without this
-file. Gears may use these objects to transparently fix bugs and compatibility
-issues. Applications that use the code below will continue to work seamlessly
-when that happens.
-
-===============================================================================
-htmlArea v3.0 - Copyright (c) 2002, 2003 interactivetools.com, inc.
-===============================================================================
-
-This copyright notice MUST stay intact for use (see license.txt).
-
-Portions (c) dynarch.com, 2003
-
-A free WYSIWYG editor replacement for <textarea> fields.
-For full source code and docs, visit http://www.interactivetools.com/
-
-Version 3.0 developed by Mihai Bazon.
-  http://dynarch.com/mishoo
+"richtext/resources/src/external/xinha/plugins/PSLocal/gears_init.js" is licensed under the BSD 3-Clause License
+You can obtain a copy of the License at: http://opensource.org/licenses/BSD-3-Clause
 
 
+"richtext/resources/src/external/xinha/plugins/ExtendedFileManager/assets/popup.js" and
+"richtext/resources/src/external/xinha/plugins/ImageManager/assets/popup.js" and
+"richtext/resources/src/external/xinha/popups/popup.js" are licensed under the BSD 3-Clause License
+You can obtain a copy of the License at: http://opensource.org/licenses/BSD-3-Clause
 
-This product uses the Yahoo! User Interface Library (YUI) developed by 
+
+This product uses the Yahoo! User Interface Library (YUI) developed by
 Yahoo! (http://developer.yahoo.com/yui/).
 For more information see addon/yui/yui-licence.txt
 
