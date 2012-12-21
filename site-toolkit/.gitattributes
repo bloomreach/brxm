@@ -628,6 +628,7 @@ components/core/src/test/java/org/hippoecm/hst/core/beans/TextBean.java -text sv
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstComponentMetadataReader.java -text
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstRequest.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/component/TestHstResponse.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/AbstractPipelineTestCase.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestComponentWindowFilter.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestContainerURLProvider.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestDefaultPipeline.java svneol=native#text/plain
@@ -700,6 +701,7 @@ components/core/src/test/resources/org/hippoecm/hst/core/GeneralBasicPoolingRepo
 components/core/src/test/resources/org/hippoecm/hst/core/GeneralMultiplePoolingRepository.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/TestConfigurations.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/component/TestHstRequest.xml svneol=native#text/plain
+components/core/src/test/resources/org/hippoecm/hst/core/container/AbstractPipelineTestCase.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestContainerURLProvider.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestDefaultPipeline.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestFactoryComponentInstanceCreation.xml -text

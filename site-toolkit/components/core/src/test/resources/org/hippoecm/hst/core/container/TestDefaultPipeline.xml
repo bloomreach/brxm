@@ -18,55 +18,22 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <import resource="classpath:/org/hippoecm/hst/core/TestConfigurations.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-channelManager.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-cache.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-sitemenu.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-search.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-pipelines.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-request.xml" />
-  <import resource="classpath:/org/hippoecm/hst/core/GeneralMultiplePoolingRepository.xml" />
-  
-  <bean id="javax.servlet.ServletContext"
-        class="org.hippoecm.hst.test.mock.HstMockServletContext">
-    <property name="requestDispatchers">
-      <list>
-        <map>
-          <entry key="/.*\.jsp">
-            <bean class="org.hippoecm.hst.test.mock.HstMockRequestDispatcher">
-              <constructor-arg value="/*.jsp" />
-              <constructor-arg>
-                <bean class="org.hippoecm.hst.test.mock.HstMockJspServlet" />
-              </constructor-arg>
-            </bean>
-          </entry>
-        </map>
-      </list>
-    </property>
-  </bean>
-  
-  <bean id="javax.servlet.ServletConfig"
-        class="org.springframework.mock.web.MockServletConfig">
-    <constructor-arg ref="javax.servlet.ServletContext" />
-  </bean>
-  
+
+  <import resource="classpath:/org/hippoecm/hst/core/container/AbstractPipelineTestCase.xml" />
+
   <bean id="javax.servlet.http.HttpServletRequest" scope="prototype"
         class="org.springframework.mock.web.MockHttpServletRequest">
-     <constructor-arg ref="javax.servlet.ServletContext" />
-     <property name="scheme" value="http" />
-     <property name="serverName" value="localhost" />
-     <property name="serverPort" value="8085" />
-     <property name="method" value="GET" />
-     <property name="contextPath" value="/site" />
+    <constructor-arg ref="javax.servlet.ServletContext" />
+    <property name="scheme" value="http" />
+    <property name="serverName" value="localhost" />
+    <property name="serverPort" value="8085" />
+    <property name="method" value="GET" />
+    <property name="contextPath" value="/site" />
   </bean>
-  
+
   <bean id="javax.servlet.http.HttpServletResponse" scope="prototype"
         class="org.springframework.mock.web.MockHttpServletResponse">
   </bean>
-  
+
+
 </beans>
