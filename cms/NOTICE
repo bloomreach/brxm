@@ -13,14 +13,20 @@ Apache License. Users and redistributors are hereby requested to verify these
 conditions and agree upon them.
 
 
-"richtext/resources/src/external/xinha/plugins/PSLocal/gears_init.js" is licensed under the BSD 3-Clause License
+This product includes software (Google Gears) developed by Google Inc. under the BSD 3-Clause License
 For more information: http://opensource.org/licenses/BSD-3-Clause
 
 
-"richtext/resources/src/external/xinha/plugins/ExtendedFileManager/assets/popup.js" and
-"richtext/resources/src/external/xinha/plugins/ImageManager/assets/popup.js" and
-"richtext/resources/src/external/xinha/popups/popup.js" are licensed under the BSD 3-Clause License
+This product includes software developed by interactivetools.com, inc and dynarch.com under the BSD 3-Clause License
 For more information: http://opensource.org/licenses/BSD-3-Clause
+
+
+This product includes artwork developed Tango Desktop Project (http://tango.freedesktop.org/) under Creative Commons Attribution-ShareAlike 2.5 License Agreement
+For more information: http://creativecommons.org/licenses/by-sa/2.5/legalcode
+
+
+This product includes software (PSServer.js) developed by http://xinha.org (Douglas Mayle) under MIT license
+For more information: http://opensource.org/licenses/MIT
 
 
 This product uses the Yahoo! User Interface Library (YUI) developed by

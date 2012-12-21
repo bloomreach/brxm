@@ -213,7 +213,7 @@ The following components are MIT Licensed
 richtext/resources/src/external/xinha/plugins/PSServer/PSServer.js
 
 ===============================================================================
-The following components are BSD Licensed
+The following components are BSD 3-Clause Licensed
 ===============================================================================
 
 htmlArea License (based on BSD license)
@@ -389,10 +389,8 @@ richtext/resources/src/external/xinha/popups/popup.js
 richtext/resources/src/external/xinha/plugins/PSLocal/gears_init.js
 
 ===============================================================================
-The following components have the Creative Commons license
+The following components have the Creative Commons Attribution-ShareAlike 2.5 License Agreement
 ===============================================================================
-
-richtext/resources/src/external/xinha/images/tango
 
 Creative Commons Attribution-ShareAlike 2.5 License Agreement
 
@@ -462,3 +460,4 @@ Except for the limited purpose of indicating to the public that the Work is lice
 
 Creative Commons may be contacted at http://creativecommons.org/.
 
+richtext/resources/src/external/xinha/images/tango
