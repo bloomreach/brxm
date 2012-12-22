@@ -155,9 +155,9 @@ public class HippoEvent<E extends HippoEvent<E>> implements Cloneable {
     @Override
     public E clone() {
         try {
-            final E clone;
-            clone = (E) super.clone();
-            clone.sealed = false;
+            final E clone = (E) super.clone();
+            final HippoEvent created = clone;
+            created.sealed = false;
             return clone;
         } catch (CloneNotSupportedException e) {
             // not possible by Object definition
