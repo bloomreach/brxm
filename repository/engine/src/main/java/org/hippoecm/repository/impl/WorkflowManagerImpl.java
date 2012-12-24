@@ -1012,17 +1012,22 @@ public class WorkflowManagerImpl implements WorkflowManager {
         }
         @Override
         public int compareTo(Object o) {
-            if (o instanceof InvocationBinding) {
-                InvocationBinding other = (InvocationBinding)o;
-                if (contextClass.isAssignableFrom(other.contextClass)) {
-                    return -1;
-                } else if (other.contextClass.isAssignableFrom(contextClass)) {
-                    return 1;
-                } else {
-                    return contextClass.getName().compareTo(other.contextClass.getName());
-                }
-            } else {
+            if (o == null) {
+                throw new NullPointerException();
+            }
+            if (o == this) {
+                return 0;
+            }
+            InvocationBinding other = (InvocationBinding)o;
+            if (other.contextClass.equals(contextClass)) {
+                return 0;
+            }
+            if (contextClass.isAssignableFrom(other.contextClass)) {
                 return -1;
+            } else if (other.contextClass.isAssignableFrom(contextClass)) {
+                return 1;
+            } else {
+                return contextClass.getName().compareTo(other.contextClass.getName());
             }
         }
     }

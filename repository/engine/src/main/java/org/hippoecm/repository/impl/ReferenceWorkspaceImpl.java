@@ -91,7 +91,7 @@ public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
                     try {
                         double s1 = n1.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble();
                         double s2 = n2.getProperty(HippoNodeType.HIPPO_SEQUENCE).getDouble();
-                        return s1 == s2 ? 0 : s1 <= s2 ? -1 : 1;
+                        return s1 == s2 ? 0 : s1 < s2 ? -1 : 1;
                     } catch (RepositoryException e) {
                         return 0;
                     }

@@ -118,6 +118,9 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
                             }
                         }
 
+                        if (thisFacetValueIndex == -1 && otherFacetValueIndex == -1) {
+                            break;
+                        }
                         if (thisFacetValueIndex != -1 && otherFacetValueIndex == -1) {
                             return -1;
                         } else if (thisFacetValueIndex == -1 && otherFacetValueIndex != -1) {
@@ -129,7 +132,7 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
                             }
                         }
                     }
-                } catch (RepositoryException ex) {
+                } catch (RepositoryException ignored) {
                 }
 
             }

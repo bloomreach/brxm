@@ -308,19 +308,20 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
          */
         @Override
         public int compareTo(FacetSearchEntry entry) {
-           if(entry == null) {
-               throw new NullPointerException();
-           }
-           if(entry == this) {
-               return 0;
-           }
-           // count will never be negative and never in the range of MAX integer hence
-           // below will never fail
-           if(entry.count.count - this.count.count != 0) {
-               return (entry.count.count - this.count.count);
-           }
-           // now, if facetValue's are equal, we just return 0 : this is inline with the equals            
-           return facetValue.compareTo(entry.facetValue);
+            if(entry == null) {
+                throw new NullPointerException();
+            }
+            if(entry == this) {
+                return 0;
+            }
+            // count will never be negative and never in the range of MAX integer hence
+            // below will never fail
+            int compare = entry.count.count - this.count.count;
+            if(compare != 0) {
+                return compare;
+            }
+            // now, if facetValue's are equal, we just return 0 : this is inline with the equals
+            return facetValue.compareTo(entry.facetValue);
         }
 
         @Override
@@ -337,9 +338,6 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
             if (!(obj instanceof FacetSearchEntry)) {
                 return false;
             }
@@ -348,8 +346,9 @@ public abstract class AbstractFacetSearchProvider extends HippoVirtualProvider {
                 if (other.count != null) {
                     return false;
                 }
-            } else if (!count.equals(other.count))
+            } else if (!count.equals(other.count)) {
                 return false;
+            }
             if (facetValue == null) {
                 if (other.facetValue != null) {
                     return false;

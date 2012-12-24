@@ -160,7 +160,7 @@ public class CreateFixture {
                     try {
                         return o1.getPath().compareTo(o2.getPath());
                     } catch(RepositoryException ex) {
-                        return -1;
+                        return 0;
                     }
                 }
             });
