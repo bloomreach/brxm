@@ -831,8 +831,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                }
                return -1;
             }
-            // keep the order as is, return -1
-            return -1;
+            return 0;
         }
        
         

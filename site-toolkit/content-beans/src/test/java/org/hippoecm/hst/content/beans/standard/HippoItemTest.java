@@ -18,13 +18,15 @@ package org.hippoecm.hst.content.beans.standard;
 import java.util.HashSet;
 import java.util.TreeSet;
 
-import static junit.framework.Assert.*;
+import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 
 /**
  * Tests {@link org.hippoecm.hst.content.beans.standard.HippoItem HippoItem}.
@@ -131,6 +133,8 @@ public class HippoItemTest {
         HippoItem item2 = new TestItem("item2", "/foo/bar/lux/item2");
         HippoItem sns1 = new TestItem("sns", "/foo/bar/lux/sns1");
         HippoItem sns2 = new TestItem("sns", "/foo/bar/lux/sns2[2]");
+        HippoItem nullPath1 = new TestItem("null", null);
+        HippoItem nullPath2 = new TestItem("null", null);
 
 
         HippoItem sameNameDiffPath1 = new TestItem("same", "/foo/bar/one");
@@ -152,6 +156,8 @@ public class HippoItemTest {
         assertTrue(sns2.compareTo(sns1) != 0);
         assertTrue(sns1.compareTo(sns2) != 0);
 
+        assertTrue(nullPath1.compareTo(nullPath2) == 0);
+        assertTrue(nullPath2.compareTo(nullPath1) == 0);
 
         assertFalse(sameNameDiffPath1.equals(sameNameDiffPath2));
         assertTrue(sameNameDiffPath1.compareTo(sameNameDiffPath2) != 0);

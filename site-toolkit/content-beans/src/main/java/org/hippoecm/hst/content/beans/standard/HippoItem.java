@@ -674,6 +674,10 @@ public class HippoItem implements HippoBean {
             return val;
         }
 
+        if (this.getPath() == null && hippoBean.getPath() == null) {
+            return 0;
+        }
+        
         // return the compareTo of the backing path : this to be in sync with the equals
         if (this.getPath() == null) {
             return 1;
