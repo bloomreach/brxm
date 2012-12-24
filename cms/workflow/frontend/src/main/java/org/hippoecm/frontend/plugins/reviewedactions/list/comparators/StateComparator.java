@@ -29,20 +29,21 @@ public class StateComparator extends NodeComparator {
         try {
             Node n1 = o1.getNode();
             Node n2 = o2.getNode();
-            Node variant = n1.getNode(n1.getName());
-            String state1 = "unknown";
-            if (variant.hasProperty("hippostd:stateSummary")) {
-                state1 = variant.getProperty("hippostd:stateSummary").getString();
-            }
-            variant = n2.getNode(n2.getName());
-            String state2 = "unknown";
-            if (variant.hasProperty("hippostd:stateSummary")) {
-                state2 = variant.getProperty("hippostd:stateSummary").getString();
-            }
+            Node variant1 = n1.getNode(n1.getName());
+            String state1 = getStateSummary(variant1);
+            Node variant2 = n2.getNode(n2.getName());
+            String state2 = getStateSummary(variant2);
             return String.CASE_INSENSITIVE_ORDER.compare(state1, state2);
         } catch (RepositoryException e) {
             return 0;
         }
+    }
+
+    private String getStateSummary(final Node variant) throws RepositoryException {
+        if (variant.hasProperty("hippostd:stateSummary")) {
+            return variant.getProperty("hippostd:stateSummary").getString();
+        }
+        return "unknown";
     }
 
 }

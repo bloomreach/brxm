@@ -71,6 +71,6 @@ class Item extends TreeMap<String, Value[]> implements Comparable<Item> {
         if (thatIter.hasNext()) {
             return -1;
         }
-        return 1;
+        return 0;
     }
 }

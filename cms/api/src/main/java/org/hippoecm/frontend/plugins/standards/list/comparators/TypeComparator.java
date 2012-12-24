@@ -28,8 +28,8 @@ public class TypeComparator extends NodeComparator {
     @Override
     public int compare(JcrNodeModel o1, JcrNodeModel o2) {
         try {
-            Node n1 = ((JcrNodeModel) o1).getNode();
-            Node n2 = ((JcrNodeModel) o2).getNode();
+            Node n1 = o1.getNode();
+            Node n2 = o2.getNode();
             if (n1 == null) {
                 if (n2 == null) {
                     return 0;

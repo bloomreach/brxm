@@ -15,12 +15,8 @@
  */
 package org.onehippo.cms7.brokenlinks;
 
-import org.hippoecm.repository.api.Document;
-
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.LinkedList;
 
 public class Link implements Comparable<Object>, Serializable {
 

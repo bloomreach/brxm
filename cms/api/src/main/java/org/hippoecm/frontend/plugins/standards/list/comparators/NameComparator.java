@@ -29,8 +29,8 @@ public class NameComparator extends NodeComparator {
         String name1 = new NodeTranslator(o1).getNodeName().getObject();
         String name2 = new NodeTranslator(o2).getNodeName().getObject();
 
-        int result;
-        if ((result = String.CASE_INSENSITIVE_ORDER.compare(name1, name2)) == 0) {
+        int nameCompare = String.CASE_INSENSITIVE_ORDER.compare(name1, name2);
+        if (nameCompare == 0) {
             try {
                 Node n1 = o1.getNode();
                 Node n2 = o2.getNode();
@@ -43,10 +43,10 @@ public class NameComparator extends NodeComparator {
                     return -1;
                 }
                 return n1.getIndex() - n2.getIndex();
-            } catch (RepositoryException e) {
+            } catch (RepositoryException ignored) {
             }
         } else {
-            return result;
+            return nameCompare;
         }
         return 0;
     }
