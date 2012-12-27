@@ -74,30 +74,15 @@
     <junit.version>4.4</junit.version>
     
     <!-- Project Dependencies -->
-    <commons-collections.version>3.1</commons-collections.version>
-    <commons-httpclient.version>3.0</commons-httpclient.version>
-    <commons-lang.version>2.1</commons-lang.version>
-    <commons-cli.version>1.0</commons-cli.version>
     <commons-io.version>1.4</commons-io.version>
-    <concurrent.version>1.3.4</concurrent.version>
     <org.datanucleus.version>2.2.2</org.datanucleus.version>
-    <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
-    <org.apache.derby.version>10.8.1.2</org.apache.derby.version>
-    <poi.version>3.0.2-FINAL</poi.version>
+    <lucene.version>2.2.0</lucene.version>
     <tika.version>0.9</tika.version>
     <pdfbox.version>1.7.1</pdfbox.version>
-    <org.textmining.version>0.4</org.textmining.version>
-    <xerces.version>2.8.1</xerces.version>
-    <cglib.version>2.1_3</cglib.version>
-    <lucene.version>2.2.0</lucene.version>
-    <nekohtml.version>1.9.13</nekohtml.version>
-    <jetty.version>6.1.22</jetty.version>
     <jackrabbit.version>2.2.13-h5</jackrabbit.version>
     <quartz.version>1.8.5</quartz.version>
     <json-lib.version>2.2.2</json-lib.version>
-    <dom4j.version>1.6.1</dom4j.version>
     <groovy.version>2.0.1</groovy.version>
-    <xmlunit.version>1.3</xmlunit.version>
     <easymock.version>3.1</easymock.version>
   </properties>
 
@@ -109,44 +94,6 @@
 
   <build>
     <plugins>
-      <plugin>
-       <!-- Report project history via xdoc, by supplying information in src/changes/changes.xml 
-
-         WARNINGS
-         - Some examples use the following changes plugin, but the report is full of bugs,
-           missing title and descriptions, not using the issueLinkTemplate and ugly markup.
-           <groupId>org.codehaus.mojo</groupId>
-           <artifactId>changes-maven-plugin</artifactId>
-
-         - The issueLinkTemplate configuration is supposed to be deprecated, but is the only
-           way to configure for actions that have no system attribute and therefor have
-           as system 'default'. From the details of issueLinkTemplatePerSystem.
-           Note: The deprecated issueLinkTemplate will be used for a system called "default".
-
-        -->
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-changes-plugin</artifactId>
-        <configuration>
-          <issueLinkTemplatePerSystem>
-            <Jira>%URL%/%ISSUE%</Jira>
-          </issueLinkTemplatePerSystem>
-          <issueLinkTemplate>%URL%/%ISSUE%</issueLinkTemplate>
-        </configuration>
-        <executions>
-          <execution>
-            <id>validate-changes</id>
-            <phase>pre-site</phase>
-            <goals>
-              <goal>changes-validate</goal>
-            </goals>
-            <configuration>
-              <!-- if set to true the build will fail if the changes file is invalid,
-                   if set to false warnings will be logged. -->
-              <failOnError>false</failOnError>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
       <plugin>
         <inherited>false</inherited>
         <groupId>org.apache.maven.plugins</groupId>
@@ -339,69 +286,9 @@
         </exclusions>
       </dependency>
       <dependency>
-        <groupId>concurrent</groupId>
-        <artifactId>concurrent</artifactId>
-        <version>${concurrent.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <version>${commons-collections.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-cli</groupId>
-        <artifactId>commons-cli</artifactId>
-        <version>${commons-cli.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>${commons-httpclient.version}</version>
-        <!-- JCR-683: Exclude bad transitive dependencies -->
-        <exclusions>
-          <exclusion>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.derby</groupId>
-        <artifactId>derby</artifactId>
-        <version>${org.apache.derby.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi</artifactId>
-        <version>${poi.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi-scratchpad</artifactId>
-        <version>${poi.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-          </exclusion>
-        </exclusions>
       </dependency>
       <dependency>
         <groupId>org.apache.tika</groupId>
@@ -425,44 +312,14 @@
         </exclusions>
       </dependency>      
       <dependency>
-        <groupId>xerces</groupId>
-        <artifactId>xercesImpl</artifactId>
-        <version>${xerces.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>net.sourceforge.nekohtml</groupId>
-        <artifactId>nekohtml</artifactId>
-        <version>${nekohtml.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>cglib</groupId>
-        <artifactId>cglib</artifactId>
-        <version>${cglib.version}</version>
-      </dependency>
-      <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
       </dependency>
       <dependency>
-        <groupId>xmlunit</groupId>
-        <artifactId>xmlunit</artifactId>
-        <version>${xmlunit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
         <version>${easymock.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>dom4j</groupId>
-        <artifactId>dom4j</artifactId>
-        <version>${dom4j.version}</version>
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
@@ -491,12 +348,6 @@
         <artifactId>atomikos-util</artifactId>
         <version>${atomikos.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.openqa.selenium.client-drivers</groupId>
-        <artifactId>selenium-java-client-driver</artifactId>
-        <version>${selenium.version}</version>
-      </dependency>
-
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymockclassextension</artifactId>
