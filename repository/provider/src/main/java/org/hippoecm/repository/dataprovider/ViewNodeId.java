@@ -137,20 +137,24 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
 
             }
 
-            if (o1.name.equals(o2.name)) {
+            final Name name1 = o1.name;
+            final Name name2 = o2.name;
+            if (name1.equals(name2)) {
                 return 0;
             }
 
-            if (o1.getValue().parentName == null && o2.getValue().parentName == null) {
+            final Name parentName1 = o1.getValue().parentName;
+            final Name parentName2 = o2.getValue().parentName;
+            if (parentName1 == null && parentName2 == null) {
                 return 0;
             }
 
             // document nodes are always ordered before anything else
             // (we make use of the fact that document nodes always have the same name as their handles)
-            if (o1.getValue().parentName.equals(o1.name) && !o2.getValue().parentName.equals(o2.name)) {
+            if ((parentName1 != null && parentName1.equals(name1)) && !(parentName2 != null && parentName2.equals(name2))) {
                 return -1;
             }
-            if (o2.getValue().parentName.equals(o2.name) && !o1.getValue().parentName.equals(o1.name)) {
+            if ((parentName2 != null && parentName2.equals(name2)) && !(parentName1 != null && parentName1.equals(name1))) {
                 return 1;
             }
 
