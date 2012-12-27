@@ -858,6 +858,7 @@ content-beans/src/main/java/org/hippoecm/hst/content/beans/query/filter/FilterIm
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/filter/IsNodeTypeFilter.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/filter/MixinNodeTypeFilterImpl.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/query/filter/PrimaryNodeTypeFilterImpl.java svneol=native#text/plain
+content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/AvailableTranslations.java -text
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/BeanWrapper.java svneol=native#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/BeansWrapper.java -text svneol=unset#text/plain
 content-beans/src/main/java/org/hippoecm/hst/content/beans/standard/HippoAsset.java svneol=native#text/plain

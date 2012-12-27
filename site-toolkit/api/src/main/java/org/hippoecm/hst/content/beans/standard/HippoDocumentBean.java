@@ -51,13 +51,17 @@ public interface HippoDocumentBean extends HippoBean, HippoTranslated {
      * @return the jcr path of the canonical handle or <code>null</code>
      */
     String getCanonicalHandlePath();
-    
-    
+
+
     /**
-     * In case that there is no translation bean, a {@link NoopTranslationsBean} is returned, to make sure you do not need null checks
-     * @param beanMappingClass
+     * @deprecated since 2.26.01 : Use {@link #getAvailableTranslations(Class)} instead
+     */
+    @Deprecated
+    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass);
+
+    /**
+     * @param beanMappingClass only return translations of type <code>beanMappingClass</code>
      * @return a {@link HippoAvailableTranslationsBean} where the translations must be of type <code>beanMappingClass</code>. This method never returns <code>null</code>
      */
-    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean(Class<T> beanMappingClass);
- 
+    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations(Class<T> beanMappingClass);
 }

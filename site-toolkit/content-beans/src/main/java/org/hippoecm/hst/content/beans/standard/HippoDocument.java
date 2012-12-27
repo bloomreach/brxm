@@ -38,10 +38,18 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
     
     private javax.jcr.Node canonicalHandleNode;
 
+    @Deprecated
     private boolean availableTranslationsBeanMappingClassInitialized;
+
+    @Deprecated
     @SuppressWarnings("rawtypes")
     private HippoAvailableTranslationsBean availableTranslationsBeanMappingClass;
-    
+
+    private boolean availableTranslationsMappingClassInitialized;
+
+    @SuppressWarnings("rawtypes")
+    private HippoAvailableTranslationsBean availableTranslationsMappingClass;
+
     /**
      * @param relPath
      * @return <code>HippoHtml</code> or <code>null</code> if no node exists as relPath or no node of type "hippostd:html"
@@ -149,6 +157,16 @@ public class HippoDocument extends HippoItem implements HippoDocumentBean{
             }
         }
         return (HippoAvailableTranslationsBean<T>)availableTranslationsBeanMappingClass;
+    }
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations(Class<T> beanMappingClass) {
+        if(!availableTranslationsMappingClassInitialized) {
+            availableTranslationsMappingClassInitialized = true;
+            availableTranslationsMappingClass = new AvailableTranslations(getNode(), getObjectConverter());
+            ((AvailableTranslations)availableTranslationsMappingClass).setBeanMappingClass(beanMappingClass);
+        }
+        return (HippoAvailableTranslationsBean<T>)availableTranslationsMappingClass;
     }
     
     @Override

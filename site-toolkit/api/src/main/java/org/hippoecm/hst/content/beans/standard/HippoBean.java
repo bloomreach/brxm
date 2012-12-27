@@ -324,12 +324,17 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     boolean isSelf(HippoBean compare);
     
     /**
-     * In general, only a {@link HippoDocumentBean} and {@link HippoFolderBean} can have a {@link HippoAvailableTranslationsBean}. However, to make sure that on
-     * any {@link HippoBean} you can call {@link #getAvailableTranslationsBean()}, we add it to the base {@link HippoBean} as well. If the bean is not a document or folder, this method
-     * will return a no-operation {@link HippoAvailableTranslationsBean} instance.
-     * @return A {@link HippoAvailableTranslationsBean}. If there are no translations for this {@link HippoBean}, a no-operation {@link HippoAvailableTranslationsBean} will be returned 
+     * @deprecated since 2.26.01 : Use {@link #getAvailableTranslations()} instead
      */
+    @Deprecated
     <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean();
+
+    /**
+     * In general, only a {@link HippoDocumentBean} and {@link HippoFolderBean} can have a {@link HippoAvailableTranslationsBean}. However, to make sure that on
+     * any {@link HippoBean} you can call {@link #getAvailableTranslationsBean()}, we add it to the base {@link HippoBean} as well.
+     * @return A {@link HippoAvailableTranslationsBean}.
+     */
+    <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations();
     
     /**
      * A convenience method capable of comparing two HippoBean instances for you for the underlying jcr node. 

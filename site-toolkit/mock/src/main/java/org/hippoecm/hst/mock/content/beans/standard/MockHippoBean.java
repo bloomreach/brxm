@@ -35,6 +35,11 @@ public class MockHippoBean implements HippoBean {
         throw new UnsupportedOperationException("Not supported yet");
     }
 
+    @Override
+    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations() {
+        throw new UnsupportedOperationException("Not supported yet");
+    }
+
     public <T> T getBean(String relPath) {
         throw new UnsupportedOperationException("Not supported yet");
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010 Hippo.
+ *  Copyright 2012 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,36 +20,40 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
-import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.index.Indexable;
+import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is a useful bean for finding available translations of one and the same bean (folder or document). Because there is already also 
- * nodetype hippo:translation used for translating a node name, see {@link HippoTranslation}, we use for the current class a name
- * that might be unexpected wrt to its backing primary node type name, namely  'hippotranslation:translations'
+ * This is a useful POJO/BEAN (non jcr node backed bean, not extending {@link HippoItem} or implementing {@link HippoBean})
+ * for finding available translations of one and the same bean (folder or document). 
  *
- * @deprecated since 2.26.01 : Use {@link AvailableTranslations} pojo which is not backed by a jcr node instead and does NOT 
- * extend from {@link HippoItem} and does not implement {@link HippoBean} at all
  */
-@Deprecated
 
-@Indexable(ignore = true)
-@Node(jcrType="hippotranslation:translations")
-public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem implements HippoAvailableTranslationsBean<K> {
+public class AvailableTranslations<K extends HippoBean> implements HippoAvailableTranslationsBean<K> {
 
-    private static final Logger log = LoggerFactory.getLogger(HippoAvailableTranslations.class);
-    
+    private static final Logger log = LoggerFactory.getLogger(AvailableTranslations.class);
+
+    final private Node node;
+    final private ObjectConverter objectConverter;
     private Map<String, K> translations;
     private Class<K> beanMappingClass;
+
+    /**
+     * @param node the <code>node</code> to get the translations for
+     */
+    public AvailableTranslations(Node node, ObjectConverter objectConverter) {
+        this.node = node;
+        this.objectConverter = objectConverter;
+    } 
     
     public List<String> getAvailableLocales() {
         populate();
@@ -79,20 +83,15 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
         if(translations != null) {
             return;
         }
-
-        if (getNode() == null) {
-            log.debug("Cannot get translations for detached bean.");
-            return;
-        }
         try {
-            populateTranslations(getNode());
+            populateTranslations();
         } catch(RepositoryException e) {
             log.warn("Exception while trying to fetch translations.", e);
         }
     }
     
     /**
-     * Sets the <code>beanMappingClass</code> for this {@link HippoAvailableTranslationsBean}. Only translations of type
+     * Sets the <code>beanMappingClass</code> for this {@link org.hippoecm.hst.content.beans.standard.HippoAvailableTranslationsBean}. Only translations of type
      * <code>beanMappingClass</code> will be returned
      * @param beanMappingClass the type of class the available translations should be off
      */
@@ -100,19 +99,17 @@ public class HippoAvailableTranslations<K extends HippoBean> extends HippoItem i
         this.beanMappingClass = beanMappingClass;
      }
 
-    private void populateTranslations(final javax.jcr.Node translationNode) throws RepositoryException {
-        javax.jcr.Node docNode = translationNode.getParent();
-        // use LinkedHashMap as we want to keep the order of the locales
+    private void populateTranslations() throws RepositoryException {
         translations = new LinkedHashMap<String,K>();
-        if (!docNode.hasProperty(HippoTranslationNodeType.ID)) {
-            log.debug("No translations for '{}' since property '{}' not available", docNode.getPath(), HippoTranslationNodeType.ID);
+        if (!node.hasProperty(HippoTranslationNodeType.ID)) {
+            log.debug("No translations for '{}' since property '{}' not available", node.getPath(), HippoTranslationNodeType.ID);
             return;
         }
-        String id = docNode.getProperty(HippoTranslationNodeType.ID).getString();
+        String id = node.getProperty(HippoTranslationNodeType.ID).getString();
 
         String xpath = "//element(*,"+HippoTranslationNodeType.NT_TRANSLATED+")["+HippoTranslationNodeType.ID+" = '"+id+"']";
 
-        Query query = docNode.getSession().getWorkspace().getQueryManager().createQuery(xpath, "xpath");
+        Query query = node.getSession().getWorkspace().getQueryManager().createQuery(xpath, "xpath");
         final QueryResult result = query.execute();
         final NodeIterator nodeIterator = result.getNodes();
         while (nodeIterator.hasNext()) {

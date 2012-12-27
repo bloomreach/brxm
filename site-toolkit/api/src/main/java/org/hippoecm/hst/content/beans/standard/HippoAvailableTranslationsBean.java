@@ -33,16 +33,14 @@ public interface HippoAvailableTranslationsBean<K extends HippoBean> {
     boolean hasTranslation(String locale);
     
     /**
-     * @param <K> the type of elements in the {@link List} to be returned
-     * @return the List of all {@link T}'s and an empty {@link List} if no translations found
+     * @return the List of all {@link K}'s and an empty {@link List} if no translations found
      * @throws ClassCastException when the bean for <code>locale</code> cannot be cast to <K>
      */
     List<K> getTranslations() throws ClassCastException;
-    
+
     /**
-     * @param <K> the return type
      * @param locale the locale for the translation
-     * @return returns the {@link T} for <code>locale</code> and <code>null</code> if not present
+     * @return returns {@link K} for <code>locale</code> and <code>null</code> if not present
      * @throws ClassCastException when the bean for <code>locale</code> cannot be cast to <K>
      */
      K getTranslation(String locale) throws ClassCastException;

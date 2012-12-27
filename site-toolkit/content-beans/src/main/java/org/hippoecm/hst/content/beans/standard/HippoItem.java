@@ -54,11 +54,17 @@ public class HippoItem implements HippoBean {
 
     private String canonicalUUID;
 
+
+    @Deprecated
     private boolean availableTranslationsBeanInitialized;
+    @Deprecated
     @SuppressWarnings("rawtypes")
     private HippoAvailableTranslationsBean availableTranslationsBean;
-    
-    
+
+    private boolean availableTranslationsInitialized;
+    @SuppressWarnings("rawtypes")
+    private HippoAvailableTranslationsBean availableTranslations;
+
     public void setObjectConverter(ObjectConverter objectConverter) {
         this.objectConverter = objectConverter;
     }
@@ -610,7 +616,7 @@ public class HippoItem implements HippoBean {
         return this instanceof HippoFolderBean;
     }
 
-    
+
     @SuppressWarnings("unchecked")
     public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslationsBean() {
         if(!availableTranslationsBeanInitialized) {
@@ -618,7 +624,7 @@ public class HippoItem implements HippoBean {
             try {
                 availableTranslationsBean = getBean("hippotranslation:translations");
             } catch (ClassCastException e) {
-                 log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
+                log.warn("Bean with name 'hippotranslation:translations' was not of type '{}'. Unexpected. Cannot get translation bean", HippoAvailableTranslationsBean.class.getName());
             }
             if(availableTranslationsBean== null) {
                 availableTranslationsBean = new NoopTranslationsBean<T>();
@@ -626,6 +632,15 @@ public class HippoItem implements HippoBean {
             }
         }
         return availableTranslationsBean;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations() {
+        if(!availableTranslationsInitialized) {
+            availableTranslationsInitialized = true;
+            availableTranslations = new AvailableTranslations<T>(getNode(), getObjectConverter());
+        }
+        return availableTranslations;
     }
     
     
