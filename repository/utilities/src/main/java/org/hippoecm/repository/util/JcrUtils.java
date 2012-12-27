@@ -439,10 +439,10 @@ public class JcrUtils {
             return;
         }
         final Node destNode;
-        if (!isAutoCreatedNode(srcNode.getName(), destParentNode)) {
-            destNode = destParentNode.addNode(destNodeName, srcNode.getPrimaryNodeType().getName());
-        } else {
+        if (isAutoCreatedNode(srcNode.getName(), destParentNode) && destParentNode.hasNode(srcNode.getName())) {
             destNode = destParentNode.getNode(destNodeName);
+        } else {
+            destNode = destParentNode.addNode(destNodeName, srcNode.getPrimaryNodeType().getName());
         }
 
         for (NodeType nodeType : srcNode.getMixinNodeTypes()) {
