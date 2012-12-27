@@ -23,7 +23,7 @@
 <div class="yui-b">
   <p><fmt:message key="key.available.languages"/>:</p>
   <br/>
-  <c:forEach var="language" items="${crBean.availableTranslationsBean.translations}">
+  <c:forEach var="language" items="${crBean.availableTranslations.translations}">
       <hst:link var="flag" path="/images/icons/flag-16_${language.localeString}.png"/>
       <hst:link var="link" hippobean="${language}"/>
       <!-- the equal comparator can be used to check whether the translation is the current bean  -->
