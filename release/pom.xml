@@ -40,7 +40,7 @@
     <hippo.release.version>7.8.1-SNAPSHOT</hippo.release.version>
     <hippo.commons.version>1.02.01</hippo.commons.version>
     <hippo.services.version>3</hippo.services.version>
-    <hippo.utilities.version>1.01.02</hippo.utilities.version>
+    <hippo.utilities.version>1.01.03-SNAPSHOT</hippo.utilities.version>
     <hippo.repository.version>2.24.02-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.24.01-SNAPSHOT</hippo.cms.version>
     <hippo.addon-hst-configuration-editor.version>1.11.00</hippo.addon-hst-configuration-editor.version>
