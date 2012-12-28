@@ -371,10 +371,8 @@ public class HstFilter implements Filter {
                         String renderingHost = HstRequestUtils.getRenderingHost(containerRequest);
                         if (renderingHost != null) {
                             requestContext.setRenderHost(renderingHost);
-                            // check whether there is a SSO handshake already: If there is, we decorate the mount to a previewMount
                             HttpSession session = containerRequest.getSession(false);
                             if (requestComesFromCms(vHosts, resolvedMount) && session != null && Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
-                                // we now know for sure the call came from a CMS context : we need to decorate the mount to a preview mount
                                 requestContext.setCmsRequest(true);
                                 // from 2.28.00 and onwards, this REQUEST_COMES_FROM_CMS attr won't be set any more
                                 req.setAttribute(ContainerConstants.REQUEST_COMES_FROM_CMS, Boolean.TRUE);
