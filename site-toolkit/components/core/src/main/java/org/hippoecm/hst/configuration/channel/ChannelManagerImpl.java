@@ -78,7 +78,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     private Map<String, Blueprint> blueprints;
     private Map<String, Channel> channels;
-    private Repository repository;
     private String channelsRoot = DEFAULT_HST_ROOT_PATH + "/" + HstNodeTypes.NODENAME_HST_CHANNELS + "/";
     private String contentRoot = DEFAULT_CONTENT_ROOT;
 
@@ -91,10 +90,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
             new ArrayList<ChannelManagerEventListener>());
 
     public ChannelManagerImpl() {
-    }
-
-    public void setRepository(final Repository repository) {
-        this.repository = repository;
     }
 
     public void setRootPath(String rootPath) {

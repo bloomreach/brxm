@@ -508,8 +508,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     private ChannelManagerImpl createManager() throws ChannelException {
 
         final ChannelManagerImpl manager = new ChannelManagerImpl();
-        manager.setRepository(getRepository());
-        
+
         ComponentManager cm = createMock(ComponentManager.class);
         setComponentManager(cm);
 
