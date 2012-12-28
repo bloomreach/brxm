@@ -134,7 +134,7 @@ public class ParametersInfoProcessor {
         try {
             return ResourceBundle.getBundle(typeName, localeOrDefault);
         } catch (MissingResourceException e) {
-            log.warn("Could not find a resource bundle for class '{}', locale '{}'. The template composer " +
+            log.info("Could not find a resource bundle for class '{}', locale '{}'. The template composer " +
                     "properties panel will show displayName values instead of internationalized labels.", typeName, locale);
             failedBundlesToLoad.add(bundleKey);
             return null;
