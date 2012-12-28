@@ -277,7 +277,7 @@ public class HstFilter implements Filter {
                 return;
             }
 
-    		VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
+            VirtualHosts vHosts = hstSitesManager.getVirtualHosts(isStaleConfigurationAllowedForRequest(containerRequest));
 
     		// we always want to have the virtualhost available, even when we do not have hst request processing:
     		// We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
@@ -469,6 +469,21 @@ public class HstFilter implements Filter {
                 HDC.cleanUp();
             }
     	}
+    }
+
+    /*
+     * we do never allow a stale model for cms sso logged in users as they need to see changes directly in the
+     * channel manager
+     */
+    private boolean isStaleConfigurationAllowedForRequest(final HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return true;
+        }
+        if (Boolean.TRUE.equals(session.getAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED))) {
+            return false;
+        }
+        return true;
     }
 
     // returns true if the request comes from cms

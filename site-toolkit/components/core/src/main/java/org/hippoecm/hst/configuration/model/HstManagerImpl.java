@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -68,6 +70,15 @@ public class HstManagerImpl implements MutableHstManager {
     private Credentials credentials;
 
     private volatile VirtualHosts virtualHosts;
+
+    // stale model with async loading support instance variables
+    private final Executor executor = Executors.newSingleThreadExecutor();
+    boolean staleConfigurationSupported = false;
+    private volatile VirtualHosts staleVirtualHosts;
+    private volatile boolean virtualHostsBeingBuild = false;
+    private volatile boolean virtualHostsBuildAlreadyScheduled = false;
+    // end stale model with async loading support instance variables
+
     private HstURLFactory urlFactory;
     private HstSiteMapMatcher siteMapMatcher;
     private HstSiteMapItemHandlerFactory siteMapItemHandlerFactory;
@@ -265,6 +276,10 @@ public class HstManagerImpl implements MutableHstManager {
         this.hstFilterSuffixExclusions = hstFilterSuffixExclusions;
     }
 
+    public void setStaleConfigurationSupported(boolean staleConfigurationSupported) {
+        this.staleConfigurationSupported = staleConfigurationSupported;
+    }
+
     public boolean isExcludedByHstFilterInitParameter(String pathInfo) {
         if (hstFilterPrefixExclusions != null) {
             for(String excludePrefix : hstFilterPrefixExclusions) {
@@ -284,13 +299,50 @@ public class HstManagerImpl implements MutableHstManager {
         }
         return false;
     }
-
+    
+    public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
+        if (allowStale && staleConfigurationSupported) {
+            VirtualHosts currentHosts = virtualHosts;
+            if (currentHosts != null) {
+                return currentHosts;
+            }
+            VirtualHosts staleHosts = staleVirtualHosts;
+            if (staleHosts != null) {
+                if (!virtualHostsBeingBuild && !virtualHostsBuildAlreadyScheduled) {
+                    virtualHostsBuildAlreadyScheduled = true;
+                    executor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                getVirtualHosts();
+                            } catch (ContainerException e) {
+                                log.warn("Exception during building virtualhosts model. ", e);
+                            } finally {
+                                // finished with the scheduled job
+                                virtualHostsBuildAlreadyScheduled = false;
+                            }
+                        }
+                    });
+                } else {
+                    log.debug("Returning stale virtualhosts model and no async build will be done because already being" +
+                            "build or scheduled.");
+                }
+                return staleHosts;
+            }
+            return getVirtualHosts();
+        } else {
+            return getVirtualHosts();
+        }
+    }
+    
     public VirtualHosts getVirtualHosts() throws ContainerException {
+
         VirtualHosts currentHosts = virtualHosts;
         if (currentHosts == null) {
             synchronized(MUTEX) {
                 if (virtualHosts == null) {
                     try {
+                        virtualHostsBeingBuild = true;
                         try {
                             buildSites();
                         } catch (ModelLoadingException e) {
@@ -312,6 +364,8 @@ public class HstManagerImpl implements MutableHstManager {
                         }
                     } catch (LoginException e) {
                         throw new ContainerException("Could not build hst model because user 'configuser' could not login to the repository.");
+                    } finally {
+                        virtualHostsBeingBuild = false;
                     }
                     pageCache.clear();
                 }
@@ -444,6 +498,7 @@ public class HstManagerImpl implements MutableHstManager {
 
             this.channelManager.load(virtualHosts, session);
 
+            staleVirtualHosts = virtualHosts;
         } catch (LoginException e) {
             throw e;
         } catch (PathNotFoundException e) {
@@ -622,6 +677,9 @@ public class HstManagerImpl implements MutableHstManager {
 
     private final void invalidateVirtualHosts() {
         log.info("In memory hst configuration model is invalidated. It will be reloaded on the next request.");
+        if (virtualHosts != null) {
+            staleVirtualHosts = virtualHosts;
+        }
         virtualHosts = null;
         if (channelManager != null) {
             channelManager.invalidate();
@@ -669,5 +727,4 @@ public class HstManagerImpl implements MutableHstManager {
             log.debug("--------- End relevant events ----------- ");
         }
     }
-
 }

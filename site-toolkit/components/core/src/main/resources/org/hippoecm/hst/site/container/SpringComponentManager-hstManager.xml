@@ -46,6 +46,7 @@
     <property name="pageCache" ref="pageCache"/>
     <property name="channelManager" ref="org.hippoecm.hst.configuration.channel.ChannelManager" />
     <property name="hstLinkCreator" ref="org.hippoecm.hst.core.linking.HstLinkCreator"/>
+    <property name="staleConfigurationSupported" value="${stale.configuration.supported}"/>
   </bean>
   
 </beans>

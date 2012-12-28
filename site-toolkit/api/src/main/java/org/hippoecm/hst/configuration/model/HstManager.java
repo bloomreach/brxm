@@ -35,6 +35,14 @@ public interface HstManager {
     VirtualHosts getVirtualHosts() throws ContainerException;
 
     /**
+     * When <code>allowStale</code> is <code>true</code> a stale {@link VirtualHosts} might be returned. This might be favoured
+     * over {@link #getVirtualHosts()} when the model is very large and thus might take longer to reload.
+     * @return the <code>VirtualHosts</code> object and possibly a stale version of it when <code>allowStale</code> is
+     * <code>true</code>
+     */
+    VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException;
+
+    /**
      * @return the HstURLFactory
      */
     HstURLFactory getUrlFactory();
