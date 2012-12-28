@@ -59,6 +59,11 @@ public class HstManagerImpl implements MutableHstManager {
     
     private static final Logger log = LoggerFactory.getLogger(HstManagerImpl.class);
 
+    /**
+     * general mutex on which implementation can synchronize with the HstManagerImpl
+     */
+    public static final Object MUTEX = new Object();
+
     private Repository repository;
     private Credentials credentials;
 
@@ -279,13 +284,11 @@ public class HstManagerImpl implements MutableHstManager {
         }
         return false;
     }
-    
-    
-    public VirtualHosts getVirtualHosts() throws ContainerException {
 
+    public VirtualHosts getVirtualHosts() throws ContainerException {
         VirtualHosts currentHosts = virtualHosts;
         if (currentHosts == null) {
-            synchronized(this) {
+            synchronized(MUTEX) {
                 if (virtualHosts == null) {
                     try {
                         try {
@@ -595,7 +598,7 @@ public class HstManagerImpl implements MutableHstManager {
 
     @Override
     public void invalidate(EventIterator events) {
-        synchronized (this) {
+        synchronized(MUTEX) {
             try {
                 while (events.hasNext()) {
                     relevantEventsHolder.addEvent(events.nextEvent());
@@ -611,7 +614,7 @@ public class HstManagerImpl implements MutableHstManager {
 
     @Override
     public void invalidateAll() {
-        synchronized(this) {
+        synchronized(MUTEX) {
             invalidateVirtualHosts();
             clearAll = true;
         }
