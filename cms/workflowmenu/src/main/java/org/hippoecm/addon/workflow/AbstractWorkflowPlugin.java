@@ -18,6 +18,7 @@ package org.hippoecm.addon.workflow;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -124,7 +125,7 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
     }
     
     MenuHierarchy buildMenu(Set<Node> nodeSet) {
-        final MenuHierarchy menu = new MenuHierarchy();
+        final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories));
         plugins.stopRenderers();
         IPluginContext context = getPluginContext();
         for (IObserver<JcrNodeModel> observer : new ArrayList<IObserver<JcrNodeModel>>(observers)) {

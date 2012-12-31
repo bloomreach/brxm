@@ -16,6 +16,8 @@
 package org.hippoecm.addon.workflow;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,11 +31,17 @@ class MenuHierarchy implements Serializable {
 
     static final Logger log = LoggerFactory.getLogger(MenuHierarchy.class);
 
+    private final List<String> categories;
     private Map<String, MenuDescription> menus = new LinkedHashMap<String, MenuDescription>();
     private Map<String, MenuHierarchy> submenus = new LinkedHashMap<String, MenuHierarchy>();
     private List<ActionDescription> items = new LinkedList<ActionDescription>();
 
     MenuHierarchy() {
+        this(Collections.<String>emptyList());
+    }
+
+    MenuHierarchy(final List<String> categories) {
+        this.categories = categories;
     }
 
     public void put(String category, ActionDescription action) {
@@ -166,18 +174,36 @@ class MenuHierarchy implements Serializable {
                     }
                 }
             }
-            for (Map.Entry<String, MenuHierarchy> submenu : submenus.entrySet()) {
-                if (menus.containsKey(submenu.getKey())) {
-                    list.add(new MenuButton("item", submenu.getKey(), submenu.getValue(), menus.get(submenu.getKey())));
-                } else {
-                    list.add(new MenuButton("item", submenu.getKey(), submenu.getValue()));
+
+            List<String> categories = new ArrayList(this.categories);
+            if (categories.contains("default")) {
+                categories.remove("default");
+                categories.add(0, "publication");
+                categories.add(1, "request");
+                categories.add(2, "document");
+                categories.add(3, "miscellaneous");
+            }
+            for (String subMenuKey : submenus.keySet()) {
+                if (!categories.contains(subMenuKey)) {
+                    categories.add(subMenuKey);
                 }
             }
-            for (Map.Entry<String, MenuDescription> menu : menus.entrySet()) {
-                if (!submenus.containsKey(menu.getKey())) {
-                    list.add(new MenuButton("item", menu.getKey(), menus.get(menu.getKey())));
+            for (String menuKey : menus.keySet()) {
+                if (!categories.contains(menuKey)) {
+                    categories.add(menuKey);
                 }
             }
+            for (String category : categories) {
+                if (menus.containsKey(category) && submenus.containsKey(category)) {
+                    MenuHierarchy hierarchy = submenus.get(category);
+                    list.add(new MenuButton("item", category, hierarchy, menus.get(category)));
+                } else if (menus.containsKey(category)) {
+                    list.add(new MenuButton("item", category, menus.get(category)));
+                } else if (submenus.containsKey(category)) {
+                    list.add(new MenuButton("item", category, submenus.get(category)));
+                }
+            }
+
             for (ActionDescription item : items) {
                 if (item.getId().startsWith("info")) {
                     list.add(new MenuLabel("item", item));
