@@ -50,6 +50,7 @@ import org.onehippo.cms7.jcrdiff.match.Matcher;
 import org.onehippo.cms7.jcrdiff.match.MatcherItemInfo;
 import org.onehippo.cms7.jcrdiff.match.PatchFactory;
 import org.onehippo.cms7.jcrdiff.patch.PatchFilter;
+import org.onehippo.cms7.jcrdiff.serialization.PatchWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,6 +129,7 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
             final ReferenceWorkspace referenceWorkspace = UserSession.get().getHippoRepository().getOrCreateReferenceWorkspace();
             if (referenceWorkspace == null) {
                 error("This functionality is not available in your environment");
+                return;
             }
 
             session = referenceWorkspace.login();
@@ -136,17 +138,14 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
                 referenceWorkspace.bootstrap();
             }
 
-            // check if reference node exists
             if (!session.nodeExists(path)) {
                 error("No node at " + path + " in reference repository");
             }
 
             final Patch patch = createPatch(getModelObject(), session.getNode(path));
 
-            final JAXBContext context = JAXBContext.newInstance(Patch.class);
-            final Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-            marshaller.marshal(patch, writer);
+            final PatchWriter patchWriter = new PatchWriter(patch, writer, UserSession.get().getJcrSession());
+            patchWriter.writePatch();
 
             writer.write("\n\n");
 
@@ -178,13 +177,13 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
 
         final Matcher matcher = new Matcher();
         final MatcherItemInfo currentInfo = new MatcherItemInfo(matcher.getContext(), new JcrTreeNode(currentNode));
-        final MatcherItemInfo cleanInfo = new MatcherItemInfo(matcher.getContext(), new JcrTreeNode(referenceNode));
-        matcher.setSource(cleanInfo);
+        final MatcherItemInfo referenceInfo = new MatcherItemInfo(matcher.getContext(), new JcrTreeNode(referenceNode));
+        matcher.setSource(referenceInfo);
         matcher.setResult(currentInfo);
         matcher.match();
 
         final PatchFactory factory = new PatchFactory();
-        return factory.createPatch(cleanInfo, currentInfo, new PatchFilter() {
+        return factory.createPatch(referenceInfo, currentInfo, new PatchFilter() {
             @Override
             public boolean isIncluded(final MatcherItemInfo info) {
                 return isPathValid(info.getPath());
@@ -223,7 +222,7 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
 
         @Override
         protected String getFilename() {
-            return "patch.xml";
+            return "patch.txt";
         }
 
         @Override
@@ -237,7 +236,7 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
         protected InputStream getContent() {
             Writer writer = null;
             try {
-                tempFile = File.createTempFile("patch-" + Time.now(), ".xml");
+                tempFile = File.createTempFile("patch-" + Time.now(), ".txt");
                 writer = new FileWriter(tempFile);
                 createDiff(writer);
                 return new FileInputStream(tempFile);

@@ -48,6 +48,7 @@ import org.onehippo.cms7.jcrdiff.delta.Operation;
 import org.onehippo.cms7.jcrdiff.delta.Patch;
 import org.onehippo.cms7.jcrdiff.patch.PatchLog;
 import org.onehippo.cms7.jcrdiff.patch.Patcher;
+import org.onehippo.cms7.jcrdiff.serialization.PatchReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,10 +104,6 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
                 sb.append("The patch is empty.");
             }
             result = true;
-        } catch (JAXBException e) {
-            final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
-            log.error(message, e);
         } catch (IOException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
             error(message);
@@ -141,10 +138,9 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
         return result;
     }
 
-    private Patch parsePatch(final InputStream is) throws JAXBException, IOException {
-        final JAXBContext context = JAXBContext.newInstance(Patch.class);
-        final Unmarshaller unmarshaller = context.createUnmarshaller();
-        return (Patch) unmarshaller.unmarshal(new InputStreamReader(is));
+    private Patch parsePatch(final InputStream is) throws IOException, RepositoryException {
+        final PatchReader patchReader = new PatchReader(new InputStreamReader(is), UserSession.get().getJcrSession());
+        return patchReader.readPatch();
     }
 
     private boolean applyPatch() {
@@ -163,11 +159,7 @@ public class ApplyPatchDialog extends MultiStepDialog<Node> {
                 warn("Some patch operations failed");
             }
             return true;
-        } catch (JAXBException e) {
-            final String message = "An unexpected error occurred: " + e.getMessage();
-            error(message);
-            log.error(message, e);
-        } catch (RepositoryException e) {
+        }  catch (RepositoryException e) {
             final String message = "An unexpected error occurred: " + e.getMessage();
             error(message);
             log.error(message, e);
