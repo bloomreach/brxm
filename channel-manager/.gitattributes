@@ -1,4 +1,6 @@
 * text=auto !eol
+/LICENSE -text
+/NOTICE -text
 frontend/pom.xml eol=lf
 frontend/src/main/java/org/onehippo/cms7/channelmanager/BlueprintListPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/BreadcrumbToolbar.js -text
