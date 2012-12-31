@@ -72,7 +72,7 @@ public class HstManagerImpl implements MutableHstManager {
     private volatile VirtualHosts virtualHosts;
 
     // stale model with async loading support instance variables
-    private final Executor executor = Executors.newSingleThreadExecutor();
+    private static final Executor executor = Executors.newSingleThreadExecutor();
     boolean staleConfigurationSupported = false;
     private volatile VirtualHosts staleVirtualHosts;
     private volatile boolean virtualHostsBeingBuild = false;
