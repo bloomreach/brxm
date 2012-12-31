@@ -497,8 +497,9 @@ public class HstManagerImpl implements MutableHstManager {
             }
 
             this.channelManager.load(virtualHosts, session);
-
-            staleVirtualHosts = virtualHosts;
+            if (staleConfigurationSupported) {
+                staleVirtualHosts = virtualHosts;
+            }
         } catch (LoginException e) {
             throw e;
         } catch (PathNotFoundException e) {
@@ -677,7 +678,7 @@ public class HstManagerImpl implements MutableHstManager {
 
     private final void invalidateVirtualHosts() {
         log.info("In memory hst configuration model is invalidated. It will be reloaded on the next request.");
-        if (virtualHosts != null) {
+        if (virtualHosts != null && staleConfigurationSupported) {
             staleVirtualHosts = virtualHosts;
         }
         virtualHosts = null;
