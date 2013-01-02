@@ -16,13 +16,12 @@
 package org.hippoecm.frontend.plugins.standards.search;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoQuery;
 
 public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
 
@@ -44,16 +43,16 @@ public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
         javax.jcr.Session session = UserSession.get().getJcrSession();
         try {
             QueryManager queryManager = UserSession.get().getQueryManager();
-            HippoQuery hippoQuery = (HippoQuery) queryManager.createQuery(query, "xpath");
+            Query q = queryManager.createQuery(query, "xpath");
             session.refresh(true);
             if (limit > 0 && limit < LIMIT) {
-                hippoQuery.setLimit(limit);
+                q.setLimit(limit);
             } else {
-                hippoQuery.setLimit(LIMIT);
+                q.setLimit(LIMIT);
             }
 
             long start = System.currentTimeMillis();
-            result = hippoQuery.execute();
+            result = q.execute();
             long end = System.currentTimeMillis();
             TextSearchBuilder.log.info("Executing search query: " + TextSearchBuilder.TEXT_QUERY_NAME + " took " + (end - start) + "ms");
         } catch (RepositoryException e) {
