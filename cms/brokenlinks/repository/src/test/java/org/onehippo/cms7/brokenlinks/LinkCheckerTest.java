@@ -19,8 +19,6 @@ public class LinkCheckerTest {
         PrintStream realErr = System.err;
 
         try {
-            PrintStream mockErr = Mockito.mock(PrintStream.class);
-            System.setErr(mockErr);
 
             Logger log = Mockito.mock(Logger.class);
 
@@ -40,7 +38,6 @@ public class LinkCheckerTest {
             t.join();
 
             Mockito.verify(log).error(expectedException.getClass().getName() + ": Test", expectedException);
-            Mockito.verify(mockErr, atLeastOnce()).println(Matchers.anyString());
         } finally {
             System.setErr(realErr);
         }
