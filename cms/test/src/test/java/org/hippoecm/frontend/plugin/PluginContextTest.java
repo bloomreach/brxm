@@ -77,7 +77,7 @@ public class PluginContextTest {
 
             context.registerService(this, "service.test");
 
-            throw new RuntimeException("exception");
+            throw new RuntimeException("Deliberate exception for testing");
         }
     }
 

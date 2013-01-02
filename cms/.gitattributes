@@ -2633,6 +2633,7 @@ test/src/test/java/org/hippoecm/frontend/session/UserSessionTest.java svneol=nat
 test/src/test/java/org/hippoecm/frontend/util/MappingTestBean.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/frontend/util/NodeStateUtilTest.java -text
 test/src/test/java/org/hippoecm/frontend/util/PluginConfigMapperTest.java svneol=native#text/plain
+test/src/test/resources/log4j-filters.txt -text
 test/src/test/resources/log4j.dtd svneol=native#text/plain
 test/src/test/resources/log4j.xml svneol=native#text/plain
 test/src/test/resources/mock.jar -text
