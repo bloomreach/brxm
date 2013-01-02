@@ -44,7 +44,6 @@ public class QueryResultModel extends LoadableDetachableModel<QueryResult> {
         try {
             QueryManager queryManager = UserSession.get().getQueryManager();
             Query q = queryManager.createQuery(query, "xpath");
-            session.refresh(true);
             if (limit > 0 && limit < LIMIT) {
                 q.setLimit(limit);
             } else {
