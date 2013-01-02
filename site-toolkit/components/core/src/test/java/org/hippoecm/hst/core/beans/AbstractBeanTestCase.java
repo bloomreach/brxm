@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2013 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.List;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.test.AbstractSpringTestCase;
+import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.hst.util.ObjectConverterUtils;
  
 /**
@@ -30,7 +31,7 @@ import org.hippoecm.hst.util.ObjectConverterUtils;
  * </p> 
  * 
  */ 
-public abstract class AbstractBeanTestCase extends AbstractSpringTestCase {
+public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
 
     protected ObjectConverter getObjectConverter() {
         return ObjectConverterUtils.createObjectConverter(getAnnotatedClasses(), true);

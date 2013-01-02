@@ -661,6 +661,7 @@ components/core/src/test/java/org/hippoecm/hst/site/request/TestHstRequestContex
 components/core/src/test/java/org/hippoecm/hst/site/request/TestMountDecoratorImpl.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/request/TestSiteNameDecoratedContextCredentialsProvider.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/test/AbstractSpringTestCase.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/test/AbstractTestConfigurations.java -text
 components/core/src/test/java/org/hippoecm/hst/test/mock/HstMockJspServlet.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/test/mock/HstMockRequestDispatcher.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/test/mock/HstMockServletContext.java svneol=native#text/plain
@@ -696,21 +697,14 @@ components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/servl
 components/core/src/test/resources/META-INF/hst-assembly/addon/servletctxaware-module.xml -text
 components/core/src/test/resources/log4j.xml -text
 components/core/src/test/resources/org/hippoecm/hst/cache/ehcache/TestHstCache.xml -text
-components/core/src/test/resources/org/hippoecm/hst/configuration/TestMatchHostAndURL.xml svneol=native#text/plain
-components/core/src/test/resources/org/hippoecm/hst/configuration/TestSharedHstComponentsConfigurationModels.xml -text svneol=unset#text/plain
-components/core/src/test/resources/org/hippoecm/hst/configuration/TestSiteMapItemHandler.xml -text svneol=unset#text/plain
-components/core/src/test/resources/org/hippoecm/hst/core/GeneralBasicPoolingRepository.xml svneol=native#text/plain
-components/core/src/test/resources/org/hippoecm/hst/core/GeneralMultiplePoolingRepository.xml svneol=native#text/plain
-components/core/src/test/resources/org/hippoecm/hst/core/TestConfigurations.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/component/TestHstRequest.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/AbstractPipelineTestCase.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestContainerURLProvider.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestDefaultPipeline.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestFactoryComponentInstanceCreation.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestPageCachingValve.xml -text
-components/core/src/test/resources/org/hippoecm/hst/core/linking/TestHstLinkForCmsRequest.xml -text
-components/core/src/test/resources/org/hippoecm/hst/core/linking/TestHstLinkRewriting.xml -text svneol=unset#text/plain
-components/core/src/test/resources/org/hippoecm/hst/service/jcr/TestJCRServiceBean.xml svneol=native#text/plain
+components/core/src/test/resources/org/hippoecm/hst/test/AbstractTestConfigurations.xml -text
+components/core/src/test/resources/org/hippoecm/hst/test/GeneralMultiplePoolingRepository.xml -text
 components/core/src/test/resources/org/hippoecm/repository/repository.xml svneol=native#text/plain
 components/jaxrs/pom.xml svneol=native#text/plain
 components/jaxrs/src/main/java/org/hippoecm/hst/jaxrs/AbstractJaxrsService.java svneol=native#text/plain

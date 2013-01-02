@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008 Hippo
+  Copyright 2008-2013 Hippo
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -18,7 +18,14 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
 
-  <import resource="classpath:/org/hippoecm/hst/core/TestConfigurations.xml" />
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>classpath:/org/hippoecm/hst/site/container/SpringComponentManager.properties</value>
+      </list>
+    </property>
+  </bean>
+
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
   <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml" />
 
