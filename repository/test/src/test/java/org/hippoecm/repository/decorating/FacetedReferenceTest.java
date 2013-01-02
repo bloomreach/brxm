@@ -135,31 +135,31 @@ public class FacetedReferenceTest extends RepositoryTestCase {
         assertNotNull(traverse(session,"/test/dutch/war-of-the-worlds[@language='dutch']"));
         assertNull(traverse(session,"/test/dutch/war-of-the-worlds[@language='english']"));
     }
-    
+
     @Test
     public void testPreferenceOrder() throws Exception {
-        Node node = traverse(session, "/test/prefer/articles/war-of-the-worlds");
-        assertNotNull(node);
-        NodeIterator iter = node.getNodes(node.getName());
+        Node handle = traverse(session, "/test/prefer/articles/war-of-the-worlds");
+        assertNotNull(handle);
+        NodeIterator iter = handle.getNodes(handle.getName());
         assertTrue(iter.hasNext());
-        node = iter.nextNode();
-        assertNotNull(node);
-        assertEquals("dutch", node.getProperty("language").getString());
+        Node document = iter.nextNode();
+        assertNotNull(document);
+        assertEquals("dutch", document.getProperty("language").getString());
         assertTrue(iter.hasNext());
-        node = iter.nextNode();
-        assertNotNull(node);
-        assertEquals("english", node.getProperty("language").getString());
+        document = iter.nextNode();
+        assertNotNull(document);
+        assertEquals("english", document.getProperty("language").getString());
         assertFalse(iter.hasNext());
 
-        node = traverse(session, "/test/prefer/articles/the-invisible-man");
-        iter = node.getNodes(node.getName());
+        handle = traverse(session, "/test/prefer/articles/the-invisible-man");
+        iter = handle.getNodes(handle.getName());
         assertTrue(iter.hasNext());
-        node = iter.nextNode();
-        assertNotNull(node);
-        assertEquals("english", node.getProperty("language").getString());
+        document = iter.nextNode();
+        assertNotNull(document);
+        assertEquals("english", document.getProperty("language").getString());
         assertFalse(iter.hasNext());
     }
-    
+
     @Test
     public void testPreferenceOnceOrder() throws Exception {
         Node node = traverse(session, "/test/preferonce/articles/war-of-the-worlds");

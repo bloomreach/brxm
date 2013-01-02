@@ -97,7 +97,7 @@ public final class ViewNodeId extends MirrorNodeId implements IFilterNodeId {
                         String value = entry.getValue();
 
                         int thisFacetValueIndex = -1;
-                        String[] thisFacetValues = provider.getProperty(getCanonicalId(), facet, null);
+                        String[] thisFacetValues = provider.getProperty(o1.getValue().getCanonicalId(), facet, null);
                         if (thisFacetValues != null) {
                             for (int i = 0; i < thisFacetValues.length; i++) {
                                 if (thisFacetValues[i].equals(value)) {
