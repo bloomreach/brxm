@@ -60,7 +60,7 @@ public class TestSiteMapItemHandler extends AbstractSpringTestCase {
             this.hstSitesManager = getComponent(HstManager.class.getName());
             this.hstURLFactory = getComponent(HstURLFactory.class.getName());
             this.servletConfig = (ServletConfig) getComponent(ServletConfig.class.getName());
-            this.requestContainerConfig = new HstContainerConfigImpl(this.servletConfig.getServletContext(), getClass().getClassLoader());
+            this.requestContainerConfig = new HstContainerConfigImpl(null, getClass().getClassLoader());
         }
 
      

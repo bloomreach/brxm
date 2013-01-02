@@ -23,32 +23,10 @@
     <import resource="classpath:/org/hippoecm/hst/core/GeneralMultiplePoolingRepository.xml" />
     <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-channelManager.xml" />
     <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml" />
-  <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-cache.xml" />
+    <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-cache.xml" />
     <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-linking.xml" />
     <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-container.xml" />
     <import resource="classpath:/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml" />
 
-    <bean id="javax.servlet.ServletContext"
-        class="org.hippoecm.hst.test.mock.HstMockServletContext">
-    <property name="requestDispatchers">
-      <list>
-        <map>
-          <entry key="/.*\.jsp">
-            <bean class="org.hippoecm.hst.test.mock.HstMockRequestDispatcher">
-              <constructor-arg value="/*.jsp" />
-              <constructor-arg>
-                <bean class="org.hippoecm.hst.test.mock.HstMockJspServlet" />
-              </constructor-arg>
-            </bean>
-          </entry>
-        </map>
-      </list>
-    </property>
-  </bean>
-  
-  <bean id="javax.servlet.ServletConfig"
-        class="org.springframework.mock.web.MockServletConfig">
-    <constructor-arg ref="javax.servlet.ServletContext" />
-  </bean>
-  
+
 </beans>
