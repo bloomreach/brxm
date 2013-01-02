@@ -893,6 +893,9 @@ brokenlinks/repository/src/test/java/org/onehippo/cms7/brokenlinks/LinkCheckerTe
 brokenlinks/test/pom.xml svneol=native#text/plain
 brokenlinks/test/src/test/resources/brokenlinks-test.cnd -text
 brokenlinks/test/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
+brokenlinks/test/src/test/resources/log4j-filters.txt -text
+brokenlinks/test/src/test/resources/log4j.dtd -text
+brokenlinks/test/src/test/resources/log4j.xml -text
 builtin/pom.xml svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/AddDocumentDialog.html -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/AddDocumentDialog_de.properties -text
@@ -1477,6 +1480,7 @@ editor/repository/src/test/resources/RedefineNodetypeTest-2.cnd -text
 editor/repository/src/test/resources/editmodel-namespace.xml -text
 editor/repository/src/test/resources/editmodel.cnd -text
 editor/repository/src/test/resources/hippoecm-extension.xml -text
+editor/repository/src/test/resources/log4j-filters.txt -text
 editor/repository/src/test/resources/log4j.dtd -text
 editor/repository/src/test/resources/log4j.xml -text
 editor/repository/src/test/resources/test-namespace.xml -text
@@ -1503,6 +1507,7 @@ editor/test/src/test/java/org/hippoecm/frontend/editor/workflow/NamespaceWorkflo
 editor/test/src/test/java/org/hippoecm/frontend/types/TypeStoreTest.java -text
 editor/test/src/test/resources/cmstest.cnd -text
 editor/test/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
+editor/test/src/test/resources/log4j-filters.txt -text
 editor/test/src/test/resources/log4j.dtd -text
 editor/test/src/test/resources/log4j.xml -text
 editor/test/src/test/resources/repository-test.cnd -text
@@ -2172,6 +2177,7 @@ richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/RichTextP
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/richtext/jcr/JcrRichTextLinkFactoryTest.java svneol=native#text/plain
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/xinha/json/JsonParserTest.java -text
 richtext/frontend/src/test/java/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent.java -text
+richtext/frontend/src/test/resources/log4j-filters.txt -text
 richtext/frontend/src/test/resources/log4j.dtd svneol=native#text/plain
 richtext/frontend/src/test/resources/log4j.xml svneol=native#text/plain
 richtext/frontend/src/test/resources/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent.properties -text
@@ -3151,6 +3157,7 @@ workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/UnlockWo
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/UnlockWorkflowImpl_nl.properties svneol=native#text/plain
 workflow/frontend/src/test/resources/cmstest.cnd -text
 workflow/frontend/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
+workflow/frontend/src/test/resources/log4j-filters.txt -text
 workflow/frontend/src/test/resources/log4j.xml svneol=native#text/plain
 workflow/repository/src/main/resources/admin-workflows.xml -text
 workflow/repository/src/main/resources/admin-workflows_de.xml -text
