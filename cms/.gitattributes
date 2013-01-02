@@ -873,6 +873,7 @@ automatic-export/repository/src/test/resources/filter/expected8.xml -text
 automatic-export/repository/src/test/resources/filter/input.xml -text
 automatic-export/repository/src/test/resources/hippoecm-extension.xml -text
 automatic-export/repository/src/test/resources/initializeitemtest/delta.xml -text
+automatic-export/repository/src/test/resources/log4j-filters.txt -text
 automatic-export/repository/src/test/resources/log4j.dtd -text
 automatic-export/repository/src/test/resources/log4j.xml -text
 brokenlinks/common/pom.xml svneol=native#text/plain
