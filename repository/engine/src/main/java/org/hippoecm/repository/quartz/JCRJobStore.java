@@ -243,13 +243,13 @@ public class JCRJobStore extends AbstractJobStore {
         synchronized (session) {
             try {
                 final String triggerIdentifier = trigger.getName();
+                stopLockKeepAlive(triggerIdentifier);
                 final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
                 final Property fireTimeProperty = JcrUtils.getPropertyIfExists(triggerNode, HIPPOSCHED_FIRETIME);
                 if (fireTimeProperty != null) {
                     triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTimeProperty.getValue());
                 }
                 session.save();
-                stopLockKeepAlive(triggerIdentifier);
                 unlock(session, triggerNode.getPath());
             } catch (ItemNotFoundException e) {
                 log.info("Trigger no longer exists: " + trigger.getName());
@@ -285,7 +285,7 @@ public class JCRJobStore extends AbstractJobStore {
             try {
                 final String triggerIdentifier = trigger.getName();
                 final Node triggerNode = session.getNodeByIdentifier(triggerIdentifier);
-    
+                stopLockKeepAlive(triggerIdentifier);
                 final Date nextFire = trigger.getFireTimeAfter(new Date());
                 if(nextFire != null) {
                     final Calendar nextFireTime = getCalendarInstance(nextFire);
