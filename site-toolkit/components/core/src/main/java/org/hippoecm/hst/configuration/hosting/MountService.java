@@ -530,7 +530,6 @@ public class MountService implements ContextualizableMount, MutableMount {
             
             hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
             canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
-            //contentPath = hstSiteNodeForMount.getContentPath();
             contentPath = hstSiteNodeForMount.getCanonicalContentPath();
 
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
