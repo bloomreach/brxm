@@ -186,6 +186,38 @@ public class ScaleImageOperationTest {
                 IOUtils.contentEquals(normalOp.getScaledData(), compressedOp.getScaledData()));
     }
 
+    @Test
+    public void upscalingBounded() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.gif");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(800, 600, true, ImageUtils.ScalingStrategy.SPEED);
+        scaleOp.execute(data, "image/gif");
+        checkImageDimensions(scaleOp, "image/gif", 532, 600);
+    }
+
+    @Test
+    public void upscalingUnboundedHeight() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.gif");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(760, 0, true, ImageUtils.ScalingStrategy.SPEED);
+        scaleOp.execute(data, "image/gif");
+        checkImageDimensions(scaleOp, "image/gif", 760, 856);
+    }
+    
+    @Test
+    public void upscalingUnboundedWidth() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.gif");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(0, 856 , true, ImageUtils.ScalingStrategy.SPEED);
+        scaleOp.execute(data, "image/gif");
+        checkImageDimensions(scaleOp, "image/gif", 760, 856);
+    }
+
+    @Test
+    public void upscalingUnboundedBothEdges() throws GalleryException, IOException {
+        InputStream data = getClass().getResourceAsStream("/test-380x428.gif");
+        ScaleImageOperation scaleOp = new ScaleImageOperation(0, 0, true, ImageUtils.ScalingStrategy.SPEED);
+        scaleOp.execute(data, "image/gif");
+        checkImageDimensions(scaleOp, "image/gif", 380, 428);
+    }
+
     private void checkImageDimensions(ScaleImageOperation scaleOp, String mimeType, int expectedWidth, int expectedHeight) throws IOException {
         assertEquals(expectedWidth, scaleOp.getScaledWidth());
         assertEquals(expectedHeight, scaleOp.getScaledHeight());
