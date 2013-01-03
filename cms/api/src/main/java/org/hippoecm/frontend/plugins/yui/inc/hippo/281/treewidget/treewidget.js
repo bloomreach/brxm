@@ -37,23 +37,25 @@ if (!YAHOO.hippo.TreeWidget) {
         YAHOO.extend(YAHOO.hippo.TreeWidget, YAHOO.hippo.Widget, {
 
             calculateWidthAndHeight: function(sizes) {
+                var width, computedWidth, computedHeight, items, i, iLen, item, itemChildNodes, j, jLen, childNode, reg, ref;
+
                 this._setWidth(2000); //make sure initial calculation isn't blocked by a broken UI
 
-                var width = 0;
+                width = 0;
                 if (this.config.treeAutoWidth) {
-                    var computedWidth = 0;
-                    var computedHeight = 0;
-                    var items = Dom.getElementsByClassName('a_', 'div', this.id);
+                    computedWidth = 0;
+                    computedHeight = 0;
+                    items = Dom.getElementsByClassName('a_', 'div', this.id);
 
                     //Calculate width&height of items and save largest computedWidth value in var 'width'
-                    for (var i = 0; i < items.length; i++) {
-                        var item = items[i];
-                        var itemChildNodes = Dom.getChildren(item);
-                        for (var j = 0; j < itemChildNodes.length; j++) {
-                            var childNode = itemChildNodes[j];
-                            var reg = Dom.getRegion(childNode);
+                    for (i = 0, iLen = items.length; i < iLen; i++) {
+                        item = items[i];
+                        itemChildNodes = Dom.getChildren(item);
+                        for (j = 0, jLen = itemChildNodes.length; j < jLen; j++) {
+                            childNode = itemChildNodes[j];
+                            reg = Dom.getRegion(childNode);
                             computedWidth += reg.width;
-                            if (j == 0) {
+                            if (j === 0) {
                                 computedHeight += reg.height;
                             }
                         }
@@ -63,7 +65,7 @@ if (!YAHOO.hippo.TreeWidget) {
                         computedWidth = 0;
                     }
 
-                    var ref = Dom.getRegion(this.el.parentNode);
+                    ref = Dom.getRegion(this.el.parentNode);
                     if (computedHeight > ref.height) {
                         //tree content overflows container element, browser will render scrollbars, so change width
                         width += YAHOO.hippo.HippoAjax.getScrollbarWidth();
@@ -86,22 +88,23 @@ if (!YAHOO.hippo.TreeWidget) {
             },
 
             _setWidth : function(width) {
+                var ar, layoutMax, regionTree, regionUnitCenter, isWin;
+
                 //try to set width to child element with classname 'hippo-tree'. We can't directly take
                 //the childnode of 'id' because of the wicket:panel elements in dev-mode
-                var ar = Dom.getElementsByClassName(this.config.setWidthToClassname, 'div', this.id);
+                ar = Dom.getElementsByClassName(this.config.setWidthToClassname, 'div', this.id);
                 if (!Lang.isUndefined(ar.length) && ar.length > 0) {
                     //Also check if the maxFound width in the tree isn't smaller than the layoutMax width
-                    var layoutMax = this.getLayoutMax();
-                    if (layoutMax != null && layoutMax > width) {
+                    layoutMax = this.getLayoutMax();
+                    if (layoutMax !== null && layoutMax > width) {
                         width = layoutMax;
                     }
 
-                    var regionTree = Dom.getRegion(ar[0]);
-                    var regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0],
-                            'hippo-accordion-unit-center'));
+                    regionTree = Dom.getRegion(ar[0]);
+                    regionUnitCenter = Dom.getRegion(Dom.getAncestorByClassName(ar[0], 'hippo-accordion-unit-center'));
                     if (regionTree.height > regionUnitCenter.height) {
                         //there is vertical scrolling, remove pixels from width to remove horizontal scrollbar
-                        var isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());
+                        isWin = (/windows|win32/).test(navigator.userAgent.toLowerCase());
                         width -= (isWin ? 17 : 15);
                     }
 
@@ -110,23 +113,29 @@ if (!YAHOO.hippo.TreeWidget) {
             },
 
             getLayoutMax : function() {
-                if (this.config.bindToLayoutUnit && this.unit != null) {
-                    return this.unit.getSizes().body.w;
-                } else if (this.config.useWidthFromClassname != null) {
-                    var e = Dom.getAncestorByClassName(this.el, this.config.useWidthFromClassname);
-                    return parseInt(Dom.getStyle(e, 'width'));
+                var layoutMax, e;
+
+                layoutMax = null;
+
+                if (this.config.bindToLayoutUnit && this.unit !== null) {
+                    layoutMax = this.unit.getSizes().body.w;
+                } else if (this.config.useWidthFromClassname !== null) {
+                    e = Dom.getAncestorByClassName(this.el, this.config.useWidthFromClassname);
+                    layoutMax = parseInt(Dom.getStyle(e, 'width'), 10);
                 }
-                return null;
+                return layoutMax;
             },
 
             updateMouseListeners : function(id) {
-                var el = Dom.get(id);
-                if (el == null) {
+                var el, items, i, len;
+
+                el = Dom.get(id);
+                if (el === null || el === undefined) {
                     return;
                 }
                 if (this.config.workflowEnabled) {
-                    var items = Dom.getElementsByClassName('a_', 'div', id);
-                    for (var i = 0; i < items.length; i++) {
+                    items = Dom.getElementsByClassName('a_', 'div', id);
+                    for (i = 0, len = items.length; i < len; i++) {
                         this.updateMouseListener(items[i].parentNode);
                     }
                 }
@@ -147,7 +156,7 @@ if (!YAHOO.hippo.TreeWidget) {
 
         });
 
-    })();
+    }());
 
     YAHOO.register("TreeWidget", YAHOO.hippo.TreeWidget, {
         version: "2.8.1", build: "19"

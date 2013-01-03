@@ -198,6 +198,27 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <configuration>
+          <assumeABrowser>true</assumeABrowser>
+          <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
+          <excludes>
+            <exclude>org/hippoecm/frontend/plugins/yui/accordion/init.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/yui/upload/ajax/add_upload.js</exclude>
+          </excludes>
+          <failOnIssues>false</failOnIssues>
+          <predefinedVars>
+            Ext,
+            Hippo,
+            Wicket,
+            window,
+            YAHOO
+          </predefinedVars>
+          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.hippoecm.maven.plugins</groupId>
         <artifactId>maven-yuicompressor-plugin</artifactId>
         <version>1.01.00</version>

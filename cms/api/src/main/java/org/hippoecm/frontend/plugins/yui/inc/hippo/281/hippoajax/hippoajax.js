@@ -1,4 +1,3 @@
-
 /**
  * @description
  * <p>
@@ -14,11 +13,11 @@
 YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
-    ( function() {
+    (function() {
         
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, tmpFunc;
 
-        YAHOO.hippo.HippoAjaxImpl = function() {}
+        YAHOO.hippo.HippoAjaxImpl = function() {};
         
         YAHOO.hippo.HippoAjaxImpl.prototype = {
             prefix : 'hippo-destroyable-',
@@ -26,8 +25,8 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
             _scrollbarWidth : null,
             
             loadJavascript : function(url, callback, scope) {
-                var evt = !YAHOO.env.ua.ie ? "onload" : 'onreadystatechange';
-                var element = document.createElement("script");
+                var evt = !YAHOO.env.ua.ie ? "onload" : 'onreadystatechange',
+                    element = document.createElement("script");
                 element.type = "text/javascript";
                 element.src = url;
                 if (callback) {
@@ -43,12 +42,14 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
             },
 
             getScrollbarWidth : function() {
-                if(this._scrollbarWidth == null) {
-                    var inner = document.createElement('p');
+                if (this._scrollbarWidth === null) {
+                    var inner, outer, w1, w2;
+
+                    inner = document.createElement('p');
                     inner.style.width = "100%";
                     inner.style.height = "200px";
 
-                    var outer = document.createElement('div');
+                    outer = document.createElement('div');
                     outer.style.position = "absolute";
                     outer.style.top = "0px";
                     outer.style.left = "0px";
@@ -59,10 +60,12 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                     outer.appendChild (inner);
 
                     document.body.appendChild (outer);
-                    var w1 = inner.offsetWidth;
+                    w1 = inner.offsetWidth;
                     outer.style.overflow = 'scroll';
-                    var w2 = inner.offsetWidth;
-                    if (w1 == w2) w2 = outer.clientWidth;
+                    w2 = inner.offsetWidth;
+                    if (w1 === w2) {
+                        w2 = outer.clientWidth;
+                    }
 
                     document.body.removeChild (outer);
 
@@ -88,41 +91,46 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
             callDestroyFunction : function(id) {
                 if(this.callbacks.containsKey(id)) {
                     var callback = this.callbacks.remove(id);
-                    callback.func.apply(callback.context, callback.args)
+                    callback.func.apply(callback.context, callback.args);
                 }
             },
 
             cleanupModal : function(modal) {
-                var els = YAHOO.util.Dom.getElementsBy(function(node) {
+                var els, i, len;
+
+                els = YAHOO.util.Dom.getElementsBy(function(node) {
                     return !YAHOO.lang.isUndefined(node.HippoDestroyID);
                 }, null, modal.window);
 
-                for(var i=0; i<els.length; i++) {
+                for (i = 0, len = els.length; i < len; i++) {
                     YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
                 }
             }
-        }
+        };
         
         YAHOO.hippo.HippoAjax = new YAHOO.hippo.HippoAjaxImpl();
         
-        var tmpFunc = Wicket.Ajax.Call.prototype.processComponent;
+        tmpFunc = Wicket.Ajax.Call.prototype.processComponent;
         Wicket.Ajax.Call.prototype.processComponent = function(steps, node) {
-            var compId = node.getAttribute("id");
-            var el = YAHOO.util.Dom.get(compId);
-            if(el != null) {
-                var els = YAHOO.util.Dom.getElementsBy(function(node) {
+            var compId, el, els, i, len;
+
+            compId = node.getAttribute("id");
+            el = YAHOO.util.Dom.get(compId);
+
+            if (el !== null && el !== undefined) {
+                els = YAHOO.util.Dom.getElementsBy(function(node) {
                     return !YAHOO.lang.isUndefined(node.HippoDestroyID);
                 }, null, el);
-                
-                for(var i=0; i<els.length; i++) {
+
+                for (i = 0, len = els.length; i < len; i++) {
                     YAHOO.hippo.HippoAjax.callDestroyFunction(els[i].HippoDestroyID);
                 }
                 YAHOO.util.Event.purgeElement(el, true);
             }
             tmpFunc.call(this, steps, node);
-        }
+        };
 
-    })();
+    }());
 
     YAHOO.register("hippoajax", YAHOO.hippo.HippoAjax, {
         version: "2.8.1", build: "19"

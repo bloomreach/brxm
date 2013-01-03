@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2013 Hippo.
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ if (!YAHOO.hippo.ScrollStateSaver) {
             this.cookiePrefix = cookiePrefix;
             var _this = this;
             Wicket.Ajax.registerPreCallHandler(function() {
-                _this.saveScrollPosition()
+                _this.saveScrollPosition();
             });
             Wicket.Ajax.registerPostCallHandler(function() {
-                _this.loadScrollPosition()
+                _this.loadScrollPosition();
             });
         };
 
@@ -38,11 +38,13 @@ if (!YAHOO.hippo.ScrollStateSaver) {
             },
 
             getScrollElement : function() {
-                var scrollElement = Dom.get(this.scrollElementId);
+                var scrollElement, unit;
+
+                scrollElement = Dom.get(this.scrollElementId);
                 if (!scrollElement) {
                     return null;
                 }
-                var unit = YAHOO.hippo.LayoutManager.findLayoutUnit(scrollElement);
+                unit = YAHOO.hippo.LayoutManager.findLayoutUnit(scrollElement);
                 if (!unit) {
                     return null;
                 }
@@ -50,26 +52,30 @@ if (!YAHOO.hippo.ScrollStateSaver) {
             },
 
             saveScrollPosition : function() {
-                var scrollElement = this.getScrollElement();
-                if (scrollElement == null) {
+                var scrollElement, offsetX, offsetY;
+
+                scrollElement = this.getScrollElement();
+                if (scrollElement === null) {
                     return;
                 }
-                var offsetX = scrollElement.pageXOffset || scrollElement.scrollLeft;
+                offsetX = scrollElement.pageXOffset || scrollElement.scrollLeft;
                 YAHOO.util.Cookie.set(this.cookiePrefix+"ScrollOffsetX", offsetX);
-                var offsetY = scrollElement.pageYOffset || scrollElement.scrollTop;
+                offsetY = scrollElement.pageYOffset || scrollElement.scrollTop;
                 YAHOO.util.Cookie.set(this.cookiePrefix+"ScrollOffsetY", offsetY);
             },
 
             loadScrollPosition : function() {
-                var scrollElement = this.getScrollElement();
-                if (scrollElement == null) {
+                var scrollElement, offsetX, offsetY;
+
+                scrollElement = this.getScrollElement();
+                if (scrollElement === null || scrollElement === undefined) {
                     return;
                 }
-                var offsetX = YAHOO.util.Cookie.get(this.cookiePrefix+"ScrollOffsetX", Number);
+                offsetX = YAHOO.util.Cookie.get(this.cookiePrefix+"ScrollOffsetX", Number);
                 if (offsetX) {
                     scrollElement.scrollLeft = offsetX;
                 }
-                var offsetY = YAHOO.util.Cookie.get(this.cookiePrefix+"ScrollOffsetY", Number);
+                offsetY = YAHOO.util.Cookie.get(this.cookiePrefix+"ScrollOffsetY", Number);
                 if (offsetY) {
                     scrollElement.scrollTop = offsetY;
                 }
@@ -77,7 +83,7 @@ if (!YAHOO.hippo.ScrollStateSaver) {
                 YAHOO.util.Cookie.remove(this.cookiePrefix+"ScrollOffsetY");
             }
         };
-    })();
+    }());
 
     YAHOO.register("ScrollStateSaver", YAHOO.hippo.ScrollStateSaver, {
         version: "1.0.0", build: "1"

@@ -27,10 +27,13 @@ if (!YAHOO.hippo.Upload) {
                 // *     example 1: number_format(1234.5678, 2, '.', '');
                 // *     returns 1: 1234.57
 
-                var n = number, c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals;
-                var d = dec_point == undefined ? "," : dec_point;
-                var t = thousands_sep == undefined ? "." : thousands_sep, s = n < 0 ? "-" : "";
-                var i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+                var n = number,
+                    c = isNaN(decimals = Math.abs(decimals)) ? 2 : decimals,
+                    d = (dec_point === null || dec_point === undefined) ? "," : dec_point,
+                    t = (thousands_sep === null || thousands_sep === undefined) ? "." : thousands_sep,
+                    s = n < 0 ? "-" : "",
+                    i = String(parseInt(n = Math.abs(+n || 0).toFixed(c), 10)),
+                    j = i.length > 3 ? i.length % 3 : 0;
 
                 return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
             };
@@ -66,10 +69,10 @@ if (!YAHOO.hippo.Upload) {
 
             render : function() {
                 this.entries.forEach(this, function(k, v) {
-                    var id = v.id;
-                    var config = v.config;
-                    var el = Dom.get(id);
-                    if(el != null) {
+                    var id = v.id,
+                        config = v.config,
+                        el = Dom.get(id);
+                    if (el !== null && el !== undefined) {
                         if (Lang.isUndefined(el.uploadWidget)) {
                             el.uploadWidget = new YAHOO.hippo.UploadWidget(id, config);
                         } else {
@@ -84,25 +87,25 @@ if (!YAHOO.hippo.Upload) {
             },
 
             upload : function() {
-                if(this.latest != null) {
+                if (this.latest !== null && this.latest !== undefined) {
                     this.latest.upload();
                 }
             },
 
             stopIndicator : function() {
-                if(this.latest != null) {
+                if (this.latest !== null && this.latest !== undefined) {
                     this.latest.stopIndicator();
                 }
             },
 
             restoreScrollPosition : function(posY) {
-                if(this.latest != null) {
+                if (this.latest !== null && this.latest !== undefined) {
                     this.latest.restoreScrollPosition(posY);
                 }
             },
 
             removeItem : function(oRecord) {
-                if(this.latest != null) {
+                if (this.latest !== null && this.latest !== undefined) {
                     this.latest.removeItem(oRecord);
                 }
             }
@@ -116,7 +119,7 @@ if (!YAHOO.hippo.Upload) {
             this.progressBars = new YAHOO.hippo.HashMap();
             this.elements = {uiElements: null};
 
-            if(this.config.ajaxIndicatorId != null) {
+            if (this.config.ajaxIndicatorId !== null && this.config.ajaxIndicatorId !== undefined) {
                 this.indicator = new YAHOO.hippo.AjaxIndicator(this.config.ajaxIndicatorId);
             }
 
@@ -149,8 +152,8 @@ if (!YAHOO.hippo.Upload) {
             Dom.addClass(this.elements.selectFilesLink, 'selectFilesLink');
             this.elements.selectFiles.appendChild(this.elements.selectFilesLink);
 
-            Dom.setStyle(this.elements.uploaderOverlay, 'width', config.buttonWidth == null || config.buttonWidth == ""  ? "155px" : config.buttonWidth);
-            Dom.setStyle(this.elements.uploaderOverlay, 'height', config.buttonHeight == null || config.buttonHeight == "" ? "26px" : config.buttonHeight);
+            Dom.setStyle(this.elements.uploaderOverlay, 'width', config.buttonWidth === null || config.buttonWidth === ""  ? "155px" : config.buttonWidth);
+            Dom.setStyle(this.elements.uploaderOverlay, 'height', config.buttonHeight === null || config.buttonHeight === "" ? "26px" : config.buttonHeight);
 
             this.dataArr = [];
             this.numberOfUploads = 0;
@@ -180,23 +183,22 @@ if (!YAHOO.hippo.Upload) {
             },
 
             upload : function() {
+                var sizes, el, offsetY, sc, pixFromBottom;
+
                 if(this.dataArr.length > 0) {
-                    if(this.config.hideBrowseDuringUpload) {
-                        //Dom.setStyle(this.elements.uploaderContainer, 'display', 'none');
-                    }
-                    if(this.indicator != null) {
+                    if(this.indicator !== null) {
                         this.indicator.show();
                     }
                     this.uploader.uploadAll(this.config.uploadUrl);
                     this.numberOfUploads += this.dataArr.length;
 
-                    if(this.layoutUnit != null && this.layoutUnit.get('scroll') === true) {
+                    if (this.layoutUnit !== null && this.layoutUnit !== undefined && this.layoutUnit.get('scroll') === true) {
                         //save scroll position
-                        var sizes = this.layoutUnit.getSizes();
-                        var el = this.layoutUnit.body;
-                        var offsetY = el.pageYOffset || el.scrollTop;
-                        var sc = offsetY + sizes.wrap.h;
-                        var pixFromBottom = el.scrollHeight - sc;
+                        sizes = this.layoutUnit.getSizes();
+                        el = this.layoutUnit.body;
+                        offsetY = el.pageYOffset || el.scrollTop;
+                        sc = offsetY + sizes.wrap.h;
+                        pixFromBottom = el.scrollHeight - sc;
                         this.scrollData = '&scrollPosY=' + pixFromBottom;
                     }
 
@@ -204,13 +206,15 @@ if (!YAHOO.hippo.Upload) {
             },
 
             onFileSelect : function(event) {
-                if('fileList' in event && event.fileList != null) {
+                var fileName, file;
+
+                if (event.hasOwnProperty('fileList') && event.fileList !== null && event.fileList !== undefined) {
                     this.dataArr = [];
 
-                    for (var fileName in event.fileList) {
-                        if(YAHOO.lang.hasOwnProperty(event.fileList, fileName)) {
-                            var file  = event.fileList[fileName];
-                            file["progress"] = -1;
+                    for (fileName in event.fileList) {
+                        if (event.fileList.hasOwnProperty(fileName)) {
+                            file = event.fileList[fileName];
+                            file.progress = -1;
                             this.dataArr.unshift(file);
                         }
                     }
@@ -222,28 +226,32 @@ if (!YAHOO.hippo.Upload) {
             },
 
             onUploadStart : function(event) {
-                if(this.indicator != null) {
+                var record, id, nameWidth, pb;
+
+                if (this.indicator !== null && this.indicator !== undefined) {
                     this.indicator.show();
                 }
-                var record = this._getRecordById(event["id"]);
-                var id = 'yui-progressbar-' + event["id"];
+                record = this._getRecordById(event.id);
+                id = 'yui-progressbar-' + event.id;
                 record.setData("progress", 0);
                 this.datatable.updateCell(record, "name", record.getData("name"));
                 this.datatable.updateCell(record, "id", record.getData("id"));
 
-                var nameWidth = this.datatable.getRecordSet().getLength() < 10 ? 305 : 305 - YAHOO.hippo.HippoAjax.getScrollbarWidth();
-                var pb = new YAHOO.widget.ProgressBar({value:1, maxValue: 100, width: nameWidth, height: 12, anim: true});
+                nameWidth = this.datatable.getRecordSet().getLength() < 10 ? 305 : 305 - YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                pb = new YAHOO.widget.ProgressBar({value:1, maxValue: 100, width: nameWidth, height: 12, anim: true});
                 pb.render(id);
-                this.progressBars.put(event["id"], pb);
+                this.progressBars.put(event.id, pb);
             },
 
             onUploadProgress : function(event) {
-                var id = event["id"];
-                var record = this._getRecordById(id);
-                var prog = Math.round(100*(event["bytesLoaded"]/event["bytesTotal"]));
+                var id, record, prog, pb;
+
+                id = event.id;
+                record = this._getRecordById(id);
+                prog = Math.round(100 * (event.bytesLoaded / event.bytesTotal));
                 record.setData("progress", prog);
                 if(this.progressBars.containsKey(id)) {
-                    var pb = this.progressBars.get(id);
+                    pb = this.progressBars.get(id);
                     pb.set('value', prog);
                 }
             },
@@ -254,11 +262,13 @@ if (!YAHOO.hippo.Upload) {
             },
 
             onUploadComplete  : function(event) {
-                var id = event["id"];
-                var record = this._getRecordById(id);
+                var id, record, pb;
+
+                id = event.id;
+                record = this._getRecordById(id);
                 record.setData("progress", 100);
                 if(this.progressBars.containsKey(id)) {
-                    var pb = this.progressBars.get(id);
+                    pb = this.progressBars.get(id);
                     pb.set('value', 100);
                 }
                 this.datatable.updateCell(record, "name", record.getData("name"));
@@ -275,20 +285,19 @@ if (!YAHOO.hippo.Upload) {
             },
 
             onAfterUpload : function() {
-                if(this.numberOfUploads == 0) {
-                    if(this.indicator != null) {
+                var url;
+
+                if (this.numberOfUploads === 0) {
+                    if (this.indicator !== null && this.indicator !== undefined) {
                         this.indicator.hide();
                     }
 
                     if(this.config.clearAfterUpload === true) {
                         this.clearAfterUpload();
                     }
-                    if(this.config.hideBrowseDuringUpload === true) {
-                        //Dom.setStyle(this.elements.uploaderContainer, 'display', 'block');
-                    }
 
-                    var url = this.config.callbackUrl + "&finished=true";
-                    if(this.scrollData != null) {
+                    url = this.config.callbackUrl + "&finished=true";
+                    if (this.scrollData !== null && this.scrollData !== undefined) {
                         url = url + this.scrollData;
                         this.scrollData = null;
                     }
@@ -297,29 +306,21 @@ if (!YAHOO.hippo.Upload) {
             },
 
             restoreScrollPosition : function(posY) {
-                var el = Dom.get(this.id);
-                /*if(Lang.isFunction(el.scrollIntoView)) {
-
+                if(this.layoutUnit !== null && this.layoutUnit.get('scroll') === true) {
                     YAHOO.lang.later(200, this, function() {
-                        el.scrollIntoView();
-                    });
-                } else {*/
-                    if(this.layoutUnit != null && this.layoutUnit.get('scroll') === true) {
-                        YAHOO.lang.later(200, this, function() {
-                            var el = this.layoutUnit.body;
-                            var sh = (el.scrollHeight - el.offsetHeight) + posY;
-                             var attributes = {
+                        var el = this.layoutUnit.body,
+                            sh = (el.scrollHeight - el.offsetHeight) + posY,
+                            attributes = {
 	                              scroll: { to: [el.scrollTop, sh] }
-                             };
-                              var anim = new YAHOO.util.Scroll(el, attributes, 0);
+                            },
+                            anim = new YAHOO.util.Scroll(el, attributes, 0);
                             anim.animate();
                         });
                     }
-                /*}*/
             },
 
             stopIndicator : function() {
-                if(this.indicator != null) {
+                if (this.indicator !== null && this.indicator !== undefined) {
                     this.indicator.hide();
                 }
             },
@@ -329,6 +330,8 @@ if (!YAHOO.hippo.Upload) {
             },
 
             handleContentReady  : function() {
+                var allowedExtensions, i, len, ext, self;
+
                 // CMS7-5086 the flash object javascript callbacks are not available at the moment
                 // the swfReady event is fired from the flash object.
                 if (this.uploader._swf.setAllowMultipleFiles !== undefined) {
@@ -336,17 +339,17 @@ if (!YAHOO.hippo.Upload) {
                     this.uploader.setAllowMultipleFiles(this.config.allowMultipleFiles);
                     this.uploader.setSimUploadLimit(this.config.simultaneousUploadLimit);
 
-                    if (this.config.fileExtensions != null && this.config.fileExtensions.length > 0) {
-                        var allowedExtensions = '';
-                        for (var i = 0; i < this.config.fileExtensions.length; ++i) {
-                            var ext = this.config.fileExtensions[i];
-                            if(ext.indexOf("*.") != 0) {
+                    if (this.config.fileExtensions !== null && this.config.fileExtensions.length > 0) {
+                        allowedExtensions = '';
+                        for (i = 0, len = this.config.fileExtensions.length; i < len; ++i) {
+                            ext = this.config.fileExtensions[i];
+                            if (ext.indexOf("*.") !== 0) {
                                 ext = "*." + ext;
                             }
                             allowedExtensions += ext + ';';
                         }
                         // Apply new set of file filters to the uploader.
-                        this.uploader.setFileFilters(new Array({description:"Files", extensions:allowedExtensions}));
+                        this.uploader.setFileFilters([{description:"Files", extensions:allowedExtensions}]);
                     }
 
                     // Add the custom formatter to the shortcuts
@@ -356,7 +359,7 @@ if (!YAHOO.hippo.Upload) {
 
                     this.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(Dom.get(this.id));
                 } else if (this.initializationAttempts++ < 20) {
-                    var self = this;
+                    self = this;
                     window.setTimeout(function() {
                         self.uploader.destroy();
                         self.initializeUploader.call(self);
@@ -390,17 +393,18 @@ if (!YAHOO.hippo.Upload) {
             },
 
             hasFilesSelected : function() {
-                if (!Lang.isUndefined(this.datatable) && this.datatable != null) {
+                if (!Lang.isUndefined(this.datatable) && this.datatable !== null) {
                     return this.datatable.getRecordSet().getLength() > 0;
                 }
                 return false;
             },
 
             _getRecordById : function(id) {
-                var recordSet = this.datatable.getRecordSet();
-                for (var j = 0; j < recordSet.getLength(); j++) {
-                    var r = recordSet.getRecord(j);
-                    if(r._oData["id"] == id) {
+                var recordSet, i, len, r;
+                recordSet = this.datatable.getRecordSet();
+                for (i = 0, len = recordSet.getLength(); i < len; i++) {
+                    r = recordSet.getRecord(i);
+                    if (r._oData.id === id) {
                         return r;
                     }
                 }
@@ -408,44 +412,46 @@ if (!YAHOO.hippo.Upload) {
             },
 
           _createDatatable : function() {
-                if(this.dataArr.length == 0) {
+                var nameWidth, myColumnDefs, myDataSource, sortedBy, state;
+
+                if (this.dataArr.length === 0) {
                     return;
                 }
 
-                var nameWidth = 305;
+                nameWidth = 305;
                 if(this.dataArr.length > 10) {
                     nameWidth -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
                 }
 
-                var myColumnDefs = [
+                myColumnDefs = [
                     {key:"name", label: "File Name", sortable:true, width: nameWidth, formatter:"titleFormatter"},
                     {key:"size", label: "Size", sortable:true, width: 50, formatter: "bytesFormatter"},
                     {key:"id", label: "", sortable:false, width: 20, formatter: "removeFormatter"}
                 ];
 
-                var myDataSource = new YAHOO.util.LocalDataSource(this.dataArr);
+                myDataSource = new YAHOO.util.LocalDataSource(this.dataArr);
                 myDataSource.responseType = YAHOO.util.LocalDataSource.TYPE_JSARRAY;
                 myDataSource.responseSchema = {
                   fields: ["id",{key:"name", parser:"string"},"created","modified","type", {key:"size", parser:"number"}, "progress"]
                 };
 
-                var sortedBy = {key:'name', dir: YAHOO.widget.DataTable.CLASS_ASC};
-                if(this.datatable != null) {
-                    var state = this.datatable.getState();
+                sortedBy = {key:'name', dir: YAHOO.widget.DataTable.CLASS_ASC};
+                if (this.datatable !== null && this.datatable !== undefined) {
+                    state = this.datatable.getState();
                     sortedBy.key = state.sortedBy.key;
                     sortedBy.dir = state.sortedBy.dir;
                 }
                 this.dataArr.sort(function(a, b) {
-                    if(sortedBy.key == 'name') {
+                    if(sortedBy.key === 'name') {
                         a = a.name.toLowerCase();
                         b = b.name.toLowerCase();
-                    } else if(sortedBy.key == 'size') {
+                    } else if(sortedBy.key === 'size') {
                         a = a.size;
                         b = b.size;
                     }
                     return ((a < b) ? -1 : ((a > b) ? 1 : 0));
                 });
-                if(sortedBy.dir == YAHOO.widget.DataTable.CLASS_DESC) {
+                if (sortedBy.dir === YAHOO.widget.DataTable.CLASS_DESC) {
                     this.dataArr.reverse();
                 }
                 if(this.dataArr.length > 10) {
@@ -475,7 +481,7 @@ if (!YAHOO.hippo.Upload) {
             },
 
             _titleFormatter : function(elLiner, oRecord, oColumn, oData) {
-                if(oRecord._oData.progress == 100) {
+                if (oRecord._oData.progress === 100) {
                     Dom.addClass(elLiner, 'finished');
                     elLiner.innerHTML = '<span style="font-weight: bold;">OK: </span><span title="' + oData + '">' + oData + '</span>';
                 }else if(oRecord._oData.progress > -1) {
@@ -507,20 +513,20 @@ if (!YAHOO.hippo.Upload) {
                     YAHOO.hippo.Upload.latest = null;
                 }
 
-                if(this.uploader != null) {
+                if (this.uploader !== null && this.uploader !== undefined) {
                     this.uploader.destroy();
                     this.uploader = null;
                 }
 
-                if(this.indicator != null) {
+                if (this.indicator !== null && this.indicator !== undefined) {
                     this.indicator.hide();
                 }
-                if(this.datatable != null) {
+                if (this.datatable !== null && this.datatable !== undefined) {
                     this.datatable.destroy();
                 }
 
                 this.progressBars.forEach(this, function(k, v) {
-                    v.destroy()
+                    v.destroy();
                 });
                 this.progressBars.clear();
 
@@ -528,7 +534,7 @@ if (!YAHOO.hippo.Upload) {
                 this.id = null;
             }
         };
-    })();
+    }());
 
    YAHOO.hippo.Upload = new YAHOO.hippo.UploadImpl();
 

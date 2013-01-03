@@ -45,7 +45,7 @@ if (!YAHOO.hippo.AccordionManager) {
 
             render : function(id, unitId) {
                 var el = Dom.get(id);
-                if(el != null) {
+                if (el !== null && el !== undefined) {
                     if (Lang.isUndefined(el.accordion)) {
                         el.accordion = new YAHOO.hippo.Accordion(id, unitId, this.configurations.get(id));
                     } else {
@@ -81,20 +81,22 @@ if (!YAHOO.hippo.AccordionManager) {
             },
     
             init: function() {
+                var me, root;
+
                 if(this.initialized) {
                     return;
                 }
                 this.initialized = true; //set here because render registration below does a direct callback
 
-                var me = this;
-                var root = Dom.get(this.id);
-                if(this.cfg.registerResizeListener) {
+                me = this;
+                root = Dom.get(this.id);
+                if (this.cfg.registerResizeListener) {
                     YAHOO.hippo.LayoutManager.registerResizeListener(root, me, function() {
                         me.calculated = false;
                         me.update();
                     });
                 }
-                if(this.cfg.registerRenderListener) {
+                if (this.cfg.registerRenderListener) {
                     YAHOO.hippo.LayoutManager.registerRenderListener(root, me, function() {
                         me.update(true);
                     }, true);
@@ -109,26 +111,28 @@ if (!YAHOO.hippo.AccordionManager) {
             },
 
             calculate : function() {
+                var parent, children, i, len;
+
                 if(this.calculated) {
                     return;
                 }
                 
-                var parent = Dom.getAncestorByClassName(this.id, this.cfg.ancestorClassname);
-                if(parent != null) {
+                parent = Dom.getAncestorByClassName(this.id, this.cfg.ancestorClassname);
+                if (parent !== null && parent !== undefined) {
                     this.region = Dom.getRegion(parent);
                 } else {
                     YAHOO.log('Could not find parent element, error calculating available height', 'error');
                     return;
                 }
     
-                var children = Dom.getElementsByClassName(this.cfg.unitClassname, 'div', this.id);
+                children = Dom.getElementsByClassName(this.cfg.unitClassname, 'div', this.id);
                 if(this.cfg.calculateTotalHeight) {
                     //set display of tree to none to calculate height of section headers
-                    if(this.current != null) {
+                    if(this.current !== null) {
                         Dom.setStyle(this.current, 'display', 'none');
                     }
                     this.totalHeight = 0;
-                    for(var i=0; i<children.length; i++) {
+                    for (i = 0, len = children.length; i < len; i++) {
                         this.totalHeight += Dom.getRegion(children[i]).height;
                     }
                 } else {
@@ -137,29 +141,31 @@ if (!YAHOO.hippo.AccordionManager) {
             },
     
             render : function(id) {
+                var height, bottom, top;
+
                 this.init();
                 this.calculate();
                 
-                var height = this.region.height - this.totalHeight;
+                height = this.region.height - this.totalHeight;
 
-                var bottom = this.findElement(id, this.cfg.unitClassname + '-bottom');
-                if (bottom != null && Dom.getStyle(bottom, 'display') != 'none') {
+                bottom = this.findElement(id, this.cfg.unitClassname + '-bottom');
+                if (bottom !== null && Dom.getStyle(bottom, 'display') !== 'none') {
                     height -= Dom.getRegion(bottom).height;
                 }
 
-                var top = this.findElement(id, this.cfg.unitClassname + '-top');
-                if (top != null && Dom.getStyle(top, 'display') != 'none') {
+                top = this.findElement(id, this.cfg.unitClassname + '-top');
+                if (top !== null && Dom.getStyle(top, 'display') !== 'none') {
                     height -= Dom.getRegion(top).height;
                 }
 
-                if(height > 0) {
+                if (height > 0) {
                     Dom.setStyle(this.findElement(id, this.cfg.unitClassname + '-center'), 'height', height + 'px');
                 }
                 this.current = id;
             },
     
             update: function(bOverride) {
-                if(this.current == null) {
+                if (this.current === null || this.current === undefined) {
                     return;
                 }
                 
@@ -179,7 +185,7 @@ if (!YAHOO.hippo.AccordionManager) {
             }
         };
 
-    })();
+    }());
 
     YAHOO.hippo.AccordionManager = new YAHOO.hippo.AccordionManagerImpl();
     YAHOO.register("AccordionManager", YAHOO.hippo.AccordionManager, {

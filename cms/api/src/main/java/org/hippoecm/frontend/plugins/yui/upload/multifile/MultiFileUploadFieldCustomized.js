@@ -66,7 +66,7 @@ function MultiSelector(eprefix, list_target, max, del_label) {
     }
 
     this.form = null;
-    this.submitAfterSelect = this.max == 1;
+    this.submitAfterSelect = this.max === 1;
 
     this.delete_label = del_label;
     this.element_name_prefix = eprefix;
@@ -77,14 +77,15 @@ function MultiSelector(eprefix, list_target, max, del_label) {
      * Add a new file input element
      */
     this.addElement = function(element) {
+        var p, new_element;
 
         // Make sure it's a file input element
-        if (element.tagName.toLowerCase() == 'input' && element.type.toLowerCase() == 'file') {
+        if (element.tagName.toLowerCase() === 'input' && element.type.toLowerCase() === 'file') {
 
-            if(this.submitAfterSelect && this.form == null) {
-                var p = element.parentNode;
-                while(p != document.body) {
-                    if(p.tagName.toLowerCase() == 'form') {
+            if(this.submitAfterSelect && this.form === null) {
+                p = element.parentNode;
+                while(p !== document.body) {
+                    if(p.tagName.toLowerCase() === 'form') {
                         this.form = p;
                         break;
                     }
@@ -105,15 +106,15 @@ function MultiSelector(eprefix, list_target, max, del_label) {
                     element.multi_selector.form.submit();
                 } else {
                     // Workaround for issue CMS7-6415: IE8: Extra empty files...
-                    if (YAHOO.env.ua.ie == '8') {
+                    if (YAHOO.env.ua.ie === '8') {
                         var filename = this.multi_selector.parseFilename(this.value);
-                        if (filename == '' || filename != '' && YAHOO.lang.trim(filename) == '') {
+                        if (filename === '' || YAHOO.lang.trim(filename) === '') {
                             return;
                         }
                     }
 
                     // New file input
-                    var new_element = document.createElement('input');
+                    new_element = document.createElement('input');
                     new_element.type = 'file';
 
                     // Add new element
@@ -128,10 +129,10 @@ function MultiSelector(eprefix, list_target, max, del_label) {
                     // Hide this: we can't use display:none because Safari doesn't like it
                     this.style.position = 'absolute';
                     this.style.left = '-3000px';
-                    }
+                }
             };
             // If we've reached maximum number, disable input element
-            if (this.max != -1 && this.count >= this.max) {
+            if (this.max !== -1 && this.count >= this.max) {
                 element.disabled = true;
             }
 
@@ -151,6 +152,7 @@ function MultiSelector(eprefix, list_target, max, del_label) {
      * Add a new row to the list of files
      */
     this.addListRow = function(element) {
+        var new_row, new_row_button, img, label;
 
         if(this.count >= 8) {
             //turn container element into a scrollable unit with set height.
@@ -158,15 +160,15 @@ function MultiSelector(eprefix, list_target, max, del_label) {
         }
 
         // Row div
-        var new_row = document.createElement('div');
+        new_row = document.createElement('div');
         new_row.className = 'wicket-mfu-row';
 
         // Delete button
-        var new_row_button = document.createElement('a');
+        new_row_button = document.createElement('a');
         new_row_button.title = this.delete_label;
         new_row_button.className = 'wicket-mfu-delete-button';
 
-        var img = document.createElement('span');
+        img = document.createElement('span');
         img.className = 'wicket-mfu-delete-button-inner';
         new_row_button.appendChild(img);
 
@@ -199,7 +201,7 @@ function MultiSelector(eprefix, list_target, max, del_label) {
         };
 
         // Set row value
-        var label = document.createElement("span");
+        label = document.createElement("span");
         label.innerHTML = this.parseFilename(element.value);
         label.className = 'wicket-mfu-row-label';
         new_row.appendChild(label);
@@ -212,7 +214,7 @@ function MultiSelector(eprefix, list_target, max, del_label) {
     };
 
     this.appendToList = function(row) {
-        if (this.list_container == null) {
+        if (this.list_container === null || this.list_container === undefined) {
             this.list_container = document.createElement("div");
             this.list_container.className = 'wicket-mfu-row-container';
             this.list_target.appendChild(this.list_container);

@@ -14,11 +14,10 @@
  *  limitations under the License.
  */
 
-"use strict";
-
 (function() {
+    "use strict";
 
-    if (typeof window.console === 'undefined') {
+    if (window.console === undefined) {
         window.console = {
             log : function() {
             },
@@ -38,13 +37,13 @@
     }
 
     String.prototype.format = function() {
-        var formatted = this;
-        for (var i = 0; i < arguments.length; i++) {
-            var regexp = new RegExp('\\{' + i + '\\}', 'gi');
+        var formatted, regexp, i, len;
+        formatted = this;
+        for (i = 0, len = arguments.length; i < len; i++) {
+            regexp = new RegExp('\\{' + i + '\\}', 'gi');
             formatted = formatted.replace(regexp, arguments[i]);
         }
         return formatted;
     };
 
-})();
-
+}());

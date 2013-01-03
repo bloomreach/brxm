@@ -13,18 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-(function () {
+(function() {
     "use strict";
 
-    if (typeof Hippo === 'undefined') {
+    if (Hippo === undefined) {
         Hippo = {};
     }
 
-    if (typeof Hippo.Future !== 'undefined') {
+    if (Hippo.Future !== undefined) {
         return;
     }
 
-    var _Future = function(func) {
+    var Future = function(func) {
         this.success = false;
         this.completed = false;
         this.value = undefined;
@@ -34,13 +34,13 @@
 
         var self = this;
         func.call(this, function(value) {
-            self.onSuccess.call(self, value)
+            self.onSuccess.call(self, value);
         }, function(value) {
-            self.onFailure.call(self, value)
+            self.onFailure.call(self, value);
         });
-    }
+    };
 
-    _Future.prototype = {
+    Future.prototype = {
 
         /**
          * Register a callback to be invoked when the future completes successfully.
@@ -50,7 +50,7 @@
          * @param cb
          * @return {*}
          */
-        when : function (cb) {
+        when: function(cb) {
             if (!cb) {
                 throw new TypeError('callback is undefined');
             }
@@ -70,7 +70,7 @@
          * @param cb
          * @return {*}
          */
-        otherwise : function (cb) {
+        otherwise: function(cb) {
             if (!this.completed) {
                 this.failureHandlers.push(cb);
             } else if (!this.success) {
@@ -98,9 +98,9 @@
          * @param transformer
          * @return {Hippo.Future}
          */
-        transform : function (transformer) {
-            return new Hippo.Future(function (onSuccess, onFail) {
-                this.when(function (value) {
+        transform: function(transformer) {
+            return new Hippo.Future(function(onSuccess, onFail) {
+                this.when(function(value) {
                     var transformed;
                     try {
                         transformed = transformer(value);
@@ -133,9 +133,9 @@
          * @param futureFactory
          * @return {Hippo.Future}
          */
-        chain : function (futureFactory) {
-            return new Hippo.Future(function (onSuccess, onFail) {
-                this.when(function (value) {
+        chain: function(futureFactory) {
+            return new Hippo.Future(function(onSuccess, onFail) {
+                this.when(function(value) {
                     var future = futureFactory(value);
                     future.when(onSuccess).otherwise(onFail);
                 }).otherwise(onFail);
@@ -158,10 +158,10 @@
          * @param futureFactory
          * @return {Hippo.Future}
          */
-        retry : function (futureFactory) {
-            return new Hippo.Future(function (onSuccess, onFail) {
+        retry: function(futureFactory) {
+            return new Hippo.Future(function(onSuccess, onFail) {
                 this.when(onSuccess)
-                    .otherwise(function () {
+                    .otherwise(function() {
                         var future = futureFactory();
                         future.when(onSuccess).otherwise(onFail);
                     });
@@ -173,43 +173,45 @@
          *
          * @return {*}
          */
-        get : function () {
+        get: function() {
             if (!this.completed) {
                 throw "Future has not completed yet";
             }
             if (!this.success) {
-                throw "Future completed unsuccessfully"
+                throw "Future completed unsuccessfully";
             }
             return this.value;
         },
 
-        onSuccess : function (value) {
+        onSuccess: function(value) {
+            var i, len;
             if (this.completed) {
                 return;
             }
             this.value = value;
             this.success = true;
             this.completed = true;
-            for (var i = 0; i < this.successHandlers.length; i++) {
+            for (i = 0, len = this.successHandlers.length; i < len; i++) {
                 this.successHandlers[i].call(this, value);
             }
             this.cleanup();
         },
 
-        onFailure : function (value) {
+        onFailure: function(value) {
+            var i, len;
             if (this.completed) {
                 return;
             }
             this.value = value;
             this.success = false;
             this.completed = true;
-            for (var i = 0; i < this.failureHandlers.length; i++) {
+            for (i = 0, len = this.failureHandlers.length; i < len; i++) {
                 this.failureHandlers[i].call(this, value);
             }
             this.cleanup();
         },
 
-        cleanup : function () {
+        cleanup : function() {
             delete this.successHandlers;
             delete this.failureHandlers;
         }
@@ -222,8 +224,8 @@
      * @param func
      * @constructor
      */
-    Hippo.Future = function (func) {
-        var _future = new _Future(func),
+    Hippo.Future = function(func) {
+        var _future = new Future(func),
             publicMembers = [ 'when', 'otherwise', 'transform', 'chain', 'retry', 'get' ],
             i, len;
         // use a for-loop to be compatible with IE8
@@ -247,7 +249,7 @@
      * @param value
      * @return {Hippo.Future}
      */
-    Hippo.Future.constant = function (value) {
+    Hippo.Future.constant = function(value) {
         return new Hippo.Future(function (onSuccess, onFail) {
             onSuccess(value);
         });
@@ -260,26 +262,36 @@
      *
      * @return {Hippo.Future}
      */
-    Hippo.Future.join = function () {
-        var futures;
-        if (arguments.length == 1) {
+    Hippo.Future.join = function() {
+        var futures, value, join;
+
+        if (arguments.length === 1) {
             futures = arguments[0];
         } else {
             futures = Array.prototype.slice.call(arguments);
         }
 
-        var value = null;
-        var join = new Hippo.Future(function (onSuccess, onFailure) {
-            var togo = futures.length;
+        value = null;
+        join = new Hippo.Future(function (onSuccess, onFailure) {
+            var togo, completed, successHandler, failureHandler, i, len;
+
+            togo = futures.length;
 
             // early exit if there are no actual futures to wait for
-            if (togo == 0) {
+            if (togo === 0) {
                 onSuccess.call(this, value);
                 return;
             }
 
-            var completed = false;
-            var failureHandler = function () {
+            completed = false;
+            successHandler = function() {
+                togo--;
+                if (!completed && togo === 0) {
+                    completed = true;
+                    onSuccess.call(this, value);
+                }
+            };
+            failureHandler = function() {
                 togo--;
                 if (completed) {
                     return;
@@ -287,17 +299,12 @@
                 completed = true;
                 onFailure.call(this);
             };
-            for (var i = 0; i < futures.length; i++) {
-                futures[i].when(function (result) {
-                    togo--;
-                    if (!completed && togo === 0) {
-                        completed = true;
-                        onSuccess.call(this, value);
-                    }
-                }).otherwise(failureHandler);
+
+            for (i = 0, len = futures.length; i < len; i++) {
+                futures[i].when(successHandler).otherwise(failureHandler);
             }
         });
-        join.set = function (val) {
+        join.set = function(val) {
             value = val;
         };
         return join;
@@ -313,8 +320,8 @@
      * @param map
      * @return {Hippo.Future}
      */
-    Hippo.Future.map = function (map) {
-        return new Hippo.Future(function (onSuccess, onFail) {
+    Hippo.Future.map = function(map) {
+        return new Hippo.Future(function(onSuccess, onFail) {
             var value = {}, keys = Object.keys(map), togo = keys.length, completed = false;
 
             if (togo === 0) {
@@ -330,7 +337,7 @@
                 }
             }
 
-            keys.forEach(function (key) {
+            keys.forEach(function(key) {
                 var future = map[key];
                 future.when(function (val) {
                     value[key] = val;
@@ -344,4 +351,4 @@
     };
 
 
-})();
+}());

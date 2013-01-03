@@ -27,8 +27,8 @@
 YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.DragDropManager) {
-    ( function() {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+    (function() {
+        var Lang = YAHOO.lang;
 
         YAHOO.hippo.DragDropManagerImpl = function() {
         };
@@ -52,12 +52,13 @@ if (!YAHOO.hippo.DragDropManager) {
              * TODO: Maybe the draggables and droppables can be merged?
              */
             getModel : function(id) {
+                var model = null;
                 if (this.draggables.containsKey(id)) {
-                    return this.draggables.get(id);
+                    model = this.draggables.get(id);
                 } else if (this.droppables.containsKey(id)) {
-                    return this.droppables.get(id);
+                    model = this.droppables.get(id);
                 }
-                return null;
+                return model;
             },
 
             addDraggable : function(id, modelClass, config) {
@@ -70,15 +71,14 @@ if (!YAHOO.hippo.DragDropManager) {
                 this._add(id, clazz, config, this.droppables);
             },
 
-            _add : function(id, clazz, config, map) {
-                var me = this;
+            _add : function(id, Clazz, config, map) {
                 var func = function() {
                     var c = null;
 
                     if (Lang.isArray(config.groups)) {
-                        c = new clazz(id, config.groups.shift(), config);
+                        c = new Clazz(id, config.groups.shift(), config);
                     } else {
-                        c = new clazz(id, null, config);
+                        c = new Clazz(id, null, config);
                     }
                     map.put(id, c);
                 };
@@ -93,7 +93,7 @@ if (!YAHOO.hippo.DragDropManager) {
                 return defaultClazz;
             }
         };
-    })();
+    }());
 
     YAHOO.hippo.DragDropManager = new YAHOO.hippo.DragDropManagerImpl();
     YAHOO.register("dragdropmanager", YAHOO.hippo.DragDropManager, {

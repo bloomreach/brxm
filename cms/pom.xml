@@ -133,6 +133,8 @@
     <sanselan.version>0.97-incubator</sanselan.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
+
+    <jslint.plugin.version>1.0.1</jslint.plugin.version>
   </properties>
 
   <!--
@@ -169,19 +171,31 @@
               <version>${log4j.version}</version>
             </dependency>
           </dependencies>
-        <configuration>
-          <fork>false</fork>
-          <!--mappingIncludes>**/*.jdo, **/*.class</mappingIncludes-->
-          <verbose>false</verbose>
-          <enhancerName>ASM</enhancerName>
-          <props>jdo.properties</props>
-        </configuration>
-        <executions>
-          <execution>
-            <phase>compile</phase>
-            <goals><goal>enhance</goal></goals>
-          </execution>
-        </executions>
+          <configuration>
+            <fork>false</fork>
+            <!--mappingIncludes>**/*.jdo, **/*.class</mappingIncludes-->
+            <verbose>false</verbose>
+            <enhancerName>ASM</enhancerName>
+            <props>jdo.properties</props>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>compile</phase>
+              <goals><goal>enhance</goal></goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>jslint-maven-plugin</artifactId>
+          <version>${jslint.plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>jslint</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

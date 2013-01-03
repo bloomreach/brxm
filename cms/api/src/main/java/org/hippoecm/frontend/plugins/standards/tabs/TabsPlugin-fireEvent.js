@@ -1,5 +1,6 @@
 (function(window, document) {
-    var fireEvent = function(element, eventName, active) {
+    var fireEvent, decorator;
+    fireEvent = function(element, eventName, active) {
         try {
             var event;
             if (document.createEvent) {
@@ -26,8 +27,8 @@
     if (window.Hippo && window.Hippo.activePerspective) {
         fireEvent(window.Hippo.activePerspective, 'readystatechange', false);
     }
-    var decorator = document.getElementById('REPLACE_WITH_TAB_ID');
+    decorator = document.getElementById('REPLACE_WITH_TAB_ID');
     fireEvent(decorator, 'readystatechange', true);
     window.Hippo = window.Hippo || {};
     window.Hippo.activePerspective = decorator;
-})(window, document);
+}(window, document));

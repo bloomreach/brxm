@@ -27,7 +27,7 @@
 YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.DragDropManager) {
-    ( function() {
+    (function() {
         var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
         YAHOO.hippo.DragDropManagerImpl = function() {
@@ -52,12 +52,13 @@ if (!YAHOO.hippo.DragDropManager) {
              * TODO: Maybe the draggables and droppables can be merged?
              */
             getModel : function(id) {
+                var model = null;
                 if (this.draggables.containsKey(id)) {
-                    return this.draggables.get(id);
+                    model = this.draggables.get(id);
                 } else if (this.droppables.containsKey(id)) {
-                    return this.droppables.get(id);
+                    model = this.droppables.get(id);
                 }
-                return null;
+                return model;
             },
 
             addDraggable : function(id, modelClass, config) {
@@ -71,29 +72,32 @@ if (!YAHOO.hippo.DragDropManager) {
              * Do smarter registration of draggables.
              * Not in use for now because IE is slow
              */
-            registerDraggable : function(id, modelClass, config) {
+            registerDraggable : function(id, ModelClass, config) {
+                var func, func2;
+
                 if (YAHOO.env.ua.ie > 0) {
                     return; 
                 } 
                 
-                var me = this;
-                var func = function() {
-                    var tbody = Dom.getElementBy(function(el) { return true; }, 'tbody', id);
-                    var children = Dom.getChildren(tbody);
-                    for(var i=0; i<children.length; i++) {
-                        var child = children[i];
-                        var c = null;
+                func = function() {
+                    var tbody, children, i, len, child, c;
+
+                    tbody = Dom.getElementBy(function(el) { return true; }, 'tbody', id);
+                    children = Dom.getChildren(tbody);
+                    for (i = 0, len = children.length; i < len; i++) {
+                        child = children[i];
+                        c = null;
                         if (Lang.isArray(config.groups)) {
-                            c = new modelClass(child.id, config.groups.shift(), config);
+                            c = new ModelClass(child.id, config.groups.shift(), config);
                         } else {
-                            c = new modelClass(child.id, null, config);
+                            c = new ModelClass(child.id, null, config);
                         }
                         child.dd = c;
                     }
                 };
-                var func2 = function() {
+                func2 = function() {
                     window.setTimeout(func, 10);
-                }
+                };
                 this.loader.registerFunction(func2);
             },
 
@@ -104,15 +108,14 @@ if (!YAHOO.hippo.DragDropManager) {
                 this._add(id, clazz, config, this.droppables);
             },
 
-            _add : function(id, clazz, config, map) {
-                var me = this;
+            _add : function(id, Clazz, config, map) {
                 var func = function() {
                     var c = null;
 
                     if (Lang.isArray(config.groups)) {
-                        c = new clazz(id, config.groups.shift(), config);
+                        c = new Clazz(id, config.groups.shift(), config);
                     } else {
-                        c = new clazz(id, null, config);
+                        c = new Clazz(id, null, config);
                     }
                     map.put(id, c);
                 };
@@ -127,7 +130,7 @@ if (!YAHOO.hippo.DragDropManager) {
             }
             
         };
-    })();
+    }());
 
     YAHOO.hippo.DragDropManager = new YAHOO.hippo.DragDropManagerImpl();
     YAHOO.register("dragdropmanager", YAHOO.hippo.DragDropManager, {

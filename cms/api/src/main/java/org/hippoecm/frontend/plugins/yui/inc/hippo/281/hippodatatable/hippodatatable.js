@@ -13,7 +13,7 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.DataTable) {
     (function() {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+        var Dom = YAHOO.util.Dom;
 
         YAHOO.hippo.DataTable = function(id, config) {
             YAHOO.hippo.DataTable.superclass.constructor.apply(this, arguments);
@@ -23,43 +23,44 @@ if (!YAHOO.hippo.DataTable) {
 
             resize: function(sizes, preserveScroll) {
                 var table = Dom.get(this.id);
-                if (table == null) {
-//                    console.log('oops: id ' + this.id + ' does no longer exist');
+                if (table === null || table === undefined) {
                     return;
                 }
                 this._updateGecko(sizes, table, preserveScroll);
             },
 
             update : function() {
-                var table = Dom.get(this.id);
-                var un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
+                var table = Dom.get(this.id),
+                    un = YAHOO.hippo.LayoutManager.findLayoutUnit(table);
                 this.resize(un.getSizes(), true);
             },
 
             _updateGecko : function(sizes, table, preserveScroll) {
-                var thead = this._getThead(table);
-                var headers = Dom.getElementsByClassName('headers', 'tr', thead);
-                if (headers.length == 0) {
+                var thead, headers, tbody, bodyDiv, previousScrollTop, h, widthData, availableHeight;
+
+                thead = this._getThead(table);
+                headers = Dom.getElementsByClassName('headers', 'tr', thead);
+                if (headers.length === 0) {
                     return;
                 }
 
-                var tbody = this._getTbody(table);
-                var bodyDiv = tbody.parentNode.parentNode;
-                var previousScrollTop = bodyDiv.scrollTop;
+                tbody = this._getTbody(table);
+                bodyDiv = tbody.parentNode.parentNode;
+                previousScrollTop = bodyDiv.scrollTop;
 
                 Dom.setStyle(thead.parentNode.parentNode, 'margin-right', YAHOO.hippo.HippoAjax.getScrollbarWidth() + 'px');
-                var h = Dom.getElementsByClassName(this.config.autoWidthClassName, 'th', headers[0]);
-                if (h != null) {
+                h = Dom.getElementsByClassName(this.config.autoWidthClassName, 'th', headers[0]);
+                if (h !== null && h !== undefined) {
                     Dom.setStyle(h, 'width', 'auto');
                     Dom.setStyle(h, 'min-width', '100px');
                 }
-                var widthData = this.getWidthData(headers[0], sizes);
+                widthData = this.getWidthData(headers[0], sizes);
 
                 Dom.setStyle(bodyDiv, 'display', 'block');
                 this._setColsWidth(tbody, headers[0], widthData);
                 Dom.setStyle(thead.parentNode.parentNode, 'display', 'block');
 
-                var availableHeight = this.getHeightData(table, thead, sizes);
+                availableHeight = this.getHeightData(table, thead, sizes);
                 Dom.setStyle(bodyDiv, 'height', availableHeight + 'px');
                 if (preserveScroll) {
                     bodyDiv.scrollTop = previousScrollTop;
@@ -68,18 +69,20 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             getWidthData : function(headrow, sizes) {
-                var result = {
+                var result, fixedHeaderWidth, cells, i, len, child, region, cellWidth;
+
+                result = {
                     autoIndex: -1,
                     widths: []
                 };
 
-                var fixedHeaderWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                fixedHeaderWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
 
-                var cells = headrow.getElementsByTagName('th');
-                for (var i = 0; i < cells.length; i++) {
-                    var child = cells[i];
+                cells = headrow.getElementsByTagName('th');
+                for (i = 0, len = cells.length; i < len; i++) {
+                    child = cells[i];
                     if (!Dom.hasClass(child, this.config.autoWidthClassName)) {
-                        var region = Dom.getRegion(child);
+                        region = Dom.getRegion(child);
                         fixedHeaderWidth += region.width;
                         result.widths.push(region.width);
                     } else {
@@ -89,7 +92,7 @@ if (!YAHOO.hippo.DataTable) {
                 }
 
                 if (result.autoIndex >= 0) {
-                    var cellWidth = sizes.wrap.w - fixedHeaderWidth;
+                    cellWidth = sizes.wrap.w - fixedHeaderWidth;
                     if (cellWidth < 100) {
                         cellWidth = 100;
                     }
@@ -100,12 +103,14 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             getHeightData : function(table, thead, sizes) {
-                var siblings = Dom.getChildren(table.parentNode);
-                var fixedTableHeight = 0;
+                var siblings, fixedTableHeight, i, len, sibling, pagingTr, pagingHeight;
+
+                siblings = Dom.getChildren(table.parentNode);
+                fixedTableHeight = 0;
                 //calculate height of table siblings
-                for (var i = 0; i < siblings.length; ++i) {
-                    var sibling = siblings[i];
-                    if (sibling != table) {
+                for (i = 0, len = siblings.length; i < len; i++) {
+                    sibling = siblings[i];
+                    if (sibling !== table) {
                         fixedTableHeight += Dom.getRegion(sibling).height;
                     }
                 }
@@ -114,10 +119,10 @@ if (!YAHOO.hippo.DataTable) {
                 //add height of header
                 fixedTableHeight += Dom.getRegion(thead).height;
 
-                var pagingTr = Dom.getElementsByClassName('hippo-list-paging', 'tr', table);
-                var pagingHeight = 0;
+                pagingTr = Dom.getElementsByClassName('hippo-list-paging', 'tr', table);
+                pagingHeight = 0;
                 if (pagingTr.length > 0) {
-                    for (var i = 0; i < pagingTr.length; i++) {
+                    for (i = 0, len = pagingTr.length; i < len; i++) {
                         pagingHeight += Dom.getRegion(pagingTr[i]).height;
                     }
                 }
@@ -134,9 +139,11 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             _getTbody : function(table) {
-                var tbodies = table.getElementsByTagName('tbody');
+                var tbodies, i, len;
+
+                tbodies = table.getElementsByTagName('tbody');
                 if (tbodies.length > 0) {
-                    for (var i = 0; i < tbodies.length; i++) {
+                    for (i = 0, len = tbodies.length; i < len; i++) {
                         if (Dom.hasClass(tbodies[i].parentNode.parentNode, 'list-data-table-body')) {
                             return tbodies[i];
                         }
@@ -147,9 +154,11 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             _getThead : function(table) {
-                var theads = table.getElementsByTagName('thead');
+                var theads, i, len;
+
+                theads = table.getElementsByTagName('thead');
                 if (theads.length > 0) {
-                    for (var i = 0; i < theads.length; i++) {
+                    for (i = 0, len = theads.length; i < len; i++) {
                         if (Dom.hasClass(theads[i].parentNode.parentNode, 'list-data-table-header')) {
                             return theads[i];
                         }
@@ -160,16 +169,18 @@ if (!YAHOO.hippo.DataTable) {
             },
 
             _setColsWidth : function(tbody, headrow, widthData) {
-                var widths = widthData.widths;
+                var widths, rows, j, len, cells, i, cell, padding, newWidth;
+
+                widths = widthData.widths;
 
                 if (widthData.autoIndex >= 0) {
-                    var rows = tbody.getElementsByTagName('tr');
-                    for (var j = 0; j < rows.length; j++) {
-                        var cells = rows[j].getElementsByTagName('td');
-                        var i = widthData.autoIndex;
-                        var cell = cells[i];
-                        var padding = this.helper.getMargin(cell).w;
-                        var newWidth = (widths[i] - padding);
+                    rows = tbody.getElementsByTagName('tr');
+                    for (j = 0, len = rows.length; j < len; j++) {
+                        cells = rows[j].getElementsByTagName('td');
+                        i = widthData.autoIndex;
+                        cell = cells[i];
+                        padding = this.helper.getMargin(cell).w;
+                        newWidth = (widths[i] - padding);
                         if (newWidth < 100) {
                             newWidth = 100;
                         }
@@ -179,7 +190,7 @@ if (!YAHOO.hippo.DataTable) {
                 }
             }
         });
-    })();
+    }());
 
     YAHOO.register("HippoDataTable", YAHOO.hippo.DataTable, {
         version: "2.8.1", build: "19"
