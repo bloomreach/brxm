@@ -67,6 +67,12 @@
       <version>${joda-time.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.apache.jackrabbit</groupId>
+      <artifactId>jackrabbit-jcr-commons</artifactId>
+      <version>${jackrabbit.version}</version>
+    </dependency>
+
     <!-- test -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
