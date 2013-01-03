@@ -38,17 +38,17 @@ class MenuBar extends Panel implements MenuComponent {
     public MenuBar(String id, MenuHierarchy list) {
         super(id);
         buttons = new LinkedList<IContextMenu>();
-        add(new DataView("list", new ListDataProvider(list.list(this))) {
+        add(new DataView<Component>("list", new ListDataProvider<Component>(list.list(this))) {
             private static final long serialVersionUID = 1L;
 
             @Override
-            protected Item newItem(String id, int index, IModel model) {
+            protected Item<Component> newItem(String id, int index, IModel<Component> model) {
                 return super.newItem(String.valueOf(index), index, model);
             }
 
             @Override
-            public void populateItem(final Item item) {
-                Component component = (Component) item.getModelObject();
+            public void populateItem(final Item<Component> item) {
+                Component component = item.getModelObject();
                 item.add(new AttributeAppender("class", new Model<String>(
                         component instanceof MenuLabel ? "menu-label-item" : "icon-16"), " "));
 

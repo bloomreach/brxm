@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 
 class MenuHierarchy implements Serializable {
 
-    static final Logger log = LoggerFactory.getLogger(MenuHierarchy.class);
-
     private final List<String> categories;
     private Map<String, MenuDescription> menus = new LinkedHashMap<String, MenuDescription>();
     private Map<String, MenuHierarchy> submenus = new LinkedHashMap<String, MenuHierarchy>();
@@ -175,7 +173,7 @@ class MenuHierarchy implements Serializable {
                 }
             }
 
-            List<String> categories = new ArrayList(this.categories);
+            List<String> categories = new ArrayList<String>(this.categories);
             if (categories.contains("default")) {
                 categories.remove("default");
                 categories.add(0, "publication");
