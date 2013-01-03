@@ -114,6 +114,7 @@ public class BroadcastModuleTest extends RepositoryTestCase {
         while (n-- > 0) {
             Thread.sleep(100);
             if (listener.seenEvents.size() == 1) {
+                Thread.sleep(100);
                 return;
             }
         }
