@@ -129,6 +129,18 @@ public class JCRJobStoreTest extends RepositoryTestCase {
         assertEquals(1, triggersForJob.length);
     }
 
+    @Test
+    public void testTriggerLockKeepAlive() throws Exception {
+        final JCRJobStore store = new JCRJobStore(10);
+        final SchedulingContext context = new JCRSchedulingContext(session);
+        final Node jobNode = createAndStoreJobAndSimpleTrigger(store, context);
+        final Trigger trigger = store.acquireNextTrigger(context, System.currentTimeMillis());
+        Thread.sleep(1000*12); // sleep longer than lock timeout
+        assertTrue(jobNode.getNode("hipposched:triggers/trigger").isLocked());
+        store.releaseAcquiredTrigger(context, trigger);
+        assertFalse(jobNode.getNode("hipposched:triggers/trigger").isLocked());
+    }
+
     private Node createAndStoreJobAndRepeatedTrigger(final JCRJobStore store, final SchedulingContext context) throws RepositoryException, JobPersistenceException {
         final Node jobNode = session.getNode("/test").addNode("job", "hipposched:job");
         final JobDetail jobDetail = new JCRJobDetail(jobNode, Job.class);

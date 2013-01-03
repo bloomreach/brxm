@@ -19,8 +19,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -62,6 +69,19 @@ public class JCRJobStore extends AbstractJobStore {
     private static final String HIPPOSCHED_TRIGGER = "hipposched:trigger";
 
     private static final long TWO_MINUTES = 60 * 2;
+
+    private final long lockTimeout;
+
+    private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+    private Map<String, Future<?>> keepAlives = Collections.synchronizedMap(new HashMap<String, Future<?>>());
+
+    public JCRJobStore() {
+        this(TWO_MINUTES);
+    }
+
+    JCRJobStore(long lockTimeout) {
+        this.lockTimeout = lockTimeout;
+    }
 
     @Override
     public void initialize(ClassLoadHelper loadHelper, SchedulerSignaler signaler) throws SchedulerConfigException {
@@ -189,6 +209,7 @@ public class JCRJobStore extends AbstractJobStore {
                             continue;
                         }
                         if (lock(session, triggerNode.getPath())) {
+                            startLockKeepAlive(session, triggerNode.getIdentifier());
                             JcrUtils.ensureIsCheckedOut(triggerNode, false);
                             final Trigger trigger = createTriggerFromNode(triggerNode);
                             triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
@@ -228,6 +249,7 @@ public class JCRJobStore extends AbstractJobStore {
                     triggerNode.setProperty(HIPPOSCHED_NEXTFIRETIME, fireTimeProperty.getValue());
                 }
                 session.save();
+                stopLockKeepAlive(triggerIdentifier);
                 unlock(session, triggerNode.getPath());
             } catch (ItemNotFoundException e) {
                 log.info("Trigger no longer exists: " + trigger.getName());
@@ -333,13 +355,13 @@ public class JCRJobStore extends AbstractJobStore {
         }
     }
 
-    private static boolean lock(Session session, String nodePath) throws RepositoryException {
+    private boolean lock(Session session, String nodePath) throws RepositoryException {
         log.debug("Trying to obtain lock on " + nodePath);
         final LockManager lockManager = session.getWorkspace().getLockManager();
         if (!lockManager.isLocked(nodePath)) {
             try {
                 ensureIsLockable(session, nodePath);
-                lockManager.lock(nodePath, false, false, TWO_MINUTES, getClusterNodeId(session));
+                lockManager.lock(nodePath, false, false, lockTimeout, getClusterNodeId(session));
                 log.debug("Lock successfully obtained on " + nodePath);
                 return true;
             } catch (LockException e) {
@@ -352,7 +374,7 @@ public class JCRJobStore extends AbstractJobStore {
         return false;
     }
 
-    private static void unlock(Session session, String nodePath) throws RepositoryException {
+    private void unlock(Session session, String nodePath) throws RepositoryException {
         log.debug("Trying to release lock on " + nodePath);
         try {
             final LockManager lockManager = session.getWorkspace().getLockManager();
@@ -371,6 +393,38 @@ public class JCRJobStore extends AbstractJobStore {
             log.error("Failed to release lock on " + nodePath, e);
         }
 
+    }
+
+    private void refreshLock(final Session session, String identifier) {
+        synchronized (session) {
+            try {
+                final Node node = session.getNodeByIdentifier(identifier);
+                final LockManager lockManager = session.getWorkspace().getLockManager();
+                final Lock lock = lockManager.getLock(node.getPath());
+                lock.refresh();
+                log.debug("Lock successfully refreshed");
+            } catch (RepositoryException e) {
+                log.error("Failed to refresh lock", e);
+            }
+        }
+    }
+
+    private void startLockKeepAlive(final Session session, final String identifier) {
+        final long refreshInterval = lockTimeout / 2;
+        final Future<?> future = executorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                refreshLock(session, identifier);
+            }
+        }, refreshInterval, refreshInterval, TimeUnit.SECONDS);
+        keepAlives.put(identifier, future);
+    }
+
+    private void stopLockKeepAlive(final String identifier) {
+        final Future<?> future = keepAlives.remove(identifier);
+        if (future != null) {
+            future.cancel(true);
+        }
     }
 
     private static void ensureIsLockable(Session session, String nodePath) throws RepositoryException {
