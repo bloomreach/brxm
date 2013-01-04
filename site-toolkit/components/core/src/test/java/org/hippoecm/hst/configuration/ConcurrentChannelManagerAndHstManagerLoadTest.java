@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Test;
 
@@ -41,6 +42,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
     public void setUp() throws Exception {
         super.setUp();
         this.hstManager = getComponent(HstManager.class.getName());
+        ((HstManagerImpl)hstManager).setStaleConfigurationSupported(true);
     }
 
     @Test
@@ -70,6 +72,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 
     @Test
     public void testConcurrentHstManagerSynchronousAndAsynchronousLoad() throws Exception {
+
         try {
             Collection<Callable<VirtualHosts>> jobs = new ArrayList<Callable<VirtualHosts>>(500);
             final Random random = new Random();
