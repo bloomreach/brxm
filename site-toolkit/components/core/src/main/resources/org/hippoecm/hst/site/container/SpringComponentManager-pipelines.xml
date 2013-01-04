@@ -64,7 +64,7 @@
     <property name="repository" ref="javax.jcr.Repository.cms"/>
   </bean>
 
-  <bean id="cmsHostContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsHostContextValve"/>
+  <bean id="cmsHostRestRequestContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsHostRestRequestContextValve"/>
 
   <!-- Generic no-cache response headers setting valve -->
   <bean id="noCacheResponseHeadersValve" parent="abstractValve" class="org.hippoecm.hst.core.container.GenericResponseHeadersValve">

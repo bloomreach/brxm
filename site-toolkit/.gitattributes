@@ -492,7 +492,7 @@ components/core/src/main/java/org/hippoecm/hst/core/container/AbstractValve.java
 components/core/src/main/java/org/hippoecm/hst/core/container/ActionValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/AggregationValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/CleanupValve.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/container/CmsHostContextValve.java -text svneol=unset#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/container/CmsHostRestRequestContextValve.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/CmsSecurityValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ContainerConfigurationImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/ContextResolvingValve.java svneol=native#text/plain
