@@ -62,34 +62,6 @@ public class Channel implements Serializable {
     }
 
     /**
-     * Copy constructor; create an independent copy of a channel.
-     *
-     * @param orig the original channel to copy
-     */
-    public Channel(Channel orig) {
-        this.id = orig.id;
-
-        this.name = orig.name;
-        this.hostname = orig.hostname;
-        this.mountPath = orig.mountPath;
-        this.contextPath = orig.contextPath;
-        this.cmsPreviewPrefix = orig.cmsPreviewPrefix;
-        this.url = orig.url;
-        this.type = orig.type;
-        this.hstMountPoint = orig.hstMountPoint;
-        this.hstPreviewMountPoint = orig.hstPreviewMountPoint;
-        this.hstConfigPath = orig.hstConfigPath;
-        this.contentRoot = orig.contentRoot;
-        this.composerModeEnabled = orig.composerModeEnabled;
-        this.properties.putAll(orig.properties);
-        this.channelInfoClassName = orig.channelInfoClassName;
-        this.mountId = orig.mountId;
-        this.locale = orig.locale;
-        this.lockedBy = orig.lockedBy;
-        this.lockedOn = orig.lockedOn;
-    }
-
-    /**
      * @return the unique ID of this channel
      */
     public String getId() {
@@ -100,9 +72,9 @@ public class Channel implements Serializable {
      * Set the unique ID of this channel
      */
     public void setId(String id) throws IllegalStateException {
-    	if ( (this.id != null) && (this.id != "") ) {
-    		throw new IllegalStateException("Channel id has been already set. It can not be changed.");
-    	}
+        if ( (this.id != null) && (this.id != "") ) {
+            throw new IllegalStateException("Channel id has been already set. It can not be changed.");
+        }
 
         this.id = id;
     }

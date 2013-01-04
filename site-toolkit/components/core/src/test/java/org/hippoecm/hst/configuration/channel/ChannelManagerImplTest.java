@@ -186,7 +186,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void channelsAreClonedWhenRetrieved() throws ChannelException, RepositoryException {
+    public void channelsAreNotClonedWhenRetrieved() throws ChannelException, RepositoryException {
         ChannelManagerImpl manager = createManager();
 
         Map<String, Channel> channels = manager.getChannels();
@@ -194,8 +194,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         channel.setName("aap");
 
         Map<String, Channel> moreChannels = manager.getChannels();
-        assertFalse(moreChannels == channels);
-        assertEquals("Test Channel", moreChannels.values().iterator().next().getName());
+        assertTrue(moreChannels == channels);
     }
 
     @Test

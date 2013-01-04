@@ -364,12 +364,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     public Map<String, Channel> getChannels() throws ChannelException {
         synchronized (HstManagerImpl.MUTEX) {
             load();
-
-            Map<String, Channel> result = new HashMap<String, Channel>();
-            for (Map.Entry<String, Channel> entry : channels.entrySet()) {
-                result.put(entry.getKey(), new Channel(entry.getValue()));
-            }
-            return result;
+            return channels;
         }
     }
 
