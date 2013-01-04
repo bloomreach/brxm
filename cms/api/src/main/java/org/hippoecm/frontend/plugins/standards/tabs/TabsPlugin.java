@@ -15,21 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.standards.tabs;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.markup.html.tabs.ITab;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
@@ -38,7 +36,6 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.string.Strings;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -87,7 +84,6 @@ public class TabsPlugin extends RenderPlugin {
     public static final String TAB_ID = "tabs";
     public static final String MAX_TAB_TITLE_LENGTH = "title.maxlength";
     public static final String TAB_ICON_SIZE = "icon.size";
-    public static final String TABS_PLUGIN_FIRE_EVENT_JS = "TabsPlugin-fireEvent.js";
 
     private final TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
@@ -169,6 +165,8 @@ public class TabsPlugin extends RenderPlugin {
             }
         };
         context.registerTracker(tabsTracker, properties.getString(TAB_ID));
+
+        add(JavascriptPackageResource.getHeaderContribution(TabsPlugin.class, "TabsPlugin.js"));
     }
 
     @Override
@@ -220,29 +218,14 @@ public class TabsPlugin extends RenderPlugin {
     void onSelect(Tab tabbie, AjaxRequestTarget target) {
         tabbie.renderer.focus(null);
         onSelectTab(tabs.indexOf(tabbie));
-
-        if (tabbie.getDecoratorId() != null) {
-            String tabId = tabbie.getDecoratorId();
-            final String fireEventJS = readJavascript(TABS_PLUGIN_FIRE_EVENT_JS, "REPLACE_WITH_TAB_ID", tabId);
-            target.appendJavascript(fireEventJS);
-        }
+        fireTabSelectionEvent(tabbie, target);
     }
 
-    private String readJavascript(String resourceName, String replaceToken, String replacement) {
-        InputStream stream = TabsPlugin.class.getResourceAsStream(resourceName);
-        if (stream == null) {
-            log.error("Cannot find resource '" + resourceName + "', tab selection will not fire any events");
-            return StringUtils.EMPTY;
-        }
-        try {
-            String script = IOUtils.toString(stream);
-            script = StringUtils.replace(script, replaceToken, replacement);
-            return script;
-        } catch (IOException e) {
-            log.error("Error reading resource '" + resourceName + "', tab selection will not fire any events");
-            return StringUtils.EMPTY;
-        } finally {
-            IOUtils.closeQuietly(stream);
+    private void fireTabSelectionEvent(final Tab tab, final AjaxRequestTarget target) {
+        final String tabId = tab.getDecoratorId();
+        if (tabId != null) {
+            final String fireEventJavascript = String.format("window.Hippo.fireTabSelectionEvent('%s');", tabId);
+            target.appendJavascript(fireEventJavascript);
         }
     }
 
