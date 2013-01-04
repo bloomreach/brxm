@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.hippoecm.frontend;
 import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.WicketAjaxReference;
-import org.apache.wicket.behavior.HeaderContributor;
 import org.apache.wicket.behavior.IBehavior;
+import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.WicketEventReference;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.protocol.http.WebRequest;
@@ -49,8 +49,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PluginPage extends Home implements IServiceTracker<IRenderService> {
-
-    private static final Logger log = LoggerFactory.getLogger(Home.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -86,24 +84,10 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         add(dialogService.getComponent());
 
         context.registerService(this, Home.class.getName());
-        String serviceId = context.getReference(this).getServiceId();
-        ServiceTracker<IBehavior> tracker = new ServiceTracker<IBehavior>(IBehavior.class) {
-            private static final long serialVersionUID = 1L;
+        registerGlobalBehaviorTracker();
 
-            @Override
-            public void onServiceAdded(IBehavior behavior, String name) {
-                add(behavior);
-            }
-
-            @Override
-            public void onRemoveService(IBehavior behavior, String name) {
-                remove(behavior);
-            }
-        };
-        context.registerTracker(tracker, serviceId);
-
-        add(HeaderContributor.forJavaScript(WicketEventReference.INSTANCE));
-        add(HeaderContributor.forJavaScript(WicketAjaxReference.INSTANCE));
+        add(JavascriptPackageResource.getHeaderContribution(WicketEventReference.INSTANCE));
+        add(JavascriptPackageResource.getHeaderContribution(WicketAjaxReference.INSTANCE));
         
         add(menuBehavior = new ContextMenuBehavior());
 
@@ -115,6 +99,29 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         if (controller != null) {
             WebRequest request = (WebRequest) RequestCycle.get().getRequest();
             controller.process(request.getParameterMap());
+        }
+    }
+
+    private void registerGlobalBehaviorTracker() {
+        final String[] serviceIds = {
+                context.getReference(this).getServiceId(),
+                IBehavior.class.getName()
+        };
+        for (String serviceId : serviceIds) {
+            ServiceTracker<IBehavior> tracker = new ServiceTracker<IBehavior>(IBehavior.class) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public void onServiceAdded(IBehavior behavior, String name) {
+                    add(behavior);
+                }
+
+                @Override
+                public void onRemoveService(IBehavior behavior, String name) {
+                    remove(behavior);
+                }
+            };
+            context.registerTracker(tracker, serviceId);
         }
     }
 

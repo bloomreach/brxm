@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008 Hippo.
+ *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.IClusterable;
@@ -89,7 +88,6 @@ public class TabsPlugin extends RenderPlugin {
     public static final String MAX_TAB_TITLE_LENGTH = "title.maxlength";
     public static final String TAB_ICON_SIZE = "icon.size";
     public static final String TABS_PLUGIN_FIRE_EVENT_JS = "TabsPlugin-fireEvent.js";
-    public static final String TABS_PLUGIN_PUSH_URL_JS = "TabsPlugin-pushUrl.js";
 
     private final TabbedPanel tabbedPanel;
     private RenderService emptyPanel;
@@ -179,9 +177,6 @@ public class TabsPlugin extends RenderPlugin {
         tabbedPanel.render(target);
         for (Tab tabbie : tabs) {
             tabbie.renderer.render(target);
-        }
-        if (tabs.isEmpty()) {
-            showPathInUrl("");
         }
     }
 
@@ -288,27 +283,6 @@ public class TabsPlugin extends RenderPlugin {
      * @param index Index of the tab
      */
     protected void onSelectTab(int index) {
-        Tab tab = tabs.get(index);
-        if (tab.isEditorTab()) {
-            IModel<Node> nodeModel = tabs.get(index).getModel();
-            showPathInUrl(nodeModel);
-        }
-    }
-
-    private void showPathInUrl(final IModel<Node> nodeModel) {
-        try {
-            showPathInUrl(nodeModel.getObject().getPath());
-        } catch (RepositoryException e) {
-            log.warn("Could not retrieve path of node model, path to the node will not be shown in the URL");
-        }
-    }
-
-    private void showPathInUrl(final String path) {
-        AjaxRequestTarget requestTarget = AjaxRequestTarget.get();
-        if (requestTarget != null) {
-            final String pushUrlJS = readJavascript(TABS_PLUGIN_PUSH_URL_JS, "REPLACE_WITH_PATH", path);
-            requestTarget.appendJavascript(pushUrlJS);
-        }
     }
 
     /**
