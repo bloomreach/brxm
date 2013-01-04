@@ -90,7 +90,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
 //        a.animate();
 
         active = Ext.WindowMgr.getActive();
-        if (active !== null) {
+        if (active !== null && active !== undefined) {
             active.setActive(false);
         }
         anim = {activateTimeout: null};
@@ -99,7 +99,7 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
             this.el.stopFx();
         }
         cb = function() {
-            if (this.activateTimeout !== null) {
+            if (this.activateTimeout !== null && this.activateTimeout !== undefined) {
                 window.clearTimeout(this.activateTimeout);
             }
             this.activateTimeout = window.setTimeout(function() {

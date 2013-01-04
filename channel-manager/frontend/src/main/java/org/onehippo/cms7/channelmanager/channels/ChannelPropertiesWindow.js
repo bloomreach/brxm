@@ -71,7 +71,7 @@
 
         initComponent: function() {
             this.on('beforeexpand', function(self, animate) {
-                return this.channelId !== null;
+                return this.channelId !== null && this.channelId !== undefined;
             }, this);
 
             this.addEvents('selectchannel', 'savechannel');

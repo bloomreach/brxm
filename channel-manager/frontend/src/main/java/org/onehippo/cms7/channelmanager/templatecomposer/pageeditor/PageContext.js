@@ -22,7 +22,7 @@
 
         constructor: function(config, cache, oldContext, pageContainer) {
 
-            if (oldContext !== null) {
+            if (oldContext !== null && oldContext !== undefined) {
                 this.ids = {
                     pageUrl: oldContext.ids.pageUrl,
                     pageId: oldContext.ids.pageId,
@@ -177,7 +177,7 @@
                         var pageId, mountId, lockedBy, futures;
                         pageId = responseObject.getResponseHeader('HST-Page-Id');
                         mountId = responseObject.getResponseHeader('HST-Mount-Id');
-                        if (typeof pageId === 'undefined' || typeof mountId === 'undefined') {
+                        if (pageId === undefined || mountId === undefined) {
                             onFail('No page and/or mount information found');
                             return;
                         }

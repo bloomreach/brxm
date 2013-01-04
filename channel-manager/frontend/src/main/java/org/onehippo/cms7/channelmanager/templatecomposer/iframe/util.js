@@ -217,7 +217,7 @@
     
     Hippo.Util.getElementPath = function(element) {
         var path = "", nodeString = "", node = element;
-        while (node.parentNode !== null) {
+        while (node.parentNode !== null && node.parentNode !== undefined) {
             nodeString = node.tagName;
             if (node.id) {
                 nodeString += "[id="+node.id+"]";
@@ -235,7 +235,7 @@
     
     Hippo.Util.getBoolean = function(object) {
         var str;
-        if (typeof object === 'undefined' || object === null) {
+        if (object === undefined || object === null) {
             return null;
         }
         if (object === true || object === false) {

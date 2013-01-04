@@ -42,7 +42,7 @@ Ext.ux.ColorField = Ext.extend(Ext.form.TriggerField,  {
         if (this.disabled) {
             return;
         }
-        if (this.menu === null) {
+        if (this.menu === null || this.menu === undefined) {
             this.menu = new Ext.ux.ColorMenu({
                 hideOnClick: false,
                 fallback: this.fallback
@@ -274,7 +274,7 @@ Ext.extend(Ext.ux.ColorPicker, Ext.ColorPalette, {
             this.gradient.setAttribute('width', '200');
             this.gradient.setAttribute('height', '200');
             this.gradient.setAttribute('class', 'x-color-picker-gradient');
-            if (typeof G_vmlCanvasManager !== 'undefined') {
+            if (G_vmlCanvasManager !== undefined) {
                 this.gradient = G_vmlCanvasManager.initElement(this.gradient);
             }
             Ext.get(this.gradient).on('click', this.select, this);

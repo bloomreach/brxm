@@ -107,7 +107,7 @@
 
         retrieve : function(id) {
             var o = Factory.getById.call(Factory, id);
-            if (o === null) {
+            if (o === null || o === undefined) {
                 Main.exception(this.resources['manager-object-not-found'].format(id));
             }
             return o;
@@ -133,7 +133,7 @@
             var selection = this.retrieve(id);
             if (this.current === selection) {
                 return;
-            } else if (this.current !== null) {
+            } else if (this.current !== null && this.current !== undefined) {
                 this.current.deselect();
             }
             this.current = selection;
@@ -142,7 +142,7 @@
         },
 
         deselect : function() {
-            if (this.current !== null) {
+            if (this.current !== null && this.current !== undefined) {
                 this.current.deselect();
                 this.current = null;
                 sendMessage({}, 'deselect');
@@ -184,7 +184,7 @@
         },
 
         onDragStart : function(ui, container) {
-            if(this.dropIndicator === null) {
+            if (this.dropIndicator === null || this.dropIndicator === undefined) {
                 this.dropIndicator = $('<div id="hst-drop-indicator"/>').appendTo(document.body);
                 this.dropIndicator.css('position', 'absolute');
             }
@@ -195,7 +195,7 @@
         },
 
         onDrag : function(ui, container) {
-            var c = this.currentContainer === null ? container : this.currentContainer;
+            var c = (this.currentContainer === null || this.currentContainer === undefined) ? container : this.currentContainer;
             c.drawDropIndicator(ui, this.dropIndicator);
         },
 
@@ -205,7 +205,7 @@
         },
 
         onDragStop : function() {
-            if(this.dropIndicator !== null) {
+            if (this.dropIndicator !== null && this.dropIndicator !== undefined) {
                 this.dropIndicator.remove();
                 this.dropIndicator = null;
             }

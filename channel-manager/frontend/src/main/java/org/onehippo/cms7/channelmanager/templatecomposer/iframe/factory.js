@@ -217,9 +217,9 @@
                     return null;
                 }
                 commentJsonObject = JSON.parse(element.data);
-                if (typeof commentJsonObject[HST.ATTR.ID] !== 'undefined'
-                    && commentJsonObject[HST.ATTR.TYPE] !== 'undefined'
-                    && commentJsonObject[HST.ATTR.XTYPE] !== 'undefined') {
+                if (commentJsonObject[HST.ATTR.ID] !== undefined
+                    && commentJsonObject[HST.ATTR.TYPE] !== undefined
+                    && commentJsonObject[HST.ATTR.XTYPE] !== undefined) {
                     element.parentNode.removeChild(element);
                     return commentJsonObject;
                 }
