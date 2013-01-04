@@ -492,33 +492,34 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
         // returns a copy of the list
         List<ChildNodeEntry> cnes = state.getChildNodeEntries();
         LinkedList<ChildNodeEntry> update = new LinkedList<ChildNodeEntry>();
-        ChildNodeEntry previous = null;
         int readable = 0;
         boolean hasUpdate = false;
         for (ChildNodeEntry cne : cnes) {
             boolean added = false;
-            if (cne.getIndex() > 1) {
+
+            // if there is a same-name-sibling with a bigger index, check authorization
+            // there is no need to check last one, because it's already last
+            int index = cne.getIndex();
+            ChildNodeEntry next = state.getChildNodeEntry(cne.getName(), index + 1);
+            if (next != null) {
                 try {
-                    // this is SNS number 2, so check previous one, no need to check last one, because it's already last
-                    if (!accessManager.isGranted(previous.getId(), AccessManager.READ)) {
-                        update.addLast(previous);
+                    // this is SNS number 2, so check previous one,
+                    if (!accessManager.isGranted(cne.getId(), AccessManager.READ)) {
+                        update.addLast(cne);
                         added = true;
                         hasUpdate = true;
                     }
                 } catch (ItemNotFoundException t) {
                     log.error("Unable to order documents below handle " + state.getId(), t);
                 } catch (RepositoryException t) {
-                    log.error("Unable to determine access rights for " + previous.getId());
+                    log.error("Unable to determine access rights for " + cne.getId());
                 }
             }
-            if (!added && previous != null) {
-                update.add(readable, previous);
+
+            if (!added) {
+                update.add(readable, cne);
                 readable++;
             }
-            previous = cne;
-        }
-        if (previous != null) {
-            update.add(readable, previous);
         }
         if (hasUpdate) {
             state.setChildNodeEntries(update);

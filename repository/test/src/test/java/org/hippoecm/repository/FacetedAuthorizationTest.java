@@ -311,6 +311,35 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testDocumentsAreOrderedBelowHandleWithOtherNodesPresent() throws RepositoryException {
+        Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testRoot.addNode("doc", "hippo:handle");
+        handle.addMixin("hippo:hardhandle");
+        handle.addMixin("hippo:translated");
+
+        Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.addMixin("hippo:harddocument");
+
+        Node translation = handle.addNode("hippo:translation", "hippo:translation");
+        translation.setProperty("hippo:language", "lang");
+        translation.setProperty("hippo:message", "ignored");
+
+        doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.addMixin("hippo:harddocument");
+        doc.setProperty("authtest", "canread");
+        String identifierSecondDoc = doc.getIdentifier();
+        session.save();
+
+        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
+        Node userDoc = testData.getNode("doc/doc");
+        assertEquals(testData.getPath() + "/doc/doc", userDoc.getPath());
+        // even though it is as-if we fetch the first doc, it is actually the second doc below the handle. It is just the
+        // first doc that the userSession is allowed to read. Hence, the identifier should be equal to identifierSecondDoc
+        assertEquals("Identifiers expected to be equal", testData.getNode("doc/doc").getIdentifier(), identifierSecondDoc);
+        assertFalse(userSession.hasPendingChanges());
+    }
+
+    @Test
     public void testDocumentsAreOrderedAfterModification() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
