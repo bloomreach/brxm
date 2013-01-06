@@ -696,6 +696,7 @@ components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/analy
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/failing/base.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/org/example/servletctxawaremodulebeans/base.xml -text
 components/core/src/test/resources/META-INF/hst-assembly/addon/servletctxaware-module.xml -text
+components/core/src/test/resources/log4j-filters.txt -text
 components/core/src/test/resources/log4j.xml -text
 components/core/src/test/resources/org/hippoecm/hst/cache/ehcache/TestHstCache.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/component/TestHstRequest.xml svneol=native#text/plain
