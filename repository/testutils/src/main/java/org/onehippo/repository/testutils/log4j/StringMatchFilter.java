@@ -29,9 +29,9 @@ import org.apache.log4j.spi.LoggingEvent;
  * This is a very simple filter based on string matching.
  *
  * <p>The filter reads lines from a called <code>log4j-filters.txt</code>
- * that is expected to be on the classpath. Each line represents a string to
+ * that is expected to be on the classpath. Each line that does not start with # represents a string to
  * to match the log message to filter against. If the log message contains one
- * of the configured strings it is filtered out.</p>
+ * of the configured strings it is filtered out. Lines that start with # are treated as comments and ignored</p>
  */
 public class StringMatchFilter extends Filter {
 
@@ -44,6 +44,9 @@ public class StringMatchFilter extends Filter {
             try {
                 String line;
                 while ((line = reader.readLine()) != null && !(line = line.trim()).isEmpty()) {
+                    if (line.startsWith("#")) {
+                        continue;
+                    }
                     stringsToMatch.add(line);
                 }
             } catch (IOException e) {
