@@ -43,7 +43,11 @@ public class StringMatchFilter extends Filter {
             BufferedReader reader = new BufferedReader(new InputStreamReader(resourceAsStream));
             try {
                 String line;
-                while ((line = reader.readLine()) != null && !(line = line.trim()).isEmpty()) {
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (line.isEmpty()) {
+                        continue;
+                    }
                     if (line.startsWith("#")) {
                         continue;
                     }
