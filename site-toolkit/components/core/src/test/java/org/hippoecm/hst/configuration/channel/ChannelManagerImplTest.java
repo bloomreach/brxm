@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -77,7 +78,8 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
     private List<Mount> mounts;
     private VirtualHost testHost;
-    private MutableMount testMount;
+    private MutableMount testMount1;
+    private MutableMount testMount2;
 
     public void setComponentManager(ComponentManager componentManager) {
         HstServices.setComponentManager(componentManager);
@@ -238,7 +240,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void channelsAreReloaded() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
+    public void channelsAreReloadedAfterAddingOne() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
         final ChannelManagerImpl manager = createManager();
         int numberOfChannels = manager.getChannels().size();
 
@@ -251,17 +253,17 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         // manager should reload
 
-        reset(testHost, testMount);
-        
+        reset(testHost, testMount1, testMount2);
+
 
         VirtualHosts vhosts = HstServices.getComponentManager().getComponent(VirtualHosts.class.getName());
-        expectMountLoad(testHost, testMount, vhosts);
+        expectMountLoad(testHost, testMount1, testMount2, vhosts);
 
         MutableMount newMount = createNiceMock(MutableMount.class);
         mounts.add(newMount);
-        
+
         VirtualHost newHost = createNiceMock(VirtualHost.class);
-        
+
         expect(newMount.getChannelPath()).andReturn("/hst:hst/hst:channels/cmit-test-channel").anyTimes();
         expect(newMount.getMountPoint()).andReturn("mountpoint").anyTimes();
         expect(newMount.getHstSite()).andReturn(createNiceMock(HstSite.class)).anyTimes();
@@ -271,17 +273,18 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         expect(newHost.getVirtualHosts()).andReturn(vhosts).anyTimes();
         expect(newMount.getLocale()).andReturn("nl_NL").anyTimes();
         expect(newMount.getScheme()).andReturn("http").anyTimes();
+        expect(newMount.getIdentifier()).andReturn(UUID.randomUUID().toString()).anyTimes();
         expect(newMount.isPreview()).andReturn(false);
         expect(newMount.isMapped()).andReturn(true);
         expect(newMount.getMountPath()).andReturn("").anyTimes();
         expect(newMount.getPort()).andReturn(0).anyTimes();
 
-        replay(testHost, testMount, newHost, newMount);
-      
+        replay(testHost, testMount1, testMount2, newHost, newMount);
+
         Map<String, Channel> channels = manager.getChannels();
 
         // verify reload
-        verify(testHost, testMount, newHost, newMount);
+        verify(testHost, testMount1, testMount2, newHost, newMount);
 
         assertEquals(numberOfChannels + 1, channels.size());
         assertTrue(channels.containsKey("cmit-test-channel"));
@@ -293,6 +296,39 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals("http://myhost", created.getUrl());
         assertEquals("/unittestcontent/documents", created.getContentRoot());
         assertEquals("nl_NL", created.getLocale());
+    }
+
+    @Test
+    public void channelsThatAreNotReferencedByAMountAreDiscarded() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
+        final ChannelManagerImpl manager = createManager();
+        int numberOfChannerBeforeAddingAnOrphanOne = manager.getChannels().size();
+
+        Node channelsNode = getSession().getNode("/hst:hst/hst:channels");
+        Node channel = channelsNode.addNode("cmit-test-channel", "hst:channel");
+        channel.setProperty("hst:name", "CMIT Test Channel");
+        getSession().save();
+
+        // We've now added a Channel that does not have a Mount referring it
+
+        manager.invalidate();
+
+        // manager should reload
+
+        reset(testHost, testMount1, testMount2);
+
+        VirtualHosts vhosts = HstServices.getComponentManager().getComponent(VirtualHosts.class.getName());
+        expectMountLoad(testHost, testMount1, testMount2, vhosts);
+
+        replay(testHost, testMount1, testMount2);
+
+        Map<String, Channel> channels = manager.getChannels();
+
+        // verify reload
+        verify(testHost, testMount1, testMount2);
+
+        assertEquals(numberOfChannerBeforeAddingAnOrphanOne , channels.size());
+        assertFalse(channels.containsKey("cmit-test-channel"));
+
     }
 
     @Test
@@ -403,7 +439,23 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(0, listener1.getUpdatedCount());
         assertEquals(0, listener2.getUpdatedCount());
         assertEquals(0, listener3.getUpdatedCount());
-        
+
+        manager.invalidate();
+
+        // manager should reload
+
+        reset(testHost, testMount1, testMount2);
+
+        VirtualHosts vhosts = HstServices.getComponentManager().getComponent(VirtualHosts.class.getName());
+        expectMountLoad(testHost, testMount1, testMount2, vhosts);
+
+        replay(testHost, testMount1, testMount2);
+
+        manager.getChannels();
+
+        // verify reload
+        verify(testHost, testMount1, testMount2);
+
         channel = manager.getChannels().get(channelId);
         channel.setName("cmit-channel2");
         channel.setUrl("http://cmit-myhost2");
@@ -426,7 +478,19 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(1, listener3.getUpdatedCount());
 
         manager.removeChannelManagerEventListeners(listener1, listener2, listener3);
-        
+
+        reset(testHost, testMount1, testMount2);
+
+        vhosts = HstServices.getComponentManager().getComponent(VirtualHosts.class.getName());
+        expectMountLoad(testHost, testMount1, testMount2, vhosts);
+
+        replay(testHost, testMount1, testMount2);
+
+        manager.getChannels();
+
+        // verify reload
+        verify(testHost, testMount1, testMount2);
+
         channel = manager.getChannels().get(channelId);
         channel.setName("cmit-channel2");
         channel.setUrl("http://cmit-myhost2");
@@ -505,13 +569,13 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     private ChannelManagerImpl createManager() throws ChannelException {
-
         final ChannelManagerImpl manager = new ChannelManagerImpl();
 
         ComponentManager cm = createMock(ComponentManager.class);
         setComponentManager(cm);
 
         final VirtualHosts vhosts = createNiceMock(VirtualHosts.class);
+
         expect(vhosts.getCmsPreviewPrefix()).andReturn("_cmsinternal").anyTimes();
         HstManager hstMgr = createNiceMock(HstManager.class);
         try {
@@ -533,22 +597,57 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         expect(vhosts.getHostGroupNames()).andReturn(Arrays.asList("dev-localhost")).anyTimes();
         expect(vhosts.getChannelManagerHostGroupName()).andReturn("dev-localhost").anyTimes();
         expect(vhosts.getChannelManagerSitesName()).andReturn("hst:sites").anyTimes();
-        
+
         testHost = createNiceMock(VirtualHost.class);
-        
-        testMount = createNiceMock(MutableMount.class);
-        mounts.add(testMount);
 
-        expectMountLoad(testHost, testMount, vhosts);
+        testMount1 = createNiceMock(MutableMount.class);
+        testMount2 = createNiceMock(MutableMount.class);
+        mounts.add(testMount1);
+        mounts.add(testMount2);
 
-        replay(vhosts, cm, hstMgr, testHost, testMount);
+        expectMountLoad(testHost, testMount1, testMount2, vhosts);
+
+        replay(vhosts, cm, hstMgr, testHost, testMount1, testMount2);
 
         manager.load();
 
-        verify(testHost, testMount);
+        verify(testHost, testMount1, testMount2);
 
         return manager;
     }
+
+
+    private static void expectMountLoad(final VirtualHost host, final MutableMount mount1, final MutableMount mount2, VirtualHosts vhosts) {
+        expect(host.getHostName()).andReturn("localhost").anyTimes();
+        expect(host.getVirtualHosts()).andReturn(vhosts).anyTimes();
+
+        expect(mount1.getMountPoint()).andReturn("mountpoint");
+        expect(mount2.getMountPoint()).andReturn("mountpoint").anyTimes();
+        expect(mount1.getHstSite()).andReturn(createNiceMock(HstSite.class)).anyTimes();
+        expect(mount2.getHstSite()).andReturn(createNiceMock(HstSite.class)).anyTimes();
+        expect(mount1.getCanonicalContentPath()).andReturn("/content/documents");
+        expect(mount2.getCanonicalContentPath()).andReturn("/content/documents").anyTimes();
+
+        expect(mount1.getChannelPath()).andReturn("/hst:hst/hst:channels/testchannel");
+        expect(mount2.getChannelPath()).andReturn("/hst:hst/hst:channels/cmit-channel2").anyTimes();
+        expect(mount1.getVirtualHost()).andReturn(host).anyTimes();
+        expect(mount2.getVirtualHost()).andReturn(host).anyTimes();
+        expect(mount1.getLocale()).andReturn("en_EN");
+        expect(mount2.getLocale()).andReturn("en_EN").anyTimes();
+        expect(mount1.getScheme()).andReturn("http");
+        expect(mount2.getScheme()).andReturn("http").anyTimes();
+        expect(mount1.getIdentifier()).andReturn(UUID.randomUUID().toString());
+        expect(mount2.getIdentifier()).andReturn(UUID.randomUUID().toString()).anyTimes();
+        expect(mount1.getMountPath()).andReturn("");
+        expect(mount2.getMountPath()).andReturn("").anyTimes();
+        expect(mount1.isPreview()).andReturn(false);
+        expect(mount2.isPreview()).andReturn(false).anyTimes();
+        expect(mount1.isMapped()).andReturn(true);
+        expect(mount2.isMapped()).andReturn(true).anyTimes();
+        expect(mount1.isPortInUrl()).andReturn(false);
+        expect(mount2.isPortInUrl()).andReturn(false).anyTimes();
+    }
+
 
     private void propagateJcrSession(Credentials credentials) throws LoginException, RepositoryException {
         Session session;
@@ -577,24 +676,6 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     @Override
     public Session getSession() {
         return CmsJcrSessionThreadLocal.getJcrSession();
-    }
-
-    private static void expectMountLoad(final VirtualHost host, final MutableMount mount, VirtualHosts vhosts) {
-        expect(host.getHostName()).andReturn("localhost").anyTimes();
-        expect(host.getVirtualHosts()).andReturn(vhosts).anyTimes();
-        
-        expect(mount.getMountPoint()).andReturn("mountpoint");
-        expect(mount.getHstSite()).andReturn(createNiceMock(HstSite.class));
-        expect(mount.getCanonicalContentPath()).andReturn("/content/documents");
-
-        expect(mount.getChannelPath()).andReturn("/hst:hst/hst:channels/testchannel");
-        expect(mount.getVirtualHost()).andReturn(host).anyTimes();
-        expect(mount.getLocale()).andReturn("en_EN");
-        expect(mount.getScheme()).andReturn("http");
-        expect(mount.getMountPath()).andReturn("");
-        expect(mount.isPreview()).andReturn(false);
-        expect(mount.isMapped()).andReturn(true);
-        expect(mount.isPortInUrl()).andReturn(false);
     }
 
     private static class MyChannelManagerEventListener implements ChannelManagerEventListener {
