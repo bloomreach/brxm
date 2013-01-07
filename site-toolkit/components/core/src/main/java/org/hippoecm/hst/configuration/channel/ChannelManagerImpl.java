@@ -279,7 +279,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
             } else {
                 // in channel manager only the mounts for at most ONE single hostGroup are shown
                 mountsForCurrentHostGroup = virtualHosts.getMountsByHostGroup(hostGroup);
-                if (mountsForCurrentHostGroup.size() == 0) {
+                if (mountsForCurrentHostGroup.isEmpty()) {
                     log.warn("No mounts found in host group {}.", hostGroup);
                 }
             }
@@ -321,14 +321,11 @@ public class ChannelManagerImpl implements MutableChannelManager {
                     }
                 }
             }
-
-
-            discardChannelsThatDoNotHaveAMountForCurrentHostGroup();
-
+            discardChannelsWithoutMountForCurrentHostGroup();
         }
     }
 
-    private void discardChannelsThatDoNotHaveAMountForCurrentHostGroup() {
+    private void discardChannelsWithoutMountForCurrentHostGroup() {
         List<String> channelsToDiscard = new ArrayList<String>();
         for (Map.Entry<String, Channel> entry : channels.entrySet()) {
             if (entry.getValue().getMountId() == null) {
