@@ -76,7 +76,7 @@ public class ChildNodeProvider extends AbstractProvider<Node, JcrNodeModel> {
             Node parent = (Node) getItemModel().getObject();
             if (parent != null) {
                 Node node;
-                if (prototype != null && prototype.getNode() != null) {
+                if (prototype != null) {
                     HippoSession session = (HippoSession) UserSession.get().getJcrSession();
                     node = session.copy(prototype.getNode(), parent.getPath() + "/" + descriptor.getPath());
                 } else {
