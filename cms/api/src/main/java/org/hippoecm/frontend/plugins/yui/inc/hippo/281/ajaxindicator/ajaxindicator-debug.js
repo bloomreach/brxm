@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2008-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@
   YAHOO.hippo.AjaxIndicator = function(_elId) {
     this.elementId = _elId;
     
-    var _this = this;
-    Wicket.Ajax.registerPreCallHandler(function() { _this.show() });
-    Wicket.Ajax.registerPostCallHandler(function(){ _this.hide() });
+    var self = this;
+    Wicket.Ajax.registerPreCallHandler(function() { self.show(); });
+    Wicket.Ajax.registerPostCallHandler(function(){ self.hide(); });
   };
 
   YAHOO.hippo.AjaxIndicator.prototype = {
@@ -93,6 +93,6 @@
     }
     
   };
-})();
+}());
 
 YAHOO.register("ajaxindicator", YAHOO.hippo.AjaxIndicator, {version: "2.8.1", build: "19"});

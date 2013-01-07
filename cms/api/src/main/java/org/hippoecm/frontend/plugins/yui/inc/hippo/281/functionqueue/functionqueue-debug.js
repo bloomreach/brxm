@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2008-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@
 
     YAHOO.hippo.FunctionQueue = function(_id) {
         this.id = _id;
-        this.queue = new Array();
-        this.uniques = new Array();
+        this.queue = [];
+        this.uniques = [];
         this.preQueueHandler = null;
         this.postQueueHandler = null;
 
@@ -57,25 +57,29 @@
         },
 
         registerFunction : function(func, uniqueId) {
+            var i, len;
+
             YAHOO.log('Register function[' + uniqueId + '] in queue[' + this.id
                     + '] -> func=' + func, 'info', 'FunctionQueue');
-            if (!Lang.isFunction(func))
-                return;
-            if (!Lang.isUndefined(uniqueId) && !Lang.isNull(uniqueId)) {
-                for ( var i = 0; i < this.uniques.length; i++) {
-                    if (this.uniques[i] == uniqueId)
-                        return;
+
+            if (Lang.isFunction(func)) {
+                if (!Lang.isUndefined(uniqueId) && !Lang.isNull(uniqueId)) {
+                    for (i = 0, len = this.uniques.length; i < len; i++) {
+                        if (this.uniques[i] === uniqueId) {
+                            return;
+                        }
+                    }
+                    this.uniques.push(uniqueId);
                 }
-                this.uniques.push(uniqueId);
+                this.queue.push(func);
             }
-            this.queue.push(func);
         },
 
         toString : function() {
             return 'Function queue [' + this.id + ']';
         }
     };
-})();
+}());
 YAHOO.register("functionqueue", YAHOO.hippo.FunctionQueue, {
     version: "2.8.1", build: "19"
 });

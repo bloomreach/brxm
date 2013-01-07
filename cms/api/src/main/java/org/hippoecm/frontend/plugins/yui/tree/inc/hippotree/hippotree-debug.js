@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2008-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -28,12 +28,12 @@
 YAHOO.namespace("hippo");
 
 (function() {
-    var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+    var Dom = YAHOO.util.Dom;
 
     YAHOO.hippo.HippoTree = function(id, config) {
-        var args = [ 2 ];
-        var rootEl = Dom.getElementsByClassName('hippo-yui-tree');
-        if (rootEl != null && rootEl.length > 0) {
+        var args = [ 2 ],
+            rootEl = Dom.getElementsByClassName('hippo-yui-tree');
+        if (rootEl !== null && rootEl !== undefined && rootEl.length > 0) {
             args[0] = rootEl[0];
         } else {
             args[0] = id;
@@ -53,27 +53,26 @@ YAHOO.namespace("hippo");
     YAHOO.extend(YAHOO.hippo.HippoTree, YAHOO.widget.TreeView, {
 
         initConfig : function(config) {
-            var me = this;
+            var me, dblClick, click;
+            me = this;
             if (config.registerOnDoubleclick) {
-                var dblClick = function(args) {
-                    var uuid = args.node.data.uuid;
-                    var url = me.callbackUrl + '&action=dblClick&UUID='
-                            + encodeURIComponent(uuid);
+                dblClick = function(args) {
+                    var uuid = args.node.data.uuid,
+                        url = me.callbackUrl + '&action=dblClick&UUID=' + encodeURIComponent(uuid);
                     me.callbackMethod(url);
-                }
+                };
                 this.subscribe("dblClickEvent", dblClick);
             }
             if (config.registerOnclick) {
-                var click = function(args) {
-                    var uuid = args.node.data.uuid;
-                    var url = me.callbackUrl + '&action=click&UUID='
-                            + encodeURIComponent(uuid);
+                click = function(args) {
+                    var uuid = args.node.data.uuid,
+                        url = me.callbackUrl + '&action=click&UUID=' + encodeURIComponent(uuid);
                     me.callbackMethod(url);
-                }
+                };
                 this.subscribe("clickEvent", click);
             }
 
         }
 
     });
-})();
+}());

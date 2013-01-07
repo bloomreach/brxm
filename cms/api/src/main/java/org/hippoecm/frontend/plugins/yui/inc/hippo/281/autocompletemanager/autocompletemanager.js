@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2008-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -28,13 +28,11 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.AutoCompleteManager) {
     ( function() {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
-        
         YAHOO.hippo.AutoCompleteManagerImpl = function() {
         };
         
         YAHOO.hippo.AutoCompleteManagerImpl.prototype = {
-        		
+
 			loader       : new YAHOO.hippo.FunctionQueue('AutoCompleteQueue'),
 			instances  : new YAHOO.hippo.HashMap(),
 			
@@ -51,16 +49,16 @@ if (!YAHOO.hippo.AutoCompleteManager) {
 				this._add(id, clazz, config, this.instances);
 			},
 
-			_add: function(id, clazz, config, map) {
+			_add: function(id, Clazz, config, map) {
 				var func = function() {
-					var c = new clazz(id, config);
+					var c = new Clazz(id, config);
 					map.put(id, c);
 				};
 				this.loader.registerFunction(func);
 			}
 			
         };
-    })();
+    }());
 
     YAHOO.hippo.AutoCompleteManager = new YAHOO.hippo.AutoCompleteManagerImpl();
     YAHOO.register("autocompletemanager", YAHOO.hippo.AutoCompleteManager, {

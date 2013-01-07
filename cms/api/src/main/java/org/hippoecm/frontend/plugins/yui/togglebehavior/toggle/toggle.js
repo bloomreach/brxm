@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008,2011 Hippo.
+ *  Copyright 2008-2013 Hippo.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,33 +23,40 @@
 YAHOO.namespace("hippo");
 
 (function() {
-    var Dom = YAHOO.util.Dom, Cookie = YAHOO.util.Cookie;
-    var CLOSED_BOXES = 'ConsoleClosedBoxes';
+    var Dom = YAHOO.util.Dom, Cookie = YAHOO.util.Cookie,
+        CLOSED_BOXES = 'ConsoleClosedBoxes';
 
-    YAHOO.hippo.ToggleInit = function(d) {
-      var c = getCookie(CLOSED_BOXES), l = Dom.getElementsByClassName('toggle-header', 'h3', d || null).length;
-      if(!c || !l) {
-        return;
-      }
-      for(var i=1; i<=l; i++) {
-        if(c['box-' + i] == '1') {
-          hideBox(i);
+    function setCookie(name, value, exdays) {
+        var expires = new Date();
+        expires.setDate(expires.getDate() + exdays);
+        Cookie.setSubs(name, value, {
+            expires: expires
+        });
+    }
+
+    function getCookie(name) {
+        return Cookie.getSubs(name);
+    }
+
+    function updateBox(boxName, display, oldGroup, newGroup) {
+        var box, toggled, cook;
+
+        if (boxName === '') {
+            return;
         }
-      }
-    };
+        box = Dom.get('toggle-box-' + boxName);
+        if (box !== null && box !== undefined) {
+            Dom.setStyle(box, 'display', display ? 'block' : 'none');
+        }
+        toggled = Dom.get('toggle-' + boxName);
+        if (toggled !== null && toggled !== undefined) {
+            toggled.src = toggled.src.replace(oldGroup, newGroup);
+        }
 
-    YAHOO.hippo.ToggleBox = function(boxName) {
-      var box = Dom.get('toggle-box-' + boxName);
-      if (box == null) {
-        return;
-      }
-      var dStyle = Dom.getStyle(box, 'display');
-      if (dStyle == 'none') {
-        showBox(boxName);
-      } else if (dStyle == 'block') {
-        hideBox(boxName);
-      }
-    };
+        cook = getCookie(CLOSED_BOXES) || {};
+        cook['box-' + boxName] = display ? 0 : 1;
+        setCookie(CLOSED_BOXES, cook, 30);
+    }
 
     function showBox(boxName) {
         updateBox(boxName, true, 'group-collapsed', 'group-expanded');
@@ -59,33 +66,33 @@ YAHOO.namespace("hippo");
         updateBox(boxName, false, 'group-expanded', 'group-collapsed');
     }
 
-    function updateBox(boxName, display, oldGroup, newGroup) {
-        if (boxName === '') {
-            return;
+    YAHOO.hippo.ToggleInit = function(d) {
+      var c = getCookie(CLOSED_BOXES),
+          l = Dom.getElementsByClassName('toggle-header', 'h3', d || null).length,
+          i;
+      if(!c || !l) {
+        return;
+      }
+      for (i = 1; i <= l; i++) {
+        if(c['box-' + i] === '1') {
+          hideBox(i);
         }
-        var box = Dom.get('toggle-box-' + boxName);
-        if (box != null) {
-            Dom.setStyle(box, 'display', display ? 'block' : 'none');
-        }
-        var toggled = Dom.get('toggle-' + boxName);
-        if (toggled != null) {
-            toggled.src = toggled.src.replace(oldGroup, newGroup);
-        }
+      }
+    };
 
-        var cook = getCookie(CLOSED_BOXES) || {};
-        cook['box-' + boxName] = display ? 0 : 1;
-        setCookie(CLOSED_BOXES, cook, 30);
-    }
+    YAHOO.hippo.ToggleBox = function(boxName) {
+      var box, dStyle;
 
-    function setCookie(name, value, exdays) {
-        var expires = new Date();
-        expires.setDate(expires.getDate() + exdays);
-        Cookie.setSubs(name, value, {
-          expires: expires
-        });
-    }
+      box = Dom.get('toggle-box-' + boxName);
+      if (box === null || box === undefined) {
+        return;
+      }
+      dStyle = Dom.getStyle(box, 'display');
+      if (dStyle === 'none') {
+        showBox(boxName);
+      } else if (dStyle === 'block') {
+        hideBox(boxName);
+      }
+    };
 
-    function getCookie(name) {
-        return Cookie.getSubs(name);
-    }
-})();
+}());

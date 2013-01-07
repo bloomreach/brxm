@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2008-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -38,29 +38,30 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         };
 
         YAHOO.hippo.Dom.resolveElement = function(_id) {
-            var pathEls = _id.split(':');
+            var pathEls, baseId, element, yuiId, children, traverse;
+            pathEls = _id.split(':');
             if (pathEls.length > 0) {
-                var baseId = pathEls[0];
-                var element = YAHOO.util.Dom.get(baseId);
-                if (element != null && pathEls.length > 1) {
-                    var yuiId = pathEls[1];
-                    var children = [];
-                    var traverse = function(node) {
+                baseId = pathEls[0];
+                element = YAHOO.util.Dom.get(baseId);
+                if (element !== null && element !== undefined && pathEls.length > 1) {
+                    yuiId = pathEls[1];
+                    children = [];
+                    traverse = function(node) {
+                        var value, childNodes, i, len;
                         try {
-                            var value = node.getAttribute("yui:id", 2);
+                            value = node.getAttribute("yui:id", 2);
                                 
-                            if (value && value == yuiId) {
+                            if (value && value === yuiId) {
                                 children[children.length] = node;
                                 return;
                             }
                             if (node.hasChildNodes()) {
-                                var childNodes = Dom.getChildrenBy(node,
-                                        YAHOO.hippo.Dom.isValidChildNode);
-                                for (var i = 0; i < childNodes.length; i++) {
+                                childNodes = Dom.getChildrenBy(node, YAHOO.hippo.Dom.isValidChildNode);
+                                for (i = 0, len = childNodes.length; i < len; i++) {
                                     traverse(childNodes[i]);
                                 }
                             }
-                        }catch(e) {
+                        } catch(e) {
                             //ignore
                         }
                     };
@@ -77,11 +78,11 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         };
 
         YAHOO.hippo.Dom.enhance = function(el, id) {
-            if(el == null) {
+            if(el === null || el === undefined) {
                 return;
             }
             var yid = el.getAttribute("yui:id");
-            if (yid && yid == id.split(':')[1] && el.id != id) {
+            if (yid && yid === id.split(':')[1] && el.id !== id) {
                 el.id = id;
                 // workaround: css3 selectors allow a [yui|id=...] syntax
                 Dom.addClass(el, yid);
@@ -89,7 +90,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
         };
 
         YAHOO.hippo.Dom.isValidChildNode = function(node) {
-            if (node.nodeType == 1 && (node.prefix == null || node.prefix == 'html')
+            if (node.nodeType === 1 && (node.prefix === null || node.prefix === undefined || node.prefix === 'html')
                     && (!node.getAttribute("id") || node.getAttribute("yui:id"))) {
                 return true;
             }
@@ -161,7 +162,7 @@ if (!YAHOO.hippo.Dom) { // Ensure only one hippo dom exists
             return 0;
         };
         
-    })();
+    }());
 
     YAHOO.register("hippodom", YAHOO.hippo.Dom, {
         version: "2.8.1", build: "19"

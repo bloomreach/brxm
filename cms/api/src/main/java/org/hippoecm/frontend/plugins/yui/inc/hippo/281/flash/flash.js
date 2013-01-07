@@ -12,8 +12,6 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.Flash) {
     (function() {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
-
         YAHOO.hippo.FlashImpl = function() {
             this.config = null;
         };
@@ -25,15 +23,15 @@ if (!YAHOO.hippo.Flash) {
             },
 
             probe : function() {
-                if(this.config != null) {
-                    var playerVersion = YAHOO.deconcept.SWFObjectUtil.getPlayerVersion();
-                    var url = this.config.callbackUrl + '&major=' + playerVersion.major + '&minor=' + playerVersion.minor + '&rev=' + playerVersion.rev;
+                if (this.config !== null && this.config !== undefined) {
+                    var playerVersion = YAHOO.deconcept.SWFObjectUtil.getPlayerVersion(),
+                        url = this.config.callbackUrl + '&major=' + playerVersion.major + '&minor=' + playerVersion.minor + '&rev=' + playerVersion.rev;
                     this.config.callbackFunction(url);
                 }
             }
         };
 
-    })();
+    }());
 
    YAHOO.hippo.Flash = new YAHOO.hippo.FlashImpl();
 

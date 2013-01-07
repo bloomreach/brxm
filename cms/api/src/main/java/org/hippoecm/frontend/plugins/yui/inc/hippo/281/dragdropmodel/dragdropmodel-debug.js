@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2008-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -46,15 +46,18 @@ YAHOO.namespace("hippo");
         },
 
         execute : function(overrideParameters) {
-            if (overrideParameters != null) {
+            var url, entries, e, entry;
+            if (overrideParameters !== null && overrideParameters !== undefined) {
                 this.callbackParameters.putAll(overrideParameters);
             }
-            var url = this.callbackUrl;
-            var entries = this.callbackParameters.entrySet();
-            for ( var e in entries) {
-                var entry = entries[e];
-                url += (url.indexOf('?') > -1) ? '&' : '?';
-                url += (entry.getKey() + '=' + Wicket.Form.encode(entry.getValue()));
+            url = this.callbackUrl;
+            entries = this.callbackParameters.entrySet();
+            for (e in entries) {
+                if (entries.hasOwnProperty(e)) {
+                    entry = entries[e];
+                    url += (url.indexOf('?') > -1) ? '&' : '?';
+                    url += (entry.getKey() + '=' + Wicket.Form.encode(entry.getValue()));
+                }
             }
             this.callbackFunction(url);
         }
@@ -83,11 +86,11 @@ YAHOO.namespace("hippo");
         },
 
         onDragDropAction : function(dropId) {
-            if (this.cancelCallback)
-                return;
-            this.callback.execute(this.getCallbackParameters(dropId));
+            if (this.cancelCallback !== true) {
+                this.callback.execute(this.getCallbackParameters(dropId));
+            }
         }
-    }
+    };
 
     YAHOO.hippo.DDBaseDragModel = function(id, sGroup, config) {
         YAHOO.hippo.DDBaseDragModel.superclass.constructor.apply(this, arguments);
@@ -128,16 +131,18 @@ YAHOO.namespace("hippo");
     },
 
     startDrag : function(x, y) {
+        var targets, i, len, targetEl;
+
         if (!this.startPos) {
             this.startPos = YAHOO.util.Dom.getXY(this.getEl());
         }
         YAHOO.log('Start drag[' + this.id + '] startpos: ' + this.startPos, "info", "DDBaseDragModel");
         this.setStartStyle();
 
-        var targets = YAHOO.util.DDM.getRelated(this, true);
+        targets = YAHOO.util.DDM.getRelated(this, true);
 
-        for ( var i = 0; i < targets.length; i++) {
-            var targetEl = this.getTargetDomRef(targets[i]);
+        for (i = 0, len = targets.length; i < len; i++) {
+            targetEl = this.getTargetDomRef(targets[i]);
 
             if (!this.originalStyles[targetEl.id]) {
                 this.originalStyles[targetEl.id] = targetEl.className;
@@ -147,11 +152,13 @@ YAHOO.namespace("hippo");
     },
 
     getTargetDomRef : function(oDD) {
+        var result;
         if (oDD.resource) {
-            return oDD.resource.getEl();
+            result = oDD.resource.getEl();
         } else {
-            return oDD.getEl();
+            result = oDD.getEl();
         }
+        return result;
     },
 
     endDrag : function(e) {
@@ -162,12 +169,14 @@ YAHOO.namespace("hippo");
 
     resetTargets : function() {
         // reset the target styles
+        var targets, i, len, targetEl, oldStyle;
 
-        var targets = YAHOO.util.DDM.getRelated(this, true);
-        for ( var i = 0; i < targets.length; i++) {
-            var targetEl = this.getTargetDomRef(targets[i]);
-            var oldStyle = this.originalStyles[targetEl.id];
-            if (oldStyle || oldStyle == '') {
+        targets = YAHOO.util.DDM.getRelated(this, true);
+
+        for (i = 0, len = targets.length; i < len; i++) {
+            targetEl = this.getTargetDomRef(targets[i]);
+            oldStyle = this.originalStyles[targetEl.id];
+            if (oldStyle || oldStyle === '') {
                 targetEl.className = oldStyle;
             }
         }
@@ -196,11 +205,11 @@ YAHOO.namespace("hippo");
         },
 
         setStartStyle : function() {
-            var dragEl = this.getDragEl();
+            var dragEl = this.getDragEl(),
+                clickEl = this.getEl();
+
             dragEl.innerHTML = this.label;
             Dom.setStyle(dragEl, "color", Dom.getStyle(clickEl, "color"));
-
-            var clickEl = this.getEl();
             Dom.setStyle(clickEl, "opacity", 0.4);
         },
 
@@ -212,8 +221,8 @@ YAHOO.namespace("hippo");
          * lookup drop model, getParameters, add to own and return;
          */
         getCallbackParameters : function(dropId) {
-            var cp = YAHOO.hippo.DDImage.superclass.getCallbackParameters.call(this, dropId);
-            var model = YAHOO.hippo.DragDropManager.getModel(dropId);
+            var cp = YAHOO.hippo.DDImage.superclass.getCallbackParameters.call(this, dropId),
+                model = YAHOO.hippo.DragDropManager.getModel(dropId);
             if (Lang.isFunction(model.getCallbackParameters)) {
                 cp.putAll(model.getCallbackParameters(dropId));
             }
@@ -223,47 +232,55 @@ YAHOO.namespace("hippo");
     });
 
     YAHOO.hippo.DDFallbackModel = function(id, group, config) {
+        var Clazz, original, ids, className, i, len, el, newEl, parent, x, ancestorTag;
 
-        var clazz = config.wrappedModelClass;
+        function opacity(_el, _val) {
+            Dom.setStyle(Dom.getAncestorByTagName(_el, ancestorTag), "opacity", _val);
+        }
+
+        function setStartStyle() {
+            this.getDragEl().innerHTML = this.label;
+            opacity(this.getEl(), 0.4);
+        }
+
+        function setEndStyle() {
+            opacity(this.getEl(), 1);
+        }
+
+        Clazz = config.wrappedModelClass;
+
         if (YAHOO.env.ua.ie > 0) {
-            var original = Dom.get(id);
+            original = Dom.get(id);
 
-            var ids = [];
-            var className = config.ieFallbackClass;
-            var dds = Dom.getElementsByClassName(className, null, original, function(el) {
-                if (el.id == '') {
+            ids = [];
+            className = config.ieFallbackClass;
+
+            Dom.getElementsByClassName(className, null, original, function(el) {
+                if (el.id === '') {
                     Dom.generateId(el);
                 }
                 ids.push(el.id);
             });
 
-            for ( var i = 0; i < ids.length; i++) {
-                var el = Dom.get(ids[i]);
-                var newEl = document.createElement("a");
-                var parent = el.parentNode;
+            ancestorTag = config.firstAncestorToBlur;
+
+            for (i = 0, len = ids.length; i < len; i++) {
+                el = Dom.get(ids[i]);
+                newEl = document.createElement("a");
+                parent = el.parentNode;
                 newEl.appendChild(parent.removeChild(el));
                 newEl.setAttribute("href", "#"); // this does the trick
                 parent.appendChild(newEl);
                 Dom.generateId(newEl);
-                var x = new clazz(newEl.id, group, config);
+                x = new Clazz(newEl.id, group, config);
 
-                var ancestorTag = config.firstAncestorToBlur;
-                if (ancestorTag != '') {
-                    var opacity = function(_el, _val) {
-                        Dom.setStyle(Dom.getAncestorByTagName(_el, ancestorTag), "opacity", _val);
-                    }
-                    x.setStartStyle = function() {
-                        this.getDragEl().innerHTML = this.label;
-                        opacity(this.getEl(), 0.4);
-                    };
-
-                    x.setEndStyle = function() {
-                        opacity(this.getEl(), 1);
-                    }
+                if (ancestorTag !== '') {
+                    x.setStartStyle = setStartStyle;
+                    x.setEndStyle = setEndStyle;
                 }
             }
         } else {
-            var x = new clazz(id, group, config)
+            x = new Clazz(id, group, config);
         }
     };
 
@@ -285,9 +302,9 @@ YAHOO.namespace("hippo");
                         },
 
                         setStartStyle : function() {
-                            var Dom = YAHOO.util.Dom;
-                            var dragEl = this.getDragEl();
-                            var clickEl = this.getEl();
+                            var Dom = YAHOO.util.Dom,
+                                dragEl = this.getDragEl(),
+                                clickEl = this.getEl();
 
                             dragEl.innerHTML = this.label;
                             dragEl.innerHTML = '<div style="padding-left:15px;padding-top:5px;width:120px;"><div><img src="' + clickEl.src + '" /></div></div>';
@@ -305,8 +322,8 @@ YAHOO.namespace("hippo");
                          * return;
                          */
                         getCallbackParameters : function(dropId) {
-                            var cp = YAHOO.hippo.DDImage.superclass.getCallbackParameters.call(this, dropId);
-                            var model = YAHOO.hippo.DragDropManager.getModel(dropId);
+                            var cp = YAHOO.hippo.DDImage.superclass.getCallbackParameters.call(this, dropId),
+                                model = YAHOO.hippo.DragDropManager.getModel(dropId);
                             if (Lang.isFunction(model.getCallbackParameters)) {
                                 cp.putAll(model.getCallbackParameters(dropId));
                             }
@@ -326,4 +343,4 @@ YAHOO.namespace("hippo");
 
     Lang.augment(YAHOO.hippo.DDBaseDropModel, YAHOO.hippo.DDSharedBehavior);
 
-})();
+}());

@@ -22,18 +22,18 @@ YAHOO.namespace('hippo');
 
         YAHOO.hippo.WidgetManagerImpl.prototype = {
 
-            register : function(id, config, instance) {
+            register : function(id, config, Instance) {
                 var name = this.NAME;
                 this.queue.registerFunction(function() {
                     var widget = Dom.get(id);
-                    if(widget == null) {
+                    if (widget === null || widget === undefined) {
                         return;
                     }
-                    if(Lang.isUndefined(widget[name])) {
+                    if (Lang.isUndefined(widget[name])) {
                         try {
-                            widget[name] = new instance(id, config);
+                            widget[name] = new Instance(id, config);
                         } catch(e) {
-                            YAHOO.log('Could not instantiate widget of type ' + instance, 'error');
+                            YAHOO.log('Could not instantiate widget of type ' + Instance, 'error');
                             return;
                         }
                     }
@@ -47,10 +47,10 @@ YAHOO.namespace('hippo');
 
             update : function(id) {
                 var widget = Dom.get(id);
-                if(widget == null) {
+                if (widget === null || widget === undefined) {
                     return;
                 }
-                if(!Lang.isUndefined(widget[this.NAME])) {
+                if (!Lang.isUndefined(widget[this.NAME])) {
                    widget[this.NAME].update();
                 }
             }
@@ -64,7 +64,7 @@ YAHOO.namespace('hippo');
             this.unit = null;
             this.helper = new YAHOO.hippo.DomHelper();
 
-            if(Lang.isFunction(this.config.calculateWidthAndHeight)) {
+            if (Lang.isFunction(this.config.calculateWidthAndHeight)) {
                 this.calculateWidthAndHeight = this.config.calculateWidthAndHeight;
             }
 
@@ -98,18 +98,19 @@ YAHOO.namespace('hippo');
             },
 
             render : function() {
+                var parent, reg;
                 this.unit = YAHOO.hippo.LayoutManager.findLayoutUnit(this.el);
-                if (this.unit != null) {
+                if (this.unit !== null && this.unit !== undefined) {
                     this.resize(this.unit.getSizes());
                 } else {
                     //We're not inside a layout unit to provide us with dimension details, thus the
                     //resize event will never be called. For providing an initial size, the first ancestor
                     //with a classname is used.
-                    var parent = Dom.getAncestorBy(this.el, function(node) {
+                    parent = Dom.getAncestorBy(this.el, function(node) {
                         return Lang.isValue(node.className) && Lang.trim(node.className).length > 0;
                     });
-                    if (parent != null) {
-                        var reg = Dom.getRegion(parent);
+                    if (parent !== null && parent !== undefined) {
+                        reg = Dom.getRegion(parent);
                         this.resize({wrap: {w: reg.width, h: reg.height}});
                     }
                 }
@@ -134,5 +135,4 @@ YAHOO.namespace('hippo');
             version: "2.8.1", build: "19"
         });
     }
-})();
-
+}());

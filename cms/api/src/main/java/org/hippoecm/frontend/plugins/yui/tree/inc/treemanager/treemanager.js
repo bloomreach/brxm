@@ -27,16 +27,14 @@
 YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.TreeManager) {
-    ( function() {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
-        
+    (function() {
         YAHOO.hippo.TreeManagerImpl = function() {
         };
         
         YAHOO.hippo.TreeManagerImpl.prototype = {
-        		
-			loader       : new YAHOO.hippo.FunctionQueue('TreeQueue'),
-			instances  : new YAHOO.hippo.HashMap(),
+
+            loader: new YAHOO.hippo.FunctionQueue('TreeQueue'),
+			instances: new YAHOO.hippo.HashMap(),
 			
 			onLoad : function() {
 			    this.cleanup();
@@ -51,9 +49,9 @@ if (!YAHOO.hippo.TreeManager) {
 				this._add(id, clazz, config, this.instances);
 			},
 
-			_add: function(id, clazz, config, map) {
+			_add: function(id, Clazz, config, map) {
 				var func = function() {
-					var c = new clazz(id, config);
+					var c = new Clazz(id, config);
 					map.put(id, c);
 					c.render();//?
 				};
@@ -61,7 +59,7 @@ if (!YAHOO.hippo.TreeManager) {
 			}
 			
         };
-    })();
+    }());
 
     YAHOO.hippo.TreeManager = new YAHOO.hippo.TreeManagerImpl();
     YAHOO.register("treemanager", YAHOO.hippo.TreeManager, {

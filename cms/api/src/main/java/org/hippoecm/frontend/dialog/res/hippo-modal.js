@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 Hippo.
+ *  Copyright 2012-2013 Hippo.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  */
 
 (function () {
+    var oldWindowInitialize, oldWindowBindInit, oldWindowBindClean;
 
-    var oldWindowInitialize = Wicket.Window.prototype.initialize;
+    oldWindowInitialize = Wicket.Window.prototype.initialize;
     Wicket.Window.prototype.initialize = function() {
 //        console.log('wicket.window initialize');
         oldWindowInitialize.apply(this, arguments);
@@ -24,26 +25,27 @@
     };
 
     Wicket.Window.prototype.onWindowResize = function(e) {
+        var w, f, width, height;
         if(this.isFullscreen) {
 //            console.log('onWindowResize');
-            var w = this.window;
-            var f = this.content;
+            w = this.window;
+            f = this.content;
 
-            var width  = Wicket.Window.getViewportWidth();
-            var height = Wicket.Window.getViewportHeight();
+            width  = Wicket.Window.getViewportWidth();
+            height = Wicket.Window.getViewportHeight();
 
-            w.style.width = width  + "px";
-            w.style.height = height  + "px";
-            w.style.top = 0 + "px";
-            w.style.left = 0 + "px";
+            w.style.width = width + "px";
+            w.style.height = height + "px";
+            w.style.top = "0";
+            w.style.left = "0";
 
-            f.style.height = height  + "px";
+            f.style.height = height + "px";
             f.style.width = width + "px";
             this.resizing();
         }
     };
 
-    var oldWindowBindInit = Wicket.Window.prototype.bindInit;
+    oldWindowBindInit = Wicket.Window.prototype.bindInit;
     Wicket.Window.prototype.bindInit = function() {
         oldWindowBindInit.apply(this, arguments);
 
@@ -58,7 +60,7 @@
         }
     };
 
-    var oldWindowBindClean = Wicket.Window.prototype.bindClean;
+    oldWindowBindClean = Wicket.Window.prototype.bindClean;
     Wicket.Window.prototype.bindClean = function() {
         oldWindowBindClean.apply(this, arguments);
         //unregister window resize listener
@@ -68,8 +70,10 @@
     };
 
     Wicket.Window.prototype.toggleFullscreen = function() {
-        var w = this.window;
-        var f = this.content;
+        var w, f, width, height;
+
+        w = this.window;
+        f = this.content;
 
         if (this.isFullscreen) {
             //go small
@@ -104,15 +108,15 @@
             this.oldCTop = f.style.top;
             this.oldCLeft = f.style.left;
 
-            var width  = Wicket.Window.getViewportWidth();
-            var height = Wicket.Window.getViewportHeight();
+            width  = Wicket.Window.getViewportWidth();
+            height = Wicket.Window.getViewportHeight();
 
-            w.style.width = width  + "px";
-            w.style.height = height  + "px";
-            w.style.top = 0 + "px";
-            w.style.left = 0 + "px";
+            w.style.width = width + "px";
+            w.style.height = height + "px";
+            w.style.top = "0";
+            w.style.left = "0";
 
-            f.style.height = height  + "px";
+            f.style.height = height + "px";
             f.style.width = width + "px";
             f.className = 'modal_fullscreen_content';
 
@@ -158,7 +162,7 @@
         if (isFrame) {
             s+= "<iframe";
             if (Wicket.Browser.isIELessThan7()) {
-                s+= " src=\"about:blank\""
+                s+= " src=\"about:blank\"";
             }
             s+= " frameborder=\"0\" id=\""+idContent+"\" allowtransparency=\"false\" style=\"height: 200px\" class=\"wicket_modal\"></iframe>";
         } else {
@@ -196,4 +200,4 @@
         return s;
     };
 
-})();
+}());

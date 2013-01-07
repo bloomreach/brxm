@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2008-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -26,16 +26,14 @@
 /**
  * add method removeAt(index) to Array prototype
  */
-function _removeAt( index )
-{
-  var part1 = this.slice( 0, index);
-  var part2 = this.slice( index+1 );
+Array.prototype.removeAt = function(index) {
+    var part1 = this.slice(0, index),
+        part2 = this.slice(index + 1);
 
-  return( part1.concat( part2 ) );
-}
-Array.prototype.removeAt = _removeAt;
+    return part1.concat(part2);
+};
 
-( function() {
+(function() {
 
     YAHOO.namespace('hippo');
 
@@ -47,47 +45,55 @@ Array.prototype.removeAt = _removeAt;
     YAHOO.hippo.HashMap.prototype = {
         
         put : function(key, value) {
-            var index = this._getIndex(key);
-            if(index == -1) {
+            var index, result, previous;
+            index = this._getIndex(key);
+            if (index === -1) {
                 this.keys.push(key);
                 this.values.push(value);
-                return null;
+                result = null;
             } else {
-                var previous = this.values[index];
+                previous = this.values[index];
                 this.values[index] = value;
-                return previous;
+                result = previous;
             }
+            return result;
         },
         
         putAll : function(hashMap) {
-            var entries = hashMap.entrySet();
-            for(var e in  entries) {
-                var entry =entries[e];
-                this.put(entry.getKey(), entry.getValue());
+            var entries, e, entry;
+            entries = hashMap.entrySet();
+            for (e in entries) {
+                if (entries.hasOwnProperty(e)) {
+                    entry = entries[e];
+                    this.put(entry.getKey(), entry.getValue());
+                }
             }
         },
         
         get : function(key) {
-            var index = this._getIndex(key);
+            var index, msg;
 
-            if(index == -1) {
+            index = this._getIndex(key);
+
+            if (index === -1) {
                 //TODO: throw error or return null?
-                var msg = "No value found for key[" + key + "]";
+                msg = "No value found for key[" + key + "]";
                 YAHOO.log(msg, "error", "HashMap");
-                throw new Error(msg)
+                throw new Error(msg);
             }
              return this.values[index];
         },
         
         remove : function(key) {
-            var index = this._getIndex(key);
-            if(index == -1) {
+            var index, msg, value;
+            index = this._getIndex(key);
+            if (index === -1) {
                 //TODO: throw error or return null
-                var msg = "Can not remove entry, key[" + key + "] not found";
+                msg = "Can not remove entry, key[" + key + "] not found";
                 YAHOO.log(msg, "error", "HashMap");
-                throw new Error(msg)
+                throw new Error(msg);
             }
-            var value = this.values[index];
+            value = this.values[index];
             this.keys = this.keys.removeAt(index);
             this.values = this.values.removeAt(index);
             
@@ -103,7 +109,7 @@ Array.prototype.removeAt = _removeAt;
         },
         
         isEmpty : function() {
-            return this.keys.length == 0;
+            return this.keys.length === 0;
         },
         
         clear : function() {
@@ -120,34 +126,38 @@ Array.prototype.removeAt = _removeAt;
         },
         
         entrySet : function() {
-            var o = {};
-            for(var i=0; i<this.keys.length; i++) {
+            var o, i, len;
+            o = {};
+            for (i = 0, len = this.keys.length; i < len; i++) {
                 o['o' + i] = new YAHOO.hippo.HashMapEntry(this.keys[i], this.values[i]);
             }
             return o;
         },
 
         entrySetAsArray : function() {
-            var ar = [];
-            for(var i=0; i<this.keys.length; i++) {
+            var ar, i, len;
+            ar = [];
+            for (i = 0, len = this.keys.length; i < len; i++) {
                 ar.push(new YAHOO.hippo.HashMapEntry(this.keys[i], this.values[i]));
             }
             return ar;
         },
         
         forEach : function(context, visitor) {
-            var ar = this.entrySetAsArray();
-            for(var i=0; i<ar.length; i++) {
-                var br = visitor.call(context, ar[i].getKey(), ar[i].getValue());
-                if(br === true) {
+            var ar, i, len, br;
+            ar = this.entrySetAsArray();
+            for (i = 0, len = ar.length; i < len; i++) {
+                br = visitor.call(context, ar[i].getKey(), ar[i].getValue());
+                if (br === true) {
                     break;
                 }
             }
         },
 
         _getIndex : function(key) {
-            for (var i=0; i < this.keys.length; i++) {
-                if( this.keys[ i ] == key ) {
+            var i, len;
+            for (i = 0, len = this.keys.length; i < len; i++) {
+                if (this.keys[i] === key) {
                     return i;
                 }
             }
@@ -155,11 +165,14 @@ Array.prototype.removeAt = _removeAt;
         },
         
         toString : function() {
-            var x = '';
-            var entries = this.entrySetAsArray();
-            for(var i=0; i<entries.length; i++) {
-                if (i>0) x += ', ';
-                var entry = entries[i];
+            var x, entries, i, len, entry;
+            x = '';
+            entries = this.entrySetAsArray();
+            for (i = 0, len = entries.length; i < len; i++) {
+                if (i > 0) {
+                    x += ', ';
+                }
+                entry = entries[i];
                 x +='{' + entry.getKey() + '=' + entry.getValue()+ '}'; 
             }
             return 'HashMap[' + x + ']';
@@ -181,7 +194,7 @@ Array.prototype.removeAt = _removeAt;
         }
     };
 
-})();
+}());
 
 YAHOO.register("hashmap", YAHOO.hippo.HashMap, {
     version: "2.8.1", build: "19"

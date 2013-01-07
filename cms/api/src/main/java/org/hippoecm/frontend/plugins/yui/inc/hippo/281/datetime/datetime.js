@@ -1,6 +1,5 @@
 /*
- * Copyright 2009 Hippo
-
+ * Copyright 2009-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +39,7 @@ if (!YAHOO.hippo.DateTime) {
 
             render : function(id, config) {
                 var el = Dom.get(id);
-                if(el != null) {
+                if (el !== null && el !== undefined) {
                     if (Lang.isUndefined(el.datepicker)) {
                         el.datepicker = new YAHOO.hippo.DatePicker(id, config);
                     } else {
@@ -52,7 +51,7 @@ if (!YAHOO.hippo.DateTime) {
             },
 
             setCurrent : function(datePicker) {
-                if (this.current != null) {
+                if (this.current !== null && this.current !== undefined) {
                     this.current.hide();
                 }
                 this.current = datePicker;
@@ -81,7 +80,11 @@ if (!YAHOO.hippo.DateTime) {
         YAHOO.hippo.DatePicker.prototype = {
 
             onIconClicked : function() {
-                this.isVisible() ? this.hide() : this.show();
+                if (this.isVisible()) {
+                    this.hide();
+                } else {
+                    this.show();
+                }
             },
 
             /**
@@ -89,17 +92,19 @@ if (!YAHOO.hippo.DateTime) {
              * using the provided date pattern, and set as the current date on the widget.
              */
             show : function() {
+                var render, date, firstDate;
+
                 YAHOO.hippo.DateTime.setCurrent(this);
               
-                var render = false;
-                if(this.picker == null) {
+                render = false;
+                if (this.picker === null || this.picker === undefined) {
                     this.picker = new YAHOO.widget.Calendar(this.config.dpJs, this.config.dp, this.config);
                     this.picker.selectEvent.subscribe(this.selectHandler, this, true);
                     this.picker.hideEvent.subscribe(function() {this.picker.visible = false;}, this, true);
                     render = true;
                 }
 
-                var date = Dom.get(this.id).value;
+                date = Dom.get(this.id).value;
                 if (date) {
                     date = this._parseDate(this.config.datePattern, date);
                     if (!isNaN(date)) {
@@ -109,7 +114,7 @@ if (!YAHOO.hippo.DateTime) {
                         render = true;
                     }
                 }
-                if(render) {
+                if (render) {
                     this.picker.render();
                 }
 
@@ -120,14 +125,14 @@ if (!YAHOO.hippo.DateTime) {
             },
 
             hide : function() {
-                if(this.picker != null) {
+                if (this.picker !== null && this.picker !== undefined) {
                     this.picker.hide();
                 }
             },
             
             destroy : function() {
                 YAHOO.util.Event.removeListener(this.config.icon, "click", this.show);
-                if(this.picker != null) {
+                if (this.picker !== null && this.picker !== undefined) {
                     this.picker.destroy();
                     this.picker = null;
                 }
@@ -148,7 +153,9 @@ if (!YAHOO.hippo.DateTime) {
                     }
                     if (this.config.fireChangeEvent) {
                         var field = Dom.get(this.id);
-                        if (field.onchange != null && typeof(field.onchange) != 'undefined') field.onchange();
+                        if (field.onchange !== null && field.onchange !== undefined) {
+                            field.onchange();
+                        }
                     }
                 }
             },
@@ -162,35 +169,36 @@ if (!YAHOO.hippo.DateTime) {
              * @param target id of the dom element to position relative to
              */
             positionRelativeTo : function(subject, target) {
-                
+                var targetPos, targetHeight, subjectHeight, subjectWidth, viewportHeight, viewportWidth, scrollPos;
+
                 targetPos = Dom.getXY(target);
                 targetHeight = Dom.get(target).offsetHeight;
                 subjectHeight = Dom.get(subject).offsetHeight;
                 subjectWidth = Dom.get(subject).offsetWidth;     
                 
-                viewPortHeight =  Dom.getViewportHeight();
-                viewPortWidth = Dom.getViewportWidth();
+                viewportHeight =  Dom.getViewportHeight();
+                viewportWidth = Dom.getViewportWidth();
                 
                 // also take scroll position into account
                 scrollPos = [Dom.getDocumentScrollLeft(), Dom.getDocumentScrollTop()];
                 
                 // correct datepicker's position so that it isn't rendered off screen on the right side or bottom
-                if (targetPos[0] + subjectWidth > scrollPos[0] + viewPortWidth) {
+                if (targetPos[0] + subjectWidth > scrollPos[0] + viewportWidth) {
                     // correct horizontal position
-                    Dom.setX(subject, Math.max(targetPos[0], viewPortWidth) - subjectWidth);
+                    Dom.setX(subject, Math.max(targetPos[0], viewportWidth) - subjectWidth);
                 } else {
                     Dom.setX(subject, targetPos[0]);
                 }
-                if (targetPos[1] + targetHeight + 1 + subjectHeight > scrollPos[1] + viewPortHeight) {
+                if (targetPos[1] + targetHeight + 1 + subjectHeight > scrollPos[1] + viewportHeight) {
                     // correct vertical position
-                    Dom.setY(subject, Math.max(targetPos[1], viewPortHeight) - subjectHeight);
+                    Dom.setY(subject, Math.max(targetPos[1], viewportHeight) - subjectHeight);
                 } else {
                     Dom.setY(subject, targetPos[1] + targetHeight + 1);
                 }
             },
             
             isVisible : function() {
-                return this.picker != null && this.picker.visible;
+                return this.picker !== null && this.picker !== undefined && this.picker.visible;
             },
             
             /**
@@ -199,33 +207,39 @@ if (!YAHOO.hippo.DateTime) {
              * anyway 99.9% of the time).
              */
             _parseDate : function(pattern, value) {
+                var numbers, day, month, year, arrayPos, i, len, c, date;
+
                 numbers = value.match(/(\d+)/g);
-                if (numbers == null) return Number.NaN;
-                var day, month, year;
+                if (numbers === null || numbers === undefined) {
+                    return NaN;
+                }
+
                 arrayPos = 0;
-                for (i = 0; i < pattern.length; i++) {
+                for (i = 0, len = pattern.length; i < len; i++) {
                     c = pattern.charAt(i);
-                    while ((pattern.charAt(i) == c) && (i < pattern.length)) {
+                    while ((pattern.charAt(i) === c) && (i < pattern.length)) {
                         i++;
                     }
-                    if (c == 'y') {
+                    if (c === 'y') {
                         year = numbers[arrayPos++];
-                    } else if (c == 'M') {
+                    } else if (c === 'M') {
                         month = numbers[arrayPos++];
-                    } else if (c == 'd') {
+                    } else if (c === 'd') {
                         day = numbers[arrayPos++];
                     }
-                    if (arrayPos > 2) break;
+                    if (arrayPos > 2) {
+                        break;
+                    }
                 }
                 // TODO this is a bit crude. Make nicer some time.
                 if (year < 100) {
                     if (year < 70) {
-                        year = year * 1 + 2000;
+                        year = parseInt(year, 10) + 2000;
                     } else {
-                        year = year * 1 + 1900;
+                        year = parseInt(year, 10) + 1900;
                     }
                 }
-                var date = new Date();
+                date = new Date();
                 date.setFullYear(year, (month - 1), day);
                 return date;
             },
@@ -236,13 +250,20 @@ if (!YAHOO.hippo.DateTime) {
              * and date (day of month) in the third slot.
              */
             _substituteDate : function(datePattern, date) {
+                var day, month, year;
                 day = date[2];
                 month = date[1];
                 year = date[0];
                 // optionally do some padding to match the pattern
-                if(datePattern.match(/\bdd\b/)) day =   this._padDateFragment(day);
-                if(datePattern.match(/\bMM\b/)) month = this._padDateFragment(month);
-                if(datePattern.match(/\byy\b/)) year =  this._padDateFragment(year % 100);
+                if(datePattern.match(/\bdd\b/)) {
+                    day = this._padDateFragment(day);
+                }
+                if(datePattern.match(/\bMM\b/)) {
+                    month = this._padDateFragment(month);
+                }
+                if(datePattern.match(/\byy\b/)) {
+                    year = this._padDateFragment(year % 100);
+                }
                 // replace pattern with real values
                 return datePattern.replace(/d+/, day).replace(/M+/, month).replace(/y+/, year);
             },
@@ -258,7 +279,7 @@ if (!YAHOO.hippo.DateTime) {
             }
         };
 
-    })();
+    }());
 
     YAHOO.hippo.DateTime = new YAHOO.hippo.DateTimeImpl();
     

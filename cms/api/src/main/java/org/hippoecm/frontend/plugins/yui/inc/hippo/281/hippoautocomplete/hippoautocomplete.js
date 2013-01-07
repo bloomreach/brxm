@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Hippo
+ * Copyright 2008-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -26,23 +26,25 @@
 YAHOO.namespace("hippo"); 
 
 ( function() {
-    var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+    var Dom = YAHOO.util.Dom;
   
     YAHOO.hippo.HippoAutoComplete = function(id, config) {
-        var args = [3];
+        var args, respSchema, ds;
+
+        args = [3];
         args[0] = id;
         args[1] = config.containerId;
         
         this.callbackUrl = config.callbackUrl; //used for getting search results, currently uses YUI to do callbacks
         this.callbackMethod = config.callbackFunction; //used for handling clicks
         
-        var respSchema = {
+        respSchema = {
                 resultsList: config.schemaResultList, 
                 fields: config.schemaFields,
                 metaFields: config.schemaMetaFields
         };
         
-        var ds = new YAHOO.util.ScriptNodeDataSource(this.callbackUrl);
+        ds = new YAHOO.util.ScriptNodeDataSource(this.callbackUrl);
         ds.getUtility = YAHOO.util.Get;
         ds.responseType = YAHOO.util.ScriptNodeDataSource.TYPE_JSON;
         ds.responseSchema = respSchema;
@@ -68,13 +70,13 @@ YAHOO.namespace("hippo");
         },
         
         _isIgnoreKey : function(nKeyCode) {
-            if(this.submitOnlyOnEnter) {
-                if(nKeyCode == 13)
-                    return false;
-                return true;
+            var result;
+            if (this.submitOnlyOnEnter) {
+                result = (nKeyCode === 13);
             } else {
-                return YAHOO.hippo.HippoAutoComplete.superclass._isIgnoreKey.call(this, nKeyCode);
+                result = YAHOO.hippo.HippoAutoComplete.superclass._isIgnoreKey.call(this, nKeyCode);
             }
+            return result;
         },
         
         /**
@@ -91,13 +93,12 @@ YAHOO.namespace("hippo");
             var nKeyCode = v.keyCode;
 
             // Clear timeout
-            if(oSelf._nTypeAheadDelayID != -1) {
+            if (oSelf._nTypeAheadDelayID !== -1) {
                 clearTimeout(oSelf._nTypeAheadDelayID);
             }
-            if(nKeyCode == 27) { //esc
+            if (nKeyCode === 27) { //esc
                 oSelf._toggleContainer(false);
                 oSelf._clearTextboxValue();
-                return;
             } else {
                 return YAHOO.hippo.HippoAutoComplete.superclass._onTextboxKeyDown.call(this, v, oSelf);
             }
@@ -112,4 +113,4 @@ YAHOO.namespace("hippo");
             this._elTextbox.value = '';
         }
     });
- })();
+ }());

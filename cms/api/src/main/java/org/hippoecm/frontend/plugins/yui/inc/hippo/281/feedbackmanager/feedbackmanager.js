@@ -1,5 +1,5 @@
 /*
- * Copyright 2009 Hippo
+ * Copyright 2009-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.FeedbackManager) {
     (function () {
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
+        var Dom = YAHOO.util.Dom;
 
         YAHOO.hippo.FeedbackPanel = function (id, config) {
             this.id = id;
@@ -41,7 +41,7 @@ if (!YAHOO.hippo.FeedbackManager) {
 
         YAHOO.hippo.FeedbackPanel.prototype = {
             show : function () {
-                if (this.module == null) {
+                if (this.module === null || this.module === undefined) {
                     this.module = new YAHOO.widget.Module(this.id, this.config);
                 }
                 var element = Dom.get(this.id);
@@ -51,13 +51,13 @@ if (!YAHOO.hippo.FeedbackManager) {
             },
 
             hide : function () {
-                if (this.module != null) {
+                if (this.module !== null && this.module !== undefined) {
                     this.module.hide();
                 }
             },
 
             cleanup : function () {
-                if (this.module != null) {
+                if (this.module !== null && this.module !== undefined) {
                     this.module.destroy();
                     this.module = null;
                 }
@@ -94,22 +94,24 @@ if (!YAHOO.hippo.FeedbackManager) {
             },
 
             _cleanup : function () {
-                var ids = this.instances.keySet();
-                var toRemove = [];
-                for (var i = 0; i < ids.length; i++) {
-                    var id = ids[i];
-                    if (Dom.get(id) == null) {
+                var ids, toRemove, i, len, id, domId, panel;
+                ids = this.instances.keySet();
+                toRemove = [];
+                for (i = 0, len = ids.length; i < len; i++) {
+                    id = ids[i];
+                    domId = Dom.get(id);
+                    if (domId === null || domId === undefined) {
                         toRemove.push(id);
                     }
                 }
-                for (var i = 0; i < toRemove.length; i++) {
-                    var panel = this.instances.remove(toRemove[i]);
+                for (i = 0, len = toRemove.length; i < len; i++) {
+                    panel = this.instances.remove(toRemove[i]);
                     panel.cleanup();
                 }
             }
         };
 
-    })();
+    }());
 
     YAHOO.hippo.FeedbackManager = new YAHOO.hippo.FeedbackManagerImpl();
     YAHOO.register("feedbackmanager", YAHOO.hippo.FeedbackManager, {

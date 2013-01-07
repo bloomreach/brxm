@@ -33,9 +33,9 @@
   YAHOO.hippo.AjaxIndicator = function(_elId) {
     this.elementId = _elId;
     
-    var _this = this;
-    Wicket.Ajax.registerPreCallHandler(function() { _this.show() });
-    Wicket.Ajax.registerPostCallHandler(function(){ _this.hide() });
+    var self = this;
+    Wicket.Ajax.registerPreCallHandler(function() { self.show(); });
+    Wicket.Ajax.registerPostCallHandler(function(){ self.hide(); });
   };
 
   YAHOO.hippo.AjaxIndicator.prototype = {
@@ -60,7 +60,7 @@
     },
     
     show: function() {
-        if(this.active && this.calls === 0) {
+        if (this.active && this.calls === 0) {
             this.timerID = self.setTimeout("document.body.style.cursor = 'wait';", 750);
         }
         this.calls++;
@@ -70,7 +70,7 @@
     },
     
     hide: function() {
-        if(this.calls > 0) {
+        if (this.calls > 0) {
             this.calls--;
         } 
         if (this.active && this.calls === 0) {
@@ -87,6 +87,6 @@
     }
     
   };
-})();
+}());
 
 YAHOO.register("ajaxindicator", YAHOO.hippo.AjaxIndicator, {version: "2.8.1", build: "19"});
