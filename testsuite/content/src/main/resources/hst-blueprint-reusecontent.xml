@@ -28,10 +28,10 @@
           <sv:value>hst:pages/home</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-          <sv:value>general/home</sv:value>
+          <sv:value>common/home-page</sv:value>
         </sv:property>
         <sv:property sv:name="hst:refId" sv:type="String">
-          <sv:value>home</sv:value>
+          <sv:value>homeId</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="about">
@@ -42,10 +42,10 @@
           <sv:value>hst:pages/detailpage</sv:value>
         </sv:property>
         <sv:property sv:name="hst:relativecontentpath" sv:type="String">
-          <sv:value>general/about</sv:value>
+          <sv:value>common/about-us</sv:value>
         </sv:property>
         <sv:property sv:name="hst:refId" sv:type="String">
-          <sv:value>about</sv:value>
+          <sv:value>aboutId</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="error">
@@ -54,9 +54,6 @@
         </sv:property>
         <sv:property sv:name="hst:componentconfigurationid" sv:type="String">
           <sv:value>hst:pages/errorpage</sv:value>
-        </sv:property>
-        <sv:property sv:name="hst:refId" sv:type="String">
-          <sv:value>error</sv:value>
         </sv:property>
       </sv:node>
       <sv:node sv:name="_any_">
