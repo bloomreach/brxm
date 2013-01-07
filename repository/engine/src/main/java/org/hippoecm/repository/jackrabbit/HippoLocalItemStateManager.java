@@ -491,38 +491,38 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
 
         // returns a copy of the list
         List<ChildNodeEntry> cnes = state.getChildNodeEntries();
-        LinkedList<ChildNodeEntry> update = new LinkedList<ChildNodeEntry>();
-        int readable = 0;
+        LinkedList<ChildNodeEntry> updatedList = new LinkedList<ChildNodeEntry>();
+        int readableIndex = 0;
         boolean hasUpdate = false;
-        for (ChildNodeEntry cne : cnes) {
+        for (ChildNodeEntry current : cnes) {
             boolean added = false;
 
             // if there is a same-name-sibling with a bigger index, check authorization
             // there is no need to check last one, because it's already last
-            int index = cne.getIndex();
-            ChildNodeEntry next = state.getChildNodeEntry(cne.getName(), index + 1);
+            int index = current.getIndex();
+            ChildNodeEntry next = state.getChildNodeEntry(current.getName(), index + 1);
             if (next != null) {
                 try {
                     // this is SNS number 2, so check previous one,
-                    if (!accessManager.isGranted(cne.getId(), AccessManager.READ)) {
-                        update.addLast(cne);
+                    if (!accessManager.isGranted(current.getId(), AccessManager.READ)) {
+                        updatedList.addLast(current);
                         added = true;
                         hasUpdate = true;
                     }
                 } catch (ItemNotFoundException t) {
                     log.error("Unable to order documents below handle " + state.getId(), t);
                 } catch (RepositoryException t) {
-                    log.error("Unable to determine access rights for " + cne.getId());
+                    log.error("Unable to determine access rights for " + current.getId());
                 }
             }
 
             if (!added) {
-                update.add(readable, cne);
-                readable++;
+                updatedList.add(readableIndex, current);
+                readableIndex++;
             }
         }
         if (hasUpdate) {
-            state.setChildNodeEntries(update);
+            state.setChildNodeEntries(updatedList);
         }
     }
 
