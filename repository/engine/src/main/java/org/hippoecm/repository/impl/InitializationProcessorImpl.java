@@ -25,9 +25,9 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -113,8 +113,13 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     private final static String GET_INITIALIZE_ITEMS =
             "SELECT * FROM hipposys:initializeitem " +
                     "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND " +
-                    HippoNodeType.HIPPO_STATUS + " = 'pending'" +
+                    HippoNodeType.HIPPO_STATUS + " = 'pending' " +
                     "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC";
+
+    private final static String GET_OLD_INITIALIZE_ITEMS = "SELECT * FROM hipposys:initializeitem " +
+            "WHERE jcr:path = '/hippo:configuration/hippo:initialize/%' AND (" +
+            HippoNodeType.HIPPO_TIMESTAMP + " IS NULL OR " +
+            HippoNodeType.HIPPO_TIMESTAMP + " < {})";
 
     private static XmlPullParserFactory factory;
 
@@ -145,7 +150,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             final Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(
                     "SELECT * FROM hipposys:initializeitem " +
                             "WHERE jcr:path = '/initialize/%' AND " +
-                            HippoNodeType.HIPPO_STATUS + " = 'pending'" +
+                            HippoNodeType.HIPPO_STATUS + " = 'pending' " +
                             "ORDER BY " + HippoNodeType.HIPPO_SEQUENCE + " ASC", Query.SQL);
             final NodeIterator nodes = getInitializeItems.execute().getNodes();
             while (nodes.hasNext()) {
@@ -229,17 +234,14 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                         processContentDelete(initializeItem, session, dryRun);
                     }
 
-                    // Content from file
                     if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE)) {
                         processContentFromFile(initializeItem, session, dryRun);
                     }
 
-                    // CONTENT FROM NODE
                     if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENT)) {
                         processContentFromNode(initializeItem, session, dryRun);
                     }
 
-                    // SET OR ADD PROPERTY CONTENT
                     if (initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTPROPSET) || initializeItem.hasProperty(HippoNodeType.HIPPO_CONTENTPROPADD)) {
                         processSetOrAddProperty(initializeItem, session, dryRun);
                     }
@@ -344,9 +346,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             boolean isSingle = false;
             Set<NodeType> nodeTypes = new HashSet<NodeType>();
             nodeTypes.add(last.node.getPrimaryNodeType());
-            for (NodeType nodeType : last.node.getMixinNodeTypes()) {
-                nodeTypes.add(nodeType);
-            }
+            Collections.addAll(nodeTypes, last.node.getMixinNodeTypes());
             for (NodeType nodeType : nodeTypes) {
                 for (PropertyDefinition propertyDefinition : nodeType.getPropertyDefinitions()) {
                     if (propertyDefinition.getName().equals("*") || propertyDefinition.getName().equals(propertyName)) {
@@ -401,7 +401,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
 
         final String root = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/");
-        // verify that content root is not under the initialization node
         if (root.startsWith(INIT_PATH)) {
             getLogger().error("Bootstrapping content to " + INIT_PATH + " is no supported");
             return;
@@ -423,7 +422,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
 
         final String root = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/");
-        // verify that content root is not under the initialization node
         if (root.startsWith(INIT_PATH)) {
             getLogger().error("Bootstrapping content to " + INIT_PATH + " is not supported");
             return;
@@ -495,19 +493,37 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
         String namespace = node.getProperty(HippoNodeType.HIPPO_NAMESPACE).getString();
         getLogger().info("Initializing namespace: " + node.getName() + " " + namespace);
-        // Add namespace if it doesn't exist
         if (!dryRun) {
             initializeNamespace(session.getWorkspace().getNamespaceRegistry(), node.getName(), namespace);
         }
     }
 
     public List<Node> loadExtensions(Session session, Node initializationFolder) throws IOException, RepositoryException {
+        final long now = System.currentTimeMillis();
         final List<URL> extensions = scanForExtensions();
         final List<Node> initializeItems = new ArrayList<Node>();
         for(final URL configurationURL : extensions) {
             initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder));
         }
+        cleanupInitializeItems(session, now);
         return initializeItems;
+    }
+
+    private void cleanupInitializeItems(final Session session, final long cleanBefore) throws RepositoryException {
+        try {
+            final String statement = GET_OLD_INITIALIZE_ITEMS.replace("{}", String.valueOf(cleanBefore));
+            final Query query = session.getWorkspace().getQueryManager().createQuery(statement, Query.SQL);
+            for (Node node : new NodeIterable(query.execute().getNodes())) {
+                if (node != null) {
+                    log.info("Removing old initialize item {}", node.getName());
+                    node.remove();
+                }
+            }
+            session.save();
+        } catch (RepositoryException e) {
+            log.error("Exception occurred while cleaning up old initialize items", e);
+            session.refresh(false);
+        }
     }
 
     public List<Node> loadExtension(final URL configurationURL, final Session session, final Node initializationFolder) throws RepositoryException, IOException {
@@ -603,6 +619,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
             }
         }
+        initItemNode.setProperty(HippoNodeType.HIPPO_TIMESTAMP, System.currentTimeMillis());
 
         return initializeItems;
     }
@@ -785,14 +802,12 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
         NodeTypeRegistry ntreg = ntmgr.getNodeTypeRegistry();
 
-        for (Iterator<QNodeTypeDefinition> iter = ntdList.iterator(); iter.hasNext();) {
-            QNodeTypeDefinition ntd = iter.next();
-
+        for (QNodeTypeDefinition ntd : ntdList) {
             try {
                 ntreg.registerNodeType(ntd);
                 getLogger().info("Registered node type: " + ntd.getName().getLocalName());
             } catch (NamespaceException ex) {
-                getLogger().error(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName(), ex);
+                getLogger().error(ex.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), ex);
             } catch (InvalidNodeTypeDefException ex) {
                 if (ex.getMessage().endsWith("already exists")) {
                     try {
@@ -801,18 +816,18 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                     } catch (NamespaceException e) {
                         getLogger().error(e.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), e);
                     } catch (InvalidNodeTypeDefException e) {
-                        getLogger().info(e.getMessage() +". In " + cndName +" for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName(), e);
+                        getLogger().info(e.getMessage() + ". In " + cndName + " for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), e);
                     } catch (RepositoryException e) {
                         if (!e.getMessage().equals("not yet implemented")) {
                             getLogger().warn(e.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), e);
                         }
                     }
                 } else {
-                    getLogger().error(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName(), ex);
+                    getLogger().error(ex.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), ex);
                 }
             } catch (RepositoryException ex) {
                 if (!ex.getMessage().equals("not yet implemented")) {
-                    getLogger().warn(ex.getMessage()+". In " + cndName +" error for "+  ntd.getName().getNamespaceURI() +":"+ntd.getName().getLocalName(), ex);
+                    getLogger().warn(ex.getMessage() + ". In " + cndName + " error for " + ntd.getName().getNamespaceURI() + ":" + ntd.getName().getLocalName(), ex);
                 }
             }
         }

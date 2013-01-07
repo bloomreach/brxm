@@ -131,6 +131,7 @@
 - hippo:status (string) < 'pending', 'done', 'disabled'
 - hippo:contextnodename (string)
 - hippo:version (string)
+- hippo:timestamp (long)
 
 [hippo:initializefolder] > nt:base orderable
 - hippo:version (string) multiple // never specify this item at this time
