@@ -217,8 +217,8 @@
                             onSuccess();
                         }
                     },
-                    failure: function(responseObject) {
-                        onFail("HST-Meta-Data request failed: " + Ext.encode({ url: encodedUrl, response: responseObject}));
+                    failure: function() {
+                        onFail("HST-Meta-Data request failed for URL '" + encodedUrl + "'");
                     }
                 });
             }.createDelegate(this));
