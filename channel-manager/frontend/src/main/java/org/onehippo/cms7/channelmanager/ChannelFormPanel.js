@@ -120,7 +120,7 @@
                 this.hideError();
 
                 blueprint = Ext.getCmp('blueprints-panel').getSelectionModel().getSelected();
-                Ext.getCmp('displayedBlueprintId').setValue(blueprint.id);
+                Ext.getCmp('displayedBlueprintId').setValue(blueprint.get('name'));
                 Ext.getCmp('blueprintId').setValue(blueprint.id);
 
                 contentRootCmp = Ext.getCmp('contentRoot');
