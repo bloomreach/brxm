@@ -447,11 +447,8 @@
         getOverlayData : function(data) {
             if(data.overlayBorder > 0) {
                 var total = data.overlayBorder * 2;
-                data.left -= total;
-                data.top -= total;
-                data.width += total;
-                data.height += total;
-
+                data.width -= total;
+                data.height -= total;
                 this.parentMargin = data.overlayBorder;
             }
             return data;
