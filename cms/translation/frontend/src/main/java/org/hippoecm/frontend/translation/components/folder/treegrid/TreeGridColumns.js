@@ -36,4 +36,4 @@
     Ext.reg('tgnumbercolumn', Ext.tree.NumberColumn);
     Ext.reg('tgdatecolumn', Ext.tree.DateColumn);
     Ext.reg('tgbooleancolumn', Ext.tree.BooleanColumn);
-})();
+}());

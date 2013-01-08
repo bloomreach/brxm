@@ -112,6 +112,25 @@
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>org/hippoecm/frontend/translation/components/folder/treegrid/TreeGrid.js</exclude>
+            <exclude>org/hippoecm/frontend/translation/components/folder/treegrid/TreeGridColumnResizer.js</exclude>
+            <exclude>org/hippoecm/frontend/translation/components/folder/treegrid/TreeGridNodeUI.js</exclude>
+            <exclude>org/hippoecm/frontend/translation/components/folder/treegrid/TreeGridSorter.js</exclude>
+          </excludes>
+          <predefinedVars>
+            Ext,
+            Hippo,
+            Wicket,
+            window
+          </predefinedVars>
+          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+        </configuration>
+      </plugin>
    </plugins>
   </build>
 

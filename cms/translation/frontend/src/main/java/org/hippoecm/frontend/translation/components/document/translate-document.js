@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Hippo
+ * Copyright 2010-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,339 +15,368 @@
  */
 
 
-if (Hippo.Translation.WicketHook == undefined) {
-  (function() {
+if (Hippo.Translation.WicketHook === undefined) {
+    (function() {
 
-    Hippo.Translation.WicketHook = {
-      listeners: [],
+        Hippo.Translation.WicketHook = {
+            listeners: [],
 
-      cleanup: function() {
-        for (var i = 0; i < this.listeners.length;) {
-          var listener = this.listeners[i];
-          if (Ext.get(listener.id) == null) {
-            this.listeners.splice(i, 1);
-          } else {
-            i++;
-          }
-        }
-      },
+            cleanup: function() {
+                var i, len, listener, listenerId;
+                i = 0;
+                len = this.listeners.length;
+                while (i < len) {
+                    listener = this.listeners[i];
+                    listenerId = Ext.get(listener.id);
+                    if (listenerId === null || listenerId === undefined) {
+                        this.listeners.splice(i, 1);
+                    } else {
+                        i++;
+                    }
+                }
+            },
 
-      preAjaxCall: function() {
-        var listenersLength = this.listeners.length;
-        for (var i = 0; i < listenersLength; i++) {
-          var listener = this.listeners[i];
-          var el = Ext.get(listener.id);
-          if (el != null) {
-            listener.callback.call(window);
-          }
-        }
-      },
-      
-      addListener: function(id, callback) {
-        this.cleanup();
-        this.listeners.push({ id: id, callback: callback });
-      }
+            preAjaxCall: function() {
+                var i, len, listener, el;
+                for (i = 0, len = this.listeners.length; i < len; i++) {
+                    listener = this.listeners[i];
+                    el = Ext.get(listener.id);
+                    if (el !== null && el !== undefined) {
+                        listener.callback.call(window);
+                    }
+                }
+            },
 
-    };
-  })();
-  Wicket.Ajax.registerPreCallHandler(function() { 
-    Hippo.Translation.WicketHook.preAjaxCall();
-  });
+            addListener: function(id, callback) {
+                this.cleanup();
+                this.listeners.push({ id: id, callback: callback });
+            }
+
+        };
+    }());
+    Wicket.Ajax.registerPreCallHandler(function() {
+        Hippo.Translation.WicketHook.preAjaxCall();
+    });
 }
 
 Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
 
-  labelWidth: 75, // label settings here cascade unless overridden
-  frame: false,
-  width: 661,
-  defaultType: 'textfield',
+    labelWidth: 75, // label settings here cascade unless overridden
+    frame: false,
+    width: 661,
+    defaultType: 'textfield',
 
-  constructor: function(config) {
-    var self = this;
+    constructor: function(config) {
+        var self, imageService;
 
-    this.dirty = [];
-    this.store = config.store;
-    this.codecUrl = config.codecUrl;
+        self = this;
 
-    this.resources = config.resources;
+        this.dirty = [];
+        this.store = config.store;
+        this.codecUrl = config.codecUrl;
 
-    this.emptyImg = config.emptyImg;
-    this.folderImg = config.folderImg;
-    this.documentImg = config.documentImg;
+        this.resources = config.resources;
 
-    var imageService = new Hippo.Translation.ImageService(config.imageService);
-    this.imgLeft = imageService.getImage(config.sourceLanguage);
-    this.imgRight = imageService.getImage(config.targetLanguage);
+        this.emptyImg = config.emptyImg;
+        this.folderImg = config.folderImg;
+        this.documentImg = config.documentImg;
 
-    this.record = null;
-    this.updateUrlTask = null;
+        imageService = new Hippo.Translation.ImageService(config.imageService);
+        this.imgLeft = imageService.getImage(config.sourceLanguage);
+        this.imgRight = imageService.getImage(config.targetLanguage);
 
-    this.updateUrl = function(record, value, async) {
-        var xhr;
-        if (window.XMLHttpRequest) {    // Mozilla/Safari
-            xhr = new XMLHttpRequest();
-        } else if (window.ActiveXObject) {     // IE
-            xhr = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        var handleResponse = function() {
-          var obj = Ext.decode(xhr.responseText);
-          if (!record.checked) {
-            if (async) {
-              Ext.getCmp('urlfr').setRawValue(obj.data);
-            } else {
-              record.set('urlfr', obj.data); // triggers store update event
+        this.record = null;
+        this.updateUrlTask = null;
+
+        this.updateUrl = function(record, value, async) {
+            var xhr, handleResponse;
+            if (window.XMLHttpRequest) {    // Mozilla/Safari
+                xhr = new XMLHttpRequest();
+            } else if (window.ActiveXObject) {     // IE
+                xhr = new window.ActiveXObject("Microsoft.XMLHTTP");
             }
-          }
+            handleResponse = function() {
+                var obj = Ext.decode(xhr.responseText);
+                if (!record.checked) {
+                    if (async) {
+                        Ext.getCmp('urlfr').setRawValue(obj.data);
+                    } else {
+                        record.set('urlfr', obj.data); // triggers store update event
+                    }
+                }
+            };
+            xhr.open('POST', self.codecUrl + "&" + Ext.urlEncode({name: value}), async);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Wicket-Ajax', "true");
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    handleResponse();
+                }
+            };
+            xhr.send(null);
+            if (!async) {
+                if (xhr.status === 200) {
+                    handleResponse();
+                    self.store.save();
+                }
+            }
         };
-        xhr.open('POST', self.codecUrl + "&" + Ext.urlEncode({name: value}), async);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Wicket-Ajax', "true");
-        xhr.onreadystatechange = function() {
-          if (xhr.readyState == 4) {
-            handleResponse();
-          }
+
+        this.onKeyUp = function(field, event) {
+            var rec = self.record;
+            if (self.updateUrlTask) {
+                self.updateUrlTask.cancel();
+            }
+            self.updateUrlTask = new Ext.util.DelayedTask(function() {
+                if (!rec.checked) {
+                    self.updateUrl(rec, field.getRawValue(), true);
+                }
+            });
+            self.updateUrlTask.delay(500);
         };
-        xhr.send(null);
-        if (!async) {
-          if (xhr.status == 200) {
-            handleResponse();
-            self.store.save();
-          }
-        }
+
+        // the column model has information about grid columns
+        // dataIndex maps the column to the specific data field in
+        // the data store (created below)
+        this.cm = new Ext.grid.ColumnModel({
+            // specify any defaults for each column
+            defaults: {
+                sortable: false, // columns are not sortable by default
+                orderable: false,
+                menuDisabled: true
+            },
+            columns: [
+                {
+                    id: 'name',
+                    header: "<img src='" + self.imgLeft + "' style='vertical-align: top;' /> " + self.resources['folder-name'],
+                    dataIndex: 'name',
+                    width: 323,
+                    renderer: self.renderFolder.createDelegate(self, ['url'], 0)
+                    // use shorthand alias defined above
+                },
+                {
+                    id: 'namefr',
+                    header: "<img src='" + self.imgRight + "' style='vertical-align: top;' /> " + self.resources['folder-name'],
+                    dataIndex: 'namefr',
+                    width: 334,
+                    renderer: self.renderFolder.createDelegate(self, ['urlfr'], 0),
+                    editor: new Ext.form.TextField({
+                        allowBlank: false,
+                        enableKeyEvents: true,
+                        listeners: {
+                            keyup: function(field, event) {
+                                self.onKeyUp(field, event);
+                            }
+                        }
+                    })
+                }
+            ],
+            isCellEditable: function(col, row) {
+                var record = self.store.getAt(row);
+                return record.get('editable');
+            }
+        });
+
+        Hippo.Translation.Document.superclass.constructor.call(this, {
+
+            renderTo: config.applyTo,
+
+            items: [
+                {
+                    xtype: 'editorgrid',
+                    name: 'grid',
+                    store: config.store,
+                    width: 666,
+                    height: 245,
+                    frame: false,
+                    clicksToEdit: 1,
+                    enableColumnMove: false,
+                    enableColumnResize: false,
+                    cm: self.cm,
+                    sm: new Ext.grid.RowSelectionModel({
+                        singleSelect: true,
+                        listeners: {
+                            rowselect: function(sm, row, rec) {
+                                if (rec !== self.record) {
+                                    self.record = rec;
+                                    self.form.loadRecord(rec);
+                                    Ext.getCmp('url-edit').setDisabled(!self.record.get('editable'));
+
+                                    var checked = (self.record.checked || false);
+                                    Ext.getCmp('urlfr').setDisabled(!checked);
+                                    Ext.getCmp('url-edit').setValue(checked);
+                                }
+                            }
+                        }
+                    }),
+                    listeners: {
+                        afteredit: function(e) {
+                            if (e.field === "namefr") {
+                                // update url immediately with the current namefr value
+                                if (self.updateUrlTask !== null && self.updateUrlTask !== undefined) {
+                                    self.updateUrlTask.cancel();
+                                }
+                                self.updateUrl(e.record, e.value, false);
+                            }
+                        }
+                    }
+                },
+                {
+                    xtype: 'compositefield',
+                    width: 666,
+                    hideLabel: true,
+                    frame: true,
+                    items: [
+                        {
+                            xtype: 'fieldset',
+                            title: this.resources['url-name'],
+                            height: 60,
+                            width: 310,
+                            items: [
+                                {
+                                    xtype: 'compositefield',
+                                    hideLabel: true,
+                                    frame: true,
+                                    items: [
+                                        {
+                                            xtype: 'displayfield',
+                                            value: '<img src="' + this.imgLeft + '" style="vertical-align: top;" />',
+                                            width: 25
+                                        },
+                                        {
+                                            xtype: 'displayfield',
+                                            name: 'url',
+                                            height: 60,
+                                            width: 225
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldset',
+                            title: this.resources['url-name'],
+                            height: 60,
+                            width: 344,
+                            items: [
+                                {
+                                    xtype: 'compositefield',
+                                    hideLabel: true,
+                                    frame: true,
+                                    items: [
+                                        {
+                                            xtype: 'displayfield',
+                                            value: '<img src="' + this.imgRight + '" style="vertical-align: top;" />',
+                                            width: 25
+                                        },
+                                        {
+                                            xtype: 'textfield',
+                                            disabled: true,
+                                            name: 'urlfr',
+                                            id: 'urlfr',
+                                            width: 225,
+                                            listeners: {
+                                                blur: function(field) {
+                                                    self.record.set('urlfr', field.getRawValue());
+                                                }
+                                            }
+                                        },
+                                        {
+                                            xtype: 'checkbox',
+                                            name: 'edit',
+                                            id: 'url-edit',
+                                            disabled: true,
+                                            value: false,
+                                            hideLabel: false,
+                                            boxLabel: self.resources.edit,
+                                            listeners: {
+                                                check: function(chkbox, checked) {
+                                                    self.record.checked = checked;
+                                                    Ext.getCmp('urlfr').setDisabled(!checked);
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        });
+
+        Ext.apply(this, config);
     },
 
-    this.onKeyUp = function (field, event) {
-      var rec = self.record;
-      if (self.updateUrlTask) {
-        self.updateUrlTask.cancel();
-      }
-      self.updateUrlTask = new Ext.util.DelayedTask(function() {
-        if (!rec.checked) {
-          self.updateUrl(rec, field.getRawValue(), true);
-        }
-      });
-      self.updateUrlTask.delay(500);
-    };
+    initComponent: function() {
+        Hippo.Translation.Document.superclass.initComponent.call(this);
 
-    // the column model has information about grid columns
-    // dataIndex maps the column to the specific data field in
-    // the data store (created below)
-    this.cm = new Ext.grid.ColumnModel({
-      // specify any defaults for each column
-      defaults: {
-        sortable: false, // columns are not sortable by default
-        orderable: false,
-        menuDisabled: true
-      },
-      columns: [{
-        id: 'name',
-        header: "<img src='" + self.imgLeft + "' style='vertical-align: top;' /> " + self.resources['folder-name'],
-        dataIndex: 'name',
-        width: 323,
-        renderer: self.renderFolder.createDelegate(self, ['url'], 0)
-        // use shorthand alias defined above
-      }, {
-        id: 'namefr',
-        header: "<img src='" + self.imgRight + "' style='vertical-align: top;' /> " + self.resources['folder-name'],
-        dataIndex: 'namefr',
-        width: 334,
-        renderer: self.renderFolder.createDelegate(self, ['urlfr'], 0),
-        editor: new Ext.form.TextField({
-          allowBlank: false,
-          enableKeyEvents: true,
-          listeners: {
-            keyup: function(field, event) {
-              self.onKeyUp(field, event);
+        this.bodyCfg = {
+            tag: "div",
+            cls: "x-panel-body"
+        };
+
+        this.store.load();
+
+        this.store.on('update', function(store, record, operation) {
+            if (record === this.record) {
+                Ext.getCmp('urlfr').setRawValue(record.get('urlfr'));
             }
-          }
-        })
-      }],
-      isCellEditable: function(col, row) {
-        var record = self.store.getAt(row);
-        return record.get('editable');
-      }
-    });
-
-    Hippo.Translation.Document.superclass.constructor.call(this, {
-
-      renderTo: config.applyTo,
-      
-      items: [{
-        xtype: 'editorgrid',
-        name: 'grid',
-        store: config.store,
-        width: 666,
-        height: 245,
-        frame: false,
-        clicksToEdit: 1,
-        enableColumnMove: false,
-        enableColumnResize: false,
-        cm: self.cm,
-        sm: new Ext.grid.RowSelectionModel({
-          singleSelect: true,
-          listeners: {
-            rowselect: function(sm, row, rec) {
-              if (rec != self.record) {
-                self.record = rec;
-                self.form.loadRecord(rec);
-                Ext.getCmp('url-edit').setDisabled(!self.record.get('editable'));
-
-                var checked = (self.record.checked || false);
-                Ext.getCmp('urlfr').setDisabled(!checked);
-                Ext.getCmp('url-edit').setValue(checked);
-              }
-            }
-          }
-        }),
-        listeners: {
-            afteredit: function(e) {
-                if (e.field == "namefr") {
-                    // update url immediately with the current namefr value
-                    if (self.updateUrlTask != null) {
-                        self.updateUrlTask.cancel();
-                    }
-                    self.updateUrl(e.record, e.value, false);
+            if (operation === Ext.data.Record.EDIT) {
+                if (this.dirty.indexOf(record) === -1) {
+                    this.dirty.push(record);
                 }
             }
-      	}
-      }, {
-        xtype: 'compositefield',
-        width: 666,
-        hideLabel: true,
-        frame: true,
-        items: [{
-          xtype: 'fieldset',
-          title: this.resources['url-name'],
-          height: 60,
-          width: 310,
-          items: [{
-            xtype: 'compositefield',
-            hideLabel: true,
-            frame: true,
-            items: [{
-              xtype: 'displayfield',
-              value: '<img src="' + this.imgLeft + '" style="vertical-align: top;" />',
-              width: 25
-            }, {
-              xtype: 'displayfield',
-              name: 'url',
-              height: 60,
-              width: 225
-            }]
-          }]
-        }, {
-          xtype: 'fieldset',
-          title: this.resources['url-name'],
-          height: 60,
-          width: 344,
-          items: [{
-            xtype: 'compositefield',
-            hideLabel: true,
-            frame: true,
-            items: [{
-              xtype: 'displayfield',
-              value: '<img src="' + this.imgRight + '" style="vertical-align: top;" />',
-              width: 25
-            }, {
-              xtype: 'textfield',
-              disabled: true,
-              name: 'urlfr',
-              id: 'urlfr',
-              width: 225,
-              listeners: {
-                blur: function(field) {
-                  self.record.set('urlfr', field.getRawValue());
+        }, this);
+        this.store.on('beforesave', function() {
+            var i, len;
+            for (i = 0, len = this.dirty.length; i < len; i++) {
+                this.dirty[i].markDirty();
+            }
+            this.dirty = [];
+        }, this);
+        this.on('render', function() {
+            var self = this;
+            Hippo.Translation.WicketHook.addListener(this.getEl().id, function() {
+                if (self.dirty.length > 0) {
+                    self.store.save();
                 }
-              }
-            }, {
-              xtype: 'checkbox',
-              name: 'edit',
-              id: 'url-edit',
-              disabled: true,
-              value: false,
-              hideLabel: false,
-              boxLabel: self.resources['edit'],
-              listeners: {
-                check: function(chkbox, checked) {
-                  self.record.checked = checked;
-                  Ext.getCmp('urlfr').setDisabled(!checked);
-                }
-              }
-            }]
-          }]
-        }]
-      }]
-    });
+            });
+        }, this);
+    },
 
-    Ext.apply(this, config);
-  },
+    renderFolder: function(col, value, p, record) {
+        var indent, txt;
 
-  initComponent : function() {
-    Hippo.Translation.Document.superclass.initComponent.call(this);
+        indent = {
+            ancestors: 0
+        };
+        this.store.each(function(it) {
+            if (it === record) {
+                return false;
+            }
+            if ((it.get(col) !== "") || it.get('editable')) {
+                indent.ancestors++;
+            }
+        });
 
-    this.bodyCfg = {
-  		tag: "div",
-  		cls: "x-panel-body"
-	  };
-
-    this.store.load();
-
-    this.store.on('update', function(store, record, operation) {
-      if (record == this.record) {
-        Ext.getCmp('urlfr').setRawValue(record.get('urlfr'));
-      }
-      if (operation == Ext.data.Record.EDIT) {
-        if (this.dirty.indexOf(record) == -1) {
-          this.dirty.push(record);
+        txt = "<img src='" + this.emptyImg + "' width='" + 15 * indent.ancestors + "' height='1'/>";
+        if (value !== "" || record.get('editable')) {
+            txt += "<img src='";
+            if (record.data.type === "folder") {
+                txt += this.folderImg;
+            } else {
+                txt += this.documentImg;
+            }
+            txt += "' heigth='10'/> ";
         }
-      }
-    }, this);
-    this.store.on('beforesave', function() {
-      for (var i = 0; i < this.dirty.length; i++) {
-        this.dirty[i].markDirty();
-      }
-      this.dirty = [];
-    }, this);
-    this.on('render', function() {
-      var self = this;
-      Hippo.Translation.WicketHook.addListener(this.getEl().id, function() {
-        if (self.dirty.length > 0) {
-            self.store.save();
+
+        if (value === "" && record.get('editable')) {
+            txt += "<font color='#ff0000'><i>" + this.resources['add-translation'] + "</i></font>";
+        } else {
+            txt += String.format("{0}", value);
         }
-      });
-    }, this);
-  },
-
-  renderFolder: function(col, value, p, record){
-    var indent = {
-      ancestors: 0
-    };
-    this.store.each(function(it) {
-      if (it == record) {
-        return false;
-      }
-      if ((it.get(col) != "") || it.get('editable')) {
-        indent.ancestors++;
-      }
-    });
-
-    var txt = "<img src='" + this.emptyImg + "' width='" + 15 * indent.ancestors + "' height='1'/>";
-    if (value != "" || record.get('editable')) {
-      txt += "<img src='";
-      if (record.data.type == "folder") {
-        txt += this.folderImg;
-      } else {
-        txt += this.documentImg;
-      }
-      txt += "' heigth='10'/> ";
+        return txt;
     }
-
-    if (value == "" && record.get('editable')) {
-      txt += "<font color='#ff0000'><i>" + this.resources['add-translation'] + "</i></font>";
-    } else {
-      txt += String.format("{0}", value);
-    }
-    return txt;
-  }
 
 });
