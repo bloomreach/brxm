@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 Hippo
+ * Copyright 2010-2013 Hippo
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -15,27 +15,30 @@
  */
 
 Hippo.EnterHandler = function(elementId) {
-	var obj = Wicket.$(elementId);
-	obj.setAttribute("autocomplete", "off");
+    var obj, objonchange;
 
-	var objonchange = obj.onchange;
-	obj.onkeypress = function(event) {
-		Wicket.stopEvent(event);
-		var key = wicketKeyCode(Wicket.fixEvent(event));
-		if (key == 13) {
-			objonchange();
-			return false;
-		}
-		return true;
-	}
+    obj = Wicket.$(elementId);
+    obj.setAttribute("autocomplete", "off");
 
-	obj.onkeyup = function(event) {
-		Wicket.stopEvent(event);
-		return true;
-	}
+    objonchange = obj.onchange;
+    obj.onkeypress = function(event) {
+        Wicket.stopEvent(event);
+        var key = wicketKeyCode(Wicket.fixEvent(event));
+        if (key === 13) {
+            objonchange();
+            return false;
+        }
+        return true;
+    };
 
-	obj.onchange = function(event) {
-		Wicket.stopEvent(event); return false;
-	}
+    obj.onkeyup = function(event) {
+        Wicket.stopEvent(event);
+        return true;
+    };
 
-}
+    obj.onchange = function(event) {
+        Wicket.stopEvent(event);
+        return false;
+    };
+
+};

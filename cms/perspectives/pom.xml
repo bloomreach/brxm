@@ -139,6 +139,27 @@
           </excludes>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <configuration>
+          <assumeABrowser>true</assumeABrowser>
+          <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
+          <excludes>
+            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/util/simple-hint.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/cms/dev/codemirror/mode/groovy/groovy.js</exclude>
+          </excludes>
+          <predefinedVars>
+            Hippo,
+            Wicket,
+            wicketKeyCode,
+            window,
+            YAHOO
+          </predefinedVars>
+          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+        </configuration>
+      </plugin>
    </plugins>
   </build>
 
