@@ -3,7 +3,9 @@ Ext.ns('Hippo.Reports');
 Hippo.Reports.BrokenLinksListPanel = Ext.extend(Hippo.Reports.Portlet, {
 
     constructor: function(config) {
-        var self = this;
+        var self, grid;
+
+        self = this;
 
         this.store = config.store;
         this.pageSize = config.pageSize;
@@ -15,10 +17,7 @@ Hippo.Reports.BrokenLinksListPanel = Ext.extend(Hippo.Reports.Portlet, {
 
         this.columns = config.columns;
 
-        var columnCount = this.columns.length;
-
-
-        var grid = new Ext.grid.GridPanel({
+        grid = new Ext.grid.GridPanel({
             store: self.store,
             colModel: new Ext.grid.ColumnModel({
                 defaults: {
@@ -55,10 +54,10 @@ Hippo.Reports.BrokenLinksListPanel = Ext.extend(Hippo.Reports.Portlet, {
             }],
             listeners: {
                 cellclick: function(grid, rowIndex, columnIndex, event) {
-                    var record = grid.getStore().getAt(rowIndex);
-                    var columnId = grid.getColumnModel().getColumnId(columnIndex);
+                    var record = grid.getStore().getAt(rowIndex),
+                        columnId = grid.getColumnModel().getColumnId(columnIndex);
 
-                    if (columnId != 'brokenlinksLinks') {
+                    if (columnId !== 'brokenlinksLinks') {
                         self.fireEvent('documentSelected', {path: record.data.path});
                     }
                 }
@@ -84,7 +83,7 @@ Hippo.Reports.BrokenLinksListPanel = Ext.extend(Hippo.Reports.Portlet, {
     },
 
     checkNoData: function(component) {
-        if (this.store.getTotalCount() == 0) {
+        if (this.store.getTotalCount() === 0) {
             this.showMessage(this.noDataText+"\n"+this.updateText);
         }
     },
