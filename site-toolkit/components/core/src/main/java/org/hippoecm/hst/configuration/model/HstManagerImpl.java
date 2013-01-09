@@ -693,12 +693,20 @@ public class HstManagerImpl implements MutableHstManager {
 
     @Override
     public void invalidatePendingHstConfigChanges(final Session session) {
-        if (!(session instanceof HippoSession)) {
-            log.error("Session not instance of HippoSession. Cannot get pending changes");
-            return;
-        }
-        HippoSession hippoSession = (HippoSession) session;
         try {
+            HippoSession hippoSession;
+            if (!(session instanceof HippoSession)) {
+                // a jcr session from request context cannot be directly cast to a HippoSession...hence this workaround:
+                Session nonProxiedSession = session.getRootNode().getSession();
+                if (!(nonProxiedSession instanceof HippoSession)) {
+                    log.error("Session not instance of HippoSession. Cannot get pending changes");
+                    return;
+                }
+                hippoSession = (HippoSession) nonProxiedSession;
+            } else {
+               hippoSession = (HippoSession) session;
+            }
+
             final NodeIterator pendingNodes = hippoSession.pendingChanges(session.getNode(rootPath), "nt:base", true);
             while (pendingNodes.hasNext()) {
                 invalidate(pendingNodes.nextNode().getPath());
