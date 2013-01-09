@@ -95,8 +95,8 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
     @Test
     public void testHstManagerConcurrentSynchronousLoad() throws Exception {
         try {
-            Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(500);
-            for (int i = 0; i < 500; i++) {
+            Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(100);
+            for (int i = 0; i < 100; i++) {
                 jobs.add(new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
@@ -127,9 +127,9 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
     @Test
     public void testConcurrentHstManagerSynchronousAndAsynchronousLoad() throws Exception {
         try {
-            Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(500);
+            Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(100);
             final Random random = new Random();
-            for (int i = 0; i < 500; i++) {
+            for (int i = 0; i < 100; i++) {
                 final boolean allowStale;
                 Job randomJob = enumJobs[random.nextInt(2)];
                 switch (randomJob) {
@@ -173,9 +173,9 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
     @Test
     public void testConcurrentSyncAndAsyncHstManagerAndChannelManagerLoad() throws Exception {
         try {
-            Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(500);
+            Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(100);
             final Random random = new Random();
-            for (int i = 0; i < 500; i++) {
+            for (int i = 0; i < 100; i++) {
                 int rand = random.nextInt(3);
                 Job randomJob = enumJobs[rand];
                 switch (randomJob) {
@@ -354,7 +354,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
         assertTrue(channels.size() == 1);
         final Channel existingChannel = channels.values().iterator().next();
         try {
-            final int jobCount = 1000;
+            final int jobCount = 100;
             Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(jobCount);
             final Random random = new Random();
             final AtomicLong channelModCount = new AtomicLong(0);
