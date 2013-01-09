@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2012 Hippo
+ * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
  *
  */
 (function() {

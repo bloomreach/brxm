@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2010 Hippo.
+  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -242,6 +242,39 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-site-plugin</artifactId>
         <version>3.0-beta-3</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludes combine.children="append">
+            <exclude>datanucleus.log</exclude>
+            <exclude>log4j.log</exclude>
+            <exclude>api/src/main/java/org/hippoecm/frontend/widgets/res/tree.css</exclude>
+            <exclude>api/src/main/java/org/hippoecm/frontend/widgets/JcrTree.html</exclude>
+            <exclude>api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.css</exclude>
+            <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.6.2.js</exclude>
+            <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.16.js</exclude>
+            <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQuantizer.java</exclude>
+            <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/DiffusionFilterOp.java</exclude>
+            <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFEncoder.java</exclude>
+            <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriteParam.java</exclude>
+            <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriter.java</exclude>
+            <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java</exclude>
+            <exclude>reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css</exclude>
+            <exclude>richtext/resources/src/external/**/*</exclude>
+            <exclude>richtext/resources/src/main/resources/xinha/modules/GetHtml/TransformInnerHTML.js</exclude>
+            <exclude>richtext/resources/src/main/resources/xinha/modules/InsertTable/insert_table.js</exclude>
+            <exclude>richtext/resources/src/main/resources/xinha/modules/InternetExplorer/InternetExplorer.js</exclude>
+            <exclude>richtext/resources/src/main/resources/xinha/plugins/InsertAnchor/InsertAnchor.js</exclude>
+            <exclude>richtext/resources/src/main/resources/xinha/plugins/UnFormat/UnFormat.js</exclude>
+            <exclude>richtext/resources/src/main/resources/xinha/XinhaCore.js</exclude>
+            <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
+            <exclude>tools/eclipse/monkey/convertDependencies.gm</exclude>
+            <exclude>tools/eclipse/monkey/prepareProjects.gm</exclude>
+            <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
+          </excludes>
+        </configuration>
       </plugin>
     </plugins>
   </build>
