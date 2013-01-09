@@ -38,7 +38,6 @@ import javax.jcr.SimpleCredentials;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
@@ -48,7 +47,6 @@ import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -255,8 +253,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
         // load the model first ones to make sure async model is really async
         hstManager.getVirtualHosts();
         try {
-            final int synchronousJobCount = 100;
-            Collection<JobResultWrapperModifyMount> results = new ArrayList<JobResultWrapperModifyMount>(synchronousJobCount);
+            final int synchronousJobCount = 1000;
             for (int i = 0; i < synchronousJobCount; i++) {
                 String prevVal = "testVal"+counter;
                 counter++;
@@ -265,31 +262,20 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                 mountNode.getSession().save();
                 // Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
                 hstManager.invalidate(mountNode.getPath());
-
-                JobResultWrapperModifyMount result = new JobResultWrapperModifyMount();
-                result.testPropBeforeChange = prevVal;
-                result.testPropAfterChange = nextVal;
-                // ASYNC load
-                result.asyncLoadedHosts = hstManager.getVirtualHosts(true);
+              // ASYNC load
+                final VirtualHosts asyncHosts = hstManager.getVirtualHosts(true);
+                String testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
                 // SYNC load
-                result.syncLoadedHosts = hstManager.getVirtualHosts();
-                results.add(result);
-            }
+                final VirtualHosts syncHosts = hstManager.getVirtualHosts();
 
-            for (JobResultWrapperModifyMount result : results) {
-                {
-                    assertFalse(result.testPropAfterChange.equals(result.testPropBeforeChange));
-                    Mount mountFromSyncModel = result.syncLoadedHosts.matchMount("localhost", "/site", "").getMount();
-                    assertTrue(mountFromSyncModel.getProperty(TEST_PROP).equals(result.testPropAfterChange));
-
-                    // because the jobs above are done in a synchronous loop (single threaded) and AFTER every ASYNC
-                    // there is a SYNC load, we expect that the ASYNC model in this case is ALWAYS ONE instance behind
-                    // Note that this does not hold in concurrent loading as below in
-                    // #testConcurrentSyncAndAsyncHstManagerAndChannelManagerWithConfigChanges
-                    Mount mountFromASyncModel = result.asyncLoadedHosts.matchMount("localhost","/site", "").getMount();
-                    assertTrue("The async model should be one version behind",
-                            mountFromASyncModel.getProperty(TEST_PROP).equals(result.testPropBeforeChange));
-                }
+                String testPropOfSyncLoadedHosts = syncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
+                assertTrue(testPropOfSyncLoadedHosts.equals(nextVal));
+                // because the jobs above are done in a synchronous loop (single threaded) and AFTER every ASYNC
+                // there is a SYNC load, we expect that the ASYNC model in this case is ALWAYS ONE instance behind
+                // Note that this does not hold in concurrent loading as below in
+                // #testConcurrentSyncAndAsyncHstManagerAndChannelManagerWithConfigChanges
+                assertTrue("The async model should be one version behind",
+                        testPropOfAsyncLoadedHosts.equals(prevVal));
             }
 
         } catch (AssertionError e) {
@@ -310,8 +296,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
         final Map<String, Channel> channels = channelManager.getChannels();
         final Channel existingChannel = channels.values().iterator().next();
         try {
-            final int synchronousJobCount = 100;
-            Collection<JobResultWrapperModifyChannel> results = new ArrayList<JobResultWrapperModifyChannel>(synchronousJobCount);
+            final int synchronousJobCount = 1000;
             for (int i = 0; i < synchronousJobCount; i++) {
                 Long newTestValue = channelModCount.incrementAndGet();
                 CmsJcrSessionThreadLocal.setJcrSession(getSession2());
@@ -319,20 +304,11 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                 existingChannel.setChannelInfoClassName(ConcurrentChannelManagerAndHstManagerLoadTest.class.getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
                 existingChannel.getProperties().put(TEST_PROP, newTestValue);
                 channelManager.save(existingChannel);
-
                 CmsJcrSessionThreadLocal.clearJcrSession();
-                // get channel must always reflect LATEST version.
-                
+
+                // getChannels must always reflect LATEST version.
                 final Map<String, Channel> loadedChannels = channelManager.getChannels();
-
-                JobResultWrapperModifyChannel result = new JobResultWrapperModifyChannel();
-                result.loadedChannels = loadedChannels;
-                result.expectedNewTestValue = newTestValue;
-                results.add(result);
-            }
-
-            for (JobResultWrapperModifyChannel result : results) {
-                assertTrue(result.expectedNewTestValue.equals(result.loadedChannels.values().iterator().next().getProperties().get(TEST_PROP)));
+                assertTrue(newTestValue.equals(loadedChannels.values().iterator().next().getProperties().get(TEST_PROP)));
             }
         } finally {
             existingChannel.getProperties().remove(TEST_PROP);
@@ -354,11 +330,12 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
         assertTrue(channels.size() == 1);
         final Channel existingChannel = channels.values().iterator().next();
         try {
-            final int jobCount = 100;
+            final int jobCount = 1000;
             Collection<Callable<Object>> jobs = new ArrayList<Callable<Object>>(jobCount);
             final Random random = new Random();
             final AtomicLong channelModCount = new AtomicLong(0);
             final Object MUTEX = new Object();
+            final Object MUTEX2 = new Object();
             for (int i = 0; i < jobCount; i++) {
                 int rand = random.nextInt(5);
                 Job randomJob = enumJobs[rand];
@@ -394,25 +371,25 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                         jobs.add(new Callable<Object>() {
                             @Override
                             public Object call() throws Exception {
-                                Long newTestValue = channelModCount.incrementAndGet();
-                                // need to set the channel info to be able to store properties
-                                existingChannel.setChannelInfoClassName(ConcurrentChannelManagerAndHstManagerLoadTest.class.getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
-                                existingChannel.getProperties().put(TEST_PROP, newTestValue);
-                                CmsJcrSessionThreadLocal.setJcrSession(getSession2());
-                                
-                                channelManager.save(existingChannel);
+                                synchronized (MUTEX2) {
+                                    Long newTestValue = channelModCount.incrementAndGet();
+                                    // need to set the channel info to be able to store properties
+                                    existingChannel.setChannelInfoClassName(ConcurrentChannelManagerAndHstManagerLoadTest.class.getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
+                                    existingChannel.getProperties().put(TEST_PROP, newTestValue);
+                                    CmsJcrSessionThreadLocal.setJcrSession(getSession2());
+                                    channelManager.save(existingChannel);
+                                    CmsJcrSessionThreadLocal.clearJcrSession();
+                                    // get channel must always reflect LATEST version. Since this MODIFY_CHANNEL is
+                                    // called concurrently, we can only guarantee that the loaded value for TEST_PROP
+                                    // is AT LEAST AS big as newTestValue
 
-                                CmsJcrSessionThreadLocal.clearJcrSession();
-                                // get channel must always reflect LATEST version. Since this MODIFY_CHANNEL is 
-                                // called concurrently, we can only guarantee that the loaded value for TEST_PROP
-                                // is AT LEAST AS big as newTestValue
-                                
-                                final Map<String, Channel> loadedChannels = channelManager.getChannels();
+                                    final Map<String, Channel> loadedChannels = channelManager.getChannels();
 
-                                JobResultWrapperModifyChannel result = new JobResultWrapperModifyChannel();
-                                result.loadedChannels = loadedChannels;
-                                result.expectedNewTestValue = newTestValue;
-                                return result;
+                                    JobResultWrapperModifyChannel result = new JobResultWrapperModifyChannel();
+                                    result.loadedChannels = loadedChannels;
+                                    result.expectedNewTestValue = newTestValue;
+                                    return result;
+                                }
                             }
                         });
                         break;
@@ -421,8 +398,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                             @Override
                             public Object call() throws Exception {
                                 synchronized (MUTEX) {
-                                    String prevVal = "testVal" + counter.get();
-
                                     String nextVal = "testVal" + counter.incrementAndGet();
                                     Node node = getSession1().getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root");
                                     node.setProperty(TEST_PROP, nextVal);
@@ -431,12 +406,14 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                                     hstManager.invalidate(node.getPath());
 
                                     JobResultWrapperModifyMount result = new JobResultWrapperModifyMount();
-                                    result.testPropBeforeChange = prevVal;
                                     result.testPropAfterChange = nextVal;
                                     // ASYNC load
-                                    result.asyncLoadedHosts = hstManager.getVirtualHosts(true);
+                                    final VirtualHosts asyncHosts = hstManager.getVirtualHosts(true);
+                                    result.testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
                                     // SYNC load
-                                    result.syncLoadedHosts = hstManager.getVirtualHosts();
+                                    final VirtualHosts syncHosts = hstManager.getVirtualHosts();
+                                    result.testPropOfSyncLoadedHosts = syncHosts.matchMount("localhost","/site", "").getMount().getProperty(TEST_PROP);
+
                                     return result;
                                 }
                             }
@@ -464,14 +441,11 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                     assertTrue(valueFromChannel.longValue() >= jobResultWrapperModifyChannel.expectedNewTestValue.longValue());
                 } else if (o instanceof JobResultWrapperModifyMount) {
                     JobResultWrapperModifyMount job = (JobResultWrapperModifyMount)o;
-                    Mount mountFromSyncModel = job.syncLoadedHosts.matchMount("localhost", "/site", "").getMount();
                     // the sync model should always have the changed prop directly
-                    assertTrue(mountFromSyncModel.getProperty(TEST_PROP).equals(job.testPropAfterChange));
-
+                    assertTrue(job.testPropOfSyncLoadedHosts.equals(job.testPropAfterChange));
                     // the async model is hard to predict which version it gets as it is loaded concurrently by many different
-                    // threads. We can at least guarantee that there should match a mount
-                    Mount mountFromASyncModel = job.asyncLoadedHosts.matchMount("localhost", "/site", "").getMount();
-                    assertNotNull(mountFromASyncModel);
+                    // threads. We can at least guarantee that it should not be null
+                    assertNotNull(job.testPropOfAsyncLoadedHosts);
                 }
             }
 
@@ -543,10 +517,9 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
     }
 
     private class JobResultWrapperModifyMount {
-        private String testPropBeforeChange;
         private String testPropAfterChange;
-        private VirtualHosts asyncLoadedHosts;
-        private VirtualHosts syncLoadedHosts;
+        private String testPropOfAsyncLoadedHosts;
+        private String testPropOfSyncLoadedHosts;
     }
 
     private class JobResultWrapperModifyChannel {
