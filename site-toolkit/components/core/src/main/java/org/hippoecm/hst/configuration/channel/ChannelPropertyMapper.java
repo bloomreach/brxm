@@ -208,6 +208,7 @@ public class ChannelPropertyMapper {
             case DOUBLE:
                 return value.getDouble();
             case INTEGER:
+                // fall through: JCR does not support int but long, so return a long
             case LONG:
                 return value.getLong();
             default:
