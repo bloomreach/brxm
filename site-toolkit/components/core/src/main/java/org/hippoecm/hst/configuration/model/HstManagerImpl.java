@@ -304,12 +304,6 @@ public class HstManagerImpl implements MutableHstManager {
     }
 
     private void asynchronousBuild() {
-        try {
-            // THIS IS FOR HUDSON TEST ONLY
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
         synchronized (MUTEX) {
             if (state == BuilderState.UP2DATE) {
                 // other thread already built the model
@@ -328,6 +322,12 @@ public class HstManagerImpl implements MutableHstManager {
                 @Override
                 public void run() {
                     try {
+                        try {
+                            // THIS IS FOR HUDSON TEST ONLY
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                        }
                         synchronousBuild();
                     } catch (ContainerException e) {
                         log.warn("Exception during building virtualhosts model. ", e);
