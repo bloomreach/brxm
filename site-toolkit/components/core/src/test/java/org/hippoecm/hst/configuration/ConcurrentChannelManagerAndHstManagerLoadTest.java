@@ -282,9 +282,9 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                 
                 if (asyncHosts == syncHosts) {
                     // can happen in race condition explained above
-                  fail("THIS IS NOT A FAIL BUT CAN HAPPEN BUT NOW TEMPORARILY AS FAIL TO TEST HUDSON");
+
                 } else { 
-                assertTrue("The async model should be one version behind but this was not the case. the async model has a version with " +
+                      assertTrue("The async model should be one version behind but this was not the case. the async model has a version with " +
                         "value '"+testPropOfAsyncLoadedHosts+"' and the expected value was '"+prevVal+"'",
                         testPropOfAsyncLoadedHosts.equals(prevVal));
                 }
