@@ -623,7 +623,8 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQu
 
 
 =======================================================================================================================================
-For the component (ImageInfo)  is licensed for the Public Domain
+The following components are provided under the Public Domain
 =======================================================================================================================================
 
 api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java
+tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java
