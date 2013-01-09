@@ -253,7 +253,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
         // load the model first ones to make sure async model is really async
         hstManager.getVirtualHosts();
         try {
-            final int synchronousJobCount = 10;
+            final int synchronousJobCount = 1000;
             for (int i = 0; i < synchronousJobCount; i++) {
                 String prevVal = "testVal"+counter;
                 counter++;
@@ -275,7 +275,8 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                 // Note that this does not hold in concurrent loading as below in
                 // #testConcurrentSyncAndAsyncHstManagerAndChannelManagerWithConfigChanges
 
-                assertTrue("The async model should be one version behind",
+                assertTrue("The async model should be one version behind but this was not the case. the async model has a version with " +
+                        "value '"+testPropOfAsyncLoadedHosts+"' and the expected value was '"+prevVal+"'",
                         testPropOfAsyncLoadedHosts.equals(prevVal));
             }
 
