@@ -50,6 +50,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -687,6 +688,25 @@ public class HstManagerImpl implements MutableHstManager {
                 return;
             }
             invalidateVirtualHosts();
+        }
+    }
+
+    @Override
+    public void invalidatePendingHstConfigChanges(final Session session) {
+        if (!(session instanceof HippoSession)) {
+            log.error("Session not instance of HippoSession. Cannot get pending changes");
+            return;
+        }
+        HippoSession hippoSession = (HippoSession) session;
+        try {
+            final NodeIterator pendingNodes = hippoSession.pendingChanges(session.getNode(rootPath), "nt:base", true);
+            while (pendingNodes.hasNext()) {
+                invalidate(pendingNodes.nextNode().getPath());
+            }
+        } catch (RepositoryException e) {
+            log.error("RepositoryException happened during processing pending events. Invalidate hst model completely", e);
+            invalidateAll();
+            return;
         }
     }
 

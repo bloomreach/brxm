@@ -422,21 +422,13 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
 
                 channels = null;
-                fireInvalidationsEvents(session);
+                hstManager.invalidatePendingHstConfigChanges(session);
                 session.save();
 
                 return channelId;
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
             }
-        }
-    }
-
-    private void fireInvalidationsEvents(final Session session) throws RepositoryException {
-        HippoSession hippoSession = (HippoSession) session;
-        final NodeIterator pendingNodes = hippoSession.pendingChanges(session.getNode(DEFAULT_HST_ROOT_PATH), "nt:base", true);
-        while (pendingNodes.hasNext()) {
-            hstManager.invalidate(pendingNodes.nextNode().getPath());
         }
     }
 
@@ -509,7 +501,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                     }
                 }
 
-                fireInvalidationsEvents(session);
+                hstManager.invalidatePendingHstConfigChanges(session);
                 session.save();
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);

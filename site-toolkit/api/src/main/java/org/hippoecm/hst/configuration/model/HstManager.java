@@ -17,7 +17,7 @@ package org.hippoecm.hst.configuration.model;
 
 import java.util.List;
 
-import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -66,6 +66,14 @@ public interface HstManager {
      */
     void invalidate(EventIterator events);
 
+    /**
+     * Invalidate the {@link HstManager} for all pending hst config of this JCR {@link Session} directly. This is very
+     * useful when the changes must be reflected directly upon next reload. The {@link #invalidate(javax.jcr.observation.EventIterator)}
+     * is asynchronous by jcr event listeners.
+     * @param session the jcr Session to fire the events for
+     */
+    void invalidatePendingHstConfigChanges(Session session);
+    
     /**
      * Invalidates this HstSitesManager with all the varargs absEventPaths. This is useful in cases where you directly want to
      * invalidate the hst model and cannot wait for asynchronous jcr events to be dispatched.
