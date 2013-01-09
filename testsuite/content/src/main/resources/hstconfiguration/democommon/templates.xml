@@ -95,7 +95,14 @@
         "${resource!}" != ""&gt; &lt;a
         href="${resource}"&gt;${document.resource.name}&lt;/a&gt;
         &lt;/#if&gt; &lt;/#if&gt; &lt;div&gt; &lt;@hst.include ref="todolist"/&gt;
-        &lt;/div&gt; &lt;hr/&gt;
+        &lt;/div&gt;
+        &lt;div class="bannersHome" id="container-1"&gt;
+        &lt;@hst.include ref="container-1"/&gt;
+        &lt;/div&gt;
+        &lt;div class="bannersHome" id="container-2"&gt;
+        &lt;@hst.include ref="container-2"/&gt;
+        &lt;/div&gt;
+        &lt;hr/&gt;
         &lt;p&gt;Dummy Example REST links &lt;/p&gt; &lt;@hst.link
         var="imageset" hippobean=image
         mount="restapi-gallery" /&gt; &lt;@hst.link var="original"

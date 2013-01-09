@@ -19,5 +19,5 @@
 <%@ taglib uri="http://www.hippoecm.org/jsp/hst/core" prefix='hst'%>
 
 <div style="width: 80px; height: 80px; background-color:${info.bgColor}; border: 2px solid red; margin: 5px; display: inline-block;">
-  My block
+  ${info.content}
 </div>

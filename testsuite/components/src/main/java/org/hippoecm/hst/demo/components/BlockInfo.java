@@ -8,4 +8,7 @@ public interface BlockInfo {
     @Color
     String getBgColor();
 
+    @Parameter(name = "content", defaultValue="My block", displayName = "Contents")
+    String getContent();
+
 }
