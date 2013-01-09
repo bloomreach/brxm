@@ -267,17 +267,27 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                 String testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
                 // SYNC load
                 final VirtualHosts syncHosts = hstManager.getVirtualHosts();
-
                 String testPropOfSyncLoadedHosts = syncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
-                assertTrue(testPropOfSyncLoadedHosts.equals(nextVal));
-                // because the jobs above are done in a synchronous loop (single threaded) and AFTER every ASYNC
-                // there is a SYNC load, we expect that the ASYNC model in this case is ALWAYS ONE instance behind
-                // Note that this does not hold in concurrent loading as below in
-                // #testConcurrentSyncAndAsyncHstManagerAndChannelManagerWithConfigChanges
 
+                assertTrue(testPropOfSyncLoadedHosts.equals(nextVal));
+                
+                // because the jobs above are done in a synchronous loop (single threaded) and AFTER every ASYNC
+                // there is a SYNC load, we expect that the ASYNC model in this case is always one instance behind : 
+                // This would mean that testPropOfAsyncLoadedHosts would always be equal to 'prevVal'
+                // HOWEVER, there is a very small (but it happens on certain machines, most likely with not so many CPU's)
+                // chance that hstManager.getVirtualHosts(true) returns the UP2DATE model because the background thread that 
+                // is started to load the async model gets all the CPU for some time resulting in replacing the global 
+                // virtualhosts volatile instance that the main thread fetches. Hence, there is a small chance that 
+                // testPropOfAsyncLoadedHosts = nextVal
+                
+                if (asyncHosts == syncHosts) {
+                    // can happen in race condition explained above
+                  fail("THIS IS NOT A FAIL BUT CAN HAPPEN BUT NOW TEMPORARILY AS FAIL TO TEST HUDSON");
+                } else { 
                 assertTrue("The async model should be one version behind but this was not the case. the async model has a version with " +
                         "value '"+testPropOfAsyncLoadedHosts+"' and the expected value was '"+prevVal+"'",
                         testPropOfAsyncLoadedHosts.equals(prevVal));
+                }
             }
 
         } finally {
