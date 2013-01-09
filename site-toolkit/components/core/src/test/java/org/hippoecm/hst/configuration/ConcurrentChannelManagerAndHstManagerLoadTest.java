@@ -253,7 +253,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
         // load the model first ones to make sure async model is really async
         hstManager.getVirtualHosts();
         try {
-            final int synchronousJobCount = 1000;
+            final int synchronousJobCount = 10;
             for (int i = 0; i < synchronousJobCount; i++) {
                 String prevVal = "testVal"+counter;
                 counter++;
@@ -262,7 +262,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                 mountNode.getSession().save();
                 // Make sure to directly invalidate and do not wait for jcr event which is async and might arrive too late
                 hstManager.invalidate(mountNode.getPath());
-              // ASYNC load
+                // ASYNC load
                 final VirtualHosts asyncHosts = hstManager.getVirtualHosts(true);
                 String testPropOfAsyncLoadedHosts = asyncHosts.matchMount("localhost", "/site", "").getMount().getProperty(TEST_PROP);
                 // SYNC load
@@ -274,15 +274,11 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
                 // there is a SYNC load, we expect that the ASYNC model in this case is ALWAYS ONE instance behind
                 // Note that this does not hold in concurrent loading as below in
                 // #testConcurrentSyncAndAsyncHstManagerAndChannelManagerWithConfigChanges
+
                 assertTrue("The async model should be one version behind",
                         testPropOfAsyncLoadedHosts.equals(prevVal));
             }
 
-        } catch (AssertionError e) {
-            throw e;
-        } catch (Throwable e) {
-            e.printStackTrace();
-            fail(e.toString());
         } finally {
             mountNode.getProperty(TEST_PROP).remove();
             mountNode.getSession().save();
