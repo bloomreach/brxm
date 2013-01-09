@@ -46,7 +46,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 	public List<Channel> getChannels() throws ChannelException {
 		try {
 			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-			// TODO - We should use a proper validation framework!
+
 			validate();
 	        return Collections.unmodifiableList(new ArrayList<Channel>(channelManager.getChannels().values()));
 		} catch (ResourceRequestValidationException rrve) {
@@ -72,7 +72,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     public void save(Channel channel) throws ChannelException {
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-            // TODO - We should use a proper validation framework!
+
             validate();
             channelManager.save(channel);
         } catch (ResourceRequestValidationException rrve) {
@@ -96,7 +96,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     public String persist(String blueprintId, Channel channel) throws ChannelException {
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-            // TODO - We should use a proper validation framework!
+
             validate();
             return channelManager.persist(blueprintId, channel);
         } catch (ResourceRequestValidationException rrve) {
@@ -132,7 +132,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     public Channel getChannel(String id) throws ChannelException {
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-            // TODO - We should use a proper validation framework!
+
             validate();
             return channelManager.getChannelById(id);
         } catch (ResourceRequestValidationException rrve) {
@@ -176,7 +176,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-            // TODO - We should use a proper validation framework!
+
             validate();
             Class<? extends ChannelInfo> channelInfoClass = channelManager.getChannelInfoClass(id);
 
@@ -213,7 +213,7 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     public Properties getChannelResourceValues(String id, String language) throws ChannelException {
         try {
             // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-            // TODO - We should use a proper validation framework!
+
             validate();
             Channel channel = channelManager.getChannelById(id);
             return InformationObjectsBuilder.buildResourceBundleProperties(channelManager.getResourceBundle(channel, new Locale(language)));
