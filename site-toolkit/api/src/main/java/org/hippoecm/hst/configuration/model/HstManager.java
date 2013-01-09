@@ -65,6 +65,13 @@ public interface HstManager {
      * @param events
      */
     void invalidate(EventIterator events);
+
+    /**
+     * Invalidates this HstSitesManager with all the varargs absEventPaths. This is useful in cases where you directly want to
+     * invalidate the hst model and cannot wait for asynchronous jcr events to be dispatched.
+     * @param absEventPaths the varargs abs paths of the event that should be invalidated
+     */
+    void invalidate(String... absEventPaths);
     
     /**
      * Invalidates this HstSitesManager completely. For example useful after a 

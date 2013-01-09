@@ -83,12 +83,8 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
     }
 
     @Override
-    public void augment(HstManager manager) throws ContainerException {
+    public void augment(final MutableVirtualHosts hosts) throws ContainerException {
         try {
-            if (!(manager.getVirtualHosts() instanceof MutableVirtualHosts)) {
-                log.error("{} can only work when the hosts is an instanceof MutableVirtualHosts.", this.getClass().getName());
-                return;
-            }
             if (customMountName == null || customMountName.isEmpty()) {
                 log.error("{} can only work when the customMountName is not null or empty.", this.getClass().getName());
                 return;
@@ -101,7 +97,6 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
                 log.error("{} can only work when the customHostName is not null or empty.", this.getClass().getName());
                 return;
             }
-            MutableVirtualHosts hosts = (MutableVirtualHosts) manager.getVirtualHosts();
 
             // get the host segments in reversed order. For example 127.0.0.1 --> {"1", "0", "0", "127"}
             String[] hostSegments = customHostName.split("\\.");
@@ -132,7 +127,7 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
 
             if (customHost == null) {
                 // add the cmsRestHostName + mount
-                MutableVirtualHost cmsVirtualHost = new CustomVirtualHost(manager.getVirtualHosts(), hostSegments, 0);
+                MutableVirtualHost cmsVirtualHost = new CustomVirtualHost(hosts, hostSegments, 0);
                 hosts.addVirtualHost(cmsVirtualHost);
             } else if (customHost instanceof MutableVirtualHost) {
                 // only add the needed portMount / hst:root mount / _cmsrest mount

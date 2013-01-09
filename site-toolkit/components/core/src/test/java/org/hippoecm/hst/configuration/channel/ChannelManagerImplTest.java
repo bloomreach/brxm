@@ -27,6 +27,7 @@ import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -49,6 +50,7 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.test.AbstractHstTestCase;
+import org.hippoecm.hst.test.AbstractTestConfigurations;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.After;
 import org.junit.Before;
@@ -67,7 +69,7 @@ import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertNull;
 
-public class ChannelManagerImplTest extends AbstractHstTestCase {
+public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
     public static interface TestChannelInfo extends ChannelInfo {
 
@@ -127,7 +129,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
     @Test
     public void createUniqueChannelId() throws RepositoryException, ChannelException {
-        ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         assertEquals("test", manager.createUniqueChannelId("test", getSession()));
         assertEquals("name-with-spaces", manager.createUniqueChannelId("Name with Spaces", getSession()));
@@ -142,7 +144,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
     @Test
     public void channelsAreReadCorrectly() throws ChannelException, RepositoryException {
-        ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         Map<String, Channel> channels = manager.getChannels();
         assertEquals(1, channels.size());
@@ -155,17 +157,13 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
     }
 
     @Test
-    public void channelWithContextPathIsSavedCorrectly() throws ChannelException, RepositoryException, PrivilegedActionException {
-        final ChannelManagerImpl manager = createManager();
+    public void channelPropertiesSaved() throws ChannelException, RepositoryException, PrivilegedActionException {
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         Map<String, Channel> channels = manager.getChannels();
         assertEquals(1, channels.size());
 
         final Channel channel = channels.values().iterator().next();
-        assertNull("Initial channel should not have a context path", channel.getContextPath());
-        channel.setUrl("http://localhost:8080/site");
-        channel.setContextPath("/site");
-        channel.setMountPath("");
         channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
         channel.getProperties().put("title", "test title");
 
@@ -178,30 +176,47 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         }, null);
 
 
-        channels = createManager().getChannels();
+        channels = manager.getChannels();
         assertEquals(1, channels.size());
         Channel savedChannel = channels.values().iterator().next();
 
         Map<String, Object> savedProperties = savedChannel.getProperties();
         assertTrue(savedProperties.containsKey("title"));
         assertEquals("test title", savedProperties.get("title"));
+
     }
 
     @Test
     public void channelsAreNotClonedWhenRetrieved() throws ChannelException, RepositoryException {
-        ChannelManagerImpl manager = createManager();
-
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
         Map<String, Channel> channels = manager.getChannels();
-        Channel channel = channels.values().iterator().next();
-        channel.setName("aap");
-
-        Map<String, Channel> moreChannels = manager.getChannels();
-        assertTrue(moreChannels == channels);
+        Map<String, Channel> channelsAgain = manager.getChannels();
+        assertTrue(channelsAgain == channels);
     }
 
     @Test
+    public void channelsMapIsNewInstanceWhenReloadedAfterChange() throws ChannelException, RepositoryException, PrivilegedActionException {
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
+        Map<String, Channel> channels = manager.getChannels();
+        final Channel channel = channels.values().iterator().next();
+        channel.setChannelInfoClassName(getClass().getCanonicalName() + "$" + TestChannelInfo.class.getSimpleName());
+        channel.getProperties().put("title", "test title");
+        HstSubject.doAsPrivileged(createSubject(), new PrivilegedExceptionAction<Void>() {
+            @Override
+            public Void run() throws ChannelException {
+                manager.save(channel);
+                return null;
+            }
+        }, null);
+        Map<String, Channel> channelsAgain = manager.getChannels();
+
+        assertTrue("After a change, getChannels should return different instance for the Map",channelsAgain != channels);
+    }
+
+
+    @Test
     public void channelIsCreatedFromBlueprint() throws ChannelException, RepositoryException, PrivilegedActionException {
-        final ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         List<Blueprint> bluePrints = manager.getBlueprints();
         assertEquals(1, bluePrints.size());
@@ -241,50 +256,27 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
     @Test
     public void channelsAreReloadedAfterAddingOne() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
-        final ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
         int numberOfChannels = manager.getChannels().size();
 
         Node channelsNode = getSession().getNode("/hst:hst/hst:channels");
-        Node channel = channelsNode.addNode("cmit-test-channel", "hst:channel");
-        channel.setProperty("hst:name", "CMIT Test Channel");
-        getSession().save();
+        Node newChannel = channelsNode.addNode("cmit-test-channel", "hst:channel");
+        newChannel.setProperty("hst:name", "CMIT Test Channel");
 
-        manager.invalidate();
+        // channels must have a mount pointing to them otherwise they are skipped, hence point to this channel from
+        // subsite mount
+        Node mountForNewChannel = getSession().getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root/subsite");
+        mountForNewChannel.setProperty("hst:channelpath", newChannel.getPath());
+
+        // for direct jcr node changes, we need to trigger an invalidation event ourselves
+        HstManager hstMngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        hstMngr.invalidate(newChannel.getPath(), mountForNewChannel.getPath());
+
+        getSession().save();
 
         // manager should reload
 
-        reset(testHost, testMount1, testMount2);
-
-
-        VirtualHosts vhosts = HstServices.getComponentManager().getComponent(VirtualHosts.class.getName());
-        expectMountLoad(testHost, testMount1, testMount2, vhosts);
-
-        MutableMount newMount = createNiceMock(MutableMount.class);
-        mounts.add(newMount);
-
-        VirtualHost newHost = createNiceMock(VirtualHost.class);
-
-        expect(newMount.getChannelPath()).andReturn("/hst:hst/hst:channels/cmit-test-channel").anyTimes();
-        expect(newMount.getMountPoint()).andReturn("mountpoint").anyTimes();
-        expect(newMount.getHstSite()).andReturn(createNiceMock(HstSite.class)).anyTimes();
-        expect(newMount.getCanonicalContentPath()).andReturn("/unittestcontent/documents");
-        expect(newMount.getVirtualHost()).andReturn(newHost).anyTimes();
-        expect(newHost.getHostName()).andReturn("myhost").anyTimes();
-        expect(newHost.getVirtualHosts()).andReturn(vhosts).anyTimes();
-        expect(newMount.getLocale()).andReturn("nl_NL").anyTimes();
-        expect(newMount.getScheme()).andReturn("http").anyTimes();
-        expect(newMount.getIdentifier()).andReturn(UUID.randomUUID().toString()).anyTimes();
-        expect(newMount.isPreview()).andReturn(false);
-        expect(newMount.isMapped()).andReturn(true);
-        expect(newMount.getMountPath()).andReturn("").anyTimes();
-        expect(newMount.getPort()).andReturn(0).anyTimes();
-
-        replay(testHost, testMount1, testMount2, newHost, newMount);
-
         Map<String, Channel> channels = manager.getChannels();
-
-        // verify reload
-        verify(testHost, testMount1, testMount2, newHost, newMount);
 
         assertEquals(numberOfChannels + 1, channels.size());
         assertTrue(channels.containsKey("cmit-test-channel"));
@@ -293,38 +285,32 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertNotNull(created);
         assertEquals("cmit-test-channel", created.getId());
         assertEquals("CMIT Test Channel", created.getName());
-        assertEquals("http://myhost", created.getUrl());
-        assertEquals("/unittestcontent/documents", created.getContentRoot());
-        assertEquals("nl_NL", created.getLocale());
+        assertEquals("http://localhost/site/subsite", created.getUrl());
+        assertEquals("/unittestcontent/documents/unittestsubproject", created.getContentRoot());
+        assertEquals("en_EN", created.getLocale());
+
+        // clean up only the added channelpath for subsite
+        mountForNewChannel.getProperty("hst:channelpath").remove();
+        getSession().save();
     }
 
     @Test
     public void channelsThatAreNotReferencedByAMountAreDiscarded() throws ChannelException, RepositoryException, PrivilegedActionException, ContainerException {
-        final ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
         int numberOfChannerBeforeAddingAnOrphanOne = manager.getChannels().size();
 
         Node channelsNode = getSession().getNode("/hst:hst/hst:channels");
-        Node channel = channelsNode.addNode("cmit-test-channel", "hst:channel");
-        channel.setProperty("hst:name", "CMIT Test Channel");
+        Node newChannel = channelsNode.addNode("cmit-test-channel", "hst:channel");
+        newChannel.setProperty("hst:name", "CMIT Test Channel");
         getSession().save();
 
-        // We've now added a Channel that does not have a Mount referring it
+        // for direct jcr node changes, we need to trigger an invalidation event ourselves
+        HstManager hstMngr = HstServices.getComponentManager().getComponent(HstManager.class.getName());
+        hstMngr.invalidate(newChannel.getPath());
 
-        manager.invalidate();
-
-        // manager should reload
-
-        reset(testHost, testMount1, testMount2);
-
-        VirtualHosts vhosts = HstServices.getComponentManager().getComponent(VirtualHosts.class.getName());
-        expectMountLoad(testHost, testMount1, testMount2, vhosts);
-
-        replay(testHost, testMount1, testMount2);
+        getSession().save();
 
         Map<String, Channel> channels = manager.getChannels();
-
-        // verify reload
-        verify(testHost, testMount1, testMount2);
 
         assertEquals(numberOfChannerBeforeAddingAnOrphanOne , channels.size());
         assertFalse(channels.containsKey("cmit-test-channel"));
@@ -333,7 +319,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
     @Test
     public void ancestorMountsMustExist() throws ChannelException, RepositoryException, PrivilegedActionException {
-        final ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         List<Blueprint> bluePrints = manager.getBlueprints();
         assertEquals(1, bluePrints.size());
@@ -374,7 +360,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         defaultChannelInfo.setProperty("getme", "noot");
         getSession().save();
 
-        final ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         final Channel channel = manager.getBlueprint("cmit-test-bp").getPrototypeChannel();
         channel.setName("cmit-channel");
@@ -407,7 +393,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         defaultChannelInfo.setProperty("getme", "noot");
         getSession().save();
 
-        final ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         Channel channel = manager.getBlueprint("cmit-test-bp2").getPrototypeChannel();
         channel.setName("cmit-channel2");
@@ -440,21 +426,6 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         assertEquals(0, listener2.getUpdatedCount());
         assertEquals(0, listener3.getUpdatedCount());
 
-        manager.invalidate();
-
-        // manager should reload
-
-        reset(testHost, testMount1, testMount2);
-
-        VirtualHosts vhosts = HstServices.getComponentManager().getComponent(VirtualHosts.class.getName());
-        expectMountLoad(testHost, testMount1, testMount2, vhosts);
-
-        replay(testHost, testMount1, testMount2);
-
-        manager.getChannels();
-
-        // verify reload
-        verify(testHost, testMount1, testMount2);
 
         channel = manager.getChannels().get(channelId);
         channel.setName("cmit-channel2");
@@ -479,17 +450,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
 
         manager.removeChannelManagerEventListeners(listener1, listener2, listener3);
 
-        reset(testHost, testMount1, testMount2);
-
-        vhosts = HstServices.getComponentManager().getComponent(VirtualHosts.class.getName());
-        expectMountLoad(testHost, testMount1, testMount2, vhosts);
-
-        replay(testHost, testMount1, testMount2);
-
         manager.getChannels();
-
-        // verify reload
-        verify(testHost, testMount1, testMount2);
 
         channel = manager.getChannels().get(channelId);
         channel.setName("cmit-channel2");
@@ -526,7 +487,7 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         defaultChannelInfo.setProperty("getme", "noot");
         getSession().save();
 
-        final ChannelManagerImpl manager = createManager();
+        final ChannelManagerImpl manager = HstServices.getComponentManager().getComponent(ChannelManager.class.getName());
 
         Channel channel = manager.getBlueprint("cmit-test-bp2").getPrototypeChannel();
         channel.setName("cmit-channel2");
@@ -568,101 +529,12 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         return subject;
     }
 
-    private ChannelManagerImpl createManager() throws ChannelException {
-        final ChannelManagerImpl manager = new ChannelManagerImpl();
-
-        ComponentManager cm = createMock(ComponentManager.class);
-        setComponentManager(cm);
-
-        final VirtualHosts vhosts = createNiceMock(VirtualHosts.class);
-
-        expect(vhosts.getCmsPreviewPrefix()).andReturn("_cmsinternal").anyTimes();
-        HstManager hstMgr = createNiceMock(HstManager.class);
-        try {
-            expect(hstMgr.getVirtualHosts()).andAnswer(new IAnswer<VirtualHosts>() {
-                @Override
-                public VirtualHosts answer() throws Throwable {
-                    manager.load(vhosts, getSession());
-                    return vhosts;
-                }
-            }).anyTimes();
-        } catch (ContainerException e) {
-            // mock impl doesn't throw
-        }
-        expect(cm.getComponent(HstManager.class.getName())).andReturn(hstMgr).anyTimes();
-        expect(cm.getComponent(VirtualHosts.class.getName())).andReturn(vhosts).anyTimes();
-
-        mounts = new LinkedList<Mount>();
-        expect(vhosts.getMountsByHostGroup("dev-localhost")).andReturn(mounts).anyTimes();
-        expect(vhosts.getHostGroupNames()).andReturn(Arrays.asList("dev-localhost")).anyTimes();
-        expect(vhosts.getChannelManagerHostGroupName()).andReturn("dev-localhost").anyTimes();
-        expect(vhosts.getChannelManagerSitesName()).andReturn("hst:sites").anyTimes();
-
-        testHost = createNiceMock(VirtualHost.class);
-
-        testMount1 = createNiceMock(MutableMount.class);
-        testMount2 = createNiceMock(MutableMount.class);
-        mounts.add(testMount1);
-        mounts.add(testMount2);
-
-        expectMountLoad(testHost, testMount1, testMount2, vhosts);
-
-        replay(vhosts, cm, hstMgr, testHost, testMount1, testMount2);
-
-        manager.load();
-
-        verify(testHost, testMount1, testMount2);
-
-        return manager;
-    }
-
-
-    private static void expectMountLoad(final VirtualHost host, final MutableMount mount1, final MutableMount mount2, VirtualHosts vhosts) {
-        expect(host.getHostName()).andReturn("localhost").anyTimes();
-        expect(host.getVirtualHosts()).andReturn(vhosts).anyTimes();
-
-        expect(mount1.getMountPoint()).andReturn("mountpoint");
-        expect(mount2.getMountPoint()).andReturn("mountpoint").anyTimes();
-        expect(mount1.getHstSite()).andReturn(createNiceMock(HstSite.class)).anyTimes();
-        expect(mount2.getHstSite()).andReturn(createNiceMock(HstSite.class)).anyTimes();
-        expect(mount1.getCanonicalContentPath()).andReturn("/content/documents");
-        expect(mount2.getCanonicalContentPath()).andReturn("/content/documents").anyTimes();
-
-        expect(mount1.getChannelPath()).andReturn("/hst:hst/hst:channels/testchannel");
-        expect(mount2.getChannelPath()).andReturn("/hst:hst/hst:channels/cmit-channel2").anyTimes();
-        expect(mount1.getVirtualHost()).andReturn(host).anyTimes();
-        expect(mount2.getVirtualHost()).andReturn(host).anyTimes();
-        expect(mount1.getLocale()).andReturn("en_EN");
-        expect(mount2.getLocale()).andReturn("en_EN").anyTimes();
-        expect(mount1.getScheme()).andReturn("http");
-        expect(mount2.getScheme()).andReturn("http").anyTimes();
-        expect(mount1.getIdentifier()).andReturn(UUID.randomUUID().toString());
-        expect(mount2.getIdentifier()).andReturn(UUID.randomUUID().toString()).anyTimes();
-        expect(mount1.getMountPath()).andReturn("");
-        expect(mount2.getMountPath()).andReturn("").anyTimes();
-        expect(mount1.isPreview()).andReturn(false);
-        expect(mount2.isPreview()).andReturn(false).anyTimes();
-        expect(mount1.isMapped()).andReturn(true);
-        expect(mount2.isMapped()).andReturn(true).anyTimes();
-        expect(mount1.isPortInUrl()).andReturn(false);
-        expect(mount2.isPortInUrl()).andReturn(false).anyTimes();
-    }
-
 
     private void propagateJcrSession(Credentials credentials) throws LoginException, RepositoryException {
         Session session;
-
-        if (credentials == null) {
-            session = getRepository().login();
-        } else {
-            session = getRepository().login(credentials);
-        }
-
+        Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
+        session = repository.login(credentials);
         CmsJcrSessionThreadLocal.setJcrSession(session);
-    }
-
-    private void propagateJcrSession() throws LoginException, RepositoryException {
-        propagateJcrSession(null);
     }
 
     private void dePropagateSession() {
@@ -673,7 +545,6 @@ public class ChannelManagerImplTest extends AbstractHstTestCase {
         return new SimpleCredentials("admin", "admin".toCharArray());
     }
 
-    @Override
     public Session getSession() {
         return CmsJcrSessionThreadLocal.getJcrSession();
     }

@@ -50,9 +50,9 @@ import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ContainerException;
-import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -88,6 +88,12 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
     private List<ChannelManagerEventListener> channelManagerEventListeners = Collections.synchronizedList(
             new ArrayList<ChannelManagerEventListener>());
+
+    private HstManager hstManager;
+
+    public void setHstManager(HstManager hstManager) {
+        this.hstManager = hstManager;
+    }
 
     public ChannelManagerImpl() {
     }
@@ -245,11 +251,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
      * @throws ChannelException when initializing the HST manager failed
      */
     void load() throws ChannelException {
-        if (channels == null) {
-            HstManager manager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-
+        synchronized (HstManagerImpl.MUTEX) {
             try {
-                manager.getVirtualHosts();
+                hstManager.getVirtualHosts();
             } catch (ContainerException e) {
                 throw new ChannelException("could not build channels");
             }
@@ -418,13 +422,21 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
 
                 channels = null;
-
+                fireInvalidationsEvents(session);
                 session.save();
 
                 return channelId;
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
             }
+        }
+    }
+
+    private void fireInvalidationsEvents(final Session session) throws RepositoryException {
+        HippoSession hippoSession = (HippoSession) session;
+        final NodeIterator pendingNodes = hippoSession.pendingChanges(session.getNode(DEFAULT_HST_ROOT_PATH), "nt:base", true);
+        while (pendingNodes.hasNext()) {
+            hstManager.invalidate(pendingNodes.nextNode().getPath());
         }
     }
 
@@ -497,8 +509,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                     }
                 }
 
-                channels = null;
-
+                fireInvalidationsEvents(session);
                 session.save();
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
@@ -997,6 +1008,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         return new ChannelException("Could not create content at '" + contentRoot + "'", cause,
                                     ChannelException.Type.CANNOT_CREATE_CONTENT, contentRoot);
     }
+
 
     private static class ChannelManagerEventImpl implements ChannelManagerEvent {
 

@@ -78,6 +78,14 @@ public class RelevantEventsHolder {
         }
     }
 
+    public void addEvent(final String eventPath) {
+        RelevantEvent event = new RelevantEvent(eventPath);
+        boolean added = configurationEvents.add(event);
+        if (added) {
+            log.debug("Added event '{}'", event.relevantPath);
+        }
+    }
+
     public boolean hasEvents() {
         return !configurationEvents.isEmpty();
     }
@@ -160,6 +168,12 @@ public class RelevantEventsHolder {
         private String relevantPath;
         private EventFor eventFor;
 
+        RelevantEvent(final String eventPath) {
+            eventFor = getEventFor(eventPath);
+            relevantPath = getRelevantPathOfEventFor(eventFor, eventPath);
+
+        }
+
         RelevantEvent(final Event jcrEvent) throws RepositoryException {
             String nodePath;
             if (isPropertyEvent(jcrEvent)) {
@@ -170,7 +184,6 @@ public class RelevantEventsHolder {
             }
             eventFor = getEventFor(nodePath);
             relevantPath = getRelevantPathOfEventFor(eventFor, nodePath);
-
         }
 
         private String getRelevantPathOfEventFor(final EventFor eventFor, final String nodePath) {

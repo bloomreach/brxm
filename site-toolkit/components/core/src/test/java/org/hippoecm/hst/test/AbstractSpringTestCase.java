@@ -70,6 +70,7 @@ public abstract class AbstractSpringTestCase
         
         this.componentManager.initialize();
         this.componentManager.start();
+        HstServices.setComponentManager(getComponentManager());
     }
 
     @After

@@ -22,8 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -40,6 +38,7 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.MutableChannelManager;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
+import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHostsService;
 import org.hippoecm.hst.core.component.HstURLFactory;
@@ -70,14 +69,17 @@ public class HstManagerImpl implements MutableHstManager {
     private Credentials credentials;
 
     private volatile VirtualHosts virtualHosts;
+    private volatile BuilderState state = BuilderState.UNDEFINED;
 
-    // stale model with async loading support instance variables
-    private static final Executor executor = Executors.newSingleThreadExecutor();
-    boolean staleConfigurationSupported = false;
-    private volatile VirtualHosts staleVirtualHosts;
-    private volatile boolean virtualHostsBeingBuild = false;
-    private volatile boolean virtualHostsBuildAlreadyScheduled = false;
-    // end stale model with async loading support instance variables
+    enum BuilderState {
+        UNDEFINED,
+        UP2DATE,
+        STALE,
+        SCHEDULED,
+        RUNNING,
+    }
+    
+    private boolean staleConfigurationSupported = false;
 
     private HstURLFactory urlFactory;
     private HstSiteMapMatcher siteMapMatcher;
@@ -299,92 +301,100 @@ public class HstManagerImpl implements MutableHstManager {
         }
         return false;
     }
-    
-    public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
-        if (allowStale && staleConfigurationSupported) {
-            VirtualHosts currentHosts = virtualHosts;
-            if (currentHosts != null) {
-                return currentHosts;
+
+    private void asynchronousBuild() {
+        synchronized (MUTEX) {
+            if (state == BuilderState.UP2DATE) {
+                // other thread already built the model
+                return;
             }
-            VirtualHosts staleHosts = staleVirtualHosts;
-            if (staleHosts != null) {
-                if (!virtualHostsBeingBuild && !virtualHostsBuildAlreadyScheduled) {
-                    virtualHostsBuildAlreadyScheduled = true;
-                    executor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                getVirtualHosts();
-                            } catch (ContainerException e) {
-                                log.warn("Exception during building virtualhosts model. ", e);
-                            } finally {
-                                // finished with the scheduled job
-                                virtualHostsBuildAlreadyScheduled = false;
-                            }
-                        }
-                    });
-                } else {
-                    log.debug("Returning stale virtualhosts model and no async build will be done because already being" +
-                            "build or scheduled.");
+            if (state == BuilderState.SCHEDULED) {
+                // already scheduled
+                return;
+            } 
+            if (state == BuilderState.RUNNING) {
+                log.error("BuilderState should not be possible to be in RUNNING state at this point. Return");
+                return;
+            }
+            state = BuilderState.SCHEDULED;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        synchronousBuild();
+                    } catch (ContainerException e) {
+                        log.warn("Exception during building virtualhosts model. ", e);
+                    }
                 }
-                return staleHosts;
-            }
-            return getVirtualHosts();
-        } else {
-            return getVirtualHosts();
+            }).start();
         }
     }
-    
-    public VirtualHosts getVirtualHosts() throws ContainerException {
 
-        VirtualHosts currentHosts = virtualHosts;
-        if (currentHosts == null) {
-            synchronized(MUTEX) {
-                if (virtualHosts == null) {
+    public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
+        if (state == BuilderState.UP2DATE) {
+            return virtualHosts;
+        }
+        if (state == BuilderState.UNDEFINED) {
+            return synchronousBuild();
+        }
+        if (allowStale && staleConfigurationSupported) {
+            asynchronousBuild();
+            return virtualHosts;
+        }
+        return synchronousBuild();
+    }
+
+    public VirtualHosts getVirtualHosts() throws ContainerException {
+        return getVirtualHosts(false);
+
+    }
+
+    private VirtualHosts synchronousBuild() throws ContainerException {
+        if (state != BuilderState.UP2DATE) {
+            synchronized (MUTEX) {
+                if (state == BuilderState.UP2DATE) {
+                    return virtualHosts;
+                } else {
                     try {
-                        virtualHostsBeingBuild = true;
+                        state = BuilderState.RUNNING;
                         try {
                             buildSites();
                         } catch (ModelLoadingException e) {
                             // since the model has changed during loading, we try a complete rebuild (invalidateAll). If that one fails again, we return a ContainerException
                             // and it will be tried during the next request
-                            if (log.isDebugEnabled()) {
-                                log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches.", e);
-                            } else {
-                                log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches. Reason : {} ", e.toString());
+                            logModelFailedToLoad(e);
+                            invalidateAll();
+                            try {
+                                buildSites();
+                            } catch (ModelLoadingException e2) {
+                                invalidateAll();
+                                throwContainerExceptionAfterFailedRetry();
                             }
-                            retryCleanBuildSites();
+
                         } catch (ContainerException e) {
-                            if (log.isDebugEnabled()) {
-                                log.warn("During building the HST model an error occured. A total rebuild will be done now after flushing all caches.", e);
-                            } else {
-                                log.warn("During building the HST model an error occured. A total rebuild will be done now after flushing all caches. Reason : {} ", e.toString());
+                            logModelFailedToLoad(e);
+                            invalidateAll();
+                            try {
+                                buildSites();
+                            } catch (ModelLoadingException e2) {
+                                invalidateAll();
+                                throwContainerExceptionAfterFailedRetry();
                             }
-                            retryCleanBuildSites();
                         }
                     } catch (LoginException e) {
                         throw new ContainerException("Could not build hst model because user 'configuser' could not login to the repository.");
                     } finally {
-                        virtualHostsBeingBuild = false;
+                        // whether there were exceptions or not, the model is up2date (though the virtualHosts object might
+                        // be from a previous run in case it could not be loaded)
+                        state = BuilderState.UP2DATE;
                     }
+                    log.info("Flushing page cache after new model is loaded");
                     pageCache.clear();
                 }
-                currentHosts = virtualHosts;
-                log.info("Flushing page cache after new model is loaded");
+                return virtualHosts;
             }
         }
-        return currentHosts;
-    }
-
-    private void retryCleanBuildSites() throws ContainerException, LoginException {
-        invalidateAll();
-        try {
-            buildSites();
-        } catch (ModelLoadingException e) {
-            invalidateAll();
-            throw new ContainerException("Retry of building HST model due to jcr config changes during the previous build failed again " +
-                    "because the jcr config changed again. No retry done untill next request.");
-        }
+        return virtualHosts;
     }
 
     private void buildSites() throws ContainerException, LoginException {
@@ -489,7 +499,7 @@ public class HstManagerImpl implements MutableHstManager {
                 enhancedConfigurationRootNodes = enhanceHstConfigurationNodes(configurationRootNodes);
                 this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
                 for(HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters ) {
-                    configurationAugmenter.augment(this);
+                    configurationAugmenter.augment((MutableVirtualHosts)virtualHosts);
                 }
                 log.info("Finished build in memory hst configuration model in " + (System.currentTimeMillis() - start) + " ms.");
             } catch (ServiceException e) {
@@ -497,9 +507,6 @@ public class HstManagerImpl implements MutableHstManager {
             }
 
             this.channelManager.load(virtualHosts, session);
-            if (staleConfigurationSupported) {
-                staleVirtualHosts = virtualHosts;
-            }
         } catch (LoginException e) {
             throw e;
         } catch (PathNotFoundException e) {
@@ -531,6 +538,16 @@ public class HstManagerImpl implements MutableHstManager {
         }
 
     }
+
+
+    private void logModelFailedToLoad(final Exception e) {
+        if (log.isDebugEnabled()) {
+            log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches.", e);
+        } else {
+            log.warn("Model was possibly not build correctly. A total rebuild will be done now after flushing all caches. Reason : {} ", e.toString());
+        }
+    }
+
 
     private void populatePreviousCorrectLoadedSiteRootNodePaths() {
         previousCorrectLoadedSiteRootNodePaths.clear();
@@ -652,6 +669,11 @@ public class HstManagerImpl implements MutableHstManager {
         }
     }
 
+    private void throwContainerExceptionAfterFailedRetry() throws ContainerException{
+        throw new ContainerException("Retry of building HST model due to jcr config changes during the previous build failed again " +
+                "because the jcr config changed again. No retry done until next request.");
+    }
+
     @Override
     public void invalidate(EventIterator events) {
         synchronized(MUTEX) {
@@ -669,6 +691,19 @@ public class HstManagerImpl implements MutableHstManager {
     }
 
     @Override
+    public void invalidate(final String... absEventPaths) {
+        if (absEventPaths == null) {
+            return;
+        }
+        synchronized(MUTEX) {
+            for (String eventPath : absEventPaths) {
+                relevantEventsHolder.addEvent(eventPath);
+            }
+            invalidateVirtualHosts();
+        }
+    }
+
+    @Override
     public void invalidateAll() {
         synchronized(MUTEX) {
             invalidateVirtualHosts();
@@ -677,13 +712,12 @@ public class HstManagerImpl implements MutableHstManager {
     }
 
     private final void invalidateVirtualHosts() {
-        log.info("In memory hst configuration model is invalidated. It will be reloaded on the next request.");
-        if (virtualHosts != null && staleConfigurationSupported) {
-            staleVirtualHosts = virtualHosts;
-        }
-        virtualHosts = null;
+        log.info("In memory hst configuration model is marked as stale due to changes.");
         if (channelManager != null) {
             channelManager.invalidate();
+        }
+        if (state != BuilderState.UNDEFINED) {
+            state = BuilderState.STALE;
         }
     }
 

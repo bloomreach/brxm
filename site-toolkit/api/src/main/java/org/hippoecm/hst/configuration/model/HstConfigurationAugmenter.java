@@ -15,22 +15,22 @@
  */
 package org.hippoecm.hst.configuration.model;
 
+import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.container.ContainerException;
 
 /**
  * Classes that implement this interface can be used to augment the loaded configuration. The implementations will get the 
- * {@link #augment(HstManager)} called by the {@link HstManager} <b>after</b> the {@link VirtualHosts} object is 
+ * {@link #augment(MutableVirtualHosts)} called by the {@link HstManager} <b>after</b> the {@link MutableVirtualHosts} object is
  * completely loaded and all configuration has been enhanced.
- * 
- *  
+ *
  */
 public interface HstConfigurationAugmenter {
 
     /**
      * Implementations that are 
-     * @param manager
+     * @param hosts the MutableVirtualHosts to augment
      * @throws ContainerException
      */
-    void augment(HstManager manager) throws ContainerException;
+    void augment(MutableVirtualHosts hosts) throws ContainerException;
 }

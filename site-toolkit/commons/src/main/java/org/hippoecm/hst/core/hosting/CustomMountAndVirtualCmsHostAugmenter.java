@@ -93,11 +93,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
      * Every virtual hostgroup that has a hst:cmslocation property defined we try to add the correct mount for.
      */
     @Override
-    public void augment(HstManager manager) throws ContainerException {
-        if (!validateState(manager)) {
-            return;
-        }
-        MutableVirtualHosts hosts = (MutableVirtualHosts) manager.getVirtualHosts();
+    public void augment(final MutableVirtualHosts hosts) throws ContainerException {
 
         // first we try to find all the cmsLocations that need to be added.
         // for every host group, we fetch just virtualhost and ask for its cmsLocation: Although it is configured
@@ -251,11 +247,7 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
     }
 
-    private boolean validateState(final HstManager manager) throws ContainerException {
-        if (!(manager.getVirtualHosts() instanceof MutableVirtualHosts)) {
-            log.error("{} can only work when the hosts is an instanceof MutableVirtualHosts", this.getClass().getName());
-            return false;
-        }
+    private boolean validateState() throws ContainerException {
         if (mountName == null || mountName.isEmpty()) {
             log.error("No mount name set for {}", this.getClass().getName());
             return false;
