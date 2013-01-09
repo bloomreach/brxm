@@ -27,6 +27,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -49,20 +50,25 @@ public class AbstractConfigResource {
     private static Logger log = LoggerFactory.getLogger(AbstractConfigResource.class);
 
     private ObjectConverter objectConverter;
+    private HstManager hstManager;
     private MountDecorator mountDecorator;
     private List<Class<? extends HippoBean>> annotatedClasses;
     public static final String BEANS_ANNOTATED_CLASSES_CONF_PARAM = "hst-beans-annotated-classes";
 
     private static final String CURRENT_MOUNT_CANONICAL_CONTENT_PATH = AbstractConfigResource.class.getName() + "-CurrentMountCanonicalContentPath";
 
-    /**
-     * @param mountDecorator the mountDecorator to set
-     */
+    public void setHstManager(final HstManager hstManager) {
+        this.hstManager = hstManager;
+    }
+
     public void setMountDecorator(MountDecorator mountDecorator) {
         this.mountDecorator = mountDecorator;
     }
 
-    
+    public HstManager getHstManager() {
+        return hstManager;
+    }
+
     protected HstRequestContext getRequestContext(HttpServletRequest servletRequest) {
         return (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
     }

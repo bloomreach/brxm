@@ -92,8 +92,9 @@ public class ContainerComponentResource extends AbstractConfigResource {
             session.getWorkspace().copy(containerItem.getPath(), containerNode.getPath() + "/" + newItemNodeName);
             Node newItem = containerNode.getNode(newItemNodeName);
 
-            // now save the container node
-            session.save();
+            // trigger a hstManager invalidate to avoid possibly a reload where this change is not yet
+            // included because the jcr event did not yet arrive:
+            getHstManager().invalidate(newItem.getPath());
 
             ContainerItemRepresentation item = new ContainerItemRepresentation().represent(newItem);
             return ok("Successfully create item " + newItem.getName() + " with path " + newItem.getPath(), item);
@@ -155,6 +156,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                     return error("ItemNotFoundException: Cannot update item '"+itemUUID+"'");
                 }
             }
+            getHstManager().invalidatePendingHstConfigChanges(session);
             session.save();
             return ok("Item order for container[" + container.getId() + "] has been updated.", container);
 
@@ -188,6 +190,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             }
 
             containerItem.remove();
+            getHstManager().invalidatePendingHstConfigChanges(session);
             session.save();
         } catch (RepositoryException e) {
             if(log.isDebugEnabled()) {

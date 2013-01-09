@@ -130,6 +130,7 @@ public class MountResource extends AbstractConfigResource {
                     return ok("This configuration was already locked.", "already-locked");
                 } else {
                     setLockProperties(configurationNode);
+                    getHstManager().invalidatePendingHstConfigChanges(session);
                     session.save();
                     return ok("This configuration lock was acquired.", "lock-acquired");
                 }
@@ -170,6 +171,7 @@ public class MountResource extends AbstractConfigResource {
                 }
                 if (!isLockedBySession(configurationNode)) {
                     setLockProperties(configurationNode);
+                    getHstManager().invalidatePendingHstConfigChanges(session);
                     session.save();
                 }
                 return ok("Site can be edited now");
@@ -177,6 +179,7 @@ public class MountResource extends AbstractConfigResource {
 
             Node newPreviewConfigurationNode = createPreviewConfigurationNode(requestContext);
             setLockProperties(newPreviewConfigurationNode);
+            getHstManager().invalidatePendingHstConfigChanges(session);
             session.save();
         } catch (IllegalStateException e) {
             return error("Cannot start editing : " + e);
@@ -275,6 +278,7 @@ public class MountResource extends AbstractConfigResource {
             session.removeItem(editingLiveSite.getConfigurationPath());
             Node hstSiteLiveNode = session.getNodeByIdentifier(editingLiveSite.getCanonicalIdentifier());
             hstSiteLiveNode.setProperty(HstNodeTypes.SITE_VERSION, editingPreviewSite.getVersion());
+            getHstManager().invalidatePendingHstConfigChanges(session);
             session.save();
         } catch (LoginException e) {
             return error("Could not get a jcr session : " + e + ". Cannot publish configuration.");
@@ -399,6 +403,7 @@ public class MountResource extends AbstractConfigResource {
             Session session = requestContext.getSession();
             session.removeItem(previewConfigPath);
             resetVersionToLive(requestContext);
+            getHstManager().invalidatePendingHstConfigChanges(session);
             session.save();
         } catch (LoginException e) {
             return error("Could not get a jcr session : " + e  + ". Cannot discard configuration.");

@@ -102,7 +102,7 @@ public class ContainerItemComponentResourceTest {
         params.add("parameterOne", "bar");
         params.add("someNonAnnotatedParameter", "lux");
 
-        HstComponentParameters componentParameters = new HstComponentParameters(node);
+        HstComponentParameters componentParameters = new HstComponentParameters(node, null);
         containerItemComponentResource.doSetParameters(componentParameters, null, params);
 
         assertTrue(node.hasProperty(HST_PARAMETERNAMES));
@@ -117,7 +117,7 @@ public class ContainerItemComponentResourceTest {
         assertEquals(defaultAnnotated.get("parameterTwo"), "test");
 
 
-        Set<String> variants =  ContainerItemComponentResource.doGetVariants(node);
+        Set<String> variants =  new ContainerItemComponentResource().doGetVariants(node);
         assertTrue(variants.size() == 1);
         assertTrue(variants.contains("hippo-default"));
 
@@ -125,18 +125,18 @@ public class ContainerItemComponentResourceTest {
         // pick up the explicitly defined parameters from 'default' that are ALSO annotated (thus parameterOne, and NOT someNonAnnotatedParameter) PLUS
         // the implicit parameters from the DummyInfo (parameterTwo but not parameterOne because already from 'default')
 
-        containerItemComponentResource.doCreateVariant(node, new HstComponentParameters(node), "newvar");
+        containerItemComponentResource.doCreateVariant(node, new HstComponentParameters(node, null), "newvar");
         assertTrue(node.hasProperty(HST_PARAMETERNAMES));
         assertTrue(node.hasProperty(HST_PARAMETERVALUES));
         // now it must contain HST_PARAMETERNAMEPREFIXES
         assertTrue(node.hasProperty(HST_PARAMETERNAMEPREFIXES));
 
-        variants = ContainerItemComponentResource.doGetVariants(node);
+        variants = new ContainerItemComponentResource().doGetVariants(node);
         assertTrue(variants.size() == 2);
         assertTrue(variants.contains("hippo-default"));
         assertTrue(variants.contains("newvar"));
 
-        componentParameters = new HstComponentParameters(node);
+        componentParameters = new HstComponentParameters(node, null);
         assertTrue(componentParameters.hasParameter("newvar", "parameterOne"));
         assertEquals("bar", componentParameters.getValue("newvar", "parameterOne"));
         assertTrue(componentParameters.hasParameter("newvar", "parameterTwo"));
@@ -145,15 +145,15 @@ public class ContainerItemComponentResourceTest {
         assertFalse(componentParameters.hasParameter("newvar", "someNonAnnotatedParameter"));
 
         // 3. try to remove the new variant
-        containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node), "newvar");
-        variants = ContainerItemComponentResource.doGetVariants(node);
+        containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node, null), "newvar");
+        variants = new ContainerItemComponentResource().doGetVariants(node);
         assertTrue(variants.size() == 1);
         assertTrue(variants.contains("hippo-default"));
 
         // 4. try to remove the 'default' variant : this should not be allowed
         boolean removeSucceeded = true;
         try {
-            containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node), "hippo-default");
+            containerItemComponentResource.doDeleteVariant(new HstComponentParameters(node, null), "hippo-default");
             fail("Default variant should not be possible to be removed");
         } catch (IllegalStateException e) {
             removeSucceeded = false;

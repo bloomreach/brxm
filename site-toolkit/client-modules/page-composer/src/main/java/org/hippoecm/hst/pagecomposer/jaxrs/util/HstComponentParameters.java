@@ -28,6 +28,7 @@ import javax.jcr.Value;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,10 +42,12 @@ public class HstComponentParameters {
     private static final Logger log = LoggerFactory.getLogger(HstComponentParameters.class);
 
     private final Node node;
+    private final HstManager hstManager;
     private final Map<String, Map<String, String>> prefixedParameters;
 
-    public HstComponentParameters(Node node) throws RepositoryException {
+    public HstComponentParameters(Node node, HstManager hstManager) throws RepositoryException {
         this.node = node;
+        this.hstManager = hstManager;
         prefixedParameters = new HashMap<String, Map<String, String>>();
         initialize();
     }
@@ -214,7 +217,9 @@ public class HstComponentParameters {
             node.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, names.toArray(new String[names.size()]));
             node.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, values.toArray(new String[values.size()]));
         }
-
+        if (hstManager != null) {
+            hstManager.invalidatePendingHstConfigChanges(node.getSession());
+        }
         node.getSession().save();
     }
 
