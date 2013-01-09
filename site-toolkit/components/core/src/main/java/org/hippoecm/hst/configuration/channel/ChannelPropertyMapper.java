@@ -208,7 +208,6 @@ public class ChannelPropertyMapper {
             case DOUBLE:
                 return value.getDouble();
             case INTEGER:
-                return value.getLong();
             case LONG:
                 return value.getLong();
             default:
