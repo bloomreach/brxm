@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2012 Hippo.
+  Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>15</version>
+    <version>16-SNAPSHOT</version>
   </parent>
 
   <name>Repository</name>
@@ -121,6 +121,25 @@
           <systemPropertyVariables>
             <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
           </systemPropertyVariables>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.rat</groupId>
+        <artifactId>apache-rat-plugin</artifactId>
+        <configuration>
+          <excludes combine.children="append">
+            <exclude>**/datanucleus.log</exclude>
+            <exclude>connector/src/main/java/org/apache/jackrabbit/jcr2spi/state/HippoSessionItemStateManager.java</exclude>
+            <exclude>engine/src/main/java/org/apache/jackrabbit/core/ForkedXASessionImpl.java</exclude>
+            <exclude>engine/src/main/java/org/apache/jackrabbit/core/persistence/mem/InMemBundlePersistenceManager.java</exclude>
+            <exclude>engine/src/main/java/org/apache/jackrabbit/core/state/ForkedXAItemStateManager.java</exclude>
+            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedDerbyPersistenceManager.java</exclude>
+            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedOracle9PersistenceManager.java</exclude>
+            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedOraclePersistenceManager.java</exclude>
+            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMSSqlPersistenceManager.java</exclude>
+            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMySqlPersistenceManager.java</exclude>
+            <exclude>utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java</exclude>
+          </excludes>
         </configuration>
       </plugin>
     </plugins>
