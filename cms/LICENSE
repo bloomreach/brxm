@@ -662,18 +662,7 @@ gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQu
 
 
 =======================================================================================================================================
-For the ImageInfo (api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java) it is licensed for the Public Domain
+For the component (ImageInfo)  is licensed for the Public Domain
 =======================================================================================================================================
 
-/*
- * ImageInfo.java
- *
- * Version 1.9
- *
- * A Java class to determine image width, height and color depth for
- * a number of image file formats.
- *
- * Written by Marco Schmidt
- *
- * Contributed to the Public Domain.
- */
+api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java
