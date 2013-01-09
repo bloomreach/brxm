@@ -1055,6 +1055,7 @@
             </executions>
             <configuration>
               <addDefaultLicenseMatchers>false</addDefaultLicenseMatchers>
+              <excludeSubProjects>false</excludeSubProjects>
               <licenses>
                 <license implementation="org.apache.rat.analysis.license.AppliedApacheSoftwareLicense20">
                   <copyrightOwner>Hippo B\.V\. \(http://www\.onehippo\.com\)</copyrightOwner>
@@ -1063,6 +1064,7 @@
               <excludes>
                 <exclude>**/log4j.dtd</exclude>
                 <exclude>**/MANIFEST.MF</exclude>
+                <exclude>**/*.iml</exclude>
                 <exclude>**/*.json</exclude>
               </excludes>
             </configuration>
