@@ -41,12 +41,14 @@
             this.resources = data.resources;
 
             var pageOnHostMessage = function() {
-                var func = arguments[0];
-                var scope = arguments[1];
-                var single = arguments[2];
-                var msg = arguments[3];
+                var func, scope, single, msg;
+                func = arguments[0];
+                scope = arguments[1];
+                single = arguments[2];
+                msg = arguments[3];
 
                 onhostmessage(function() {
+                    var value;
                     try {
                         if (typeof Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['pre'+msg] === 'function') {
                             Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['pre'+msg]();
@@ -54,7 +56,7 @@
                     } catch (exception) {
                         console.log('Error calling pre-hostmessage handler. '+exception);
                     }
-                    var value = func.apply(scope, arguments);
+                    value = func.apply(scope, arguments);
                     try {
                         if (typeof Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['post'+msg] === 'function') {
                             Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['post'+msg](value);
