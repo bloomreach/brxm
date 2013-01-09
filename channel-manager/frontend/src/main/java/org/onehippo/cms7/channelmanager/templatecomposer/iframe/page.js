@@ -53,16 +53,16 @@
                         if (typeof Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['pre'+msg] === 'function') {
                             Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['pre'+msg]();
                         }
-                    } catch (exception) {
-                        console.log('Error calling pre-hostmessage handler. '+exception);
+                    } catch (preCallHandlerException) {
+                        console.log('Error calling pre-hostmessage handler. '+preCallHandlerException);
                     }
                     value = func.apply(scope, arguments);
                     try {
                         if (typeof Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['post'+msg] === 'function') {
                             Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['post'+msg](value);
                         }
-                    } catch (exception) {
-                        console.log('Error calling post-hostmessage handler. '+exception);
+                    } catch (postCallHandlerException) {
+                        console.log('Error calling post-hostmessage handler. '+postCallHandlerException);
                     }
                     return value;
                 }, scope, single, msg);
