@@ -50,6 +50,7 @@ Hippo.Reports.BrokenLinksListPanel = Ext.extend(Hippo.Reports.Portlet, {
                 }
             }) : null,
             tbar:[{
+                xtype: 'tbtext',
                 text: self.updateText
             }],
             listeners: {
