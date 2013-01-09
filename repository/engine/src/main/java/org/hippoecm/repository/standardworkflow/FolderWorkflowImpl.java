@@ -898,16 +898,14 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             Node handle = folder.addNode(targetName, HippoNodeType.NT_HANDLE);
             handle.addMixin(HippoNodeType.NT_HARDHANDLE);
 
-            Node document = copyDocument(targetName, (arguments == null ? Collections.EMPTY_MAP : arguments), source, handle);
+            Node document = copyDocument(targetName, (arguments == null ? Collections.<String, String>emptyMap() : arguments), source, handle);
             renameChildDocument(handle);
 
             folder.save();
-            ((EmbedWorkflow)workflowContext.getWorkflowContext(null).getWorkflow("embedded", sourceFolder)).copyOver(folder, offspring, new Document(handle.getUUID()), arguments);
             return new Document(document.getUUID());
         } else {
             renameChildDocument(((HippoSession)folder.getSession()).copy(source, folder.getPath() + "/" + targetName));
             folder.save();
-            ((EmbedWorkflow)workflowContext.getWorkflowContext(null).getWorkflow("embedded", sourceFolder)).copyOver(folder, offspring, new Document(folder.getNode(targetName).getUUID()), arguments);
             return new Document(folder.getNode(targetName).getUUID());
         }
     }

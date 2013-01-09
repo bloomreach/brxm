@@ -122,8 +122,9 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         if (newName == null || newName.equals("")) {
             throw new WorkflowException("missing required name to copy document");
         }
-        if(publishedDocument == null && unpublishedDocument == null)
+        if(publishedDocument == null && unpublishedDocument == null) {
             throw new WorkflowException("cannot copy unsaved document");
+        }
 
         String folderWorkflowCategory = "embedded";
         RepositoryMap config = getWorkflowContext().getWorkflowConfiguration();
@@ -142,10 +143,12 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
         } else {
             Document folder = getWorkflowContext().getDocument("embedded", unpublishedDocument.getIdentity());
             Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, destination);
-            if(workflow instanceof EmbedWorkflow)
+            if(workflow instanceof EmbedWorkflow) {
                 ((EmbedWorkflow)workflow).copyTo(folder, unpublishedDocument, newName, null);
-            else
+            }
+            else {
                 throw new WorkflowException("cannot copy document which is not contained in a folder");
+            }
         }
     }
 
@@ -165,10 +168,12 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
             folderWorkflowCategory = (String) config.get("folder-workflow-category");
         }
         Workflow workflow = getWorkflowContext().getWorkflow(folderWorkflowCategory, folder);
-        if(workflow instanceof FolderWorkflow)
+        if(workflow instanceof FolderWorkflow) {
             ((FolderWorkflow)workflow).move(unpublishedDocument, destination, newName);
-        else
+        }
+        else {
             throw new WorkflowException("cannot move document which is not contained in a folder");
+        }
     }
 
     public void rename(String newName) throws MappingException, RemoteException, WorkflowException, RepositoryException {
@@ -193,8 +198,9 @@ public class FullReviewedActionsWorkflowImpl extends BasicReviewedActionsWorkflo
                 throw new WorkflowException("Document has already been published");
             }
         }
-        if(draftDocument != null)
+        if(draftDocument != null) {
             throw new WorkflowException("cannot publish document being edited");
+        }
         doPublish();
     }
 

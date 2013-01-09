@@ -19,13 +19,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
- * A workflow context class is make available to a workflow implementation (see WorkflowImpl@getWorkflowContext) to obtain additional
+ * A workflow context class is made available to a workflow implementation (see WorkflowImpl@getWorkflowContext) to obtain additional
  * information during the execution of a workflow step.
  */
 public interface WorkflowContext {
-    /**
-     * 
-     */
 
     /**
      * Obtains an alternative work-flow context, which has special behavior depending on the specification parameter passed.
@@ -41,7 +38,7 @@ public interface WorkflowContext {
     public WorkflowContext getWorkflowContext(Object specification) throws MappingException, RepositoryException;
 
     /**
-     * Obtains a Document implementation --a class which extends Document-- represeting the document stored as JCR nodes as
+     * Obtains a Document implementation --a class which extends Document-- representing the document stored as JCR nodes as
      * indicated by the identifier (implementation dependent on category, mostly a UUID or path) as specified by a configuration
      * indicated by the category
      * @param category defines the category to use as search query to find document definitions
@@ -83,7 +80,7 @@ public interface WorkflowContext {
      * Obtains the current workflow invocation (user) session.
      * Note that this doesn't have to be the first invocation session as workflows can be chained.
      * <p>
-     *   <b>Do not use this session to make any changes as it might interfer with the workflow invocation state itself.</b>
+     *   <b>Do not use this session to make any changes as it might interfere with the workflow invocation state itself.</b>
      * </p>
      * @return the invocation user session
      */

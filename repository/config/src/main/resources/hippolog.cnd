@@ -30,6 +30,7 @@
 - hippolog:eventReturnValue (string)
 - hippolog:eventDocument (string)
 - hippolog:handleUuid (string)
+- hippolog:interactionId (string)
 
 [hippolog:folder] > nt:base orderable
 - hippolog:enabled (boolean) // deprecated

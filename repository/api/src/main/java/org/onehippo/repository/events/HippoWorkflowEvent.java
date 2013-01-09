@@ -30,6 +30,7 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
     private static final String RETURN_VALUE = "returnValue";
     private static final String RETURN_TYPE = "returnType";
     private static final String ARGUMENTS = "arguments";
+    private static final String INTERACTION_ID = "interactionId";
 
     public HippoWorkflowEvent() {
         super("repository");
@@ -98,5 +99,13 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
 
     public T arguments(List<String> arguments) {
         return set(ARGUMENTS, new ArrayList<String>(arguments));
+    }
+
+    public String interactionId() {
+        return get(INTERACTION_ID);
+    }
+
+    public T interactionId(String interactionId) {
+        return set(INTERACTION_ID, interactionId);
     }
 }
