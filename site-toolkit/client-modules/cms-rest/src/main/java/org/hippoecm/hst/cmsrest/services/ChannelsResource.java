@@ -1,5 +1,5 @@
 /*
-*  Copyright 2012 Hippo.
+*  Copyright 2012 - 2013 Hippo.
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -39,14 +39,9 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 
     private static final Logger log = LoggerFactory.getLogger(ChannelsResource.class);
 
-	/* (non-Javadoc)
-	 * @see org.hippoecm.hst.rest.ChannelService#getChannels()
-	 */
 	@Override
 	public List<Channel> getChannels() throws ChannelException {
 		try {
-			// Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-
 			validate();
 	        return Collections.unmodifiableList(new ArrayList<Channel>(channelManager.getChannels().values()));
 		} catch (ResourceRequestValidationException rrve) {
@@ -65,14 +60,9 @@ public class ChannelsResource extends BaseResource implements ChannelService {
 		}
 	}
 
-	/* (non-Javadoc)
-     * @see org.hippoecm.hst.rest.ChannelService#save(Channel channel)
-     */
     @Override
     public void save(Channel channel) throws ChannelException {
         try {
-            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-
             validate();
             channelManager.save(channel);
         } catch (ResourceRequestValidationException rrve) {
@@ -95,8 +85,6 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     @Override
     public String persist(String blueprintId, Channel channel) throws ChannelException {
         try {
-            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-
             validate();
             return channelManager.persist(blueprintId, channel);
         } catch (ResourceRequestValidationException rrve) {
@@ -117,22 +105,14 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.hst.rest.ChannelService#getChannelPropertyDefinitions(String id)
-     */
     @Override
     public List<HstPropertyDefinitionInfo> getChannelPropertyDefinitions(String id) {
         return InformationObjectsBuilder.buildHstPropertyDefinitionInfos(channelManager.getPropertyDefinitions(id));
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.hst.rest.ChannelService#getChannel(String id)
-     */
     @Override
     public Channel getChannel(String id) throws ChannelException {
         try {
-            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-
             validate();
             return channelManager.getChannelById(id);
         } catch (ResourceRequestValidationException rrve) {
@@ -159,24 +139,16 @@ public class ChannelsResource extends BaseResource implements ChannelService {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.hst.rest.ChannelService#canUserModifyChannels()
-     */
     @Override
     public boolean canUserModifyChannels() {
         return channelManager.canUserModifyChannels();
     }
 
-    /* (non-Javadoc)
-     * @see org.hippoecm.hst.rest.ChannelService#getChannelInfoClassInfo(String id)
-     */
     @Override
     public ChannelInfoClassInfo getChannelInfoClassInfo(String id) throws ChannelException {
         ChannelInfoClassInfo channelInfoClassInfo = null;
 
         try {
-            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-
             validate();
             Class<? extends ChannelInfo> channelInfoClass = channelManager.getChannelInfoClass(id);
 
@@ -212,8 +184,6 @@ public class ChannelsResource extends BaseResource implements ChannelService {
     @Override
     public Properties getChannelResourceValues(String id, String language) throws ChannelException {
         try {
-            // Do required validations and throw @{link ResourceRequestValidationException} if there are violations
-
             validate();
             Channel channel = channelManager.getChannelById(id);
             return InformationObjectsBuilder.buildResourceBundleProperties(channelManager.getResourceBundle(channel, new Locale(language)));
