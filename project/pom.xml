@@ -699,6 +699,31 @@
                 <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
               </manifest>
             </archive>
+            <!-- copy/move (possible) L&N files as added/appended by maven-remote-resources-plugin
+                 under /WEB-INF/classes/META-INF/ as for war artifacts these should
+                 be provided under /META-INF/ instead
+            -->
+            <webResources>
+              <resource>
+                <directory>${project.build.directory}/classes/META-INF</directory>
+                <includes>
+                  <include>LICENSE</include>
+                  <include>NOTICE</include>
+                  <include>DEPENDENCIES</include>
+                </includes>
+                <targetPath>META-INF</targetPath>
+                <filtering>false</filtering>
+              </resource>
+            </webResources>
+            <!-- exclude (possible) L&N files added/appended by maven-remote-resources-plugin
+                 under /WEB-INF/classes/META-INF/ as for war artifacts these should (see above)
+                 be provided under /META-INF/ instead
+            -->
+            <packagingExcludes>
+              WEB-INF/classes/META-INF/LICENSE,
+              WEB-INF/classes/META-INF/NOTICE,
+              WEB-INF/classes/META-INF/DEPENDENCIES
+            </packagingExcludes>
           </configuration>
         </plugin>
         <plugin>
