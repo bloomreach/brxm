@@ -194,7 +194,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         response.setHeader("Pragma", "no-cache");
         // FF3 bug: no-store shouldn't be necessary
         response.setHeader("Cache-Control", "no-store, no-cache, max-age=0, must-revalidate"); // no-store
-        response.setHeader("X-Frame-Options", "deny");
+        response.setHeader("X-Frame-Options", "sameorigin");
     }
 
     @Override
