@@ -27,6 +27,8 @@
   <description>Hippo CMS7 Commons</description>
   <packaging>jar</packaging>
 
+  <inceptionYear>2012</inceptionYear>
+
   <artifactId>hippo-cms7-commons</artifactId>
   <version>1.02.02-SNAPSHOT</version>
 
