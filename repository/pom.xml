@@ -29,7 +29,7 @@
   <version>2.24.02-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <inceptionYear>2010</inceptionYear>
+  <inceptionYear>2007</inceptionYear>
 
   <repositories>
     <repository>
