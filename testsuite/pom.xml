@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2011 Hippo
+  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -290,6 +290,32 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- copy of the Apache Solr admin webapp -->
+                <exclude>solr/src/main/webapp/index.jsp</exclude>
+                <exclude>solr/src/main/webapp/admin/**</exclude>
+                <exclude>solr/src/main/webapp/WEB-INF/solr/**</exclude>
+                <!-- covered by 3rd-party licenses in the LICENSE file -->
+                <exclude>components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml</exclude>
+                <exclude>resources/src/main/webapp/css/yui-2.8.1-reset-fonts-grids.css</exclude>
+                <!-- repository content XML -->
+                <exclude>content/src/main/resources/**/*.xml</exclude>
+              </excludes>
+            </configuration>
           </plugin>
         </plugins>
       </build>
