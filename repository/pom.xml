@@ -29,6 +29,8 @@
   <version>2.24.02-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <inceptionYear>2010</inceptionYear>
+
   <repositories>
     <repository>
       <id>hippo</id>
