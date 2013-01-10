@@ -53,6 +53,7 @@ public abstract class AbstractWorkflowDialog<T> extends AbstractDialog<T> {
             invoker.invokeWorkflow();
         } catch (Exception e) {
             log.error("Could not execute workflow.", e);
+            error(e);
         }
     }
 }
