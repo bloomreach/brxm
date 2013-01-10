@@ -248,16 +248,18 @@
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
+        <inherited>false</inherited>
         <configuration>
           <excludes combine.children="append">
-            <!-- ignore log files -->
-            <exclude>datanucleus.log</exclude>
-            <exclude>log4j.log</exclude>
-            <!-- ignore .properties file -->
-            <exclude>**/*.properties</exclude>
-            <!-- forked from Apache sources -->
+            <!-- forked from Apache Wicket sources -->
             <exclude>api/src/main/java/org/hippoecm/frontend/widgets/res/tree.css</exclude>
+            <!-- forked from Apache Tomcat sources -->
+            <exclude>engine/src/main/java/org/hippoecm/frontend/custom/ServerCookie.java</exclude>
+            <!-- external contributions -->
+            <exclude>gotolink/src/test/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPluginTest.java/</exclude>
+            <exclude>gotolink/src/test/java/org/hippoecm/frontend/plugins/gotolink/MyHomePage.java</exclude>
             <!-- covered by 3rd-party licenses in the LICENSE file -->
+            <exclude>api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/skin.css</exclude>
             <exclude>api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.css</exclude>
             <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.6.2.js</exclude>
             <exclude>jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.16.js</exclude>
@@ -277,6 +279,16 @@
             <exclude>richtext/resources/src/main/resources/xinha/XinhaCore.js</exclude>
             <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
             <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
+q            <!-- code templates -->
+            <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterTemplate.groovy</exclude>
+            <!-- no comments possible -->
+            <exclude>translation/frontend/flags.txt</exclude>
+            <exclude>gallery/frontend/src/main/java/META-INF/services/javax.imageio.spi.ImageWriterSpi</exclude>
+            <!-- repository content XML -->
+            <exclude>automatic-export/repository/src/test/resources/**/*.xml</exclude>
+            <exclude>brokenlinks/repository/src/main/resources/*.xml</exclude>
+            <exclude>translations/repository/src/main/resources/*.xml</exclude>
+            <exclude>workflow/repository/src/main/resources/*.xml</exclude>
           </excludes>
         </configuration>
       </plugin>
