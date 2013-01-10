@@ -126,30 +126,6 @@
           </systemPropertyVariables>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.apache.rat</groupId>
-        <artifactId>apache-rat-plugin</artifactId>
-        <inherited>false</inherited>
-        <configuration>
-          <excludes combine.children="append">
-            <!-- forked from Jackrabbit sources -->
-            <exclude>connector/src/main/java/org/apache/jackrabbit/jcr2spi/state/HippoSessionItemStateManager.java</exclude>
-            <exclude>engine/src/main/java/org/apache/jackrabbit/core/ForkedXASessionImpl.java</exclude>
-            <exclude>engine/src/main/java/org/apache/jackrabbit/core/persistence/mem/InMemBundlePersistenceManager.java</exclude>
-            <exclude>engine/src/main/java/org/apache/jackrabbit/core/state/ForkedXAItemStateManager.java</exclude>
-            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedDerbyPersistenceManager.java</exclude>
-            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedOracle9PersistenceManager.java</exclude>
-            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedOraclePersistenceManager.java</exclude>
-            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMSSqlPersistenceManager.java</exclude>
-            <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMySqlPersistenceManager.java</exclude>
-            <!-- copied from Maven sources -->
-            <exclude>utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java</exclude>
-            <!-- repository content XML -->
-            <exclude>engine/src/test/resources/export/*.xml</exclude>
-            <exclude>engine/src/test/resources/import/*.xml</exclude>
-          </excludes>
-        </configuration>
-      </plugin>
     </plugins>
 
     <pluginManagement>
@@ -384,5 +360,39 @@
 
     </dependencies>
   </dependencyManagement>
+
+  <profiles>
+    <profile>
+      <id>pedantic</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.rat</groupId>
+            <artifactId>apache-rat-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <excludes combine.children="append">
+                <!-- forked from Jackrabbit sources -->
+                <exclude>connector/src/main/java/org/apache/jackrabbit/jcr2spi/state/HippoSessionItemStateManager.java</exclude>
+                <exclude>engine/src/main/java/org/apache/jackrabbit/core/ForkedXASessionImpl.java</exclude>
+                <exclude>engine/src/main/java/org/apache/jackrabbit/core/persistence/mem/InMemBundlePersistenceManager.java</exclude>
+                <exclude>engine/src/main/java/org/apache/jackrabbit/core/state/ForkedXAItemStateManager.java</exclude>
+                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedDerbyPersistenceManager.java</exclude>
+                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedOracle9PersistenceManager.java</exclude>
+                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedOraclePersistenceManager.java</exclude>
+                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMSSqlPersistenceManager.java</exclude>
+                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMySqlPersistenceManager.java</exclude>
+                <!-- copied from Maven sources -->
+                <exclude>utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java</exclude>
+                <!-- repository content XML -->
+                <exclude>engine/src/test/resources/export/*.xml</exclude>
+                <exclude>engine/src/test/resources/import/*.xml</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
