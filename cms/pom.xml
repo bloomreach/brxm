@@ -26,6 +26,8 @@
   <artifactId>hippo-cms</artifactId>
   <version>2.24.01-SNAPSHOT</version>
 
+  <inceptionYear>2010</inceptionYear>
+
   <name>CMS</name>
   <description>Hippo CMS</description>
   <packaging>pom</packaging>
