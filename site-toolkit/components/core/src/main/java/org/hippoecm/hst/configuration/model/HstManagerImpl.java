@@ -339,8 +339,10 @@ public class HstManagerImpl implements MutableHstManager {
             return synchronousBuild();
         }
         if (allowStale && staleConfigurationSupported) {
+            VirtualHosts hudsonTest = virtualHosts;
             asynchronousBuild();
-            return virtualHosts;
+            System.out.println(hudsonTest == virtualHosts);
+            return hudsonTest;
         }
         return synchronousBuild();
     }
