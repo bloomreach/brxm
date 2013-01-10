@@ -13,7 +13,8 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -128,7 +129,7 @@
         <artifactId>apache-rat-plugin</artifactId>
         <configuration>
           <excludes combine.children="append">
-            <exclude>**/datanucleus.log</exclude>
+            <!-- forked from Jackrabbit sources -->
             <exclude>connector/src/main/java/org/apache/jackrabbit/jcr2spi/state/HippoSessionItemStateManager.java</exclude>
             <exclude>engine/src/main/java/org/apache/jackrabbit/core/ForkedXASessionImpl.java</exclude>
             <exclude>engine/src/main/java/org/apache/jackrabbit/core/persistence/mem/InMemBundlePersistenceManager.java</exclude>
@@ -138,7 +139,11 @@
             <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedOraclePersistenceManager.java</exclude>
             <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMSSqlPersistenceManager.java</exclude>
             <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMySqlPersistenceManager.java</exclude>
+            <!-- copied from Maven sources -->
             <exclude>utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java</exclude>
+            <!-- repository content XML -->
+            <exclude>engine/src/test/resources/export/*.xml</exclude>
+            <exclude>engine/src/test/resources/import/*.xml</exclude>
           </excludes>
         </configuration>
       </plugin>
