@@ -28,6 +28,7 @@
   <artifactId>hippo-packages</artifactId>
   <version>2.24.01-SNAPSHOT</version>
   <packaging>pom</packaging>
+  <inceptionYear>2008</inceptionYear>
 
   <scm>
     <connection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/packages/trunk/</connection>
