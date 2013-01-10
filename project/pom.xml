@@ -1072,7 +1072,7 @@
             <version>${maven.plugin.rat.version}</version>
             <executions>
               <execution>
-                <phase>verify</phase>
+                <phase>validate</phase>
                 <goals>
                   <goal>check</goal>
                 </goals>
