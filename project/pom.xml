@@ -1091,6 +1091,7 @@
                 <exclude>**/*.cnd</exclude>
                 <exclude>**/*.json</exclude>
                 <exclude>**/*.log</exclude>
+                <exclude>**/*.patch</exclude>
                 <exclude>**/*.properties</exclude>
                 <exclude>**/hippoecm-extension.xml</exclude>
                 <exclude>**/log4j.dtd</exclude>
