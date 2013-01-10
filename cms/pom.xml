@@ -279,7 +279,7 @@
             <exclude>richtext/resources/src/main/resources/xinha/XinhaCore.js</exclude>
             <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
             <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
-q            <!-- code templates -->
+            <!-- code templates -->
             <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterTemplate.groovy</exclude>
             <!-- no comments possible -->
             <exclude>translation/frontend/flags.txt</exclude>
