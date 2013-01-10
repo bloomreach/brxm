@@ -281,7 +281,9 @@
             <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
             <!-- code templates -->
             <exclude>perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterTemplate.groovy</exclude>
-            <!-- no comments possible -->
+            <!-- files in which apache-rat does not recognize the license header -->
+            <exclude>tools/eclipse/createlinks.bat</exclude>
+            <!-- files in which no comments are possible -->
             <exclude>translation/frontend/flags.txt</exclude>
             <exclude>gallery/frontend/src/main/java/META-INF/services/javax.imageio.spi.ImageWriterSpi</exclude>
             <!-- repository content XML -->
