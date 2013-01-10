@@ -1,4 +1,4 @@
 * text=auto !eol
-/LICENSE.txt svneol=native#text/plain
-/NOTICE.txt svneol=native#text/plain
+/LICENSE svneol=native#text/plain
+/NOTICE svneol=native#text/plain
 /pom.xml svneol=native#text/plain
