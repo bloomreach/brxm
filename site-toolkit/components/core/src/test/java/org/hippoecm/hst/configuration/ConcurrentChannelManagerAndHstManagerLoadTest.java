@@ -253,7 +253,7 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 		// load the model first ones to make sure async model is really async
 		hstManager.getVirtualHosts();
 		try {
-			final int synchronousJobCount = 5000;
+			final int synchronousJobCount = 1000;
 			for (int i = 0; i < synchronousJobCount; i++) {
 				String prevVal = "testVal"+counter;
 				counter++;
@@ -282,7 +282,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 
 				if (asyncHosts == syncHosts) {
 					// can happen in race condition explained above
-                    fail("HUDSON TEST ");
 				} else {
 					  assertTrue("The async model should be one version behind but this was not the case. the async model has a version with " +
 						"value '"+testPropOfAsyncLoadedHosts+"' and the expected value was '"+prevVal+"'",
