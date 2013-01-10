@@ -724,13 +724,20 @@
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
+        <inherited>false</inherited>
         <configuration>
           <excludes combine.children="append">
+            <!-- copied from Apache CXF 2.4.0 -->
             <exclude>client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/AbstractJsonpOutInterceptor.java</exclude>
             <exclude>client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/JsonpInInterceptor.java</exclude>
             <exclude>client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/JsonpPostStreamInterceptor.java</exclude>
             <exclude>client-modules/page-composer/src/main/java/org/hippoecm/hst/pagecomposer/jaxrs/cxf/provider/JsonpPreStreamInterceptor.java</exclude>
+            <!-- files in which no comments are possible -->
             <exclude>sandbox/WARNINGS</exclude>
+            <!-- repository content XML -->
+            <exclude>client-modules/page-composer/src/test/resources/**/*.xml</exclude>
+            <exclude>toolkit-resources/addon/repository/src/main/resources/**/*.xml</exclude>
+            <exclude>toolkit-resources/addon/unittestcontents/src/main/resources/**/*.xml</exclude>
           </excludes>
         </configuration>
       </plugin>
