@@ -129,6 +129,7 @@
       <plugin>
         <groupId>org.apache.rat</groupId>
         <artifactId>apache-rat-plugin</artifactId>
+        <inherited>false</inherited>
         <configuration>
           <excludes combine.children="append">
             <!-- forked from Jackrabbit sources -->
