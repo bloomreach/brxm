@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.BitSet;
 import java.util.HashMap;
 
+import org.apache.lucene.util.DocIdBitSet;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.junit.Test;
 
@@ -29,26 +30,26 @@ public class FacetedEngineCacheTest {
     public void testCacheMaximumSize() {
         FacetedEngineCache facetedEngineCache = new FacetedEngineCache(250, 500);
         for(int i = 0 ; i < 11000; i++) {
-            facetedEngineCache.putBitSet(String.valueOf(i), new BitSet());
+            facetedEngineCache.putDocIdSet(String.valueOf(i), new DocIdBitSet(new BitSet()));
             Object[] objs = new Object[1];
             objs[0] = new Object();
             facetedEngineCache.putFacetValueCountMap(new FacetedEngineCache.FECacheKey(objs), new HashMap<String, Count>());
         }
-        assertTrue("bitSetCache size should be 250 ",facetedEngineCache.bitSetCache.size() == 250);
-        assertTrue("facetValueCountMapCache size should be 500 ",facetedEngineCache.facetValueCountMapCache.size() == 500);
+        assertTrue("docIdSetCache size should be 250 ", facetedEngineCache.getDocIdSetCacheSize() == 250);
+        assertTrue("facetValueCountMapCache size should be 500 ", facetedEngineCache.getFacetValueCountMapCacheSize() == 500);
     }
     
     @Test
     public void testCacheMinimumSize() {
         // the cache size is at a minimum of 100, even if configured lower
         FacetedEngineCache facetedEngineCache = new FacetedEngineCache(90,90);for(int i = 0 ; i < 11000; i++) {
-            facetedEngineCache.putBitSet(String.valueOf(i), new BitSet());
+            facetedEngineCache.putDocIdSet(String.valueOf(i), new DocIdBitSet(new BitSet()));
             Object[] objs = new Object[1];
             objs[0] = new Object();
             facetedEngineCache.putFacetValueCountMap(new FacetedEngineCache.FECacheKey(objs), new HashMap<String, Count>());
         }
-        assertTrue("bitSetCache size should be 100 because 100 is minumum ",facetedEngineCache.bitSetCache.size() == 100);
-        assertTrue("facetValueCountMapCache size should be 100 because 100 is minumum ",facetedEngineCache.facetValueCountMapCache.size() == 100);
+        assertTrue("docIdSetCache size should be 100 because 100 is minumum ", facetedEngineCache.getDocIdSetCacheSize() == 100);
+        assertTrue("facetValueCountMapCache size should be 100 because 100 is minumum ", facetedEngineCache.getFacetValueCountMapCacheSize() == 100);
     }
     
 }

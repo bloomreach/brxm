@@ -25,13 +25,13 @@ public class FacetedEngineCacheManager {
     
     private volatile IndexReader cacheCreatedWithIndexReader = null;
     
-    public synchronized CacheAndSearcher getCacheAndSearcherInstance(IndexReader currentReader, int bitSetCacheSize, int facetValueCountMapCacheSize) {
+    public synchronized CacheAndSearcher getCacheAndSearcherInstance(IndexReader currentReader, int docIdSetCacheSize, int facetValueCountMapCacheSize) {
         if(cacheCreatedWithIndexReader == currentReader && cacheAndSearcher != null) {
             return cacheAndSearcher;
         }
         // the currentReader is not the same as the reader with which the cacheAndSearcher was created. Recreate it now 
         cacheCreatedWithIndexReader = currentReader;
-        FacetedEngineCache feCache = new FacetedEngineCache(bitSetCacheSize, facetValueCountMapCacheSize);
+        FacetedEngineCache feCache = new FacetedEngineCache(docIdSetCacheSize, facetValueCountMapCacheSize);
         cacheAndSearcher = new CacheAndSearcher(feCache, new IndexSearcher(currentReader));
         return cacheAndSearcher;
     }

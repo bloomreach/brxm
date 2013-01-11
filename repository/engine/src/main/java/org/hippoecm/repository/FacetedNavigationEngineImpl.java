@@ -25,6 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -60,6 +61,8 @@ import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.DocIdSet;
+import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
@@ -231,29 +234,41 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         }
     }
 
-    class BitSetFilter extends Filter {
-        private static final long serialVersionUID = 1L;
-        BitSet filter;
-        BitSetFilter(List<BitSet> bitSets, int size){
-            filter = new BitSet(size);
-            filter.flip(0, size);
-            for(BitSet bitSet : bitSets) {
-                filter.and(bitSet);
-            }
+    private static class DocIdSetFilter extends Filter {
+
+        private final SetDocIdSet docIdSet;
+        private BitSet bits;
+
+        private DocIdSetFilter(SetDocIdSet docIdSet) throws IOException {
+            this.docIdSet = docIdSet;
         }
+
         @Override
-        public BitSet bits(IndexReader reader) throws IOException {
-            return filter;
+        public BitSet bits(final IndexReader reader) throws IOException {
+            if (bits == null) {
+                bits = new BitSet();
+                final DocIdSetIterator iterator = docIdSet.iterator();
+                while (iterator.next()) {
+                    bits.set(iterator.doc());
+                }
+            }
+            return bits;
         }
-     }
+
+        @Override
+        public DocIdSet getDocIdSet(final IndexReader reader) throws IOException {
+            return docIdSet;
+        }
+
+    }
 
     /** The logger instance for this class */
     private static final Logger log = LoggerFactory.getLogger(FacetedNavigationEngine.class);
 
     private final FacetedEngineCacheManager facetedEngineCacheMngr = new FacetedEngineCacheManager();
 
-    private int bitSetCacheSize = 250;
     private int facetValueCountMapCacheSize = 250;
+    private int docIdSetCacheSize = 250;
 
     public FacetedNavigationEngineImpl() {
     }
@@ -290,15 +305,27 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
     /**
      * The facetedEngineCacheMngr property for the maximum number of cached BitSet's
+     * @deprecated
      */
     public void setBitSetCacheSize(int bitSetCacheSize) {
-        this.bitSetCacheSize = bitSetCacheSize;
+        this.docIdSetCacheSize = bitSetCacheSize;
     }
 
-    // although we do not need the getter ourselves, it is mandatory here because otherwise the setter is not called because
-    // of org.apache.commons.collections.BeanMap#keyIterator
+    /**
+     * although we do not need the getter ourselves, it is mandatory here because otherwise the setter is not called because
+     * of org.apache.commons.collections.BeanMap#keyIterator
+     * @deprecated
+     */
     public int getBitSetCacheSize() {
-        return bitSetCacheSize;
+        return docIdSetCacheSize;
+    }
+
+    public void setDocIdSetCacheSize(int docIdSetCacheSize) {
+        this.docIdSetCacheSize = docIdSetCacheSize;
+    }
+
+    public int getDocIdSetCacheSize() {
+        return docIdSetCacheSize;
     }
 
     /**
@@ -321,47 +348,27 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
         NamespaceMappings nsMappings = getNamespaceMappings();
 
-        BitSet matchingDocs = null;
-        FacetedEngineCache cache = null;
         IndexReader indexReader = null;
 
         try {
             indexReader = getIndex().getIndexReader();
 
-            CacheAndSearcher cacheAndSearcher = facetedEngineCacheMngr.getCacheAndSearcherInstance(indexReader, bitSetCacheSize, facetValueCountMapCacheSize);
+            CacheAndSearcher cacheAndSearcher = facetedEngineCacheMngr.getCacheAndSearcherInstance(indexReader, docIdSetCacheSize, facetValueCountMapCacheSize);
 
-            cache = cacheAndSearcher.getCache();
+            FacetedEngineCache cache = cacheAndSearcher.getCache();
             IndexSearcher searcher =  cacheAndSearcher.getSearcher();
 
-            List<BitSet> bitSetFilterList = new ArrayList<BitSet>();
-
-            /*
-             * facetsQuery: get the query for the facets that are asked for
-             */
             BooleanQuery facetsQuery = new FacetsQuery(facetsQueryList, nsMappings).getQuery();
+            SetDocIdSet matchingDocs = filterDocIdSet(facetsQuery, null, cache, indexReader);
 
-            addQueryAsBitSetToFilter(facetsQuery, bitSetFilterList, cache, indexReader);
-
-            /*
-             * facetRangeQuery : get the query for the ranges of facet values
-             */
             BooleanQuery facetRangeQuery = new FacetRangeQuery(rangeQuery, nsMappings, this).getQuery();
-
-            addQueryAsBitSetToFilter(facetRangeQuery, bitSetFilterList, cache, indexReader);
-
-
-            /*
-             * inheritedFilter: get the query representation of the interited filters (for example from facetselect)
-             */
+            matchingDocs = filterDocIdSet(facetRangeQuery, matchingDocs, cache, indexReader);
 
             BooleanQuery inheritedFilterQuery = new InheritedFilterQuery(inheritedFilter, nsMappings).getQuery();
-            addQueryAsBitSetToFilter(inheritedFilterQuery, bitSetFilterList, cache, indexReader);
+            matchingDocs = filterDocIdSet(inheritedFilterQuery, matchingDocs, cache, indexReader);
 
-            /*
-             * initialQuery: get the query for initialQuery. This is the hippo:docbase value. 
-             */
             org.apache.lucene.search.Query initialLuceneQuery = null;
-            if (initialQuery != null && !(initialQuery.scopes == null) && initialQuery.scopes.length > 0) {
+            if (initialQuery != null && initialQuery.scopes != null && initialQuery.scopes.length > 0) {
                 if(initialQuery.scopes.length == 1) {
                     initialLuceneQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_PATH, initialQuery.scopes[0]));
                 } else {
@@ -371,9 +378,8 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                     }
                 }
             }
-            
-            addQueryAsBitSetToFilter(initialLuceneQuery, bitSetFilterList, cache, indexReader);
-            
+            matchingDocs = filterDocIdSet(initialLuceneQuery, matchingDocs, cache, indexReader);
+
             FacetFiltersQuery facetFiltersQuery = null;
             if (initialQuery != null && initialQuery.facetFilters != null) {
                 facetFiltersQuery = new FacetFiltersQuery(initialQuery.facetFilters, nsMappings, this.getTextAnalyzer(), this.getSynonymProvider()); 
@@ -381,7 +387,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
             final BooleanQuery authorizationQuery = contextImpl.getAuthorizationQuery();
             if (authorizationQuery != null) {
-                addQueryAsBitSetToFilter(authorizationQuery, bitSetFilterList, cache, indexReader);
+                matchingDocs = filterDocIdSet(authorizationQuery, matchingDocs, cache, indexReader);
             }
 
             if (resultset != null) {
@@ -396,12 +402,12 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                    // Not a search involving scoring, thus compute bitsets for facetFiltersQuery & freeSearchInjectedSort
                   
                    if (facetFiltersQuery != null) {
-                       addQueryAsBitSetToFilter(facetFiltersQuery.getQuery(), bitSetFilterList, cache, indexReader);
+                       matchingDocs = filterDocIdSet(facetFiltersQuery.getQuery(), matchingDocs, cache, indexReader);
                    }
                    
                    if (openQuery != null) {
                        QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                       addQueryAsBitSetToFilter(queryAndSort.query, bitSetFilterList, cache, indexReader);
+                       matchingDocs = filterDocIdSet(queryAndSort.query, matchingDocs, cache, indexReader);
                    }
                     /*
                      * Nodes not having this facet, still should be counted if they are a hit
@@ -411,7 +417,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                     int numHits = 0;
                     if (hitsRequested.isFixedDrillPath()) {
                         // only in the case of the fixed drillpath we use the count where the facet does not need to exist
-                        numHits = new BitSetFilter(bitSetFilterList, indexReader.maxDoc()).bits(indexReader).cardinality();
+                        numHits = matchingDocs.cardinality();
                     }
 
                     ParsedFacet parsedFacet = null;
@@ -428,10 +434,8 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                     /*
                      * facetPropExists: the node must have the property as facet
                      */
-                    
-                    addQueryAsBitSetToFilter(new FacetPropExistsQuery(propertyName).getQuery(), bitSetFilterList, cache, indexReader);
-                   
-                    matchingDocs = new BitSetFilter(bitSetFilterList, indexReader.maxDoc()).bits(indexReader);
+
+                    matchingDocs = filterDocIdSet(new FacetPropExistsQuery(propertyName).getQuery(), matchingDocs, cache, indexReader);
                     
                     // this method populates the facetValueCountMap for the current facet
                     Object[] keyObjects = {matchingDocs,propertyName,parsedFacet};
@@ -460,15 +464,15 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                 if (!hitsRequested.isResultRequested()) {
                     // No search with SCORING involved, this everything can be done with BitSet's
                     if (facetFiltersQuery != null && facetFiltersQuery.getQuery().clauses().size() > 0) {
-                        addQueryAsBitSetToFilter(facetFiltersQuery.getQuery(), bitSetFilterList, cache, indexReader);
+                        matchingDocs = filterDocIdSet(facetFiltersQuery.getQuery(), matchingDocs, cache, indexReader);
                     }
                     
                     if (openQuery != null) {
-                        QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);                        
-                        addQueryAsBitSetToFilter(queryAndSort.query, bitSetFilterList, cache, indexReader);   
+                        QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
+                        matchingDocs = filterDocIdSet(queryAndSort.query, matchingDocs, cache, indexReader);
                     }
-                    
-                    int size = new BitSetFilter(bitSetFilterList, indexReader.maxDoc()).bits(indexReader).cardinality();
+
+                    int size = matchingDocs.cardinality();
                     return new ResultImpl(size, null);
                     
                 } else {
@@ -543,24 +547,24 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                      
                     if (sort == null) {
                         // when sort == null, use this search without search as is more efficient
-                        Filter filterToApply = new BitSetFilter(bitSetFilterList, indexReader.maxDoc());
+                        Filter filterToApply = new DocIdSetFilter(matchingDocs);
                         tfDocs = searcher.search(query, filterToApply, fetchTotal);
                     } else {
                         if(sortScoreAscending) {
                             // we need the entire searchQuery because scoring is involved
-                            Filter filterToApply = new BitSetFilter(bitSetFilterList, indexReader.maxDoc());
+                            Filter filterToApply = new DocIdSetFilter(matchingDocs);
                             tfDocs = searcher.search(query, filterToApply, fetchTotal, sort);
                         } else {
                             // because we have at least one explicit sort, scoring can be skipped. We can use cached bitsets combined with a match all query
                             if (facetFiltersQuery != null) {
-                                addQueryAsBitSetToFilter(facetFiltersQuery.getQuery(), bitSetFilterList, cache, indexReader);   
+                                matchingDocs = filterDocIdSet(facetFiltersQuery.getQuery(), matchingDocs, cache, indexReader);
                             }
                             if (openQuery != null) {
                                 QueryAndSort queryAndSort = openQuery.getLuceneQueryAndSort(contextImpl);
-                                addQueryAsBitSetToFilter(queryAndSort.query, bitSetFilterList, cache, indexReader);
+                                matchingDocs = filterDocIdSet(queryAndSort.query, matchingDocs, cache, indexReader);
                             }
-                            
-                            Filter filterToApply = new BitSetFilter(bitSetFilterList, indexReader.maxDoc());
+
+                            Filter filterToApply = new DocIdSetFilter(matchingDocs);
                             // set query to MatchAllDocsQuery because we have everything as filter now
                             query = new MatchAllDocsQuery();
                             tfDocs = searcher.search(query, filterToApply, fetchTotal, sort);
@@ -668,7 +672,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
     }
 
     private void populateFacetValueCountMap(String propertyName, ParsedFacet parsedFacet,
-            Map<String, Count> facetValueCountMap, BitSet matchingDocs, IndexReader indexReader) throws IOException {
+            Map<String, Count> facetValueCountMap, SetDocIdSet matchingDocs, IndexReader indexReader) throws IOException {
 
         long start = 0;
         if(log.isDebugEnabled()) {
@@ -714,7 +718,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
                                         }
                                         termDocs.seek(term);
                                         while (termDocs.next()) {
-                                            if (matchingDocs.get(termDocs.doc())) {
+                                            if (matchingDocs.contains(termDocs.doc())) {
                                                 counter.count++;
                                             }
                                         }
@@ -755,7 +759,7 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
                             termDocs.seek(term);
                             while (termDocs.next()) {
-                                if (matchingDocs.get(termDocs.doc())) {
+                                if (matchingDocs.contains(termDocs.doc())) {
                                     count++;
                                 }
                             }
@@ -784,37 +788,27 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
             log.debug("Populating the FacetValueCountMap took '{}' ms for  #'{}' facet values (in case of ranges, this is not the same as all unique facet values, but only the number of ranges) ", (System.currentTimeMillis() - start), facetValueCountMap.size());
         }
     }
-   
-    private void addQueryAsBitSetToFilter(org.apache.lucene.search.Query query, List<BitSet> bitSetFilterList,
-             FacetedEngineCache cache, IndexReader indexReader) throws IOException {
-         if(query == null) {
-             return;
-         }
-         
-         BitSet queryBitSet = null;
-         if(query instanceof BooleanQuery) {
-             if(((BooleanQuery)query).clauses().size() > 0) {
-                 String key = query.toString();
-                 queryBitSet = cache.getBitSet(key);
-                 if(queryBitSet == null) {
-                     Filter filter = new QueryWrapperFilter(query);
-                     queryBitSet = filter.bits(indexReader);
-                     cache.putBitSet(key, queryBitSet);
-                 } 
-             }
-         } else {
-             String key = query.toString();
-             queryBitSet = cache.getBitSet(key);
-             if(queryBitSet == null) {
-                 Filter filter = new QueryWrapperFilter(query);
-                 queryBitSet = filter.bits(indexReader);
-                 cache.putBitSet(key, queryBitSet);
-             } 
-         }
-         if(queryBitSet != null) {
-             bitSetFilterList.add(queryBitSet);
-         }
-     }
+
+    private SetDocIdSet filterDocIdSet(org.apache.lucene.search.Query query, SetDocIdSet docIdSet, FacetedEngineCache cache, IndexReader indexReader) throws IOException {
+        if (docIdSet != null && docIdSet.cardinality() == 0) {
+            return docIdSet;
+        }
+        if (!(query instanceof BooleanQuery) || ((BooleanQuery)query).clauses().size() > 0) {
+            String key = query.toString();
+            DocIdSet queryDocIdSet = cache.getDocIdSet(key);
+            if (queryDocIdSet == null) {
+                Filter filter = new QueryWrapperFilter(query);
+                queryDocIdSet = filter.getDocIdSet(indexReader);
+                cache.putDocIdSet(key, queryDocIdSet);
+            }
+            if (docIdSet == null) {
+                docIdSet = new SetDocIdSet(queryDocIdSet);
+            } else {
+                docIdSet = docIdSet.and(queryDocIdSet);
+            }
+        }
+        return docIdSet;
+    }
     
     /**
      * Creates a path with a single element out of the given <code>name</code>.
@@ -832,4 +826,85 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
             throw new InternalError();
         }
     }
+
+    private static class SetDocIdSet extends DocIdSet {
+
+        private final TreeSet<Integer> docIds = new TreeSet<Integer>();
+
+        private SetDocIdSet(DocIdSet docIdSet) throws IOException {
+            final DocIdSetIterator iterator = docIdSet.iterator();
+            while (iterator.next()) {
+                docIds.add(iterator.doc());
+            }
+        }
+
+        @Override
+        public DocIdSetIterator iterator() {
+            return new DocIdSetIterator() {
+
+                private final Iterator<Integer> docIdsIterator = docIds.iterator();
+                private int currentDocId = 0;
+
+                @Override
+                public int doc() {
+                    return currentDocId;
+                }
+
+                @Override
+                public boolean next() throws IOException {
+                    if (docIdsIterator.hasNext()) {
+                        currentDocId = docIdsIterator.next();
+                        return true;
+                    }
+                    return false;
+                }
+
+                @Override
+                public boolean skipTo(final int target) throws IOException {
+                    while (currentDocId < target) {
+                        if (!next()) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            };
+        }
+
+        private int cardinality() {
+            return docIds.size();
+        }
+
+        private SetDocIdSet and(final DocIdSet docIdSet) throws IOException {
+            final Set<Integer> andSet = new HashSet<Integer>();
+            for (DocIdSetIterator iter = docIdSet.iterator(); iter.next();) {
+                andSet.add(iter.doc());
+            }
+            for (Iterator<Integer> iter = docIds.iterator(); iter.hasNext();) {
+                if (!andSet.contains(iter.next())) {
+                    iter.remove();
+                }
+            }
+            return this;
+        }
+
+        private boolean contains(Integer doc) {
+            return docIds.contains(doc);
+        }
+
+        @Override
+        public int hashCode() {
+            return docIds.hashCode();
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof SetDocIdSet) {
+                SetDocIdSet other = (SetDocIdSet) obj;
+                return other.docIds.equals(docIds);
+            }
+            return false;
+        }
+    }
+
 }

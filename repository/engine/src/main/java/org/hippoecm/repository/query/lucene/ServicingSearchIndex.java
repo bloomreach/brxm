@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.jcr.ItemNotFoundException;
@@ -282,7 +281,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         if (configName == null) {
             return null;
         }
-        InputStream configInputStream = null;
+        InputStream configInputStream;
         if (configName.startsWith("file:/")) {
             configName = RepoUtils.stripFileProtocol(configName);
             File config = new File(configName);
@@ -505,8 +504,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 // transfer fields to doc if there are any
                 Fieldable[] fulltextFields = aDoc.getFieldables(FieldNames.FULLTEXT);
                 if (fulltextFields != null) {
-                    for (int k = 0; k < fulltextFields.length; k++) {
-                        doc.add(fulltextFields[k]);
+                    for (final Fieldable fulltextField : fulltextFields) {
+                        doc.add(fulltextField);
                     }
                 }
 

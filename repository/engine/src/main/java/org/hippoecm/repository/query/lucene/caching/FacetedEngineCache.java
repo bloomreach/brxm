@@ -16,12 +16,11 @@
 
 package org.hippoecm.repository.query.lucene.caching;
 
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
+import org.apache.lucene.search.DocIdSet;
 import org.hippoecm.repository.FacetedNavigationEngine.Count;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,135 +28,52 @@ import org.slf4j.LoggerFactory;
 public class FacetedEngineCache {
     
     private static final Logger log = LoggerFactory.getLogger(FacetedEngineCache.class);
-   
-    Map<String, BitSet> bitSetCache;
-    Map<FECacheKey, Map<String, Count>> facetValueCountMapCache;
+
+    private final Map<String, DocIdSet> docIdSetCache;
+    private final Map<FECacheKey, Map<String, Count>> facetValueCountMapCache;
     
-    long creationTime;
-    volatile long fvcMisses = 0L;
-    
-    volatile long fvcHits = 0L;
-    volatile long bitSetMisses = 0L;
-    volatile long bitSetHits = 0L;
-    
-    public FacetedEngineCache(int bitSetCacheSize, int facetValueCountMapCacheSize) {
-        creationTime = System.currentTimeMillis();
-        if (bitSetCacheSize < 100) {
-            log.warn("Minimum bitSetCache size is 100. Change size to 100");
-            bitSetCacheSize = 100;
+    public FacetedEngineCache(int docIdSetCacheSize, int facetValueCountMapCacheSize) {
+        if (docIdSetCacheSize < 100) {
+            log.warn("Minimum docIdSetCache size is 100. Change size to 100");
+            docIdSetCacheSize = 100;
         }
         if (facetValueCountMapCacheSize < 100) {
             log.warn("Minimum facetValueCountMapCache size is 100. Change size to 100");
             facetValueCountMapCacheSize = 100;
         }
-       
-        bitSetCache =  Collections.synchronizedMap(new LRUMap<String, BitSet>(100, bitSetCacheSize));
+
+        docIdSetCache =  Collections.synchronizedMap(new LRUMap<String, DocIdSet>(100, docIdSetCacheSize));
         facetValueCountMapCache = Collections.synchronizedMap(new LRUMap<FECacheKey, Map<String,Count>>(100, facetValueCountMapCacheSize));
     }
     
     public Map<String, Count> getFacetValueCountMap(FECacheKey key) {
-        Map<String, Count> val = facetValueCountMapCache.get(key);
-        if (val == null) {
-            fvcMisses++;
-        } else {
-            fvcHits++;
-        }
-        return val;
+        return facetValueCountMapCache.get(key);
     }
     
     public void putFacetValueCountMap(FECacheKey key, Map<String, Count> facetValueCountMap) {
         facetValueCountMapCache.put(key, facetValueCountMap);
     }
-    
-    
-    public BitSet getBitSet(String key){
-        BitSet val = bitSetCache.get(key);
-        if (val == null) {
-            bitSetMisses++;
-        } else {
-            bitSetHits++;
-        }
-        return val;
+
+    public DocIdSet getDocIdSet(String key) {
+        return docIdSetCache.get(key);
     }
-    
-    public void putBitSet(String key, BitSet bitSet){
-       bitSetCache.put(key, bitSet);
+
+    public void putDocIdSet(String key, DocIdSet docIdSet) {
+        docIdSetCache.put(key, docIdSet);
     }
-    
+
+    int getDocIdSetCacheSize() {
+        return docIdSetCache.size();
+    }
+
+    int getFacetValueCountMapCacheSize() {
+        return facetValueCountMapCache.size();
+    }
+
     void clear() {
-        bitSetCache.clear();
+        docIdSetCache.clear();
         facetValueCountMapCache.clear();
     }
-    
-    private long estimateMemoryInBytes(Map<FECacheKey, Map<String, Count>> cache) {
-        long start = System.currentTimeMillis();
-        long estimatedBytes = 0;
-        
-        for(Entry<FECacheKey, Map<String, Count>> entry : cache.entrySet()) {
-            // we ignore the objects in the FECacheKey objects array, as they are most likely also used for other keys. Only the object
-            // reference overhead and the array overheaad (12)
-            estimatedBytes += entry.getKey().objects.length * 8 + 12;
-            
-            for(Entry<String, Count> subentry : entry.getValue().entrySet()) {
-                // add the String overhead
-               int stringMemLenght = 8 * (int) ((((subentry.getKey().length()) * 2) + 45) / 8);
-               estimatedBytes += stringMemLenght;
-               // add the Count overhead: Object overhead 8 and int 4 bytes
-               estimatedBytes += 8 + 4;
-            }
-        }
-        log.info("Estimating the facetValueCountMap memory size took: " + (System.currentTimeMillis() - start) + " ms.");
-        return estimatedBytes;
-    }
-
-    /*
-     * A very rough estimate of the memory consumed by Map<String, BitSet>. The bitSetLength is the length of all the BitSet as they
-     * are all of equal length.
-     * 
-     * Note that most of object overhead is ignored. We just calculate a rough order of magnitude about size
-     */
-    private long estimateMemoryInBytes(Map<String, BitSet> cache, int bitSetLength) {
-        long start = System.currentTimeMillis();
-        // we estimate the BitSet size just equal to the lenght for the bitset: this might be bigger than bitSetLength because new BitSet(bitSetLength) 
-        // can create a bitset with more capacity. Therefore, we create a new BitSet(bitSetLength)
-        long estimatedBytes = (cache.size() * new BitSet(bitSetLength).size() / 8) ;
-        // add the BitSet object overhead
-        estimatedBytes +=   8 * cache.size();
-        // add the Entry overhead:
-        estimatedBytes +=   8 * cache.size();
-        
-        for(Entry<String, BitSet> entry : cache.entrySet()) {
-            // add the String overhead
-           int stringMemLenght = 8 * (int) ((((entry.getKey().length()) * 2) + 45) / 8);
-           estimatedBytes += stringMemLenght;
-        }
-        log.info("Estimating the BitSet memory size took: " + (System.currentTimeMillis() - start)  + " ms.");
-        return estimatedBytes;
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        
-        if(log.isDebugEnabled()) {
-            log.debug("Disposing old FacetedEngineCache");
-            if(bitSetCache.size() != 0) {
-                int maxDoc = bitSetCache.values().iterator().next().size();
-                long bitSetCacheSizeInBytes = estimateMemoryInBytes(bitSetCache, maxDoc); 
-                log.debug("Cache lived for {} seconds.", String.valueOf((System.currentTimeMillis() - creationTime)/1000) );
-                log.debug("Cache bitSetCache size = '{}'. Each BitSet has length '{}'",bitSetCache.size() ,maxDoc);
-                log.debug("Cache bitSetCache estimated memory consumption is '{} Kb', or '{} Mb'", (bitSetCacheSizeInBytes + 512)/1024, (bitSetCacheSizeInBytes + (1024 * 512) ) / (1024*1024));
-                log.debug("Cache bitSet stats: hits = '{}' , misses = '{}'. Hit percentage = "+ (bitSetHits * 100) / (bitSetHits + bitSetMisses) +"%", bitSetHits, bitSetMisses);
-            }
-            if(facetValueCountMapCache.size() != 0) {
-                long fvcSizeInBytes = estimateMemoryInBytes(facetValueCountMapCache); 
-                log.debug("Cache facetValueCountMapCache size = '{}'", facetValueCountMapCache.size());
-                log.debug("Cache facetValueCountMapCache estimated memory consumption is '{} Kb', or '{} Mb'", (fvcSizeInBytes + 512)/1024, (fvcSizeInBytes + (1024 * 512) )/(1024*1024));
-                log.debug("Cache facetValueCountMapCache stats: hits = '{}' , misses = '{}'. Hit percentage = "+ ( fvcHits * 100 ) / (fvcHits + fvcMisses) +"%", fvcHits, fvcMisses);
-            }
-        }    
-        
-    }
-    
     
     /**
      * An FECacheKey is a key that is constructed by any Object array. Two {@link FECacheKey} are equal if all the 
