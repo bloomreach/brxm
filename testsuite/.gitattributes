@@ -156,6 +156,7 @@ content/src/main/resources/hstconfiguration/demosite_test_many/pages.xml -text s
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemap.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/sitemenus.xml -text svneol=unset#text/plain
 content/src/main/resources/hstconfiguration/demosite_test_many/templates.xml -text svneol=unset#text/plain
+content/src/main/resources/resourcebundles.xml -text
 content/src/main/resources/security/configuser-read-everywhere.xml -text
 content/src/main/resources/security/group-liveusers.xml -text
 content/src/main/resources/security/group-previewusers.xml -text
@@ -262,6 +263,9 @@ resources/src/main/webapp/images/vorige.gif -text
 resources/src/main/webapp/javascript/inline-editing.js svneol=native#text/plain
 resources/src/main/webapp/javascript/simple-io.js -text
 site/pom.xml svneol=native#text/plain
+site/src/main/resources/org/onehippo/hst/demo/resources/MyProductResources.properties -text
+site/src/main/resources/org/onehippo/hst/demo/resources/MyProductResources_en.properties -text
+site/src/main/resources/org/onehippo/hst/demo/resources/MyProductResources_fr.properties -text
 site/src/main/webapp/META-INF/context.xml svneol=native#text/plain
 solr/pom.xml -text
 solr/src/main/java/org/hippoecm/hst/demo/servlet/SolrConfigContextListener.java -text

@@ -44,6 +44,7 @@ linear-algebra/.classpath
 linear-algebra/.project
 linear-algebra/.settings
 linear-algebra/target
+/node_modules
 random-numbers/*.iml
 random-numbers/.classpath
 random-numbers/.project

@@ -37,6 +37,15 @@
       <version>1.04.01-SNAPSHOT</version>
       <type>pom</type>
     </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-resourcebundle-cnd</artifactId>
+      <version>${hippo.hst.version}</version>
+      <type>jar</type>
+      <scope>runtime</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

@@ -61,7 +61,7 @@ Automatic Export
 To have your repository changes automatically exported to filesystem during local development, add to the 
 startup cmd: 
 
--Dhippoecm.export.dir = content/src/main/resources 
+-Dhippoecm.export.dir=content/src/main/resources 
 
 The automatic export can then be switch off/on through the /cms/console. By default it is switched on.
   
@@ -74,4 +74,4 @@ You may run the following command:
   
 Adding a debugger like Yourkit
 =============================
--Dcargo.jvm.args=" -Xmx200m -Xms200m -agentpath:/usr/local/yourkit/yjp-9.0.9/bin/linux-x86-64/libyjpagent.so"
+-Dcargo.jvm.args="-Xmx200m -Xms200m -agentpath:/usr/local/yourkit/yjp-9.0.9/bin/linux-x86-64/libyjpagent.so"

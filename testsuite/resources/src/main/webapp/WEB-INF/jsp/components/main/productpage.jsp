@@ -22,6 +22,28 @@
 
 <hst:defineObjects/>
 
+<%---------------------------------------------------------------------------------------------------------------------
+!!!!! HST ResourceBundle Examples !!!!!
+-----------------------------------------------------------------------------------------------------------------------
+  * Use one of the three following choices and read the explanation for each. 
+
+--%>
+  <%-- Option 1: Set resource bundle with <hst:setBundle/> with the basename
+                 by which a resource bundle is chosen from the repository. --%>
+    <hst:setBundle basename="org.onehippo.hst.demo.resources.ProductResources" />
+  <%-- Option 2: If the resource bundle by the basename is not found in the repository,
+                 it loads a resource bundle from the Java standard resource bundles by default
+                 This fallback option can be configured by 'fallbackToJavaResourceBundle' attribute though. --%>
+    <%--
+    <hst:setBundle basename="org.onehippo.hst.demo.resources.MyProductResources" />
+    --%>
+  <%-- Option 3: If you use the same resource bundle basename for all pages under a specific mount, then
+                 you can configure 'hst:defaultresourcebundleid = "org.onehippo.hst.demo.resources.ProductResources"' or
+                 'hst:defaultresourcebundleid = "org.onehippo.hst.demo.resources.MyProductResources"'.
+                 The former one is equivalent to the option 1, while the latter to the option 2.
+                 In this case, you don't have to put <hst:setBundle/> tag in each page. --%>
+<%---------------------------------------------------------------------------------------------------------------------%>
+
 <hst:headContribution keyHint="title"><title><c:out value="${document.title}" /></title></hst:headContribution>
 <hst:element name="script" var="yui3Elem">
   <hst:attribute name="type" value="text/javascript" />
@@ -37,7 +59,7 @@
   </p>
   
   <p>
-    Brand : 
+    <fmt:message key="brand" /> : 
     <c:out value="${document.brand}" />
     (
     View via 
@@ -49,7 +71,7 @@
     )
   </p>
   <p>
-    Product : 
+    <fmt:message key="product" /> : 
     <c:choose>
       <c:when test="${isPreview and not empty(hstRequest.userPrincipal)}">
         <input type='text' size='8' id='<hst:namespace/>product' value='<c:out value="${document.product}" />' />
@@ -65,7 +87,7 @@
     )
   </p>
   <p>
-    Type : 
+    <fmt:message key="type" /> : 
     <c:choose>
       <c:when test="${isPreview and not empty(hstRequest.userPrincipal)}">
         <input type='text' size='8' id='<hst:namespace/>type' value='<c:out value="${document.type}" />' />
@@ -76,7 +98,7 @@
     </c:choose>
   </p>
   <p>
-    Color : 
+    <fmt:message key="color" /> : 
     <c:choose>
       <c:when test="${isPreview and not empty(hstRequest.userPrincipal)}">
         <input type='text' size='8' id='<hst:namespace/>color' value='<c:out value="${document.color}" />' />
@@ -87,7 +109,7 @@
     </c:choose>
   </p>
   <p>
-    Price : 
+    <fmt:message key="price" /> : 
     <c:choose>
       <c:when test="${isPreview and not empty(hstRequest.userPrincipal)}">
         <input type='text' size='8' id='<hst:namespace/>price' value='<c:out value="${document.price}" />' />
@@ -98,7 +120,7 @@
     </c:choose>
   </p>
   <p>
-    Tags : 
+    <fmt:message key="tags" /> : 
     <c:choose>
       <c:when test="${isPreview and not empty(hstRequest.userPrincipal)}">
         <input id="<hst:namespace/>tags" 
@@ -114,7 +136,7 @@
 </form>
 
   <p>
-    Image:
+    <fmt:message key="image" />:
     <br/>
     <c:if test="${not empty document.image}">
       <a href="<hst:link hippobean="${document.image.original}"><hst:param name="t" value="<%=Long.toString(System.currentTimeMillis())%>"/></hst:link>" target="_blank">
