@@ -78,11 +78,6 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
 
     }
 
-    private List<Mount> mounts;
-    private VirtualHost testHost;
-    private MutableMount testMount1;
-    private MutableMount testMount2;
-
     public void setComponentManager(ComponentManager componentManager) {
         HstServices.setComponentManager(componentManager);
     }
