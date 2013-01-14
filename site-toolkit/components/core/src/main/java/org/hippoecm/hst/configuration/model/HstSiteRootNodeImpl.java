@@ -44,16 +44,15 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
         super(siteRootNode, parent, false);
         
         try {
-            if (getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH) != null) {
-                log.warn("'{}' is using deprecated property '{}'. This property is not used any more. Please remove this property and make " +
-                        "sure the hst:site has the same name as the hst:configuration node (minus the version info in that name)",
-                        siteRootNode.getPath(), HstNodeTypes.SITE_CONFIGURATIONPATH);
+            String configurationName = findConfigurationNameForSite();
+            if (configurationName == null) {
+                return;
             }
             if (getValueProvider().hasProperty(HstNodeTypes.SITE_VERSION)) {
                 version = getValueProvider().getLong(HstNodeTypes.SITE_VERSION).longValue();
             }
             
-            configurationPath = rootConfigurationsPath + "/" + findConfigurationNameForSite(this.getValueProvider().getName(), version);
+            configurationPath = rootConfigurationsPath + "/" + findConfigurationNameAndVersionForSite(configurationName, version);
 
             if(siteRootNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
                 Node contentNode = siteRootNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
@@ -88,17 +87,28 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
         
     }
 
-    
-    
-    private String findConfigurationNameForSite(final String name, final long version) {
-        String configurationName;
-        // if ends with -preview, we strip it off.
-        configurationName = StringUtils.substringBefore(name, "-preview");
-
-        if (version > -1) {
-            configurationName = configurationName+"-v"+version;
+    private String findConfigurationNameForSite() {
+        if (getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH) != null) {
+            String configuredPath = getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH);
+            String configurationName = StringUtils.substringAfterLast(configuredPath, "/");
+            if (configurationName.isEmpty()) {
+                log.warn("Invalid configuration path '{}' is used for '{}'.",
+                        getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH), getValueProvider().getPath());
+                return null;
+            }
+            return configurationName;
         }
-        return configurationName;
+        String configurationName = getValueProvider().getName();
+        return StringUtils.substringBefore(configurationName, "-preview");
+    }
+
+
+    private String findConfigurationNameAndVersionForSite(final String configurationName, final long version) {
+        String configurationNameAndVersion = configurationName;
+        if (version > -1) {
+            configurationNameAndVersion += ("-v"+version);
+        }
+        return configurationNameAndVersion;
     }
     
     @Override

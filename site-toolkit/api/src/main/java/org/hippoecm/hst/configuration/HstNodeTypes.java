@@ -163,7 +163,6 @@ public interface HstNodeTypes {
 
     static final String SITEMAPITEMHANDLDER_PROPERTY_CLASSNAME = "hst:sitemapitemhandlerclassname";
 
-    @Deprecated
     static final String SITE_CONFIGURATIONPATH = "hst:configurationpath";
     static final String SITE_VERSION = "hst:version";
     

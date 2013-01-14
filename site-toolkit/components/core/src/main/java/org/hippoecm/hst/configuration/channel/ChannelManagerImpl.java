@@ -645,9 +645,6 @@ public class ChannelManagerImpl implements MutableChannelManager {
             }
         }
 
-        // Create live and preview site nodes. We don't need to set the property 'hst:configurationpath', as the
-        // HST derives it by convention. If the site node in the blueprint contains an explicit configuration path,
-        // that property will be copied and used instead of the derived one.
         final Node sitesNode = configRoot.getNode(sites);
         final Node liveSiteNode = copyOrCreateSiteNode(blueprintNode, sitesNode, channelId, "live", contentRoot);
         final Node previewSiteNode = copyOrCreateSiteNode(blueprintNode, sitesNode, channelId + "-preview", "preview",
@@ -703,10 +700,12 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
             Node siteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
-                throw new ChannelException(
-                        "Blueprint '" + blueprintNode.getPath() + "' uses deprecated property '" + HstNodeTypes.SITE_CONFIGURATIONPATH + "'." +
-                                "Make sure the blueprint gets its own configuration prototype.");
-
+                String configurationPath = siteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
+                if (!session.nodeExists(configurationPath)) {
+                    throw new ChannelException(
+                            "Blueprint '" + blueprintNode.getPath() + "' does not have an hst:configuration node, and its hst:site node points to a non-existing node: '" + configurationPath + "'");
+                }
+                return configurationPath;
             }
         }
 
