@@ -20,6 +20,7 @@ import java.util.List;
 import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
+import org.apache.wicket.extensions.wizard.IWizardModel;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
@@ -53,6 +54,13 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
         this();
 
         setDefaultModel(model);
+    }
+
+    @Override
+    protected void init(final IWizardModel wizardModel) {
+        super.init(wizardModel);
+
+        getForm().get(FEEDBACK_ID).setOutputMarkupId(true);
     }
 
     /**
