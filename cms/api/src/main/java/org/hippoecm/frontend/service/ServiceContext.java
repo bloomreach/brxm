@@ -179,6 +179,8 @@ public class ServiceContext implements IPluginContext {
             }
         }
         services.clear();
+
+        upstream = null;
     }
 
 }
