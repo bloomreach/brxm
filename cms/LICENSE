@@ -200,25 +200,52 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-===============================================================================
+========================================================================================================================
 
 Hippo CMS includes a number of sub-components with separate copyright notices
 and license terms. Your use of the code for the these sub-components is subject
 to the terms and conditions of the following licenses.
 
-====================================================
-The following unmodified components are MIT Licensed
-====================================================
+========================================================================================================================
+The following unmodified components are licensed under the MIT License
+========================================================================================================================
 
     richtext/resources/src/external/xinha/plugins/PSServer/PSServer.js
 
         There is no explicit license text provided
         For general information about the MIT License: http://opensource.org/licenses/MIT
 
+------------------------------------------------------------------------------------------------------------------------
 
-=============================================================
-The following unmodified components are BSD 3-Clause Licensed
-=============================================================
+    jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.6.2.js
+    jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.16.js
+
+        Copyright 2013 jQuery Foundation and other contributors
+        http://jquery.com/
+
+        Permission is hereby granted, free of charge, to any person obtaining
+        a copy of this software and associated documentation files (the
+        "Software"), to deal in the Software without restriction, including
+        without limitation the rights to use, copy, modify, merge, publish,
+        distribute, sublicense, and/or sell copies of the Software, and to
+        permit persons to whom the Software is furnished to do so, subject to
+        the following conditions:
+
+        The above copyright notice and this permission notice shall be
+        included in all copies or substantial portions of the Software.
+
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+        EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+        MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+        NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+        LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+        OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+        WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+========================================================================================================================
+The following unmodified components are licensed under the BSD License
+========================================================================================================================
 
     richtext/resources/src/external/xinha/contrib/compress.php
     richtext/resources/src/external/xinha/contrib/compress_yui.php
@@ -263,7 +290,6 @@ The following unmodified components are BSD 3-Clause Licensed
     richtext/resources/src/external/xinha/plugins/ImageManager/ddt.php
     richtext/resources/src/external/xinha/plugins/ImageManager/ImageManager.js
     richtext/resources/src/external/xinha/plugins/ImageManager/image-picker.js
-    richtext/resources/src/external/xinha/plugins/InsertAnchor/InsertAnchor.js
     richtext/resources/src/external/xinha/plugins/InsertPagebreak/InsertPagebreak.js
     richtext/resources/src/external/xinha/plugins/InsertSmiley/InsertSmiley.js
     richtext/resources/src/external/xinha/plugins/InsertSnippet2/InsertSnippet2.js
@@ -304,7 +330,7 @@ The following unmodified components are BSD 3-Clause Licensed
     richtext/resources/src/main/resources/xinha/modules/InsertTable/insert_table.js
     richtext/resources/src/main/resources/xinha/modules/InternetExplorer/InternetExplorer.js
     richtext/resources/src/main/resources/xinha/plugins/AutoSave/AutoSave.js
-    richtext/resources/src/main/resources/xinha/plugins/InsertAnchor/InsertAnchor.js
+    richtext/resources/src/external/xinha/plugins/InsertAnchor/InsertAnchor.js
     richtext/resources/src/main/resources/xinha/plugins/UnFormat/UnFormat.js
     richtext/resources/src/main/resources/xinha/XinhaCore.js
     richtext/resources/src/external/xinha/plugins/ExtendedFileManager/assets/popup.js
@@ -398,10 +424,116 @@ The following unmodified components are BSD 3-Clause Licensed
         ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
         ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+------------------------------------------------------------------------------------------------------------------------
 
-===============================================================================================
+    gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriter.java
+    gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java
+    gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFEncoder.java
+    gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/DiffusionFilterOp.java
+    gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriteParam.java
+
+         Helma License version 2.0
+
+         Copyright (c) 1998-2008 Helma Project. All rights reserved.
+
+          | Redistribution and use in source and binary forms, with or without
+          | modification, are permitted provided that the following conditions
+          | are met:
+          |
+          | 1. Redistributions of source code must retain the above copyright
+          |    notice, this list of conditions and the following disclaimer.
+          |
+          | 2. Redistributions in binary form must reproduce the above copyright
+          |    notice, this list of conditions and the following disclaimer in
+          |    the documentation and/or other materials provided with the
+          |    distribution.
+          |
+          | 3. Products derived from this software may not be called "Helma"
+          |    or "Hop", nor may "Helma" or "Hop" appear in their name, without
+          |    prior written permission of the Helma Project Group. For written
+          |    permission, please contact helma@helma.org.
+          |
+          | THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED
+          | WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+          | OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+          | DISCLAIMED. IN NO EVENT SHALL THE HELMA PROJECT OR ITS
+          | CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+          | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+          | NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+          | LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+          | HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+          | STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+          | ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+          | OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+========================================================================================================================
+The following components are licensed under the BSD License
+========================================================================================================================
+
+        api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/skin.css
+
+            Copyright © 2013 Yahoo! Inc. All rights reserved.
+
+            Redistribution and use of this software in source and binary forms, with or without modification,
+            are permitted provided that the following conditions are met:
+
+                1. Redistributions of source code must retain the above copyright notice,
+                   this list of conditions and the following disclaimer.
+
+                2. Redistributions in binary form must reproduce the above copyright notice,
+                   this list of conditions and the following disclaimer in the documentation
+                   and/or other materials provided with the distribution.
+
+                3. Neither the name of Yahoo! Inc. nor the names of YUI's contributors may be used to endorse or promote
+                   products derived from this software without specific prior written permission of Yahoo! Inc.
+
+            THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+            INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+            ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+            INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+            SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+            ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+            ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------------------------------------------------------------------------------------------------------------------------
+
+    richtext/resources/src/main/resources/xinha/plugins/InsertAnchor/InsertAnchor.js
+
+        htmlArea License (based on BSD license)
+        Copyright (c) 2002-2004, interactivetools.com, inc.
+        Copyright (c) 2003-2004 dynarch.com
+        All rights reserved.
+
+        Redistribution and use in source and binary forms, with or without
+        modification, are permitted provided that the following conditions are met:
+
+        1) Redistributions of source code must retain the above copyright notice,
+           this list of conditions and the following disclaimer.
+
+        2) Redistributions in binary form must reproduce the above copyright notice,
+           this list of conditions and the following disclaimer in the documentation
+           and/or other materials provided with the distribution.
+
+        3) Neither the name of interactivetools.com, inc. nor the names of its
+           contributors may be used to endorse or promote products derived from this
+           software without specific prior written permission.
+
+        THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+        AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+        IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+        ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+        LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+        CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+        SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+        INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+        CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+        ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+        POSSIBILITY OF SUCH DAMAGE.
+
+========================================================================================================================
 The following components have the Creative Commons Attribution-ShareAlike 2.5 License Agreement
-===============================================================================================
+========================================================================================================================
 
     richtext/resources/src/external/xinha/images/tango
 
@@ -584,49 +716,10 @@ The following components have the Creative Commons Attribution-ShareAlike 2.5 Li
 
         Creative Commons may be contacted at http://creativecommons.org/.
 
-------------------------------------------------------------------------------------------------------------------------
 
-    gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriter.java
-    gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java
-
-         Helma License version 2.0
-
-         Copyright (c) 1998-2008 Helma Project. All rights reserved.
-
-          | Redistribution and use in source and binary forms, with or without
-          | modification, are permitted provided that the following conditions
-          | are met:
-          |
-          | 1. Redistributions of source code must retain the above copyright
-          |    notice, this list of conditions and the following disclaimer.
-          |
-          | 2. Redistributions in binary form must reproduce the above copyright
-          |    notice, this list of conditions and the following disclaimer in
-          |    the documentation and/or other materials provided with the
-          |    distribution.
-          |
-          | 3. Products derived from this software may not be called "Helma"
-          |    or "Hop", nor may "Helma" or "Hop" appear in their name, without
-          |    prior written permission of the Helma Project Group. For written
-          |    permission, please contact helma@helma.org.
-          |
-          | THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESSED OR IMPLIED
-          | WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
-          | OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-          | DISCLAIMED. IN NO EVENT SHALL THE HELMA PROJECT OR ITS
-          | CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-          | SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-          | NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-          | LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-          | HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-          | STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-          | ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-          | OF THE POSSIBILITY OF SUCH DAMAGE.
-
-
-===============================================================================
+========================================================================================================================
 The following components are licensed under the ImageMagick License
-===============================================================================
+========================================================================================================================
 
     gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQuantizer.java
 
@@ -752,8 +845,9 @@ The following components are licensed under the ImageMagick License
            liability.
 
 
-=======================================================================================================================================
-The following components are provided under the Public Domain
-=======================================================================================================================================
+========================================================================================================================
+The following components are provided for use for the Public Domain
+========================================================================================================================
+
     api/src/main/java/org/hippoecm/frontend/editor/plugins/resource/ImageInfo.java
     tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java
