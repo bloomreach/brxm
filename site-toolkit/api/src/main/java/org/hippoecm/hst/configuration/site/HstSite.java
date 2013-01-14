@@ -16,7 +16,6 @@
 package org.hippoecm.hst.configuration.site;
 
 import org.hippoecm.hst.configuration.components.HstComponentsConfiguration;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenusConfiguration;
