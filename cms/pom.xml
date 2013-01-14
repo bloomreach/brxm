@@ -631,7 +631,7 @@
                 <!-- forked from Apache Tomcat sources -->
                 <exclude>engine/src/main/java/org/hippoecm/frontend/custom/ServerCookie.java</exclude>
                 <!-- external contributions -->
-                <exclude>gotolink/src/test/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPluginTest.java/</exclude>
+                <exclude>gotolink/src/test/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPluginTest.java</exclude>
                 <exclude>gotolink/src/test/java/org/hippoecm/frontend/plugins/gotolink/MyHomePage.java</exclude>
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/ajax/res/skin.css</exclude>
