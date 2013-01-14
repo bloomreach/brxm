@@ -33,6 +33,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
+import org.hippoecm.hst.resourcebundle.ResourceBundleRegistry;
 import org.hippoecm.hst.util.DefaultKeyValue;
 import org.hippoecm.hst.util.KeyValue;
 import org.slf4j.Logger;
@@ -59,6 +60,7 @@ public abstract class AbstractValve implements Valve {
     protected HstSiteMenusManager siteMenusManager;
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected PageErrorHandler defaultPageErrorHandler;
+    protected ResourceBundleRegistry resourceBundleRegistry;
     
     protected boolean alwaysRedirectLocationToAbsoluteUrl = true;
     
@@ -157,7 +159,15 @@ public abstract class AbstractValve implements Valve {
     public void setDefaultPageErrorHandler(PageErrorHandler defaultPageErrorHandler) {
         this.defaultPageErrorHandler = defaultPageErrorHandler;
     }
-    
+
+    public ResourceBundleRegistry getResourceBundleRegistry() {
+        return resourceBundleRegistry;
+    }
+
+    public void setResourceBundleRegistry(ResourceBundleRegistry resourceBundleRegistry) {
+        this.resourceBundleRegistry = resourceBundleRegistry;
+    }
+
     public abstract void invoke(ValveContext context) throws ContainerException;
 
     public void initialize() throws ContainerException {

@@ -74,6 +74,14 @@ components/jaxrs/.project
 components/jaxrs/.settings
 components/jaxrs/hst-jaxrs.iml
 components/jaxrs/target
+components/resourcebundle-cnd/.classpath
+components/resourcebundle-cnd/.project
+components/resourcebundle-cnd/.settings
+components/resourcebundle-cnd/target
+components/resourcebundle/.classpath
+components/resourcebundle/.project
+components/resourcebundle/.settings
+components/resourcebundle/target
 components/rewriter/.classpath
 components/rewriter/.project
 components/rewriter/.settings

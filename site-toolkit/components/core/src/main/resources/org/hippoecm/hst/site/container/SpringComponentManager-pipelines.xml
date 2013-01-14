@@ -46,6 +46,7 @@
     <property name="siteMenusManager" ref="org.hippoecm.hst.core.sitemenu.HstSiteMenusManager" />
     <property name="hstQueryManagerFactory" ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
     <property name="defaultPageErrorHandler" ref="org.hippoecm.hst.core.container.PageErrorHandler" />
+    <property name="resourceBundleRegistry" ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry" />
   </bean>
 
   <!-- Pre-processing valves -->

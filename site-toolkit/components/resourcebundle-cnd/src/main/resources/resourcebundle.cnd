@@ -1,0 +1,15 @@
+<rep='internal'>
+<jcr='http://www.jcp.org/jcr/1.0'>
+<nt='http://www.jcp.org/jcr/nt/1.0'>
+<mix='http://www.jcp.org/jcr/mix/1.0'>
+<hippostd='http://www.onehippo.org/jcr/hippostd/nt/2.0'>
+<hippostdpubwf='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
+<hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
+<resourcebundle='http://www.hippoecm.org/hst/resourcebundle/nt/2.1'>
+
+[resourcebundle:resourcebundle] > hippo:document, hippostdpubwf:document orderable
+- resourcebundle:id (string) mandatory
+- resourcebundle:keys (string) multiple
+- resourcebundle:messages (string) multiple
+- * (string)
+- * (string) multiple

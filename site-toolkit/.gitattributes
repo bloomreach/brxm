@@ -242,6 +242,11 @@ api/src/main/java/org/hippoecm/hst/provider/ValueProvider.java svneol=native#tex
 api/src/main/java/org/hippoecm/hst/provider/jcr/JCRValueProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/provider/jcr/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/provider/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/resourcebundle/ResourceBundleFamily.java -text
+api/src/main/java/org/hippoecm/hst/resourcebundle/ResourceBundleRegistry.java -text
+api/src/main/java/org/hippoecm/hst/resourcebundle/internal/MutableResourceBundleFamily.java -text
+api/src/main/java/org/hippoecm/hst/resourcebundle/internal/MutableResourceBundleRegistry.java -text
+api/src/main/java/org/hippoecm/hst/resourcebundle/internal/ResourceBundleFamilyFactory.java -text
 api/src/main/java/org/hippoecm/hst/security/AuthenticationProvider.java -text
 api/src/main/java/org/hippoecm/hst/security/Role.java -text
 api/src/main/java/org/hippoecm/hst/security/User.java -text
@@ -358,6 +363,7 @@ client/src/main/java/org/hippoecm/hst/tag/HstTagSupport.java -text svneol=unset#
 client/src/main/java/org/hippoecm/hst/tag/NamespaceTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/tag/ParamContainerTag.java -text svneol=unset#text/plain
 client/src/main/java/org/hippoecm/hst/tag/ParamTag.java svneol=native#text/plain
+client/src/main/java/org/hippoecm/hst/tag/SetHstBundleTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/SetWrapperElementTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/SiteMapItemTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/utils/BeanUtils.java svneol=native#text/plain
@@ -408,6 +414,7 @@ commons/src/main/java/org/hippoecm/hst/core/sitemenu/EditableMenuItemImpl.java s
 commons/src/main/java/org/hippoecm/hst/diagnosis/DefaultTaskImpl.java -text
 commons/src/main/java/org/hippoecm/hst/diagnosis/HDC.java -text
 commons/src/main/java/org/hippoecm/hst/diagnosis/NOOPTaskImpl.java -text
+commons/src/main/java/org/hippoecm/hst/resourcebundle/ResourceBundleUtils.java -text
 commons/src/main/java/org/hippoecm/hst/security/HstSubject.java -text
 commons/src/main/java/org/hippoecm/hst/security/PolicyContextWrapper.java -text
 commons/src/main/java/org/hippoecm/hst/security/TransientRole.java -text
@@ -607,6 +614,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-pipelines.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-propscheck.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-request.xml svneol=native#text/plain
+components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-resourcebundle.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-search.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-security.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-sitemenu.xml svneol=native#text/plain
@@ -781,6 +789,24 @@ components/jaxrs/src/test/resources/testproject-namespace.xml svneol=native#text
 components/jaxrs/src/test/resources/testproject-products.xml -text
 components/jaxrs/src/test/resources/testproject-types.cnd -text
 components/pom.xml -text svneol=unset#text/plain
+components/resourcebundle-cnd/pom.xml -text
+components/resourcebundle-cnd/src/main/resources/hippoecm-extension.xml -text
+components/resourcebundle-cnd/src/main/resources/resourcebundle.cnd -text
+components/resourcebundle/pom.xml -text
+components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/PlaceHolderEmptyResourceBundleFamily.java -text
+components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/SimpleListResourceBundle.java -text
+components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/DefaultMutableResourceBundleFamily.java -text
+components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/DefaultMutableResourceBundleRegistry.java -text
+components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleEventListener.java -text
+components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleFamilyFactory.java -text
+components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/TestDefaultResourceBundleRegistry.java -text
+components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages.properties -text
+components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_en.properties -text
+components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_en_CA.properties -text
+components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_en_US.properties -text
+components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_fr.properties -text
+components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_fr_CA.properties -text
+components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_fr_FR.properties -text
 components/rewriter/pom.xml -text
 components/rewriter/src/main/java/org/hippoecm/hst/content/rewriter/impl/AbstractContentRewriter.java -text
 components/rewriter/src/main/java/org/hippoecm/hst/content/rewriter/impl/SimpleContentRewriter.java -text

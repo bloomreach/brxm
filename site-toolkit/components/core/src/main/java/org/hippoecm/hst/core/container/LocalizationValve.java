@@ -19,15 +19,21 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.jsp.jstl.core.Config;
+import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 
 import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.resourcebundle.ResourceBundleRegistry;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -81,6 +87,12 @@ public class LocalizationValve extends AbstractValve {
             servletRequest.setAttribute("javax.servlet.jsp.jstl.fmt.locale.request", preferredLocale);
         }
 
+        // if default resource bundle is found, then set it to request attribute.
+        ResourceBundle defaultResourceBundle = findDefaultResourceBundle(requestContext);
+        if (defaultResourceBundle != null) {
+            Config.set(servletRequest, Config.FMT_LOCALIZATION_CONTEXT, new LocalizationContext(defaultResourceBundle));
+        }
+
         // continue
         context.invokeNext();
     }
@@ -108,4 +120,37 @@ public class LocalizationValve extends AbstractValve {
         return null;
     }
 
+    protected ResourceBundle findDefaultResourceBundle(HstRequestContext requestContext) {
+        ResourceBundle bundle = null;
+
+        if (requestContext.getResolvedMount() != null) {
+            Mount mount = requestContext.getResolvedMount().getMount();
+            String defaultBundleId = mount.getProperty(ContainerConstants.HST_DEFAULT_RESOURCE_BUNDLE_ID);
+
+            if (StringUtils.isNotEmpty(defaultBundleId)) {
+                ResourceBundleRegistry bundleRegistry = getResourceBundleRegistry();
+                Locale locale = requestContext.getPreferredLocale();
+
+                try {
+                    if (bundleRegistry != null) {
+                        if (locale == null) {
+                            bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(defaultBundleId) : bundleRegistry.getBundle(defaultBundleId));
+                        } else {
+                            bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(defaultBundleId, locale) : bundleRegistry.getBundle(defaultBundleId, locale));
+                        }
+                    } else {
+                        if (locale == null) {
+                            bundle = ResourceBundle.getBundle(defaultBundleId, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
+                        } else {
+                            bundle = ResourceBundle.getBundle(defaultBundleId, locale, Thread.currentThread().getContextClassLoader());
+                        }
+                    }
+                } catch (MissingResourceException e) {
+                    log.warn("Resource bundle not found by the basename, '{}'. {}", defaultBundleId, e);
+                }
+            }
+        }
+
+        return bundle;
+    }
 }

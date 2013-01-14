@@ -773,6 +773,53 @@
       ]]></example>
   </tag>
 
+  <tag>
+    <description>
+      Loads a resource bundle and stores it in the named scoped variable or
+      the bundle configuration variable
+    </description>
+    <name>setBundle</name>
+    <tag-class>org.hippoecm.hst.tag.SetHstBundleTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <description>
+        Resource bundle base name. This is the bundle's fully-qualified resource name,
+        which has the same form as a fully-qualified class name, that is, it uses "."
+        as the package component separator and does not have any file type 
+        (such as ".class" or ".properties") suffix.
+      </description>
+      <name>basename</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+        Flag whether or not to fall back to the Java standard resource bundles
+        if no resource bundle is found from the HST ResourceBundleRegistry by the basename.
+      </description>
+      <name>fallbackToJavaResourceBundle</name>
+      <required>false</required>
+      <rtexprvalue>true</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+        Name of the exported scoped variable which stores the i18n localization context of
+        type javax.servlet.jsp.jstl.fmt.LocalizationContext.
+      </description>
+      <name>var</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description>
+        Scope of var or the localization context configuration variable.
+      </description>
+      <name>scope</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+  </tag>
+
   <function>
     <description>
       Tests if the property of the bean is a readable one
