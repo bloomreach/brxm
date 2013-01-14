@@ -551,15 +551,24 @@ public class MountService implements ContextualizableMount, MutableMount {
                 previewContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
             }
         }
-        // check whether there are child Mounts now for this Mount
-        
-        for(HstNode childMount : mount.getNodes()) {
-            if(HstNodeTypes.NODETYPE_HST_MOUNT.equals(childMount.getNodeTypeName())) {
-                MountService childMountService = new MountService(childMount, this, virtualHost, hstManager, port);
-                MutableMount prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
-                if(prevValue != null) {
-                    log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());
+
+        for (HstNode childMount : mount.getNodes()) {
+            if (HstNodeTypes.NODETYPE_HST_MOUNT.equals(childMount.getNodeTypeName())) {
+                try {
+                    MountService childMountService = new MountService(childMount, this, virtualHost, hstManager, port);
+                    MutableMount prevValue = this.childMountServices.put(childMountService.getName(), childMountService);
+                    if (prevValue != null) {
+                        log.warn("Duplicate child mount with same name below '{}'. The first one is overwritten and ignored.", mount.getValueProvider().getPath());
+                    }
+                } catch (ServiceException e) {
+                    String path = childMount.getValueProvider().getPath();
+                    if (log.isDebugEnabled()) {
+                        log.warn("Skipping incorrect mount for mount node '" + path + "'. ", e);
+                    } else {
+                        log.warn("Skipping incorrect mount for mount node '{}' because of '{}'. ", path, e.toString());
+                    }
                 }
+
             }
         }
 

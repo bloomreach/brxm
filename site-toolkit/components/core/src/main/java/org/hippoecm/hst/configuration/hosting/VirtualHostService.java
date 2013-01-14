@@ -249,15 +249,11 @@ public class VirtualHostService implements MutableVirtualHost {
                     MutablePortMount portMount = new PortMountService(mount, this);
                     attachPortMountToHost.portMounts.put(portMount.getPortNumber(), portMount);
                 } catch (ServiceException e) {
+                    String path = mountNode.getValueProvider().getPath();
                     if (log.isDebugEnabled()) {
-                        log.error("Skipping incorrect mount or port mount for mount node '"+mountNode.getValueProvider().getPath()+"'. " ,e);
+                        log.warn("Skipping incorrect mount or port mount for mount node '"+path+"'. " ,e);
                     } else {
-                        String path = mountNode.getValueProvider().getPath();
-                        String[] args = {path, e.toString(), path, path};
-                        log.warn("Skipping incorrect mount or port mount for mount node '{}' because of '{}'. " +
-                                "On next request, we will check the existence of the jcr node at '{}' : In clustered repository setup " +
-                                "it can happen that a jcr node is temporarily missing. If this warning keeps being logged, then check " +
-                                "whether there exists in the repository a configuration node at '{}'", args);
+                        log.warn("Skipping incorrect mount or port mount for mount node '{}' because of '{}'. ", path, e.toString());
                     }
                 }
             } else {

@@ -562,7 +562,7 @@ public class HstManagerImpl implements MutableHstManager {
         for (HstSiteRootNode hstSiteRootNode : siteRootNodes.values()) {
             if (!containsConfigurationRootNode(session, hstSiteRootNode)) {
                 HstNode configurationRootNode = tryLoadConfigurationForSite(session, hstSiteRootNode);
-                if (configurationRootNode == null) {
+                if (configurationRootNode == null || hstSiteRootNode.getConfigurationPath() == null) {
                     // the site really can't be loaded correctly. If it was loaded correctly before, then most
                     // likely we had jcr node changes in a clustered environment during model loading
                     String siteRootNodePath = hstSiteRootNode.getValueProvider().getPath();
@@ -592,7 +592,7 @@ public class HstManagerImpl implements MutableHstManager {
     private HstNode tryLoadConfigurationForSite(final Session session, final HstSiteRootNode hstSiteRootNode) throws RepositoryException {
         session.refresh(false);
         String configurationPath = hstSiteRootNode.getConfigurationPath();
-        if(session.nodeExists(configurationPath)) {
+        if(configurationPath != null && session.nodeExists(configurationPath)) {
             Node jcrNode = session.getNode(configurationPath);
             if (!jcrNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
                 log.warn("Hst configuration node at '{}' for site '{}' is not of correct type. Discarding this hst:site from the model now.", configurationPath, hstSiteRootNode.getValueProvider().getPath());
