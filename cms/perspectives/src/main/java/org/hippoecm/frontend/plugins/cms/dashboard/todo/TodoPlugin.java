@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.dashboard.todo;
 
+import java.io.Serializable;
 import java.util.Iterator;
 
 import javax.jcr.Node;
@@ -88,7 +89,7 @@ public class TodoPlugin extends RenderPlugin {
                 item.add(new BrowseLink(getPluginContext(), getPluginConfig(), "request", target,
                         new PropertyModel<String>(target, "name")));
 
-                Request request = new Request((Node)item.getModelObject(), this);
+                Request request = new Request(item.getModel(), this);
                 item.add(new Label("request-description", new PropertyModel(request, "localType")));
                 item.add(new Label("request-owner", new PropertyModel(request, "username")));
             } catch (RepositoryException e) {
@@ -97,18 +98,19 @@ public class TodoPlugin extends RenderPlugin {
         }
     }
 
-    private static class Request {
+    private static class Request implements Serializable {
 
-        private final Node node;
+        private final IModel<Node> nodeModel;
         private final Component container;
 
-        private Request(Node node, Component container) {
-            this.node = node;
+        private Request(IModel<Node> nodeModel, Component container) {
+            this.nodeModel = nodeModel;
             this.container = container;
         }
 
         public String getLocalType() {
             try {
+                Node node = nodeModel.getObject();
                 return new StringResourceModel(node.getProperty("hippostdpubwf:type").getString(), container, null).getString();
             } catch (RepositoryException ignored) {
             }
@@ -117,6 +119,7 @@ public class TodoPlugin extends RenderPlugin {
 
         public String getUsername() {
             try {
+                Node node = nodeModel.getObject();
                 return node.getProperty("hippostdpubwf:username").getString();
             } catch (RepositoryException ignored) {
             }
