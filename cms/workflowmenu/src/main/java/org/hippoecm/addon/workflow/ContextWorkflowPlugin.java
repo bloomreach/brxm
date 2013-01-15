@@ -15,13 +15,14 @@
  */
 package org.hippoecm.addon.workflow;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
+
 import javax.jcr.Node;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
-
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -31,8 +32,12 @@ public final class ContextWorkflowPlugin extends AbstractWorkflowPlugin {
 
     private static final long serialVersionUID = 1L;
 
+    private final IPluginContext pluginContext;
+
     public ContextWorkflowPlugin(IPluginContext context, IPluginConfig config) {
         super(new ServiceContext(context), config);
+        this.pluginContext = context;
+
         Component menu;
         add(menu = new Label("menu"));
         Component v;
@@ -45,10 +50,23 @@ public final class ContextWorkflowPlugin extends AbstractWorkflowPlugin {
     }
 
     @Override
+    protected void onInitialize() {
+        super.onInitialize();
+
+        final ServiceContext context = (ServiceContext) getPluginContext();
+        context.attachTo(pluginContext);
+    }
+
+    @Override
     protected void onRemove() {
         super.onRemove();
+
+        updateMenu(Collections.<Node>emptySet());
+
         final ServiceContext context = (ServiceContext) getPluginContext();
         context.stop();
+
+        setFlag(FLAG_INITIALIZED, false);
     }
 
     @Override
@@ -64,13 +82,18 @@ public final class ContextWorkflowPlugin extends AbstractWorkflowPlugin {
                 nodeSet.add(node);
             }
         }
+
+        updateMenu(nodeSet);
+    }
+
+    private void updateMenu(final Set<Node> nodeSet) {
         MenuHierarchy menu = buildMenu(nodeSet);
         menu.flatten();
         MenuDrop dropdown = new MenuDrop("menu", null, menu);
         addOrReplace(dropdown);
         dropdown.setVisible(true);
     }
-    
+
     @Override
     protected void onBeforeRender() {
         populate();

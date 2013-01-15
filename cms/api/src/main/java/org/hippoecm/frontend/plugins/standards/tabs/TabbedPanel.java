@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.wicket.AttributeModifier;
@@ -40,15 +41,14 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.list.ListItem;
-import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.Loop.LoopItem;
 import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.markup.repeater.AbstractRepeater;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.util.collections.ReadOnlyIterator;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
@@ -411,15 +411,17 @@ public class TabbedPanel extends WebMarkupContainer {
         return iconType;
     }
 
-    private static class CardView extends ListView<TabsPlugin.Tab> implements ICardView {
+    private static class CardView extends AbstractRepeater implements ICardView {
 
+        private final List<TabsPlugin.Tab> tabs;
         private Set<TabsPlugin.Tab> added = new HashSet<TabsPlugin.Tab>();
         private Set<TabsPlugin.Tab> removed = new HashSet<TabsPlugin.Tab>();
         private TabsPlugin.Tab selected;
         private int counter = 0;
 
         public CardView(final List<TabsPlugin.Tab> tabs) {
-            super("cards", tabs);
+            super("cards");
+            this.tabs = tabs;
             setRenderBodyOnly(true);
         }
 
@@ -440,12 +442,6 @@ public class TabbedPanel extends WebMarkupContainer {
             this.selected = tabbie;
         }
 
-        @Override
-        protected void populateItem(final ListItem<TabsPlugin.Tab> item) {
-            item.add(item.getModelObject().getPanel(TAB_PANEL_ID));
-            item.setOutputMarkupId(true);
-        }
-
         void removed(final TabsPlugin.Tab tabbie) {
             if (added.contains(tabbie)) {
                 added.remove(tabbie);
@@ -454,7 +450,6 @@ public class TabbedPanel extends WebMarkupContainer {
         }
 
         void addLast() {
-            List<TabsPlugin.Tab> tabs = getModelObject();
             TabsPlugin.Tab tabbie = tabs.get(tabs.size() - 1);
             if (removed.contains(tabbie)) {
                 removed.remove(tabbie);
@@ -463,17 +458,11 @@ public class TabbedPanel extends WebMarkupContainer {
         }
 
         void addFirst() {
-            List<TabsPlugin.Tab> tabs = getModelObject();
             TabsPlugin.Tab tabbie = tabs.get(0);
             if (removed.contains(tabbie)) {
                 removed.remove(tabbie);
             }
             added.add(tabbie);
-        }
-
-        @Override
-        protected ListItem<TabsPlugin.Tab> newItem(int index) {
-            return newItem(getModelObject().get(index));
         }
 
         protected ListItem<TabsPlugin.Tab> newItem(TabsPlugin.Tab tabbie) {
@@ -489,29 +478,65 @@ public class TabbedPanel extends WebMarkupContainer {
                             }
                         }
                     }, " "));
+
+                    add(getModelObject().getPanel(TAB_PANEL_ID));
+                    setOutputMarkupId(true);
                 }
+
             };
         }
 
         @Override
-        protected void onBeforeRender() {
-            super.onBeforeRender();
+        protected void onPopulate() {
+            if (!hasBeenRendered()) {
+                for (TabsPlugin.Tab tabbie : tabs) {
+                    add(newItem(tabbie));
+                }
+            } else {
+                Iterator<? extends Component> iterator = iterator();
+                while (iterator.hasNext()) {
+                    Component component = iterator.next();
+                    if (removed.contains(component.getDefaultModelObject())) {
+                        iterator.remove();
+                    }
+                }
+                removed.clear();
 
-            added.clear();
-            removed.clear();
+                for (TabsPlugin.Tab tabbie : added) {
+                    add(newItem(tabbie));
+                }
+                added.clear();
+            }
         }
 
         @Override
-        protected Iterator<Component> renderIterator() {
-            final Iterator<? extends ListItem<TabsPlugin.Tab>> upstream = iterator();
-            return new ReadOnlyIterator<Component>() {
+        protected Iterator<? extends Component> renderIterator() {
+            final Iterator<TabsPlugin.Tab> upstream = tabs.iterator();
+            return new Iterator<Component>() {
 
+                @Override
                 public boolean hasNext() {
                     return upstream.hasNext();
                 }
 
+                @Override
                 public Component next() {
-                    return upstream.next();
+                    final TabsPlugin.Tab tabbie = upstream.next();
+
+                    Iterator<? extends Component> iterator = iterator();
+                    while (iterator.hasNext()) {
+                        Component component = iterator.next();
+                        if (component.getDefaultModelObject() == tabbie) {
+                            return component;
+                        }
+                    }
+
+                    throw new NoSuchElementException();
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();
                 }
             };
         }
@@ -520,8 +545,6 @@ public class TabbedPanel extends WebMarkupContainer {
             for (TabsPlugin.Tab tabbie : added) {
                 ListItem<TabsPlugin.Tab> item = newItem(tabbie);
                 add(item);
-
-                populateItem(item);
 
                 target.prependJavascript(
                         "var element = document.createElement('div');" +

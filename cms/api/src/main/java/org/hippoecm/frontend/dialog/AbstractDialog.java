@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
@@ -489,10 +488,22 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         }
     }
 
+    /**
+     * Method that handles the submit to a form.
+     */
     protected void handleSubmit() {
         onOk();
         if (!hasError()) {
             closeDialog();
+        }
+    }
+
+    @Override
+    protected void delegateSubmit(final IFormSubmittingComponent submittingComponent) {
+        super.delegateSubmit(submittingComponent);
+
+        if (submittingComponent == null) {
+            handleSubmit();
         }
     }
 
@@ -502,10 +513,6 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         if (page != null) {
             if (fmm != null) {
                 fmm.reset();
-            }
-            IFormSubmittingComponent submitButton = findSubmittingButton();
-            if (submitButton == null) {
-                handleSubmit();
             }
         }
     }

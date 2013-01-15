@@ -259,6 +259,6 @@ public class FileUploadWidget extends Panel {
     public String hasFileSelectedScript() {
         return isFlashUpload() ?
                 "YAHOO.hippo.Upload.latest.hasFilesSelected()" :
-                "YAHOO.util.Dom.getElementsByClassName ('wicket-mfu-row', 'div', '" + getMarkupId() + "')).length > 0";
+                "YAHOO.util.Dom.getElementsByClassName('wicket-mfu-row', 'div', '" + getMarkupId() + "').length > 0";
     }
 }
