@@ -88,12 +88,11 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
     }
 
     private String findConfigurationNameForSite() {
-        if (getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH) != null) {
-            String configuredPath = getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH);
+        String configuredPath = getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH);
+        if (configuredPath != null) {
             String configurationName = StringUtils.substringAfterLast(configuredPath, "/");
             if (configurationName.isEmpty()) {
-                log.warn("Invalid configuration path '{}' is used for '{}'.",
-                        getValueProvider().getString(HstNodeTypes.SITE_CONFIGURATIONPATH), getValueProvider().getPath());
+                log.warn("Invalid configuration path '{}' is used for '{}'.", configuredPath, getValueProvider().getPath());
                 return null;
             }
             return configurationName;
