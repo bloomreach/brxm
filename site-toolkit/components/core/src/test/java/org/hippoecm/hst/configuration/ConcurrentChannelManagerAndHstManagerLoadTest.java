@@ -53,7 +53,10 @@ import static org.junit.Assert.fail;
 
 public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestConfigurations {
 
-	private HstManager hstManager;
+
+    private final static String TEST_PROP =  "ConcurrentChannelManagerAndHstManagerLoadTest.testProp";
+
+    private HstManager hstManager;
 	private ChannelManager channelManager;
 	private List<Session> sessionList = null;
 
@@ -240,8 +243,6 @@ public class ConcurrentChannelManagerAndHstManagerLoadTest extends AbstractTestC
 			fail(e.toString());
 		}
 	}
-
-	private final static String TEST_PROP =  "ConcurrentChannelManagerAndHstManagerLoadTest.testProp";
 
 	@Test
 	public void testHstManagerLoadingAfterConfigChanges() throws Exception {
