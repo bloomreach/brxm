@@ -52,7 +52,6 @@ import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -84,7 +83,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
     /**
      * The codec which is used for the channel ID
      */
-    private StringCodec channelIdCodec = new StringCodecFactory.UriEncoding();
+    private final StringCodec CHANNEL_ID_CODEC = new StringCodecFactory.UriEncoding();
 
     private List<ChannelManagerEventListener> channelManagerEventListeners = Collections.synchronizedList(
             new ArrayList<ChannelManagerEventListener>());
@@ -446,7 +445,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
             throw new ChannelException("Cannot create channel ID: channel name is blank");
         }
         try {
-            String channelId = channelIdCodec.encode(channelName);
+            String channelId = CHANNEL_ID_CODEC.encode(channelName);
             int retries = 0;
             Node channelsNode = session.getNode(channelsRoot);
             Node rootNode = session.getNode(rootPath);
@@ -459,7 +458,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 StringBuilder builder = new StringBuilder(channelName);
                 builder.append('-');
                 builder.append(retries);
-                channelId = channelIdCodec.encode(builder.toString());
+                channelId = CHANNEL_ID_CODEC.encode(builder.toString());
             }
 
             return channelId;
