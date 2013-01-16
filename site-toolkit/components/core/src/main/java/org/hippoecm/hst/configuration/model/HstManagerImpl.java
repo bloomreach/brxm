@@ -331,6 +331,7 @@ public class HstManagerImpl implements MutableHstManager {
         }
     }
 
+    @Override
     public VirtualHosts getVirtualHosts(boolean allowStale) throws ContainerException {
         if (state == BuilderState.UP2DATE) {
             return virtualHosts;
@@ -345,6 +346,7 @@ public class HstManagerImpl implements MutableHstManager {
         return synchronousBuild();
     }
 
+    @Override
     public VirtualHosts getVirtualHosts() throws ContainerException {
         return getVirtualHosts(false);
 
