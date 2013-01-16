@@ -18,6 +18,7 @@ package org.hippoecm.hst.site.container;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,22 +28,27 @@ import javax.jcr.LoginException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.configuration.AbstractFileConfiguration;
+import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.DefaultConfigurationBuilder;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.SystemConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.container.event.ComponentManagerBeforeReplacedEvent;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.util.ServletConfigUtils;
@@ -169,11 +175,17 @@ public class HstSiteConfigServlet extends HttpServlet {
     public static final String HST_CONFIGURATION_PARAM = "hst-configuration";
 
     public static final String HST_CONFIG_PROPERTIES_PARAM = "hst-config-properties";
-    
+
+    public static final String HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM = "hst-system-properties-override";
+
+    public static final String HST_CONFIG_ENV_PROPERTIES_PARAM = "hst-env-config-properties";
+
     private static final String HST_CONFIGURATION_XML = "hst-configuration.xml";
-    
+
     private static final String HST_CONFIG_PROPERTIES = "hst-config.properties";
-    
+
+    private static final String HST_CONFIG_ENV_PROPERTIES = "file://${catalina.base}/conf/hst.properties";
+
     private static final String HST_CONFIGURATION_REFRESH_DELAY_PARAM = "hst-config-refresh-delay";
     
     private static final String CHECK_REPOSITORIES_RUNNING_INIT_PARAM = "check.repositories.running";
@@ -197,12 +209,14 @@ public class HstSiteConfigServlet extends HttpServlet {
     protected boolean forecefulReinitialization;
     protected boolean checkRepositoriesRunning;
     protected boolean allRepositoriesAvailable;
-    
+
     protected Configuration configuration;
-    
-    private FileChangedReloadingStrategy configurationReloadingStrategy;
-    
+
     private long configurationRefreshDelay;
+
+    private boolean hstSystemPropertiesOverride = true;
+
+    private String hstConfigEnvProperties = HST_CONFIG_ENV_PROPERTIES;
 
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
@@ -233,41 +247,21 @@ public class HstSiteConfigServlet extends HttpServlet {
         if (!forecefulReinitialization && HstServices.isAvailable()) {
             return;
         }
-        // If it is not available or it is forceful re-initialization mode from the web app (like portal webapp)
-        // then the initialization will go on from here.
-        
-        this.configuration = getConfiguration(config);
-        
+
+        hstSystemPropertiesOverride = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM, "true"));
+        hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
+
         configurationRefreshDelay = NumberUtils.toLong(getConfigOrContextInitParameter(HST_CONFIGURATION_REFRESH_DELAY_PARAM, null), DEFAULT_CONFIGURATION_REFRESH_DELAY);
-        
-        if ((configurationRefreshDelay > 0L) && (this.configuration instanceof AbstractFileConfiguration)) {
-            configurationReloadingStrategy = new FileChangedReloadingStrategy() {
-                @Override
-                public void reloadingPerformed() {
-                    super.reloadingPerformed();
-                    log.warn("HstSiteConfigServlet is trying to reinitialize component manager on configuration change.");
-                    try {
-                        initializeComponentManager(config);
-                        log.warn("HstSiteConfigServlet has completed reinitializing component manager on configuration change.");
-                    } catch (Exception e) {
-                        log.error("HstSiteConfigServlet failed to reinitialize component manager on configuration change.", e);
-                    }
-                }
-            };
-            
-            configurationReloadingStrategy.setRefreshDelay(configurationRefreshDelay);
-            ((AbstractFileConfiguration) this.configuration).setReloadingStrategy(configurationReloadingStrategy);
-            log.info("HstSiteConfigServlet enables component manager reloading on configuration change with refreshing delay = {} ms", configurationRefreshDelay);
-            
-            destroyHstSiteConfigurationChangesCheckerThread();
-            hstSiteConfigurationChangesCheckerThread = new HstSiteConfigurationChangesChecker();
-            hstSiteConfigurationChangesCheckerThread.start();
+        this.configuration = getConfiguration(config);
+
+        if (configurationRefreshDelay > 0L) {
+            setUpFileConfigurationReloadingStrategies();
         }
-        
+
         if (this.configuration.containsKey(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM)) {
             assemblyOverridesConfigurations = this.configuration.getStringArray(ASSEMBLY_OVERRIDES_CONFIGURATIONS_PARAM);
         }
-        
+
         checkRepositoriesRunning = this.configuration.getBoolean(CHECK_REPOSITORIES_RUNNING_INIT_PARAM);
         
         if (!checkRepositoriesRunning) {
@@ -494,49 +488,122 @@ public class HstSiteConfigServlet extends HttpServlet {
      * @return Configuration containing all the params found in the system, jndi and the config file found
      * @throws ServletException thrown if file's cannot be found or configuration problems arise.
      */
-    protected Configuration getConfiguration(ServletConfig servletConfig) throws ServletException {
-        Configuration configuration = null;
-        DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
-
-        // check if we have an commons configuration xml config file
-        String hstConfigurationFilePath = getConfigOrContextInitParameter(HST_CONFIGURATION_PARAM, "/WEB-INF/" + HST_CONFIGURATION_XML);
-        
+    protected Configuration getConfiguration(final ServletConfig servletConfig) throws ServletException {
         try {
-            File hstConfigurationFile = getResourceFile(hstConfigurationFilePath);
-            
-            if (hstConfigurationFile != null && hstConfigurationFile.isFile()) {
-                builder.setFile(hstConfigurationFile);
-                configuration = builder.getConfiguration();
+            Configuration [] configs = loadFileConfigurations(servletConfig);
+            CompositeConfiguration configuration = new CompositeConfiguration();
 
-                log.info("Using HST Configuration File: {}", hstConfigurationFile.getCanonicalPath());
+            if (hstSystemPropertiesOverride) {
+                configuration.addConfiguration(new SystemConfiguration());
+                log.info("Adding System Properties to HST Configuration.");
+            }
+
+            for (Configuration config : configs) {
+                configuration.addConfiguration(config);
+            }
+
+            return configuration;
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
+
+    private void setUpFileConfigurationReloadingStrategies() {
+        boolean reloadingStrategySet = false;
+
+        int configSize = ((CompositeConfiguration) configuration).getNumberOfConfigurations();
+
+        for (int i = 0; i < configSize; i++) {
+            Configuration config = ((CompositeConfiguration) configuration).getConfiguration(i);
+
+            if (config instanceof AbstractFileConfiguration) {
+                ((AbstractFileConfiguration) config).setReloadingStrategy(new FileChangedReloadingStrategy() {
+                    @Override
+                    public void reloadingPerformed() {
+                        super.reloadingPerformed();
+                        log.warn("HstSiteConfigServlet is trying to reinitialize component manager on configuration change in {}.", getFile());
+                        try {
+                            initializeComponentManager(getServletConfig());
+                            log.warn("HstSiteConfigServlet has completed reinitializing component manager on configuration change in {}.", getFile());
+                        } catch (Exception e) {
+                            log.error("HstSiteConfigServlet failed to reinitialize component manager on configuration change in " + getFile(), e);
+                        }
+                    }
+                });
+
+                reloadingStrategySet = true;
+            }
+        }
+
+        if (reloadingStrategySet) {
+            log.info("HstSiteConfigServlet enables component manager reloading on configuration change with refreshing delay = {} ms", configurationRefreshDelay);
+            destroyHstSiteConfigurationChangesCheckerThread();
+            hstSiteConfigurationChangesCheckerThread = new HstSiteConfigurationChangesChecker();
+            hstSiteConfigurationChangesCheckerThread.start();
+        }
+    }
+
+    /**
+     * Loads all the file configurations.
+     * @return
+     * @throws ConfigurationException
+     */
+    protected Configuration [] loadFileConfigurations(final ServletConfig servletConfig) throws ConfigurationException {
+        List<Configuration> configs = new ArrayList<Configuration>();
+        ServletContext servletContext = servletConfig.getServletContext();
+
+        String fileParam = ServletConfigUtils.getInitParameter(null, servletContext, HST_CONFIGURATION_PARAM, null);
+
+        if (StringUtils.isNotBlank(fileParam)) {
+            Configuration config = loadConfigurationFromDefinitionXml(getResourceFile(fileParam, true));
+            if (config != null) {
+                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                configs.add(config);
+            }
+        } else {
+            fileParam = ServletConfigUtils.getInitParameter(null, servletContext, HST_CONFIG_PROPERTIES_PARAM, null);
+            Configuration config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
+            if (config != null) {
+                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                configs.add(config);
+            }
+        }
+
+        {
+            Configuration config = loadConfigurationFromProperties(getResourceFile(hstConfigEnvProperties, true));
+            if (config != null) {
+                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                configs.add(config);
+            }
+        }
+
+        fileParam = ServletConfigUtils.getInitParameter(servletConfig, null, HST_CONFIGURATION_PARAM, "/WEB-INF/" + HST_CONFIGURATION_XML);
+
+        if (StringUtils.isNotBlank(fileParam)) {
+            Configuration config = loadConfigurationFromDefinitionXml(getResourceFile(fileParam, true));
+            if (config != null) {
+                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                configs.add(config);
             } else {
-                // No xml config found, try the properties file alternative
-                log.debug("The file does not exist: {}", hstConfigurationFilePath);
-
-                String hstConfigPropFilePath = getConfigOrContextInitParameter(HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
-                File hstConfigPropFile = getResourceFile(hstConfigPropFilePath);
-                
-                if (hstConfigPropFile != null && hstConfigPropFile.isFile()) {
-                    configuration = new PropertiesConfiguration(hstConfigPropFile);
-
-                    log.info("Using HST Configuration Properties File: {}", hstConfigPropFile.getCanonicalPath());
-                } else {
-                    log.warn("The file does not exist: {}", hstConfigPropFilePath);
+                fileParam = ServletConfigUtils.getInitParameter(servletConfig, null, HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
+                config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
+                if (config != null) {
+                    log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                    configs.add(config);
                 }
             }
-        } catch (ConfigurationException e) {
-            throw new ServletException(e);
-        } catch (IOException e) {
-            throw new ServletException(e);
-        }
-        
-        if (configuration == null) {
-            configuration = new PropertiesConfiguration();
+        } else {
+            fileParam = ServletConfigUtils.getInitParameter(servletConfig, null, HST_CONFIG_PROPERTIES_PARAM, "/WEB-INF/" + HST_CONFIG_PROPERTIES);
+            Configuration config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
+            if (config != null) {
+                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                configs.add(config);
+            }
         }
 
-        return configuration;
+        return configs.toArray(new Configuration[configs.size()]);
     }
-    
+
     protected String getConfigOrContextInitParameter(String paramName, String defaultValue) {
         String value = ServletConfigUtils.getInitParameter(getServletConfig(), getServletConfig().getServletContext(), paramName, defaultValue);
         return (value != null ? value.trim() : null);
@@ -555,30 +622,96 @@ public class HstSiteConfigServlet extends HttpServlet {
      * @return
      */
     protected File getResourceFile(String resourcePath) {
-        File resourceFile = null;
-        
-        if (resourcePath != null) {
-            if (resourcePath.startsWith("file:")) {
-                resourceFile = new File(URI.create(resourcePath));
-            } else if (resourcePath.startsWith("/")) {
-                String realPath = null;
-                
-                try {
-                    realPath = getServletConfig().getServletContext().getRealPath(resourcePath);
-                } catch (Exception re) {
-                }
-                
-                if (realPath != null) {
-                    resourceFile = new File(realPath);
-                }
-            } else {
-                resourceFile = new File(resourcePath);
-            }
+        return getResourceFile(resourcePath, false);
+    }
+
+    /**
+     * Returns the physical resource file object with resolving system properties which are in the form "${var}"
+     * if <code>resolveSysProps</code> is true.
+     * <P>
+     * <UL>
+     * <LI>When the resourcePath starts with 'file:', it is assumed as an absolute file URI path.</LI>
+     * <LI>When the resourcePath starts with a leading slash ('/'), it is assumed as a servlet context relative path.</LI>
+     * <LI>When the resourcePath does not starts with 'file' nor with a leading slash ('/'), it is assumed as a relative path of the file system.</LI>  
+     * </UL>
+     * </P>
+     * @param resourcePath
+     * @param resolveSysProps
+     * @return
+     */
+    protected File getResourceFile(String resourcePath, boolean resolveSysProps) {
+        if (StringUtils.isBlank(resourcePath)) {
+            return null;
         }
-        
+
+        if (resolveSysProps) {
+            PropertyParser propParser = 
+                    new PropertyParser(System.getProperties(),
+                            PropertyParser.DEFAULT_PLACEHOLDER_PREFIX,
+                            PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX,
+                            PropertyParser.DEFAULT_VALUE_SEPARATOR,
+                            true);
+            resourcePath = (String) propParser.resolveProperty("resourceFile", StringUtils.trim(resourcePath));
+        }
+
+        File resourceFile = null;
+
+        if (resourcePath.startsWith("file:")) {
+            try {
+                resourceFile = new File(URI.create(resourcePath));
+            } catch (IllegalArgumentException e) {
+                log.warn("Invalid URI for file: {}", resourcePath);
+            } catch (Exception e) {
+                log.warn("Failed to create a file from URI: {}. {}", resourcePath, e);
+            }
+        } else if (resourcePath.startsWith("/")) {
+            String realPath = null;
+
+            try {
+                realPath = getServletConfig().getServletContext().getRealPath(resourcePath);
+            } catch (Exception re) {
+            }
+
+            if (realPath != null) {
+                resourceFile = new File(realPath);
+            }
+        } else {
+            resourceFile = new File(resourcePath);
+        }
+
         return resourceFile;
     }
-    
+
+    private Configuration loadConfigurationFromDefinitionXml(File file) {
+        if (file == null || !file.isFile()) {
+            return null;
+        }
+
+        try {
+            DefaultConfigurationBuilder builder = new DefaultConfigurationBuilder();
+            builder.setFile(file);
+            return builder.getConfiguration();
+        } catch (ConfigurationException e) {
+            log.warn("Configuration error from: " + file, e);
+        }
+
+        return null;
+    }
+
+    private Configuration loadConfigurationFromProperties(File file) {
+        if (file == null || !file.isFile()) {
+            return null;
+        }
+
+        try {
+            return new PropertiesConfiguration(file);
+        } catch (ConfigurationException e) {
+            log.warn("Configuration error from: " + file, e);
+        }
+
+        return null;
+    }
+
     private void destroyRepositoryAvailabilityCheckerThread() {
         try {
             if (repositoryAvailabilityCheckerThread != null) {
@@ -671,7 +804,7 @@ public class HstSiteConfigServlet extends HttpServlet {
                 
                 synchronized (this) {
                     try {
-                        wait(3000L);
+                        wait(configurationRefreshDelay);
                     } catch (InterruptedException e) {
                         if (this.stopped) {
                             break;
@@ -681,4 +814,6 @@ public class HstSiteConfigServlet extends HttpServlet {
             }
         }
     }
+
+    
 }
