@@ -94,7 +94,9 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
      */
     @Override
     public void augment(final MutableVirtualHosts hosts) throws ContainerException {
-
+        if (!validateState()) {
+            return;
+        }
         // first we try to find all the cmsLocations that need to be added.
         // for every host group, we fetch just virtualhost and ask for its cmsLocation: Although it is configured
         // on the hst:virtualhostgroup node, it is inherited in every virtualhost
