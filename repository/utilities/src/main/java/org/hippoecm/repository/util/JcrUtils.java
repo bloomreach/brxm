@@ -551,6 +551,25 @@ public class JcrUtils {
         return node instanceof HippoNode && ((HippoNode) node).isVirtual();
     }
 
+    /**
+     * Tries to get the path a {@link Node}
+     *
+     * <p>
+     * This method is mainly provided for convenience of usage, so a developer don't have to worry about exception
+     * handling in case it is not of interest
+     * </p>
+     *
+     * @param node - The {@link Node} of which we try to get its path
+     * @return The path of the {@link Node}, <code>null</code> if <code>node</code> is null or an exception happens
+     */
+    public static String getNodePath(final Node node) {
+        try {
+            return ((node == null) ? null : node.getPath());
+        } catch (RepositoryException repoex) {
+            return null;
+        }
+    }
+
     private static boolean isAutoCreatedNode(final String childName, Node parent) throws RepositoryException {
         for (NodeDefinition nodeDefinition : parent.getPrimaryNodeType().getChildNodeDefinitions()) {
             if (childName.equals(nodeDefinition.getName())) {
