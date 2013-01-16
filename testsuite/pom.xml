@@ -238,6 +238,13 @@
                     </properties>
                   </deployable>
                 </deployables>
+                <configfiles>
+                  <configfile>
+                    <file>${project.basedir}/conf/hst.properties</file>
+                    <todir>conf/</todir>
+                    <tofile>hst.properties</tofile>
+                  </configfile>
+                </configfiles>
               </configuration>
               <container>
                 <systemProperties>

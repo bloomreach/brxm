@@ -47,6 +47,11 @@
       <outputDirectory>/conf</outputDirectory>
       <destName>context.xml</destName>
     </file>
+    <file>
+      <source>conf/hst.properties</source>
+      <outputDirectory>/conf</outputDirectory>
+      <destName>hst.properties</destName>
+    </file>
   </files>
   <dependencySets>
     <dependencySet>

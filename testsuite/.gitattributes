@@ -108,6 +108,7 @@ components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePro
 components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.properties -text
 components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage_en.properties -text
 conf/context.xml -text
+conf/hst.properties -text
 conf/log4j.dtd -text
 conf/log4j.xml -text svneol=unset#text/plain
 content/pom.xml -text
