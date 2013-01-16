@@ -195,12 +195,11 @@ public class MountResource extends AbstractConfigResource {
     }
 
     private Node createPreviewConfigurationNode(final HstRequestContext requestContext) throws RepositoryException {
-        HstSite ctxEditingPreviewSite = getEditingPreviewMount(requestContext).getHstSite();
         HstSite ctxEditingLiveMountSite = getEditingLiveMount(requestContext).getHstSite();
         long liveVersion = ctxEditingLiveMountSite.getVersion();
         long newVersion = liveVersion + 1;
         String liveConfigurationPath = ctxEditingLiveMountSite.getConfigurationPath();
-        String newPreviewConfigurationPath = getNewPreviewConfigurationPath(ctxEditingLiveMountSite, newVersion, liveConfigurationPath);
+        String newPreviewConfigurationPath = getNewPreviewConfigurationPath(newVersion, liveConfigurationPath);
         Session session = requestContext.getSession();
 
         // cannot cast session from request context to HippoSession, hence, get it from jcr node first
@@ -283,11 +282,22 @@ public class MountResource extends AbstractConfigResource {
 
     }
 
-    private String getNewPreviewConfigurationPath(final HstSite ctxEditingLiveMountSite, final long newVersion, final String liveConfigurationPath) {
+    private String getNewPreviewConfigurationPath(final long newVersion, final String liveConfigurationPath) {
         StringBuilder newPreviewConfigurationPathBuilder = new StringBuilder();
         newPreviewConfigurationPathBuilder.append(StringUtils.substringBeforeLast(liveConfigurationPath, "/"));
-        newPreviewConfigurationPathBuilder.append("/").append(ctxEditingLiveMountSite.getName());
-        newPreviewConfigurationPathBuilder.append("-v").append(newVersion);
+        final String liveConfigurationNodeName = StringUtils.substringAfterLast(liveConfigurationPath, "/");
+        final String previewConfigurationNodeName;
+        if (newVersion == 0) {
+            // liveConfiguration name does not contain a version yet
+            previewConfigurationNodeName = liveConfigurationNodeName + "-v0";
+        } else {
+            String oldVersionPostfix = "-v"+(newVersion - 1);
+            if (liveConfigurationNodeName.indexOf(oldVersionPostfix) == -1) {
+                throw new IllegalStateException("Live configuration node '"+liveConfigurationNodeName+"' contains unexpected version.");
+            }
+            previewConfigurationNodeName = StringUtils.substringBefore(liveConfigurationNodeName, oldVersionPostfix) + "-v"+newVersion;
+        }
+        newPreviewConfigurationPathBuilder.append("/").append(previewConfigurationNodeName);
         return newPreviewConfigurationPathBuilder.toString();
     }
 
