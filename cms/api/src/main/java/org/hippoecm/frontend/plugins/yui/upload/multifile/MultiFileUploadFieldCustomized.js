@@ -118,7 +118,11 @@ function MultiSelector(eprefix, list_target, max, del_label) {
             element.onchange = function() {
 
                 if (element.multi_selector.submitAfterSelect) {
-                    element.multi_selector.form.submit();
+                    var form = element.multi_selector.form;
+                    if (form.hasAttribute('action')) {
+                        // the action should be the form url
+                        wicketSubmitForm(form, form.getAttribute('action'));
+                    }
                 } else {
                     // Workaround for issue CMS7-6415: IE8: Extra empty files...
                     if (YAHOO.env.ua.ie === '8') {

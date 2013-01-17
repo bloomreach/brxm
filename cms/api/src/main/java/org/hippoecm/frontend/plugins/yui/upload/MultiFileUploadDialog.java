@@ -18,15 +18,19 @@ package org.hippoecm.frontend.plugins.yui.upload;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IFormSubmittingComponent;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.protocol.http.WebApplication;
+import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.dialog.AbstractDialog;
@@ -199,6 +203,17 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         if (!widget.isFlashUpload()) {
             widget.onFinishHtmlUpload();
         }
+    }
+
+    @Override
+    public void process(IFormSubmittingComponent component) {
+        final WebRequest request = (WebRequest) RequestCycle.get().getRequest();
+        if (request.isAjax() && AjaxRequestTarget.get() == null) {
+            WebApplication app = (WebApplication) getComponent().getApplication();
+            AjaxRequestTarget target = app.newAjaxRequestTarget(getComponent().getPage());
+            RequestCycle.get().setRequestTarget(target);
+        }
+        super.process(component);
     }
 
     @Override
