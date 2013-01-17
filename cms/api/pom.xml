@@ -221,6 +221,7 @@
             Hippo,
             self,
             Wicket,
+            wicketSubmitForm,
             window,
             YAHOO
           </predefinedVars>

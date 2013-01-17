@@ -116,9 +116,10 @@ function MultiSelector(eprefix, list_target, max, del_label) {
 
             // What to do when a file is selected
             element.onchange = function() {
+                var form, filename;
 
                 if (element.multi_selector.submitAfterSelect) {
-                    var form = element.multi_selector.form;
+                    form = element.multi_selector.form;
                     if (form.hasAttribute('action')) {
                         // the action should be the form url
                         wicketSubmitForm(form, form.getAttribute('action'));
@@ -126,7 +127,7 @@ function MultiSelector(eprefix, list_target, max, del_label) {
                 } else {
                     // Workaround for issue CMS7-6415: IE8: Extra empty files...
                     if (YAHOO.env.ua.ie === '8') {
-                        var filename = this.multi_selector.parseFilename(this.value);
+                        filename = this.multi_selector.parseFilename(this.value);
                         if (filename === '' || YAHOO.lang.trim(filename) === '') {
                             return;
                         }
