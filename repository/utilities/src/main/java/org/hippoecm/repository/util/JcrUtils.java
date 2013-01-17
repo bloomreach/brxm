@@ -552,20 +552,20 @@ public class JcrUtils {
     }
 
     /**
-     * Tries to get the path a {@link Node}
+     * Get the path of a {@link Node}, or <code>null</code> if the path cannot be retrieved.
      *
      * <p>
-     * This method is mainly provided for convenience of usage, so a developer don't have to worry about exception
-     * handling in case it is not of interest
+     * This method is mainly provided for convenience of usage, so a developer does not have to worry about exception
+     * handling in case it is not of interest.
      * </p>
      *
-     * @param node - The {@link Node} of which we try to get its path
-     * @return The path of the {@link Node}, <code>null</code> if <code>node</code> is null or an exception happens
+     * @param node - The {@link Node} to get the path of
+     * @return The path of the {@link Node}, or <code>null</code> if <code>node</code> is null or an exception happens.
      */
     public static String getNodePath(final Node node) {
         try {
             return ((node == null) ? null : node.getPath());
-        } catch (RepositoryException repoex) {
+        } catch (RepositoryException ignored) {
             return null;
         }
     }
