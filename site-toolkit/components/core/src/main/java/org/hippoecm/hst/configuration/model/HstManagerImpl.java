@@ -318,7 +318,7 @@ public class HstManagerImpl implements MutableHstManager {
                 return;
             }
             state = BuilderState.SCHEDULED;
-            new Thread(new Runnable() {
+            Thread scheduled = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -327,7 +327,15 @@ public class HstManagerImpl implements MutableHstManager {
                         log.warn("Exception during building virtualhosts model. ", e);
                     }
                 }
-            }).start();
+            });
+            scheduled.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+                @Override
+                public void uncaughtException(final Thread t, final Throwable e) {
+                    log.warn("Runtime exception "+e.getClass().getName()+" during building asynchronous " +
+                            "HST model. Reason : " + e.getMessage(), e);
+                }
+            });
+            scheduled.start();
         }
     }
 
@@ -792,4 +800,5 @@ public class HstManagerImpl implements MutableHstManager {
             log.debug("--------- End relevant events ----------- ");
         }
     }
+
 }
