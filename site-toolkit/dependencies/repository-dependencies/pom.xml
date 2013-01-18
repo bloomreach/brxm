@@ -41,6 +41,12 @@
       <version>${project.version}</version>
     </dependency>
 
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-resourcebundle-cnd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
   </dependencies>
   
 </project>
