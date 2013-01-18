@@ -544,6 +544,16 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7.hst.components</groupId>
+        <artifactId>hst-resourcebundle</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.components</groupId>
+        <artifactId>hst-resourcebundle-cnd</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst.components</groupId>
         <artifactId>hst-rewriter</artifactId>
         <version>${hippo.hst.version}</version>
       </dependency>
