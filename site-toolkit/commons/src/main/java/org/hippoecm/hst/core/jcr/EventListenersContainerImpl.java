@@ -207,8 +207,17 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                     continue;
                 }
 
-                this.observationManager.addEventListener(eventListener, eventTypes, absolutePath, isDeep, uuids,
-                        nodeTypeNames, noLocal);
+                try {
+                    this.observationManager.addEventListener(eventListener, eventTypes, absolutePath, isDeep, uuids,
+                            nodeTypeNames, noLocal);
+                } catch (RepositoryException e) {
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to register event listener '" + eventListener + "': " + e, e);
+                    } else {
+                        log.warn("Failed to register event listener '" + eventListener + "': " + e);
+                    };
+                    continue;
+                }
                 
                 boolean itemExistsOnAbsolutePath = false;
                 
