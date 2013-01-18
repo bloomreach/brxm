@@ -217,7 +217,7 @@
     
     Hippo.Util.getElementPath = function(element) {
         var path = "", nodeString = "", node = element;
-        while (node.parentNode !== null && node.parentNode !== undefined) {
+        while (node.parentNode !== null) {
             nodeString = node.tagName;
             if (node.id) {
                 nodeString += "[id="+node.id+"]";

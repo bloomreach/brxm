@@ -83,10 +83,10 @@
 
             parentOverlay = $.isFunction(parent.getOverlay) ? parent.getOverlay() : document.body;
             overlay = $('<div/>').addClass(this.cls.overlay.base).appendTo(parentOverlay);
-            if (this.cls.overlay.mark !== null && this.cls.overlay.mark !== undefined) {
+            if (this.cls.overlay.mark !== null) {
                 overlay.addClass(this.cls.overlay.mark);
             }
-            if (this.cls.overlay.custom !== null && this.cls.overlay.mark !== undefined) {
+            if (this.cls.overlay.custom !== null) {
                 overlay.addClass(this.cls.overlay.custom);
             }
             if (this.el.attr(HST.ATTR.INHERITED)) {

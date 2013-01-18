@@ -53,7 +53,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                         if (record.get('type') === HST.CONTAINER) {
                             id = record.get('id');
                             el = frmDoc.getElementById(id + '-overlay');
-                            if (el !== null && el !== undefined && !frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
+                            if (el !== null && !frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
                                 box = Ext.Element.fly(el).getBox();
                                 self.boxs.push({record: record, box: box});
                             }

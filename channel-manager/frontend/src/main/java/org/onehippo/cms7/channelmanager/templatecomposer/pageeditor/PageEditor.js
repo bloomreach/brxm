@@ -741,7 +741,7 @@
                                 window.hide();
                             },
                             variantChange: function(id, variantId) {
-                                if (id !== null && id !== undefined) {
+                                if (id !== null) {
                                     this.selectVariant(id, variantId);
                                 }
                             },

@@ -22,7 +22,7 @@
 
         constructor: function(config, cache, oldContext, pageContainer) {
 
-            if (oldContext !== null && oldContext !== undefined) {
+            if (oldContext !== null) {
                 this.ids = {
                     pageUrl: oldContext.ids.pageUrl,
                     pageId: oldContext.ids.pageId,

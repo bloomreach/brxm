@@ -503,7 +503,7 @@
             this.selectedRecord = null;
 
             // disable old page context
-            if (this.pageContext !== null && this.pageContext !== undefined) {
+            if (this.pageContext !== null) {
                 this.pageContext.suspendEvents();
             }
 
