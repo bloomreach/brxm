@@ -523,6 +523,13 @@
         <version>${mail.version}</version>
         <scope>provided</scope>
       </dependency>
+      <!-- exclude geronimo-javamail via scope 'test', since it clashes with javax.mail -->
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-javamail_1.4_spec</artifactId>
+        <version>1.7.1</version>
+        <scope>test</scope>
+      </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
@@ -594,6 +601,10 @@
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.geronimo.specs</groupId>
+      <artifactId>geronimo-javamail_1.4_spec</artifactId>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
