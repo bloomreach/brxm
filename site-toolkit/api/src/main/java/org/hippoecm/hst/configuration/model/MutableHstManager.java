@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.configuration.model;
 
-/**
- * Created by IntelliJ IDEA. User: aschrijvers Date: 11/2/12 Time: 11:55 AM To change this template use File | Settings
- * | File Templates.
- */
 public interface MutableHstManager extends HstManager {
 
     void setHstFilterPrefixExclusions(String[] hstFilterPrefixExclusions);
