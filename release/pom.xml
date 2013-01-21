@@ -208,7 +208,7 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-deprecated</artifactId>
+        <artifactId>hippo-repository-deprecated-translation</artifactId>
         <version>${hippo.repository.version}</version>
       </dependency>
 
