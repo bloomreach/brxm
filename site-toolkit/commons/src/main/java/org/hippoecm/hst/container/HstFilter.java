@@ -249,6 +249,7 @@ public class HstFilter implements Filter {
             if (hstManager != currentManagerInstance) {
                 synchronized (this) {
                     currentManagerInstance = hstManager;
+                    // multiple calls to set prefix / postfix exclusions can't harm, hence no double checked locking needed
                     if (hstManager instanceof MutableHstManager) {
                         ((MutableHstManager) hstManager).setHstFilterPrefixExclusions(prefixExclusions);
                         ((MutableHstManager) hstManager).setHstFilterSuffixExclusions(suffixExclusions);
