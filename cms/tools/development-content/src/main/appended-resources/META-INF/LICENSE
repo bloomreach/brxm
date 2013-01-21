@@ -1,0 +1,15 @@
+
+========================================================================================================================
+
+Hippo CMS Development content includes a number of sub-components with separate copyright notices
+and license terms. Your use of the code for the these sub-components is subject
+to the terms and conditions of the following licenses.
+
+------------------------------------------------------------------------------------------------------------------------
+org/hippoecm/frontend/plugins/development/content/names/Names.java
+
+   NameGen Java style, coded in 2006-2008 by Curtis Rueden
+   http://www.restlesscoder.net/software/namegen-java
+
+   This code is dedicated to the public domain.
+   All copyrights (and warranties) are disclaimed.

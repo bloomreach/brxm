@@ -1,6 +1,7 @@
 * text=auto !eol
 /README -text
 api/pom.xml -text
+api/src/main/appended-resources/META-INF/LICENSE -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin$WorkflowAction$DateDialog_de.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin$WorkflowAction$DestinationDialog.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin$WorkflowAction$DestinationDialog_de.properties -text
@@ -1599,6 +1600,7 @@ engine/src/test/resources/jackson-json-serialized-annotations/mobileinfo.json -t
 engine/src/test/resources/jackson-json-serialized-annotations/noattributesannotationchannelinfo.json -text
 engine/src/test/resources/jackson-json-serialized-annotations/websiteinfo.json -text
 gallery/frontend/pom.xml svneol=native#text/plain
+gallery/frontend/src/main/appended-resources/META-INF/LICENSE -text
 gallery/frontend/src/main/java/META-INF/services/javax.imageio.spi.ImageWriterSpi -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/AssetGalleryPlugin.css -text
 gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/AssetGalleryPlugin.java -text svneol=unset#text/plain
@@ -1778,6 +1780,7 @@ gotolink/pom.xml svneol=native#text/plain
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_de.properties -text
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/GotolinkDocumentsShortcutPlugin_it.properties -text
 gotolink/src/main/java/org/hippoecm/frontend/plugins/gotolink/images/dashboard-goto-button.png -text svneol=unset#image/png
+jquery/src/main/appended-resources/META-INF/LICENSE -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.6.2.js -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.16.js -text
@@ -2191,6 +2194,7 @@ richtext/repository/src/main/resources/html-cleaner-service.xml -text
 richtext/repository/src/main/resources/system-html-template_de.xml -text
 richtext/repository/src/main/resources/system-html-template_it.xml -text
 richtext/resources/pom.xml svneol=native#text/plain
+richtext/resources/src/main/appended-resources/META-INF/LICENSE -text
 richtext/resources/src/main/patches/bugfix/CMS7-5277.patch -text
 richtext/resources/src/main/patches/enhancement/HREPTWO-4261.patch -text
 richtext/resources/src/main/resources/xinha/XinhaCore.js -text
@@ -2639,6 +2643,7 @@ test/src/test/resources/log4j.dtd svneol=native#text/plain
 test/src/test/resources/log4j.xml svneol=native#text/plain
 test/src/test/resources/mock.jar -text
 tools/development-content/README.txt svneol=native#text/plain
+tools/development-content/src/main/appended-resources/META-INF/LICENSE -text
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin$Dialog$AddDocumentsWizard.properties -text svneol=unset#text/plain
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin$Dialog$AddDocumentsWizard_de.properties -text
 tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/AddDocumentsShortcutPlugin$Dialog$AddDocumentsWizard_fr.properties -text svneol=unset#text/plain
