@@ -20,6 +20,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +52,9 @@ public abstract class AbstractWorkflowDialog<T> extends AbstractDialog<T> {
     protected void onOk() {
         try {
             invoker.invokeWorkflow();
+        } catch (WorkflowException e) {
+            log.warn("Could not execute workflow: " + e.getMessage());
+            error(e);
         } catch (Exception e) {
             log.error("Could not execute workflow.", e);
             error(e);
