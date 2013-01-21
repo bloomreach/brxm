@@ -112,6 +112,10 @@ public class HstFilter implements Filter {
     protected String clientComponentManagerContextAttributeName = CLIENT_COMPONENT_MANANGER_DEFAULT_CONTEXT_ATTRIBUTE_NAME;
     protected volatile HstContainerConfig requestContainerConfig;
 
+    // keep track of current hst manager, and when the instance is changed, set the prefix and postfix exclusions
+    // again
+    protected HstManager currentManagerInstance;
+
     private String [] prefixExclusions;
     private String [] suffixExclusions;
 
@@ -179,16 +183,6 @@ public class HstFilter implements Filter {
             log("Invalid client component manager class or configuration: " + e);
         }
 
-        Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
-        HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-        if(hstSitesManager == null) {
-            logger.error("The HstManager is not available");
-            return;
-        }
-        if (hstSitesManager instanceof MutableHstManager) {
-            ((MutableHstManager) hstSitesManager).setHstFilterPrefixExclusions(prefixExclusions);
-            ((MutableHstManager) hstSitesManager).setHstFilterSuffixExclusions(suffixExclusions);
-        }
     }
 
     /**
@@ -251,10 +245,19 @@ public class HstFilter implements Filter {
     		        }
     		    }
     		}
-    	    HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
-    	    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstSitesManager.getSiteMapItemHandlerFactory();
+    	    HstManager hstManager = getHstManager();
+            if (hstManager != currentManagerInstance) {
+                synchronized (this) {
+                    currentManagerInstance = hstManager;
+                    if (hstManager instanceof MutableHstManager) {
+                        ((MutableHstManager) hstManager).setHstFilterPrefixExclusions(prefixExclusions);
+                        ((MutableHstManager) hstManager).setHstFilterSuffixExclusions(suffixExclusions);
+                    }
+                }
+            }
+    	    HstSiteMapItemHandlerFactory siteMapItemHandlerFactory = hstManager.getSiteMapItemHandlerFactory();
           
-    	    if(siteMapItemHandlerFactory == null || hstSitesManager == null) {
+    	    if(siteMapItemHandlerFactory == null || hstManager == null) {
                 res.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
                 logger.error("The HstManager or siteMapItemHandlerFactory is not available");
                 return;
@@ -269,15 +272,15 @@ public class HstFilter implements Filter {
     		}
 
     		// Sets up the container request wrapper
-            HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstSitesManager.getPathSuffixDelimiter());
+            HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter());
 
             // when getPathSuffix() is not null, we have a REST url and never skip hst request processing
-            if((containerRequest.getPathSuffix() == null && hstSitesManager.isExcludedByHstFilterInitParameter(containerRequest.getPathInfo()))) {
+            if((containerRequest.getPathSuffix() == null && hstManager.isExcludedByHstFilterInitParameter(containerRequest.getPathInfo()))) {
                 chain.doFilter(request, response);
                 return;
             }
 
-            VirtualHosts vHosts = hstSitesManager.getVirtualHosts(isStaleConfigurationAllowedForRequest(containerRequest));
+            VirtualHosts vHosts = hstManager.getVirtualHosts(isStaleConfigurationAllowedForRequest(containerRequest));
 
     		// we always want to have the virtualhost available, even when we do not have hst request processing:
     		// We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
@@ -356,7 +359,7 @@ public class HstFilter implements Filter {
                  * The request starts PATH_PREFIX_UUID_REDIRECT which means it is called from the cms with a uuid. Below, we compute
                  * a URL for the uuid, and send a browser redirect to this URL. 
                  */
-                sendRedirectToUuidUrl(req, res, requestContext, hstSitesManager, resolvedVirtualHost, containerRequest, hostName, logger);
+                sendRedirectToUuidUrl(req, res, requestContext, hstManager, resolvedVirtualHost, containerRequest, hostName, logger);
                 return;
             } else {
                 
@@ -400,7 +403,7 @@ public class HstFilter implements Filter {
                     }
                 }
 
-                HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, hstSitesManager, requestContext, resolvedMount, res);
+                HstContainerURL hstContainerUrl = setMountPathAsServletPath(containerRequest, hstManager, requestContext, resolvedMount, res);
 
                 if (resolvedMount.getMount().isMapped()) {
                     ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
@@ -418,7 +421,7 @@ public class HstFilter implements Filter {
                         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
                     }
 
-                    processResolvedSiteMapItem(containerRequest, res, hstSitesManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers, logger);
+                    processResolvedSiteMapItem(containerRequest, res, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers, logger);
 
                 }
                 else {
@@ -469,6 +472,10 @@ public class HstFilter implements Filter {
                 HDC.cleanUp();
             }
     	}
+    }
+
+    private HstManager getHstManager() {
+        return HstServices.getComponentManager().getComponent(HstManager.class.getName());
     }
 
     /*
