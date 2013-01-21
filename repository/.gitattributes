@@ -85,6 +85,7 @@ connector/src/main/java/org/hippoecm/repository/decorating/server/ServerServicin
 connector/src/main/java/org/hippoecm/repository/decorating/server/ServerWorkflowDescriptor.java -text
 dependencies/pom.xml svneol=native#text/plain
 deprecated/pom.xml svneol=native#text/plain
+deprecated/translation/pom.xml svneol=native#text/plain
 engine/pom.xml svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/FacetedNavigationEngineImpl.java -text
 engine/src/main/java/org/hippoecm/repository/deriveddata/BuiltinPropertyReference.java -text
