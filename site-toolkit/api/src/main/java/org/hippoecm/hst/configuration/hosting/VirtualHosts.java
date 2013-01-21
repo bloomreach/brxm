@@ -31,6 +31,8 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
  */
 public interface VirtualHosts {
 
+    String DEFAULT_SCHEME = "http";
+
     /**
      * @return the {@link HstManager} for this VirtualHosts object
      */
@@ -72,9 +74,9 @@ public interface VirtualHosts {
      * when the SiteMount has a non-empty value for {@link Mount#onlyForContextPath()}. If {@link Mount#onlyForContextPath()} is <code>null</code> or empty,
      * the <code>contextPath</code> is ignored for matching.
      * </p>
-     * @param String hostName
-     * @param String contextPath the contextPath of the request
-     * @param String requestPath
+     * @param hostName
+     * @param contextPath the contextPath of the request
+     * @param requestPath
      * @return the {@link ResolvedMount} for this hstContainerUrl or <code>null</code> when it can not be matched to a {@link Mount}
      * @throws MatchException
      */

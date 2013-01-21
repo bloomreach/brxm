@@ -161,7 +161,7 @@ public interface HstSiteMapItem {
     
     /**
      * Returns a <code>List</code> of all child <code>HstSiteMapItem</code>'s of this <code>HstSiteMapItem</code>.    
-     * Implementations should return an unmodifiable list, for example {@link java.util.Collections$UnmodifiableList} to avoid 
+     * Implementations should return an unmodifiable list, for example {@link java.util.Collections#unmodifiableList} to avoid
      * client code changing configuration
      * @return the List of HstSiteMapItem children. If there are no children, an empty list is returned
      */
@@ -202,7 +202,7 @@ public interface HstSiteMapItem {
     
     /**
      * See {@link #getParameter(String)}, only now entire the parameters map is returned.
-     * Implementations should return an unmodifiable map, for example {@link java.util.Collections$UnmodifiableMap} to avoid 
+     * Implementations should return an unmodifiable map, for example {@link java.util.Collections#unmodifiableMap} to avoid
      * client code changing configuration
      * 
      * Parameters are inherited from ancestor sitemap items. When this sitemap item configures the same parameter as an ancestor, the
@@ -273,7 +273,7 @@ public interface HstSiteMapItem {
      * <br/> 
      * <b>Note</b> that {@link HstSiteMapItemHandlerConfiguration}s are  <b>NOT</b> inherited from  parent/ancestor HstSiteMapItem's. 
      * </p>
-     * <p>Implementations should return an unmodifiable list, for example {@link java.util.Collections$UnmodifiableList} to avoid 
+     * <p>Implementations should return an unmodifiable list, for example {@link java.util.Collections#unmodifiableList} to avoid
      * client code changing configuration</p>
      * @return The List of {@link HstSiteMapItemHandlerConfiguration}s and an empty list if this SiteMapItem does not contain {@link HstSiteMapItemHandlerConfiguration}s 
      */
@@ -283,4 +283,19 @@ public interface HstSiteMapItem {
      * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached.
      */
     boolean isCacheable();
+
+    /**
+     * The scheme of a site map item specifies which scheme is to be used for serving this site map item. The value of
+     * this property is derived in the following order:
+     * <ol>
+     *     <li>If the hst:scheme property is set for this site map item, then that is used</li>
+     *     <li>If this site map item has a parent, it will use the parent's scheme</li>
+     *     <li>If the mount that this site map item belongs to has a scheme set, then that is used</li>
+     * </ol>
+     *
+     * If a site map item has an hst:scheme property, but it is left blank then the scheme defaults to
+     * {@link org.hippoecm.hst.configuration.hosting.VirtualHosts#DEFAULT_SCHEME}
+     * @return the scheme of this site map item
+     */
+    String getScheme();
 }

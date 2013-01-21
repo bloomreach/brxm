@@ -97,6 +97,7 @@ public interface HstNodeTypes {
     static final String SITEMAPITEM_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
     static final String SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS =  "hst:sitemapitemhandlerids";
     static final String SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING = "hst:excludedforlinkrewriting";
+    static final String SITEMAPITEM_PROPERTY_SCHEME = "hst:scheme";
 
     static final String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
     static final String SITEMENUITEM_PROPERTY_EXTERNALLINK =  "hst:externallink";

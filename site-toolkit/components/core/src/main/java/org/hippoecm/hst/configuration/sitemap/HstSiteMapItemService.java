@@ -27,9 +27,11 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
@@ -126,7 +128,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String extension;
     private String prefix;
     private final boolean cacheable;
-    
+    private final String scheme;
+
     public HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap; 
@@ -174,11 +177,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             occurences++;
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
             this.isAny = true;
-        } else if(value.indexOf(HstNodeTypes.WILDCARD) > -1) {
+        } else if(value.contains(HstNodeTypes.WILDCARD)) {
             this.containsWildCard = true;
             this.postfix = value.substring(value.indexOf(HstNodeTypes.WILDCARD) + HstNodeTypes.WILDCARD.length());
             this.prefix = value.substring(0, value.indexOf(HstNodeTypes.WILDCARD));
-            if(this.postfix.indexOf(".") > -1) {
+            if(this.postfix.contains(".")) {
                 this.extension = this.postfix.substring(this.postfix.indexOf("."));
             }
             if(parentItem != null) {
@@ -186,10 +189,10 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             }
             occurences++;
             parameterizedPath = parameterizedPath + value.replace(HstNodeTypes.WILDCARD, "${"+occurences+"}" );
-        } else if(value.indexOf(HstNodeTypes.ANY) > -1) {
+        } else if(value.contains(HstNodeTypes.ANY)) {
             this.containsAny = true;
             this.postfix = value.substring(value.indexOf(HstNodeTypes.ANY) + HstNodeTypes.ANY.length());
-            if(this.postfix.indexOf(".") > -1) {
+            if(this.postfix.contains(".")) {
                 this.extension = this.postfix.substring(this.postfix.indexOf("."));
             }
             this.prefix = value.substring(0, value.indexOf(HstNodeTypes.ANY));
@@ -244,7 +247,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         }
         
         this.relativeContentPath = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
-        if(relativeContentPath != null && relativeContentPath.indexOf(PARENT_PROPERTY_PLACEHOLDER) > -1 ) {
+        if(relativeContentPath != null && relativeContentPath.contains(PARENT_PROPERTY_PLACEHOLDER)) {
              if(parentItem == null || parentItem.getRelativeContentPath() == null) {
                  log.error("Cannot use '{}' for a sitemap item that does not have a parent or a parent without relative content path. Used at: '{}'", PARENT_PROPERTY_PLACEHOLDER, id);
              } else {
@@ -328,6 +331,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             this.cacheable = parentItem.isCacheable();
         } else {
             this.cacheable = mount.isCacheable();
+        }
+
+        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME)) {
+            String scheme = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME));
+            this.scheme = StringUtils.isNotBlank(scheme) ? scheme : VirtualHosts.DEFAULT_SCHEME;
+        } else {
+            this.scheme = parentItem != null ? parentItem.getScheme() : mount.getScheme();
         }
 
         for(HstNode child : node.getNodes()) {
@@ -454,6 +464,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         return cacheable;
     }
 
+    @Override
+    public String getScheme() {
+        return scheme;
+    }
+
     public HstSiteMapItem getParentItem() {
         return this.parentItem;
     }
@@ -488,7 +503,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         if(value == null || containsAnyChildSiteMapItems.isEmpty()) {
             return null;
         }
-        StringBuffer remainder = new StringBuffer(elements[position]);
+        StringBuilder remainder = new StringBuilder(elements[position]);
         while(++position < elements.length) {
             remainder.append("/").append(elements[position]);
         }

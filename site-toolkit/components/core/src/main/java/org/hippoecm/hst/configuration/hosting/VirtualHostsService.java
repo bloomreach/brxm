@@ -37,6 +37,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
+import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.service.ServiceException;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
 import org.hippoecm.hst.util.DuplicateKeyNotAllowedHashMap;
@@ -50,8 +51,6 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     private final static String WILDCARD = "_default_";
     
-    public final static String DEFAULT_SCHEME = "http";
-
     private HstManagerImpl hstManager;
     private Map<String, Map<String, MutableVirtualHost>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<String, Map<String, MutableVirtualHost>>();
 
@@ -63,23 +62,27 @@ public class VirtualHostsService implements MutableVirtualHosts {
   
     private String defaultHostName;
     /**
-     * The homepage for this VirtualHosts. When the backing configuration does not contain a homepage, the value is <code>null
+     * The homepage for this VirtualHosts. When the backing configuration does not contain a homepage, the value is
+     * <code>null</code>
      */
     private String homepage;
 
     /**
-     * The pageNotFound for this VirtualHosts. When the backing configuration does not contain a pageNotFound, the value is <code>null</code>
+     * The pageNotFound for this VirtualHosts. When the backing configuration does not contain a pageNotFound, the
+     * value is <code>null</code>
      */
     private String pageNotFound;
     
 
     /**
-     * The general locale configured on VirtualHosts. When the backing configuration does not contain a locale, the value is <code>null</code>
+     * The general locale configured on VirtualHosts. When the backing configuration does not contain a locale, the
+     * value is <code>null</code>
      */
     private String locale;
     
     /**
-     * Whether the {@link Mount}'s below this VirtualHostsService should show the hst version as a response header when they are a preview {@link Mount}
+     * Whether the {@link Mount}'s below this VirtualHostsService should show the hst version as a response header
+     * when they are a preview {@link Mount}
      */
     private boolean versionInPreviewHeader = true;
     
@@ -119,22 +122,22 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private String channelMngrSitesNodeName = DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME;
     
     /*
-     * Note, this cache does not need to be synchronized at all, because worst case scenario one entry would be computed twice and overriden.
+     * Note, this cache does not need to be synchronized at all, because worst case scenario one entry would be
+     * computed twice and overriden.
      */
     private Map<String, ResolvedVirtualHost> resolvedMapCache = new HashMap<String, ResolvedVirtualHost>();
     
     public VirtualHostsService(HstNode virtualHostsConfigurationNode, HstManagerImpl hstManager) throws ServiceException {
         this.hstManager = hstManager;
         virtualHostsConfigured = true;
-        contextPathInUrl = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
-        defaultContextPath = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
-        cmsPreviewPrefix = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
-        diagnosticsEnabled = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED);
+        ValueProvider vHostConfValueProvider = virtualHostsConfigurationNode.getValueProvider();
+        contextPathInUrl = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWCONTEXTPATH);
+        defaultContextPath = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
+        cmsPreviewPrefix = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
+        diagnosticsEnabled = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED);
 
-        String[] ips = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS);
-        for (String ip : ips) {
-            diagnosticsForIps.add(ip);
-        }
+        String[] ips = vHostConfValueProvider.getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS);
+        Collections.addAll(diagnosticsForIps, ips);
         if(cmsPreviewPrefix == null) {
             // there is no explicit cms preview prefix configured. Take the default one from the hstManager
             cmsPreviewPrefix = hstManager.getCmsPreviewPrefix();
@@ -143,43 +146,46 @@ public class VirtualHostsService implements MutableVirtualHosts {
             }
         }
         if(StringUtils.isEmpty(cmsPreviewPrefix)) {
-            log.info("cmsPreviewPrefix property '{}' on hst:hosts is configured to be empty. This means that when the " +
-            		"cms and site run on the same host that a client who visited the preview in cms also" +
-            		"sees the preview without the cms where he expected to see the live. ", HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
+            log.info("cmsPreviewPrefix property '{}' on hst:hosts is configured to be empty. This means that when " +
+                    "the cms and site run on the same host that a client who visited the preview in cms also" +
+            		"sees the preview without the cms where he expected to see the live. ",
+                    HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
         } else {
             cmsPreviewPrefix =  PathUtils.normalizePath(cmsPreviewPrefix);
         }
         
-        channelMngrVirtualHostGroupNodeName = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
+        channelMngrVirtualHostGroupNodeName =
+                vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
         if(StringUtils.isEmpty(channelMngrVirtualHostGroupNodeName)) {
-            log.warn("On the hst:hosts node there is no '{}' property configured. This means the channel manager won't be able to " +
-            		"load channels in the preview / composer", HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
+            log.warn("On the hst:hosts node there is no '{}' property configured. This means the channel manager " +
+                    "won't be able to load channels in the preview / composer",
+                    HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP);
         } else {
             log.info("Channel manager will load channels for hostgroup = '{}'", channelMngrVirtualHostGroupNodeName);
         }
-        String sites = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES);
+        String sites = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES);
         if(!StringUtils.isEmpty(sites)) {
             log.info("Channel manager will load work with hst:sites node '{}' instead of the default '{}'.",
                     sites, DEFAULT_CHANNEL_MNGR_SITES_NODE_NAME);
             channelMngrSitesNodeName = sites;
         }
-        showPort = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
-        prefixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
-        suffixExclusions = virtualHostsConfigurationNode.getValueProvider().getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
-        scheme = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
-        locale = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
-        homepage = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
-        pageNotFound = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
-        if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
-            versionInPreviewHeader = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
+        showPort = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SHOWPORT);
+        prefixExclusions = vHostConfValueProvider.getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS);
+        suffixExclusions = vHostConfValueProvider.getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS);
+        scheme = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_SCHEME);
+        locale = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
+        homepage = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE);
+        pageNotFound = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_PAGE_NOT_FOUND);
+        if(vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER)) {
+            versionInPreviewHeader = vHostConfValueProvider.getBoolean(HstNodeTypes.GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER);
         }
         
-        if(virtualHostsConfigurationNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
-            cacheable = virtualHostsConfigurationNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
+        if(vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
+            cacheable = vHostConfValueProvider.getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
             log.info("Page caching for HST is set to : {} ", cacheable);
         }
         
-        defaultHostName  = virtualHostsConfigurationNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
+        defaultHostName  = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTHOSTNAME);
         if (defaultHostName != null) {
             defaultHostName = defaultHostName.toLowerCase();
         }
@@ -303,7 +309,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
         Map<String, Mount> aliasTypeMap = mountByGroupAliasAndType.get(hostGroup);
         if (aliasTypeMap == null) {
-            // when a duplicate key is tried to be put, an IllegalArgumentException must be thrown, hence the DuplicateKeyNotAllowedHashMap
+            // when a duplicate key is tried to be put, an IllegalArgumentException must be thrown, hence the
+            // DuplicateKeyNotAllowedHashMap
             aliasTypeMap = new DuplicateKeyNotAllowedHashMap<String, Mount>();
             mountByGroupAliasAndType.put(hostGroup, aliasTypeMap);
         }
@@ -316,13 +323,13 @@ public class VirtualHostsService implements MutableVirtualHosts {
             try {
                 aliasTypeMap.put(aliasTypeKey, mount);
             } catch (IllegalArgumentException e) {
-                log.error("Incorrect hst:hosts configuration. Not allowed to have multiple mount's having the same 'alias/type/types' combination " +
-                		"within a single hst:hostgroup. Failed for mount '{}' in hostgroup '"
-                        +mount.getVirtualHost().getHostGroupName()+"' for host '"
-                		+mount.getVirtualHost().getHostName()+
-                		"'. Make sure that you add a unique 'alias' in combination with the 'types' on the mount " +
-                		"within a single hostgroup. The mount '{}' cannot be used for lookup. " +
-                		"Change alias for it. Conflicting mounts are "+mount+" that conflicts with "+aliasTypeMap.get(aliasTypeKey) , mount.getName(), mount.getName());
+                log.error("Incorrect hst:hosts configuration. Not allowed to have multiple mount's having the same " +
+                        "'alias/type/types' combination within a single hst:hostgroup. Failed for mount '{}' in " +
+                        "hostgroup '" + mount.getVirtualHost().getHostGroupName()+"' for host '" +
+                        mount.getVirtualHost().getHostName() + "'. Make sure that you add a unique 'alias' in " +
+                        "combination with the 'types' on the mount within a single hostgroup. The mount '{}' cannot " +
+                        "be used for lookup. Change alias for it. Conflicting mounts are " + mount + " that " +
+                        "conflicts with "+aliasTypeMap.get(aliasTypeKey) , mount.getName(), mount.getName());
             }
         }
         
@@ -557,7 +564,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     /**
      * @return a HashMap<String, VirtualHostService> that throws an exception when you put in the same key twice
      */
-    public final static HashMap<String, MutableVirtualHost> virtualHostHashMap(){
+    public static HashMap<String, MutableVirtualHost> virtualHostHashMap(){
         return new DuplicateKeyNotAllowedHashMap<String, MutableVirtualHost>();
     }
     
@@ -589,16 +596,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     @Override
     public boolean isDiagnosticsEnabled(String ip) {
-        if (!diagnosticsEnabled) {
-            return false;
-        }
-        if (ip == null || diagnosticsForIps.isEmpty()) {
-            return true;
-        }
-        if (diagnosticsForIps.contains(ip)) {
-            return true;
-        }
-        return false;
+        return diagnosticsEnabled && (ip == null || diagnosticsForIps.isEmpty() || diagnosticsForIps.contains(ip));
     }
 
     public boolean isCacheable() {
