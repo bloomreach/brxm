@@ -136,6 +136,7 @@ api/src/main/java/org/hippoecm/frontend/model/tree/ILabelTreeNode.java -text
 api/src/main/java/org/hippoecm/frontend/model/tree/JcrTreeNodeComparator.java -text
 api/src/main/java/org/hippoecm/frontend/model/tree/ObservableTreeModel.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/observation/IFacetRootsObserver.java -text
+api/src/main/java/org/hippoecm/frontend/perspectives/common/ErrorMessagePanel_de.properties -text
 api/src/main/java/org/hippoecm/frontend/plugin/IClusterControl.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/IPlugin.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/frontend/plugin/IPluginContext.java -text
@@ -800,6 +801,7 @@ automatic-export/frontend/pom.xml -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin.html -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin.java -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin.properties -text
+automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin_de.properties -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/Constants.java -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/autoexport_off.png -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/autoexport_on.png -text
@@ -1265,6 +1267,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/ValueTemplate
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/ValueTemplatePlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin_de.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin_fr.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ComparingController$ItemEntry.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ComparingController$ItemEntry_compat.html svneol=native#text/plain
@@ -1277,6 +1280,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPl
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin$PropertyEditor.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin_de.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_de.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_fr.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_it.properties -text
@@ -1285,8 +1289,10 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPl
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ITemplateFactory.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/NodeFieldPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/NodeFieldPlugin.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/NodeFieldPlugin_de.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/PropertyFieldPlugin.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/PropertyFieldPlugin.java -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/PropertyFieldPlugin_de.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/TemplateController.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/TemplateParameterEditor.html -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/TemplateParameterEditor.java -text
@@ -1448,6 +1454,7 @@ editor/pom.xml -text
 editor/repository/pom.xml -text
 editor/repository/src/main/resources/cms-validators_de.xml -text
 editor/repository/src/main/resources/committype-workflows.xml -text
+editor/repository/src/main/resources/committype-workflows_de.xml -text
 editor/repository/src/main/resources/default-editor-factory.xml svneol=native#text/plain
 editor/repository/src/main/resources/default-workflows.xml svneol=native#text/plain
 editor/repository/src/main/resources/domain-templates-templateset.xml svneol=native#text/plain
@@ -1993,6 +2000,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dashboard/todo/Todo
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPanelPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/CodeMirrorEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.css -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.js -text
@@ -3131,6 +3139,8 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/wo
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/workflow-requestdelete-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/workflow-requestpublish-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/workflow-requestunpublish-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/PermissionsFolderWorkflowPlugin$PermissionsConfirmDialog_de.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/PermissionsFolderWorkflowPlugin_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/queries-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl.properties svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl_de.properties -text
