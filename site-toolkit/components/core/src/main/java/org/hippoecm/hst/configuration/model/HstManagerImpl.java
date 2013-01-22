@@ -69,12 +69,14 @@ public class HstManagerImpl implements MutableHstManager {
     private Repository repository;
     private Credentials credentials;
 
+    private volatile VirtualHosts prevVirtualHosts;
     private volatile VirtualHosts virtualHosts;
     private volatile BuilderState state = BuilderState.UNDEFINED;
 
     enum BuilderState {
         UNDEFINED,
         UP2DATE,
+        FAILED,
         STALE,
         SCHEDULED,
         RUNNING,
@@ -349,7 +351,7 @@ public class HstManagerImpl implements MutableHstManager {
         }
         if (allowStale && staleConfigurationSupported) {
             asynchronousBuild();
-            return virtualHosts;
+            return prevVirtualHosts;
         }
         return synchronousBuild();
     }
@@ -370,6 +372,7 @@ public class HstManagerImpl implements MutableHstManager {
                         state = BuilderState.RUNNING;
                         try {
                             buildSites();
+                            state = BuilderState.UP2DATE;
                         } catch (ModelLoadingException e) {
                             // since the model has changed during loading, we try a complete rebuild (invalidateAll). If that one fails again, we return a ContainerException
                             // and it will be tried during the next request
@@ -377,6 +380,7 @@ public class HstManagerImpl implements MutableHstManager {
                             invalidateAll();
                             try {
                                 buildSites();
+                                state = BuilderState.UP2DATE;
                             } catch (ModelLoadingException e2) {
                                 invalidateAll();
                                 throwContainerExceptionAfterFailedRetry();
@@ -387,6 +391,7 @@ public class HstManagerImpl implements MutableHstManager {
                             invalidateAll();
                             try {
                                 buildSites();
+                                state = BuilderState.UP2DATE;
                             } catch (ModelLoadingException e2) {
                                 invalidateAll();
                                 throwContainerExceptionAfterFailedRetry();
@@ -395,12 +400,17 @@ public class HstManagerImpl implements MutableHstManager {
                     } catch (LoginException e) {
                         throw new ContainerException("Could not build hst model because user 'configuser' could not login to the repository.");
                     } finally {
-                        // whether there were exceptions or not, the model is up2date (though the virtualHosts object might
-                        // be from a previous run in case it could not be loaded)
-                        state = BuilderState.UP2DATE;
+                        if (state == BuilderState.RUNNING) {
+                            log.warn("Model failed to built. Serve old virtualHosts model.");
+                            state = BuilderState.FAILED;
+                            return prevVirtualHosts;
+                        }
                     }
                     log.info("Flushing page cache after new model is loaded");
                     pageCache.clear();
+                }
+                if (state == BuilderState.UP2DATE) {
+                    prevVirtualHosts = virtualHosts;
                 }
                 return virtualHosts;
             }
@@ -508,7 +518,8 @@ public class HstManagerImpl implements MutableHstManager {
 
                 siteMapItemHandlerRegistry.unregisterAllSiteMapItemHandlers();
                 enhancedConfigurationRootNodes = enhanceHstConfigurationNodes(configurationRootNodes);
-                this.virtualHosts = new VirtualHostsService(virtualHostsNode, this);
+
+                virtualHosts = new VirtualHostsService(virtualHostsNode, this);
                 for(HstConfigurationAugmenter configurationAugmenter : hstConfigurationAugmenters ) {
                     configurationAugmenter.augment((MutableVirtualHosts)virtualHosts);
                 }
