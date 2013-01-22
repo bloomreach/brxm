@@ -45,8 +45,6 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PluginPage extends Home implements IServiceTracker<IRenderService> {
 
@@ -227,4 +225,8 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
         menuBehavior.activate(active);
     }
 
+    @Override
+    public void collapseAllContextMenus() {
+        menuBehavior.collapseAll();
+    }
 }

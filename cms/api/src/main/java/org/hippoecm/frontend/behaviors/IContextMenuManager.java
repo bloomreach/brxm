@@ -30,4 +30,6 @@ import org.apache.wicket.behavior.IBehavior;
 public interface IContextMenuManager {
 
     void showContextMenu(IContextMenu active);
+
+    void collapseAllContextMenus();
 }

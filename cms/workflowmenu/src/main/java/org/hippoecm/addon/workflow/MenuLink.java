@@ -24,6 +24,7 @@ import org.apache.wicket.markup.html.link.Link;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
+import org.hippoecm.frontend.behaviors.IContextMenuManager;
 
 abstract class MenuLink extends Link {
 
@@ -41,6 +42,11 @@ abstract class MenuLink extends Link {
                     IContextMenu parent = findParent(IContextMenu.class);
                     if (parent != null) {
                         parent.collapse(target);
+                    } else {
+                        IContextMenuManager manager = findParent(IContextMenuManager.class);
+                        if (manager != null) {
+                            manager.collapseAllContextMenus();
+                        }
                     }
                     onClick();
                 }

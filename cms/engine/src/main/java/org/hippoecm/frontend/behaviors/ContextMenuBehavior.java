@@ -66,6 +66,17 @@ public class ContextMenuBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     /**
+     * Close all open context menu's.
+     */
+    public void collapseAll() {
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        for (IContextMenu menu : getMenus(false)) {
+            menu.collapse(target);
+        }
+        hide(target);
+    }
+
+    /**
      * Check context menus.  If a menu is no longer visible, it will be hidden.
      */
     public void checkMenus(AjaxRequestTarget target) {
