@@ -383,7 +383,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
             // load all extension resources
             try {
-                initializationProcessor.loadExtensions(rootSession, rootSession.getRootNode().getNode("hippo:configuration/hippo:initialize"));
+                initializationProcessor.loadExtensions(rootSession);
             } catch (IOException ex) {
                 throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
             }

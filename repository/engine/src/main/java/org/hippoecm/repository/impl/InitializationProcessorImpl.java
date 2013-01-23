@@ -144,7 +144,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         try {
             Node initializeFolder = session.getRootNode().addNode("initialize");
             session.save();
-            loadExtensions(session, initializeFolder);
+            loadExtensions(session, initializeFolder, false);
             session.save();
             final List<Node> initializeItems = new ArrayList<Node>();
             final Query getInitializeItems = session.getWorkspace().getQueryManager().createQuery(
@@ -169,7 +169,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     @Override
     public List<Node> loadExtensions(final Session session) throws RepositoryException, IOException {
-        return loadExtensions(session, session.getNode(INITIALIZATION_FOLDER));
+        return loadExtensions(session, session.getNode(INITIALIZATION_FOLDER), true);
     }
 
     @Override
@@ -498,14 +498,16 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
     }
 
-    public List<Node> loadExtensions(Session session, Node initializationFolder) throws IOException, RepositoryException {
+    public List<Node> loadExtensions(Session session, Node initializationFolder, boolean cleanup) throws IOException, RepositoryException {
         final long now = System.currentTimeMillis();
         final List<URL> extensions = scanForExtensions();
         final List<Node> initializeItems = new ArrayList<Node>();
         for(final URL configurationURL : extensions) {
             initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder));
         }
-        cleanupInitializeItems(session, now);
+        if (cleanup) {
+            cleanupInitializeItems(session, now);
+        }
         return initializeItems;
     }
 

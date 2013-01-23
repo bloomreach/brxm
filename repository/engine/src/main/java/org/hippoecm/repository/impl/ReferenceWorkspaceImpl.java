@@ -37,6 +37,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.jackrabbit.api.JackrabbitWorkspace;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.xml.sax.InputSource;
@@ -76,7 +77,7 @@ public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
 
             session.save();
 
-            final List<Node> initializeItems = initializationProcessor.loadExtensions(session);
+            final List<Node> initializeItems = initializationProcessor.loadExtensions(session, session.getNode(InitializationProcessor.INITIALIZATION_FOLDER), false);
             final List<Node> contentItems = new ArrayList<Node>();
 
             for (Node initializeItem : initializeItems) {
