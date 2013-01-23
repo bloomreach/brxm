@@ -38,7 +38,7 @@
   <properties>
     <!-- use UTF-8 encoding for filtered file copy -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    
+
     <!--
       Note on upgrading dependencies and plugins:
       Always check the apache pom for guidance before upgrading.
@@ -90,13 +90,13 @@
     <maven.plugin.project-info.version>2.6</maven.plugin.project-info.version>
     <maven.plugin.release.version>2.1</maven.plugin.release.version>
     <maven.plugin.rat.version>0.9.RAT125</maven.plugin.rat.version>
-    <maven.plugin.remote-resources.version>1.2.1</maven.plugin.remote-resources.version>
+    <maven.plugin.remote-resources.version>1.4</maven.plugin.remote-resources.version>
     <maven.plugin.resources.version>2.6</maven.plugin.resources.version>
     <maven.plugin.source.version>2.1.2</maven.plugin.source.version>
     <maven.plugin.surefire.version>2.9</maven.plugin.surefire.version>
     <maven.plugin.surefire-report.version>2.9</maven.plugin.surefire-report.version>
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
-    <maven.plugin.war.version>2.1.1</maven.plugin.war.version>
+    <maven.plugin.war.version>2.3</maven.plugin.war.version>
     
     <maven.extension.wagon-http.version>1.0-beta-7</maven.extension.wagon-http.version>
 
@@ -716,13 +716,12 @@
             -->
             <webResources>
               <resource>
-                <directory>${project.build.directory}/classes/META-INF</directory>
+                <directory>${project.build.directory}/classes</directory>
                 <includes>
-                  <include>LICENSE</include>
-                  <include>NOTICE</include>
-                  <include>DEPENDENCIES</include>
+                  <include>META-INF/LICENSE</include>
+                  <include>META-INF/NOTICE</include>
+                  <include>META-INF/DEPENDENCIES</include>
                 </includes>
-                <targetPath>META-INF</targetPath>
                 <filtering>false</filtering>
               </resource>
             </webResources>
@@ -787,7 +786,7 @@
               </goals>
               <configuration>
                 <resourceBundles>
-                  <resourceBundle>org.apache:apache-jar-resource-bundle:1.4</resourceBundle>
+                  <resourceBundle>org.onehippo.cms7:hippo-cms7-legal-resources:1</resourceBundle>
                 </resourceBundles>
               </configuration>
             </execution>
