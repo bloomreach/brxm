@@ -327,6 +327,7 @@ public class HstManagerImpl implements MutableHstManager {
                 return;
             }
             state = BuilderState.SCHEDULED;
+            log.info("Asynchronous hst model build will be scheduled");
             Thread scheduled = new Thread(new Runnable() {
                 @Override
                 public void run() {
