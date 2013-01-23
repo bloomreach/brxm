@@ -52,6 +52,8 @@ dependencies/.settings
 dependencies/target
 deprecated/*.iml
 deprecated/target
+deprecated/translation/hippo-repository-deprecated-translation.iml
+deprecated/translation/target
 engine/*.tmp
 engine/.classpath
 engine/.pom.xml.swp
