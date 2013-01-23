@@ -35,8 +35,9 @@
   <bean id="org.hippoecm.hst.configuration.model.HstManager" class="org.hippoecm.hst.configuration.model.HstManagerImpl">
     <property name="rootPath" value="${hst.configuration.rootPath}"/>
     <property name="cmsPreviewPrefix" value="${cms.default.cmspreviewprefix}"/> 
-    <property name="repository" ref="javax.jcr.Repository" />
-    <property name="credentials" ref="javax.jcr.Credentials.hstconfigreader" />
+    <property name="repository" ref="javax.jcr.Repository.delegating" />
+    <property name="username" value="${hstconfigreader.repository.user.name}" />
+    <property name="password" value="${hstconfigreader.repository.password}" />
     <property name="urlFactory" ref="org.hippoecm.hst.core.component.HstURLFactory" />        
     <property name="siteMapMatcher" ref="org.hippoecm.hst.core.request.HstSiteMapMatcher" />
     <property name="siteMapItemHandlerFactory" ref="org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory" />

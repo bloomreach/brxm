@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -31,6 +30,7 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.cache.HstCache;
@@ -67,12 +67,14 @@ public class HstManagerImpl implements MutableHstManager {
     public static final Object MUTEX = new Object();
 
     private Repository repository;
-    private Credentials credentials;
 
     private volatile VirtualHosts prevVirtualHosts;
     private volatile VirtualHosts virtualHosts;
-    private volatile BuilderState state = BuilderState.UNDEFINED;
+    private String username;
+    private String password;
 
+
+    private volatile BuilderState state = BuilderState.UNDEFINED;
     enum BuilderState {
         UNDEFINED,
         UP2DATE,
@@ -185,11 +187,15 @@ public class HstManagerImpl implements MutableHstManager {
     public synchronized void setRepository(Repository repository) {
         this.repository = repository;
     }
-    
-    public synchronized void setCredentials(Credentials credentials) {
-        this.credentials = credentials;
+
+    public void setUsername(String username) {
+        this.username = username;
     }
-    
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public synchronized void setRootPath(String rootPath) {
         this.rootPath = rootPath;
         rootPathDepth = rootPath.split("/").length;
@@ -432,16 +438,9 @@ public class HstManagerImpl implements MutableHstManager {
         }
 
         Session session = null;
-        if (log.isDebugEnabled()) {
-            logRelevantEventsHolder();
-        }
+
         try {
-            if (this.credentials == null) {
-                session = this.repository.login();
-            } else {
-                session = this.repository.login(this.credentials);
-            }
-            session.refresh(false);
+            session = this.repository.login(new SimpleCredentials(username, password.toCharArray()));
             // get all the root hst virtualhosts node: there is only allowed to be exactly ONE
 
             if(virtualHostsNode == null) {
@@ -787,29 +786,6 @@ public class HstManagerImpl implements MutableHstManager {
      */
     public Map<Set<String>, HstComponentsConfigurationService> getHstComponentsConfigurationInstanceCache() {
         return hstComponentsConfigurationInstanceCache;
-    }
-
-    public void logRelevantEventsHolder() {
-        if (relevantEventsHolder.hasEvents()) {
-            log.debug("--------- Relevant events ----------- ");
-            final Iterator<String> hostPathEvents = relevantEventsHolder.getHostPathEvents();
-            while(hostPathEvents.hasNext()) {
-                log.debug("HOST PATH EVENT: {}", hostPathEvents.next());
-            }
-            Iterator<String> hstConfigurationPathEvents = relevantEventsHolder.getHstRootConfigurationPathEvents();
-            while(hstConfigurationPathEvents.hasNext()) {
-                log.debug("CONFIGURATION EVENT: {}", hstConfigurationPathEvents.next());
-            }
-            Iterator<String> siteRootPathEvents = relevantEventsHolder.getRootSitePathEvents();
-            while(siteRootPathEvents.hasNext()) {
-                log.debug("SITE EVENT: {}", siteRootPathEvents.next());
-            }
-            Iterator<String> commonCatalogPathEvents = relevantEventsHolder.getCommonCatalogPathEvents();
-            while(commonCatalogPathEvents.hasNext()) {
-                log.debug("COMMON CATALOG EVENT: {}", commonCatalogPathEvents.next());
-            }
-            log.debug("--------- End relevant events ----------- ");
-        }
     }
 
 }
