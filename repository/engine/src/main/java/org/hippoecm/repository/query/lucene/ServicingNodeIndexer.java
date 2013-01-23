@@ -31,6 +31,7 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
+import org.apache.jackrabbit.core.query.lucene.DateField;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.LongField;
@@ -126,6 +127,22 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 }
                 binaryValues.add(binaryValue);
             }
+        }
+    }
+
+    protected void addCalendarValue(Document doc, String fieldName, Calendar internalValue) {
+        final long timeInMillis = internalValue.getTimeInMillis();
+        super.addCalendarValue(doc, fieldName, internalValue);
+        HippoDateTools.Resolution[] supportedResolutions = {HippoDateTools.Resolution.YEAR,
+                                                            HippoDateTools.Resolution.MONTH,
+                                                            HippoDateTools.Resolution.WEEK,
+                                                            HippoDateTools.Resolution.DAY,
+                                                            HippoDateTools.Resolution.HOUR};
+
+        for (HippoDateTools.Resolution resolution : supportedResolutions) {
+            String propertyNameForResolution = HippoDateTools.getPropertyForResolution(fieldName, resolution);
+            Calendar roundedForResolution = HippoDateTools.roundDate(timeInMillis, resolution);
+            super.addCalendarValue(doc, propertyNameForResolution, roundedForResolution);
         }
     }
 

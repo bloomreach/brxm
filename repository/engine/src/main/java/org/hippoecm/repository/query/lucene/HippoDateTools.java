@@ -25,8 +25,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.lucene.document.DateTools;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
+/**
+ * @deprecated  since 2.24.02. Use DateTools from hippo-cms7-utilities
+ *
+ * TODO When the changes have been backported to 2.22.xx, then copy this class to hippo-cms7-utilities and add
+ * TODO here above the class to use instead. For now, keep it here as it needs to be backported to the 2.22.xx
+ */
+@Deprecated
 public class HippoDateTools {
     
     private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
@@ -46,7 +54,7 @@ public class HippoDateTools {
      * 
      * @param date the date to be converted
      * @param resolution the desired resolution, see
-     *    {@link #round(Date, DateTools.Resolution)}
+     *    {@link #round(long, org.hippoecm.repository.query.lucene.HippoDateTools.Resolution)}
      * @return a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,
      *    depeding on <code>resolution</code>; using UTC as timezone 
      */
@@ -59,7 +67,7 @@ public class HippoDateTools {
      * 
      * @param time the date expressed as milliseconds since January 1, 1970, 00:00:00 GMT
      * @param resolution the desired resolution, see
-     *    {@link #round(long, DateTools.Resolution)}
+     *    {@link #round(long, org.hippoecm.repository.query.lucene.HippoDateTools.Resolution)}
      * @return a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,
      *    depeding on <code>resolution</code>; using UTC as timezone
      */
@@ -108,17 +116,31 @@ public class HippoDateTools {
         return result;
     }
 
+
     /**
      * Limit a date's resolution. For example, the date <code>1095767411000</code>
-     * (which represents 2004-09-21 13:50:11) will be changed to 
+     * (which represents 2004-09-21 13:50:11) will be changed to
      * <code>1093989600000</code> (2004-09-01 00:00:00) when using
      * <code>Resolution.MONTH</code>.
-     * 
+     *
      * @param resolution The desired resolution of the date to be returned
      * @return the date with all values more precise than <code>resolution</code>
      *    set to 0 or 1, expressed as milliseconds since January 1, 1970, 00:00:00 GMT
      */
     public static long round(long time, Resolution resolution) {
+        return roundDate(time, resolution).getTimeInMillis();
+    }
+
+    /**
+     * Limit a date's resolution. For example, the date <code>1095767411000</code>
+     * (which represents 2004-09-21 13:50:11) will be changed to 
+     * <code>1093989600000</code> (2004-09-01 00:00:00) when using
+     * <code>Resolution.MONTH</code>.
+     *
+     * @return the date with all values more precise than <code>resolution</code>
+     *    set to 0 or 1, expressed as milliseconds since January 1, 1970, 00:00:00 GMT
+     */
+    public static Calendar roundDate(long time, Resolution resolution) {
         Calendar cal = Calendar.getInstance();
 
         cal.setTime(new Date(time));
@@ -160,7 +182,7 @@ public class HippoDateTools {
         } else {
             throw new IllegalArgumentException("unknown resolution " + resolution);
         }
-        return cal.getTime().getTime();
+        return cal;
     }
 
     public static Date stringToDate(String dateString, Resolution resolution) throws ParseException {
@@ -204,7 +226,24 @@ public class HippoDateTools {
             }
             return date;
         }
-    
+
+    public static String createXPathConstraint(final Session session,
+                                               final Calendar calendar) throws RepositoryException {
+        return "xs:dateTime('"+session.getValueFactory().createValue(calendar).getString()+ "')";
+    }
+
+    public static String createXPathConstraint(final Session session,
+                                               final Calendar calendar,
+                                               final Resolution roundDateBy) throws RepositoryException {
+        final Calendar roundedCalendar = roundDate(calendar.getTimeInMillis(), roundDateBy);
+        return createXPathConstraint(session, roundedCalendar);
+    }
+
+    public static String getPropertyForResolution(final String property, final Resolution resolution) {
+        return property + "____" + resolution.resolution;
+
+    }
+
     /** Specifies the time granularity. */
     public static class Resolution {
         
@@ -232,9 +271,6 @@ public class HippoDateTools {
         private String resolution;
         private int calendarField;
 
-        private Resolution() {
-        }
-        
         private Resolution(String resolution, int calendarField) {
             this.resolution = resolution;
             this.calendarField = calendarField;
