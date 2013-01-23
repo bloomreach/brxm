@@ -144,7 +144,7 @@ public class CreatePatchDialog extends MultiStepDialog<Node> {
 
             final Patch patch = createPatch(getModelObject(), session.getNode(path));
 
-            final PatchWriter patchWriter = new PatchWriter(patch, writer, UserSession.get().getJcrSession());
+            final PatchWriter patchWriter = new PatchWriter(patch, writer);
             patchWriter.writePatch();
 
             writer.write("\n\n");
