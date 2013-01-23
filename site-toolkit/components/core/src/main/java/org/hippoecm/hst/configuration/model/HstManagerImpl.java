@@ -84,6 +84,8 @@ public class HstManagerImpl implements MutableHstManager {
         RUNNING,
     }
     
+    private volatile int consecutiveBuildFailCounter = 0;
+
     private boolean staleConfigurationSupported = false;
 
     private HstURLFactory urlFactory;
@@ -332,9 +334,15 @@ public class HstManagerImpl implements MutableHstManager {
                 @Override
                 public void run() {
                     try {
+                        long dontSweatDelayInCaseOfConsecutiveFailuers = computeReloadDelay(consecutiveBuildFailCounter);
+                        if (dontSweatDelayInCaseOfConsecutiveFailuers > 0) {
+                            Thread.sleep(dontSweatDelayInCaseOfConsecutiveFailuers);
+                        }
                         synchronousBuild();
                     } catch (ContainerException e) {
                         log.warn("Exception during building virtualhosts model. ", e);
+                    } catch (InterruptedException e) {
+                        log.error("InterruptedException ", e);
                     }
                 }
             });
@@ -382,34 +390,24 @@ public class HstManagerImpl implements MutableHstManager {
                             buildSites();
                             state = BuilderState.UP2DATE;
                         } catch (ModelLoadingException e) {
-                            // since the model has changed during loading, we try a complete rebuild (invalidateAll). If that one fails again, we return a ContainerException
-                            // and it will be tried during the next request
                             logModelFailedToLoad(e);
                             invalidateAll();
-                            try {
-                                buildSites();
-                                state = BuilderState.UP2DATE;
-                            } catch (ModelLoadingException e2) {
-                                invalidateAll();
-                                throwContainerExceptionAfterFailedRetry();
-                            }
-
+                            state = BuilderState.FAILED;
+                            consecutiveBuildFailCounter++;
+                            return prevVirtualHosts;
                         } catch (ContainerException e) {
                             logModelFailedToLoad(e);
                             invalidateAll();
-                            try {
-                                buildSites();
-                                state = BuilderState.UP2DATE;
-                            } catch (ModelLoadingException e2) {
-                                invalidateAll();
-                                throwContainerExceptionAfterFailedRetry();
-                            }
+                            state = BuilderState.FAILED;
+                            consecutiveBuildFailCounter++;
+                            return prevVirtualHosts;
                         }
                     } catch (LoginException e) {
                         throw new ContainerException("Could not build hst model because user 'configuser' could not login to the repository.");
                     } finally {
                         if (state == BuilderState.RUNNING) {
                             log.warn("Model failed to built. Serve old virtualHosts model.");
+                            consecutiveBuildFailCounter++;
                             state = BuilderState.FAILED;
                             return prevVirtualHosts;
                         }
@@ -418,12 +416,25 @@ public class HstManagerImpl implements MutableHstManager {
                     pageCache.clear();
                 }
                 if (state == BuilderState.UP2DATE) {
+                    consecutiveBuildFailCounter = 0;
                     prevVirtualHosts = virtualHosts;
                 }
                 return virtualHosts;
             }
         }
         return virtualHosts;
+    }
+
+    private long computeReloadDelay(final int consecutiveBuildFailCounter) {
+        switch (consecutiveBuildFailCounter) {
+            case 0 : return 0L;
+            case 1 : return 0L;
+            case 2 : return 100L;
+            case 3 : return 1000L;
+            case 4 : return 10000L;
+            case 5 : return 30000L;
+            default : return 60000L;
+        }
     }
 
     private void buildSites() throws ContainerException, LoginException {
