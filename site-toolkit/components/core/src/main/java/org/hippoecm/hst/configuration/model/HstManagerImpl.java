@@ -288,6 +288,7 @@ public class HstManagerImpl implements MutableHstManager {
     }
 
     public void setStaleConfigurationSupported(boolean staleConfigurationSupported) {
+        log.info("Is stale configuraion for HST model supported : '{}'", staleConfigurationSupported);
         this.staleConfigurationSupported = staleConfigurationSupported;
     }
 
