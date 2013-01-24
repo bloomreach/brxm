@@ -48,19 +48,19 @@
     <hippo.packages.version>2.24.00</hippo.packages.version>
     <hippo.hst.version>2.26.01-SNAPSHOT</hippo.hst.version>
 
-    <forge.dashboard-document-wizard.version>1.03.10-SNAPSHOT</forge.dashboard-document-wizard.version>
-    <forge.gallerypicker.version>1.10.02-SNAPSHOT</forge.gallerypicker.version>
-    <forge.easy-forms.version>2.12.02-SNAPSHOT</forge.easy-forms.version>
-    <forge.poll.version>1.05.05</forge.poll.version>
-    <forge.relateddocs.version>2.08.07</forge.relateddocs.version>
-    <forge.selection.version>2.05.08</forge.selection.version>
-    <forge.sitemap.version>1.03.00</forge.sitemap.version>
-    <forge.taxonomy.version>1.08.07</forge.taxonomy.version>
-    <forge.tcmp.version>1.06.01</forge.tcmp.version>
-    <forge.properties.version>2.07.08</forge.properties.version>
     <forge.content-blocks.version>1.08.04-SNAPSHOT</forge.content-blocks.version>
-    <forge.ecm-tagging.version>4.04.02</forge.ecm-tagging.version>
-    <forge.robotstxt.version>1.04.00</forge.robotstxt.version>
+    <forge.dashboard-document-wizard.version>1.03.10-SNAPSHOT</forge.dashboard-document-wizard.version>
+    <forge.easy-forms.version>2.12.02-SNAPSHOT</forge.easy-forms.version>
+    <forge.gallerypicker.version>1.10.02-SNAPSHOT</forge.gallerypicker.version>
+    <forge.poll.version>1.05.07-SNAPSHOT</forge.poll.version>
+    <forge.relateddocs.version>2.08.09-SNAPSHOT</forge.relateddocs.version>
+    <forge.selection.version>2.06.01-SNAPSHOT</forge.selection.version>
+    <forge.sitemap.version>1.03.01-SNAPSHOT</forge.sitemap.version>
+    <forge.taxonomy.version>1.08.08-SNAPSHOT</forge.taxonomy.version>
+    <forge.tcmp.version>1.06.02-SNAPSHOT</forge.tcmp.version>
+    <forge.properties.version>2.07.10-SNAPSHOT</forge.properties.version>
+    <forge.ecm-tagging.version>4.04.03-SNAPSHOT</forge.ecm-tagging.version>
+    <forge.robotstxt.version>1.05.02-SNAPSHOT</forge.robotstxt.version>
 
   </properties>
 
