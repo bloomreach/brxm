@@ -26,7 +26,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
-import org.hippoecm.repository.query.lucene.HippoDateTools;
+import org.onehippo.cms7.utilities.date.DateTools;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public abstract class AbstractRangesFacetNavigationTest extends RepositoryTestCase {
@@ -46,7 +46,7 @@ public abstract class AbstractRangesFacetNavigationTest extends RepositoryTestCa
        // get next day
        noon.add(Calendar.DAY_OF_YEAR, 1);
        //
-       long timeMillisSecAtNoon = HippoDateTools.round(noon.getTimeInMillis(), HippoDateTools.Resolution.DAY);
+       long timeMillisSecAtNoon = DateTools.round(noon.getTimeInMillis(), DateTools.Resolution.DAY);
        noon.setTimeInMillis(timeMillisSecAtNoon);
 
        // 300.000 millesec = 5 min

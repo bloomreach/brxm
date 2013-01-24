@@ -15,31 +15,21 @@
  */
 package org.hippoecm.repository;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStreamWriter;
 import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PropertyType;
-import javax.jcr.Repository;
-import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
-import org.apache.jackrabbit.core.query.QueryHandler;
-import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.query.lucene.HippoDateTools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.utilities.date.DateTools;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SearchDateRangeTest extends RepositoryTestCase {
@@ -88,8 +78,8 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         calEnd.add(Calendar.YEAR, 1);
         createDocumentsWithUniqueLastModified(nrOfDocuments, calStart, Calendar.SECOND);
 
-        String dateRangeNoResolutionStart = HippoDateTools.createXPathConstraint(session, calStart);
-        String dateRangeNoResolutionEnd = HippoDateTools.createXPathConstraint(session, calEnd);
+        String dateRangeNoResolutionStart = DateTools.createXPathConstraint(session, calStart);
+        String dateRangeNoResolutionEnd = DateTools.createXPathConstraint(session, calEnd);
 
         final long limit = 1L;
         String xpathNoResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@hippo:lastModified >= " + dateRangeNoResolutionStart +
@@ -98,16 +88,16 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         withNoResolution.setLimit(limit);
         final Node firstResultNoResulution = withNoResolution.execute().getNodes().nextNode();
 
-        HippoDateTools.Resolution[] supportedResolutions = {HippoDateTools.Resolution.YEAR,
-                HippoDateTools.Resolution.MONTH,
-                HippoDateTools.Resolution.WEEK,
-                HippoDateTools.Resolution.DAY,
-                HippoDateTools.Resolution.HOUR};
+        DateTools.Resolution[] supportedResolutions = {DateTools.Resolution.YEAR,
+                DateTools.Resolution.MONTH,
+                DateTools.Resolution.WEEK,
+                DateTools.Resolution.DAY,
+                DateTools.Resolution.HOUR};
 
-        for (HippoDateTools.Resolution resolution : supportedResolutions){
-            String dateResolutationStart = HippoDateTools.createXPathConstraint(session, calStart, resolution);
-            String dateResolutationEnd = HippoDateTools.createXPathConstraint(session, calEnd, resolution);
-            String lastModifiedPropertyForResolution = HippoDateTools.getPropertyForResolution("hippo:lastModified", resolution);
+        for (DateTools.Resolution resolution : supportedResolutions){
+            String dateResolutationStart = DateTools.createXPathConstraint(session, calStart, resolution);
+            String dateResolutationEnd = DateTools.createXPathConstraint(session, calEnd, resolution);
+            String lastModifiedPropertyForResolution = DateTools.getPropertyForResolution("hippo:lastModified", resolution);
 
             String xpathResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@"+lastModifiedPropertyForResolution+" >= " + dateResolutationStart +
                     " and @"+lastModifiedPropertyForResolution+" <= "+dateResolutationEnd+"] order by @hippo:lastModified ascending";
@@ -131,14 +121,14 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         createDocumentsWithUniqueLastModified(nrOfDocuments, calStart, Calendar.SECOND);
 
         final long limit = 1L;
-        HippoDateTools.Resolution[] unSupportedResolutions = {HippoDateTools.Resolution.MINUTE,
-                HippoDateTools.Resolution.SECOND,
-                HippoDateTools.Resolution.MILLISECOND};
+        DateTools.Resolution[] unSupportedResolutions = {DateTools.Resolution.MINUTE,
+                DateTools.Resolution.SECOND,
+                DateTools.Resolution.MILLISECOND};
 
-        for (HippoDateTools.Resolution unsupportedResolution : unSupportedResolutions){
-            String dateResolutationStart = HippoDateTools.createXPathConstraint(session, calStart, unsupportedResolution);
-            String dateResolutationEnd = HippoDateTools.createXPathConstraint(session, calEnd, unsupportedResolution);
-            String lastModifiedPropertyForResolution = HippoDateTools.getPropertyForResolution("hippo:lastModified", unsupportedResolution);
+        for (DateTools.Resolution unsupportedResolution : unSupportedResolutions){
+            String dateResolutationStart = DateTools.createXPathConstraint(session, calStart, unsupportedResolution);
+            String dateResolutationEnd = DateTools.createXPathConstraint(session, calEnd, unsupportedResolution);
+            String lastModifiedPropertyForResolution = DateTools.getPropertyForResolution("hippo:lastModified", unsupportedResolution);
 
             String xpathResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@"+lastModifiedPropertyForResolution+" >= " + dateResolutationStart +
                     " and @"+lastModifiedPropertyForResolution+" <= "+dateResolutationEnd+"] order by @hippo:lastModified ascending";
@@ -164,15 +154,15 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         long start = System.currentTimeMillis();
         createDocumentsWithUniqueLastModified(nrOfDocuments, calStart, Calendar.SECOND);
 
-        String dateRangeDayStart = HippoDateTools.createXPathConstraint(session, calStart, HippoDateTools.Resolution.DAY);
-        String dateRangeDayEnd = HippoDateTools.createXPathConstraint(session, calEnd, HippoDateTools.Resolution.DAY);
-        String lastModifiedPropertyForDay = HippoDateTools.getPropertyForResolution("hippo:lastModified", HippoDateTools.Resolution.DAY);
+        String dateRangeDayStart = DateTools.createXPathConstraint(session, calStart, DateTools.Resolution.DAY);
+        String dateRangeDayEnd = DateTools.createXPathConstraint(session, calEnd, DateTools.Resolution.DAY);
+        String lastModifiedPropertyForDay = DateTools.getPropertyForResolution("hippo:lastModified", DateTools.Resolution.DAY);
 
         String xpathDayResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@"+lastModifiedPropertyForDay+" >= " + dateRangeDayStart +
                 " and @"+lastModifiedPropertyForDay+" <= "+dateRangeDayEnd+"] order by @hippo:lastModified ascending";
 
-        String dateRangeNoResolutionStart = HippoDateTools.createXPathConstraint(session, calStart);
-        String dateRangeNoResolutionEnd = HippoDateTools.createXPathConstraint(session, calEnd);
+        String dateRangeNoResolutionStart = DateTools.createXPathConstraint(session, calStart);
+        String dateRangeNoResolutionEnd = DateTools.createXPathConstraint(session, calEnd);
 
         String xpathNoResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@hippo:lastModified >= " + dateRangeNoResolutionStart +
                 " and @hippo:lastModified <= "+dateRangeNoResolutionEnd+"] order by @hippo:lastModified ascending";

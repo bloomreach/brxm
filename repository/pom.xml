@@ -70,7 +70,7 @@
   <properties>
     <hippo.commons.version>1.02.01</hippo.commons.version>
     <hippo.services.version>1.02.02-SNAPSHOT</hippo.services.version>
-    <hippo.utilities.version>1.01.02</hippo.utilities.version>
+    <hippo.utilities.version>1.01.03-SNAPSHOT</hippo.utilities.version>
 
     <!-- Test dependencies  -->
     <atomikos.version>3.8.0</atomikos.version>

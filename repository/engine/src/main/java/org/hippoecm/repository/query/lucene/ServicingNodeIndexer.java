@@ -31,7 +31,6 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.query.QueryHandlerContext;
-import org.apache.jackrabbit.core.query.lucene.DateField;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.LongField;
@@ -50,6 +49,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.tika.parser.Parser;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.utilities.date.DateTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,15 +133,15 @@ public class ServicingNodeIndexer extends NodeIndexer {
     protected void addCalendarValue(Document doc, String fieldName, Calendar internalValue) {
         final long timeInMillis = internalValue.getTimeInMillis();
         super.addCalendarValue(doc, fieldName, internalValue);
-        HippoDateTools.Resolution[] supportedResolutions = {HippoDateTools.Resolution.YEAR,
-                                                            HippoDateTools.Resolution.MONTH,
-                                                            HippoDateTools.Resolution.WEEK,
-                                                            HippoDateTools.Resolution.DAY,
-                                                            HippoDateTools.Resolution.HOUR};
+        DateTools.Resolution[] supportedResolutions = {DateTools.Resolution.YEAR,
+                                                            DateTools.Resolution.MONTH,
+                                                            DateTools.Resolution.WEEK,
+                                                            DateTools.Resolution.DAY,
+                                                            DateTools.Resolution.HOUR};
 
-        for (HippoDateTools.Resolution resolution : supportedResolutions) {
-            String propertyNameForResolution = HippoDateTools.getPropertyForResolution(fieldName, resolution);
-            Calendar roundedForResolution = HippoDateTools.roundDate(timeInMillis, resolution);
+        for (DateTools.Resolution resolution : supportedResolutions) {
+            String propertyNameForResolution = DateTools.getPropertyForResolution(fieldName, resolution);
+            Calendar roundedForResolution = DateTools.roundDate(timeInMillis, resolution);
             super.addCalendarValue(doc, propertyNameForResolution, roundedForResolution);
         }
     }
@@ -361,20 +361,20 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 Field.TermVector.NO));
         
         Map<String, String> resolutions = new HashMap<String, String>();
-        resolutions.put("year", HippoDateTools.timeToString(calendar.getTimeInMillis(),
-                HippoDateTools.Resolution.YEAR));
-        resolutions.put("month", HippoDateTools.timeToString(calendar.getTimeInMillis(),
-                HippoDateTools.Resolution.MONTH));
-        resolutions.put("week", HippoDateTools.timeToString(calendar.getTimeInMillis(),
-                HippoDateTools.Resolution.WEEK));
-        resolutions.put("day", HippoDateTools.timeToString(calendar.getTimeInMillis(),
-                HippoDateTools.Resolution.DAY));
-        resolutions.put("hour", HippoDateTools.timeToString(calendar.getTimeInMillis(),
-                HippoDateTools.Resolution.HOUR));
-        resolutions.put("minute", HippoDateTools.timeToString(calendar.getTimeInMillis(),
-                HippoDateTools.Resolution.MINUTE));
-        resolutions.put("second", HippoDateTools.timeToString(calendar.getTimeInMillis(),
-                HippoDateTools.Resolution.SECOND));
+        resolutions.put("year", DateTools.timeToString(calendar.getTimeInMillis(),
+                DateTools.Resolution.YEAR));
+        resolutions.put("month", DateTools.timeToString(calendar.getTimeInMillis(),
+                DateTools.Resolution.MONTH));
+        resolutions.put("week", DateTools.timeToString(calendar.getTimeInMillis(),
+                DateTools.Resolution.WEEK));
+        resolutions.put("day", DateTools.timeToString(calendar.getTimeInMillis(),
+                DateTools.Resolution.DAY));
+        resolutions.put("hour", DateTools.timeToString(calendar.getTimeInMillis(),
+                DateTools.Resolution.HOUR));
+        resolutions.put("minute", DateTools.timeToString(calendar.getTimeInMillis(),
+                DateTools.Resolution.MINUTE));
+        resolutions.put("second", DateTools.timeToString(calendar.getTimeInMillis(),
+                DateTools.Resolution.SECOND));
 
         Map<String, Integer> byDateNumbers = new HashMap<String, Integer>();
         byDateNumbers.put("year", calendar.get(Calendar.YEAR));

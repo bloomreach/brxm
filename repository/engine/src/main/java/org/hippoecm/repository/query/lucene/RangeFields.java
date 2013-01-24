@@ -22,6 +22,7 @@ import javax.jcr.PropertyType;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.hippoecm.repository.FacetRange;
+import org.onehippo.cms7.utilities.date.DateTools;
 
 public class RangeFields {
 
@@ -39,7 +40,7 @@ public class RangeFields {
         this.facetRangeName = facetRange.getName();
         switch (type) {
         case PropertyType.DATE: {
-            HippoDateTools.Resolution resolution = HippoDateTools.Resolution.RESOLUTIONSMAP.get(facetRange
+            DateTools.Resolution resolution = DateTools.Resolution.RESOLUTIONSMAP.get(facetRange
                     .getResolution());
             if (resolution == null) {
                 throw new IllegalArgumentException("Unknown resolution : '" + facetRange.getResolution()
@@ -52,13 +53,13 @@ public class RangeFields {
             if (facetRange.getBegin() != Double.NEGATIVE_INFINITY) {
                 Calendar calBegin = Calendar.getInstance();
                 calBegin.add(resolution.getCalendarField(), (int) facetRange.getBegin());
-                this.begin = HippoDateTools.timeToString(calBegin.getTimeInMillis(), resolution);
+                this.begin = DateTools.timeToString(calBegin.getTimeInMillis(), resolution);
             }
 
             if (facetRange.getEnd() != Double.POSITIVE_INFINITY) {
                 Calendar calEnd = Calendar.getInstance();
                 calEnd.add(resolution.getCalendarField(), (int) facetRange.getEnd());
-                this.end = HippoDateTools.timeToString(calEnd.getTimeInMillis(), resolution);
+                this.end = DateTools.timeToString(calEnd.getTimeInMillis(), resolution);
             }
             break;
         }
