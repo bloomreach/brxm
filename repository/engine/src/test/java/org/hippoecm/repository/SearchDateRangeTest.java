@@ -50,12 +50,6 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         session.save();
     }
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     private void createDocumentsWithUniqueLastModified(final int amount, final Calendar calSeed, final int timeUnit) throws Exception {
         for (int i = 0 ; i < amount; i++) {
             Calendar nextCal =  ((Calendar)calSeed.clone());
@@ -64,7 +58,7 @@ public class SearchDateRangeTest extends RepositoryTestCase {
             Node document = handle.addNode("Document"+i, NT_SEARCHDOCUMENT);
             document.setProperty("hippo:lastModified", nextCal);
         }
-        testPath.getSession().save();
+        session.save();
     }
 
     @Test
@@ -82,25 +76,27 @@ public class SearchDateRangeTest extends RepositoryTestCase {
                 " and @hippo:lastModified <= "+dateRangeNoResolutionEnd+"] order by @hippo:lastModified ascending";
         final Query withNoResolution = session.getWorkspace().getQueryManager().createQuery(xpathNoResolution, "xpath");
         withNoResolution.setLimit(limit);
-        final Node firstResultNoResulution = withNoResolution.execute().getNodes().nextNode();
+        final Node firstResultNoResolution = withNoResolution.execute().getNodes().nextNode();
 
-        DateTools.Resolution[] supportedResolutions = {DateTools.Resolution.YEAR,
+        DateTools.Resolution[] supportedResolutions = {
+                DateTools.Resolution.YEAR,
                 DateTools.Resolution.MONTH,
                 DateTools.Resolution.WEEK,
                 DateTools.Resolution.DAY,
-                DateTools.Resolution.HOUR};
+                DateTools.Resolution.HOUR
+        };
 
         for (DateTools.Resolution resolution : supportedResolutions){
-            String dateResolutationStart = DateTools.createXPathConstraint(session, calStart, resolution);
-            String dateResolutationEnd = DateTools.createXPathConstraint(session, calStart, resolution);
+            String dateResolutionStart = DateTools.createXPathConstraint(session, calStart, resolution);
+            String dateResolutionEnd = DateTools.createXPathConstraint(session, calStart, resolution);
             String lastModifiedPropertyForResolution = DateTools.getPropertyForResolution("hippo:lastModified", resolution);
 
-            String xpathResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@"+lastModifiedPropertyForResolution+" >= " + dateResolutationStart +
-                    " and @"+lastModifiedPropertyForResolution+" <= "+dateResolutationEnd+"] order by @hippo:lastModified ascending";
+            String xpathResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@"+lastModifiedPropertyForResolution+" >= " + dateResolutionStart +
+                    " and @"+lastModifiedPropertyForResolution+" <= "+dateResolutionEnd+"] order by @hippo:lastModified ascending";
             final Query withResolution = session.getWorkspace().getQueryManager().createQuery(xpathResolution, "xpath");
             withResolution.setLimit(limit);
-            final Node firstResultWithResulution = withResolution.execute().getNodes().nextNode();
-            assertTrue("First result for range query with resolution should be same as without", firstResultNoResulution.isSame(firstResultWithResulution));
+            final Node firstResultWithResolution = withResolution.execute().getNodes().nextNode();
+            assertTrue("First result for range query with resolution should be same as without", firstResultNoResolution.isSame(firstResultWithResolution));
         }
 
     }
@@ -177,17 +173,19 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         createDocumentsWithUniqueLastModified(nrOfDocuments, calStart, Calendar.SECOND);
 
         final long limit = 1L;
-        DateTools.Resolution[] unSupportedResolutions = {DateTools.Resolution.MINUTE,
+        DateTools.Resolution[] unSupportedResolutions = {
+                DateTools.Resolution.MINUTE,
                 DateTools.Resolution.SECOND,
-                DateTools.Resolution.MILLISECOND};
+                DateTools.Resolution.MILLISECOND
+        };
 
         for (DateTools.Resolution unsupportedResolution : unSupportedResolutions){
-            String dateResolutationStart = DateTools.createXPathConstraint(session, calStart, unsupportedResolution);
-            String dateResolutationEnd = DateTools.createXPathConstraint(session, calStart, unsupportedResolution);
+            String dateResolutionStart = DateTools.createXPathConstraint(session, calStart, unsupportedResolution);
+            String dateResolutionEnd = DateTools.createXPathConstraint(session, calStart, unsupportedResolution);
             String lastModifiedPropertyForResolution = DateTools.getPropertyForResolution("hippo:lastModified", unsupportedResolution);
 
-            String xpathResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@"+lastModifiedPropertyForResolution+" >= " + dateResolutationStart +
-                    " and @"+lastModifiedPropertyForResolution+" <= "+dateResolutationEnd+"] order by @hippo:lastModified ascending";
+            String xpathResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@"+lastModifiedPropertyForResolution+" >= " + dateResolutionStart +
+                    " and @"+lastModifiedPropertyForResolution+" <= "+dateResolutionEnd+"] order by @hippo:lastModified ascending";
             final Query withResolution = session.getWorkspace().getQueryManager().createQuery(xpathResolution, "xpath");
             withResolution.setLimit(limit);
             final QueryResult result = withResolution.execute();
@@ -199,7 +197,7 @@ public class SearchDateRangeTest extends RepositoryTestCase {
     @Test
     public void testDateRangePerformanceAndSorting() throws Exception {
 
-        // create some not too small number of docs with unique date to proof performance for DAY resolution is better
+        // create some not too small number of docs with unique date to prove performance for DAY resolution is better
         final int nrOfDocuments = 1000;
         final Calendar calStart = Calendar.getInstance();
         // make sure start date can never be around noon to avoid race conditions in our expectations

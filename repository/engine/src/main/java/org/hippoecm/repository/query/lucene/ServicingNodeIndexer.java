@@ -57,6 +57,14 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     private static final Logger log = LoggerFactory.getLogger(ServicingNodeIndexer.class);
 
+    private static final DateTools.Resolution[] supportedResolutions = {
+            DateTools.Resolution.YEAR,
+            DateTools.Resolution.MONTH,
+            DateTools.Resolution.WEEK,
+            DateTools.Resolution.DAY,
+            DateTools.Resolution.HOUR
+    };
+
     /**
      * List where the binaries are stored before being actually indexed: when there is a hippo:text binary in the documentBinaries, we
      * then skip the other binaries indexing: the hippo:text is there as the extracted version of the real binary
@@ -130,15 +138,11 @@ public class ServicingNodeIndexer extends NodeIndexer {
         }
     }
 
+    @Override
     protected void addCalendarValue(Document doc, String fieldName, Calendar internalValue) {
-        final long timeInMillis = internalValue.getTimeInMillis();
         super.addCalendarValue(doc, fieldName, internalValue);
-        DateTools.Resolution[] supportedResolutions = {DateTools.Resolution.YEAR,
-                                                            DateTools.Resolution.MONTH,
-                                                            DateTools.Resolution.WEEK,
-                                                            DateTools.Resolution.DAY,
-                                                            DateTools.Resolution.HOUR};
 
+        final long timeInMillis = internalValue.getTimeInMillis();
         for (DateTools.Resolution resolution : supportedResolutions) {
             String propertyNameForResolution = DateTools.getPropertyForResolution(fieldName, resolution);
             Calendar roundedForResolution = DateTools.roundDate(timeInMillis, resolution);
