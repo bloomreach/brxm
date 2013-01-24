@@ -234,6 +234,16 @@ public class DateTools {
 
     }
 
+    private final static DateTools.Resolution[] supportedResolutions = {DateTools.Resolution.YEAR,
+            DateTools.Resolution.MONTH,
+            DateTools.Resolution.WEEK,
+            DateTools.Resolution.DAY,
+            DateTools.Resolution.HOUR};
+
+    public static Resolution[] getSupportedQueryResolutions() {
+        return supportedResolutions;
+    }
+
     /** Specifies the time granularity. */
     public static class Resolution {
         

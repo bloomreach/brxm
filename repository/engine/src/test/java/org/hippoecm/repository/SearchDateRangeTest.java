@@ -78,15 +78,7 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         withNoResolution.setLimit(limit);
         final Node firstResultNoResolution = withNoResolution.execute().getNodes().nextNode();
 
-        DateTools.Resolution[] supportedResolutions = {
-                DateTools.Resolution.YEAR,
-                DateTools.Resolution.MONTH,
-                DateTools.Resolution.WEEK,
-                DateTools.Resolution.DAY,
-                DateTools.Resolution.HOUR
-        };
-
-        for (DateTools.Resolution resolution : supportedResolutions){
+        for (DateTools.Resolution resolution : DateTools.getSupportedQueryResolutions()){
             String dateResolutionStart = DateTools.createXPathConstraint(session, calStart, resolution);
             String dateResolutionEnd = DateTools.createXPathConstraint(session, calStart, resolution);
             String lastModifiedPropertyForResolution = DateTools.getPropertyForResolution("hippo:lastModified", resolution);
@@ -147,13 +139,7 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         calToday.set(Calendar.HOUR, 8);
         createDocumentsWithUniqueLastModified(nrDocsToday, calToday, Calendar.SECOND);
 
-        DateTools.Resolution[] supportedResolutions = {DateTools.Resolution.YEAR,
-                DateTools.Resolution.MONTH,
-                DateTools.Resolution.WEEK,
-                DateTools.Resolution.DAY,
-                DateTools.Resolution.HOUR};
-
-        for (DateTools.Resolution resolution : supportedResolutions){
+        for (DateTools.Resolution resolution : DateTools.getSupportedQueryResolutions()){
             String dateWithResolution = DateTools.createXPathConstraint(session, calToday, resolution);
             String lastModifiedPropertyForResolution = DateTools.getPropertyForResolution("hippo:lastModified", resolution);
             String xpathWithResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@"+lastModifiedPropertyForResolution+" = " + dateWithResolution +"] order by @hippo:lastModified ascending";
