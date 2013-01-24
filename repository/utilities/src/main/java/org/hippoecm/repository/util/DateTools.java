@@ -18,7 +18,7 @@
  */
 package org.hippoecm.repository.util;
 
-import java.lang.IllegalArgumentException;import java.lang.String;import java.text.ParseException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -59,7 +59,7 @@ public class DateTools {
      *
      * @param time the date expressed as milliseconds since January 1, 1970, 00:00:00 GMT
      * @param resolution the desired resolution, see {@link #round(long, DateTools.Resolution)}
-     * @return a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,depeding on <code>resolution</code>; using UTC as timezone
+     * @return a string in format <code>yyyyMMddHHmmssSSS</code> or shorter,depending on <code>resolution</code>; using UTC as timezone
      */
     public static String timeToString(long time, Resolution resolution) {
         Calendar cal = Calendar.getInstance();
@@ -77,9 +77,9 @@ public class DateTools {
                 result = MONTH_FORMAT.format(cal.getTime());
             }
         } else if (resolution == Resolution.WEEK) {
-                synchronized (WEEK_FORMAT) {
-                        result = WEEK_FORMAT.format(cal.getTime());
-                    }
+            synchronized (WEEK_FORMAT) {
+                result = WEEK_FORMAT.format(cal.getTime());
+            }
         } else if (resolution == Resolution.DAY) {
             synchronized (DAY_FORMAT) {
                 result = DAY_FORMAT.format(cal.getTime());
@@ -183,13 +183,13 @@ public class DateTools {
                 }
             } else if (dateString.length() == 6) {
                 if(resolution == Resolution.WEEK) {
-                        synchronized (WEEK_FORMAT) {
-                                date = WEEK_FORMAT.parse(dateString);
-                            }
+                    synchronized (WEEK_FORMAT) {
+                        date = WEEK_FORMAT.parse(dateString);
+                    }
                 } else {
-                        synchronized (MONTH_FORMAT) {
-                                date = MONTH_FORMAT.parse(dateString);
-                            }
+                    synchronized (MONTH_FORMAT) {
+                        date = MONTH_FORMAT.parse(dateString);
+                    }
                 }
             } else if (dateString.length() == 8) {
                 synchronized (DAY_FORMAT) {
