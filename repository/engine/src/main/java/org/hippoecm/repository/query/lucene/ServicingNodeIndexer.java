@@ -49,7 +49,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.tika.parser.Parser;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.onehippo.cms7.utilities.date.DateTools;
+import org.hippoecm.repository.util.DateTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

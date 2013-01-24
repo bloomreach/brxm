@@ -24,10 +24,10 @@ import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.DateTools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.utilities.date.DateTools;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertTrue;

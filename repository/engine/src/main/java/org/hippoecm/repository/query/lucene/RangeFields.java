@@ -22,7 +22,7 @@ import javax.jcr.PropertyType;
 import org.apache.jackrabbit.core.query.lucene.DoubleField;
 import org.apache.jackrabbit.core.query.lucene.LongField;
 import org.hippoecm.repository.FacetRange;
-import org.onehippo.cms7.utilities.date.DateTools;
+import org.hippoecm.repository.util.DateTools;
 
 public class RangeFields {
 

@@ -26,7 +26,7 @@ import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 
-import org.onehippo.cms7.utilities.date.DateTools;
+import org.hippoecm.repository.util.DateTools;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 public abstract class AbstractRangesFacetNavigationTest extends RepositoryTestCase {

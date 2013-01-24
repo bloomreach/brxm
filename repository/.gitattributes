@@ -381,6 +381,7 @@ upgrade/src/test/resources/repository-testsubns2.cnd -text
 upgrade/src/test/resources/repository-testsuperns.cnd -text
 upgrade/src/test/resources/repository-testsuperns2.cnd -text
 utilities/pom.xml svneol=native#text/plain
+utilities/src/main/java/org/hippoecm/repository/util/DateTools.java -text
 utilities/src/main/java/org/hippoecm/repository/util/JcrUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java -text
 utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text
