@@ -207,24 +207,29 @@ public class JCRJobStore extends AbstractJobStore {
                         } catch (ClassNotFoundException e) {
                             log.info("Cannot execute job " + jobNode.getPath() + " on this cluster node. Skipping");
                             continue;
+                        } catch (IOException e) {
+                            log.error("Failed to load job " + jobNode.getPath());
+                            continue;
                         }
                         if (lock(session, triggerNode.getPath())) {
-                            startLockKeepAlive(session, triggerNode.getIdentifier());
-                            JcrUtils.ensureIsCheckedOut(triggerNode, false);
-                            final Trigger trigger = createTriggerFromNode(triggerNode);
-                            triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
-                            session.save();
-                            return trigger;
+                            try {
+                                startLockKeepAlive(session, triggerNode.getIdentifier());
+                                JcrUtils.ensureIsCheckedOut(triggerNode, false);
+                                final Trigger trigger = createTriggerFromNode(triggerNode);
+                                triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
+                                session.save();
+                                return trigger;
+                            } catch (IOException e) {
+                                log.error("Failed to read trigger for job " + jobNode.getPath(), e);
+                            } catch (ClassNotFoundException e) {
+                                log.error("Failed to recreate trigger for job " + jobNode.getPath(), e);
+                            }
                         }
                     }
                 }
             } catch (RepositoryException e) {
                 refreshSession(session);
                 log.error("Failed to acquire next trigger", e);
-            } catch (IOException e) {
-                log.error("Failed to read trigger from repository", e);
-            } catch (ClassNotFoundException e) {
-                log.error("Failed to recreate trigger", e);
             }
         }
         return null;
