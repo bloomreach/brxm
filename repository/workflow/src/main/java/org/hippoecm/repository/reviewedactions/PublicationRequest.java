@@ -24,12 +24,13 @@ import org.hippoecm.repository.api.Document;
 @PersistenceCapable
 public class PublicationRequest extends Document {
 
-    final public static String REJECTED = "rejected"; // zombie
-    final public static String PUBLISH = "publish";
-    final public static String DEPUBLISH = "depublish";
-    final public static String SCHEDPUBLISH = "scheduledpublish";
-    final public static String SCHEDDEPUBLISH = "scheduleddepublish";
-    final public static String DELETE = "delete";
+    public static final String REJECTED = "rejected"; // zombie
+    public static final String PUBLISH = "publish";
+    public static final String DEPUBLISH = "depublish";
+    public static final String SCHEDPUBLISH = "scheduledpublish";
+    public static final String SCHEDDEPUBLISH = "scheduleddepublish";
+    public static final String DELETE = "delete";
+    public static final String COLLECTION = "collection";
 
     @Persistent(column="hippostdpubwf:type")
     public String type;

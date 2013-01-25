@@ -35,6 +35,12 @@
     <sv:property sv:name="hippo:sequence" sv:type="Double">
       <sv:value>11.0</sv:value>
     </sv:property>
+    <sv:property sv:name="hippo:reloadonstartup" sv:type="Boolean">
+      <sv:value>true</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippo:version" sv:type="String">
+      <sv:value>2.24.02</sv:value>
+    </sv:property>
   </sv:node>
   <!--Derived summary configuration-->
   <sv:node sv:name="reviewedactions-derivatives">

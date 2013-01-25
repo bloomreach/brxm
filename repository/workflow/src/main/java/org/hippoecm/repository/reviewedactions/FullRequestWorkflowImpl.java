@@ -48,10 +48,14 @@ public class FullRequestWorkflowImpl extends BasicRequestWorkflowImpl implements
     @Override
     public Map<String,Serializable> hints()  {
         Map<String,Serializable> info = super.hints();
-        if(PublicationRequest.REJECTED.equals(request.getType())) {
+        if (PublicationRequest.REJECTED.equals(request.getType())) {
             info.put("acceptRequest", false);
             info.put("rejectRequest", false);
             info.put("cancelRequest", true);
+        } else if (PublicationRequest.COLLECTION.equals(request.getType())) {
+            info.put("acceptRequest", false);
+            info.put("rejectRequest", false);
+            info.put("cancelRequest", false);
         } else {
             info.put("acceptRequest", true);
             if(request.getOwner() != null) {
