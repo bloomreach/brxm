@@ -40,6 +40,7 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.reviewedactions.FullRequestWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 
 public class FullRequestWorkflowPlugin extends RenderPlugin {
 
@@ -140,7 +141,6 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
             WorkflowDescriptorModel workflowDescriptorModel = getModel();
             WorkflowDescriptor workflowDescriptor = workflowDescriptorModel.getObject();
             if (workflowDescriptor != null) {
-                Node documentNode = workflowDescriptorModel.getNode();
 
                 Workflow workflow = manager.getWorkflow(workflowDescriptor);
                 Map<String, Serializable> info = workflow.hints();
@@ -156,13 +156,19 @@ public class FullRequestWorkflowPlugin extends RenderPlugin {
                     cancelAction.setVisible(false);
                 }
 
-                if (documentNode.hasProperty("hippostdpubwf:type")) {
-                    state = documentNode.getProperty("hippostdpubwf:type").getString();
+                Node request = workflowDescriptorModel.getNode();
+                final String refId = JcrUtils.getStringProperty(request, "hippostdpubwf:refId", null);
+                if (refId != null) {
+                    final Node handle = request.getSession().getNodeByIdentifier(refId).getParent();
+                    request = handle.getNode("hippo:request");
+                    state = "scheduled" + JcrUtils.getStringProperty(request, "hipposched:methodName", state);
+                } else {
+                    state = JcrUtils.getStringProperty(request, "hippostdpubwf:type", state);
                 }
-                if (documentNode.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
-                    schedule = documentNode.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
-                } else if (documentNode.hasProperty("hippostdpubwf:reqdate")) {
-                    schedule = new Date(documentNode.getProperty("hippostdpubwf:reqdate").getLong());
+                if (request.hasProperty("hipposched:triggers/default/hipposched:fireTime")) {
+                    schedule = request.getProperty("hipposched:triggers/default/hipposched:fireTime").getDate().getTime();
+                } else if (request.hasProperty("hippostdpubwf:reqdate")) {
+                    schedule = new Date(request.getProperty("hippostdpubwf:reqdate").getLong());
                 }
             }
          } catch (WorkflowException ex) {

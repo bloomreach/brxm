@@ -90,7 +90,8 @@ public class CancelWorkflowPlugin extends RenderPlugin {
                 final String refId = JcrUtils.getStringProperty(jobNode, "hippostdpubwf:refId", null);
                 if (refId != null) {
                     final Session session = jobNode.getSession();
-                    jobNode = session.getNodeByIdentifier(refId);
+                    final Node handle = session.getNodeByIdentifier(refId).getParent();
+                    jobNode = handle.getNode("hippo:request");
                 }
                 state = JcrUtils.getStringProperty(jobNode, "hipposched:methodName", null);
                 if (state == null) {
