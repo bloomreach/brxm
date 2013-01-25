@@ -562,7 +562,7 @@ public class JcrUtils {
      * @param node - The {@link Node} to get the path of
      * @return The path of the {@link Node}, or <code>null</code> if <code>node</code> is null or an exception happens.
      */
-    public static String getNodePath(final Node node) {
+    public static String getNodePathQuietly(final Node node) {
         try {
             return ((node == null) ? null : node.getPath());
         } catch (RepositoryException ignored) {
