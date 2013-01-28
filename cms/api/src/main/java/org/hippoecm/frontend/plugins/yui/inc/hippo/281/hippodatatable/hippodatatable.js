@@ -30,6 +30,27 @@ if (!YAHOO.hippo.DataTable) {
     (function() {
         var Dom = YAHOO.util.Dom;
 
+        function getPixels(el, attr) {
+            var style = Dom.getStyle(el, attr);
+            if (style) {
+                return parseInt(style, 10);
+            }
+            return 0;
+        }
+
+        function getRegion(el) {
+            return {
+                width: getPixels(el, 'width') +
+                        getPixels(el, 'margin-left') + getPixels(el, 'margin-right') +
+                        getPixels(el, 'padding-left') + getPixels(el, 'padding-right') +
+                        getPixels(el, 'border-left-width') + getPixels(el, 'border-right-width'),
+                height: getPixels(el, 'height') +
+                        getPixels(el, 'margin-top') + getPixels(el, 'margin-bottom') +
+                        getPixels(el, 'padding-top') + getPixels(el, 'padding-bottom') +
+                        getPixels(el, 'border-top-height') + getPixels(el, 'border-bottom-height')
+            };
+        }
+
         YAHOO.hippo.DataTable = function(id, config) {
             YAHOO.hippo.DataTable.superclass.constructor.apply(this, arguments);
         };
@@ -97,7 +118,7 @@ if (!YAHOO.hippo.DataTable) {
                 for (i = 0, len = cells.length; i < len; i++) {
                     child = cells[i];
                     if (!Dom.hasClass(child, this.config.autoWidthClassName)) {
-                        region = Dom.getRegion(child);
+                        region = getRegion(child);
                         fixedHeaderWidth += region.width;
                         result.widths.push(region.width);
                     } else {
@@ -126,19 +147,19 @@ if (!YAHOO.hippo.DataTable) {
                 for (i = 0, len = siblings.length; i < len; i++) {
                     sibling = siblings[i];
                     if (sibling !== table) {
-                        fixedTableHeight += Dom.getRegion(sibling).height;
+                        fixedTableHeight += getRegion(sibling).height;
                     }
                 }
                 //add margin/padding/border value of table
                 fixedTableHeight += this.helper.getMargin(table).h;
                 //add height of header
-                fixedTableHeight += Dom.getRegion(thead).height;
+                fixedTableHeight += getRegion(thead).height;
 
                 pagingTr = Dom.getElementsByClassName('hippo-list-paging', 'tr', table);
                 pagingHeight = 0;
                 if (pagingTr.length > 0) {
                     for (i = 0, len = pagingTr.length; i < len; i++) {
-                        pagingHeight += Dom.getRegion(pagingTr[i]).height;
+                        pagingHeight += getRegion(pagingTr[i]).height;
                     }
                 }
 
