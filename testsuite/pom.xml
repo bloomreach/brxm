@@ -153,6 +153,22 @@
     </dependencies>
   </dependencyManagement>
 
+  <modules>
+    <!-- Added api,random-numbers and linear-algebra for test case of Add-on component context from jar
+    modules, also see HSTTWO-2038 -->
+    <module>api</module>
+    <module>random-numbers</module>
+    <module>linear-algebra</module>
+    <!-- End Add-on component context -->
+    <module>content</module>
+    <module>components</module>
+    <module>dependencies</module>
+    <module>resources</module>
+    <module>cms</module>
+    <module>site</module>
+    <module>solr</module>
+  </modules>
+
   <build>
     <defaultGoal>package</defaultGoal>
     <pluginManagement>
@@ -174,35 +190,27 @@
         </plugin>
       </plugins>
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-remote-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <configuration>
+              <resourceBundles>
+                <resourceBundle>org.onehippo.cms7:hippo-cms7-legal-resources:1</resourceBundle>
+              </resourceBundles>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 
   <profiles>
-
-    <profile>
-      <id>default</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-        <property>
-          <name>jrebel</name>
-        </property>
-      </activation>
-      <modules>
-        <!-- Added api,random-numbers and linear-algebra for test case of Add-on component context from jar
-        modules, also see HSTTWO-2038 -->
-        <module>api</module>
-        <module>random-numbers</module>
-        <module>linear-algebra</module>
-        <!-- End Add-on component context -->
-        <module>content</module>
-        <module>components</module>
-        <module>dependencies</module>
-        <module>resources</module>
-        <module>cms</module>
-        <module>site</module>
-        <module>solr</module>
-      </modules>
-    </profile>
-
     <profile>
       <id>cargo.run</id>
       <properties>
