@@ -801,29 +801,40 @@
   </dependencies>
 
   <build>
-    <plugins>
-      <!-- 'nullify' the inherited but 'Hippo only' specific legal-resources bundle from the hippo-cms7-project parent.
-           Downstream projects can and must specify their own (legal or otherwise) resource bundle if needed.
-      -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-remote-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <configuration>
-              <resourceBundles combine.self="override">
-                <!-- explicitly not defining anything here to nullify the 'Hippo only' specific configuration
-                     from the hippo-cms7-project parent
-                -->
-              </resourceBundles>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+    <pluginManagement>
+      <plugins>
+        <!-- 'nullify' the inherited but 'Hippo only' specific maven-war-plugin and maven-remote-resources-plugin
+              handling of LICENSE and NOTICE files as configured in the hippo-cms7-project parent.
+        -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>${maven.plugin.war.version}</version>
+          <configuration>
+            <webResources combine.self="override">
+            </webResources>
+            <packagingExcludes combine.self="override">
+            </packagingExcludes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-remote-resources-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>process</goal>
+              </goals>
+              <configuration>
+                <resourceBundles combine.self="override">
+                </resourceBundles>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+      <!-- end of 'nullify' inherited configuration -->
+    </pluginManagement>
   </build>
 
   <profiles>
