@@ -82,7 +82,7 @@
     <lucene.version>2.2.0</lucene.version>
     <tika.version>0.9</tika.version>
     <pdfbox.version>1.7.1</pdfbox.version>
-    <jackrabbit.version>2.2.13-h5</jackrabbit.version>
+    <jackrabbit.version>2.2.13-h6</jackrabbit.version>
     <quartz.version>1.8.5</quartz.version>
     <json-lib.version>2.2.2</json-lib.version>
     <groovy.version>2.0.1</groovy.version>
