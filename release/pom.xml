@@ -38,14 +38,14 @@
 
   <properties>
     <hippo.release.version>7.8.1-SNAPSHOT</hippo.release.version>
-    <hippo.commons.version>1.02.01</hippo.commons.version>
+    <hippo.commons.version>1.02.02-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>1.02.02-SNAPSHOT</hippo.services.version>
     <hippo.utilities.version>1.01.03-SNAPSHOT</hippo.utilities.version>
     <hippo.repository.version>2.24.02-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.24.01-SNAPSHOT</hippo.cms.version>
     <hippo.addon-hst-configuration-editor.version>1.11.01-SNAPSHOT</hippo.addon-hst-configuration-editor.version>
     <hippo.addon-channel-manager.version>2.24.01-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.packages.version>2.24.00</hippo.packages.version>
+    <hippo.packages.version>2.24.01-SNAPSHOT</hippo.packages.version>
     <hippo.hst.version>2.26.01-SNAPSHOT</hippo.hst.version>
 
     <forge.content-blocks.version>1.08.04-SNAPSHOT</forge.content-blocks.version>
@@ -148,11 +148,6 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-jca</artifactId>
-        <version>${hippo.repository.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-ldap</artifactId>
         <version>${hippo.repository.version}</version>
       </dependency>
@@ -188,12 +183,7 @@
       </dependency>
       <dependency>
         <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-tools-testutils</artifactId>
-        <version>${hippo.repository.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>hippo-repository-tools-documentation</artifactId>
+        <artifactId>hippo-repository-testutils</artifactId>
         <version>${hippo.repository.version}</version>
       </dependency>
       <dependency>
@@ -525,11 +515,6 @@
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>
         <artifactId>hst-commons</artifactId>
-        <version>${hippo.hst.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7.hst.components</groupId>
-        <artifactId>hst-caching</artifactId>
         <version>${hippo.hst.version}</version>
       </dependency>
       <dependency>
