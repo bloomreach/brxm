@@ -83,36 +83,45 @@ public class InheritedFieldSection extends Section {
 
                 @Override
                 public List<InheritedField> getData() {
-                    ITypeDescriptor type = builder.getTypeDescriptor();
                     Map<String, InheritedField> fieldList = new LinkedHashMap<String,InheritedField>();
+
                     try {
-                        addEditableFields(fieldList, type);
+                        addEditableFields(fieldList, builder.getTypeDescriptor().getSuperTypes());
                     } catch (TemplateEngineException e) {
                         log.error("Unable to build list of inheritable plugin configurations", e);
                     }
                     return new ArrayList<InheritedField>(fieldList.values());
                 }
 
-                private void addEditableFields(Map<String, InheritedField> fieldList, ITypeDescriptor type) throws TemplateEngineException {
-                    for (String superType : type.getSuperTypes()) {
-                        ITypeDescriptor superDescriptor = getTemplateEngine().getType(superType);
-                        addEditableFields(fieldList, superDescriptor);
+                private void addEditableFields(Map<String, InheritedField> fieldList, List<String> typesNames) throws TemplateEngineException {
+                    // A deliberate check not to start retrieving the template engine and start the steps for real gain
+                    if (typesNames.isEmpty()) {
+                        return;
                     }
-                    ITemplateEngine templateEngine = getTemplateEngine();
-                    try {
-                        final IClusterConfig template = templateEngine.getTemplate(type, IEditor.Mode.EDIT);
-                        for (Map.Entry<String, IFieldDescriptor> fieldEntry : type.getFields().entrySet()) {
-                            final String fieldName = fieldEntry.getKey();
-                            final IFieldDescriptor fieldDescriptor = fieldEntry.getValue();
-                            for (IPluginConfig config : template.getPlugins()) {
-                                if (config.containsKey("field") && fieldName.equals(config.getString("field"))) {
-                                    fieldList.put(fieldName, new InheritedField(type, fieldDescriptor));
-                                    break;
+
+                    final ITemplateEngine templateEngine = getTemplateEngine();
+
+                    for (String typeName : typesNames) {
+                        final ITypeDescriptor typeDescriptor = templateEngine.getType(typeName);
+                        addEditableFields(fieldList, typeDescriptor.getSuperTypes());
+
+                        try {
+                            final IClusterConfig template = templateEngine.getTemplate(typeDescriptor, IEditor.Mode.EDIT);
+
+                            for (Map.Entry<String, IFieldDescriptor> fieldEntry : typeDescriptor.getFields().entrySet()) {
+                                final String fieldName = fieldEntry.getKey();
+                                final IFieldDescriptor fieldDescriptor = fieldEntry.getValue();
+
+                                for (IPluginConfig config : template.getPlugins()) {
+                                    if (config.containsKey("field") && fieldName.equals(config.getString("field"))) {
+                                        fieldList.put(fieldName, new InheritedField(typeDescriptor, fieldDescriptor));
+                                        break;
+                                    }
                                 }
                             }
+                        } catch (TemplateEngineException e) {
+                            log.debug("Could not find template for " + typeDescriptor.getName());
                         }
-                    } catch (TemplateEngineException e) {
-                        log.debug("Could not find template for " + type.getName());
                     }
                 }
 
@@ -142,6 +151,7 @@ public class InheritedFieldSection extends Section {
                 IFieldDescriptor fieldDescriptor = inheritedField.getField();
                 String pluginName = TypeHelper.getFieldName(fieldDescriptor.getPath(),
                                                             fieldDescriptor.getTypeDescriptor().getName());
+
                 JavaPluginConfig pluginConfig = new JavaPluginConfig(pluginName);
                 pluginConfig.putAll(inheritedConfig);
                 pluginConfig.put("wicket.id", extPtRef.getModel().getObject());
