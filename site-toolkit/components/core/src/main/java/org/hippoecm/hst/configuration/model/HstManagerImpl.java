@@ -334,9 +334,9 @@ public class HstManagerImpl implements MutableHstManager {
                 @Override
                 public void run() {
                     try {
-                        long dontSweatDelayInCaseOfConsecutiveFailuers = computeReloadDelay(consecutiveBuildFailCounter);
-                        if (dontSweatDelayInCaseOfConsecutiveFailuers > 0) {
-                            Thread.sleep(dontSweatDelayInCaseOfConsecutiveFailuers);
+                        long reloadDelay = computeReloadDelay(consecutiveBuildFailCounter);
+                        if (reloadDelay > 0) {
+                            Thread.sleep(reloadDelay);
                         }
                         synchronousBuild();
                     } catch (ContainerException e) {
