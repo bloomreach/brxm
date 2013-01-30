@@ -31,6 +31,9 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
     private static final String RETURN_TYPE = "returnType";
     private static final String ARGUMENTS = "arguments";
     private static final String INTERACTION_ID = "interactionId";
+    private static final String INTERACTION = "interaction";
+    private static final String WORKFLOW_CATEGORY = "workflowCategory";
+    private static final String WORKFLOW_NAME = "workflowName";
 
     public HippoWorkflowEvent() {
         super("repository");
@@ -105,7 +108,32 @@ public class HippoWorkflowEvent<T extends HippoWorkflowEvent<T>> extends HippoEv
         return get(INTERACTION_ID);
     }
 
+    public String interaction() {
+        return get(INTERACTION);
+    }
+
     public T interactionId(String interactionId) {
         return set(INTERACTION_ID, interactionId);
     }
+
+    public T interaction(String interaction) {
+        return set(INTERACTION, interaction);
+    }
+
+    public String workflowCategory() {
+        return get(WORKFLOW_CATEGORY);
+    }
+
+    public void workflowCategory(String category) {
+        set(WORKFLOW_CATEGORY, category);
+    }
+
+    public String workflowName() {
+        return get(WORKFLOW_NAME);
+    }
+
+    public void workflowName(String workflowName) {
+        set(WORKFLOW_NAME, workflowName);
+    }
+
 }

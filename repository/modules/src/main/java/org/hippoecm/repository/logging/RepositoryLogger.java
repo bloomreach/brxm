@@ -98,6 +98,9 @@ public class RepositoryLogger implements DaemonModule {
         String returnType = null;
         List<String> arguments = null;
         String interactionId = null;
+        String interaction = null;
+        String workflowCategory = null;
+        String workflowName = null;
         if (HippoEventConstants.CATEGORY_WORKFLOW.equals(event.category())) {
             HippoWorkflowEvent workflowEvent = new HippoWorkflowEvent(event);
             returnValue = workflowEvent.result();
@@ -108,6 +111,9 @@ public class RepositoryLogger implements DaemonModule {
             returnType = workflowEvent.returnType();
             arguments = workflowEvent.arguments();
             interactionId = workflowEvent.interactionId();
+            interaction = workflowEvent.interaction();
+            workflowCategory = workflowEvent.workflowCategory();
+            workflowName = workflowEvent.workflowName();
         } else if (HippoEventConstants.CATEGORY_SECURITY.equals(event.category())) {
             HippoSecurityEvent securityEvent = new HippoSecurityEvent(event);
             if (!securityEvent.success()) {
@@ -128,6 +134,9 @@ public class RepositoryLogger implements DaemonModule {
             logNode.setProperty("hippolog:eventClass", className == null ? "null" : className);
             logNode.setProperty("hippolog:eventMethod", methodName == null ? "null" : methodName);
             logNode.setProperty("hippolog:interactionId", interactionId);
+            logNode.setProperty("hippolog:interaction", interaction);
+            logNode.setProperty("hippolog:category", workflowCategory);
+            logNode.setProperty("hippolog:workflowName", workflowName);
             // conditional properties
             if (documentPath != null) {
                 logNode.setProperty("hippolog:eventDocument", documentPath);

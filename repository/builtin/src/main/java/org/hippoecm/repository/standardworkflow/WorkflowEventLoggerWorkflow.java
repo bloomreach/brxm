@@ -20,6 +20,9 @@ public interface WorkflowEventLoggerWorkflow extends EventLoggerWorkflow {
     @Deprecated
     public void logWorkflowStep(String who, String className, String methodName, Object[] args, Object returnObject, String documentPath);
 
-    public void logWorkflowStep(String who, String className, String methodName, Object[] args, Object returnObject, String documentPath, String interactionId);
+    public void logWorkflowStep(String userName, String className, String methodName,
+                                Object[] args, Object returnObject, String documentPath,
+                                String interaction, String interactionId,
+                                String category, String workflowName);
 
 }

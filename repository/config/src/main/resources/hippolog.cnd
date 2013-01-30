@@ -31,6 +31,9 @@
 - hippolog:eventDocument (string)
 - hippolog:handleUuid (string)
 - hippolog:interactionId (string)
+- hippolog:interaction (string)
+- hippolog:category (string)
+- hippolog:workflowName (string)
 
 [hippolog:folder] > nt:base orderable
 - hippolog:enabled (boolean) // deprecated
