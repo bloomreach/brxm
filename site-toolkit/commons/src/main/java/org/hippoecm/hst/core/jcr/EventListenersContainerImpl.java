@@ -215,7 +215,7 @@ public class EventListenersContainerImpl implements EventListenersContainer {
                         log.warn("Failed to register event listener '" + eventListener + "': " + e, e);
                     } else {
                         log.warn("Failed to register event listener '" + eventListener + "': " + e);
-                    };
+                    }
                     continue;
                 }
                 
