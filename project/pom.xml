@@ -31,13 +31,15 @@
   </prerequisites>
 
   <organization>
-    <name>Hippo</name>
+    <name>Hippo B.V (http://www.onehippo.com)</name>
     <url>http://www.onehippo.com/</url>
   </organization>
 
   <properties>
     <!-- use UTF-8 encoding for filtered file copy -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <notice.project.name>${project.name}</notice.project.name>
 
     <!--
       Note on upgrading dependencies and plugins:
@@ -788,6 +790,9 @@
                 <resourceBundles>
                   <resourceBundle>org.onehippo.cms7:hippo-cms7-legal-resources:1</resourceBundle>
                 </resourceBundles>
+                <properties>
+                  <projectName>${notice.project.name}</projectName>
+                </properties>
               </configuration>
             </execution>
           </executions>
