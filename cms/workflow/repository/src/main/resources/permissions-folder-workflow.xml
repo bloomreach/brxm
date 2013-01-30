@@ -52,6 +52,12 @@
       <sv:property sv:name="translator.id" sv:type="String">
         <sv:value>service.translator.search</sv:value>
       </sv:property>
+      <sv:property sv:multiple="true" sv:name="exclude" sv:type="String">
+        <sv:value>Template Editor Namespace</sv:value>
+        <sv:value>new-smart-folder</sv:value>
+        <sv:value>new-type</sv:value>
+        <sv:value>simple</sv:value>
+      </sv:property>
       <sv:property sv:name="workflow.translated" sv:type="String">
         <sv:value>new-translated-folder</sv:value>
       </sv:property>

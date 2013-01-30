@@ -17,8 +17,6 @@
 <wicket:extend>
     <div class="query-folder-workflow-wrapper">
         <div class="query-folder-workflow-list">
-            <!--<h3>Template Queries on folder: <span wicket:id="folder-name">Bibliotheek.nl</span></h3>
-            -->
             <div class="query-folder-workflow-list-header">
                 <span class="list-header-category"><wicket:message key="header-category"/></span>
                 <span class="list-header-actions"><wicket:message key="header-actions"/></span>
@@ -28,27 +26,19 @@
                     <span class="list-item-category" wicket:id="list-item-category">Add new...</span>
                     <wicket:container wicket:id="action-fragment"/>
                 </div>
-                <wicket:fragment wicket:id="remove-edit-actions">
+                <wicket:fragment wicket:id="action-controls">
                     <div class="list-item-actions">
-                        <a class="list-item-remove" wicket:id="action-remove-link">
-                            <wicket:message key="action-remove-label"/>
-                        </a>
-                        <a class="list-item-edit" wicket:id="action-edit-link">
-                            <wicket:message key="action-edit-label"/>
-                        </a>
-                    </div>
-                </wicket:fragment>
-                <wicket:fragment wicket:id="remove-actions">
-                    <div class="list-item-actions">
-                        <a class="list-item-remove" wicket:id="action-remove-link">
-                            <wicket:message key="action-remove-label"/>
-                        </a>
+                        <div class="hippo-editor-field-subfield-controls" wicket:id="controls">
+                            <a class="up-16 icon-16" wicket:id="up"></a>
+                            <a class="down-16 icon-16" wicket:id="down"></a>
+                            <a class="delete-16 icon-16" wicket:id="remove"></a>
+                        </div>
                     </div>
                 </wicket:fragment>
             </div>
         </div>
         <div class="query-folder-workflow-template-add">
-            <h3><span wicket:id="title-query-add">Bibliotheek.nl</span></h3>
+            <h3><span wicket:id="title-query-add">[add]</span></h3>
             <select wicket:id="query-selection"></select>
         </div>
     </div>

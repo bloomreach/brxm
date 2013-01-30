@@ -1,0 +1,2210 @@
+/*
+ * Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/* Defaults */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Normalizes font-size for headers */
+h1, h2, h3, h4, h5, h6 {
+  font-size: 100%;
+}
+
+/* Removes list-style from lists, lists are more often used without a list style */
+ol, ul {
+  list-style: none;
+}
+
+/* no underlined links by default */
+a {
+  text-decoration: none
+}
+
+/* Normalizes font-style and font-weight to normal */
+address, caption, cite, code, dfn, th, var {
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* Default tables don't have borders */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* Removes border from fieldset and img */
+fieldset, img {
+  border: 0;
+}
+
+/* Left-aligns text in caption and th */
+caption, th {
+  text-align: left;
+}
+
+/* ======================================== */
+
+body.hippo-root #doc3 {
+  margin: 0;
+}
+
+#hd {
+  text-align: left;
+}
+
+#bd {
+  text-align: left;
+}
+
+.wicket-modal {
+  text-align: left
+}
+
+#wicketAjaxDebugWindow {
+  text-align: left;
+}
+
+.hippo-window #wicketDebugLink {
+  display: none;
+}
+
+.hippo-window #wicketDebugLink {
+  display: none;
+}
+
+/* Hippo Global CSS tools */
+/* ================================================ */
+.hippo-global-fullwidth {
+  width: 100%;
+}
+
+.hippo-global-halfwidth {
+  width: 50%;
+}
+
+.hippo-global-alignright {
+  text-align: right
+}
+
+.hippo-global-alignmiddle {
+  text-align: center;
+  vertical-align: middle
+}
+
+.hippo-global-clearer {
+  clear: both;
+  height: 0px;
+}
+
+.hippo-global-hideme {
+  display: none;
+}
+
+.hippo-global-floatleft {
+  float: left
+}
+
+.hippo-global-align-bottom {
+  vertical-align: bottom
+}
+
+/* Auke's hippo skin global css */
+/* ================================================ */
+.hippo-root {
+  background: url("images/headerBack.png") repeat-x top left;
+  background-attachment: scroll
+}
+
+/* remove the background in dialog windows */
+.hippo-window {
+  background: none
+}
+
+/* Global font setting */
+
+.hippo-root,
+.hippo-root table tr td,
+.hippo-root table tr th {
+  font-family: tahoma, arial, sans-serif, helvetica;
+  font-size: 11px;
+}
+
+/* default Link colour */
+.hippo-root a {
+  color: #333333;
+}
+
+.wicket-modal a {
+  color: #000066;
+}
+
+/* default buttons */
+.hippo-root button, .hippo-root input[type="button"], .hippo-root input[type="submit"] {
+  font-size: 12px;
+  padding: 4px;
+  margin: 2px;
+}
+
+/* highlights */
+.hippo-global-highlight li,
+.hippo-global-highlight li a span,
+.hippo-global-highlight li,
+.hippo-root table tr.selected td,
+.hippo-root table tr.selected td,
+.hippo-root table tr.selected td a,
+.hippo-global-highlight a {
+  background: #fedc89
+}
+
+/* Hippo Modal feedback */
+
+.hippo-modal-feedback ul {
+  margin-top: 5px;
+  text-align: left;
+  margin-left: 20px;
+  margin-right: 20px;
+  border: 1px solid #69849f;
+  color: #69849f;
+  background-color: #fff8d5;
+  margin-bottom: 15px;
+  font-weight: bold;
+  background-image: url("dialog-information-32.png");
+  background-repeat: no-repeat;
+  background-position: 10px 5px;
+  padding-left: 70px;
+  min-height: 35px;
+  padding-top: 8px;
+}
+
+.hippo-modal-feedback ul li {
+  list-style-type: disc
+}
+
+/* Wicket Ajaxloader */
+/* ================================================ */
+.hippo-root .wicket-ajax-indicator {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  display: block;
+  visibility: visible;
+  background: url("images/ajaxback.png") repeat-x;
+  width: 25px;
+  padding: 4px;
+}
+
+.hippo-dialog-picker .wicket-ajax-indicator, .hippo-window .hippo-root .wicket-ajax-indicator {
+  position: absolute;
+  bottom: 16px;
+  left: 12px;
+  background: transparent;
+  top: auto;
+}
+
+/* Header */
+/* ================================================ */
+.hippo-header {
+  height: 25px;
+  background: url("images/headerBack.png") repeat-x top left;
+}
+
+.hippo-header-home {
+  background: url("images/hippologo.png") no-repeat;
+  text-indent: -9999px;
+  width: 29px;
+  height: 25px;
+  margin-left: 5px;
+  display: block;
+}
+
+.hippo-logout-username {
+  position: absolute;
+  left: 40px;
+  top: 5px;
+  color: white;
+  font-weight: bold;
+}
+
+/* TabsPlugin perspective switcher (left buttons) */
+/* ================================================ */
+.tabbed-panel-layout-left {
+  background: url("images/tabs-vertical-back.png") repeat-y
+}
+
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs {
+  position: absolute;
+  top: 0px;
+  width: 62px;
+  left: 0px;
+  padding-top: 30px;
+}
+
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li {
+  height: 53px;
+}
+
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li.selected {
+  background: url("images/tab-active.png");
+  background-position: 0px 4px;
+}
+
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li div a img {
+  margin: 10px 10px 10px 9px;
+}
+
+.hippo-tabs-perspective ul.hippo-tabs-perspective-tabs li div a span {
+  display: none;
+}
+
+/* TabsPlugin Document switcher */
+/* ================================================ */
+.hippo-tabs-documents-top .tab-row {
+}
+
+.hippo-tabs-documents-top {
+  width: auto;
+  position: absolute;
+  text-align: left;
+  top: 0px;
+  left: 446px;
+  margin-right: 75px;
+}
+
+.hippo-tabs-documents-top ul {
+  margin-top: 3px;
+  height: 25px;
+  margin-left: 5px;
+}
+
+.hippo-tabs-documents-top ul li {
+  display: block;
+  float: left;
+  position: relative;
+}
+
+.hippo-tabs-documents-top .hippo-tabs-documents-close {
+  background: transparent url(images/hippo-tab-close.png) no-repeat scroll 0 0;
+  height: 14px;
+  width: 14px;
+  position: absolute;
+  right: 5px;
+  text-indent: -9999px;
+  top: 4px;
+  background-position: -18px 0px;
+}
+
+.hippo-tabs-documents-top .hippo-tabs-documents-close:hover {
+  background-position: 0px 0px;
+}
+
+.hippo-tabs-documents-top .selected .hippo-tabs-documents-tab {
+  font-weight: bold;
+  text-decoration: none;
+  color: black
+}
+
+.hippo-tabs-documents .selected .hippo-tabs-documents-tab, .hippo-tabs-documents .hippo-tabs-documents-tab {
+  font-weight: normal;
+  white-space: nowrap;
+  display: block;
+  float: left;
+  height: 14px;
+  width: 130px;
+  background: red;
+  background: url("images/documenttabs.png") no-repeat;
+  margin-right: 2px;
+  padding: 4px;
+  color: #999999;
+}
+
+.hippo-tabs-documents .selected .hippo-tabs-documents-tab {
+  background-position: 0px -22px;
+  color: #666666
+}
+
+.hippo-tabs-documents .selected .hippo-tabs-documents-tab:hover {
+  background-position: 0px -22px;
+  color: #666666
+}
+
+.hippo-tabs-documents .selected .hippo-tabs-documents-tab:active {
+  background-position: 0px -22px
+}
+
+.hippo-tabs-documents .hippo-tabs-documents-tab {
+  background-position: 0px 0px
+}
+
+.hippo-tabs-documents .hippo-tabs-documents-tab:hover {
+  background-position: 0px -66px;
+  color: #666666
+}
+
+.hippo-tabs-documents .hippo-tabs-documents-tab:active {
+  background-position: 0px -66px
+}
+
+.hippo-tabs-documents .hippo-tabs-documents-tab img {
+  margin-right: 3px;
+  vertical-align: -4px;
+}
+
+/* Logout */
+/* ================================================ */
+.hippo-logout {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  z-index: 10;
+  padding: 6px;
+  color: white;
+  padding-top: 5px;
+  text-align: right;
+  padding-right: 9px;
+
+}
+
+.hippo-logout li {
+  display: inline
+}
+
+.hippo-logout li span.hippo-logout-name {
+  color: white;
+  font-weight: bold;
+  text-transform: capitalize
+}
+
+.hippo-logout a:hover {
+  text-decoration: underline
+}
+
+.hippo-logout li a {
+  color: white;
+  background-image: url("images/close.png");
+  background-repeat: no-repeat;
+  background-position: right 1px;
+  padding-right: 18px;
+}
+
+.hippo-logout li a:hover {
+  color: white;
+  background-position: right -15px;
+  background-repeat: no-repeat;
+  padding-right: 18px;
+}
+
+.hippo-browser-search {
+  margin: 3px;
+}
+
+/* Default Table lists */
+/* ================================================ */
+.hippo-list-details {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.hippo-list-details table {
+  width: 100%;
+}
+
+/* Apply scrollbars to modern browsers */
+/* table.hippo-list-details > tbody {
+  overflow-x: hidden;
+  overflow-y: auto;
+} */
+
+.hippo-list-details tr td.icon-16 {
+  height: 16px;
+  width: 16px;
+  padding-left: 0px;
+  padding-right: 4px;
+  padding-top: 0px;
+}
+
+.hippo-list-details tr td.icon-16 span {
+  display: block;
+  height: 16px;
+  width: 16px;
+  margin-left: 2px;
+}
+
+.hippo-list-details tr td.icon-16 span {
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.hippo-list-details tr th {
+  padding: 0px;
+  padding-left: 4px;
+  border-left: 1px solid #afafaf;
+  border-bottom: 1px solid #afafaf;
+  background: url("images/hippo-list-details-th-back.png") repeat-x;
+}
+
+.hippo-list-details tr th span {
+  padding: 1px;
+  padding-left: 3px;
+  padding-right: 3px;
+  display: block;
+  white-space: nowrap;
+}
+
+.hippo-list-details tr td {
+  border-bottom: 1px solid #f4f4f4;
+  border-left: 1px solid transparent;
+  padding: 4px 2px 5px 4px;
+  border-right: none;
+  overflow: hidden;
+}
+
+.hippo-list-details tr td:hover {
+  cursor: pointer
+}
+
+.hippo-list-details th {
+  cursor: pointer
+}
+
+.hippo-list-details th a {
+  color: #666666;
+}
+
+.hippo-list-details tr.even.hippo-list-selected td, .hippo-list-details tr.odd.hippo-list-selected td {
+  background: #ffe29a;
+}
+
+.hippo-list-details tr.even.hippo-list-selected, .hippo-list-details tr.odd.hippo-list-selected {
+  background: #ffe29a;
+}
+
+.hippo-list-details .hippo-list-order-ascending {
+  background: url('arrow-sort-down-16.png') center right no-repeat;
+}
+
+.hippo-list-details .hippo-list-order-descending {
+  background: url('arrow-sort-up-16.png') center right no-repeat;
+}
+
+.hippo-list-details .hippo-list-order-none {
+}
+
+.hippo-picker-list-details .hippo-typeslist, .hippo-picker-list-details .asset-gallery-plugin, .hippo-picker-list-details .hippo-list-search {
+  margin-top: 0px;
+}
+
+/* images */
+.hippo-list-details td.icon-48 {
+  background: url("images/hippo-gallery-folder.png") no-repeat 4px center;
+}
+
+.hippo-list-details td.icon-48 span.folder-48 {
+  background: transparent
+}
+
+.hippo-list-details td.icon-48 span.folder-48 span {
+  background: transparent
+}
+
+.hippo-list-details td.icon-48 span span {
+  display: block;
+  height: 15px;
+  width: 15px;
+  background: white;
+  margin-left: 2px;
+  overflow: hidden
+}
+
+.hippo-list-details td.icon-48 span span img {
+  height: 60px;
+  width: auto
+}
+
+/* Wicket Table Paging */
+/* ================================================ */
+.hippo-list-paging {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  background: url("images/hippo-paging-back.png") repeat-x left bottom;
+  width: 100%;
+  color: #afafaf
+}
+
+.hippo-list-paging .paging-label {
+  color: #000;
+}
+
+.hippo-list-details tr.hippo-list-paging td {
+  width: 630px;
+  text-align: right;
+}
+
+.hippo-list-details .hippo-list-paging td {
+  padding: 4px;
+  text-align: center;
+  border-bottom: 0px;
+  width: 190px;
+}
+
+.hippo-list-paging td div {
+  margin-top: 10px;
+  margin-bottom: 2px;
+  width: 100%;
+}
+
+.hippo-list-paging td a {
+  padding: 3px;
+  border: 1px solid #afafaf;
+  color: #666;
+}
+
+.hippo-list-paging td span {
+  padding: 3px;
+}
+
+.hippo-list-paging td a:hover {
+  background: white;
+  color: black;
+  border: 1px solid #666666
+}
+
+.hippo-list-paging td span em, .hippo-list-paging td a em {
+  font-style: normal
+}
+
+/* Dashboard */
+/* ================================================ */
+.hippo-perspective-dashboard .hippo-perspective-dashboard-panel {
+  background: #ffffff;
+  border: 1px solid #afafaf;
+  border-right: 0px;
+}
+
+.hippo-perspective-dashboard .hippo-perspective-dashboard-panel h2 {
+  color: #666666;
+  padding: 8px;
+  padding-left: 4px;
+  padding-right: 4px;
+  font-weight: bold;
+  border-bottom: 1px dotted #afafaf;
+  background: url("images/hippo-panels-headerback.png") repeat-x
+}
+
+.hippo-perspective-dashboard .hippo-list-details {
+  width: 100%;
+}
+
+.hippo-perspective-dashboard .hippo-list-details tr td {
+  padding: 6px;
+  color: #666666;
+}
+
+.hippo-perspective-dashboard .hippo-list-details tr.even td {
+  background: #e5ebf0
+}
+
+.hippo-perspective-dashboard .hippo-list-details tr td a {
+  color: black;
+  display: block;
+}
+
+.hippo-perspective-dashboard .hippo-list-details tr td a:hover {
+  text-decoration: underline
+}
+
+.hippo-perspective-dashboard .hippo-list-details span.good {
+  color: #1c9e16;
+  font-weight: normal;
+}
+
+.hippo-perspective-dashboard .hippo-list-details span.bad {
+  color: #bb1d24;
+  font-weight: bold;
+}
+
+.hippo-perspective-dashboard .hippo-list-details span.strong {
+  color: #000000;
+  font-weight: bold;
+}
+
+.hippo-perspective-dashboard .hippo-list-details span.light {
+  color: #999999;
+  font-weight: lighter;
+}
+
+/* Dashboard shortcuts */
+.hippo-perspective-dashboard-shorcuts {
+  padding: 15px;
+  padding-top: 5px;
+}
+
+.hippo-perspective-dashboard-shorcuts div div a {
+  border-bottom: 1px solid #f2f2f2;
+  display: block;
+  padding-bottom: 10px;
+  padding-top: 10px;
+}
+
+/* Shortcuts */
+/* ================================================ */
+.hippo-header-shortcuts {
+  padding: 4px;
+  position: absolute;
+  top: 0px;
+  right: 300px
+}
+
+.hippo-header-shortcuts div div {
+  float: left;
+  margin-right: 8px;
+}
+
+.hippo-header-shortcuts div div a {
+  color: white
+}
+
+.hippo-header-shortcuts div div a.document-16 {
+  background: none
+}
+
+.hippo-header-shortcuts div div a.image-add {
+  background: none
+}
+
+.hippo-header-shortcuts div div a.icon-16 {
+  padding-left: 0px;
+}
+
+/* Toolbar */
+/* ================================================ */
+.hippo-toolbar {
+  padding: 0px;
+  margin-left: 0px;
+}
+
+.hippo-toolbar .hippo-toolbar-section {
+  display: block;
+  float: left;
+  color: #666666;
+  padding-top: 0px;
+  margin-right: 2px;
+}
+
+.hippo-toolbar .hippo-toolbar-section li {
+  margin-right: 1px;
+  float: left;
+}
+
+.hippo-toolbar .hippo-toolbar-section select {
+  float: right;
+  background: #32629b;
+  color: white;
+  margin: 0px;
+  border: 1px solid white;
+}
+
+.hippo-toolbar .hippo-toolbar-section select option {
+  background: white;
+  color: #666666;
+}
+
+.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-locked {
+  height: 16px;
+  width: 16px;
+  margin-right: 0px;
+}
+
+.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption {
+  margin-right: 2px;
+}
+
+.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-caption span,
+.hippo-toolbar .hippo-toolbar-section .hippo-toolbar-textitem-status span {
+  padding-left: 5px;
+  color: black
+}
+
+body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single {
+  background: transparent;
+}
+
+body .hippo-toolbar .hippo-toolbar-section li a.hippo-toolbar-section-button-single:hover {
+  border: 1px solid #000000;
+}
+
+.hippo-toolbar-section a.menu-action {
+  padding-top: 0;
+  height: 18px;
+}
+
+/* Dropdown menu */
+/* ================================================ */
+.hippo-toolbar-menu-item {
+  background: #f3f3f3 url("images/dropdownmenuback.png") repeat-y top left;
+  padding: 1px;
+  border: 1px solid #afafaf;
+  position: absolute;
+  top: 3px;
+  left: 0px;
+  width: 156px;
+}
+
+/* override from wicket styles */
+.hippo-toolbar-section-button {
+  padding-right: 20px;
+  display: block;
+  height: 16px;
+  padding-left: 4px;
+  padding-top: 2px;
+  border: 1px solid #BDBDBD;
+  background: url("images/hippo-toolbar-menu-item.png") no-repeat right -21px;
+  cursor: pointer;
+  clear: left;
+}
+
+.hippo-toolbar a.hippo-toolbar-section-button .menu-action-icon,
+.hippo-toolbar a.hippo-toolbar-section-button .menu-action-text {
+  padding-top: 0;
+}
+
+.hippo-toolbar-section-button:hover {
+  border: 1px solid #000000;
+  color: black;
+  background-color: #FFF6E0;
+}
+
+/* background: url("images/hippo-toolbar-menu-item.png") no-repeat top right;  */
+
+.hippo-toolbar-menu-item-button {
+  display: block;
+  float: none;
+  border: 1px solid transparent;
+  padding: 2px;
+  width: 150px;
+}
+
+/* override the default text-decoration: underline */
+.hippo-root .hippo-toolbar-menu-item-button:hover {
+  background: #fff6e0;
+  border: 1px solid #afafaf;
+  text-decoration: none
+}
+
+.hippo-toolbar-menu-item li {
+  display: block;
+  clear: left;
+  margin-right: 0px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+/* This is the context-menu header */
+.hippo-toolbar-menu-item li span.header-item {
+  display: block;
+  padding: 2px;
+}
+
+.hippo-toolbar-menu-item li span.header-item {
+  padding-left: 30px;
+}
+
+.hippo-toolbar-menu-item-button-icon {
+  display: block;
+   float: left;
+  margin-right: 11px;
+}
+
+.hippo-toolbar-section li.icon-16 {
+  padding-left: 0px;
+  background-position: 3px 4px;
+}
+
+.hippo-toolbar-section span.icon-16 {
+  display: block;
+  height: 16px;
+  width: 16px
+}
+
+.hippo-toolbar .hippo-toolbar-section li.menu-label-item {
+  white-space: nowrap;
+  padding-left: 4px;
+  padding-right: 0;
+}
+
+.hippo-toolbar-section li.icon-16 div {
+  position: relative
+}
+
+.menu-action {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 4px;
+  background-image: none;
+  border: 1px solid #BDBDBD;
+  display: block;
+  cursor: pointer;
+  min-width: 100px;
+  height: 14px;
+}
+
+.menu-action:hover {
+  border: 1px solid #000000;
+  background-color: #fff6e0;
+}
+
+.menu-action.disabled:hover {
+  border: 1px solid #e3e3e3;
+  background-color: transparent;
+}
+
+.menu-action-text {
+  display: block;
+  float: left;
+  height: 18px;
+  margin-left: 4px;
+  padding-top: 2px;
+}
+
+.menu-action-icon {
+  display: block;
+  float: left;
+  height: 18px;
+  padding-top: 1px;
+  width: 16px;
+}
+
+.menu-label {
+  padding-left: 4px;
+  padding-right: 8px;
+  padding-top: 3px;
+  background-image: none;
+  border: 0px solid #e3e3e3;
+  display: block;
+  min-width: 100px;
+  height: 17px;
+  white-space: nowrap;
+}
+
+.menu-spacer {
+  width: 80px;
+}
+
+/* Default feedback */
+/* ================================================ */
+.hippo-feedback ul {
+  text-align: left;
+  margin-left: 60px;
+  margin-right: 60px;
+  border: 1px solid #69849f;
+  color: #69849f;
+  background-color: #fff8d5;
+  margin-bottom: 15px;
+  font-weight: bold;
+  background-image: url("dialog-information-32.png");
+  background-repeat: no-repeat;
+  background-position: 10px 5px;
+  padding-left: 70px;
+  min-height: 35px;
+  padding-top: 8px;
+}
+
+.hippo-feedback ul li {
+  list-style-type: disc
+}
+
+/* Windows */
+/* ================================================ */
+.hippo-window {
+  background: none
+}
+
+.hippo-window .hippo-root {
+  background: none
+}
+
+.hippo-window .hippo-root table.modal-contents {
+  margin: 10px 25px 0px 25px;
+}
+
+.hippo-window .hippo-root table.modal-contents td {
+  padding: 2px 5px 2px 5px;
+}
+
+.hippo-window h1, .hippo-window h1 {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.hippo-window-buttons {
+  text-align: right;
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+}
+
+.hippo-window .wicketExtensionsWizardInnerTable .wicketExtensionsWizardButtonBar {
+  padding-top: 10px;
+}
+
+.hippo-window-buttons input {
+}
+
+/* forms inside windows */
+table.hippo-window-form {
+  width: 100%;
+}
+
+.hippo-window-form {
+  background: #f4f4f4;
+  padding: 5px;
+}
+
+.hippo-window-form td input {
+  background: white;
+  border: 1px solid #afafaf;
+  padding: 3px;
+  line-height: 18px;
+}
+
+.hippo-window-form td {
+  padding: 5px;
+}
+
+.hippo-window-form .hippo-form-select {
+  width: 300px;
+}
+
+.hippo-window-form .hippo-form-input {
+  width: 300px;
+}
+
+.hippo-window-form td.hippo-window-navigator,
+.hippo-window-form table.hippo-search-section td {
+  padding: 0px;
+}
+
+.hippo-window .notification {
+  display: block;
+  margin: 11px;
+  padding: 12px;
+  text-align: center;
+  background: #ffccaa;
+  border: 1px solid #ff9900;
+}
+
+.hippo-window .hippo-dialog-container {
+  padding: 10px;
+}
+
+/* Dialogs, mini windows that ask a question */
+.hippo-window-dialog {
+  background-position: 10px 10px;
+  background-repeat: no-repeat;
+  padding: 5px;
+  padding-left: 75px;
+  padding-top: 20px;
+  min-height: 200px;
+}
+
+.hippo-window-dialog-title {
+  font-size: 11px;
+}
+
+.hippo-window-dialog-question {
+  font-weight: bold
+}
+
+/* Wicket Modal windows overwrite */
+.hippo-root div.wicket-modal div.w_grey div.w_top,
+.hippo-root div.wicket-modal div.w_grey div.w_bottom,
+.hippo-root div.wicket-modal div.w_grey div.w_topLeft,
+.hippo-root div.wicket-modal div.w_grey div.w_topRight,
+.hippo-root div.wicket-modal div.w_grey div.w_bottomRight,
+.hippo-root div.wicket-modal div.w_grey div.w_bottomLeft,
+.hippo-root div.wicket-modal div.w_grey a.w_close {
+  background-image: url(images/box-grey.png);
+}
+
+.hippo-root div.wicket-modal div.w_grey_resize div.w_top,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_bottom,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_topLeft,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_topRight,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_bottomRight,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_bottomLeft,
+.hippo-root div.wicket-modal div.w_grey_resize a.w_close {
+  background-image: url(images/box-grey-resizable.png);
+}
+
+.hippo-root div.wicket-modal div.w_grey div.w_left,
+.hippo-root div.wicket-modal div.w_grey div.w_right,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_left,
+.hippo-root div.wicket-modal div.w_grey_resize div.w_right {
+  background-image: url(images/box-grey2.png);
+}
+
+/* .hippo-root div.wicket-modal div.w_caption{background: url("images/box-blue-caption.png") repeat-x; height: 20px; padding: 6px;} */
+.hippo-root div.wicket-modal div.w_caption {
+  height: 24px;
+  background: #999999;
+  text-align: center;
+  color: #f2f2f2
+}
+
+.hippo-root div.wicket-modal div.w_caption span {
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+  position: relative;
+}
+
+.hippo-root div.w_grey a.w_close {
+  width: 44px;
+  height: 18px;
+  background-position: -154px -48px;
+}
+
+.hippo-root div.w_grey a.w_close:hover {
+  background-position: -154px -66px;
+  width: 44px;
+  height: 18px;
+}
+
+.hippo-root div.w_grey_resize a.w_close {
+  width: 44px;
+  height: 18px;
+  background-position: -154px -48px;
+}
+
+.hippo-root div.w_grey_resize a.w_close:hover {
+  background-position: -154px -66px;
+  width: 44px;
+  height: 18px;
+}
+
+.hippo-root div.wicket-modal div.w_content {
+  background: white url("images/box-blue-back.png") repeat-x bottom left;
+}
+
+.hippo-root div.wicket-modal div.w_content_3 {
+  border: none
+}
+
+.hippo-root div.wicket-modal div.w_content_2 {
+  padding-top: 0px
+}
+
+.hippo-root div.wicket-modal div.w_content_1 {
+  margin-right: 7px;
+}
+
+.hippo-root div.wicket-modal div.w_right_1 {
+  margin-left: 7px;
+}
+
+/* Overlay on full application on popup styling */
+.hippo-root div.wicket-mask-dark {
+  opacity: 0.5;
+  filter: alpha(opacity = 50);
+}
+
+/* Picker General Styling */
+.hippo-picker {
+/*background: url("images/picker-back.png") repeat-y;*/
+  height: 356px;
+}
+
+.hippo-picker-tree {
+  width: 193px;
+  float: left;
+  border-right: 1px solid #afafaf;
+}
+
+.hippo-picker-tree .hippo-tree {
+  width: 193px;
+}
+
+.hippo-picker-list-details {
+  height: 331px;
+  margin-left: 0px;
+  background: #ffffff url('images/silverBack3.png') repeat-x;
+  width: auto;
+  position: relative;
+  overflow: auto
+}
+
+.hippo-picker-properties {
+  clear: both;
+  height: 35px;
+  padding: 10px;
+  margin-top: 0px;
+  border-top: 1px solid #afafaf;
+}
+
+.hippo-picker .hippo-list-details .hippo-list-paging td {
+  width: 630px;
+  text-align: right;
+}
+
+.hippo-picker .hippo-window-form td input {
+  width: 200px;
+}
+
+/*
+.hippo-list-paging{position: absolute; bottom: 0px; left: 0px; background: url("images/hippo-paging-back.png") repeat-x left bottom; width: 100%; color: #afafaf}
+.hippo-list-details .hippo-list-paging td{padding: 4px; text-align: center; border-bottom: 0px; width: 190px;}
+.hippo-list-paging td div{margin-top: 20px; margin-bottom: 2px; width: 100%;}
+.hippo-list-paging td a{padding: 3px; color: #909090; border: 1px solid #afafaf}
+.hippo-list-paging td span{padding: 3px;}
+.hippo-list-paging td a:hover{background: white; color: black; border: 1px solid #666666}
+.hippo-list-paging td span em, .hippo-list-paging td a em{font-style: normal}
+*/
+
+.hippo-picker-navigation {
+  background: url("images/silver4.png") repeat-x;
+  height: 20px;
+  width: auto;
+  border-bottom: 1px solid #afafaf;
+  margin-left: 194px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  padding-left: 2px;
+}
+
+.hippo-picker-list-details tr.hippo-list-paging td div {
+  margin-bottom: 2px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.hippo-picker-navigation-buttons {
+  background: url("images/hippo-picker-navigation-back.png") repeat-x;
+}
+
+.hippo-window-form td div.hippo-picker-navigation-buttons input, .hippo-picker-navigation-buttons input {
+  float: left;
+  padding: 0px;
+  width: 24px;
+  font-size: 11px;
+  background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat;
+  background-position: 0px -20px;
+  border: none;
+  margin: 0px;
+  text-indent: -9999px;
+}
+
+.hippo-window-form td div.hippo-picker-navigation-buttons input.up {
+  background: url("images/hippo-picker-navigation-buttons-back.png") no-repeat;
+  background-position: 0px -20px;
+}
+
+.hippo-picker-navigation-breadcrumbs {
+  float: left;
+  margin-left: 2px;
+  background-image: url("images/hippo-picker-navigation-breadcrumb.png");
+  background-position: left 20px;
+  padding-left: 7px;
+}
+
+.hippo-picker-navigation-breadcrumbs li {
+  display: block;
+  float: left;
+}
+
+.hippo-picker-navigation-breadcrumbs li em,
+.hippo-picker-navigation-breadcrumbs li a {
+  display: block;
+  float: left;
+  height: 20px;
+  background-image: url("images/hippo-picker-navigation-breadcrumb.png");
+  background-repeat: no-repeat;
+  background-position: right 0px;
+  padding-right: 27px;
+  line-height: 18px;
+  color: #333333;
+}
+
+.hippo-picker-navigation-breadcrumbs li.firstlast em,
+.hippo-picker-navigation-breadcrumbs li.firstlast a {
+  background-position: right -40px
+}
+
+.hippo-picker-navigation-breadcrumbs li.first em,
+.hippo-picker-navigation-breadcrumbs li.first a {
+  background-position: top right;
+  padding-right: 27px;
+}
+
+.hippo-picker-navigation-breadcrumbs li.last em,
+.hippo-picker-navigation-breadcrumbs li.last a {
+  background-position: right -40px;
+}
+
+.hippo-picker-navigation-breadcrumbs li a:hover {
+  text-decoration: underline
+}
+
+/* Image Picker */
+.hippo-picker-properties label {
+  float: left;
+  margin-right: 5px;
+  padding: 2px;
+  line-height: 21px;
+}
+
+body .hippo-picker-properties div.text-input input {
+  border: 1px solid #afafaf;
+  padding: 4px;
+  line-height: 16px;
+  background: url("images/hippo-window-input-back.png") no-repeat;
+  width: 535px
+}
+
+/*.hippo-picker-list-details table tr th{padding: 1px; padding-left: 4px; padding-bottom: 1px; border: 1px solid #afafaf; border-right: 0px; border-bottom: none;}*/
+
+/* Referring documents */
+
+.hippo-window-form.compatibility-workflow-plugin-date-dialog {
+    position: absolute;
+    bottom: 50px;
+}
+
+.hippo-referring-documents {
+  margin: 5px;
+  height: 365px;
+}
+
+.hippo-referring-documents-list {
+  height: 245px;
+  position: relative;
+  margin-top: 8px;
+}
+
+.hippo-delete-dialog .hippo-referring-documents {
+  height: 240px;
+}
+
+.hippo-delete-dialog .hippo-referring-documents-list {
+  height: 181px;
+}
+
+.hippo-depublish-dialog .hippo-referring-documents {
+  height: 240px;
+}
+
+.hippo-depublish-dialog .hippo-referring-documents-list {
+  height: 181px;
+}
+
+/* Wizard */
+/* ================================================ */
+.hippo-wizard {
+}
+
+.hippo-wizard-buttons {
+  text-align: right;
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+}
+
+/* Form elements */
+/* ================================================ */
+.hippo-select-file {
+}
+
+/* Navigator */
+/* ================================================ */
+.hippo-browser-documents-small .hippo-perspective-title {
+  color: white;
+  padding: 2px;
+  padding-left: 4px;
+  float: left;
+  padding-top: 5px;
+}
+
+.hippo-browser-documents-small {
+  background: transparent
+}
+
+.hippo-browser-documents-small .hippo-browser-docum
+ents-small-folders h3 {
+  background: transparent url(images/filelistHeaderback.png) repeat-x;
+  font-weight: normal;
+  padding: 2px;
+  padding-left: 6px;
+  padding-bottom: 5px;
+}
+
+.hippo-browser-documents-small .hippo-browser-documents-small-files {
+  border-left: 1px solid #afafaf;
+  border-right: 1px solid #afafaf;
+  background: white;
+}
+
+.hippo-browser-documents-small .hippo-browser-documents-small-folders {
+  background: #f4f4f4;
+  border-left: 1px solid #afafaf;
+  border-bottom: 0px;
+  border-top: 0px
+}
+
+.hippo-browser-documents-small .hippo-browser-documents-small-files .hippo-list-details {
+  clear: both;
+}
+
+.hippo-browser-documents-small .hippo-browser-documents-small-files {
+  background: url("images/document-list-back.png") repeat-x top left #fcfcfc;
+}
+
+/* toolbar requires some tweaks here */
+.hippo-browser-documents-small .hippo-browser-documents-workflow select {
+  width: 180px;
+  padding: 1px;
+  margin: 2px;
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+}
+
+.hippo-browser-documents-small .hippo-browser-documents-workflow select option {
+  color: #666666;
+  background: white;
+  padding: 1px;
+}
+
+/* Tree Plugin */
+
+/* overriding standard wicket tree styling */
+/*
+.hippo-tree {overflow: scroll; -ms-overflow-y: auto; overflow-y: auto; -ms-overflow-x: hidden; overflow-x: hidden; width: 200px;  z-index: 1;}
+*/
+
+/* remove margins */
+.hippo-tree div.wicket-tree {
+  margin: 0px;
+  border: none;
+  width: auto;
+}
+
+/* make sure the first folder level in the tree doens't have a left padding */
+.hippo-tree div.wicket-tree div.a_ {
+  padding-left: 0px
+}
+
+.hippo-tree div.wicket-tree div.a_ div.a_ {
+  padding-left: 1em
+}
+
+/* make the rows expand so it will activate the scrolling of the .hippotree div */
+.hippo-tree div.wicket-tree,
+.hippo-tree div.wicket-tree div.row,
+.hippo-tree div.wicket-tree div.row-selected {
+  overflow: visible;
+  white-space: nowrap
+}
+
+.hippo-console-tree .hippo-tree div.wicket-tree {
+  width: auto;
+}
+
+/* set row height to a little higher for better clickability */
+.hippo-tree div.wicket-tree div.row,
+.hippo-tree div.wicket-tree div.row-selected {
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
+
+.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown,
+.hippo-tree div.wicket-tree div.row-selected .hippo-tree-dropdown {
+  visibility: hidden;
+  float: right;
+}
+
+.hippo-tree div.wicket-tree div.row .hippo-tree-dropdown-icon-container {
+  background: transparent;
+}
+
+.hippo-tree div.wicket-tree div.row:hover .hippo-tree-dropdown-icon-container,
+.hippo-tree div.wicket-tree div.row-selected:hover .hippo-tree-dropdown-icon-container {
+  background: url("images/controls/folder-workflow-icon.png") no-repeat -1px -2px transparent;
+}
+
+.hippo-tree div.wicket-tree div.row-selected {
+  background-image: url("images/controls/folder-background-selected.png");
+}
+
+/*background-position: 0px -20px;}*/
+
+.hippo-tree div.wicket-tree div.row a,
+.hippo-tree div.wicket-tree div.row-selected a {
+  font-weight: normal;
+  color: black;
+}
+
+/* IE6 workaround */
+.hippo-tree div.wicket-tree div.context-hover .hippo-tree-dropdown-icon-container {
+  background-image: url("images/controls/folder-workflow-icon.png");
+  background-repeat: no-repeat;
+  background-position: -1px -2px;
+}
+
+.hippo-tree div.wicket-tree div.context-hover-selected .hippo-tree-dropdown-icon-container {
+  background-image: url("images/controls/folder-workflow-icon.png");
+  background-repeat: no-repeat;
+  background-position: -1px -2px;
+
+}
+
+.hippo-tree .wicket-tree span.plus,
+.hippo-tree .wicket-tree span.minus {
+  background-image: url("images/tree-icons.png");
+  width: 14px;
+}
+
+.hippo-tree .wicket-tree span.junction,
+.hippo-tree .wicket-tree span.junction-last,
+.hippo-tree .wicket-tree span.corner,
+.hippo-tree .wicket-tree span.indent-line,
+.hippo-tree .wicket-tree span.indent-blank {
+  background-image: none;
+  width: 14px;
+}
+
+.hippo-tree .icon-16 {
+  padding: 0px;
+  width: 16px;
+  height: 16px;
+  display: block;
+  float: left;
+  margin-right: 5px;
+  margin-left: 3px;
+}
+
+/* mimetypes icons */
+table tr.selected span.document-16, .document-16{background-image:url("document-16.png")}
+table tr.selected span.alert-16, .alert-16{background-image:url("alert-16.png")}
+table tr.selected span.folder-16, .folder-16{background-image:url("folder-16.png")}
+
+/* mimetypes icons for virtual trees */
+table tr.selected span.document-virtual-16, .document-virtual-16{background-image:url("document-16.png")}
+table tr.selected span.folder-virtual-16, .folder-virtual-16{background-image:url("folder-virtual-16.gif")}
+
+/* Accordion */
+.hippo-accordion-unit {
+  background: #f4f4f4;
+}
+
+/* change the tree if he's inside an accordion */
+.hippo-accordion-unit .hippo-tree .wicket-tree {
+/*min-height: 100px;*/
+  margin-bottom: 0px;
+  padding-left: 0px;
+  padding-top: 0px;
+}
+
+.hippo-accordion-unit h2 {
+  background-image: url("images/accordion-unit-back2.png");
+  background-repeat: repeat-x
+}
+
+.hippo-accordion-unit h2 a {
+  background-image: url("images/accordion-unit-back.png");
+  background-repeat: no-repeat;
+  color: #666666;
+  display: block;
+  height: 14px;
+  width: 100%;
+  padding: 5px;
+  padding-left: 0px;
+  padding-right: 0px;
+  border-bottom: 1px solid #afafaf;
+  font-weight: bold;
+}
+
+.hippo-accordion-unit h2 a span {
+  padding-left: 20px;
+}
+
+.hippo-accordion-unit h2 a {
+  background-position: 0px 0px
+}
+
+.hippo-accordion-unit h2 a:hover {
+  background-position: 0px -96px
+}
+
+.hippo-accordion-unit h2 a:active {
+  background-position: 0px -120px
+}
+
+.hippo-accordion-unit h2 a.focus {
+  background-position: 0px -24px
+}
+
+.hippo-accordion-unit h2 a.focus:hover {
+  background-position: 0px -48px
+}
+
+.hippo-accordion-unit h2 a.focus:active {
+  background-position: 0px -72px
+}
+
+/* Show add-root button in tree*/
+.hippo-accordion-unit-add {
+  display: block;
+  background-image: url("images/list-add-16.png");
+  background-repeat: no-repeat;
+  background-position: 0px 6px;
+  text-align: left;
+  padding-left: 21px;
+  padding-top: 6px;
+  margin-left: 5px;
+  height: 20px;
+  color: #333;
+}
+
+/* But hide it in pickers */
+.wicket-modal .hippo-accordion-unit-add {
+  display: none;
+}
+
+/* Hide the context-menu-left-click-icon as well */
+.wicket-modal .hippo-tree-dropdown-icon-container {
+  display: none;
+}
+
+/* Hippo tree addition */
+
+.hippo-tree-dropdown-icon-container {
+  display: none;
+  position: absolute;
+  left: -100px;
+  top: -100px;
+}
+
+.container-selected {
+  display: block;
+  background-color: #F4F4F4;
+  width: 20px;
+  height: 20px;
+}
+
+.hippo-tree-dropdown-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+/* Editor Plugin */
+/* ================================================ */
+/* default background when nothing is selected */
+.hippo-tabs-documents .tabbed-panel-layout-center {
+  background: #f4f4f4 no-repeat center center
+}
+
+ul.hippo-toolbar-section li.icon-16 {
+  padding-bottom: 0;
+}
+
+.column-wrapper {
+  width: 100%;
+  overflow: auto;
+}
+
+.column-wrapper .col70 {
+  width: 70%;
+  float: left;
+}
+
+.column-wrapper .col30 {
+  width: 30%;
+  float: right;
+}
+
+.column-wrapper .col80 {
+  width: 80%;
+  float: left;
+}
+
+.column-wrapper .col20 {
+  width: 20%;
+  float: right;
+}
+
+.default-textarea textarea {
+  width: 100%;
+  height: 150px;
+}
+
+/* Xinha modal windows */
+/*div.wicket-modal div.link-picker select { margin-bottom:10px;}
+div.wicket-modal div.link-picker div.internal-link-label {margin-bottom: 10px;}
+div.wicket-modal div.link-picker table {background-color: #e3e3e3;}
+*/
+div.wicket-modal div.wicket-tree {
+  border: 0px;
+}
+
+/* select layout wizard step */
+.create-type-select-layout td {
+  text-align: center;
+  height: 80px;
+}
+
+.create-type-select-layout .selected {
+  background-color: #ccc;
+}
+
+.hippo-root .hippo-list-simple-container input[type="text"],
+.hippo-root .hippo-list-simple-container input[type="button"] {
+  padding: 3px;
+  margin: 6px;
+}
+
+.hippo-list-simple-container {
+  margin-bottom: 10px;
+}
+
+.hippo-list-simple {
+  overflow: auto;
+  height: 84px;
+  border: 2px inset #f2f2f2;
+}
+
+.hippo-list-simple ul li a {
+  display: block;
+}
+
+
+/* Global Icon Management */
+/* ================================================ */
+.icon-16 {
+  background-repeat: no-repeat;
+  background-position: center left;
+  padding-left: 22px;
+  padding-top: 2px;
+  padding-bottom: 4px;
+}
+
+.icon-24 a {
+  background-repeat: no-repeat;
+  background-position: 4px 4px;
+}
+
+.icon-24 a {
+  background-repeat: no-repeat;
+  background-position: 4px 4px;
+}
+
+.icon-48 a {
+  background-repeat: no-repeat;
+  background-position: 8px 8px;
+}
+
+.icon-128 a {
+  background-repeat: no-repeat;
+  background-position: 8px 8px;
+}
+
+.state-changed-16 {
+  background-image: url("state-changed-16.png")
+}
+
+.state-new-16 {
+  background-image: url("state-new-16.png")
+}
+
+.state-live-16 {
+  background-image: url("state-live-16.png")
+}
+
+.state-prev-new-16 {
+  background-image: url("state-prev-new-16.png")
+}
+
+.state-prev-changed-16 {
+  background-image: url("state-prev-changed-16.png")
+}
+
+.state-prev-live-16 {
+  background-image: url("state-prev-live-16.png")
+}
+
+.arrow-sort-down-16 {
+  background-image: url("arrow-sort-down-16.png")
+}
+
+.arrow-sort-up-16 {
+  background-image: url("arrow-sort-up-16.png")
+}
+
+.remove-field-16 {
+  background-image: url("images/controls/close-control.gif")
+}
+
+.arrow-paging-previous-16 {
+  background-image: url("arrow-paging-previous-16.png")
+}
+
+.arrow-paging-next-16 {
+  background-image: url("arrow-paging-next-16.png")
+}
+
+.image-add-48 {
+  background-image: url("image-add-48.png")
+}
+
+.image-add {
+  background-image: url("image-add-16.png");
+}
+
+.rename-128 {
+  background-image: url("rename-128.png")
+}
+
+.rename-48 {
+  background-image: url("rename-48.png")
+}
+
+.rename-24 {
+  background-image: url("rename-24.png");
+}
+
+.rename-16 {
+  background-image: url("rename-16.png");
+}
+
+.document-lock-16 {
+  background-image: url("document-lock-16.png")
+}
+
+.dialog-information-48 {
+  background-image: url("dialog-information-48.png")
+}
+
+.hippo-icon-question-48 {
+  background-image: url("dialog-question-48.png")
+}
+
+.panel-toggle-version-16 {
+  background-image: url("panel-toggle-version-16.png");
+}
+
+.panel-toggle-version-16 a:hover {
+  cursor: pointer
+}
+
+.edit-16 {
+  background-image: url("edit-16.png")
+}
+
+.delete-16 {
+  background-image: url("edit-delete-16.png")
+}
+
+.clear-16 {
+  background-image: url("edit-clear-16.png");
+  margin-left: 10px;
+}
+
+.add-16 {
+  background-image: url("list-add-16.png")
+}
+
+.remove-16 {
+  background-image: url("edit-delete-16.png")
+}
+
+.delete-inline-16 {
+  background-image: url("delete-inline-16.png")
+}
+
+.delete-inline-24 {
+  background-image: url("delete-inline-24.png")
+}
+
+.delete-inline-48 {
+  background-image: url("delete-inline-48.png")
+}
+
+.delete-inline-128 {
+  background-image: url("delete-inline-128.png")
+}
+
+a.up-16 {
+  background-image: url("go-up-16.png")
+}
+
+span.up-16 {
+  background-image: url("go-up-disabled-16.png")
+}
+
+a.down-16 {
+  background-image: url("go-down-16.png")
+}
+
+span.down-16 {
+  background-image: url("go-down-disabled-16.png")
+}
+
+/* temp quick hack */
+.revert_ico {
+  background-image: url("document-revert-16.png")
+}
+
+.save_ico {
+  background-image: url("document-save-16.png")
+}
+
+.templateitemup_ico {
+  background-image: url("go-up.png")
+}
+
+.templateitemdown_ico {
+  background-image: url("go-down.png")
+}
+
+.reqdelete_ico {
+  background-image: url("workflow-requestdelete-16.png")
+}
+
+.reqpublish_ico {
+  background-image: url("workflow-requestpublish-16.png")
+}
+
+.reqdepublish_ico {
+  background-image: url("workflow-requestunpublish-16.png")
+}
+
+.reqschedpublish_ico {
+  background-image: url("workflow-requestpublish-16.png")
+}
+
+.reqscheddepublish_ico {
+  background-image: url("workflow-requestunpublish-16.png")
+}
+
+.publish-16, .publish_ico {
+  background-image: url("publish-16.png")
+}
+
+.depublish-16, .depublish_ico {
+  background-image: url("unplublish-16.png")
+}
+
+.publish-schedule-16 {
+  background-image: url("publish-schedule-16.png")
+}
+
+.copy-16 {
+  background-image: url("copy-16.png")
+}
+
+.move-16 {
+  background-image: url("move-16.png")
+}
+
+.depublish-schedule-16 {
+  background-image: url("unpublish-scheduled-16.png")
+}
+
+.reqcancel_ico {
+  background-image: url("unplublish-16.png")
+}
+
+.reqaccept_ico {
+  background-image: url("workflow-accept-16.png")
+}
+
+.reqreject_ico {
+  background-image: url("workflow-requestunpublish-16.png")
+}
+
+.adddocument_ico {
+  background-image: url("document-new-16.png")
+}
+
+.addfolder_ico {
+  background-image: url("folder-new-16.png")
+}
+
+.addextended_ico {
+  background-image: url("folder-extended-new-16.png")
+}
+
+.copymodelrequest_ico {
+  background-image: url("document-copy-16.png")
+}
+
+.editmodel_ico {
+  background-image: url("edit-16.png")
+}
+
+.createnamespace_ico {
+  background-image: url("document-new-16.png")
+}
+
+.modelreq_ico {
+  background-image: url("refresh-16.png")
+}
+
+.createtyperequest_ico {
+  background-image: url("document-new-16.png")
+}
+
+#context-menu-container {
+  text-align: left;
+  position: absolute;
+  display: block;
+  z-index: 10000;
+  color: #000;
+  padding: 3px;
+  left: -1000px;
+  top: -1000px;
+}
+
+#global-feedback-container {
+  border: 1px solid #e3e3e3;
+  background-color: #FFF6E0;
+  color: #333333;
+  padding-top: 2px;
+}
+
+li.feedbackPanelERROR {
+  margin: 5px;
+}
+
+table.hippo-defaultcontent td {
+  vertical-align: top;
+}
+
+.smooth_load_workaround {
+  display: none;
+  left: -2000px;
+  top: -2000px;
+  position: absolute;
+}
+
+.navigator-center-body table.hippo-list-documents,
+.navigator-center-body table.hippo-gallery-images,
+.navigator-center-body table.hippo-gallery-assets,
+.navigator-center-body table.asset-gallery-plugin,
+.navigator-center-body table.hippo-typeslist,
+.hippo-dialog-picker table.hippo-list-documents,
+.hippo-dialog-picker table.hippo-gallery-images,
+.hippo-dialog-picker table.hippo-gallery-assets,
+.hippo-dialog-picker table.asset-gallery-plugin {
+  border-collapse: inherit;
+  background-color: #fff;
+}
+
+table.hippo-currentactivity > tbody, table.hippo-todo > tbody {
+  display: table-row-group;
+  overflow-y: hidden;
+  height: 100%;
+}
+
+.hippo-accordion-unit-center {
+  -ms-overflow: auto;
+  overflow: auto;
+}
+
+.hippo-accordion-unit-top {
+  background-color: #ebebeb;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.hippo-accordion-unit-bottom {
+  background-color: #ebebeb;
+  cursor: pointer;
+  height: 26px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  white-space: nowrap;
+}
+
+.hippo-revision-help {
+  background-image: url("dialog-information-32.png");
+  background-repeat: no-repeat;
+  background-position: 10px 5px;
+  padding-left: 70px;
+  padding-top: 8px;
+  min-height: 35px;
+  border: 1px solid #69849f;
+  color: #69849f;
+  background-color: #fff8d5;
+}
+
+/* Reposition the YUI-logger so that it does not block the logout link */
+body.hippo-root div.yui-log-container {
+  top: 30px;
+  right: 5px;
+}
+
+/* Resource upload/properties */
+.resource-values {
+  font-size: 12px;
+  padding: 5px;
+}
+
+.resource-values label {
+  display: block;
+  float: left;
+  margin-right: 10px;
+}
+
+.resource-values .simple-editor-value {
+  float: left;
+  color: #666;
+}
+
+.resource-values a {
+  text-decoration: underline;
+}
+
+.resource-values ul {
+  overflow: auto;
+}
+
+.resource-values ul li {
+  list-style: none;
+  float: left;
+  min-width: 180px;
+}
+
+.resource-values ul li > span {
+  padding-right: 5px;
+}
+
+.resource-upload {
+  margin-top: 10px;
+}
+
+.resource-upload input {
+  clear: left;
+  float: left;
+}
+
+.resource-upload input[type="submit"] {
+  padding: 0;
+  margin: 0;
+}
+
+.hippo-window-form td input.grayedout {
+  background-color: #F4F4F4;
+}
+
+.hippo-window-form td input.grayedin {
+}
+
+.hippo-window-form td a.action {
+  color: #107EC0;
+  width: 38px;
+  float: right;
+  margin-right: 10px;
+  margin-top: 6px;
+}
+
+/* Tooltip styling without skin-sam*/
+.hippo-root .yui-tt .bd {
+  position: relative;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  color: #000;
+  border-color: #D4C237 #A6982B #A6982B #A6982B;
+  border-width: 1px;
+  border-style: solid;
+  background-color: #FFEE69;
+  font-size: 13px;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+.hippo-root .yui-tt {
+  border-width: 0px;
+}
+
+.hippo-root .yui-tt.show-scrollbars .bd {
+  overflow: auto;
+}
+
+.hippo-root .yui-tt-shadow-visible {
+  overflow: auto;
+}
+
+.hippo-root .yui-tt-shadow {
+  margin-top: 2px;
+  top: 2px;
+  right: -1px;
+  left: -1px;
+  bottom: -1px;
+  background-color: #000;
+  display: block;
+  z-index: 0;
+}
+
+.hippo-root .yui-tt-shadow-visible {
+  opacity: .12;
+  filter: alpha(opacity = 12); /* For IE */
+}
+
+/* Workflow reject request dialog: textarea styling */
+.hippo-window-form textarea.text-dialog-textarea {
+  width: 420px;
+  height: 150px;
+}
+
+/* Toggle button class is used in multiple plugin, to avoid clashes define it here */
+.toggle-button {
+  float: right; /*margin-bottom: 3px;*/
+  padding-top: 2px;
+  padding-right: 2px;
+  position: static;
+  padding-bottom: 3px;
+}
+
+.toggle-button > a > img {
+  vertical-align: bottom;
+}
+
+.hippo-picker .hippo-picker-list-details .toggle-button {
+  padding-top: 1px;
+  padding-right: 1px;
+}
+
+.hippo-picker .hippo-picker-list-details .toggle-button > a > img {
+  height: 15px;
+}
+
+.password-expiration-label {
+	color: red;
+	font-size: 14px;
+	font-weight: bold;
+}
+

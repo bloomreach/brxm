@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -31,12 +32,14 @@ import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.IHeaderResponse;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.IChoiceRenderer;
@@ -73,6 +76,8 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
     private static final ResourceReference CSS = new CompressedResourceReference(ConfirmBulkWorkflowDialog.class, "PermissionsFolderWorkflowPlugin.css");
     private static final String QUERY_LANGUAGE_QUERIES = Query.XPATH;
     private static final String QUERY_STATEMENT_QUERIES = "hippo:configuration/hippo:queries/hippo:templates//element(*, hippostd:templatequery)";
+
+    private static final List<String> EMPTY = new ArrayList<String>();
 
     private String name;
     private String selected;
@@ -154,13 +159,23 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
 
     public class PermissionsConfirmDialog extends AbstractWorkflowDialog {
         private static final long serialVersionUID = 1L;
+        protected static final String EXCLUDE = "exclude";
         private IModel folderName;
+
 
         @SuppressWarnings({"unchecked", "rawtypes"})
         public PermissionsConfirmDialog(WorkflowDescriptorModel model, IWorkflowInvoker invoker, IModel folderName, Query query) {
             super(model, invoker);
 
             this.folderName = folderName;
+
+            final IPluginConfig pluginConfig = getPluginConfig();
+            List<String> excludes;
+            if (pluginConfig.containsKey(EXCLUDE)) {
+                excludes = Arrays.asList(pluginConfig.getStringArray(EXCLUDE));
+            } else {
+                excludes = EMPTY;
+            }
 
             //list of available queries:::
             final List<String> modelList = new ArrayList<String>();
@@ -170,9 +185,10 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
                     for (NodeIterator queryIterator = result.getNodes(); queryIterator.hasNext(); ) {
                         Node document = queryIterator.nextNode();
                         if (document != null) {
-                            DisplayModel displayModel = new DisplayModel(document.getName());
-                            if (!folderTypesList.contains(displayModel)) {
-                                modelList.add(document.getName());
+                            final String documentName = document.getName();
+                            DisplayModel displayModel = new DisplayModel(documentName);
+                            if (!folderTypesList.contains(displayModel) && !excludes.contains(documentName)) {
+                                modelList.add(documentName);
                             }
                         }
                     }
@@ -200,27 +216,12 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
 
                     item.add(new Label("list-item-category", valueModel.getDisplayObject()));
 
-                    Fragment actions;
+                    Fragment fragment = new Fragment("action-fragment", "action-controls", PermissionsConfirmDialog.this);
 
-                    if (isEditable(valueModel)) {
-                        actions = new Fragment("action-fragment", "remove-edit-actions", PermissionsConfirmDialog.this);
+                    WebMarkupContainer controls = new WebMarkupContainer("controls");
+                    fragment.add(controls);
 
-                        AjaxLink edit = new AjaxLink("action-edit-link") {
-                            private static final long serialVersionUID = 1L;
-
-                            @Override
-                            public void onClick(AjaxRequestTarget target) {
-                                folderTypesList.remove(valueModel);
-                                target.addComponent(PermissionsConfirmDialog.this);
-                            }
-                        };
-
-                        actions.add(edit);
-                    } else {
-                        actions = new Fragment("action-fragment", "remove-actions", PermissionsConfirmDialog.this);
-                    }
-
-                    AjaxLink remove = new AjaxLink("action-remove-link") {
+                    MarkupContainer remove = new AjaxLink("remove") {
                         private static final long serialVersionUID = 1L;
 
                         @Override
@@ -231,9 +232,38 @@ public class PermissionsFolderWorkflowPlugin extends ExtendedFolderWorkflowPlugi
                             target.addComponent(PermissionsConfirmDialog.this);
                         }
                     };
+                    controls.add(remove);
 
-                    actions.add(remove);
-                    item.add(actions);
+                    MarkupContainer upLink = new AjaxLink("up") {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void onClick(AjaxRequestTarget target) {
+                            final int i = folderTypesList.indexOf(valueModel);
+                            Collections.swap(folderTypesList, i, i - 1);
+                            target.addComponent(PermissionsConfirmDialog.this);
+                        }
+                    };
+                    boolean isFirst = (item.getIndex() == 0);
+                    upLink.setEnabled(!isFirst);
+                    controls.add(upLink);
+
+                    MarkupContainer downLink = new AjaxLink("down") {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void onClick(AjaxRequestTarget target) {
+                            final int i = folderTypesList.indexOf(valueModel);
+                            Collections.swap(folderTypesList, i, i + 1);
+                            target.addComponent(PermissionsConfirmDialog.this);
+                        }
+                    };
+                    boolean isLast = (item.getIndex() == folderTypesList.size() - 1);
+                    downLink.setEnabled(!isLast);
+                    controls.add(downLink);
+
+                    item.add(fragment);
+
 
                     item.add(new AttributeAppender("class", new AbstractReadOnlyModel() {
                         private static final long serialVersionUID = 1L;
