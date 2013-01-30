@@ -43,6 +43,15 @@ a.sub {
     *padding-left: 0.75em;
 }
 
+.inline-editor-editable-container {
+    position:relative;
+}
+
+.inline-editor-editable-container a.hst-cmseditlink {
+    top: 0px;
+    right: 0px;
+}
+
 h1 {
     color: #00A5E3;
     font-size: 123.1%;
