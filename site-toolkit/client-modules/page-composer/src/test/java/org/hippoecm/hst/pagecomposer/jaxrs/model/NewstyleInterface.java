@@ -29,7 +29,7 @@ interface NewstyleInterface {
     @Color
     String getColor();
 
-    @Parameter(name = "01-documentLocation")
+    @Parameter(name = "01-documentLocation", displayName = "Document Location")
     @DocumentLink(docLocation = "/content", docType = "hst:testdocument")
     String getDocumentLocation();
 

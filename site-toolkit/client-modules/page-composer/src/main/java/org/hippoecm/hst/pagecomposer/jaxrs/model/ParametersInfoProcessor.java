@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.model;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -48,7 +49,7 @@ public class ParametersInfoProcessor {
             return properties;
         }
 
-        ResourceBundle resourceBundle = getResourceBundle(parameterInfo, locale);
+        ResourceBundle[] resourceBundles = getResourceBundles(parameterInfo, locale);
 
         for (Method method : classType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
@@ -59,9 +60,15 @@ public class ParametersInfoProcessor {
                 prop.setDescription(propAnnotation.description());
                 prop.setRequired(propAnnotation.required());
                 prop.setHiddenInChannelManager(propAnnotation.hideInChannelManager());
-                if (resourceBundle != null && resourceBundle.containsKey(propAnnotation.name())) {
-                    prop.setLabel(resourceBundle.getString(propAnnotation.name()));
-                } else {
+                boolean labelSet = false;
+                for (ResourceBundle resourceBundle : resourceBundles) {
+                    if (resourceBundle.containsKey(propAnnotation.name())) {
+                        prop.setLabel(resourceBundle.getString(propAnnotation.name()));
+                        labelSet = true;
+                        break;
+                    }
+                }
+                if (!labelSet) {
                     if (propAnnotation.displayName().equals("")) {
                         prop.setLabel(propAnnotation.name());
                     } else {
@@ -92,9 +99,15 @@ public class ParametersInfoProcessor {
 
                     for (int i = 0; i < values.length; i++) {
                         final String resourceKey = propAnnotation.name() + "/" + values[i];
-                        if (resourceBundle != null && resourceBundle.containsKey(resourceKey)) {
-                            displayValues[i] = resourceBundle.getString(resourceKey);
-                        } else {
+                        boolean displayValueSet = false;
+                        for (ResourceBundle resourceBundle : resourceBundles) {
+                            if (resourceBundle.containsKey(resourceKey)) {
+                                displayValues[i] = resourceBundle.getString(resourceKey);
+                                displayValueSet = true;
+                                break;
+                            }
+                        }
+                        if (!displayValueSet) {
                             displayValues[i] = values[i];
                         }
                     }
@@ -116,17 +129,60 @@ public class ParametersInfoProcessor {
 
     /**
      *
-     * @return the ResourceBundle for <code><parameterInfo/code> and <code>locale</code> or <code>null</code> when
+     * @return the ResourceBundles for <code><parameterInfo.type()</code> including the bundles for the super interfaces for
+     * <code><parameterInfo.type()</code> and <code>locale</code>. The resource bundles are ordered according the interface
+     * hierarchy BREADTH FIRST traversal. Empty array if there are no resource bundles at all
+     */
+    protected final ResourceBundle[] getResourceBundles(final ParametersInfo parameterInfo, final Locale locale) {
+        List<ResourceBundle> resourceBundles = new ArrayList<ResourceBundle>();
+
+        final List<Class<?>> breadthFirstInterfaceHierarchy = getBreadthFirstInterfaceHierarchy(parameterInfo.type());
+        for (Class<?> clazz : breadthFirstInterfaceHierarchy) {
+            ResourceBundle bundle = getResourceBundle(clazz, locale);
+            if (bundle != null) {
+                resourceBundles.add(bundle);
+            }
+        }
+        return resourceBundles.toArray(new ResourceBundle[resourceBundles.size()]);
+    }
+
+    List<Class<?>> getBreadthFirstInterfaceHierarchy(final Class<?> clazz) {
+        final List<Class<?>> interfaceHierarchList = new ArrayList<Class<?>>();
+        interfaceHierarchList.add(clazz);
+        populateBreadthFirstSuperInterfaces(clazz.getInterfaces(), interfaceHierarchList);
+        return interfaceHierarchList;
+    }
+
+    private void populateBreadthFirstSuperInterfaces(final Class<?>[] interfaces, final List<Class<?>> populatedSuperInterfaces) {
+        for (Class<?> clazz : interfaces) {
+            populatedSuperInterfaces.add(clazz);
+        }
+        List<Class<?>> superInterfaces = new ArrayList<Class<?>>();
+        for (Class<?> clazz : interfaces) {
+            superInterfaces.addAll(Arrays.asList(clazz.getInterfaces()));
+        }
+        if (superInterfaces.size() == 0) {
+            return;
+        }
+        populateBreadthFirstSuperInterfaces(superInterfaces.toArray(new Class[superInterfaces.size()]), populatedSuperInterfaces);
+    }
+
+    /**
+     * @return the ResourceBundle for <code><parameterInfo.type()</code> and <code>locale</code> or <code>null</code> when
      * it cannot be loaded
      */
     protected final ResourceBundle getResourceBundle(final ParametersInfo parameterInfo, final Locale locale) {
-        Locale localeOrDefault;
+        return getResourceBundle(parameterInfo.type(), locale);
+    }
+
+    private ResourceBundle getResourceBundle(final Class<?> clazz, final Locale locale) {
+        final Locale localeOrDefault;
         if (locale == null) {
             localeOrDefault = Locale.getDefault();
         } else {
             localeOrDefault = locale;
         }
-        final String typeName = parameterInfo.type().getName();
+        final String typeName = clazz.getName();
         CacheKey bundleKey = new CacheKey(typeName, localeOrDefault);
         if (failedBundlesToLoad.contains(bundleKey)) {
             return null;

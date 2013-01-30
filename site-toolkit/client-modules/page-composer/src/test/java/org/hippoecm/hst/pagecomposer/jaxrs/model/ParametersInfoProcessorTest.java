@@ -36,6 +36,10 @@ public class ParametersInfoProcessorTest {
     static class NewstyleContainer {
     }
 
+    @ParametersInfo(type=NewstyleSubInterface.class)
+    static class NewstyleSubContainer {
+    }
+
     ParametersInfoProcessor processor = new ParametersInfoProcessor();
 
     @Test
@@ -147,7 +151,109 @@ public class ParametersInfoProcessorTest {
         assertEquals("Waarde 2", displayValues[1]);
         assertEquals("value3", displayValues[2]);
     }
-    
+
+
+    static interface a extends b, c {
+    }
+
+    static interface b extends d, e {
+    }
+
+    static interface d {
+    }
+
+    static interface e extends h {
+    }
+
+    static interface h {
+    }
+
+    static interface c extends f, g {
+    }
+
+    static interface f {
+    }
+    static interface g {
+    }
+
+    /**
+     * above is a interface hierarchy as follows:
+     *
+     *                a
+     *              /   \
+     *             b     c
+     *           / \    / \
+     *          d  e   f  g
+     *              \
+     *              h
+     *
+     *  the BREADTH FIRST method should thus return a,b,c,d,e,f,gh
+     */
+    @Test
+    public void assertBreadthFirstInterfaceHierarchy() {
+        final ParametersInfoProcessor parametersInfoProcessor = new ParametersInfoProcessor();
+        final List<Class<?>> hierarchy = parametersInfoProcessor.getBreadthFirstInterfaceHierarchy(a.class);
+        assertEquals(hierarchy.get(0), a.class);
+        assertEquals(hierarchy.get(1), b.class);
+        assertEquals(hierarchy.get(2), c.class);
+        assertEquals(hierarchy.get(3), d.class);
+        assertEquals(hierarchy.get(4), e.class);
+        assertEquals(hierarchy.get(5), f.class);
+        assertEquals(hierarchy.get(6), g.class);
+        assertEquals(hierarchy.get(7), h.class);
+    }
+
+    @Test
+    public void valuesAreInheritedFromSuperTypesAndLocalized() {
+        final String currentMountCanonicalContentPath = "/content/documents/testchannel";
+
+        ParametersInfo parameterInfo = NewstyleSubContainer.class.getAnnotation(ParametersInfo.class);
+
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, new Locale("nl"), currentMountCanonicalContentPath);
+
+        // NewstyleSubContainer has 2 properties and NewstyleContainer which is extends has 16 properties, BUT
+        // NewstyleSubContainer overrides one property of NewstyleContainer, hence total should be 16 + 1
+        assertEquals(17, properties.size());
+
+        // sort properties alphabetically by name to ensure a deterministic order
+        Collections.sort(properties, new PropertyComparator());
+
+        final ContainerItemComponentPropertyRepresentation representation1 = properties.get(0);
+        // present in NewstyleSubInterface_nl.properties and in NewstyleInterface.properties, however
+        // value from NewstyleSubInterface_nl.properties should be shown
+        assertEquals(representation1.getLabel(), "zwart sub");
+
+        final ContainerItemComponentPropertyRepresentation representation2 = properties.get(1);
+        // missing in NewstyleSubInterface_nl.properties and missing in NewstyleInterface.properties
+        // but in NewstyleInterface there is a displayname, namely:
+        // @Parameter(name = "01-documentLocation", displayName = "Document Location")
+        assertEquals(representation2.getLabel(), "Document Location");
+
+
+        final ContainerItemComponentPropertyRepresentation representation3 = properties.get(2);
+        // missing in NewstyleSubInterface_nl.properties but defined in NewstyleInterface.properties
+        // @Parameter(name = "02-image", defaultValue = "/content/gallery/default.png")
+        assertEquals(representation3.getLabel(), "Plaatje");
+
+
+        final ContainerItemComponentPropertyRepresentation representation14 = properties.get(14);
+        // NewstyleSubInterface_nl.properties does not have dropdown values but NewstyleInterface.properties
+        // has them, so should be taken from there
+        final String[] displayValues = representation14.getDropDownListDisplayValues();
+        assertEquals(3, displayValues.length);
+        assertEquals("Waarde 1", displayValues[0]);
+        assertEquals("Waarde 2", displayValues[1]);
+        assertEquals("value3", displayValues[2]);
+
+
+        final ContainerItemComponentPropertyRepresentation representation15 = properties.get(16);
+        // Present in NewstyleSubInterface_nl.properties
+        // @Parameter(name = "16-subboolean")
+        assertEquals(representation15.getLabel(),"Sub Boolean NL");
+    }
+
+
+
     /**
      * Below, we have two broken combinations: 
      * @Color annotation is not allowed to return a int
