@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>18</version>
+    <version>19</version>
   </parent>
 
   <name>Hippo Site Toolkit</name>
@@ -43,6 +43,8 @@
   </issueManagement>
 
   <properties>
+    <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
+    <notice.project.name>Hippo Site Toolkit</notice.project.name>
 
     <!-- Documentation properties (variables).
          May not contain dots as they are processed by Apache velocity.
