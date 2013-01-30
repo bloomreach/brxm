@@ -20,7 +20,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>18</version>
+    <version>19</version>
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
@@ -29,6 +29,8 @@
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
   <packaging>pom</packaging>
+
+  <inceptionYear>2011</inceptionYear>
 
   <scm>
     <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/release/trunk</connection>
