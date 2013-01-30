@@ -403,7 +403,7 @@ public class HstManagerImpl implements MutableHstManager {
                             return prevVirtualHosts;
                         }
                     } catch (LoginException e) {
-                        throw new ContainerException("Could not build hst model because user 'configuser' could not login to the repository.");
+                        throw new ContainerException("Could not build hst model because user '"+username+"' could not login to the repository.");
                     } finally {
                         if (state == BuilderState.RUNNING) {
                             log.warn("Model failed to built. Serve old virtualHosts model.");
