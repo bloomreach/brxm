@@ -19,8 +19,10 @@ import java.util.List;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.extensions.wizard.IWizardModel;
+import org.apache.wicket.extensions.wizard.IWizardStep;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
@@ -69,9 +71,8 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
      * @return model
      */
     @SuppressWarnings("unchecked")
-    public final IModel<T> getModel()
-    {
-        return (IModel<T>)getDefaultModel();
+    public final IModel<T> getModel() {
+        return (IModel<T>) getDefaultModel();
     }
 
     /**
@@ -79,8 +80,7 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
      *
      * @param model
      */
-    public final void setModel(IModel<T> model)
-    {
+    public final void setModel(IModel<T> model) {
         setDefaultModel(model);
     }
 
@@ -90,9 +90,8 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
      * @return model object
      */
     @SuppressWarnings("unchecked")
-    public final T getModelObject()
-    {
-        return (T)getDefaultModelObject();
+    public final T getModelObject() {
+        return (T) getDefaultModelObject();
     }
 
     /**
@@ -100,9 +99,17 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
      *
      * @param object
      */
-    public final void setModelObject(T object)
-    {
+    public final void setModelObject(T object) {
         setDefaultModelObject(object);
+    }
+
+    @Override
+    public void onActiveStepChanged(final IWizardStep newStep) {
+        super.onActiveStepChanged(newStep);
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null) {
+            target.addComponent(this);
+        }
     }
 
     @Override
@@ -149,16 +156,18 @@ public class AbstractWizard<T> extends AjaxWizard implements IDialogService.Dial
     }
 
     public void render(PluginRequestTarget target) {
-        target.addComponent(getForm().get(FEEDBACK_ID));
-        if (focusComponent != null) {
-            target.focusComponent(focusComponent);
-            focusComponent = null;
+        if (target != null) {
+            target.addComponent(getForm().get(FEEDBACK_ID));
+            if (focusComponent != null) {
+                target.focusComponent(focusComponent);
+                focusComponent = null;
+            }
         }
     }
 
     /**
-     * Implement {@link org.apache.wicket.ajax.IAjaxIndicatorAware}, to let ajax components in the dialog trigger the ajax
-     * indicator when they trigger an ajax request.
+     * Implement {@link org.apache.wicket.ajax.IAjaxIndicatorAware}, to let ajax components in the dialog trigger the
+     * ajax indicator when they trigger an ajax request.
      *
      * @return the markup id of the ajax indicator
      */
