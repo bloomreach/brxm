@@ -51,7 +51,7 @@
     <portals-bridges-common.version>2.0</portals-bridges-common.version>
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
-    <yui.sources.version>1.01.09</yui.sources.version>
+    <yui.sources.version>1.01.11-SNAPSHOT</yui.sources.version>
 
     <jmxremote.port>9875</jmxremote.port>
 
