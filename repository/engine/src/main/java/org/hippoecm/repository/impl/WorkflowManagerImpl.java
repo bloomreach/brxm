@@ -686,6 +686,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
 
         public void readExternal(ObjectInput input) throws IOException, ClassNotFoundException {
             category = (String) input.readObject();
+            workflowName = (String) input.readObject();
             String uuid = (String) input.readObject();
             workflowSubject = new Document(uuid);
             String className = (String) input.readObject();
