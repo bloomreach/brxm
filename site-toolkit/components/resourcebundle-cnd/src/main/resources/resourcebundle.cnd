@@ -7,7 +7,7 @@
 <hippo='http://www.onehippo.org/jcr/hippo/nt/2.0'>
 <resourcebundle='http://www.hippoecm.org/hst/resourcebundle/nt/2.1'>
 
-[resourcebundle:resourcebundle] > hippo:document, hippostdpubwf:document orderable
+[resourcebundle:resourcebundle] > hippo:document, hippostd:publishableSummary, hippostdpubwf:document orderable
 - resourcebundle:id (string) mandatory
 - resourcebundle:keys (string) multiple
 - resourcebundle:messages (string) multiple
