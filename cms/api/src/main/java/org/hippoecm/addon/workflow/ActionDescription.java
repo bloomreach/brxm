@@ -32,6 +32,8 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
     public abstract class ActionDisplay extends Fragment {
         private static final long serialVersionUID = 1L;
 
+        private boolean initialized = false;
+
         protected ActionDisplay(String id) {
             super(id, id, ActionDescription.this, ActionDescription.this.getDefaultModel());
         }
@@ -39,7 +41,10 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
         abstract protected void initialize();
 
         void substantiate() {
-            initialize();
+            if (!initialized) {
+                initialized = true;
+                initialize();
+            }
         }
     }
 
