@@ -79,8 +79,8 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             if (handle != null && handle.isNodeType(HippoNodeType.NT_HANDLE)
                     && handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
                 Value[] discriminators = handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-                for (int i = 0; i < discriminators.length; i++) {
-                    String key = discriminators[i].getString();
+                for (Value discriminator : discriminators) {
+                    String key = discriminator.getString();
                     if (subject.hasProperty(key)) {
                         criteria.put(key, subject.getProperty(key).getString());
                     }
@@ -158,7 +158,7 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
 
         for (PropertyIterator iter = source.getProperties(); iter.hasNext();) {
             Property prop = iter.nextProperty();
-            if (prop.getName().startsWith("jcr:") ||
+            if (prop.getName().startsWith("jcr:frozen") || prop.getName().startsWith("jcr:uuid") ||
                 prop.getName().equals(HippoNodeType.HIPPO_RELATED) ||
                 prop.getName().equals(HippoNodeType.HIPPO_COMPUTE) ||
                 prop.getName().equals(HippoNodeType.HIPPO_PATHS)) {
@@ -170,16 +170,16 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             
             if (prop.getDefinition().isMultiple()) {
                 boolean isProtected = true;
-                for (int i = 0; i < nodeTypes.length; i++) {
-                    if (nodeTypes[i].canSetProperty(prop.getName(), prop.getValues())) {
+                for (NodeType nodeType : nodeTypes) {
+                    if (nodeType.canSetProperty(prop.getName(), prop.getValues())) {
                         isProtected = false;
                         break;
                     }
                 }
-                for (int i = 0; i < nodeTypes.length; i++) {
-                    PropertyDefinition[] propDefs = nodeTypes[i].getPropertyDefinitions();
-                    for (int j = 0; j < propDefs.length; j++) {
-                        if (propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected())
+                for (NodeType nodeType : nodeTypes) {
+                    PropertyDefinition[] propDefs = nodeType.getPropertyDefinitions();
+                    for (PropertyDefinition propDef : propDefs) {
+                        if (propDef.getName().equals(prop.getName()) && propDef.isProtected())
                             isProtected = true;
                     }
                 }
@@ -188,16 +188,16 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                 }
             } else {
                 boolean isProtected = true;
-                for (int i = 0; i < nodeTypes.length; i++) {
-                    if (nodeTypes[i].canSetProperty(prop.getName(), prop.getValue())) {
+                for (NodeType nodeType : nodeTypes) {
+                    if (nodeType.canSetProperty(prop.getName(), prop.getValue())) {
                         isProtected = false;
                         break;
                     }
                 }
-                for (int i = 0; i < nodeTypes.length; i++) {
-                    PropertyDefinition[] propDefs = nodeTypes[i].getPropertyDefinitions();
-                    for (int j = 0; j < propDefs.length; j++) {
-                        if (propDefs[j].getName().equals(prop.getName()) && propDefs[j].isProtected())
+                for (NodeType nodeType : nodeTypes) {
+                    PropertyDefinition[] propDefs = nodeType.getPropertyDefinitions();
+                    for (PropertyDefinition propDef : propDefs) {
+                        if (propDef.getName().equals(prop.getName()) && propDef.isProtected())
                             isProtected = true;
                     }
                 }
@@ -228,8 +228,8 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
         if (handle != null && handle.isNodeType(HippoNodeType.NT_HANDLE)
                 && handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
             Value[] discriminators = handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-            for (int i = 0; i < discriminators.length; i++) {
-                String key = discriminators[i].getString();
+            for (Value discriminator : discriminators) {
+                String key = discriminator.getString();
                 if (node.hasProperty(key)) {
                     immune.add(key);
                 }
@@ -365,8 +365,8 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
             Map<String, Value> requiredProperties = new TreeMap<String, Value>();
             if (handle.hasProperty(HippoNodeType.HIPPO_DISCRIMINATOR)) {
                 Value[] discriminators = handle.getProperty(HippoNodeType.HIPPO_DISCRIMINATOR).getValues();
-                for (int i = 0; i < discriminators.length; i++) {
-                    String key = discriminators[i].getString();
+                for (Value discriminator : discriminators) {
+                    String key = discriminator.getString();
                     if (subject.hasProperty(key)) {
                         requiredProperties.put(key, subject.getProperty(key).getValue());
                     }
@@ -457,8 +457,8 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                 Version version = iter.nextVersion();
                 Set<String> labelsSet = new TreeSet<String>();
                 String[] labels = versionHistory.getVersionLabels();
-                for (int i = 0; i < labels.length; i++) {
-                    labelsSet.add(labels[i]);
+                for (String label : labels) {
+                    labelsSet.add(label);
                 }
                 labelsSet.add(version.getName());
                 listing.put(version.getCreated(), labelsSet);
@@ -480,8 +480,8 @@ public class VersionWorkflowImpl extends Document implements VersionWorkflow, In
                             VersionHistory variantHistory = (VersionHistory) child.getSession().getNodeByUUID(ref);
                             Set<String> labelsSet = new TreeSet<String>();
                             String[] labels = variantHistory.getVersionLabels();
-                            for (int i = 0; i < labels.length; i++) {
-                                labelsSet.add(labels[i]);
+                            for (String label : labels) {
+                                labelsSet.add(label);
                             }
                             for (VersionIterator childIter = variantHistory.getAllVersions(); childIter.hasNext();) {
                                 Version version = childIter.nextVersion();

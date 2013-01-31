@@ -26,9 +26,9 @@ import javax.jcr.RepositoryException;
  * A workflow is a set of procedures that can be performed on a document in the repository.  These procedures can be accessed by obtaining a Workflow implementation from the {@link WorkflowManager}.  Calling a method that is defined by an interface extending the {@link Workflow} interface causes such a workflow step (procedure) to be executed.
  * Which workflow is active on a document depends amongst others on the type of document.  Therefor the {@link Workflow} interface itself defines no workflow actions, but any {@link Workflow} instance should be cast to a document-specific interface.
  * The implementation of these document-specific workflows can be provided at run-time to the repository.  Therefor there is no standard set of workflows available.  There are a number of  commonly available workflows, but these are not mandatory.  See all known sub-interfaces of the {@link Workflow} interface, or {@link org.hippoecm.repository.standardworkflow.FolderWorkflow} for an example.
- * 
+ *
  * Implementors of this interface should never return subclasses of the
- * @{link Document} class in their interface.  It is allowed to return an instance of
+ * {@link Document} class in their interface.  It is allowed to return an instance of
  * a subclass of a {@link Document}, but the repository will force recreating the
  * object returned as a direct instance of an {@link Document}.
  * @see org.hippoecm.repository.standardworkflow.FolderWorkflow
