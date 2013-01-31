@@ -121,7 +121,7 @@
     <cglib.version>2.1_3</cglib.version>
     <wicket.version>1.4.21-h2</wicket.version>
     <wicket-extjs.version>0.17</wicket-extjs.version>
-    <yui.sources.version>1.01.10</yui.sources.version>
+    <yui.sources.version>1.01.11-SNAPSHOT</yui.sources.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <dom4j.version>1.6.1</dom4j.version>
     <httpclient.version>4.2.2</httpclient.version>
@@ -133,7 +133,8 @@
     <tika.version>0.9</tika.version>
     <drewnoakes-extractor.version>2.4.0-beta-1</drewnoakes-extractor.version>
 
-    <hippo.htmlcleaner.version>1.02.07</hippo.htmlcleaner.version>
+    <hippo.htmlcleaner.version>1.02.08-SNAPSHOT</hippo.htmlcleaner.version>
+    <hippo.htmldiff.version>1.01.03-SNAPSHOT</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.03-SNAPSHOT</hippo.jcrdiff.version>
     <sanselan.version>0.97-incubator</sanselan.version>
 
