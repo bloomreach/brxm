@@ -23,7 +23,13 @@ import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 
 public interface Filter extends BaseFilter{
 
-    
+    /**
+     * The supported resolutions/granularities for <b>fast</b> date range queries and fast equals on dates
+     */
+    enum Resolution {
+        YEAR, MONTH, WEEK, DAY,HOUR
+    }
+
     /**
      * Adds a fulltext search to this Filter. A fulltext search is a search on the indexed text of the <code>scope</code>. When the 
      * <code>scope</code> is just a <code><b>.</b></code>, the search will be done on the entire document. When the <code>scope</code> is 
@@ -49,8 +55,8 @@ public interface Filter extends BaseFilter{
     void addNotContains(String scope, String fullTextSearch) throws FilterException ;
 
     /**
-     * Adds a constraint that the value <code>fieldAttributeName</code> is between <code>value1</code> and <code>value2</code>
-     * @param fieldAttributeName the name of the attribute, eg "example:date"
+     * Adds a constraint that the value <code>fieldAttributeName</code> is between <code>value1</code> and <code>value2</code> (boundaries included)
+     * @param fieldAttributeName the name of the attribute, eg "hippo:lastModified"
      * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code>, <code>value1</code> or <code>value2</code> are invalid types/values or one of them is <code>null</code>
@@ -58,7 +64,20 @@ public interface Filter extends BaseFilter{
     void addBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException ;
 
     /**
-     * Adds a constraint that the value <code>fieldAttributeName</code> is NOT between <code>value1</code> and <code>value2</code>
+     * Adds a <b>FAST DATE RANGE</b> constraint that the Calendar value for <code>fieldAttributeName</code> is between <code>start</code> and <code>end</code> (boundaries included) BASED ON the
+     * granularity <code>resolution</code>. Thus suppose the Resolution is <code>Resolution.DAY</code>, then results with the same DAY as value for <code>fieldAttributeName</code>
+     * will be included.
+     * @param fieldAttributeName the name of the attribute, eg "hippo:lastModified"
+     * @param start the date to start from (including)
+     * @param end the date to end  (including)
+     * @param resolution the resolution to use to compare dates.
+     * @throws FilterException
+     */
+    void addBetween(String fieldAttributeName, Calendar start, Calendar end, Resolution resolution) throws FilterException;
+
+    /**
+     * Adds a constraint that the value <code>fieldAttributeName</code> is NOT between <code>value1</code> and <code>value2</code>,
+     * including NOT <code>value1</code> and <code>value2</code>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
@@ -67,12 +86,25 @@ public interface Filter extends BaseFilter{
     void addNotBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException ;
 
     /**
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)} but now negated
+     */
+    void addNotBetween(String fieldAttributeName, Calendar start, Calendar end, Resolution resolution) throws FilterException;
+
+    /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is equal to <code>value</code>
      * @param fieldAttributeName the name of the attribute, eg "example:author"
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or <code>value</code> is of invalid type/value or is <code>null</code>
      */
     void addEqualTo(String fieldAttributeName, Object value) throws FilterException ;
+
+    /**
+     * Adds a constraint that the Calendar value for <code>fieldAttributeName</code> rounded to its resolution is equal to the
+     * rounded value for <code>calendar</code>. Thus assume the <code>Resolution</code> is equal to <code>Resolution.DAY</code>,
+     * then all nodes/documents where the property <code>fieldAttributeName</code> as a Calendar value with the <string>same</string>
+     * date rounded to days (eg 20130128) has the same value as <code>calendar</code> rounded to days, will match.
+     */
+    void addEqualTo(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
    
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is NOT equal to <code>value</code>
@@ -80,8 +112,13 @@ public interface Filter extends BaseFilter{
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
-    void addNotEqualTo(String fieldAttributeName, Object value) throws FilterException ;
-    
+    void addNotEqualTo(String fieldAttributeName, Object value) throws FilterException;
+
+    /**
+     * @see {@link #addEqualTo(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)} only now negated
+     */
+    void addNotEqualTo(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
+
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is greater than or equal to <code>value</code>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
@@ -89,6 +126,12 @@ public interface Filter extends BaseFilter{
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
     void addGreaterOrEqualThan(String fieldAttributeName, Object value) throws FilterException ;
+
+    /**
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     * but now no upper bound
+     */
+    void addGreaterOrEqualThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
 
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is greater than <code>value</code>
@@ -99,6 +142,12 @@ public interface Filter extends BaseFilter{
     void addGreaterThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     * but now no upper bound and lower bound not included
+     */
+    void addGreaterThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
+
+    /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is less than or equal to <code>value</code>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
@@ -107,12 +156,24 @@ public interface Filter extends BaseFilter{
     void addLessOrEqualThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     * but now no lower bound
+     */
+    void addLessOrEqualThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
+
+    /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is less than <code>value</code>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
      */
     void addLessThan(String fieldAttributeName, Object value) throws FilterException ;
+
+    /**
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     * but now no lower bound and upper bound not included
+     */
+    void addLessThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
 
     /**
      * <b>Try to not use this method as it blows up searches. This is Lucene (inverted indexes) related</b>
