@@ -39,12 +39,6 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-builtin</artifactId>
       <version>${hippo.repository.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.onehippo.cms7</groupId>
-          <artifactId>hippo-repository-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
