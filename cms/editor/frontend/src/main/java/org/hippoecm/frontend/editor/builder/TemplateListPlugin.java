@@ -175,8 +175,12 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                     }
                 } else {
                     List<String> superTypes = containingType.getSuperTypes();
-                    superTypes.add(type.getName());
-                    containingType.setSuperTypes(superTypes);
+
+                    // Check whether the mixin is already added to the containing type or not
+                    if (!superTypes.contains(type.getName())) {
+                        superTypes.add(type.getName());
+                        containingType.setSuperTypes(superTypes);
+                    }
                 }
             } else {
                 log.warn("adding a field to a primitive type is not supported");
@@ -191,14 +195,13 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
     static boolean hasPrefix(ITypeDescriptor descriptor, String prefix) {
         String typeName = descriptor.getName();
+
         if (typeName.indexOf(':') <= 0) {
             return false;
         }
+
         typeName = typeName.substring(0, typeName.indexOf(':'));
-        if (prefix.equals(typeName)) {
-            return true;
-        }
-        return false;
+        return ((prefix.equals(typeName)) ? true : false);
     }
 
     abstract class CategorySection extends Section {
@@ -264,10 +267,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
-                    if (!descriptor.isNode() && !descriptor.isMixin()) {
-                        return true;
-                    }
-                    return false;
+                    return ((!descriptor.isNode() && !descriptor.isMixin()) ? true : false);
                 }
             });
             sections.add(new CategorySection(engine, editableTypes, "compound") {
@@ -275,10 +275,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
-                    if (descriptor.isNode() && !hasPrefix(descriptor, prefix) && !descriptor.isMixin()) {
-                        return true;
-                    }
-                    return false;
+                    return ((descriptor.isNode() && !hasPrefix(descriptor, prefix) && !descriptor.isMixin()) ? true : false);
                 }
             });
             sections.add(new CategorySection(engine, editableTypes, "custom") {
@@ -286,10 +283,7 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
 
                 @Override
                 boolean isTypeInCategory(ITypeDescriptor descriptor) {
-                    if (descriptor.isNode() && hasPrefix(descriptor, prefix) && !descriptor.isMixin()) {
-                        return true;
-                    }
-                    return false;
+                    return ((descriptor.isNode() && hasPrefix(descriptor, prefix) && !descriptor.isMixin()) ? true : false);
                 }
             });
             sections.add(new CategorySection(engine, editableTypes, "mixins") {

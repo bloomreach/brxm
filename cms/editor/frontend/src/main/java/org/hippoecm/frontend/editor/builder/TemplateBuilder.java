@@ -60,6 +60,7 @@ import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.nodetype.ItemDefinition;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
@@ -621,18 +622,23 @@ public class TemplateBuilder implements IDetachable, IObservable {
                         doUpdate = true;
                     } else {
                         String mixin = plugin.getString("mixin");
+
                         if (mixin != null) {
+                            boolean primaryNodeTypeContainsMixin = false;
                             try {
                                 NodeType nt = getJcrNodeType(typeDescriptor.getType());
-                                if (!nt.isNodeType(mixin)) {
-                                    List<String> superTypes = typeDescriptor.getSuperTypes();
-                                    superTypes.remove(mixin);
-                                    typeDescriptor.setSuperTypes(superTypes);
-                                }
+                                primaryNodeTypeContainsMixin = ((nt != null) && nt.isNodeType(mixin));
                             } catch (RepositoryException e) {
                                 log.error("Unable to check whether removed mixin " + mixin +
                                         " is part of the JCR primary node type", e);
                             }
+
+                            if (!primaryNodeTypeContainsMixin) {
+                                List<String> superTypes = typeDescriptor.getSuperTypes();
+                                superTypes.remove(mixin);
+                                typeDescriptor.setSuperTypes(superTypes);
+                            }
+
                             doUpdate = true;
                         }
                     }
@@ -940,7 +946,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                 List<String> superTypes = typeDescriptor.getSuperTypes();
                 for (String superType : superTypes) {
                     NodeType nodeType = getJcrNodeType(superType);
-                    if (!nodeType.isMixin()) {
+                    if ((nodeType == null) || !nodeType.isMixin()) {
                         continue;
                     }
                     if (!currentTypes.contains(superType)) {
@@ -975,8 +981,22 @@ public class TemplateBuilder implements IDetachable, IObservable {
         }
     }
 
+    /*
+     * Retrieve {@link NodeType} for the given <code>superType</code>
+     * If {@link NodeType} was not found the methods returns <code>null</code>
+     */
     private static NodeType getJcrNodeType(String superType) throws RepositoryException {
-        return UserSession.get().getJcrSession().getWorkspace().getNodeTypeManager().getNodeType(superType);
+        try {
+            return UserSession.get().getJcrSession().getWorkspace().getNodeTypeManager().getNodeType(superType);
+        } catch (NoSuchNodeTypeException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Could not retrieve node type '{}'. Maybe it is not committed yet.", superType, e);
+            } else {
+                log.warn("Could not retrieve node type '{}'. Maybe it is not committed yet. {}", superType, e.toString());
+            }
+        }
+
+        return null;
     }
 
     private static void updateItem(Node prototype, String oldPath, IFieldDescriptor newField)

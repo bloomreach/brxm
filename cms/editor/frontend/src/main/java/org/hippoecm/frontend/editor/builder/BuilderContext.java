@@ -105,12 +105,13 @@ public class BuilderContext implements IClusterable {
     public void delete() {
         IClusterConfig clusterConfig = getTemplate();
         List<IPluginConfig> plugins = new LinkedList<IPluginConfig>(clusterConfig.getPlugins());
+        final String pluginId = getPluginId();
         for (IPluginConfig config : plugins) {
-            if (config.getName().equals(getPluginId())) {
+            if (config.getName().equals(pluginId)) {
                 IModelReference pluginRef = context
                         .getService(config.getString(SELECTED_PLUGIN), IModelReference.class);
                 if (pluginRef != null && pluginRef.getModel() != null
-                        && getPluginId().equals(pluginRef.getModel().getObject())) {
+                        && pluginId.equals(pluginRef.getModel().getObject())) {
                     pluginRef.setModel(null);
                 }
                 plugins.remove(config);
@@ -127,11 +128,8 @@ public class BuilderContext implements IClusterable {
 
     public boolean hasFocus() {
         IModelReference pluginRef = context.getService(config.getString(SELECTED_PLUGIN), IModelReference.class);
-        if (pluginRef.getModel() != null) {
-            return getPluginId().equals(pluginRef.getModel().getObject());
-        } else {
-            return false;
-        }
+
+        return ((pluginRef.getModel() != null) ? getPluginId().equals(pluginRef.getModel().getObject()) : false);
     }
 
     public Mode getMode() {

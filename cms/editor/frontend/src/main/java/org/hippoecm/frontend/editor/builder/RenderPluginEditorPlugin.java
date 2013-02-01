@@ -15,13 +15,7 @@
  */
 package org.hippoecm.frontend.editor.builder;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
@@ -33,8 +27,12 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
+import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.builder.EditorContext.Mode;
 import org.hippoecm.frontend.editor.layout.ILayoutContext;
 import org.hippoecm.frontend.editor.layout.ILayoutPad;
@@ -45,15 +43,26 @@ import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
+import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAware {
 
@@ -347,7 +356,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     }
 
     protected boolean validateDelete() {
-        return false;
+        return checkWhetherSubtypesHaveEditorTemplates();
     }
 
     protected void registerChildTrackers() {
@@ -434,6 +443,56 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         public ILayoutPad getPad() {
             return pad;
         }
+    }
+
+    private boolean checkWhetherSubtypesHaveEditorTemplates() {
+        IPluginContext context = getPluginContext();
+        IPluginConfig config = getPluginConfig();
+        BuilderContext builderContext = getBuilderContext();
+
+        final String field = getBuilderContext().getEditablePluginConfig().getString("field");
+        if (StringUtils.isEmpty(field)) {
+            return true;
+        }
+
+        // Do not delete if there is a subtype that has an editor template for this field
+        final List<ITypeDescriptor> subTypes = builderContext.getType().getSubTypes();
+        final ITemplateEngine templateEngine = context.getService(config.getString(ITemplateEngine.ENGINE),
+                ITemplateEngine.class);
+
+        final List<String> subTypeNames = new ArrayList<String>();
+        for (ITypeDescriptor subType : subTypes) {
+            try {
+                final IClusterConfig template = templateEngine.getTemplate(subType, IEditor.Mode.VIEW);
+                for (IPluginConfig plugin : template.getPlugins()) {
+                    if (StringUtils.equals(field, plugin.getString("field"))) {
+                        subTypeNames.add(subType.getName());
+                    }
+                }
+            } catch (TemplateEngineException e) {
+                // This error does not prevent deletion.
+                log.warn("Misconfiguration of type definition {} encountered.", subType.getName());
+            }
+        }
+        if (!subTypeNames.isEmpty()) {
+            error(buildErrorMessage(field, subTypeNames));
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Builds error message with subTypeNames.
+     *
+     * @param subTypeNames names of subTypes where the field exists.
+     * @return the formatted error message.
+     */
+    private String buildErrorMessage(String field, List<String> subTypeNames) {
+        final String[] types = subTypeNames.toArray(new String[subTypeNames.size()]);
+        StringResourceModel srm = new StringResourceModel("field-is-inherited", this, null,
+                new String[]{field, Strings.join(", ", types)});
+
+        return srm.getObject();
     }
 
 }
