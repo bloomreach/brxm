@@ -36,7 +36,8 @@ public class SolrSearchParams {
 
     private final static String DATE_FORMAT = "MM/dd/yyyy";
 
-    SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+    // since SimpleDateFormat is not thread safe, do not use static
+    private SimpleDateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
     private HstRequest request;
     private boolean showSpellCheck;
     private boolean showSuggest;
@@ -112,7 +113,7 @@ public class SolrSearchParams {
             try {
                 fromDate = formatter.parse(fromDateString);
             } catch (ParseException e) {
-                log.warn("Skip invalid fromDate", fromDateString);
+                log.warn("Skip invalid fromDate '{}'", fromDateString);
             }
         }
 
@@ -121,7 +122,7 @@ public class SolrSearchParams {
             try {
                 toDate = formatter.parse(toDateString);
             } catch (ParseException e) {
-                log.warn("Skip invalid toDate", toDateString);
+                log.warn("Skip invalid toDate '{}'", toDateString);
             }
         }
 
