@@ -28,8 +28,13 @@ import java.util.Map;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class DateTools {
-    
+
+    private static final Logger log = LoggerFactory.getLogger(DateTools.class);
+
     private static final SimpleDateFormat YEAR_FORMAT = new SimpleDateFormat("yyyy");
     private static final SimpleDateFormat MONTH_FORMAT = new SimpleDateFormat("yyyyMM");
     private static final SimpleDateFormat WEEK_FORMAT = new SimpleDateFormat("yyyyww");
@@ -218,13 +223,18 @@ public class DateTools {
         }
 
     public static String createXPathConstraint(final Session session,
-                                               final Calendar calendar) throws RepositoryException {
-        return "xs:dateTime('"+session.getValueFactory().createValue(calendar).getString()+ "')";
+                                               final Calendar calendar) {
+        try {
+            return "xs:dateTime('"+session.getValueFactory().createValue(calendar).getString()+ "')";
+        } catch (RepositoryException e) {
+            throw new IllegalArgumentException("RepositoryException while creating a calendar jcr Value " +
+                    "for '"+calendar.toString()+"'", e);
+        }
     }
 
     public static String createXPathConstraint(final Session session,
                                                final Calendar calendar,
-                                               final Resolution roundDateBy) throws RepositoryException {
+                                               final Resolution roundDateBy) {
         final Calendar roundedCalendar = roundDate(calendar.getTimeInMillis(), roundDateBy);
         return createXPathConstraint(session, roundedCalendar);
     }
