@@ -121,10 +121,6 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.wicketstuff</groupId>
-      <artifactId>wicket-extjs</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services</artifactId>
     </dependency>

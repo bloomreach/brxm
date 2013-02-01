@@ -881,6 +881,7 @@ automatic-export/repository/src/test/resources/log4j.dtd -text
 automatic-export/repository/src/test/resources/log4j.xml -text
 brokenlinks/common/pom.xml svneol=native#text/plain
 brokenlinks/frontend/pom.xml svneol=native#text/plain
+brokenlinks/frontend/src/main/appended-resources/META-INF/LICENSE -text
 brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/layout/panel/BrokenLinksPanelPlugin_nl.properties -text
 brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/layout/panel/broken-links-48.png -text svneol=unset#image/png
 brokenlinks/frontend/src/main/java/org/onehippo/cms7/reports/plugins/brokenlinkslist/BrokenLinksListColumns_de.properties -text
@@ -1793,6 +1794,7 @@ jquery/src/main/resources/org/onehippo/cms7/jquery/core/jquery-1.6.2.js -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/plugins/jquery.head-1.0.3b.js -text
 jquery/src/main/resources/org/onehippo/cms7/jquery/ui/jquery-ui-1.8.16.js -text
 perspectives/pom.xml -text
+perspectives/src/main/appended-resources/META-INF/LICENSE -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.html -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminBreadCrumbPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/admin/AdminPanelPlugin.java -text
@@ -2681,6 +2683,7 @@ tools/development-content/src/main/resources/hippoecm-extension.xml -text svneol
 tools/eclipse/monkey/convertDependencies.gm -text
 tools/eclipse/monkey/prepareProjects.gm -text
 tools/translation-runner/src/main/java/org/hippoecm/runner/translation/UpdateTranslationIdsRunner.java -text
+translation/frontend/src/main/appended-resources/META-INF/LICENSE -text
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/PathRenderer.java svneol=native#text/plain
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/TreeNodeIconPlugin.java svneol=native#text/plain
 translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/document/DocumentTranslationView.java svneol=native#text/plain
