@@ -29,6 +29,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.demo.util.DateRangeQueryConstraints;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,8 +48,24 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
        super.doBeforeRender(request, response);
     }
 
+    protected void doSearch(final HstRequest request,
+                            final HstResponse response,
+                            final String query,
+                            final String nodeType,
+                            final String sortBy,
+                            final int pageSize,
+                            final HippoBean scope) {
+        doSearch(request, response, query, nodeType, sortBy, pageSize, scope, null);
+    }
 
-    protected void doSearch(HstRequest request, HstResponse response, String query, String nodeType, String sortBy, int pageSize, HippoBean scope) {
+    protected void doSearch(final HstRequest request,
+                            final HstResponse response,
+                            final String query,
+                            final String nodeType,
+                            final String sortBy,
+                            final int pageSize,
+                            final HippoBean scope,
+                            final DateRangeQueryConstraints dateRangeQueryConstraints) {
 
         if (scope == null) {
             log.error("Scope for search is null.");
@@ -81,11 +98,18 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             }
             
             if (query != null) {
-                query = SearchInputParsingUtils.parse(query, false);
+                String parsedQuery = SearchInputParsingUtils.parse(query, false);
                 Filter filter = hstQuery.createFilter();
-                filter.addContains(".", query);
+                filter.addContains(".", parsedQuery);
                 hstQuery.setFilter(filter);
-                request.setAttribute("query", StringEscapeUtils.escapeHtml(query));
+                request.setAttribute("query", StringEscapeUtils.escapeHtml(parsedQuery));
+            }
+            if (dateRangeQueryConstraints != null) {
+                Filter filter = (Filter)hstQuery.getFilter();
+                if (filter == null) {
+                    filter = hstQuery.createFilter();
+                }
+                dateRangeQueryConstraints.addConstraintToFilter(filter);
             }
             
             final HstQueryResult result = hstQuery.execute();

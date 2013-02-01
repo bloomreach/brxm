@@ -20,17 +20,102 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
+<hst:element name="link" var="jquerytheme">
+  <hst:attribute name="id" value="jquery-theme"/>
+  <hst:attribute name="media" value="all"/>
+  <hst:attribute name="rel" value="stylesheet" />
+  <hst:attribute name="type" value="text/css"/>
+  <hst:attribute name="href" value="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css"/>
+</hst:element>
+<hst:headContribution keyHint="jquery-theme" element="${jquerytheme}"/>
+
+<hst:element name="script" var="jquery">
+  <hst:attribute name="type" value="text/javascript"/>
+  <hst:attribute name="src" value="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"/>
+</hst:element>
+<hst:headContribution keyHint="jquery" element="${jquery}" category="jsExternal"/>
+
+<hst:element name="script" var="jqueryUI">
+  <hst:attribute name="type" value="text/javascript"/>
+  <hst:attribute name="src" value="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js"/>
+</hst:element>
+<hst:headContribution keyHint="jqueryUI" element="${jqueryUI}" category="jsExternal"/>
+
+<hst:headContribution category="jsInline">
+  <script type="text/javascript">
+  $(function() {
+    $( "#fromdate" ).datepicker();
+    $( "#todate" ).datepicker();
+    $( "#fromdateDay" ).datepicker();
+    $( "#todateDay" ).datepicker();
+  });
+  </script>
+</hst:headContribution>
+
+
+
 <div id="yui-u">
-   <hst:link var="searchURL" path="/search" />
-   <form action="${searchURL}" method="get">
-      <div>
-          Query: <input type="text" name="query" value="${query}" /><br />
-          Page size: <input type="text" name="pageSize" value="${pageSize}" size="5" /><br />
-          <input type="submit" value="Search" />
-      </div>
-   </form>
-   
-   <p>
+  <hst:link var="searchURL" path="/search" />
+  <hst:link var="cal_icon" path="/images/icons/calendar_icon.gif"/>
+     <div>
+       <b>SEARCH WITH FAST HIPPO REPO DATE RANGE QUERIES</b>
+       <form action="${searchURL}" method="get">
+         <table>
+           <tr><td>Query:</td><td></td><td><input type="text" name="query" value="${query}"/></td>
+           </tr>
+           <tr><td>Page size:</td><td></td><td><input type="text" name="pageSize" value="${pageSize}" size="5"/></td>
+           </tr>
+         <tr>
+           <td><b>From date:</b> <td><label for="fromdateDay"><img src="${cal_icon}"/></label></td>
+           </td>
+           <td>
+             <input type="text" name="fromdateDay" id="fromdateDay" value="${fromdateDay}"/>
+           </td>
+         </tr>
+         <tr>
+           <td>
+             <b>To date:</b>  <td><label for="todateDay"><img src="${cal_icon}"/></label></td>
+           </td>
+           <td>
+             <input type="text" name="todateDay" id="todateDay" value="${todateDay}"/>
+           </td>
+         </tr>
+       </table>
+       <br/>
+       <input type="submit" value="Search FAST RANGES"/>
+       </form>
+     </div>
+    <br/><br/>
+  <div>
+    <b>SEARCH WITH SLOW JACKRABBIT DATE RANGE QUERIES</b>
+    <form action="${searchURL}" method="get">
+      <table>
+        <tr><td>Query:</td><td></td><td><input type="text" name="query" value="${query}"/></td>
+        </tr>
+        <tr><td>Page size:</td><td></td><td><input type="text" name="pageSize" value="${pageSize}" size="5"/></td>
+      </tr>
+        <tr>
+          <td><b>From date:</b> <td><label for="fromdate"><img src="${cal_icon}"/></label></td>
+          </td>
+          <td>
+            <input type="text" name="fromdate" id="fromdate" value="${fromdate}"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <b>To date:</b> <td><label for="todate"><img src="${cal_icon}"/></label></td>
+          </td>
+          <td>
+            <input type="text" name="todate" id="todate" value="${todate}"/>
+          </td>
+        </tr>
+      </table>
+      <br/>
+      <input type="submit" value="Search"/>
+    </form>
+  </div>
+
+  <p>
      <br/>
      <hst:componentRenderingURL var="componentRenderingURL">
         <hst:param name="page" value="${crPage}" />
