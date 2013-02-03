@@ -20,23 +20,53 @@ import java.util.Date;
 
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DateRangeQueryConstraints {
+
+    private static final Logger log = LoggerFactory.getLogger(DateRangeQueryConstraints.class);
 
     final private String property;
     final private Calendar fromDate;
     final private Calendar toDate;
     final Filter.Resolution resolution;
 
-    public DateRangeQueryConstraints(final String property, final Calendar fromDate, final Calendar toDate, final Filter.Resolution resolution) {
+    public DateRangeQueryConstraints(final String property, final Calendar fromDate, final Calendar toDate, final String resolutionString) {
         this.property = property;
         this.fromDate = fromDate;
         this.toDate = toDate;
-        this.resolution = resolution;
+        this.resolution = fromString(resolutionString);
+    }
+
+    private Filter.Resolution fromString(final String resolutionString) {
+        if (resolutionString == null) {
+            return null;
+        }
+        if (resolutionString.equals("year")) {
+            return Filter.Resolution.YEAR;
+        }
+        if (resolutionString.equals("month")) {
+            return Filter.Resolution.MONTH;
+        }
+        if (resolutionString.equals("week")) {
+            return Filter.Resolution.WEEK;
+        }
+        if (resolutionString.equals("day")) {
+            return Filter.Resolution.DAY;
+        }
+        if (resolutionString.equals("hour")) {
+            return Filter.Resolution.HOUR;
+        }
+        log.warn("Unknown resolution '{}'", resolutionString);
+        return null;
     }
 
     public void addConstraintToFilter(final Filter filter) throws FilterException {
        if (resolution == null) {
+           if (fromDate == null && toDate == null) {
+               return;
+           }
            if (fromDate == null) {
                filter.addLessOrEqualThan(property, toDate);
            } else if (toDate == null) {
@@ -45,6 +75,9 @@ public class DateRangeQueryConstraints {
                filter.addBetween(property, fromDate, toDate);
            }
        } else {
+           if (fromDate == null && toDate == null) {
+               return;
+           }
            if (fromDate == null) {
                filter.addLessOrEqualThan(property, toDate, resolution);
            } else if (toDate == null) {

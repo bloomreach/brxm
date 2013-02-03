@@ -11,7 +11,7 @@
   distributed under the License is distributed on an "AS IS"
   BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
-  limitations under the License. 
+  limitations under the License.
 --%>
 <%@ page language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -43,12 +43,12 @@
 
 <hst:headContribution category="jsInline">
   <script type="text/javascript">
-  $(function() {
-    $( "#fromdate" ).datepicker();
-    $( "#todate" ).datepicker();
-    $( "#fromdateDay" ).datepicker();
-    $( "#todateDay" ).datepicker();
-  });
+    $(function() {
+      $( "#fromdate" ).datepicker();
+      $( "#todate" ).datepicker();
+      $( "#fromDateResolution" ).datepicker();
+      $( "#toDateResolution" ).datepicker();
+    });
   </script>
 </hst:headContribution>
 
@@ -57,35 +57,49 @@
 <div id="yui-u">
   <hst:link var="searchURL" path="/search" />
   <hst:link var="cal_icon" path="/images/icons/calendar_icon.gif"/>
-     <div>
-       <b>SEARCH WITH FAST HIPPO REPO DATE RANGE QUERIES</b>
-       <form action="${searchURL}" method="get">
-         <table>
-           <tr><td>Query:</td><td></td><td><input type="text" name="query" value="${query}"/></td>
-           </tr>
-           <tr><td>Page size:</td><td></td><td><input type="text" name="pageSize" value="${pageSize}" size="5"/></td>
-           </tr>
-         <tr>
-           <td><b>From date:</b> <td><label for="fromdateDay"><img src="${cal_icon}"/></label></td>
-           </td>
-           <td>
-             <input type="text" name="fromdateDay" id="fromdateDay" value="${fromdateDay}"/>
-           </td>
-         </tr>
-         <tr>
-           <td>
-             <b>To date:</b>  <td><label for="todateDay"><img src="${cal_icon}"/></label></td>
-           </td>
-           <td>
-             <input type="text" name="todateDay" id="todateDay" value="${todateDay}"/>
-           </td>
-         </tr>
-       </table>
-       <br/>
-       <input type="submit" value="Search FAST RANGES"/>
-       </form>
-     </div>
-    <br/><br/>
+  <div>
+    <b>SEARCH WITH FAST HIPPO REPO DATE RANGE QUERIES</b>
+    <form action="${searchURL}" method="get">
+      <table>
+        <tr><td>Query:</td><td></td><td><input type="text" name="query" value="${query}"/></td>
+        </tr>
+        <tr><td>Page size:</td><td></td><td><input type="text" name="pageSize" value="${pageSize}" size="5"/></td>
+        </tr>
+        <tr>
+          <td><b>From date:</b> <td><label for="fromDateResolution"><img src="${cal_icon}"/></label></td>
+          </td>
+          <td>
+            <input type="text" name="fromDateResolution" id="fromDateResolution" value="${fromDateResolution}"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <b>To date:</b>  <td><label for="toDateResolution"><img src="${cal_icon}"/></label></td>
+          </td>
+          <td>
+            <input type="text" name="toDateResolution" id="toDateResolution" value="${toDateResolution}"/>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <b>Resolution</b>  <td></td>
+          </td>
+          <td>
+            <select name="resolution">
+              <option value="year" <c:if test="${resolution eq 'year'}">selected=""</c:if>> YEAR</option>
+              <option value="month" <c:if test="${resolution eq 'month'}">selected=""</c:if>>MONTH</option>
+              <option value="week" <c:if test="${resolution eq 'week'}">selected=""</c:if>>WEEK</option>
+              <option value="day" <c:if test="${resolution eq 'day'}">selected=""</c:if>>DAY</option>
+              <option value="hour" <c:if test="${resolution eq 'hour'}">selected=""</c:if>>HOUR</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <br/>
+      <input type="submit" value="Search FAST RANGES"/>
+    </form>
+  </div>
+  <br/><br/>
   <div>
     <b>SEARCH WITH SLOW JACKRABBIT DATE RANGE QUERIES</b>
     <form action="${searchURL}" method="get">
@@ -93,7 +107,7 @@
         <tr><td>Query:</td><td></td><td><input type="text" name="query" value="${query}"/></td>
         </tr>
         <tr><td>Page size:</td><td></td><td><input type="text" name="pageSize" value="${pageSize}" size="5"/></td>
-      </tr>
+        </tr>
         <tr>
           <td><b>From date:</b> <td><label for="fromdate"><img src="${cal_icon}"/></label></td>
           </td>
@@ -116,16 +130,16 @@
   </div>
 
   <p>
-     <br/>
-     <hst:componentRenderingURL var="componentRenderingURL">
-        <hst:param name="page" value="${crPage}" />
-        <hst:param name="query" value="${query}" />
-     </hst:componentRenderingURL>
-     <a href="${componentRenderingURL}">Render only this component</a>
-     
-   </p>
+    <br/>
+    <hst:componentRenderingURL var="componentRenderingURL">
+      <hst:param name="page" value="${crPage}" />
+      <hst:param name="query" value="${query}" />
+    </hst:componentRenderingURL>
+    <a href="${componentRenderingURL}">Render only this component</a>
 
-   <c:if test="${query != null && query != ''}">
+  </p>
+
+  <c:if test="${query != null && query != ''}">
 
     <c:choose>
       <c:when test="${result.totalSize > 0}">
@@ -133,7 +147,7 @@
         <p><b>${result.totalSize}</b> results for <b>${query}</b>.</p>
 
         <c:forEach var="bean" items="${result.hippoBeans}"
-          varStatus="indexer">
+                   varStatus="indexer">
           <hst:link var="link" hippobean="${bean}" />
           <ul class="list-overview">
             <li class="title">

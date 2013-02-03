@@ -61,25 +61,21 @@ public class Search extends AbstractSearchComponent {
 
         Calendar fromDate = getDateFor(request, "fromdate");
         Calendar toDate = getDateFor(request, "todate");
-        Calendar fromDateDay = getDateFor(request, "fromdateDay");
-        Calendar toDateDay = getDateFor(request, "todateDay");
+        Calendar fromDateResolution = getDateFor(request, "fromDateResolution");
+        Calendar toDateResolution = getDateFor(request, "toDateResolution");
 
-        if (fromDate != null && fromDateDay != null) {
-            throw new IllegalStateException("Cannot search with granularity DAY and without granularity for the same field");
+        String resolution = getPublicRequestParameter(request, "resolution");
+        if (resolution == null) {
+            resolution = request.getParameter("resolution");
         }
-        if (toDate != null && toDateDay != null) {
-            throw new IllegalStateException("Cannot search with granularity DAY and without granularity for the same field");
-        }
+        request.setAttribute("resolution", resolution);
 
-        DateRangeQueryConstraints dateRangeQueryConstraints = null;
-        if (fromDate != null) {
+        DateRangeQueryConstraints dateRangeQueryConstraints;
+
+        if (resolution == null){
             dateRangeQueryConstraints = new DateRangeQueryConstraints("hippostdpubwf:creationDate", fromDate, toDate, null);
-        } else if (fromDateDay != null) {
-            dateRangeQueryConstraints = new DateRangeQueryConstraints("hippostdpubwf:creationDate", fromDateDay, toDateDay, Filter.Resolution.DAY);
-        } else if (toDate != null) {
-            dateRangeQueryConstraints = new DateRangeQueryConstraints("hippostdpubwf:creationDate", fromDate, toDate, Filter.Resolution.DAY);
-        } else if (toDateDay != null) {
-            dateRangeQueryConstraints = new DateRangeQueryConstraints("hippostdpubwf:creationDate", fromDateDay, toDateDay, Filter.Resolution.DAY);
+        } else {
+            dateRangeQueryConstraints = new DateRangeQueryConstraints("hippostdpubwf:creationDate", fromDateResolution, toDateResolution, resolution);
         }
 
         doSearch(request, response, query, null, null, pageSize, getSiteContentBaseBean(request), dateRangeQueryConstraints);
