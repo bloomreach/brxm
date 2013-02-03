@@ -132,9 +132,9 @@ public class FilterImpl implements Filter {
         final String xpathProperty= toXPathProperty(fieldAttributeName, true, "addBetween");
         final String xpathPropertyForResolution = DateTools.getPropertyForResolution(xpathProperty, resolution);
         final String jcrExpression = "( " + xpathPropertyForResolution + " >= "
-                + getCalendarWhereXPath(start)
+                + DateTools.createXPathConstraint(session, start, resolution)
                 + " and " + xpathPropertyForResolution + " <= "
-                + getCalendarWhereXPath(end) + ")";
+                + DateTools.createXPathConstraint(session, end, resolution) + ")";
 
         if(isNot) {
             addNotExpression(jcrExpression);
@@ -182,7 +182,7 @@ public class FilterImpl implements Filter {
         }
         final String xpathProperty = toXPathProperty(fieldAttributeName, true, "equal");
         final String xpathPropertyForResolution = DateTools.getPropertyForResolution(xpathProperty, resolution);
-        final String jcrExpression = xpathPropertyForResolution + operator + getCalendarWhereXPath(calendar);
+        final String jcrExpression = xpathPropertyForResolution + operator + DateTools.createXPathConstraint(session, calendar, resolution);
         addExpression(jcrExpression);
     }
 
@@ -401,17 +401,13 @@ public class FilterImpl implements Filter {
         } else if(value instanceof Long || value instanceof Double) {
             return value.toString();
         } else if(value instanceof Calendar){
-            return getCalendarWhereXPath((Calendar)value);
+            return DateTools.createXPathConstraint(session, (Calendar)value);
         } else if(value instanceof Date){
             Calendar cal = new GregorianCalendar();
             cal.setTime((Date)value);
-            return getCalendarWhereXPath(cal);
+            return DateTools.createXPathConstraint(session, cal);
         }
         throw new FilterException("Unsupported Object type '"+value.getClass().getName()+"' to query on.");
-    }
-    
-    public String getCalendarWhereXPath(Calendar value) throws FilterException {
-        return DateTools.createXPathConstraint(session, value);
     }
 
     /**
