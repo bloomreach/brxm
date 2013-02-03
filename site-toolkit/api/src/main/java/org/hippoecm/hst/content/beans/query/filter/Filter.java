@@ -55,7 +55,14 @@ public interface Filter extends BaseFilter{
     void addNotContains(String scope, String fullTextSearch) throws FilterException ;
 
     /**
-     * Adds a constraint that the value <code>fieldAttributeName</code> is between <code>value1</code> and <code>value2</code> (boundaries included)
+     * <p>
+     *      Adds a constraint that the value <code>fieldAttributeName</code> is between <code>value1</code> and <code>value2</code> (boundaries included).
+     * </p>
+     * <p>
+     *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
+     *     <strong>should</strong> use {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     with the highest resolution that is acceptable for your use case, as this performs much better
+     * </p>
      * @param fieldAttributeName the name of the attribute, eg "hippo:lastModified"
      * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
@@ -66,18 +73,25 @@ public interface Filter extends BaseFilter{
     /**
      * Adds a <b>FAST DATE RANGE</b> constraint that the Calendar value for <code>fieldAttributeName</code> is between <code>start</code> and <code>end</code> (boundaries included) BASED ON the
      * granularity <code>resolution</code>. Thus suppose the Resolution is <code>Resolution.DAY</code>, then results with the same DAY as value for <code>fieldAttributeName</code>
-     * will be included.
+     * will be included. The higher the Resolution (year is highest) the better the performance!
      * @param fieldAttributeName the name of the attribute, eg "hippo:lastModified"
      * @param start the date to start from (including)
      * @param end the date to end  (including)
-     * @param resolution the resolution to use to compare dates.
+     * @param resolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performan
      * @throws FilterException
      */
     void addBetween(String fieldAttributeName, Calendar start, Calendar end, Resolution resolution) throws FilterException;
 
     /**
-     * Adds a constraint that the value <code>fieldAttributeName</code> is NOT between <code>value1</code> and <code>value2</code>,
-     * including NOT <code>value1</code> and <code>value2</code>
+     * <p>
+     *      Adds a constraint that the value <code>fieldAttributeName</code> is NOT between <code>value1</code> and <code>value2</code>,
+     *      including NOT <code>value1</code> and <code>value2</code>
+     * </p>
+     * <p>
+     *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
+     *     <strong>should</strong> use {@link #addNotBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     with the highest resolution that is acceptable for your use case, as this performs much better
+     * </p>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @param value2 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
@@ -103,6 +117,7 @@ public interface Filter extends BaseFilter{
      * rounded value for <code>calendar</code>. Thus assume the <code>Resolution</code> is equal to <code>Resolution.DAY</code>,
      * then all nodes/documents where the property <code>fieldAttributeName</code> as a Calendar value with the <string>same</string>
      * date rounded to days (eg 20130128) has the same value as <code>calendar</code> rounded to days, will match.
+     * The higher the Resolution (year is highest) the better the performance!
      */
     void addEqualTo(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
    
