@@ -133,7 +133,7 @@ public class FilterImpl implements Filter {
         final String xpathPropertyForResolution = DateTools.getPropertyForResolution(xpathProperty, resolution);
         final String jcrExpression = "( " + xpathPropertyForResolution + " >= "
                 + getCalendarWhereXPath(start)
-                + " and " + fieldAttributeName + " <= "
+                + " and " + xpathPropertyForResolution + " <= "
                 + getCalendarWhereXPath(end) + ")";
 
         if(isNot) {
