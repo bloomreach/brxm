@@ -258,6 +258,8 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
     class WikiPediaToJCRHandler extends DefaultHandler {
 
+        // five year of seconds : 157680000
+        private static final int NUMBER_OF_SECONDS_IN_TWO_YEARS = 63072000;
         private final Node wikiFolder;
         private Node doc;
         private Node finishedDoc;
@@ -385,19 +387,31 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
                         doc.addMixin("hippo:harddocument");
                         doc.addMixin("hippotranslation:translated");
 
+                        int creationDateSecondsAgo = new Random().nextInt(NUMBER_OF_SECONDS_IN_TWO_YEARS);
+                        // lastModifiedSecondsAgo = some random time after creationDateSecondsAgo
+                        int lastModifiedSecondsAgo = new Random().nextInt(creationDateSecondsAgo);
+                        // publicaionDateSecondsAgo = some random time after lastModifiedSecondsAgo
+                        int publicaionDateSecondsAgo = new Random().nextInt(lastModifiedSecondsAgo);
+
+                        final Calendar creationDate = Calendar.getInstance();
+                        creationDate.add(Calendar.SECOND, (-1 * creationDateSecondsAgo));
+                        final Calendar lastModificationDate = Calendar.getInstance();
+                        lastModificationDate.add(Calendar.SECOND, (-1 * lastModifiedSecondsAgo));
+                        final Calendar publicationDate = Calendar.getInstance();
+                        publicationDate.add(Calendar.SECOND, (-1 * publicaionDateSecondsAgo));
+
                         String[] availability = {"live", "preview"};
                         doc.setProperty("hippo:availability", availability);
                         doc.setProperty("hippostd:stateSummary", "live");
                         doc.setProperty("hippostd:state", "published");
                         doc.setProperty("hippostdpubwf:lastModifiedBy", users[rand.nextInt(users.length)]);
                         doc.setProperty("hippostdpubwf:createdBy", users[rand.nextInt(users.length)]);
-                        doc.setProperty("hippostdpubwf:lastModificationDate", Calendar.getInstance());
-                        doc.setProperty("hippostdpubwf:creationDate", Calendar.getInstance());
-                        doc.setProperty("hippostdpubwf:publicationDate", Calendar.getInstance());
+                        doc.setProperty("hippostdpubwf:lastModificationDate", lastModificationDate);
+                        doc.setProperty("hippostdpubwf:creationDate", creationDate);
+                        doc.setProperty("hippostdpubwf:publicationDate", publicationDate);
                         doc.setProperty("hippotranslation:locale", "en");
                         doc.setProperty("hippotranslation:id", "" + UUID.randomUUID().toString());
                         /**/
-
                         doc.setProperty("demosite:title", docTitle);
                     } else if (qName.equals("timestamp") && recording) {
                         checkCorrectDoc();
