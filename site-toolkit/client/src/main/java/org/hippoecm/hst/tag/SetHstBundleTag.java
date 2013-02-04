@@ -88,15 +88,22 @@ public class SetHstBundleTag extends TagSupport {
     // *********************************************************************
     // Tag logic
     public int doEndTag() throws JspException {
-        LocalizationContext locCtxt = getLocalizationContext(pageContext, basename, fallbackToJavaResourceBundle);
+        try {
+            LocalizationContext locCtxt = getLocalizationContext(pageContext, basename, fallbackToJavaResourceBundle);
 
-        if (var != null) {
-            pageContext.setAttribute(var, locCtxt, scope);
-        } else {
-            Config.set(pageContext, Config.FMT_LOCALIZATION_CONTEXT, locCtxt, scope);
+            if (var != null) {
+                pageContext.setAttribute(var, locCtxt, scope);
+            } else {
+                Config.set(pageContext, Config.FMT_LOCALIZATION_CONTEXT, locCtxt, scope);
+            }
+            return EVAL_PAGE;
+        } finally {
+            cleanup();
         }
+    }
 
-        return EVAL_PAGE;
+    private void cleanup() {
+        init();
     }
 
     // Releases any resources we may have (or inherit)
