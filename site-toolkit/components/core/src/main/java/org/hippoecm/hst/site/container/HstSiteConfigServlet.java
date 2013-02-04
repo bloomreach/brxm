@@ -18,6 +18,7 @@ package org.hippoecm.hst.site.container;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -73,7 +74,8 @@ import org.slf4j.LoggerFactory;
  * <EM>The parameter value for the properties file or the xml file is regarded as a web application
  * context relative path or file system relative path if the path does not start with 'file:'.
  * So, you should use a 'file:' prefixed URI for the path parameter value if you want to set an absolute path.
- * When the path starts with a leading slash ('/'), the path is regarded as a servlet context relative path.
+ * When the path starts with a leading slash ('/'), the path is regarded as a servlet context relative path
+ * or an absolute file path if the servlet context relative resource is not found.
  * If the path does not start with 'file:' nor with a leading slash ('/'), it is regarded as a relative path of the file system.
  * </EM>
  * </P>
@@ -184,7 +186,7 @@ public class HstSiteConfigServlet extends HttpServlet {
 
     private static final String HST_CONFIG_PROPERTIES = "hst-config.properties";
 
-    private static final String HST_CONFIG_ENV_PROPERTIES = "file://${catalina.base}/conf/hst.properties";
+    private static final String HST_CONFIG_ENV_PROPERTIES = "${catalina.base}/conf/hst.properties";
 
     private static final String HST_CONFIGURATION_REFRESH_DELAY_PARAM = "hst-config-refresh-delay";
     
@@ -668,7 +670,16 @@ public class HstSiteConfigServlet extends HttpServlet {
             String realPath = null;
 
             try {
-                realPath = getServletConfig().getServletContext().getRealPath(resourcePath);
+                URL resourceUrl = getServletConfig().getServletContext().getResource(resourcePath);
+
+                // if resourcePath is found in the web resources, then try to get the real path from the context relative url
+                // otherwise, use the resource path as absolute path.
+
+                if (resourceUrl != null) {
+                    realPath = getServletConfig().getServletContext().getRealPath(resourcePath);
+                } else {
+                    realPath = resourcePath;
+                }
             } catch (Exception re) {
             }
 
