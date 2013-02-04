@@ -24,12 +24,14 @@ import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -248,25 +250,21 @@ class BroadcastThread extends Thread {
      */
     private HippoWorkflowEvent createEvent(Node logNode) throws RepositoryException {
         HippoWorkflowEvent event = new HippoWorkflowEvent();
-        event.timestamp(logNode.getProperty("hippolog:timestamp").getLong());
-        event.user(logNode.getProperty("hippolog:eventUser").getString());
-        event.className(logNode.getProperty("hippolog:eventClass").getString());
-        event.methodName(logNode.getProperty("hippolog:eventMethod").getString());
-        // conditional properties
-        if (logNode.hasProperty("hippolog:eventDocument")) {
-            event.documentPath(logNode.getProperty("hippolog:eventDocument").getString());
-        }
-        if (logNode.hasProperty("hippolog:handleUuid")) {
-            event.handleUuid(logNode.getProperty("hippolog:handleUuid").getString());
-        }
-        if (logNode.hasProperty("hippolog:eventReturnType")) {
-            event.returnType(logNode.getProperty("hippolog:eventReturnType").getString());
-        }
-        if (logNode.hasProperty("hippolog:eventReturnValue")) {
-            event.returnValue(logNode.getProperty("hippolog:eventReturnValue").getString());
-        }
-        if (logNode.hasProperty("hippolog:eventArguments")) {
-            final Value[] values = logNode.getProperty("hippolog:eventArguments").getValues();
+        event.timestamp(JcrUtils.getLongProperty(logNode, "hippolog:timestamp", -1l));
+        event.user(JcrUtils.getStringProperty(logNode, "hippolog:eventUser", null));
+        event.className(JcrUtils.getStringProperty(logNode, "hippolog:eventClass", null));
+        event.methodName(JcrUtils.getStringProperty(logNode, "hippolog:eventMethod", null));
+        event.workflowCategory(JcrUtils.getStringProperty(logNode, "hippolog:category", null));
+        event.workflowName(JcrUtils.getStringProperty(logNode, "hippolog:workflowName", null));
+        event.interaction(JcrUtils.getStringProperty(logNode, "hippolog:interaction", null));
+        event.interactionId(JcrUtils.getStringProperty(logNode, "hippolog:interactionId", null));
+        event.documentPath(JcrUtils.getStringProperty(logNode, "hippolog:eventDocument", null));
+        event.handleUuid(JcrUtils.getStringProperty(logNode, "hippolog:handleUuid", null));
+        event.returnType(JcrUtils.getStringProperty(logNode, "hippolog:eventReturnType", null));
+        event.returnValue(JcrUtils.getStringProperty(logNode, "hippolog:eventReturnValue", null));
+        final Property argumentsProperty = JcrUtils.getPropertyIfExists(logNode, "hippolog:eventArguments");
+        if (argumentsProperty != null) {
+            final Value[] values = argumentsProperty.getValues();
             ArrayList<String> arguments = new ArrayList<String>(values.length);
             for (Value value : values) {
                 arguments.add(value.getString());

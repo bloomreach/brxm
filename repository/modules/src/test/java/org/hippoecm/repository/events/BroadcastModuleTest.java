@@ -64,17 +64,19 @@ public class BroadcastModuleTest extends RepositoryTestCase {
     public void testPoller() throws Exception {
         Listener listener = new Listener();
 
-        HippoWorkflowEvent event = new HippoWorkflowEvent();
-        event.className("hoho");
-        event.methodName("hihi");
-        event.documentPath("/content/documents/test");
+        HippoWorkflowEvent in = new HippoWorkflowEvent();
+        in.className("hoho");
+        in.methodName("hihi");
+        in.documentPath("/content/documents/test");
+        in.workflowCategory("haha");
+        in.interaction("hehe");
 
         HippoServiceRegistry.registerService(listener, HippoEventBus.class);
         try {
             RepositoryLogger logger = new RepositoryLogger();
             logger.initialize(session);
 
-            logger.logHippoEvent(event);
+            logger.logHippoEvent(in);
 
             logger.shutdown();
 
@@ -82,18 +84,20 @@ public class BroadcastModuleTest extends RepositoryTestCase {
 
             assertEquals(1, listener.seenEvents.size());
 
-            HippoWorkflowEvent hippoEvent = listener.seenEvents.get(0);
-            assertEquals(hippoEvent.className(), event.className());
-            assertEquals(hippoEvent.methodName(), event.methodName());
-            assertEquals(hippoEvent.documentPath(), event.documentPath());
+            HippoWorkflowEvent out = listener.seenEvents.get(0);
+            assertEquals(in.className(), out.className());
+            assertEquals(in.methodName(), out.methodName());
+            assertEquals(in.documentPath(), out.documentPath());
+            assertEquals(in.workflowCategory(), out.workflowCategory());
+            assertEquals(in.interaction(), out.interaction());
 
             final Node moduleNode = session.getNode("/hippo:configuration/hippo:modules/broadcast/hippo:moduleconfig");
             Node clusterNode = moduleNode.getNodes().nextNode();
             Node basicNode = clusterNode.getNode("basic");
-            assertEquals(hippoEvent.timestamp(), basicNode.getProperty(BroadcastConstants.LAST_PROCESSED).getLong());
+            assertEquals(out.timestamp(), basicNode.getProperty(BroadcastConstants.LAST_PROCESSED).getLong());
 
             // new event
-            HippoWorkflowEvent newEvent = new HippoWorkflowEvent(event);
+            HippoWorkflowEvent newEvent = new HippoWorkflowEvent(in);
             newEvent.timestamp(System.currentTimeMillis());
             listener.seenEvents.clear();
             logger.initialize(session);

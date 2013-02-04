@@ -137,19 +137,10 @@ public class RepositoryLogger implements DaemonModule {
             logNode.setProperty("hippolog:interaction", interaction);
             logNode.setProperty("hippolog:category", workflowCategory);
             logNode.setProperty("hippolog:workflowName", workflowName);
-            // conditional properties
-            if (documentPath != null) {
-                logNode.setProperty("hippolog:eventDocument", documentPath);
-            }
-            if (handleUuid != null) {
-                logNode.setProperty("hippolog:handleUuid", handleUuid);
-            }
-            if (returnType != null) {
-                logNode.setProperty("hippolog:eventReturnType", returnType);
-            }
-            if (returnValue != null) {
-                logNode.setProperty("hippolog:eventReturnValue", returnValue);
-            }
+            logNode.setProperty("hippolog:eventDocument", documentPath);
+            logNode.setProperty("hippolog:handleUuid", handleUuid);
+            logNode.setProperty("hippolog:eventReturnType", returnType);
+            logNode.setProperty("hippolog:eventReturnValue", returnValue);
             if (arguments != null) {
                 logNode.setProperty("hippolog:eventArguments", arguments.toArray(new String[arguments.size()]));
             }
