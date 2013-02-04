@@ -160,6 +160,7 @@ public class SearchDateRangeTest extends RepositoryTestCase {
 
         final long limit = 1L;
         DateTools.Resolution[] unSupportedResolutions = {
+                DateTools.Resolution.WEEK,
                 DateTools.Resolution.MINUTE,
                 DateTools.Resolution.SECOND,
                 DateTools.Resolution.MILLISECOND

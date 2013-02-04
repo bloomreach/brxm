@@ -246,7 +246,6 @@ public class DateTools {
 
     private final static DateTools.Resolution[] supportedResolutions = {DateTools.Resolution.YEAR,
             DateTools.Resolution.MONTH,
-            DateTools.Resolution.WEEK,
             DateTools.Resolution.DAY,
             DateTools.Resolution.HOUR};
 
