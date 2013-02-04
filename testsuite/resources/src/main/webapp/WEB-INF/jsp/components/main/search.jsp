@@ -88,7 +88,6 @@
             <select name="resolution">
               <option value="year" <c:if test="${resolution eq 'year'}">selected=""</c:if>> YEAR</option>
               <option value="month" <c:if test="${resolution eq 'month'}">selected=""</c:if>>MONTH</option>
-              <option value="week" <c:if test="${resolution eq 'week'}">selected=""</c:if>>WEEK</option>
               <option value="day" <c:if test="${resolution eq 'day'}">selected=""</c:if>>DAY</option>
               <option value="hour" <c:if test="${resolution eq 'hour'}">selected=""</c:if>>HOUR</option>
             </select>

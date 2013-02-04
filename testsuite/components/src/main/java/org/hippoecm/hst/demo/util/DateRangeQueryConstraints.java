@@ -49,9 +49,6 @@ public class DateRangeQueryConstraints {
         if (resolutionString.equals("month")) {
             return Filter.Resolution.MONTH;
         }
-        if (resolutionString.equals("week")) {
-            return Filter.Resolution.WEEK;
-        }
         if (resolutionString.equals("day")) {
             return Filter.Resolution.DAY;
         }
