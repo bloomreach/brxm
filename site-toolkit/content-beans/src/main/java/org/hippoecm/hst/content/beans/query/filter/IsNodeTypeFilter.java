@@ -16,7 +16,7 @@
 package org.hippoecm.hst.content.beans.query.filter;
 
 
-public class IsNodeTypeFilter implements BaseFilter{
+public class IsNodeTypeFilter implements BaseFilter {
 
     private String isNodeTypeName;
     

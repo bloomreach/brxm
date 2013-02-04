@@ -56,6 +56,7 @@ public class HstQueryImpl implements HstQuery {
     private NodeTypeFilter nodeTypeFilter;
     private IsNodeTypeFilter isNodeTypeFilter;
     private Session session;
+    private Filter.Resolution defaultResolution;
 
     /**
      * 
@@ -89,6 +90,9 @@ public class HstQueryImpl implements HstQuery {
         this.isNodeTypeFilter = isNodeTypeFilter; 
     }
 
+    public void setDefaultResolution(final Filter.Resolution defaultResolution) {
+        this.defaultResolution = defaultResolution;
+    }
    
     public void addOrderByAscending(String fieldNameAttribute) {
         orderByList.add("@"+fieldNameAttribute + " ascending");
@@ -101,7 +105,7 @@ public class HstQueryImpl implements HstQuery {
 
     public Filter createFilter() {
         // note: the session can be null
-        return new FilterImpl(session);
+        return new FilterImpl(session, defaultResolution);
     }
 
     public BaseFilter getFilter() {

@@ -21,13 +21,40 @@ import java.util.Date;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 
 
-public interface Filter extends BaseFilter{
+public interface Filter extends BaseFilter {
 
     /**
      * The supported resolutions/granularities for <b>fast</b> date range queries and fast equals on dates
+     * Note that EXPENSIVE_PRECISE resolution will be precise, but expensive
      */
     enum Resolution {
-        YEAR, MONTH, WEEK, DAY,HOUR
+        YEAR, MONTH, DAY,HOUR, EXPENSIVE_PRECISE;
+
+        /**
+         * @param resolution the name of the resolution, for example, year, Year,YEAR. if resolution is <code>null</code>,
+         *            EXPENSIVE_PRECISE is returned.
+         * @return Resolution for <code>name</code>. <code>name</code> is compared case-insensitive. If non matches,
+         *         <code>EXPENSIVE_PRECISE</code> is returned
+         */
+        public static Resolution fromString(String resolution) {
+            if (resolution == null) {
+                return EXPENSIVE_PRECISE;
+            }
+            resolution = resolution.toLowerCase();
+            if (resolution.equals("year")) {
+                return YEAR;
+            }
+            if (resolution.equals("month")) {
+                return MONTH;
+            }
+            if (resolution.equals("day")) {
+                return DAY;
+            }
+            if (resolution.equals("hour")) {
+                return HOUR;
+            }
+            return EXPENSIVE_PRECISE;
+        }
     }
 
     /**
@@ -61,7 +88,8 @@ public interface Filter extends BaseFilter{
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
      *     <strong>should</strong> use {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
-     *     with the highest resolution that is acceptable for your use case, as this performs much better
+     *     with the highest resolution that is acceptable for your use case, as this performs much better, or make sure
+     *     that your application runs with a default resolution set.
      * </p>
      * @param fieldAttributeName the name of the attribute, eg "hippo:lastModified"
      * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}

@@ -21,6 +21,7 @@
 
     <bean id="org.hippoecm.hst.core.search.HstQueryManagerFactory" 
           class="org.hippoecm.hst.core.search.HstQueryManagerFactoryImpl">
+      <property name="defaultQueryDateRangeResolution" value="${default.query.date.range.resolution}"/>
     </bean>
     
 </beans>

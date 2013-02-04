@@ -20,17 +20,24 @@ import javax.jcr.Session;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory {
 
     private static final Logger log = LoggerFactory.getLogger(HstQueryManagerFactoryImpl.class);
+    private String defaultQueryDateRangeResolution;
 
     @Override
     public HstQueryManager createQueryManager(Session session, ObjectConverter objectConverter) {
-        HstQueryManager mngr = new HstQueryManagerImpl(session, objectConverter);
+        Filter.Resolution resolution = Filter.Resolution.fromString(defaultQueryDateRangeResolution);
+        log.info("Default query date range resolution is : {}", resolution);
+        HstQueryManager mngr = new HstQueryManagerImpl(session, objectConverter, resolution);
         return mngr;
     }
 
+    public void setDefaultQueryDateRangeResolution(String defaultQueryDateRangeResolution) {
+        this.defaultQueryDateRangeResolution = defaultQueryDateRangeResolution;
+    }
 }

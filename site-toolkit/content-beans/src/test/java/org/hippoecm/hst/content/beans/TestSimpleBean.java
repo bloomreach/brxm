@@ -93,7 +93,7 @@ public class TestSimpleBean extends AbstractBeanTestCase {
         
         HippoFolder folder = (HippoFolder) obm.getObject("/unittestcontent/documents/unittestproject/common");
         
-        HstQueryManager queryManager = new HstQueryManagerImpl(session, objectConverter);
+        HstQueryManager queryManager = new HstQueryManagerImpl(session, objectConverter, null);
         
         HstQuery hstQuery = queryManager.createQuery(folder);
 

@@ -23,24 +23,41 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
+import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class HstQueryManagerImpl implements HstQueryManager {
 
+    private static final Logger log = LoggerFactory.getLogger(HstQueryManagerImpl.class);
+
     private ObjectConverter objectConverter;
     private Session session;
- 
+    private final Filter.Resolution defaultResolution;
 
+    /**
+     * @deprecated since 2.24.13 / 2.16.01. Use {@link #HstQueryManagerImpl(Session, ObjectConverter, Filter.Resolution)}
+     * instead
+     */
+    @Deprecated
     public HstQueryManagerImpl(Session session, ObjectConverter objectConverter) {
+        this(session, objectConverter, Filter.Resolution.EXPENSIVE_PRECISE);
+        log.warn("Using deprecated HstQueryManagerImpl constructor. No Filter.Resolution is specified. Use default" +
+                " Filter.Resolution.EXPENSIVE_PRECISE");
+    }
+
+    public HstQueryManagerImpl(final Session session, final ObjectConverter objectConverter, final Filter.Resolution resolution) {
         this.session = session;
         this.objectConverter = objectConverter;
+        defaultResolution = resolution;
     }
-    
-   
+
+
     public HstQuery createQuery(Node scope) throws QueryException {
         return createQuery(scope, (NodeTypeFilter)null);
     }
@@ -128,7 +145,9 @@ public class HstQueryManagerImpl implements HstQueryManager {
         }
         
         IsNodeTypeFilter isNodeTypeFilter = new IsNodeTypeFilter(nodeType);
-        return new HstQueryImpl(session, this.objectConverter, scope, isNodeTypeFilter);
+        HstQueryImpl query = new HstQueryImpl(session, this.objectConverter, scope, isNodeTypeFilter);
+        query.setDefaultResolution(defaultResolution);
+        return query;
     }
     
     public HstQuery createQuery(HippoBean scope, String... primaryNodeTypes) throws QueryException {
@@ -150,7 +169,9 @@ public class HstQueryManagerImpl implements HstQueryManager {
     }
     
     private HstQuery createQuery(Node scope, NodeTypeFilter filter) throws QueryException {
-        return new HstQueryImpl(session, this.objectConverter, scope, filter);
+        HstQueryImpl query  = new HstQueryImpl(session, this.objectConverter, scope, filter);
+        query.setDefaultResolution(defaultResolution);
+        return query;
     }
     
 }

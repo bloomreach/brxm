@@ -40,7 +40,7 @@ public class TestHstQuery  extends AbstractBeanTestCase {
         super.setUp();
         ObjectConverter objectConverter = getObjectConverter();
         Session session = this.getSession();
-        HstQueryManager queryMngr = new HstQueryManagerImpl(session,objectConverter);
+        HstQueryManager queryMngr = new HstQueryManagerImpl(session,objectConverter, null);
         Node scope = session.getRootNode();
         query = queryMngr.createQuery(scope);
     }
