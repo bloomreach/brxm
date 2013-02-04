@@ -41,18 +41,12 @@ public class SetHstBundleTag extends TagSupport {
 
     private static Logger log = LoggerFactory.getLogger(SetHstBundleTag.class);
 
-    // *********************************************************************
-    // Protected state
-    protected String basename; // 'basename' attribute
+    protected String basename;
     protected boolean fallbackToJavaResourceBundle = true;
 
-    // *********************************************************************
-    // Private state
-    private int scope; // 'scope' attribute
-    private String var; // 'var' attribute
+    private int scope;
+    private String var;
 
-    // *********************************************************************
-    // Constructor and initialization
     public SetHstBundleTag() {
         super();
         init();
@@ -74,8 +68,6 @@ public class SetHstBundleTag extends TagSupport {
         this.scope = getScope(scope);
     }
 
-    // *********************************************************************
-    // Accessor methods
     // for tag attribute
     public void setBasename(String basename) throws JspTagException {
         this.basename = basename;
@@ -85,8 +77,6 @@ public class SetHstBundleTag extends TagSupport {
         this.fallbackToJavaResourceBundle = fallbackToJavaResourceBundle;
     }
 
-    // *********************************************************************
-    // Tag logic
     public int doEndTag() throws JspException {
         try {
             LocalizationContext locCtxt = getLocalizationContext(pageContext, basename, fallbackToJavaResourceBundle);
@@ -106,7 +96,6 @@ public class SetHstBundleTag extends TagSupport {
         init();
     }
 
-    // Releases any resources we may have (or inherit)
     public void release() {
         init();
     }
