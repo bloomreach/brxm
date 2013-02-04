@@ -304,17 +304,15 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
     }
 
     /**
-     * The facetedEngineCacheMngr property for the maximum number of cached BitSet's
-     * @deprecated
+     * @deprecated  since 2.24.02. Use {@link #setDocIdSetCacheSize(int)} instead
      */
     public void setBitSetCacheSize(int bitSetCacheSize) {
+        log.warn("bitSetCacheSize config parameter in repository.xml is deprecated. Please use docIdCacheSize instead.");
         this.docIdSetCacheSize = bitSetCacheSize;
     }
 
     /**
-     * although we do not need the getter ourselves, it is mandatory here because otherwise the setter is not called because
-     * of org.apache.commons.collections.BeanMap#keyIterator
-     * @deprecated
+     * @deprecated since 2.24.02. Use {@link #getDocIdSetCacheSize()} instead
      */
     public int getBitSetCacheSize() {
         return docIdSetCacheSize;
