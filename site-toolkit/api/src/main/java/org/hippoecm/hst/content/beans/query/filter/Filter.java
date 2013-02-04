@@ -88,8 +88,8 @@ public interface Filter extends BaseFilter {
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
      *     <strong>should</strong> use {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
-     *     with the highest resolution that is acceptable for your use case, as this performs much better, or make sure
-     *     that your application runs with a default resolution set.
+     *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
+     *     that your application runs with a default resolution set to for example 'day'
      * </p>
      * @param fieldAttributeName the name of the attribute, eg "hippo:lastModified"
      * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
@@ -118,7 +118,8 @@ public interface Filter extends BaseFilter {
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
      *     <strong>should</strong> use {@link #addNotBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
-     *     with the highest resolution that is acceptable for your use case, as this performs much better
+     *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
+     *     that your application runs with a default resolution set to for example 'day'
      * </p>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value1 object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
@@ -145,7 +146,6 @@ public interface Filter extends BaseFilter {
      * rounded value for <code>calendar</code>. Thus assume the <code>Resolution</code> is equal to <code>Resolution.DAY</code>,
      * then all nodes/documents where the property <code>fieldAttributeName</code> as a Calendar value with the <string>same</string>
      * date rounded to days (eg 20130128) has the same value as <code>calendar</code> rounded to days, will match.
-     * The higher the Resolution (year is highest) the better the performance!
      */
     void addEqualTo(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
    
@@ -163,7 +163,15 @@ public interface Filter extends BaseFilter {
     void addNotEqualTo(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
 
     /**
+     * <p>
      * Adds a constraint that the value <code>fieldAttributeName</code> is greater than or equal to <code>value</code>
+     * </p>
+     * <p>
+     *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
+     *     <strong>should</strong> use {@link #addGreaterOrEqualThan(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
+     *     that your application runs with a default resolution set to for example 'day'
+     * </p>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
@@ -177,7 +185,15 @@ public interface Filter extends BaseFilter {
     void addGreaterOrEqualThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
 
     /**
+     * <p>
      * Adds a constraint that the value <code>fieldAttributeName</code> is greater than <code>value</code>
+     * </p>
+     * <p>
+     *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
+     *     <strong>should</strong> use {@link #addGreaterThan(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
+     *     that your application runs with a default resolution set to for example 'day'
+     * </p>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
@@ -191,7 +207,15 @@ public interface Filter extends BaseFilter {
     void addGreaterThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
 
     /**
+     * <p>
      * Adds a constraint that the value <code>fieldAttributeName</code> is less than or equal to <code>value</code>
+     * </p>
+     * <p>
+     *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
+     *     <strong>should</strong> use {@link #addLessOrEqualThan(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
+     *     that your application runs with a default resolution set to for example 'day'
+     * </p>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
@@ -205,7 +229,15 @@ public interface Filter extends BaseFilter {
     void addLessOrEqualThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
 
     /**
+     * <p>
      * Adds a constraint that the value <code>fieldAttributeName</code> is less than <code>value</code>
+     * </p>
+     * <p>
+     *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
+     *     <strong>should</strong> use {@link #addLessThan(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
+     *     that your application runs with a default resolution set to for example 'day'
+     * </p>
      * @param fieldAttributeName the name of the attribute, eg "example:date"
      * @param value object that must be of type String, Boolean, Long, Double, {@link Calendar} or {@link Date}
      * @throws FilterException when <code>fieldAttributeName</code> or  <code>value</code> is of invalid type/value or is <code>null</code>
