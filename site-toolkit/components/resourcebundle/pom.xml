@@ -38,20 +38,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-commons</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-resourcebundle-cnd</artifactId>
-      <version>${project.version}</version>
-      <scope>runtime</scope>
-    </dependency>
-
-    <dependency>
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
