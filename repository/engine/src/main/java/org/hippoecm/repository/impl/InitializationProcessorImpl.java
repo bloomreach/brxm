@@ -61,6 +61,7 @@ import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.Query;
 import javax.jcr.version.VersionException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.cnd.CompactNodeTypeDefReader;
 import org.apache.jackrabbit.commons.cnd.ParseException;
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
@@ -324,10 +325,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
                 newValues.add(contentAddProperty.getString());
             }
         }
-        String root = "/";
-        if (node.hasProperty(HippoNodeType.HIPPO_CONTENTROOT)) {
-            root = node.getProperty(HippoNodeType.HIPPO_CONTENTROOT).getString();
-        }
+        String root = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/"));
         getLogger().info("Initializing content set/add property " + root);
         HierarchyResolver.Entry last = new HierarchyResolver.Entry();
         HierarchyResolver hierarchyResolver;
@@ -400,7 +398,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             return;
         }
 
-        final String root = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/");
+        final String root = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/"));
         if (root.startsWith(INIT_PATH)) {
             getLogger().error("Bootstrapping content to " + INIT_PATH + " is no supported");
             return;
@@ -413,7 +411,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             getLogger().debug("Found content resource configuration");
         }
 
-        String contentResource = node.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString();
+        String contentResource = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
         InputStream contentStream = getResourceStream(node, contentResource);
 
         if (contentStream == null) {
@@ -421,14 +419,14 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             return;
         }
 
-        final String root = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/");
+        final String root = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTENTROOT, "/"));
         if (root.startsWith(INIT_PATH)) {
             getLogger().error("Bootstrapping content to " + INIT_PATH + " is not supported");
             return;
         }
 
         if (isReloadable(node)) {
-            final String contextNodeName = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTEXTNODENAME, null);
+            final String contextNodeName = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTEXTNODENAME, null));
             if (contextNodeName != null) {
                 final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
                 if (removeNodecontent(session, contextNodePath, false)) {
@@ -446,7 +444,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     private void processContentDelete(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
-        final String path = node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE).getString();
+        final String path = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_CONTENTDELETE).getString());
         final boolean immediateSave = !node.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) && !node.hasProperty(HippoNodeType.HIPPO_CONTENT);
         getLogger().info("Delete content in initialization: " + node.getName() + " " + path);
         final boolean success = removeNodecontent(session, path, immediateSave && !dryRun);
@@ -475,7 +473,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         if (getLogger().isDebugEnabled()) {
             getLogger().debug("Found nodetypes resource configuration");
         }
-        String cndResource = node.getProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE).getString();
+        String cndResource = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_NODETYPESRESOURCE).getString());
         InputStream cndStream = getResourceStream(node, cndResource);
         if (cndStream == null) {
             getLogger().error("Cannot locate nodetype configuration '" + cndResource + "', initialization skipped");
@@ -491,7 +489,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         if (getLogger().isDebugEnabled()) {
             getLogger().debug("Found namespace configuration");
         }
-        String namespace = node.getProperty(HippoNodeType.HIPPO_NAMESPACE).getString();
+        String namespace = StringUtils.trim(node.getProperty(HippoNodeType.HIPPO_NAMESPACE).getString());
         getLogger().info("Initializing namespace: " + node.getName() + " " + namespace);
         if (!dryRun) {
             initializeNamespace(session.getWorkspace().getNamespaceRegistry(), node.getName(), namespace);
@@ -601,7 +599,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             if (contextNodeName != null) {
                 initItemNode.setProperty(HippoNodeType.HIPPO_CONTEXTNODENAME, contextNodeName);
                 if (isReload) {
-                    final String root = JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_CONTENTROOT, "/");
+                    final String root = StringUtils.trim(JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_CONTENTROOT, "/"));
                     final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
                     final NodeIterator downstreamItems = getDownstreamItems(session, contextNodePath);
                     while (downstreamItems.hasNext()) {
@@ -703,7 +701,8 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             return null;
         }
         try {
-            InputStream contentStream = getResourceStream(item, item.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
+            final String contentResource = StringUtils.trim(item.getProperty(HippoNodeType.HIPPO_CONTENTRESOURCE).getString());
+            InputStream contentStream = getResourceStream(item, contentResource);
             if (contentStream != null) {
                 try {
                     // inspect the xml file to find out if it is a delta xml and to read the name of the context node we must remove
