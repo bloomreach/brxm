@@ -797,31 +797,25 @@
     </plugins>
   </reporting>
 
+  <modules>
+    <module>api</module>
+    <module>mock</module>
+    <module>commons</module>
+    <module>test</module>
+    <module>content-beans</module>
+    <module>solr-content-beans</module>
+    <module>solr-client</module>
+    <module>toolkit-resources</module>
+    <module>components</module>
+    <module>client</module>
+    <module>client-modules</module>
+    <module>rest-api</module>
+    <module>dependencies</module>
+    <module>sandbox</module>
+  </modules>
+
   <profiles>
 
-    <profile>
-      <id>all</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>api</module>
-        <module>mock</module>
-        <module>commons</module>
-        <module>test</module>
-        <module>content-beans</module>
-        <module>solr-content-beans</module>
-        <module>solr-client</module>
-        <module>toolkit-resources</module>
-        <module>components</module>
-        <module>client</module>
-        <module>client-modules</module>
-        <module>rest-api</module>
-        <module>dependencies</module>
-        <module>sandbox</module>
-      </modules>
-    </profile>
-    
     <profile>
       <id>website</id>
       <!-- For building website documentation, there's no need to include modules. -->
