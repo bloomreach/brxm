@@ -177,4 +177,9 @@ public interface VirtualHosts {
      */
     boolean isDiagnosticsEnabled(String ip);
 
+    /**
+     * @return default resource bundle for all sites to use, for example org.example.resources.MyResources, or <code>null</code>
+     * when not configured
+     */
+    String getDefaultResourceBundleId();
 }

@@ -105,6 +105,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
     private boolean diagnosticsEnabled;
     
     private boolean cacheable = false;
+
+    private String defaultResourceBundleId;
     
     private Set<String> diagnosticsForIps = new HashSet<String>(0);
     
@@ -126,7 +128,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
      * computed twice and overriden.
      */
     private Map<String, ResolvedVirtualHost> resolvedMapCache = new HashMap<String, ResolvedVirtualHost>();
-    
+
     public VirtualHostsService(HstNode virtualHostsConfigurationNode, HstManagerImpl hstManager) throws ServiceException {
         this.hstManager = hstManager;
         virtualHostsConfigured = true;
@@ -192,6 +194,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
         if(scheme == null || "".equals(scheme)) {
             scheme = DEFAULT_SCHEME;
         }
+
+        defaultResourceBundleId = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID);
         
         // now we loop through the hst:hostgroup nodes first:
         for(HstNode hostGroupNode : virtualHostsConfigurationNode.getNodes()) {
@@ -602,4 +606,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
     public boolean isCacheable() {
         return cacheable;
     }
+
+    public String getDefaultResourceBundleId() {
+        return defaultResourceBundleId;
+    }
+
 }

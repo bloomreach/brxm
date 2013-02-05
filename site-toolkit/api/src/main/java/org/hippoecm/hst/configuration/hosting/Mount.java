@@ -444,4 +444,10 @@ public interface Mount {
      * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached.
      */
     boolean isCacheable();
+
+    /**
+     * @return default resource bundle for all sites below this mount to use, for example org.example.resources.MyResources. Returns <code>null</code>
+     * when not configured on this {@link Mount} and <code>null</code> from ancestor {@link Mount} or when root host from  {@link VirtualHost#getDefaultResourceBundleId()}
+     */
+    String getDefaultResourceBundleId();
 }

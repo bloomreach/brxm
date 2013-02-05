@@ -129,6 +129,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String prefix;
     private final boolean cacheable;
     private final String scheme;
+    private final String resourceBundleId;
 
     public HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
@@ -340,6 +341,12 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             this.scheme = parentItem != null ? parentItem.getScheme() : mount.getScheme();
         }
 
+        if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)) {
+            this.resourceBundleId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID));
+        } else {
+            this.resourceBundleId = parentItem != null ? parentItem.getResourceBundleId() : mount.getDefaultResourceBundleId();
+        }
+
         for(HstNode child : node.getNodes()) {
             if(HstNodeTypes.NODETYPE_HST_SITEMAPITEM.equals(child.getNodeTypeName())) {
                 try {
@@ -467,6 +474,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     @Override
     public String getScheme() {
         return scheme;
+    }
+
+    @Override
+    public String getResourceBundleId() {
+        return resourceBundleId;
     }
 
     public HstSiteMapItem getParentItem() {

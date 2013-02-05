@@ -231,6 +231,8 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     private final boolean cacheable;
 
+    private String defaultResourceBundleId;
+
     private String formLoginPage;
     private ChannelInfo channelInfo;
     
@@ -484,6 +486,14 @@ public class MountService implements ContextualizableMount, MutableMount {
             this.cacheable = parent.isCacheable();
         } else {
             this.cacheable =  virtualHost.isCacheable();
+        }
+
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID)) {
+            this.defaultResourceBundleId = mount.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID);
+        } else if(parent != null) {
+            this.defaultResourceBundleId = parent.getDefaultResourceBundleId();
+        } else {
+            this.defaultResourceBundleId =  virtualHost.getDefaultResourceBundleId();
         }
 
         this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
@@ -821,7 +831,12 @@ public class MountService implements ContextualizableMount, MutableMount {
     public boolean isCacheable() {
         return cacheable;
     }
-    
+
+    @Override
+    public String getDefaultResourceBundleId() {
+        return defaultResourceBundleId;
+    }
+
     public Map<String, String> getMountProperties() {
         Map<String, String> mountProperties = new HashMap<String, String>();
         for(Entry<String, Object> entry : allProperties.entrySet()) {

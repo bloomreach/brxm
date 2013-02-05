@@ -318,6 +318,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        public String getDefaultResourceBundleId() {
+            return null;
+        }
+
+        @Override
         public String toString() {
             return "CustomVirtualHost [name=" + name + ", hostName=" + hostName + ", hostGroupName=" + getHostGroupName() + "]";
         }
@@ -626,6 +631,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public boolean isCacheable() {
             return false;
+        }
+
+        @Override
+        public String getDefaultResourceBundleId() {
+            return null;
         }
 
         @Override

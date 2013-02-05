@@ -298,4 +298,11 @@ public interface HstSiteMapItem {
      * @return the scheme of this site map item
      */
     String getScheme();
+
+    /**
+     * @return resource bundle for this sitemapitem and descendants to use, for example org.example.resources.MyResources, or <code>null</code>
+     * when not configured on this {@link HstSiteMapItem} and <code>null</code> from ancestor {@link HstSiteMapItem} or when root
+     * sitemapitem from {@link org.hippoecm.hst.configuration.hosting.Mount#getDefaultResourceBundleId()}
+     */
+    String getResourceBundleId();
 }

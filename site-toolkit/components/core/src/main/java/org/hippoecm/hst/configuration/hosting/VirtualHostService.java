@@ -83,6 +83,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private String cmsLocation;
     private Integer defaultPort;
     private final boolean cacheable;
+    private String defaultResourceBundleId;
 
     public VirtualHostService(VirtualHostsService virtualHosts, HstNode virtualHostNode, VirtualHostService parentHost, String hostGroupName, String cmsLocation, int defaultPort, HstManagerImpl hstManager) throws ServiceException {
        
@@ -196,7 +197,15 @@ public class VirtualHostService implements MutableVirtualHost {
         } else {
             this.cacheable =  virtualHosts.isCacheable();
         }
-        
+
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID)) {
+            this.defaultResourceBundleId = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID);
+        } else if(parentHost != null) {
+            this.defaultResourceBundleId = parentHost.getDefaultResourceBundleId();
+        } else {
+            this.defaultResourceBundleId =  virtualHosts.getDefaultResourceBundleId();
+        }
+
         String fullName = virtualHostNode.getValueProvider().getName();
         String[] nameSegments = fullName.split("\\.");
         
@@ -297,6 +306,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.onlyForContextPath = parent.onlyForContextPath;
         this.showPort = parent.showPort;
         this.cacheable = parent.cacheable;
+        this.defaultResourceBundleId = parent.defaultResourceBundleId;
         this.name = nameSegments[position];
         // add child host services
         if(--position > -1 ) {
@@ -416,6 +426,10 @@ public class VirtualHostService implements MutableVirtualHost {
     @Override
     public boolean isCacheable() {
         return cacheable;
+    }
+
+    public String getDefaultResourceBundleId() {
+        return defaultResourceBundleId;
     }
 
 

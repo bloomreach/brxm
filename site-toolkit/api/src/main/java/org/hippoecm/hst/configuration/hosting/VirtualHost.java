@@ -147,4 +147,10 @@ public interface VirtualHost {
      */
     boolean isCacheable();
 
+    /**
+     * @return default resource bundle for all sites below this virtualhost to use, for example org.example.resources.MyResources. Returns <code>null</code>
+     * when not configured on this {@link VirtualHost} and <code>null</code> from ancestor {@link VirtualHost} or when root host from  {@link VirtualHosts#getDefaultResourceBundleId()}
+     */
+    String getDefaultResourceBundleId();
+
 }

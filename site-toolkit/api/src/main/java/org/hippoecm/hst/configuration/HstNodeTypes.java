@@ -59,6 +59,7 @@ public interface HstNodeTypes {
     static final String GENERAL_PROPERTY_LOCALE = "hst:locale";
     static final String GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER =  "hst:versioninpreviewheader" ;
     static final String GENERAL_PROPERTY_CACHEABLE = "hst:cacheable";
+    static final String GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID = "hst:defaultresourcebundleid";
     
     static final String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     static final String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
@@ -98,6 +99,7 @@ public interface HstNodeTypes {
     static final String SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS =  "hst:sitemapitemhandlerids";
     static final String SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING = "hst:excludedforlinkrewriting";
     static final String SITEMAPITEM_PROPERTY_SCHEME = "hst:scheme";
+    static final String SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID = "hst:resourcebundleid";
 
     static final String SITEMENUITEM_PROPERTY_REFERENCESITEMAPITEM =  "hst:referencesitemapitem";
     static final String SITEMENUITEM_PROPERTY_EXTERNALLINK =  "hst:externallink";

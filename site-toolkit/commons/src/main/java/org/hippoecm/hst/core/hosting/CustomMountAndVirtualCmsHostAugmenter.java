@@ -412,6 +412,11 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
+        public String getDefaultResourceBundleId() {
+            return null;
+        }
+
+        @Override
         public String getCmsLocation() {
             return cmsLocation;
         }
@@ -740,6 +745,12 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         public boolean isCacheable() {
             return false;
         }
+
+        @Override
+        public String getDefaultResourceBundleId() {
+            return null;
+        }
+
 
         @Override
         public void setChannelInfo(ChannelInfo info) {

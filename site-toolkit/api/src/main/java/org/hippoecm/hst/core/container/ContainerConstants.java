@@ -168,9 +168,4 @@ public interface ContainerConstants {
      */
     String DEFAULT_PARAMETER_PREFIX = "hippo-default";
 
-    /**
-     * Property name on mount config node for default resource bundle basename. e.g., "org.example.Messages"
-     */
-    String HST_DEFAULT_RESOURCE_BUNDLE_ID = "hst:defaultresourcebundleid";
-
 }

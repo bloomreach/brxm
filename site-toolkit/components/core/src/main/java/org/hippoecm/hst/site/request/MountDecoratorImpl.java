@@ -218,6 +218,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public String getDefaultResourceBundleId() {
+            return delegatee.getDefaultResourceBundleId();
+        }
+
+        @Override
         public String getEmbeddedMountPath() {
             return delegatee.getEmbeddedMountPath();
         }

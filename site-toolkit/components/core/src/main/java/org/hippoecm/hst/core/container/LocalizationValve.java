@@ -124,29 +124,32 @@ public class LocalizationValve extends AbstractValve {
         ResourceBundle bundle = null;
 
         if (requestContext.getResolvedMount() != null) {
-            Mount mount = requestContext.getResolvedMount().getMount();
-            String defaultBundleId = mount.getProperty(ContainerConstants.HST_DEFAULT_RESOURCE_BUNDLE_ID);
-
-            if (StringUtils.isNotEmpty(defaultBundleId)) {
+            String bundleId;
+            if (requestContext.getResolvedSiteMapItem() != null) {
+                bundleId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getResourceBundleId();
+            } else {
+                bundleId = requestContext.getResolvedMount().getMount().getDefaultResourceBundleId();
+            }
+            if (StringUtils.isNotEmpty(bundleId)) {
                 ResourceBundleRegistry bundleRegistry = getResourceBundleRegistry();
                 Locale locale = requestContext.getPreferredLocale();
 
                 try {
                     if (bundleRegistry != null) {
                         if (locale == null) {
-                            bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(defaultBundleId) : bundleRegistry.getBundle(defaultBundleId));
+                            bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(bundleId) : bundleRegistry.getBundle(bundleId));
                         } else {
-                            bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(defaultBundleId, locale) : bundleRegistry.getBundle(defaultBundleId, locale));
+                            bundle = (requestContext.isPreview() ? bundleRegistry.getBundleForPreview(bundleId, locale) : bundleRegistry.getBundle(bundleId, locale));
                         }
                     } else {
                         if (locale == null) {
-                            bundle = ResourceBundle.getBundle(defaultBundleId, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
+                            bundle = ResourceBundle.getBundle(bundleId, Locale.getDefault(), Thread.currentThread().getContextClassLoader());
                         } else {
-                            bundle = ResourceBundle.getBundle(defaultBundleId, locale, Thread.currentThread().getContextClassLoader());
+                            bundle = ResourceBundle.getBundle(bundleId, locale, Thread.currentThread().getContextClassLoader());
                         }
                     }
                 } catch (MissingResourceException e) {
-                    log.warn("Resource bundle not found by the basename, '{}'. {}", defaultBundleId, e);
+                    log.warn("Resource bundle not found by the basename, '{}'. {}", bundleId, e);
                 }
             }
         }
