@@ -22,10 +22,9 @@ if (Hippo.Translation.WicketHook === undefined) {
             listeners: [],
 
             cleanup: function() {
-                var i, len, listener, listenerId;
+                var i, listener, listenerId;
                 i = 0;
-                len = this.listeners.length;
-                while (i < len) {
+                while (i < this.listeners.length) {
                     listener = this.listeners[i];
                     listenerId = Ext.get(listener.id);
                     if (listenerId === null || listenerId === undefined) {
