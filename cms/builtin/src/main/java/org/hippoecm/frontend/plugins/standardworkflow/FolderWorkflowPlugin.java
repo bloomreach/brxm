@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -207,7 +208,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
             class DeleteDialog extends AbstractWorkflowDialog {
 
                 public DeleteDialog(IModel messageModel, IWorkflowInvoker invoker, boolean deleteAllowed) {
-                    super(messageModel, invoker);
+                    super(null, messageModel, invoker);
 
                     if (deleteAllowed) {
                         setFocusOnOk();
@@ -256,9 +257,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                 final Set<String> translated = new TreeSet<String>();
                 if (getPluginConfig().containsKey("workflow.translated")) {
-                    for (String translatedPrototype : getPluginConfig().getStringArray("workflow.translated")) {
-                        translated.add(translatedPrototype);
-                    }
+                    Collections.addAll(translated, getPluginConfig().getStringArray("workflow.translated"));
                 }
 
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
