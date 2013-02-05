@@ -170,6 +170,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_ACTIVE = "hipposys:active";
 
+    public static final String HIPPO_SYSTEM = "hipposys:system";
+
     public static final String HIPPO_AUTOCREATED = "hipposysedit:autocreated";
 
     public static final String HIPPO_AVAILABILITY = "hippo:availability";

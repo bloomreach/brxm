@@ -50,6 +50,10 @@ public class RepositoryUserManager extends AbstractUserManager {
     }
     
     private boolean isPasswordExpired(String rawUserId) throws RepositoryException {
+        if (isSystemUser(rawUserId)) {
+            // system users password does not expire
+            return false;
+        }
         long passwordMaxAge = getPasswordMaxAge();
         if (passwordMaxAge > 0) {
             Node user = getUser(rawUserId);

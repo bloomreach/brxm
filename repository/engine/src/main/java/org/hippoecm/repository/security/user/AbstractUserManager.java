@@ -39,6 +39,7 @@ import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.ManagerContext;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -347,13 +348,11 @@ public abstract class AbstractUserManager implements UserManager {
     }
 
     public boolean isActive(String rawUserId) throws RepositoryException {
-        Node user = getUser(rawUserId);
-        if (user.hasProperty(HippoNodeType.HIPPO_ACTIVE)) {
-            return user.getProperty(HippoNodeType.HIPPO_ACTIVE).getBoolean();
-        } else {
-            // default to true
-            return true;
-        }
+        return JcrUtils.getBooleanProperty(getUser(rawUserId), HippoNodeType.HIPPO_ACTIVE, true);
+    }
+
+    public boolean isSystemUser(String rawUserId) throws RepositoryException {
+        return JcrUtils.getBooleanProperty(getUser(rawUserId), HippoNodeType.HIPPO_SYSTEM, false);
     }
 
     public final void saveUsers() throws RepositoryException {
