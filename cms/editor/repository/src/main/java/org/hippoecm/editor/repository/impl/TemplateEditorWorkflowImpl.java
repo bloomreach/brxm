@@ -41,10 +41,10 @@ public class TemplateEditorWorkflowImpl extends WorkflowImpl implements Template
             RepositoryException, RemoteException {
 
         Document root = getWorkflowContext().getDocument("root", "root");
-        RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getUnchainedWorkflowContext().getWorkflow("internal", root);
+        RepositoryWorkflow repositoryWorkflow = (RepositoryWorkflow) getNonChainingWorkflowContext().getWorkflow("internal", root);
         repositoryWorkflow.createNamespace(prefix, uri);
 
-        FolderWorkflow folderWorkflow = (FolderWorkflow) getUnchainedWorkflowContext().getWorkflow("internal");
+        FolderWorkflow folderWorkflow = (FolderWorkflow) getNonChainingWorkflowContext().getWorkflow("internal");
         Map<String, String> replacements = new TreeMap<String, String>();
         replacements.put("name", prefix);
         replacements.put("uri", uri);
