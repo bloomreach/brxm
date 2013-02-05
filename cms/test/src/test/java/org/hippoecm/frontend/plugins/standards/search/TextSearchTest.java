@@ -402,4 +402,18 @@ public class TextSearchTest extends PluginTest {
                 (query.toString()).equals(expectedQuery));
     }
 
+    @Test
+    public void queryDiacriticsAreRemoved() throws Exception {
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        // set wildcards to true
+        tsb.setWildcardSearch(true);
+        tsb.setText("très Plattenbandförderer ");
+
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'tres Plattenbandforderer') or jcr:contains(.,'tres* Plattenbandforderer*'))]/rep:excerpt(.) order by @jcr:score descending";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+    }
+
 }
