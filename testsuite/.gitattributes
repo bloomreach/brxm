@@ -97,8 +97,6 @@ components/src/main/resources/META-INF/hst-assembly/overrides/hst-cms-rest.xml -
 components/src/main/resources/META-INF/hst-assembly/overrides/jndi-repository.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/page-composer-rest.xml -text svneol=unset#text/plain
 components/src/main/resources/enwiki-20081008-pages-articles.xml.100.top.xml -text svneol=unset#text/plain
-components/src/main/resources/messages_en_US.properties -text svneol=unset#text/plain
-components/src/main/resources/messages_fr_FR.properties -text svneol=unset#text/plain
 components/src/main/resources/org/hippoecm/hst/demo/channel/DemoChannelInfo.properties -text
 components/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions.properties -text
 components/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions_en.properties -text
