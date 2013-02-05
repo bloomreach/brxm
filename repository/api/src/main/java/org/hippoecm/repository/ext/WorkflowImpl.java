@@ -82,7 +82,7 @@ public abstract class WorkflowImpl implements Remote, Workflow
      * @throws MappingException
      * @throws RepositoryException
      */
-    final protected WorkflowContext getUnchainedWorkflowContext() throws MappingException, RepositoryException {
+    final protected WorkflowContext getNonChainingWorkflowContext() throws MappingException, RepositoryException {
         return context.getWorkflowContext(null);
     }
 
