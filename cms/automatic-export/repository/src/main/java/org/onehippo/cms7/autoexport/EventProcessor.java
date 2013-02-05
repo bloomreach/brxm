@@ -78,7 +78,8 @@ public class EventProcessor implements EventListener {
         ignored.add("/jcr:system/jcr:nodeTypes/rep:");
         ignored.add("/jcr:system/jcr:nodeTypes/hipposysedit:");
         ignored.add("/jcr:system/jcr:nodeTypes/hippofacnav:");
-        ignored.add("/hippo:configuration/hippo:update");
+        ignored.add("/hippo:configuration/hippo:update/hippo:queue");
+        ignored.add("/hippo:configuration/hippo:update/hippo:history");
     }
     
     private final InitializeItemRegistry registry;
