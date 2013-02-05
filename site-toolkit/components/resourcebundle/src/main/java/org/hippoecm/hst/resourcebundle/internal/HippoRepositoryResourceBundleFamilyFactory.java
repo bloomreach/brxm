@@ -55,61 +55,60 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
     private static final ResourceBundleFamily PLACE_HOLDER_EMPTY_RESOURCE_BUNDLE_FAMILY = new PlaceHolderEmptyResourceBundleFamily();
 
     private final Repository repository;
-    private final Credentials credentials;
+    private final Credentials liveCredentials;
+    private final Credentials previewCredentials;
 
-    public HippoRepositoryResourceBundleFamilyFactory(Repository repository, Credentials credentials) {
+    public HippoRepositoryResourceBundleFamilyFactory(Repository repository, Credentials liveCredentials, Credentials previewCredentials) {
         this.repository = repository;
-        this.credentials = credentials;
+        this.liveCredentials = liveCredentials;
+        this.previewCredentials = previewCredentials;
     }
 
     @Override
     public ResourceBundleFamily createBundleFamily(String basename) {
-        ResourceBundleFamily bundleFamily = null;
+        MutableResourceBundleFamily bundleFamily = new DefaultMutableResourceBundleFamily(basename);;
+
         Session session = null;
+        Credentials[] creds = {liveCredentials, previewCredentials};
+        for (Credentials credentials : creds) {
+            try {
+                String statement = "//element(*, resourcebundle:resourcebundle)[@resourcebundle:id='" + basename +  "']";
+                session = repository.login(credentials);
+                Query query = session.getWorkspace().getQueryManager().createQuery(statement, Query.XPATH);
+                QueryResult result = query.execute();
 
-        try {
-            String statement = 
-                    "//element(*, resourcebundle:resourcebundle)[@resourcebundle:id='" + basename + 
-                    "' and (@hippo:availability='live' or @hippo:availability='preview')]";
-            session = repository.login(credentials);
-            Query query = session.getWorkspace().getQueryManager().createQuery(statement, Query.XPATH);
-            QueryResult result = query.execute();
-
-            List<Node> bundleNodes = new ArrayList<Node>();
-
-            for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext(); ) {
-                Node bundleNode = nodeIt.nextNode();
-
-                if (bundleNode != null) {
-                    bundleNodes.add(bundleNode);
+                List<Node> bundleNodes = new ArrayList<Node>();
+                for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext(); ) {
+                    Node bundleNode = nodeIt.nextNode();
+                    if (bundleNode != null) {
+                        bundleNodes.add(bundleNode);
+                    }
+                }
+                if (!bundleNodes.isEmpty()) {
+                    boolean isPreview = (credentials == previewCredentials);
+                    populateResourceBundleFamily(bundleFamily, basename, bundleNodes, isPreview);
+                }
+            } catch (RepositoryException e) {
+                log.warn("Fail to query resource bundle node", e);
+            } finally {
+                if (session != null) {
+                    session.logout();
                 }
             }
+        }
 
-            if (!bundleNodes.isEmpty()) {
-                bundleFamily = createResourceBundleFamily(basename, bundleNodes);
-            }
-
-            if (bundleFamily == null) {
-                bundleFamily = PLACE_HOLDER_EMPTY_RESOURCE_BUNDLE_FAMILY;
-            }
-        } catch (RepositoryException e) {
-            log.warn("Fail to query resource bundle node", e);
-        } finally {
-            if (session != null) {
-                session.logout();
-            }
+        if (bundleFamily.getDefaultBundle() == null && bundleFamily.getDefaultBundleForPreview() == null) {
+            return PLACE_HOLDER_EMPTY_RESOURCE_BUNDLE_FAMILY;
         }
 
         return bundleFamily;
     }
 
-    private ResourceBundleFamily createResourceBundleFamily(final String basename, Collection<Node> bundleNodes) throws RepositoryException {
-        MutableResourceBundleFamily bundleFamily = new DefaultMutableResourceBundleFamily(basename);
+    private void populateResourceBundleFamily(final MutableResourceBundleFamily bundleFamily,
+                                              final String basename, Collection<Node> bundleNodes,
+                                              final boolean preview) throws RepositoryException {
 
         for (Node bundleNode : bundleNodes) {
-            String [] availabilities = getPropertyAsStringArray(bundleNode, "hippo:availability");
-            boolean availableOnLive = ArrayUtils.contains(availabilities, "live");
-            boolean availableOnPreview = ArrayUtils.contains(availabilities, "preview");
             String [] keys = getPropertyAsStringArray(bundleNode, "resourcebundle:keys");
 
             if (bundleNode.hasProperty("resourcebundle:messages")) {
@@ -120,10 +119,10 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                         Object[][] contents = createListResourceBundleContents(keys, messages);
                         ResourceBundle defaultBundle = new SimpleListResourceBundle(contents);
     
-                        if (availableOnLive) {
-                            bundleFamily.setDefaultBundle(defaultBundle);
-                        } else if (availableOnPreview) {
+                        if (preview) {
                             bundleFamily.setDefaultBundleForPreview(defaultBundle);
+                        } else {
+                            bundleFamily.setDefaultBundle(defaultBundle);
                         }
                     }
                 } catch (Exception e) {
@@ -145,10 +144,10 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                             Object[][] contents = createListResourceBundleContents(keys, localizedMessages);
                             ResourceBundle localizedBundle = new SimpleListResourceBundle(contents);
 
-                            if (availableOnLive) {
-                                bundleFamily.setLocalizedBundle(locale, localizedBundle);
-                            } else if (availableOnPreview) {
+                            if (preview) {
                                 bundleFamily.setLocalizedBundleForPreview(locale, localizedBundle);
+                            } else {
+                                bundleFamily.setLocalizedBundle(locale, localizedBundle);
                             }
                         }
                     } catch (Exception e) {
@@ -157,8 +156,6 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                 }
             }
         }
-
-        return bundleFamily;
     }
 
     private String [] getPropertyAsStringArray(final Node node, final String propName) throws RepositoryException {

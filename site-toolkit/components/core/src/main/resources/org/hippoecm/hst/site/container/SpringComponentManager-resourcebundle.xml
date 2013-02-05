@@ -23,7 +23,8 @@
   <bean id="org.hippoecm.hst.resourcebundle.internal.ResourceBundleFamilyFactory"
         class="org.hippoecm.hst.resourcebundle.internal.HippoRepositoryResourceBundleFamilyFactory">
     <constructor-arg ref="javax.jcr.Repository" />
-    <constructor-arg ref="javax.jcr.Credentials.hstconfigreader" />
+    <constructor-arg ref="javax.jcr.Credentials.default" />
+    <constructor-arg ref="javax.jcr.Credentials.preview" />
   </bean>
 
   <bean id="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry"
