@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * DefaultMutableResourceBundleFamily
@@ -29,8 +30,8 @@ public class DefaultMutableResourceBundleFamily implements MutableResourceBundle
     private final String basename;
     private ResourceBundle defaultBundle;
     private ResourceBundle defaultBundleForPreview;
-    private final Map<Locale, ResourceBundle> localizedBundlesMap = Collections.synchronizedMap(new HashMap<Locale, ResourceBundle>());
-    private final Map<Locale, ResourceBundle> localizedBundlesMapForPreview = Collections.synchronizedMap(new HashMap<Locale, ResourceBundle>());
+    private final Map<Locale, ResourceBundle> localizedBundlesMap = new ConcurrentHashMap(new HashMap<Locale, ResourceBundle>());
+    private final Map<Locale, ResourceBundle> localizedBundlesMapForPreview = new ConcurrentHashMap(new HashMap<Locale, ResourceBundle>());
 
     public DefaultMutableResourceBundleFamily(final String basename) {
         this.basename = basename;

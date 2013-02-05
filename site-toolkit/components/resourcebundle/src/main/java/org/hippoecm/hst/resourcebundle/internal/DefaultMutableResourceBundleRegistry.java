@@ -15,12 +15,12 @@
  */
 package org.hippoecm.hst.resourcebundle.internal;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.resourcebundle.PlaceHolderEmptyResourceBundleFamily;
@@ -31,8 +31,7 @@ import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
  */
 public class DefaultMutableResourceBundleRegistry implements MutableResourceBundleRegistry {
 
-    private volatile Map<String, ResourceBundleFamily> bundleFamiliesMap = 
-            Collections.synchronizedMap(new HashMap<String, ResourceBundleFamily>());
+    private Map<String, ResourceBundleFamily> bundleFamiliesMap = new ConcurrentHashMap(new HashMap<String, ResourceBundleFamily>());
 
     private ResourceBundleFamilyFactory resourceBundleFamilyFactory;
 
@@ -101,15 +100,13 @@ public class DefaultMutableResourceBundleRegistry implements MutableResourceBund
         ResourceBundleFamily bundleFamily = bundleFamiliesMap.get(basename);
 
         if (bundleFamily == null && resourceBundleFamilyFactory != null) {
-            synchronized (bundleFamiliesMap) {
-                bundleFamily = bundleFamiliesMap.get(basename);
+            bundleFamily = bundleFamiliesMap.get(basename);
 
-                if (bundleFamily == null) {
-                    bundleFamily = resourceBundleFamilyFactory.createBundleFamily(basename);
+            if (bundleFamily == null) {
+                bundleFamily = resourceBundleFamilyFactory.createBundleFamily(basename);
 
-                    if (bundleFamily != null) {
-                        bundleFamiliesMap.put(basename, bundleFamily);
-                    }
+                if (bundleFamily != null) {
+                    bundleFamiliesMap.put(basename, bundleFamily);
                 }
             }
         }
