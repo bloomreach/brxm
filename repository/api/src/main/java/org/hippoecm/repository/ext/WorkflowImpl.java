@@ -76,6 +76,17 @@ public abstract class WorkflowImpl implements Remote, Workflow
     }
 
     /**
+     * A shorthand method to get an unchained {@link WorkflowContext}
+     *
+     * @return
+     * @throws MappingException
+     * @throws RepositoryException
+     */
+    final protected WorkflowContext getUnchainedWorkflowContext() throws MappingException, RepositoryException {
+        return context.getWorkflowContext(null);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public Map<String,Serializable> hints() {
