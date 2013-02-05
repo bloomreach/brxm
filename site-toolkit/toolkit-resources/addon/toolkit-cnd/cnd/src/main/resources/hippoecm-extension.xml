@@ -37,22 +37,7 @@
       <sv:value>true</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:version" sv:type="String">
-      <sv:value>2.25.02</sv:value>
-    </sv:property>
-  </sv:node>
-  
-  <sv:node sv:name="hst-contentpropadd-init">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>8990.1</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:initialize/hippo:version</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropadd" sv:type="String">
-      <sv:value>hst-2_1_3</sv:value>
+      <sv:value>2.26.01</sv:value>
     </sv:property>
   </sv:node>
 
