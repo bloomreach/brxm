@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotSame;
 
 import java.net.URLEncoder;
 
+import org.hippoecm.hst.util.EncodingUtils;
 import org.junit.Test;
 
 public class TestIsoLatin1AccentReplacer {

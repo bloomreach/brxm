@@ -28,7 +28,6 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -36,7 +35,7 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.hst.utils.EncodingUtils;
+import org.hippoecm.hst.util.EncodingUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;

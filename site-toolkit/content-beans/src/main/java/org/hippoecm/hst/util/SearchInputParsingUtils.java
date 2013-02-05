@@ -48,6 +48,7 @@ public final class SearchInputParsingUtils {
         parsed = removeLeadingOrTrailingOrOperator(parsed);
         parsed = rewriteNotOperatorsToMinus(parsed);
         parsed = removeLeadingAndTrailingAndReplaceWithSpaceAndOperators(parsed);
+        parsed = EncodingUtils.isoLatin1AccentReplacer(parsed);
         HstServices.getLogger(FQCN, FQCN).debug("Rewrote input '{}' to '{}'", input, parsed);
         return parsed;
     }

@@ -370,7 +370,6 @@ client/src/main/java/org/hippoecm/hst/tag/SetHstBundleTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/SetWrapperElementTag.java -text
 client/src/main/java/org/hippoecm/hst/tag/SiteMapItemTag.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/utils/BeanUtils.java svneol=native#text/plain
-client/src/main/java/org/hippoecm/hst/utils/EncodingUtils.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/utils/ParameterUtils.java -text
 client/src/main/java/org/hippoecm/hst/utils/PropertyUtils.java -text svneol=unset#text/plain
 client/src/main/resources/META-INF/hst-core.tld svneol=native#text/plain
@@ -428,6 +427,7 @@ commons/src/main/java/org/hippoecm/hst/util/AnnotationsScanner.java -text
 commons/src/main/java/org/hippoecm/hst/util/DOMElementWriter.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/DefaultKeyValue.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/DuplicateKeyNotAllowedHashMap.java -text svneol=unset#text/plain
+commons/src/main/java/org/hippoecm/hst/util/EncodingUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/GenericHttpServletRequestWrapper.java -text
 commons/src/main/java/org/hippoecm/hst/util/HeadElementUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstRequestUtils.java svneol=native#text/plain

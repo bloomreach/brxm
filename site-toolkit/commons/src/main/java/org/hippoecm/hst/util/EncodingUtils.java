@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.utils;
+package org.hippoecm.hst.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -50,16 +50,16 @@ public class EncodingUtils {
         if(input == null) {
             return null;
         }
-       
+
         char[] inputChars = input.toCharArray();
         // Worst-case length required:
         char[] output = new char[inputChars.length * 2];
-     
+
         int outputPos = 0;
 
         int pos = 0;
         int length = inputChars.length;
-        
+
         for (int i = 0; i < length; i++, pos++) {
             final char c = inputChars[pos];
 
@@ -166,7 +166,7 @@ public class EncodingUtils {
                 case '\u00F4': // ô
                 case '\u00F5': // õ
                 case '\u00F6': // ö
-                    
+
                 case '\u00F8': // ø
                     output[outputPos++] = 'o';
                     break;
@@ -198,7 +198,7 @@ public class EncodingUtils {
                 }
             }
         }
-        
+
         // now take only the populated chars from output
         char[] outputChars = new char[outputPos];
         System.arraycopy(output, 0, outputChars, 0, outputPos);

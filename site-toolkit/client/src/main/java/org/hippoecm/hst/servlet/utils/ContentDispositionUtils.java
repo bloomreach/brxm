@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.james.mime4j.codec.EncoderUtil;
-import org.hippoecm.hst.utils.EncodingUtils;
+import org.hippoecm.hst.util.EncodingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
