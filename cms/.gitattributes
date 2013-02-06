@@ -906,12 +906,6 @@ builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/AddDocument
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/AddDocumentDialog_de.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/AddDocumentDialog_fr.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/AddDocumentDialog_it.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmDialog_de.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmDialog_fr.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmDialog_it.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin_de.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin_fr.properties -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin_it.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$Dialog.html -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$Dialog.properties -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/FolderShortcutPlugin$Dialog_de.properties -text
@@ -945,12 +939,10 @@ builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/LanguageField_nl.properties svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/components/NameUriField.java svneol=native#text/plain
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/delete-16.png -text
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/depublish-all-16.png -text svneol=unset#image/png
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/new-collection-16.png -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/new-document-16.png -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/new-folder-16.png -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/new-translated-folder-16.png -text svneol=unset#image/png
-builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/publish-all-16.png -text svneol=unset#image/png
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/rename-16.png -text
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/reorder-16.png -text svneol=unset#image/png
 builtin/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/workflow-16.png -text
@@ -3142,8 +3134,16 @@ workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/wo
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/workflow-requestdelete-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/workflow-requestpublish-16.png -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/reviewedactions/workflow-requestunpublish-16.png -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmBulkWorkflowDialog_de.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmBulkWorkflowDialog_fr.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin$ConfirmBulkWorkflowDialog_it.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin_de.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin_fr.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/ExtendedFolderWorkflowPlugin_it.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/PermissionsFolderWorkflowPlugin$PermissionsConfirmDialog_de.properties -text
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/PermissionsFolderWorkflowPlugin_de.properties -text
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/depublish-all-16.png -text svneol=unset#image/png
+workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/publish-all-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/frontend/plugins/standardworkflow/queries-16.png -text svneol=unset#image/png
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl.properties svneol=native#text/plain
 workflow/frontend/src/main/java/org/hippoecm/repository/reviewedactions/BasicRequestWorkflowImpl_de.properties -text
