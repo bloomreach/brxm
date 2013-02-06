@@ -33,6 +33,7 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.behavior.SimpleAttributeModifier;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
@@ -134,6 +135,15 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         });
 
         tree = new JcrTree("updater-tree", treeModel) {
+
+            @Override
+            protected void populateTreeItem(final WebMarkupContainer item, final int level) {
+                super.populateTreeItem(item, level);
+                final Component nodeLink = item.get("nodeLink");
+                if (nodeLink != null) {
+                    nodeLink.add(new SimpleAttributeModifier("class", "node-link"));
+                }
+            }
 
             @Override
             protected void onNodeLinkClicked(final AjaxRequestTarget target, final TreeNode clickedNode) {

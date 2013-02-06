@@ -61,6 +61,18 @@
     height: 800px;
 }
 
+.updater-tree .node-link {
+    width: 50px;
+}
+
+.updater-tree .row-selected .node-link span.icon {
+    padding: 0;
+}
+
+.updater-tree .row-selected .node-link span {
+    background-color: #ffe29a;
+    padding: 3px 3px 3px 0px;
+}
 
 .updater-details form input[type=submit] {
     margin-right: 5px;

@@ -1405,7 +1405,6 @@ ents-small-folders h3 {
 /* make sure the first folder level in the tree doens't have a left padding */
 .hippo-tree div.wicket-tree div.a_ {
   padding-left: 0px;
-  display: inline-table;
 }
 
 .hippo-tree div.wicket-tree div.a_ div.a_ {
