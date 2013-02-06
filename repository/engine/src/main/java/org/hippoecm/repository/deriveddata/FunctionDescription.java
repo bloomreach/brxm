@@ -22,8 +22,8 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.NodeIterable;
 
 class FunctionDescription {
 

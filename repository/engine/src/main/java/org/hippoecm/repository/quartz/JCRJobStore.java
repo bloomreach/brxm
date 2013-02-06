@@ -43,10 +43,10 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.jackrabbit.util.ISO8601;
 import org.hippoecm.repository.quartz.workflow.WorkflowJobDetail;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.quartz.JobDetail;
 import org.quartz.JobPersistenceException;
 import org.quartz.SchedulerConfigException;

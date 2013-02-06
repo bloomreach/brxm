@@ -40,12 +40,12 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;

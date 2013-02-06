@@ -20,8 +20,8 @@ import java.util.List;
 
 import javax.jcr.Node;
 
-import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.hippoecm.repository.logging.RepositoryLogger;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;

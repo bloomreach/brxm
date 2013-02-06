@@ -51,7 +51,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.jdo.JDOException;
 
-import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.RepositoryMapImpl;
 import org.hippoecm.repository.api.Document;
@@ -74,6 +73,7 @@ import org.hippoecm.repository.ext.WorkflowManagerRegister;
 import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflow;
 import org.hippoecm.repository.standardworkflow.WorkflowEventLoggerWorkflowImpl;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

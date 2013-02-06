@@ -37,7 +37,6 @@ import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.version.VersionManager;
 
-import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.hippoecm.repository.api.HippoNode;
 
 /**

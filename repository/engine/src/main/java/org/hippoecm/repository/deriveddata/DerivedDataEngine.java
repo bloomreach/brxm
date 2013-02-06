@@ -39,13 +39,13 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
-import org.apache.jackrabbit.commons.iterator.NodeIterable;
-import org.apache.jackrabbit.commons.iterator.PropertyIterable;
 import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.ext.DerivedDataFunction;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
