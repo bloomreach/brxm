@@ -177,8 +177,6 @@
             Hippo,
             HST,
             jQuery,
-            onhostmessage,
-            sendMessage,
             XPathResult,
             YAHOO,
             window
@@ -197,12 +195,13 @@
               <insertNewLine>true</insertNewLine>
               <includes>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/templatecomposerglobal.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/dragdrop.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/factory.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/page.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/widgets.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/surfandedit.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/last.js</include>
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/iframe/iframe-all.js</output>
             </aggregation>
@@ -221,6 +220,7 @@
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/RestStore.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitStore.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IFramePanel.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageModelStore.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContext.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContainer.js</include>
@@ -236,8 +236,6 @@
               <includes>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/colorfield.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe.js</include>
-                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.js</include>
               </includes>
               <output>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/plugins/plugins-all.js</output>

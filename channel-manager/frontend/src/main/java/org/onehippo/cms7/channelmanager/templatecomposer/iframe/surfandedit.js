@@ -16,9 +16,15 @@
 (function($) {
     "use strict";
 
-    var Main, surfandedit;
+    var hostToIFrame, iframeToHost, surfandedit;
 
-    Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+    hostToIFrame = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
+    iframeToHost = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.iframeToHost;
+
+    $(window).unload(function() {
+        hostToIFrame = null;
+        iframeToHost = null;
+    });
 
     surfandedit = {
 
@@ -54,7 +60,7 @@
                     // fallback
                     self = this;
                     domWalker = function(node) {
-                        if (!node || typeof node.nodeType === 'undefined') {
+                        if (!node || node.nodeType === undefined) {
                             return;
                         }
                         var i, hstMetaData, childNode, length;
@@ -66,22 +72,21 @@
                             }
                             return;
                         }
-                        for (i=0, length=node.childNodes.length; i< length; i++) {
+                        for (i = 0, length = node.childNodes.length; i < length; i++) {
                             childNode = node.childNodes[i];
                             domWalker(childNode);
                         }
                     };
                     domWalker(document.body);
                 }
-                sendMessage(links, 'documents');
+                iframeToHost.publish('documents', links);
             } catch(e) {
-                sendMessage({msg: 'Error initializing manager.', exception: e}, "iframeexception");
+                iframeToHost.publish('exception', 'Error initializing manager.', e);
             }
         },
 
         _createLink : function(commentElement, hstMetaData) {
-            var exception, id, newLink;
-            exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
+            var id, newLink;
 
             id = hstMetaData[HST.ATTR.ID];
 
@@ -101,14 +106,14 @@
             */
             if (newLink.addEventListener) {
                 newLink.addEventListener('click', function(event) {
-                    sendMessage({uuid: id}, "edit-document");
+                    iframeToHost.publish('edit-document', id);
                     event.stopPropagation();
                     event.preventDefault();
                     return false;
                 }, false);
             } else if (newLink.attachEvent) {
                 newLink.attachEvent('onclick', function(event) {
-                    sendMessage({uuid: id}, "edit-document");
+                    iframeToHost.publish('edit-document', id);
                     event.cancelBubble = true;
                     return false;
                 });
@@ -118,8 +123,8 @@
         },
 
         convertToHstMetaData : function(element) {
-            var exception, commentJsonObject;
-            exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
+            var commentJsonObject;
+
             if (element.nodeType !== 8) {
                 return null;
             }
@@ -132,24 +137,20 @@
                 }
                 commentJsonObject = JSON.parse(element.data);
                 if (commentJsonObject[HST.ATTR.TYPE] === HST.CMSLINK
-                        && typeof commentJsonObject[HST.ATTR.ID] !== 'undefined'
-                        && typeof commentJsonObject[HST.ATTR.URL] !== 'undefined') {
+                        && commentJsonObject[HST.ATTR.ID] !== undefined
+                        && commentJsonObject[HST.ATTR.URL] !== undefined) {
                     return commentJsonObject;
                 }
-            } catch(e) {
-                exception(this.resources['factory-error-parsing-hst-data'].format(element.data) +' '+ e);
+            } catch (e) {
+                iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(element.data) + ' ' + e);
             }
             return null;
         }
 
     };
 
-    Main.subscribe('initialize', surfandedit.init, surfandedit);
-
-    Main.subscribe('dynamicContentLoaded', surfandedit.createSurfAndEditLinks, surfandedit);
-
-    onhostmessage(surfandedit.hideLinks, surfandedit, false, 'hidelinks');
-
-    onhostmessage(surfandedit.showLinks, surfandedit, false, 'showlinks');
+    hostToIFrame.subscribe('init', surfandedit.init, surfandedit);
+    hostToIFrame.subscribe('hidelinks', surfandedit.hideLinks, surfandedit);
+    hostToIFrame.subscribe('showlinks', surfandedit.showLinks, surfandedit);
 
 }(jQuery));

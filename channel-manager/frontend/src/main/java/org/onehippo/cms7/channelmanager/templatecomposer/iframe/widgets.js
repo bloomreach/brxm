@@ -18,7 +18,15 @@
 
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container', 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.ContainerItem');
 
-    var Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+    var hostToIFrame, iframeToHost;
+
+    hostToIFrame = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
+    iframeToHost = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.iframeToHost;
+
+    $(window).unload(function() {
+        hostToIFrame = null;
+        iframeToHost = null;
+    });
 
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.Widget = Class.extend({
         init : function(id, element, resources) {
@@ -97,10 +105,8 @@
             overlay.attr('id', this.overlayId);
 
             overlay.hover(function() {
-                Main.publish('mouseOverWidget', this);
                 self.onMouseOver(this);
             }, function() {
-                Main.publish('mouseOutWidget', this);
                 self.onMouseOut(this);
             });
             overlay.click(function() {
@@ -112,12 +118,6 @@
             this.onRender();
 
             this.rendered = true;
-        },
-
-        updateSharedData: function(facade) {
-            this.items.each(function(key, item) {
-                item.updateSharedData(facade);
-            });
         },
 
         toggleNoHover : function() {
@@ -718,24 +718,20 @@
             if(this.isTemporary) {
                 el.html(this.resources['base-container-item-temporary']);
             }
-
-            this.data = {
-                name : this.resources['base-container-item-label-loading']
-            };
         },
 
         onRender : function() {
-            var data, deleteButton;
+            var element, deleteButton;
             this.overlay.append($('<div/>').addClass(this.cls.overlay.inner));
 
             this.menu = $('<div/>').addClass('hst-overlay-menu');
 
-            data = {element: this.element};
+            element = this.element;
             if (!this.el.attr(HST.ATTR.INHERITED)) {
                 deleteButton = $('<div/>').addClass('hst-overlay-menu-button');
                 deleteButton.click(function(e) {
                     e.stopPropagation();
-                    sendMessage(data, 'remove');
+                    iframeToHost.publish('remove', element);
                 });
                 this.menu.append(deleteButton);
             }
@@ -778,7 +774,7 @@
             this._super();
         },
 
-        getOverlayData : function(data) {
+        getOverlayData: function(data) {
             var parentOffset = this.parent.overlay.offset();
             data.position = 'inherit';
             data.left -= (parentOffset.left + this.parent.parentMargin);
@@ -789,38 +785,37 @@
             return data;
         },
 
-        updateSharedData : function(facade) {
-            this.data.name = facade.getName(this.id);
-        },
-
-        getOverlaySource : function() {
+        getOverlaySource: function() {
             return $(this.element);
-    //        return $(this.element).parents('.hst-container-item')
         },
 
         onClick : function() {
             var id, variant, inherited;
-            if(this.isTemporary) {
-                sendMessage({}, 'refresh');
+            if (this.isTemporary) {
+                iframeToHost.publish('refresh');
             } else {
                 id = this.element.getAttribute('id');
                 variant = this.el.attr(HST.ATTR.VARIANT);
                 inherited = Hippo.Util.getBoolean(this.el.attr(HST.ATTR.INHERITED));
-                sendMessage({elementId: id, variant: variant, inherited: inherited}, 'onclick');
+                iframeToHost.publish('onclick', {
+                    elementId: id,
+                    variant: variant,
+                    inherited: inherited
+                });
             }
         },               
 
-        onDragStart : function(event, ui) {
+        onDragStart: function(event, ui) {
             $(this.element).addClass('hst-item-ondrag');
             this.menu.hide();
         },
 
-        onDragStop : function(event, ui) {
+        onDragStop: function(event, ui) {
             $(this.element).removeClass('hst-item-ondrag');
             this.menu.show();
         },
 
-        onDestroy : function() {
+        onDestroy: function() {
             this.overlay.remove();
             this.menu.remove();
         }
@@ -841,14 +836,17 @@
 
     Hippo.ChannelManager.TemplateComposer.IFrame.UI.DDState.prototype = {
 
-        orderChanged : function(test) {
-            var i;
-            if(test.length !== this.previousOrder.length) {
+        orderChanged: function(test) {
+            var i, len;
+
+            len = test.length;
+
+            if (len !== this.previousOrder.length) {
                 return true;
             }
 
-            for (i=0; i<test.length; i++) {
-                if(test[i] !== this.previousOrder[i]) {
+            for (i = 0; i < len; i++) {
+                if (test[i] !== this.previousOrder[i]) {
                     return true;
                 }
             }

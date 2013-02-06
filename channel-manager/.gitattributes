@@ -149,7 +149,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/inc/button-edit-start.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/inc/channel-manager-iframe.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/inc/close.png -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/main.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/page.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/surfandedit.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/util.js -text
@@ -174,8 +173,6 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/images/gradient.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/colorfield/images/wheel.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/floatingwindow/FloatingWindow.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/miframe.js -text
-frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/modules/mifmsg.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.css -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/VerticalTabPanel.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/plugins/vtabs/vtabs-border-bottom.png -text svneol=unset#image/png

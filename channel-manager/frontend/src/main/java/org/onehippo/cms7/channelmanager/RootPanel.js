@@ -32,7 +32,7 @@
 
             this.toolbar = new Hippo.ChannelManager.BreadcrumbToolbar({
                 autoWidth: true,
-                id: 'breadcrumbToolbar',
+                id: 'hippo-channelmanager-breadcrumb',
                 breadcrumbIconUrl: config.breadcrumbIconUrl,
                 layoutConfig: {
                     pack: 'left'
@@ -64,8 +64,8 @@
             // recalculate the ExtJs layout when the YUI layout manager fires a resize event
             this.on('afterlayout', function() {
                 var yuiLayout = this.getEl().findParent("div.yui-layout-unit");
-                YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function() {
-                    self.setSize(arguments[0].body.w, arguments[0].body.h);
+                YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, function(sizes) {
+                    self.setSize(sizes.body.w, sizes.body.h);
                     self.doLayout();
                 }, true);
             }, this, {single: true});

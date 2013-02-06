@@ -173,16 +173,12 @@
                 items: [
                     {
                         id: 'Iframe',
-                        xtype: 'iframepanel',
-                        // loadMask: true,
-                        collapsible: false,
-                        disableMessaging: false,
+                        xtype: 'Hippo.ChannelManager.TemplateComposer.IFramePanel',
                         tbar: {
                             id: 'pageEditorToolbar',
                             cls: 'channel-manager-toolbar',
                             height: this.TOOLBAR_HEIGHT,
-                            items: [
-                            ]
+                            items: []
                         }
                     },
                     {
@@ -214,8 +210,7 @@
                             this.fullscreen = fullscreen;
                             this.createViewToolbar();
                             this.registerResizeListener();
-                            var iFrame = Ext.getCmp('Iframe');
-                            iFrame.getFrame().sendMessage({}, fullscreen ? 'fullscreen' : 'partscreen');
+                            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish(fullscreen ? 'fullscreen' : 'partscreen');
                         },
                         scope: this
                     }
@@ -514,7 +509,9 @@
         },
 
         enableUI: function(pageContext) {
-            var frm, toolkitGrid;
+            var hostToIFrame, toolkitGrid;
+
+            hostToIFrame = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
 
             Hippo.Msg.hide();
 
@@ -529,12 +526,11 @@
 
             this.renderedVariant = pageContext.renderedVariant;
 
-            frm = Ext.getCmp('Iframe').getFrame();
             if (!this.pageContainer.previewMode) {
                 this.createEditToolbar();
 
-                frm.sendMessage({}, ('showoverlay'));
-                frm.sendMessage({}, ('hidelinks'));
+                hostToIFrame.publish('showoverlay');
+                hostToIFrame.publish('hidelinks');
 
                 if (this.propertiesWindow) {
                     this.propertiesWindow.destroy();
@@ -549,11 +545,11 @@
             } else {
                 this.createViewToolbar();
 
-                frm.sendMessage({}, ('hideoverlay'));
+                hostToIFrame.publish('hideoverlay');
                 if (this.fullscreen) {
-                    frm.sendMessage({}, ('hidelinks'));
+                    hostToIFrame.publish('hidelinks');
                 } else {
-                    frm.sendMessage({}, ('showlinks'));
+                    hostToIFrame.publish('showlinks');
                 }
 
                 if (this.propertiesWindow) {
@@ -592,23 +588,23 @@
                     domNode = this.getEl().dom,
                     relayout = false,
                     rootPanel = Ext.getCmp('rootPanel'),
-                    iFrame,
-                    src;
+                    iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance,
+                    location;
+
             if (this.fullscreen) {
-                iFrame = Ext.getCmp('Iframe');
-                src = iFrame.getFrame().getDocumentURI();
+                location = iframe.getLocation();
 
                 this.getEl().addClass("channel-manager-fullscreen");
                 this.getEl().addClass("channel-manager");
                 yuiLayout = this.getEl().findParent("div.yui-layout-unit");
                 YAHOO.hippo.LayoutManager.unregisterResizeListener(yuiLayout, this, this.resizeListener);
 
-                iFrame.suspendEvents();
+                iframe.suspendEvents();
                 rootPanel.remove(this, false);
                 Ext.getBody().dom.appendChild(domNode);
-                iFrame.resumeEvents();
+                iframe.resumeEvents();
 
-                iFrame.getFrame().setSrc(src);
+                iframe.setLocation(location);
 
                 element = Ext.getBody();
                 this.resizeListener = function() {
@@ -617,7 +613,7 @@
 
                     // Correct the width for the border of the outer panel: 1 pixel left and right, so 2px in total.
                     // The height of the yui layout div also includes the space for the toolbar, so subtract that.
-                    Ext.getCmp('Iframe').setSize(w - 2, h);
+                    iframe.setSize(w - 2, h);
                 }.createDelegate(this);
                 YAHOO.hippo.LayoutManager.registerRootResizeListener(this, this.resizeListener);
 
@@ -626,18 +622,17 @@
                 if (this.resizeListener) {
                     YAHOO.hippo.LayoutManager.unregisterRootResizeListener(this.resizeListener);
 
-                    iFrame = Ext.getCmp('Iframe');
-                    src = iFrame.getFrame().getDocumentURI();
+                    location = iframe.getLocation();
 
-                    iFrame.suspendEvents();
+                    iframe.suspendEvents();
                     Ext.getBody().dom.removeChild(domNode);
                     rootPanel.insert(1, this);
-                    iFrame.resumeEvents();
+                    iframe.resumeEvents();
 
                     rootPanel.getLayout().setActiveItem(1);
                     rootPanel.doLayout();
 
-                    iFrame.getFrame().setSrc(src);
+                    iframe.setLocation(location);
 
                     relayout = true;
                 }
@@ -646,10 +641,10 @@
                 element.removeClass("channel-manager");
                 element.removeClass("channel-manager-fullscreen");
                 yuiLayout = element.findParent("div.yui-layout-unit");
-                this.resizeListener = function() {
+                this.resizeListener = function(sizes) {
                     // Correct the width for the border of the outer panel: 1 pixel left and right, so 2px in total.
                     // The height of the yui layout div also includes the space for the toolbar, so subtract that.
-                    Ext.getCmp('Iframe').setSize(arguments[0].body.w - 2, arguments[0].body.h - this.TOOLBAR_HEIGHT);
+                    iframe.setSize(sizes.body.w - 2, sizes.body.h - this.TOOLBAR_HEIGHT);
                 };
                 YAHOO.hippo.LayoutManager.registerResizeListener(yuiLayout, this, this.resizeListener, true);
 
@@ -717,7 +712,7 @@
                 constrainHeader: true,
                 bodyStyle: 'background-color: #ffffff',
                 cls: "component-properties",
-                renderTo: Ext.getCmp('Iframe').getEl(),
+                renderTo: Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getEl(),
                 constrain: true,
                 hidden: true,
                 listeners: {

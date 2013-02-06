@@ -28,13 +28,15 @@ public final class IFrameBundle {
 
     public static final String FACTORY = "factory.js";
 
-    public static final String MAIN = "main.js";
-
     public static final String PAGE = "page.js";
 
     public static final String UTIL = "util.js";
 
     public static final String WIDGETS = "widgets.js";
+
+    public static final String DRAG_DROP = "dragdrop.js";
+
+    public static final String LAST = "last.js";
 
     public static final String ALL = "iframe-all.js";
 

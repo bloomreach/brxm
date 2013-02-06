@@ -84,7 +84,7 @@
                 this.setTitle(channel.channelName);
             }
             this.channelName = channel.channelName;
-            this.render(Ext.getCmp('Iframe').getEl());
+            this.render(Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getEl());
             this.expand();
             this.fireEvent('selectchannel', channel.channelId);
             Hippo.ChannelManager.ChannelPropertiesWindow.superclass.show.apply(this, arguments);

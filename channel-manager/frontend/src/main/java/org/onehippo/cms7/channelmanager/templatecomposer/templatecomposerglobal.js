@@ -16,6 +16,24 @@
 
 (function() {
 
+    if (window.Hippo === undefined) {
+        window.Hippo = {};
+    }
+
+    Hippo.namespace = function(description) {
+        var scope, parts, i, len;
+
+        scope = window;
+        parts = description.split('.');
+
+        for (i = 0, len = parts.length; i < len; i++) {
+            if (scope[parts[i]] === undefined) {
+                scope[parts[i]] = {};
+            }
+            scope = scope[parts[i]];
+        }
+    };
+
     HST = {
         COMPONENT       : 'COMPONENT',
         CONTAINER       : 'CONTAINER_COMPONENT',

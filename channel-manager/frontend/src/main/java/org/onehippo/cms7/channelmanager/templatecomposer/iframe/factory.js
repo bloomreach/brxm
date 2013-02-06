@@ -18,18 +18,24 @@
 
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
 
-    var Main, Factory;
+    var hostToIFrame, iframeToHost, Factory;
 
     if (!Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory) {
 
-        Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+        hostToIFrame = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
+        iframeToHost = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.iframeToHost;
+
+        $(window).unload(function() {
+            hostToIFrame = null;
+            iframeToHost = null;
+        });
 
         // TODO refactor, this is a module
         Factory = function() {
             this.objects = {};
             this.registry = {};
 
-            Main.subscribe('initialize', function(data) {
+            hostToIFrame.subscribe('init', function(data) {
                 this.resources = data.resources;
             }, this);
         };
@@ -47,23 +53,20 @@
             },
 
             _create : function(data) {
-                var exception, c;
-                exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
-                if (typeof this.registry[data.xtype] === 'undefined') {
-                    exception(this.resources['factory-xtype-not-found'].format(data.xtype));
+                var c;
+                if (this.registry[data.xtype] === undefined) {
+                    iframeToHost.exception(this.resources['factory-xtype-not-found'].format(data.xtype));
                 }
-                console.log('_create xtype:'+data.xtype+', element: '+Hippo.Util.getElementPath(data.element));
                 c = new this.registry[data.xtype](data.id, data.element, this.resources);
                 if (!c instanceof data.base) {
-                    Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception(this.resources['factory-inheritance-error'].format(data.id, data.base));
+                    iframeToHost.exception(this.resources['factory-inheritance-error'].format(data.id, data.base));
                 }
                 this.objects[c.id] = c;
                 return c;
             },
 
             _enhance : function(element) {
-                var exception, hstContainerMetaData, id, type, base, xtype, url, refNS, inherited, variant;
-                exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
+                var hstContainerMetaData, id, type, base, xtype, url, refNS, inherited, variant;
 
                 hstContainerMetaData = this.getContainerMetaData(element);
                 if (hstContainerMetaData === null) {
@@ -76,21 +79,21 @@
                     }
                 }
 
-                if (typeof hstContainerMetaData === 'undefined' || hstContainerMetaData === null) {
-                    exception(this.resources['factory-no-hst-meta-data'].format(Hippo.Util.getElementPath(element)));
+                if (hstContainerMetaData === undefined || hstContainerMetaData === null) {
+                    iframeToHost.exception(this.resources['factory-no-hst-meta-data'].format(Hippo.Util.getElementPath(element)));
                 }
 
                 id = hstContainerMetaData[HST.ATTR.ID];
-                if (typeof id === 'undefined') {
-                    exception(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID, Hippo.Util.getElementPath(element)));
+                if (id === undefined) {
+                    iframeToHost.exception(this.resources['factory-attribute-not-found'].format(HST.ATTR.ID, Hippo.Util.getElementPath(element)));
                 }
 
                 element.id = id;
                 element.setAttribute(HST.ATTR.ID, id);
 
                 type = hstContainerMetaData[HST.ATTR.TYPE];
-                if (typeof type === 'undefined') {
-                    exception(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE, Hippo.Util.getElementPath(element)));
+                if (type === undefined) {
+                    iframeToHost.exception(this.resources['factory-attribute-not-found'].format(HST.ATTR.TYPE, Hippo.Util.getElementPath(element)));
                 }
                 element.setAttribute(HST.ATTR.TYPE,  type);
 
@@ -103,7 +106,7 @@
 
                 //Not very sexy this..
                 xtype = hstContainerMetaData[HST.ATTR.XTYPE];
-                if (typeof xtype === 'undefined' || xtype === null || xtype === '') {
+                if (xtype === undefined || xtype === null || xtype === '') {
                     if (type === HST.CONTAINER) {
                         xtype = 'Hippo.ChannelManager.TemplateComposer.IFrame.UI.Container.Base';
                     } else if (type === HST.CONTAINERITEM) {
@@ -113,25 +116,24 @@
                 element.setAttribute(HST.ATTR.XTYPE, xtype);
 
                 url = hstContainerMetaData[HST.ATTR.URL];
-                if (typeof url !== 'undefined') {
+                if (url !== undefined) {
                     element.setAttribute(HST.ATTR.URL, url);
                 }
 
                 refNS = hstContainerMetaData[HST.ATTR.REF_NS];
-                if (typeof refNS !== 'undefined') {
+                if (refNS !== undefined) {
                     element.setAttribute(HST.ATTR.REF_NS, refNS);
                 }
 
                 inherited = hstContainerMetaData[HST.ATTR.INHERITED];
-                if (typeof inherited !== 'undefined') {
+                if (inherited !== undefined) {
                     element.setAttribute(HST.ATTR.INHERITED, inherited);
                 }
 
                 variant = hstContainerMetaData[HST.ATTR.VARIANT];
-                if (typeof variant !== 'undefined') {
+                if (variant !== undefined) {
                     element.setAttribute(HST.ATTR.VARIANT, variant);
                 }
-
 
                 return {
                     id: id,
@@ -144,14 +146,14 @@
 
             getById : function(id) {
                 var o = this.objects[id];
-                if (typeof o === 'undefined') {
+                if (o === undefined) {
                     return null;
                 }
                 return o;
             },
 
             deleteObjectRef : function(ref) {
-                if (typeof this.objects[ref] !== 'undefined') {
+                if (this.objects[ref] !== undefined) {
                     delete this.objects[ref];
                 }
             },
@@ -161,8 +163,8 @@
             },
 
             getContainerMetaData : function(element) {
-                var exception, childNodes, children, i, descendants, j, len, childrenLen, descendantsLen, hstMetaData, tmpElement;
-                exception = Hippo.ChannelManager.TemplateComposer.IFrame.Main.exception;
+                var childNodes, children, i, descendants, j, len, childrenLen, descendantsLen, hstMetaData, tmpElement;
+
                 if (element.className === HST.CLASS.ITEM) {
                     if (element.tagName === 'TR') {
                         children = element.childNodes;
@@ -185,7 +187,7 @@
                                 return hstMetaData;
                             }
                         } catch (e) {
-                            exception(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, Hippo.Util.getElementPath(element)) + ' ' + e);
+                            iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(childNodes[i].data, Hippo.Util.getElementPath(element)) + ' ' + e);
                         }
                     }
                 } else if (element.className === HST.CLASS.CONTAINER) {
@@ -198,7 +200,7 @@
                                 return hstMetaData;
                             }
                         } catch (ex) {
-                            exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + ex);
+                            iframeToHost.exception(this.resources['factory-error-parsing-hst-data'].format(tmpElement.data, Hippo.Util.getElementPath(element)) + ' ' + ex);
                         }
                     }
                 }

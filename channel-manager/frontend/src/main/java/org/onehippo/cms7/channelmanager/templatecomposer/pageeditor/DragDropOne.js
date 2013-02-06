@@ -29,48 +29,48 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
         },
 
         onRender: function() {
-            var miframePanel, self;
+            var self, iframe, iframePosition, iframeToolbarHeight;
 
-            miframePanel = Ext.getCmp('Iframe');
             self = this;
+            iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
 
-            this.iFramePosition = miframePanel.getPosition();
-            this.boxs = [];
+            this.boxes = [];
             this.nodeOverRecord = null;
 
             this.dragZone = new Ext.grid.GridDragZone(this, {
                 containerScroll: true,
-                ddGroup: 'blabla',
+                ddGroup: 'templatecomposer',
 
                 onInitDrag: function() {
-                    var framePanel, frmDoc;
-                    framePanel = Ext.getCmp('Iframe');
-                    frmDoc = framePanel.getFrameDocument();
-                    framePanel.getFrame().sendMessage({groups: 'dropzone'}, 'highlight');
+                    iframePosition = iframe.getPosition();
+                    iframeToolbarHeight = iframe.getTopToolbar().getHeight();
+
+                    iframe.hostToIFrame.publish('highlight');
+                    iframe.hostToIFrame.publish('enablemouseevents');
+
                     pageContext.stores.pageModel.each(function(record) {
                         var type, id, el, box;
                         type = record.get('type');
                         if (record.get('type') === HST.CONTAINER) {
                             id = record.get('id');
-                            el = frmDoc.getElementById(id + '-overlay');
-                            if (el !== null && !frmDoc.getElementById(id).getAttribute(HST.ATTR.INHERITED)) {
+                            el = iframe.getElement(id + '-overlay');
+                            if (el !== null && !iframe.getElement(id).getAttribute(HST.ATTR.INHERITED)) {
                                 box = Ext.Element.fly(el).getBox();
-                                self.boxs.push({record: record, box: box});
+                                self.boxes.push({record: record, box: box});
                             }
                         }
                     });
-                    Ext.ux.ManagedIFrame.Manager.showShims();
                 },
 
                 onEndDrag: function() {
-                    self.boxs = [];
-                    Ext.ux.ManagedIFrame.Manager.hideShims();
-                    Ext.getCmp('Iframe').getFrame().sendMessage({groups: 'dropzone'}, 'unhighlight');
+                    self.boxes = [];
+                    iframe.hostToIFrame.publish('disablemouseevents');
+                    iframe.hostToIFrame.publish('unhighlight');
                 }
             });
 
-            this.dropZone = new Ext.dd.DropZone(miframePanel.body.dom, {
-                ddGroup: 'blabla',
+            this.dropZone = new Ext.dd.DropZone(iframe.getEl(), {
+                ddGroup: 'templatecomposer',
 
                 //If the mouse is over a grid row, return that node. This is
                 //provided as the "target" parameter in all "onNodeXXXX" node event handling functions
@@ -80,15 +80,15 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
 
                 //While over a target node, return the default drop allowed class which
                 //places a "tick" icon into the drag proxy.
-                onNodeOver: function(target, dd, e, data) {
-                    var curX, curY, i, item, box;
-                    curX = dd.lastPageX + dd.deltaX - self.iFramePosition[0];
-                    curY = dd.lastPageY + dd.deltaY - self.iFramePosition[1];
-                    //TODO: implement dynamic fetch of toolbar height to adjust pageY
-                    curY -= 77;
+                onNodeOver: function(target, dd, e) {
+                    var eventXY, curX, curY, i, len, item, box;
 
-                    for (i = 0; i < self.boxs.length; i++) {
-                        item = self.boxs[i];
+                    eventXY = e.xy;
+                    curX = eventXY[0] - iframePosition[0];
+                    curY = eventXY[1] - iframePosition[1] - iframeToolbarHeight;
+
+                    for (i = 0, len = self.boxes.length; i < len; i++) {
+                        item = self.boxes[i];
                         box = item.box;
                         if (curX >= box.x && curX <= box.right && curY >= box.y && curY <= box.bottom) {
                             self.nodeOverRecord = item.record;
@@ -104,13 +104,9 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                 //In this case, it is a Record in the GridPanel's Store.
                 //We can use the data set up by the DragZone's getDragData method to read
                 //any data we decided to attach in the DragZone's getDragData method.
-                onNodeDrop: function(target, dd, e, data) {
-                    //                    var rowIndex = this.getView().findRowIndex(target);
-                    //                    var r = this.getStore().getAt(rowIndex);
-                    //                    Ext.Msg.alert('Drop gesture', 'Dropped Record id ' + data.draggedRecord.id +
-                    //                            ' on Record id ' + r.id);
+                onNodeDrop: function() {
                     if (self.nodeOverRecord !== null) {
-                        var pageContainer, selections, pmRecord, parentId, pmStore, offset, at, i, record, newRecord;
+                        var pageContainer, selections, pmRecord, parentId, pmStore, offset, at, i, len, record, newRecord;
                         pageContainer = pageContext.getPageContainer();
 
                         selections = self.getSelectionModel().getSelections();
@@ -121,7 +117,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
 
                         offset = pmRecord.data.children.length + 1;
                         at = pmStore.indexOf(pmRecord) + offset;
-                        for (i = 0; i < selections.length; i++) {
+                        for (i = 0, len = selections.length; i < len; i++) {
                             record = selections[i];
                             newRecord = {
                                 parentId: parentId,

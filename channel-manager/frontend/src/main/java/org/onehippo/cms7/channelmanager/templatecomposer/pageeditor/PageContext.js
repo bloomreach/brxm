@@ -68,13 +68,13 @@
 
         },
 
-        initialize: function(frm, canEdit) {
-            this.frm = frm;
+        initialize: function(canEdit) {
+            var iframeLocation = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.getLocation();
 
-            this._requestHstMetaData(frm.getDocumentURI(), canEdit).when(function() {
-                this._initializeIFrameHead(frm, this.previewMode).when(function() {
+            this._requestHstMetaData(iframeLocation, canEdit).when(function() {
+                this._initializeIFrameHead(this.previewMode).when(function() {
                     if (canEdit) {
-                        this._buildOverlay(frm);
+                        this._buildOverlay();
                     }
                     console.info('pageContextInitialized');
                     this.fireEvent('pageContextInitialized');
@@ -89,7 +89,7 @@
         },
 
         selectVariant: function(id, variant) {
-            this.frm.sendMessage({id: id, variant: variant}, 'selectVariant');
+            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('selectVariant', id, variant);
         },
 
         _initToolkitStore: function(mountId) {
@@ -211,8 +211,8 @@
                             Hippo.Future.join(futures).when(function() {
                                 onSuccess();
                             }).otherwise(function() {
-                                        onFail("Failed to initialize page model for url '" + encodedUrl + "'");
-                                    });
+                                onFail("Failed to initialize page model for url '" + encodedUrl + "'");
+                            });
                         } else {
                             onSuccess();
                         }
@@ -241,53 +241,37 @@
             return null;
         },
 
-        _initializeIFrameHead: function(frm, previewMode) {
+        _initializeIFrameHead: function(previewMode) {
+            var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+
             return new Hippo.Future(function(success, fail) {
                 this.iframeResourceCache.when(function(iframeResources) {
-                    var resourceCache, self;
+                    var resourceCache, headFragment, self, onIFrameLoaded;
 
                     resourceCache = iframeResources.cache;
+                    headFragment = iframe.createHeadFragment();
+                    self = this;
+
+                    onIFrameLoaded = function() {
+                        iframe.iframeToHost.unsubscribe('iframeloaded', onIFrameLoaded, self);
+                        iframe.hostToIFrame.publish('init', {
+                            debug: self.debug,
+                            previewMode: previewMode,
+                            resources: self.resources
+                        });
+                        success();
+                    };
+                    iframe.iframeToHost.subscribe('iframeloaded', onIFrameLoaded, self);
 
                     Ext.each(iframeResources.css, function(src) {
-                        var cssContent, frmDocument, headElements, head, styleElement, textNode;
-                        cssContent = resourceCache[src];
-                        frmDocument = frm.getFrameDocument();
-
-                        if (Ext.isIE) {
-                            frmDocument.createStyleSheet().cssText = cssContent;
-                        } else {
-                            headElements = frmDocument.getElementsByTagName("HEAD");
-                            if (headElements.length === 0) {
-                                head = frmDocument.createElement("HEAD");
-                                frmDocument.appendChild(head);
-                            } else {
-                                head = headElements[0];
-                            }
-
-                            styleElement = frmDocument.createElement("STYLE");
-                            styleElement.setAttribute("type", "text/css");
-                            textNode = frmDocument.createTextNode('/* ' + src + ' */\n' + cssContent);
-                            styleElement.appendChild(textNode);
-                            head.appendChild(styleElement);
-                        }
+                        headFragment.addStyleSheet(resourceCache[src], src);
                     });
-
                     Ext.each(iframeResources.js, function(src) {
                         var jsContent = resourceCache[src];
-                        window.setTimeout(function() {
-                            frm.writeScript.apply(frm, [jsContent, {type: "text/javascript", "title": src}]);
-                        }, 0);
+                        headFragment.addScript(jsContent, src);
                     });
+                    headFragment.flush();
 
-                    // remove global jquery references and restore previous 'jQuery' and '$' objects on window scope
-                    self = this;
-                    window.setTimeout(function() {
-                        frm.execScript(' jQuery.noConflict(true); ', true);
-                        frm.sendMessage({debug: self.debug,
-                            previewMode: previewMode,
-                            resources: self.resources}, 'init');
-                        success();
-                    }, 0);
                 }.createDelegate(this));
 
             }.createDelegate(this));
@@ -310,21 +294,9 @@
             });
         },
 
-        _buildOverlay: function(frm) {
-            var self;
-            self = this;
+        _buildOverlay: function() {
             console.log('_buildOverlay');
-            frm.sendMessage({
-                getName: function(id) {
-                    var idx, record;
-                    idx = self.stores.pageModel.findExact('id', id);
-                    if (idx === -1) {
-                        return null;
-                    }
-                    record = self.stores.pageModel.getAt(idx);
-                    return record.get('name');
-                }
-            }, 'buildoverlay');
+            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('buildoverlay');
         }
 
     });

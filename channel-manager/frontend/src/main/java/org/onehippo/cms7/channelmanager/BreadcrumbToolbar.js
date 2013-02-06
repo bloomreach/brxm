@@ -30,7 +30,7 @@
             this.breadcrumbStackSize = 0;
             this.breadcrumbIconUrl = config.breadcrumbIconUrl;
 
-            if (typeof config.items === 'undefined') {
+            if (config.items === undefined) {
                 config.items = [];
             }
 

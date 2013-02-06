@@ -19,9 +19,16 @@
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.UI');
     $.namespace('Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler');
 
-    var Main, Factory, page;
+    var hostToIFrame, iframeToHost, Factory, page;
 
-    Main = Hippo.ChannelManager.TemplateComposer.IFrame.Main;
+    hostToIFrame = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame;
+    iframeToHost = window.parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.iframeToHost;
+
+    $(window).unload(function() {
+        hostToIFrame = null;
+        iframeToHost = null;
+    });
+
     Factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
 
     page = {
@@ -40,86 +47,77 @@
             this.preview = data.previewMode;
             this.resources = data.resources;
 
-            var pageOnHostMessage = function() {
-                var func, scope, single, msg;
-                func = arguments[0];
-                scope = arguments[1];
-                single = arguments[2];
-                msg = arguments[3];
-
-                onhostmessage(function() {
+            var subscribeIntercepted = function(topic, func, scope) {
+                hostToIFrame.subscribe(topic, function() {
                     var value;
                     try {
-                        if (typeof Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['pre'+msg] === 'function') {
-                            Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['pre'+msg]();
+                        if (typeof Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['pre'+topic] === 'function') {
+                            Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['pre'+topic]();
                         }
                     } catch (preCallHandlerException) {
                         console.log('Error calling pre-hostmessage handler. '+preCallHandlerException);
                     }
                     value = func.apply(scope, arguments);
                     try {
-                        if (typeof Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['post'+msg] === 'function') {
-                            Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['post'+msg](value);
+                        if (typeof Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['post'+topic] === 'function') {
+                            Hippo.ChannelManager.TemplateComposer.IFrame.PageHostMessageHandler['post'+topic](value);
                         }
                     } catch (postCallHandlerException) {
                         console.log('Error calling post-hostmessage handler. '+postCallHandlerException);
                     }
                     return value;
-                }, scope, single, msg);
+                }, scope);
             };
 
-            pageOnHostMessage(function(msg) {
-                var facade = msg.data;
-                this.createContainers(facade);
+            subscribeIntercepted('buildoverlay', function() {
+                this.createContainers();
                 return false;
-            }, this, false, 'buildoverlay');
+            }, this);
 
-            pageOnHostMessage(function(msg) {
+            subscribeIntercepted('showoverlay', function() {
                 this.getOverlay().show();
                 $('.empty-container-placeholder').show();
                 this.requestSync();
                 this.sync();
                 return false;
-            }, this, false, 'showoverlay');
+            }, this);
 
-            pageOnHostMessage(function(msg) {
+            subscribeIntercepted('hideoverlay', function() {
                 this.getOverlay().hide();
                 $('.empty-container-placeholder').hide();
                 return false;
-            }, this, false, 'hideoverlay');
+            }, this);
 
-            onhostmessage(function(msg) {
-                console.log('onhostmessage select');
-                this.select(msg.data.id);
+            hostToIFrame.subscribe('select', function(id) {
+                this.select(id);
                 return false;
-            }, this, false, 'select');
+            }, this);
 
-            onhostmessage(function(msg) {
-                console.log('onhostmessage deselect');
+            hostToIFrame.subscribe('deselect', function() {
                 this.deselect();
                 return false;
-            }, this, false, 'deselect');
+            }, this);
 
-            onhostmessage(function(msg) {
-                this.highlight(msg.data.groups);
+            hostToIFrame.subscribe('highlight', function() {
+                this.highlight();
                 return false;
-            }, this, false, 'highlight');
+            }, this);
 
-            onhostmessage(function(msg) {
-                this.unhighlight(msg.data.groups);
+            hostToIFrame.subscribe('unhighlight', function() {
+                this.unhighlight();
                 return false;
-            }, this, false, 'unhighlight');
+            }, this);
 
-            onhostmessage(function(msg) {
-                this.selectVariant(msg.data.id, msg.data.variant);
+            hostToIFrame.subscribe('selectVariant', function(id, variant) {
+                this.selectVariant(id, variant);
                 return false;
-            }, this, false, 'selectVariant');
+            }, this);
 
-            pageOnHostMessage(function(msg) {
+            subscribeIntercepted('resize', function() {
                 this.requestSync();
                 this.sync();
                 return false;
-            }, this, false, 'resize');
+            }, this);
 
         },
 
@@ -137,28 +135,23 @@
         retrieve : function(id) {
             var o = Factory.getById.call(Factory, id);
             if (o === null) {
-                Main.exception(this.resources['manager-object-not-found'].format(id));
+                iframeToHost.exception(this.resources['manager-object-not-found'].format(id));
             }
             return o;
         },
 
-        createContainers : function(facade) {
+        createContainers : function() {
             var self = this, container;
             try {
-                //attach mouseover/mouseclick for components
-                $('.' + HST.CLASS.CONTAINER).each(function(index) {
+                $('.' + HST.CLASS.CONTAINER).each(function() {
                     container = self.createContainer(this, self);
-                    if (container !== null) {
-                        container.updateSharedData(facade);
-                    }
                 });
             } catch(e) {
-                sendMessage({msg: 'Error creating containers.', exception: e}, "iframeexception");
+                iframeToHost.exception('Error creating containers.', e);
             }
         },
 
         select: function(id) {
-            console.log('this.current = this.retrieve(element);');
             var selection = this.retrieve(id);
             if (this.current === selection) {
                 return;
@@ -174,12 +167,12 @@
             if (this.current !== null) {
                 this.current.deselect();
                 this.current = null;
-                sendMessage({}, 'deselect');
+                iframeToHost.publish('deselect');
             }
         },
 
         add: function(element, parentId) {
-            if (typeof this.containers[parentId] !== 'undefined') {
+            if (this.containers[parentId] !== undefined) {
                 var container = this.containers[parentId];
                 container.add(element);
                 this.checkStateChanges();
@@ -187,14 +180,13 @@
         },
 
         remove : function(element) {
-            var type, id, xtype, container;
+            var type, id, container;
             if (!element.hasAttribute(HST.ATTR.ID)) {
-                element = $(element).parents('.'+HST.CLASS.CONTAINER)[0];
+                element = $(element).parents('.' + HST.CLASS.CONTAINER)[0];
             }
 
             type = element.getAttribute(HST.ATTR.TYPE);
             id = element.getAttribute(HST.ATTR.ID);
-            xtype = element.getAttribute(HST.ATTR.XTYPE);
 
             if (type === HST.CONTAINERITEM) {
                 container = this.containers[id];
@@ -244,13 +236,13 @@
             this.currentContainer = null;
         },
 
-        highlight : function(groups) {
+        highlight : function() {
             $.each(this.containers, function(key, value) {
                 value.highlight();
             });
         },
 
-        unhighlight : function(groups) {
+        unhighlight : function() {
             $.each(this.containers, function(key, value) {
                 value.unhighlight();
             });
@@ -273,7 +265,7 @@
                     rearranges.push(rearrange);
                 }
             });
-            sendMessage(rearranges, 'rearrange');
+            iframeToHost.publish('rearrange', rearranges);
             this.sync();
         },
 
@@ -290,17 +282,11 @@
             this.syncRequested = false;
         },
 
-        updateSharedData : function(facade) {
-            $.each(this.containers, function(key, value) {
-                value.updateSharedData(facade);
-            });
-        },
-
         getOverlay : function() {
             return this.overlay;
         }
     };
 
-    Main.subscribe('initialize', page.init, page);
+    hostToIFrame.subscribe('init', page.init, page);
 
 }(jQuery));

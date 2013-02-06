@@ -47,6 +47,8 @@ public final class PageEditorBundle {
 
     public static final String PAGE_EDITOR = "PageEditor.js";
 
+    public static final String IFRAME_PANEL = "IFramePanel.js";
+
     public static final String ALL = "page-editor-all.js";
 
 

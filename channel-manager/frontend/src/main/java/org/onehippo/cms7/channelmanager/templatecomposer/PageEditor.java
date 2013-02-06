@@ -357,13 +357,14 @@ public class PageEditor extends ExtPanel {
                     rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_UI)).toString(),
 
                     rc.urlFor(new ResourceReference(GlobalJsResourceBehavior.class, GlobalJsResourceBehavior.GLOBAL)).toString(),
-                    rc.urlFor(new ResourceReference(TemplateComposerGlobalBundle.class, "templatecomposerglobal.js")).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.MAIN)).toString(),
+                    rc.urlFor(new ResourceReference(TemplateComposerGlobalBundle.class, TemplateComposerGlobalBundle.GLOBALS)).toString(),
                     rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.UTIL)).toString(),
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.DRAG_DROP)).toString(),
                     rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.FACTORY)).toString(),
                     rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.PAGE)).toString(),
                     rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.WIDGETS)).toString(),
-                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString()));
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.SURFANDEDIT)).toString(),
+                    rc.urlFor(new ResourceReference(IFrameBundle.class, IFrameBundle.LAST)).toString()));
         } else {
             properties.put("iFrameJsHeadContributions", Arrays.asList(
                     rc.urlFor(new ResourceReference(JQueryBundle.class, JQueryBundle.JQUERY_ALL_MIN)).toString(),
