@@ -110,7 +110,8 @@ public class DocumentEvent {
     }
 
     private void initSourceVariant(final Node node, final Session session) throws RepositoryException {
-        sourceVariant = JcrUtils.getStringProperty(node, "hippolog:eventDocument", null);
+        final String eventDocument = JcrUtils.getStringProperty(node, "hippolog:eventDocument", null);
+        sourceVariant = fixPathForRequests(eventDocument);
         sourceVariantExists = !StringUtils.isEmpty(sourceVariant) && session.itemExists(sourceVariant);
     }
 
@@ -184,6 +185,24 @@ public class DocumentEvent {
         } catch (ItemNotFoundException ignore) {
         }
         return null;
+    }
+
+    private String fixPathForRequests(String path) {
+        if (path == null || !path.endsWith("hippo:request")) {
+            return path;
+        }
+
+        String[] pathElts = path.split("/");
+        StringBuilder newPath = new StringBuilder();
+        // build new path, strip last element, eg "hippo:request"
+        for (int i = 0; i < pathElts.length - 1; i++) {
+            if (pathElts[i].length() > 0) {
+                newPath.append("/").append(pathElts[i]);
+            }
+        }
+        // add last part again to point to document
+        newPath.append("/").append(pathElts[pathElts.length - 2]);
+        return newPath.toString();
     }
 
 }
