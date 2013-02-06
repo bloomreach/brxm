@@ -45,6 +45,12 @@
     border-width: 1px;
     height: 800px;
 }
+
+.updater-tree div.hippo-tree div.wicket-tree {
+    height: 800px;
+    overflow-y: auto;
+}
+
 .updater-details {
     margin: 10px;
     width: 95%;
