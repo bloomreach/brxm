@@ -79,9 +79,10 @@ public class ResetDialog extends AbstractDialog<Node> {
     public IModel getTitle() {
         return new Model<String>("Refresh Session");
     }
-    
+
     @Override
     public IValueMap getProperties() {
-        return DialogConstants.SMALL;
+        return DialogConstants.MEDIUM;
     }
+
 }
