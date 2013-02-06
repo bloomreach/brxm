@@ -31,9 +31,11 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.addon.module.ModuleInstance;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
+import org.hippoecm.hst.core.container.ComponentsException;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
+import org.hippoecm.hst.core.container.NoSuchComponentException;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.addon.module.runtime.ModuleInstanceImpl;
 import org.slf4j.Logger;
@@ -259,6 +261,53 @@ public class SpringComponentManager implements ComponentManager {
                 log.warn("The requested bean doesn't exist: '{}' in the addon module context, '{}'.",
                          name, ArrayUtils.toString(addonModuleNames));
             }
+        }
+
+        return bean;
+    }
+
+    public <T> T getComponent(Class<T> requiredType) throws ComponentsException {
+        return getComponent(requiredType, (String []) null);
+    }
+
+    public <T> T getComponent(Class<T> requiredType, String ... addonModuleNames) throws ComponentsException {
+        T bean = null;
+
+        if (addonModuleNames == null || addonModuleNames.length == 0) {
+            try {
+                bean = (T) applicationContext.getBean(requiredType);
+            } catch (Exception e) {
+                log.warn("The requested bean doesn't exist by the required type: '{}'", requiredType);
+            }
+        } else {
+            if (addonModuleInstancesMap == null || addonModuleInstancesMap.isEmpty()) {
+                throw new ModuleNotFoundException("No Addon Module is found.");
+            }
+            
+            ModuleInstance moduleInstance = addonModuleInstancesMap.get(addonModuleNames[0]);
+
+            if (moduleInstance == null) {
+                throw new ModuleNotFoundException("Module is not found: '" + addonModuleNames[0] + "'");
+            }
+
+            for (int i = 1; i < addonModuleNames.length; i++) {
+                moduleInstance = moduleInstance.getModuleInstance(addonModuleNames[i]);
+
+                if (moduleInstance == null) {
+                    throw new ModuleNotFoundException("Module is not found in '" + ArrayUtils.toString(ArrayUtils.subarray(addonModuleNames, 0, i + 1)) + "'");
+                }
+            }
+
+            try {
+                bean = (T) moduleInstance.getComponent(requiredType);
+            } catch (Exception e) {
+                log.warn("The requested bean doesn't exist by the required type: '{}' in the addon module context, '{}'.",
+                        requiredType, ArrayUtils.toString(addonModuleNames));
+            }
+        }
+
+        if (bean == null) {
+            throw new NoSuchComponentException("No component found, not exactly matching a single component by the specified type, " + requiredType);
         }
 
         return bean;

@@ -85,6 +85,19 @@ public interface ComponentManager
     <T> T getComponent(String name);
 
     /**
+     * Returns the registered container component by the specified type if any.
+     * Implementation may also look up a component by translating the specified type into a conventional FQCN string of the type
+     * if a component is not found by the specified type.
+     * Returns null if no component is found.
+     * If there is not exactly single matching component found by the specified type, then it throws a {@link NoSuchComponentException}.
+     * 
+     * @param requiredType type the bean must match; can be an interface or superclass.
+     * @return component matching the required type or null if not found by the specified type
+     * @throws NoSuchComponentException
+     */
+    <T> T getComponent(Class<T> requiredType) throws ComponentsException;
+
+    /**
      * Returns the registered container components that match the given object type (including subclasses).
      * Returns empty map if a component is not found by the specified required type.
      * 
@@ -108,6 +121,22 @@ public interface ComponentManager
      * @throws ModuleNotFoundException thrown when module is not found by the addonModuleNames
      */
     <T> T getComponent(String name, String ... addonModuleNames);
+
+    /**
+     * Returns the registered component from a child context by the specified type.
+     * Implementation may also look up a component by translating the specified type into a conventional FQCN string of the type
+     * if a component is not found by the specified type.
+     * Returns null if no component is found.
+     * If there is not exactly single matching component found by the specified type, then it throws a {@link NoSuchComponentException}.
+     * If <CODE>addonModuleNames</CODE> consists of multiple items, then 
+     * each <CODE>addonModuleNames</CODE> item is regarded as child addon module name 
+     * in the descendant hierarchy, as ordered.
+     * @param requiredType type the bean must match; can be an interface or superclass.
+     * @param addonModuleNames
+     * @return component matching the required type or null if not found by the specified type
+     * @throws ComponentsException
+     */
+    <T> T getComponent(Class<T> requiredType, String ... addonModuleNames) throws ComponentsException;
 
     /**
      * Returns the registered container component that match the given object type (including subclasses) from a child context.

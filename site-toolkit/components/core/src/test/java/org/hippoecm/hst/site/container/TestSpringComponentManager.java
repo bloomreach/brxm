@@ -15,6 +15,13 @@
  */
 package org.hippoecm.hst.site.container;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,18 +32,12 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
 import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
+import org.hippoecm.hst.core.container.NoSuchComponentException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.web.context.ServletContextAware;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 public class TestSpringComponentManager {
     
@@ -155,6 +156,31 @@ public class TestSpringComponentManager {
         assertNotNull(componentManager.getComponent("greeting4"));
         assertNotNull(componentManager.getComponent("greeting5"));
         
+        componentManager.stop();
+        componentManager.close();
+    }
+
+    @Test
+    public void testGetComponentByType() {
+        Configuration configuration = new PropertiesConfiguration();
+        configuration.setProperty("existing.key", "some value");
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        String [] configurationResources = new String [] { SIMPLE_BEANS_4 };
+        componentManager.setConfigurationResources(configurationResources);
+
+        componentManager.initialize();
+        componentManager.start();
+
+        SingleBean singleBean = componentManager.getComponent(SingleBean.class);
+        assertNotNull(singleBean);
+
+        try {
+            String aGreeting = componentManager.getComponent(String.class);
+            fail("Because there are multiple String beans, it must not be successful.");
+        } catch (NoSuchComponentException e) {
+            // as expected.
+        }
+
         componentManager.stop();
         componentManager.close();
     }

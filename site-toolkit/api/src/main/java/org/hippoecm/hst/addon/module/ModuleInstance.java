@@ -18,6 +18,8 @@ package org.hippoecm.hst.addon.module;
 import java.util.List;
 import java.util.Map;
 
+import org.hippoecm.hst.core.container.ComponentsException;
+
 public interface ModuleInstance {
 
     public String getName();
@@ -33,7 +35,9 @@ public interface ModuleInstance {
     public void close();
 
     public <T> T getComponent(String name);
-    
+
+    public <T> T getComponent(Class<T> requiredType) throws ComponentsException;
+
     public <T> Map<String, T> getComponentsOfType(Class<T> requiredType);
 
     public ModuleInstance getModuleInstance(String name);

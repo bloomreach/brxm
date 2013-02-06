@@ -29,8 +29,10 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
+import org.hippoecm.hst.core.container.ComponentsException;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
+import org.hippoecm.hst.core.container.NoSuchComponentException;
 import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.DefaultComponentManagerApplicationContext;
@@ -153,6 +155,40 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
                 } catch (Exception ignore) {
                 }
             }
+        }
+
+        return bean;
+    }
+
+    @Override
+    public <T> T getComponent(Class<T> requiredType) throws ComponentsException {
+        return getComponent(requiredType, (String []) null);
+    }
+
+    @Override
+    public <T> T getComponent(Class<T> requiredType, String ... contextNames) throws ComponentsException {
+        T bean = null;
+
+        if (contextNames == null || contextNames.length == 0) {
+            try {
+                bean = (T) applicationContext.getBean(requiredType);
+            } catch (Exception ignore) {
+            }
+        }
+
+        if (bean == null && servletContext != null) {
+            WebApplicationContext rootWebAppContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+
+            if (rootWebAppContext != null) {
+                try {
+                    bean = (T) rootWebAppContext.getBean(requiredType);
+                } catch (Exception ignore) {
+                }
+            }
+        }
+
+        if (bean == null) {
+            throw new NoSuchComponentException("No component found, not exactly matching a single component by the specified type, " + requiredType);
         }
 
         return bean;

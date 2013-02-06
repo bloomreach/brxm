@@ -23,6 +23,7 @@ import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
+import org.hippoecm.hst.core.container.ComponentsException;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 
 /**
@@ -66,8 +67,16 @@ public class ComponentManagerFacade implements ComponentManagerAware, ComponentM
         return this.componentManager.<T>getComponent(name);
     }
 
+    public <T> T getComponent(Class<T> requiredType) throws ComponentsException {
+        return this.componentManager.<T>getComponent(requiredType);
+    }
+
     public <T> T getComponent(String name, String ... contextNames) {
         return this.componentManager.<T>getComponent(name, contextNames);
+    }
+
+    public <T> T getComponent(Class<T> requiredType, String... contextNames) throws ComponentsException {
+        return this.componentManager.<T>getComponent(requiredType, contextNames);
     }
 
     public <T> Map<String, T> getComponentsOfType(Class<T> requiredType) {
@@ -113,5 +122,5 @@ public class ComponentManagerFacade implements ComponentManagerAware, ComponentM
     public String[] getConfigurationResources() {
         return this.componentManager.getConfigurationResources();
     }
-    
+
 }

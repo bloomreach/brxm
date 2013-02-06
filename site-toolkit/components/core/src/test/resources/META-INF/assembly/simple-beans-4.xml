@@ -54,4 +54,8 @@
     <constructor-arg value="Hello, World! (2)" />
   </bean>
 
+  <bean id="singleBean" class="org.hippoecm.hst.site.container.SingleBean">
+  </bean>
+
+
 </beans>

@@ -128,6 +128,7 @@ api/src/main/java/org/hippoecm/hst/core/component/WrapperElement.java -text
 api/src/main/java/org/hippoecm/hst/core/component/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ComponentManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ComponentManagerAware.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/container/ComponentsException.java -text
 api/src/main/java/org/hippoecm/hst/core/container/ContainerConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ContainerConstants.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ContainerException.java svneol=native#text/plain
@@ -147,6 +148,7 @@ api/src/main/java/org/hippoecm/hst/core/container/HstContainerURLProvider.java s
 api/src/main/java/org/hippoecm/hst/core/container/HstNavigationalStateCodec.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstRequestProcessor.java -text
 api/src/main/java/org/hippoecm/hst/core/container/ModuleNotFoundException.java -text
+api/src/main/java/org/hippoecm/hst/core/container/NoSuchComponentException.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageCacheContext.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageCacheKey.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageErrorHandler.java svneol=native#text/plain
@@ -663,6 +665,7 @@ components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=nat
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/AlwaysFailingOnStartBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/MyServletContextAwareSpringBean.java -text
+components/core/src/test/java/org/hippoecm/hst/site/container/SingleBean.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestHstSiteConfigServlet.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/TestModuleDescriptorUtils.java -text
 components/core/src/test/java/org/hippoecm/hst/site/container/TestResourceFactoryBean.java -text

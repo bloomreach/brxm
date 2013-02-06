@@ -15,14 +15,17 @@
  */
 package org.hippoecm.hst.mock.core.container;
 
+import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ComponentsException;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 
 public class MockComponentManager implements ComponentManager {
@@ -82,6 +85,29 @@ public class MockComponentManager implements ComponentManager {
         return (T) components.get(name);
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> T getComponent(final Class<T> requiredType) throws ComponentsException {
+        List<Object> beans = new ArrayList<Object>();
+
+        for (Map.Entry<String, Object> entry : components.entrySet()) {
+            Object component = entry.getValue();
+
+            if (component != null && requiredType.isAssignableFrom(component.getClass())) {
+                beans.add(component);
+            }
+        }
+
+        if (beans.isEmpty()) {
+            return null;
+        }
+
+        if (beans.size() != 1) {
+            throw new ComponentsException("Multiple components found by the specified type, " + requiredType);
+        }
+
+        return (T) beans.get(0);
+    }
+
     @Override
     public <T> Map<String, T> getComponentsOfType(final Class<T> requiredType) {
         return null;
@@ -90,7 +116,11 @@ public class MockComponentManager implements ComponentManager {
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getComponent(final String name, final String... addonModuleNames) {
-        return (T) components.get(name);
+        return getComponent(name);
+    }
+
+    public <T> T getComponent(final Class<T> requiredType, final String... addonModuleNames) {
+        return getComponent(requiredType);
     }
 
     @Override
