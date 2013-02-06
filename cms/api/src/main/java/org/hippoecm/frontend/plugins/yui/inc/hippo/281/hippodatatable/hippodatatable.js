@@ -31,11 +31,16 @@ if (!YAHOO.hippo.DataTable) {
         var Dom = YAHOO.util.Dom;
 
         function getPixels(el, attr) {
-            var style = Dom.getStyle(el, attr);
-            if (style) {
-                return parseInt(style, 10);
+            var style, pixels;
+            style = Dom.getStyle(el, attr);
+            pixels = 0;
+            if (style && style !== 'auto') {
+                pixels = parseInt(style, 10);
             }
-            return 0;
+            if (isNaN(pixels)) {
+                pixels = 0;
+            }
+            return pixels;
         }
 
         function getRegion(el) {
