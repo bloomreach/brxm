@@ -28,9 +28,11 @@ import org.apache.wicket.model.IModel;
 public class CodeMirrorEditor extends TextArea<String> {
 
     private String markupId;
+    private String editorName;
 
-    public CodeMirrorEditor(final String id, final IModel<String> model) {
+    public CodeMirrorEditor(final String id, final String editorName, final IModel<String> model) {
         super(id, model);
+        this.editorName = editorName;
         setOutputMarkupId(true);
         markupId = getMarkupId();
         add(JavascriptPackageResource.getHeaderContribution(CodeMirrorEditor.class, "lib/codemirror.js"));
@@ -47,7 +49,8 @@ public class CodeMirrorEditor extends TextArea<String> {
     }
 
     private String getJavaScriptForEditor() {
-        return "var cm = CodeMirror.fromTextArea(document.getElementById('"+markupId+"'), " +
-                "{lineNumbers: true, matchBrackets: true, mode: \"text/x-groovy\", onChange: function(cm) { cm.save(); }});\n";
+        return "var cm = CodeMirror.fromTextArea(document.getElementById('" + markupId + "'), " +
+                "{lineNumbers: true, matchBrackets: true, mode: \"text/x-groovy\", " +
+                "onChange: function(cm) { cm.save(); }, editorName: \"" + editorName + "\"});\n";
     }
 }

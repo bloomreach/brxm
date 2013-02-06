@@ -69,3 +69,10 @@
     overflow: hidden;
     white-space: nowrap;
 }
+
+.updater-editor {
+}
+
+.updater-registry-editor {
+    height: 600px !important;
+}

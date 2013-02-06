@@ -294,7 +294,7 @@ public class UpdaterEditor extends Panel {
 
         script = getStringProperty(HippoNodeType.HIPPOSYS_SCRIPT, null);
 
-        final TextArea<String> scriptEditor = new CodeMirrorEditor("script-editor", new PropertyModel<String>(this, "script"));
+        final TextArea<String> scriptEditor = new CodeMirrorEditor("script-editor", getEditorName(), new PropertyModel<String>(this, "script"));
         form.add(scriptEditor);
 
         final Component updaterOutput = createOutputComponent("updater-output");
@@ -683,4 +683,9 @@ public class UpdaterEditor extends Panel {
     protected boolean isDryRunCheckBoxVisible() {
         return true;
     }
+
+    protected String getEditorName() {
+        return "updater-editor";
+    }
+
 }

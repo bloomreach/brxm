@@ -26,6 +26,7 @@ var CodeMirror = (function() {
   function CodeMirror(place, givenOptions) {
     // Determine effective options based on given values and defaults.
     var options = {}, defaults = CodeMirror.defaults;
+    var editorName = givenOptions["editorName"];
     for (var opt in defaults)
       if (defaults.hasOwnProperty(opt))
         options[opt] = (givenOptions && givenOptions.hasOwnProperty(opt) ? givenOptions : defaults)[opt];
@@ -39,7 +40,7 @@ var CodeMirror = (function() {
       '<div style="overflow: hidden; position: relative; width: 3px; height: 0px;">' + // Wraps and hides input textarea
         '<textarea style="position: absolute; padding: 0; width: 1px; height: 1em" wrap="off" ' +
           'autocorrect="off" autocapitalize="off"></textarea></div>' +
-      '<div class="CodeMirror-scroll" tabindex="-1">' +
+      '<div class="' + editorName + ' CodeMirror-scroll" tabindex="-1">' +
         '<div style="position: relative">' + // Set to the height of the text, causes scrolling
           '<div style="position: relative">' + // Moved around its parent to cover visible view
             '<div class="CodeMirror-gutter"><div class="CodeMirror-gutter-text"></div></div>' +

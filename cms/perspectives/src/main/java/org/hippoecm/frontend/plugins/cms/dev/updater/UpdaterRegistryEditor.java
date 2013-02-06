@@ -81,5 +81,10 @@ public class UpdaterRegistryEditor extends UpdaterEditor {
         return false;
     }
 
+    @Override
+    protected String getEditorName() {
+        return "updater-registry-editor";
+    }
+
 
 }
