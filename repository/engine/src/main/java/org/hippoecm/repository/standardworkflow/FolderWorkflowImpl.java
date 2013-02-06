@@ -53,6 +53,7 @@ import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionManager;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -534,8 +535,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (name.startsWith("/")) {
             name = name.substring(1);
         }
-        String path = subject.getPath().substring(1);
-        Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
+        Node folder = rootSession.getNode(subject.getPath());
         if (folder.hasNode(name)) {
             if (folder.hasNode(newName)) {
                 throw new WorkflowException("Cannot rename document to same name");
@@ -545,16 +545,20 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 offspring = offspring.getParent();
             }
             offspring.checkout();
-            folder.getSession().move(offspring.getPath(), folder.getPath()+"/"+newName);
+            String nextSiblingRelPath = folder.getPrimaryNodeType().hasOrderableChildNodes() ? findNextSiblingRelPath(offspring) : null;
+            rootSession.move(offspring.getPath(), folder.getPath()+"/"+newName);
             renameChildDocument(folder, newName);
+            if (nextSiblingRelPath != null) {
+                String offspringRelPath = offspring.getName() + "[" + offspring.getIndex() + "]";
+                folder.orderBefore(offspringRelPath, nextSiblingRelPath);
+            }
             folder.save();
         }
     }
 
     public void rename(Document document, String newName) throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        String path = subject.getPath().substring(1);
-        Node folderNode = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
-        Node documentNode = rootSession.getNodeByUUID(document.getIdentity());
+        Node folderNode = rootSession.getNode(subject.getPath());
+        Node documentNode = rootSession.getNodeByIdentifier(document.getIdentity());
         if(documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE))  {
             documentNode = documentNode.getParent();
         }
@@ -563,10 +567,33 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                 throw new WorkflowException("Cannot rename document to same name");
             }
             documentNode.checkout();
-            folderNode.getSession().move(documentNode.getPath(), folderNode.getPath()+"/"+newName);
+            String nextSiblingRelPath = folderNode.getPrimaryNodeType().hasOrderableChildNodes() ? findNextSiblingRelPath(documentNode) : null;
+            rootSession.move(documentNode.getPath(), folderNode.getPath()+"/"+newName);
             renameChildDocument(folderNode, newName);
+            if (nextSiblingRelPath != null) {
+                String documentNodeRelPath = documentNode.getName() + "[" + documentNode.getIndex() + "]";
+                folderNode.orderBefore(documentNodeRelPath, nextSiblingRelPath);
+            }
             folderNode.save();
         }
+    }
+
+    private static String findNextSiblingRelPath(Node node) {
+        try {
+            Node parentNode = node.getParent();
+            for (NodeIterator siblings = parentNode.getNodes(); siblings.hasNext(); ) {
+                if (siblings.nextNode().isSame(node)) {
+                    if (siblings.hasNext()) {
+                        final Node nextSibling = siblings.nextNode();
+                        return nextSibling.getName() + "[" + nextSibling.getIndex() + "]";
+                    }
+                    return null;
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     static Node copy(Node source, Node target, Map<String, String[]> renames, String path) throws RepositoryException {
