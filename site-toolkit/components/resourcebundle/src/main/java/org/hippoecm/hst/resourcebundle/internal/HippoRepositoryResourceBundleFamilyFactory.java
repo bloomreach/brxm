@@ -77,16 +77,25 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                 Query query = session.getWorkspace().getQueryManager().createQuery(statement, Query.XPATH);
                 QueryResult result = query.execute();
 
-                List<Node> bundleNodes = new ArrayList<Node>();
-                for (NodeIterator nodeIt = result.getNodes(); nodeIt.hasNext(); ) {
-                    Node bundleNode = nodeIt.nextNode();
-                    if (bundleNode != null) {
-                        bundleNodes.add(bundleNode);
+                NodeIterator nodeIt = result.getNodes();
+                if (nodeIt.getSize() > 1) {
+                    // two bundles (both preview|live) with same resourcebundle:id are not allowed.
+                    final StringBuilder paths = new StringBuilder();
+                    while (nodeIt.hasNext()){
+                        paths.append(nodeIt.nextNode().getPath()).append(",");
                     }
-                }
-                if (!bundleNodes.isEmpty()) {
+                    // remove last comma
+                    final String logPaths = paths.substring(0, (paths.length() -1));
+                    log.warn("Cannot load resource bundle with resourcebundle:id '{}' because multiple " +
+                            "documents found with same id. Documents containint duplicate ids are: '{}'",
+                            basename, logPaths);
+                } else if (nodeIt.getSize() == 0){
+                    log.warn("Cannot load resource bundle with resourcebundle:id '{}' because no resource bundle " +
+                            "with this id found", basename);
+                } else {
+                    Node bundleNode = nodeIt.nextNode();
                     boolean isPreview = (credentials == previewCredentials);
-                    populateResourceBundleFamily(bundleFamily, basename, bundleNodes, isPreview);
+                    populateResourceBundleFamily(bundleFamily, bundleNode, isPreview);
                 }
             } catch (RepositoryException e) {
                 log.warn("Fail to query resource bundle node", e);
@@ -104,55 +113,51 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         return bundleFamily;
     }
 
-    private void populateResourceBundleFamily(final MutableResourceBundleFamily bundleFamily,
-                                              final String basename, Collection<Node> bundleNodes,
+    private void populateResourceBundleFamily(final MutableResourceBundleFamily bundleFamily, Node bundleNode,
                                               final boolean preview) throws RepositoryException {
 
-        for (Node bundleNode : bundleNodes) {
-            String [] keys = getPropertyAsStringArray(bundleNode, "resourcebundle:keys");
+        String[] keys = getPropertyAsStringArray(bundleNode, "resourcebundle:keys");
+        if (bundleNode.hasProperty("resourcebundle:messages")) {
+            try {
+                String[] messages = getPropertyAsStringArray(bundleNode, "resourcebundle:messages");
 
-            if (bundleNode.hasProperty("resourcebundle:messages")) {
+                if (messages != null) {
+                    Object[][] contents = createListResourceBundleContents(keys, messages);
+                    ResourceBundle defaultBundle = new SimpleListResourceBundle(contents);
+
+                    if (preview) {
+                        bundleFamily.setDefaultBundleForPreview(defaultBundle);
+                    } else {
+                        bundleFamily.setDefaultBundle(defaultBundle);
+                    }
+                }
+            } catch (Exception e) {
+                log.warn("Failed to load default resource bundle", e);
+            }
+        }
+
+        for (PropertyIterator propIt = bundleNode.getProperties("resourcebundle:messages_*"); propIt.hasNext(); ) {
+            Property prop = propIt.nextProperty();
+
+            if (prop != null) {
+                Locale locale = null;
+
                 try {
-                    String [] messages = getPropertyAsStringArray(bundleNode, "resourcebundle:messages");
-    
-                    if (messages != null) {
-                        Object[][] contents = createListResourceBundleContents(keys, messages);
-                        ResourceBundle defaultBundle = new SimpleListResourceBundle(contents);
-    
+                    locale = LocaleUtils.toLocale(prop.getName().substring("resourcebundle:messages_".length()));
+                    String[] localizedMessages = getPropertyAsStringArray(prop);
+
+                    if (localizedMessages != null) {
+                        Object[][] contents = createListResourceBundleContents(keys, localizedMessages);
+                        ResourceBundle localizedBundle = new SimpleListResourceBundle(contents);
+
                         if (preview) {
-                            bundleFamily.setDefaultBundleForPreview(defaultBundle);
+                            bundleFamily.setLocalizedBundleForPreview(locale, localizedBundle);
                         } else {
-                            bundleFamily.setDefaultBundle(defaultBundle);
+                            bundleFamily.setLocalizedBundle(locale, localizedBundle);
                         }
                     }
                 } catch (Exception e) {
-                    log.warn("Failed to load default resource bundle", e);
-                }
-            }
-
-            for (PropertyIterator propIt = bundleNode.getProperties("resourcebundle:messages_*"); propIt.hasNext(); ) {
-                Property prop = propIt.nextProperty();
-
-                if (prop != null) {
-                    Locale locale = null;
-
-                    try {
-                        locale = LocaleUtils.toLocale(prop.getName().substring("resourcebundle:messages_".length()));
-                        String [] localizedMessages = getPropertyAsStringArray(prop);
-
-                        if (localizedMessages != null) {
-                            Object[][] contents = createListResourceBundleContents(keys, localizedMessages);
-                            ResourceBundle localizedBundle = new SimpleListResourceBundle(contents);
-
-                            if (preview) {
-                                bundleFamily.setLocalizedBundleForPreview(locale, localizedBundle);
-                            } else {
-                                bundleFamily.setLocalizedBundle(locale, localizedBundle);
-                            }
-                        }
-                    } catch (Exception e) {
-                        log.warn("Failed to load resource bundle for locale: " + locale, e);
-                    }
+                    log.warn("Failed to load resource bundle for locale: " + locale, e);
                 }
             }
         }
