@@ -121,8 +121,18 @@ Hippo.Translation.Document = Ext.extend(Ext.FormPanel, {
             }
         };
 
+        Hippo.Translation.WicketHook.addListener(config.id, function() {
+            var record = self.record;
+            if (record !== null && self.dirty.indexOf(record) !== -1 && !record.checked) {
+                self.updateUrl(record, record.get('namefr'), false);
+            }
+        });
+
         this.onKeyUp = function(field, event) {
             var rec = self.record;
+            if (self.dirty.indexOf(rec) === -1) {
+                self.dirty.push(rec);
+            }
             if (self.updateUrlTask) {
                 self.updateUrlTask.cancel();
             }
