@@ -99,10 +99,14 @@ public class DocumentListFilter implements IClusterable {
             }
         }
 
-        if(log.isDebugEnabled()) {
+        // Checking for log levels enabled or not is not a good practice but in this case we want to avoid the cost
+        // of looping over {@link FilterDefinition}(s) in case the debug level is not enabled
+        if (log.isDebugEnabled()) {
             log.debug("Filter definitions are:");
             for(FilterDefinition def : filters) {
-                log.debug("  ("+def.state+","+def.path+","+def.parent+","+def.child+","+def.targetState+","+def.targetDisplay+","+def.targetName+")");
+                log.debug("  ({}, {}, {}, {}, {}, {}, {})", new Object[] {def.state, def.path, def.parent, def.child,
+                        def.targetState, def.targetDisplay, def.targetName});
+
             }
         }
     }
@@ -122,9 +126,9 @@ public class DocumentListFilter implements IClusterable {
                 try {
                     while (iter.hasNext() && nextNode == null) {
                         Node candidate = iter.nextNode();
-                        for (FilterDefinition def : filters) {
-                            if (def.match(currentState, candidate)) {
-                                if (!def.targetDisplay) {
+                        for (FilterDefinition filterDefinition : filters) {
+                            if (filterDefinition.match(currentState, candidate)) {
+                                if (!filterDefinition.targetDisplay) {
                                     candidate = null;
                                 }
                                 break;
