@@ -58,7 +58,7 @@ public interface IDialogService extends IClusterable {
         /**
          * The title of the dialog.  Will be displayed in the dialog border.
          */
-        IModel getTitle();
+        IModel<String> getTitle();
 
         /**
          * Invoked when the dialog is closed.  Since the dialog will be decorated

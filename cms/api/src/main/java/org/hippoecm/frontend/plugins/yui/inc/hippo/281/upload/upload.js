@@ -140,7 +140,8 @@ if (!YAHOO.hippo.Upload) {
 
             YAHOO.widget.Uploader.SWFURL = config.flashUrl;
 
-            this.root = new YAHOO.util.Element(Dom.get(id));
+            var rootElement = Dom.get(id);
+            this.root = new YAHOO.util.Element(rootElement);
             this.elements.uiElements = new YAHOO.util.Element(document.createElement('div'));
             Dom.setStyle(this.elements.uiElements, 'display', 'inline');
             this.root.appendChild(this.elements.uiElements);
@@ -175,7 +176,7 @@ if (!YAHOO.hippo.Upload) {
 
             this.initializeUploader();
 
-            YAHOO.hippo.HippoAjax.registerDestroyFunction(this.root, this.destroy, this);
+            YAHOO.hippo.HippoAjax.registerDestroyFunction(rootElement, this.destroy, this);
         };
 
         YAHOO.hippo.UploadWidget.prototype = {
@@ -491,7 +492,9 @@ if (!YAHOO.hippo.Upload) {
             },
 
             _removeDatatable : function() {
-                this.datatable.destroy();
+                if (Lang.isValue(this.datatable)) {
+                    this.datatable.destroy();
+                }
                 this.datatable = null;
             },
 
@@ -536,9 +539,8 @@ if (!YAHOO.hippo.Upload) {
                 if (this.indicator !== null && this.indicator !== undefined) {
                     this.indicator.hide();
                 }
-                if (this.datatable !== null && this.datatable !== undefined) {
-                    this.datatable.destroy();
-                }
+
+                this._removeDatatable();
 
                 this.progressBars.forEach(this, function(k, v) {
                     v.destroy();

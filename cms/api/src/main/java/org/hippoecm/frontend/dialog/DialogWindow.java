@@ -27,7 +27,6 @@ import org.apache.wicket.markup.html.JavascriptPackageResource;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.resources.JavascriptResourceReference;
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
@@ -85,24 +84,29 @@ public class DialogWindow extends ModalWindow implements IDialogService {
      * @param dialog
      */
     public void hide(Dialog dialog) {
-        if (dialog == shown) {
-            close();
-            cleanup();
-        }
         if (pending.contains(dialog)) {
             pending.remove(dialog);
         }
+
+        if (dialog == shown) {
+            close();
+        }
+    }
+
+    public void showPending() {
         if (pending.size() > 0) {
             show(pending.remove(0));
         }
     }
 
     public void close() {
-        AjaxRequestTarget target = AjaxRequestTarget.get();
-        if (target != null) {
-            close(target);
-        } else {
-            respondOnWindowClosed(null);
+        if (isShown()) {
+            AjaxRequestTarget target = AjaxRequestTarget.get();
+            if (target != null) {
+                close(target);
+            } else {
+                respondOnWindowClosed(null);
+            }
         }
     }
 
@@ -114,21 +118,21 @@ public class DialogWindow extends ModalWindow implements IDialogService {
 
     @Override
     public boolean isShown() {
-        return (shown != null);
+        return shown != null && super.isShown();
     }
 
     private void cleanup() {
         shown = null;
+        setTitle(new Model<String>("title"));
         setContent(new EmptyPanel(getContentId()));
         setWindowClosedCallback(null);
-        setTitle(new Model<String>("title"));
     }
 
     private void internalShow(Dialog dialog) {
         shown = dialog;
         dialog.setDialogService(this);
-        setContent(dialog.getComponent());
         setTitle(new StringWithoutLineBreaksModel(dialog.getTitle()));
+        setContent(dialog.getComponent());
         setWindowClosedCallback(new Callback(dialog));
 
         IValueMap properties = dialog.getProperties();

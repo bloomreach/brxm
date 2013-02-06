@@ -14,20 +14,27 @@
  *  limitations under the License.
  */
 
+/**
+ *  Customisations for Wicket.Window
+ *
+ *  - Added fullscreen support
+ *  - Register for a HippoAjax cleanup callback
+ *  - Custom getMarkup impl that does not contain a form element
+ */
 (function () {
-    var oldWindowInitialize, oldWindowBindInit, oldWindowBindClean;
+    "use strict";
+    var Event = YAHOO.util.Event, HippoAjax = YAHOO.hippo.HippoAjax,
+        oldWindowInitialize, oldWindowBindInit, oldWindowBindClean;
 
     oldWindowInitialize = Wicket.Window.prototype.initialize;
     Wicket.Window.prototype.initialize = function() {
-//        console.log('wicket.window initialize');
         oldWindowInitialize.apply(this, arguments);
         this.settings.isFullscreen = false;
     };
 
     Wicket.Window.prototype.onWindowResize = function(e) {
         var w, f, width, height;
-        if(this.isFullscreen) {
-//            console.log('onWindowResize');
+        if (this.isFullscreen) {
             w = this.window;
             f = this.content;
 
@@ -49,23 +56,24 @@
     Wicket.Window.prototype.bindInit = function() {
         oldWindowBindInit.apply(this, arguments);
 
-        //HippoAjax cleanup hook.
-        if(YAHOO.hippo.HippoAjax) {
-            YAHOO.hippo.HippoAjax.cleanupModal(this);
-        }
-
         //register window resize listener
-        if(YAHOO.util.Event) {
-            YAHOO.util.Event.on(window, 'resize', this.onWindowResize, this, true);
+        if (Event) {
+            Event.on(window, 'resize', this.onWindowResize, this, true);
         }
     };
 
     oldWindowBindClean = Wicket.Window.prototype.bindClean;
     Wicket.Window.prototype.bindClean = function() {
+        //HippoAjax cleanup hook.
+        if (HippoAjax) {
+            HippoAjax.cleanupModal(this);
+        }
+
         oldWindowBindClean.apply(this, arguments);
+
         //unregister window resize listener
-        if(YAHOO.util.Event) {
-            YAHOO.util.Event.removeListener(window, 'resize', this.onWindowResize);
+        if (Event) {
+            Event.removeListener(window, 'resize', this.onWindowResize);
         }
     };
 
@@ -127,75 +135,56 @@
     };
 
     /**
-     * Returns the modal window markup with specified element identifiers.
+     * Returns the modal window markup with specified element identifiers and without a form element.
      */
     Wicket.Window.getMarkup = function(idWindow, idClassElement, idCaption, idContent, idTop, idTopLeft, idTopRight, idLeft, idRight, idBottomLeft, idBottomRight, idBottom, idCaptionText, isFrame) {
-        var s =
-                "<div class=\"wicket-modal\" id=\""+idWindow+"\" style=\"top: 10px; left: 10px; width: 100px;\">"+
-                        "<div id=\""+idClassElement+"\">"+
+        var s = "<div class=\"wicket-modal\" id=\"" + idWindow + "\" style=\"top: 10px; left: 10px; width: 100px;\">" +
+                "<div id=\"" + idClassElement + "\">" +
+                "<div class=\"w_top_1\">" +
+                "<div class=\"w_topLeft\" id=\"" + idTopLeft + "\"></div>" +
+                "<div class=\"w_topRight\" id=\"" + idTopRight + "\"></div>" +
+                "<div class=\"w_top\" id='" + idTop + "'></div>" +
+                "</div>" +
+                "<div class=\"w_left\" id='" + idLeft + "'>" +
+                "<div class=\"w_right_1\">" +
+                "<div class=\"w_right\" id='" + idRight + "'>" +
+                "<div class=\"w_content_1\" onmousedown=\"if (Wicket.Browser.isSafari()) { event.ignore = true; }  else { Wicket.stopEvent(event); } \">" +
+                "<div class=\"w_caption\"  id=\"" + idCaption + "\">" +
+                "<a class=\"w_close\" href=\"#\"></a>" +
+                "<span id=\"" + idCaptionText + "\" class=\"w_captionText\"></span>" +
+                "</div>" +
 
-                        "<div class=\"w_top_1\">"+
+                "<div class=\"w_content_2\">" +
+                "<div class=\"w_content_3\">" +
+                "<div class=\"w_content\">";
 
-                        "<div class=\"w_topLeft\" id=\""+idTopLeft+"\">"+
-                        "</div>"+
-
-                        "<div class=\"w_topRight\" id=\""+idTopRight+"\">"+
-                        "</div>"+
-
-                        "<div class=\"w_top\" id='"+idTop+"'>"+
-                        "</div>"+
-
-                        "</div>"+
-
-                        "<div class=\"w_left\" id='"+idLeft+"'>"+
-                        "<div class=\"w_right_1\">"+
-                        "<div class=\"w_right\" id='"+idRight+"'>"+
-                        "<div class=\"w_content_1\" onmousedown=\"if (Wicket.Browser.isSafari()) { event.ignore = true; }  else { Wicket.stopEvent(event); } \">"+
-                        "<div class=\"w_caption\"  id=\""+idCaption+"\">"+
-                        "<a class=\"w_close\" href=\"#\"></a>"+
-                        "<span id=\""+idCaptionText+"\" class=\"w_captionText\"></span>"+
-                        "</div>"+
-
-                        "<div class=\"w_content_2\">"+
-                        "<div class=\"w_content_3\">"+
-                        "<div class=\"w_content\">";
         if (isFrame) {
-            s+= "<iframe";
+            s += "<iframe";
             if (Wicket.Browser.isIELessThan7()) {
-                s+= " src=\"about:blank\"";
+                s += " src=\"about:blank\"";
             }
-            s+= " frameborder=\"0\" id=\""+idContent+"\" allowtransparency=\"false\" style=\"height: 200px\" class=\"wicket_modal\"></iframe>";
+            s += " frameborder=\"0\" id=\"" + idContent + "\" allowtransparency=\"false\" style=\"height: 200px\" class=\"wicket_modal\"></iframe>";
         } else {
-            s+=
-                    "<div id='"+idContent+"' class='w_content_container'></div>";
+            s += "<div id='" + idContent + "' class='w_content_container'></div>";
         }
-        s+=
-                "</div>"+
-                        "</div>"+
-                        "</div>"+
-                        "</div>"+
-                        "</div>"+
-                        "</div>"+
-                        "</div>"+
 
-
-                        "<div class=\"w_bottom_1\" id=\""+idBottom+"\">"+
-
-                        "<div class=\"w_bottomRight\"  id=\""+idBottomRight+"\">"+
-                        "</div>"+
-
-                        "<div class=\"w_bottomLeft\" id=\""+idBottomLeft+"\">"+
-                        "</div>"+
-
-                        "<div class=\"w_bottom\" id=\""+idBottom+"\">"+
-                        "</div>"+
-
-
-                        "</div>"+
-
-
-                        "</div>"+
-                        "</div>";
+        s +=    "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "<div class=\"w_bottom_1\" id=\"" + idBottom + "\">" +
+                "<div class=\"w_bottomRight\"  id=\"" + idBottomRight + "\">" +
+                "</div>" +
+                "<div class=\"w_bottomLeft\" id=\"" + idBottomLeft + "\">" +
+                "</div>" +
+                "<div class=\"w_bottom\" id=\"" + idBottom + "\">" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>";
 
         return s;
     };

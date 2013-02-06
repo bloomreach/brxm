@@ -45,7 +45,6 @@ import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationS
 public abstract class MultiFileUploadDialog extends AbstractDialog {
     private static final long serialVersionUID = 1L;
 
-
     private FileUploadWidget widget;
     private AjaxButton ajaxButton;
     private AjaxButton closeButton;
