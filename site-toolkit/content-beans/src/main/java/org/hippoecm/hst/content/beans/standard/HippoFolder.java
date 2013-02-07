@@ -201,20 +201,20 @@ public class HippoFolder extends HippoItem implements HippoFolderBean {
                     if(o instanceof HippoDocumentBean) {
                         return (HippoDocumentBean)o;
                     } else {
-                        log.warn("Cannot return HippoDocument for. Return null '{}'", node.getPath());
+                        log.warn("Cannot return HippoDocument for  '{}'. Return null", node.getPath());
                     }
                 } 
                 return null;
             } else if(node.getParent().isNodeType(HippoNodeType.NT_HANDLE) || node.getParent().isNodeType(HippoNodeType.NT_FACETRESULT)) {
                 Object hippoDoc = objectConverter.getObject(node);
                 if (hippoDoc == null) {
-                    log.warn("Cannot return HippoDocument for. Return null '{}'", node.getPath());
+                    log.warn("Cannot return HippoDocument for '{}'. Return null", node.getPath());
                 }
                 if (!(hippoDoc instanceof HippoDocument)) {
                     log.info("Cannot bind '{}' to a HippoDocument. Return null.", node.getPath());
                     return null;
                 }
-                return (HippoDocument)hippoDoc;
+                return (HippoDocument) hippoDoc;
             }
         } catch (RepositoryException e) {
             log.error("Cannot return HippoDocument. Return null : {} " , e);
