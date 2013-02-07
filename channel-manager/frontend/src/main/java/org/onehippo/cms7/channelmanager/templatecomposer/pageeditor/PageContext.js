@@ -246,22 +246,20 @@
 
             return new Hippo.Future(function(success, fail) {
                 this.iframeResourceCache.when(function(iframeResources) {
-                    var resourceCache, headFragment, self, onIFrameLoaded;
+                    var resourceCache, headFragment, self;
 
                     resourceCache = iframeResources.cache;
                     headFragment = iframe.createHeadFragment();
                     self = this;
 
-                    onIFrameLoaded = function() {
-                        iframe.iframeToHost.unsubscribe('iframeloaded', onIFrameLoaded, self);
+                    iframe.iframeToHost.subscribeOnce('iframeloaded', function() {
                         iframe.hostToIFrame.publish('init', {
                             debug: self.debug,
                             previewMode: previewMode,
                             resources: self.resources
                         });
                         success();
-                    };
-                    iframe.iframeToHost.subscribe('iframeloaded', onIFrameLoaded, self);
+                    }, self);
 
                     Ext.each(iframeResources.css, function(src) {
                         headFragment.addStyleSheet(resourceCache[src], src);

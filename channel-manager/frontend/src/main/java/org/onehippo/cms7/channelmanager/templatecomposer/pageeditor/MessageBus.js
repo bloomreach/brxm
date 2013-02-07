@@ -21,8 +21,8 @@
     Hippo.ChannelManager.TemplateComposer.createMessageBus = function(name) {
         var subscriptions = {};
         return {
-            exception: function(msg) {
-                this.publish('exception', msg);
+            exception: function(msg, e) {
+                this.publish('exception', msg, e);
             },
 
             publish: function(topic) {
@@ -47,6 +47,20 @@
                     subscriptions[topic] = [];
                 }
                 subscriptions[topic].push({callback: callback, scope: scopeParameter});
+            },
+
+            subscribeOnce: function(topic, callback, scope) {
+                var self, interceptedCallback;
+
+                self = this;
+
+                interceptedCallback = function() {
+                    var result = callback.apply(scope, arguments);
+                    self.unsubscribe.call(self, topic, interceptedCallback, scope);
+                    return result;
+                };
+
+                this.subscribe(topic, interceptedCallback, scope);
             },
 
             unsubscribe: function(topic, callback, scope) {

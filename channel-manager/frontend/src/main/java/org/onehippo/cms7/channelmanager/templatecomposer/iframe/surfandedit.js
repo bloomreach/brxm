@@ -81,7 +81,7 @@
                 }
                 iframeToHost.publish('documents', links);
             } catch(e) {
-                iframeToHost.publish('exception', 'Error initializing manager.', e);
+                iframeToHost.exception('Error initializing manager.', e);
             }
         },
 
