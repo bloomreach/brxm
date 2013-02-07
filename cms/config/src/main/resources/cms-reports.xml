@@ -69,6 +69,9 @@
       <sv:property sv:name="wicket.model" sv:type="String">
         <sv:value>model.report.current</sv:value>
       </sv:property>
+      <sv:property sv:name="limit" sv:type="Long">
+        <sv:value>15</sv:value>
+      </sv:property>
     </sv:node>
     <sv:node sv:name="reporting:query">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

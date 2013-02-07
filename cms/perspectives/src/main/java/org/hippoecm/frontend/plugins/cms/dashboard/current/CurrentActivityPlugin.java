@@ -45,6 +45,9 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(CurrentActivityPlugin.class);
+    private static final int DEFAULT_LIMIT = 15;
+
+    private final int limit;
 
     public CurrentActivityPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -52,6 +55,8 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         if (!(getDefaultModel() instanceof IDataProvider)) {
             throw new IllegalArgumentException("CurrentActivityPlugin needs a model that is an IDataProvider.");
         }
+
+        limit = config.getAsInteger("limit", DEFAULT_LIMIT);
 
         add(new CurrentActivityView("view", getDefaultModel()));
     }
@@ -97,6 +102,7 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
             return new Iterator() {
                 final Iterator upstream = dataProvider.iterator(0,0);
                 Object next = null;
+                int fetched = 0;
                 @Override
                 public boolean hasNext() {
                     if (next == null) {
@@ -119,10 +125,14 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
                 }
 
                 private void fetchNext() {
+                    if (fetched >= limit) {
+                        return;
+                    }
                     while (upstream.hasNext()) {
                         JcrNodeModel candidate = (JcrNodeModel) upstream.next();
                         if (accept(candidate)) {
                             next = candidate;
+                            fetched++;
                             break;
                         }
                     }
