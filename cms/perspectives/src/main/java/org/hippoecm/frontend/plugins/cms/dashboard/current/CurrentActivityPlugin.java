@@ -17,8 +17,8 @@ package org.hippoecm.frontend.plugins.cms.dashboard.current;
 
 import java.text.DateFormat;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -37,6 +37,7 @@ import org.hippoecm.frontend.plugins.cms.dashboard.BrowseLinkTarget;
 import org.hippoecm.frontend.plugins.cms.dashboard.DocumentEvent;
 import org.hippoecm.frontend.plugins.cms.dashboard.EventModel;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,25 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         redraw();
     }
 
+    /**
+     * Filter out event items that are irrelevant.
+     * We only display messages for 'top-level' items.
+     */
+    protected boolean accept(JcrNodeModel nodeModel) {
+        final Node node = nodeModel.getNode();
+        try {
+            final String interaction = JcrUtils.getStringProperty(node, "hippolog:interaction", null);
+            if (interaction != null) {
+                final String category = JcrUtils.getStringProperty(node, "hippolog:category", null);
+                final String workflowName = JcrUtils.getStringProperty(node, "hippolog:workflowName", null);
+                final String methodName = JcrUtils.getStringProperty(node, "hippolog:eventMethod", null);
+                return interaction.equals(category + ":" + workflowName + ":" + methodName);
+            }
+        } catch (RepositoryException ignored) {
+        }
+        return true;
+    }
+
     private class CurrentActivityView extends RefreshingView {
         private static final long serialVersionUID = 1L;
 
@@ -74,7 +94,45 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         @Override
         protected Iterator getItemModels() {
             final IDataProvider dataProvider = (IDataProvider) getDefaultModel();
-            return dataProvider.iterator(0, 0);
+            return new Iterator() {
+                final Iterator upstream = dataProvider.iterator(0,0);
+                Object next = null;
+                @Override
+                public boolean hasNext() {
+                    if (next == null) {
+                        fetchNext();
+                    }
+                    return next != null;
+                }
+
+                @Override
+                public Object next() {
+                    if (next == null) {
+                        fetchNext();
+                    }
+                    if (next == null) {
+                        new NoSuchElementException();
+                    }
+                    final Object result = next;
+                    next = null;
+                    return result;
+                }
+
+                private void fetchNext() {
+                    while (upstream.hasNext()) {
+                        JcrNodeModel candidate = (JcrNodeModel) upstream.next();
+                        if (accept(candidate)) {
+                            next = candidate;
+                            break;
+                        }
+                    }
+                }
+
+                @Override
+                public void remove() {
+                    throw new UnsupportedOperationException();
+                }
+            };
         }
 
         @Override

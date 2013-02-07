@@ -30,7 +30,7 @@
       <sv:value>426c67c6-4591-4cdf-92c8-19b7dd0b1c39</sv:value>
     </sv:property>
     <sv:property sv:name="reporting:limit" sv:type="Long">
-      <sv:value>15</sv:value>
+      <sv:value>100</sv:value>
     </sv:property>
     <sv:property sv:name="reporting:parameternames" sv:type="String">
     </sv:property>
