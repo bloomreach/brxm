@@ -192,16 +192,21 @@ public class DocumentEvent {
             return path;
         }
 
-        String[] pathElts = path.split("/");
+        String[] pathElements = path.split("/");
         StringBuilder newPath = new StringBuilder();
+
         // build new path, strip last element, eg "hippo:request"
-        for (int i = 0; i < pathElts.length - 1; i++) {
-            if (pathElts[i].length() > 0) {
-                newPath.append("/").append(pathElts[i]);
+        for (int i = 0; i < pathElements.length - 1; i++) {
+            if (!pathElements[i].isEmpty()) {
+                newPath.append("/").append(pathElements[i]);
             }
         }
+
         // add last part again to point to document
-        newPath.append("/").append(pathElts[pathElts.length - 2]);
+        if (pathElements.length > 1) {
+            newPath.append("/").append(pathElements[pathElements.length - 2]);
+        }
+
         return newPath.toString();
     }
 
