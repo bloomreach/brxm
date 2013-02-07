@@ -16,60 +16,6 @@
 (function () {
     "use strict";
 
-    function createMessageBus(name) {
-        var subscriptions = {};
-        return {
-            exception: function(msg) {
-                this.publish('exception', msg);
-            },
-
-            publish: function(topic) {
-                var i, len, subscription;
-                if (subscriptions[topic] === undefined) {
-                    return true;
-                }
-                len = subscriptions[topic].length;
-                console.log(name + "[" + len + "] " + topic);
-                for (i = 0; i < len; i++) {
-                    subscription = subscriptions[topic][i];
-                    if (subscription.callback.apply(subscription.scope, Array.prototype.slice.call(arguments, 1)) === false) {
-                        return false;
-                    }
-                }
-                return true;
-            },
-
-            subscribe: function(topic, callback, scope) {
-                var scopeParameter = scope || window;
-                if (subscriptions[topic] === undefined) {
-                    subscriptions[topic] = [];
-                }
-                subscriptions[topic].push({callback: callback, scope: scopeParameter});
-            },
-
-            unsubscribe: function(topic, callback, scope) {
-                var scopeParameter, i, len, subscription;
-                if (subscriptions[topic] === undefined) {
-                    return false;
-                }
-                scopeParameter = scope || window;
-                for (i = 0, len = subscriptions[topic].length; i < len; i++) {
-                    subscription = subscriptions[topic][i];
-                    if (subscription.callback === callback && subscription.scope === scopeParameter) {
-                        subscriptions[topic].splice(i, 1);
-                        return true;
-                    }
-                }
-                return false;
-            },
-
-            unsubscribeAll: function() {
-                subscriptions = {};
-            }
-
-        };
-    }
-
     Ext.ns('Hippo.ChannelManager.TemplateComposer');
 
     Hippo.ChannelManager.TemplateComposer.IFramePanel = Ext.extend(Ext.Panel, (function () {
@@ -143,8 +89,8 @@
                 // global singleton
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance = instance = this;
 
-                this.hostToIFrame = createMessageBus('host-to-iframe');
-                this.iframeToHost = createMessageBus('iframe-to-host');
+                this.hostToIFrame = Hippo.ChannelManager.TemplateComposer.createMessageBus('host-to-iframe');
+                this.iframeToHost = Hippo.ChannelManager.TemplateComposer.createMessageBus('iframe-to-host');
 
                 this.addEvents(
                     'locationchanged'

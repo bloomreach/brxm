@@ -225,6 +225,5 @@ test/src/test/java/org/onehippo/cms7/channelmanager/ResourceServlet.java -text
 test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/AbstractTemplateComposerTest.java -text
 test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/CmsEditTest.java -text
 test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/InitializationTest.java -text
-test/src/test/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/initMiFrameMessageMock.js -text
 test/src/test/resources/log4j.dtd -text
 test/src/test/resources/log4j.xml -text

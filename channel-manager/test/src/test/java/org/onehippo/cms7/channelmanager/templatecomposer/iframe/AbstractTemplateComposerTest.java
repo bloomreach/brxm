@@ -30,7 +30,9 @@ import net.sourceforge.htmlunit.corejs.javascript.ScriptableObject;
 import org.onehippo.cms7.channelmanager.AbstractJavascriptTest;
 import org.onehippo.cms7.channelmanager.templatecomposer.TemplateComposerGlobalBundle;
 import org.onehippo.cms7.channelmanager.templatecomposer.PageEditor;
+import org.onehippo.cms7.channelmanager.templatecomposer.pageeditor.PageEditorBundle;
 import org.onehippo.cms7.jquery.JQueryBundle;
+import org.wicketstuff.js.ext.ExtBundle;
 
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
@@ -41,16 +43,23 @@ import com.google.gson.Gson;
 abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTest {
 
     public class Message {
-        public String messageTag;
-        public Object messagePayload;
 
-        public Message(final String messageTag, final Object messagePayload) {
-            this.messageTag = messageTag;
-            this.messagePayload = messagePayload;
+        public String tag;
+        public Object payload;
+
+        public Message(final String tag, final Object payload) {
+            this.tag = tag;
+            this.payload = payload;
         }
+
+        public String toString() {
+            return tag;
+        }
+
     }
 
-    private List<Message> messagesSend = new ArrayList<Message>();
+    protected List<Message> hostToIFrameMessages = new ArrayList<Message>();
+    protected List<Message> iframeToHostMessages = new ArrayList<Message>();
 
     @Override
     public void setUp(String name) throws Exception {
@@ -70,7 +79,9 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
     }
 
     protected void initializeIFrameHead() throws IOException {
-        injectJavascript(InitializationTest.class, "initMiFrameMessageMock.js");
+        injectJavascript(ExtBundle.class, ExtBundle.EXT_BASE_DEBUG);
+        injectJavascript(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS);
+        injectJavascript(InitializationTest.class, "mockIFramePanel.js");
 
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_CORE);
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN);
@@ -78,21 +89,39 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_UI);
 
         injectJavascript(TemplateComposerGlobalBundle.class, TemplateComposerGlobalBundle.GLOBALS);
-        injectJavascript(IFrameBundle.class, IFrameBundle.MAIN);
         injectJavascript(IFrameBundle.class, IFrameBundle.UTIL);
+        injectJavascript(IFrameBundle.class, IFrameBundle.DRAG_DROP);
         injectJavascript(IFrameBundle.class, IFrameBundle.FACTORY);
         injectJavascript(IFrameBundle.class, IFrameBundle.PAGE);
         injectJavascript(IFrameBundle.class, IFrameBundle.WIDGETS);
         injectJavascript(IFrameBundle.class, IFrameBundle.SURFANDEDIT);
-
-        page.executeJavaScript("jQuery.noConflict(true);");
+        injectJavascript(IFrameBundle.class, IFrameBundle.LAST);
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
-        final Function oldFunction = (Function) window.get("sendMessage");
-        ScriptableObject.putProperty(window, "sendMessage", new BaseFunction() {
+        ScriptableObject instance = getScriptableObject(window, "Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance");
+        ScriptableObject hostToIFrame = (ScriptableObject)instance.get("hostToIFrame");
+        ScriptableObject iframeToHost = (ScriptableObject)instance.get("iframeToHost");
+
+        interceptMessages(hostToIFrame, hostToIFrameMessages);
+        interceptMessages(iframeToHost, iframeToHostMessages);
+    }
+
+    private ScriptableObject getScriptableObject(Window window, String namespacedName) {
+        ScriptableObject object = window;
+        for (String namespacePart : namespacedName.split("\\.")) {
+            object = (ScriptableObject) object.get(namespacePart);
+        }
+        return object;
+    }
+
+    private void interceptMessages(final ScriptableObject messageBus, final List<Message> interceptedMessages) {
+        final Function oldFunction = (Function) messageBus.get("publish");
+        ScriptableObject.putProperty(messageBus, "publish", new BaseFunction() {
             @Override
             public Object call(final net.sourceforge.htmlunit.corejs.javascript.Context cx, final Scriptable scope, final Scriptable thisObj, final Object[] args) {
-                AbstractTemplateComposerTest.this.messagesSend.add(new Message((String)args[1], args[0]));
+                String tag = (String)args[0];
+                Object payload = args.length > 1 ? args[1] : null;
+                interceptedMessages.add(new Message(tag, payload));
                 return oldFunction.call(cx, scope, thisObj, args);
             }
         });
@@ -113,34 +142,16 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         Gson gson = new Gson();
         String message = gson.toJson(argument);
 
-        page.executeJavaScript("sendMessage(" + message + ", 'init');");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('init', " + message + ");");
     }
 
-    public boolean isMessageSend(final String message) {
-        for (Message messageObject : this.messagesSend) {
-            if (message.equals(messageObject.messageTag)) {
+    protected static boolean isPublished(List<Message> messages, String message) {
+        for (Message messageObject : messages) {
+            if (message.equals(messageObject.tag)) {
                 return true;
             }
         }
         return false;
-    }
-
-    public void clearMessagesSend() {
-        this.messagesSend.clear();
-    }
-
-    public List<Message> getMessagesSend() {
-        return this.messagesSend;
-    }
-
-    public List<Message> getMessages(String message) {
-        List<Message> messages = new ArrayList<Message>();
-        for (Message messageObject : this.messagesSend) {
-            if (message.equals(messageObject.messageTag)) {
-                messages.add(messageObject);
-            }
-        }
-        return messages;
     }
 
 }

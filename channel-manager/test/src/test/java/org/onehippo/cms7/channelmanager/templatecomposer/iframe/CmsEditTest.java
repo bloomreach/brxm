@@ -23,7 +23,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -38,11 +37,11 @@ public class CmsEditTest extends AbstractTemplateComposerTest {
 
     @Test
     public void testSurfAndEdit() throws Exception {
-        assertFalse(isMessageSend("iframeexception"));
+        assertFalse(isPublished(iframeToHostMessages, "exception"));
 
         // test if container is present
         HtmlElement link = getLink();
-        assertTrue(isMessageSend("documents"));
+        assertTrue(isPublished(iframeToHostMessages, "documents"));
         assertTrue(isMetaDataConsumed(link));
     }
 
@@ -61,11 +60,10 @@ public class CmsEditTest extends AbstractTemplateComposerTest {
         HtmlElement link = getLink();
         link.click();
 
-        final List<Message> messages = getMessagesSend();
-        assertEquals("init", messages.get(0).messageTag);
-        assertEquals("documents", messages.get(1).messageTag);
-        assertEquals("edit-document", messages.get(2).messageTag);
-        assertFalse(isMessageSend("iframeexception"));
+        assertTrue(isPublished(hostToIFrameMessages, "init"));
+        assertTrue(isPublished(iframeToHostMessages, "iframeloaded"));
+        assertTrue(isPublished(iframeToHostMessages, "documents"));
+        assertTrue(isPublished(iframeToHostMessages, "edit-document"));
     }
 
 }

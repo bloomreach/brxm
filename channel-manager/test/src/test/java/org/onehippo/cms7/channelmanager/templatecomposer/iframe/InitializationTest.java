@@ -21,8 +21,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.javascript.host.Window;
 
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -31,29 +29,18 @@ import static org.junit.Assert.assertTrue;
 public class InitializationTest extends AbstractTemplateComposerTest {
 
     @Test
-    public void testMiFrameMessageHandling() throws Exception {
-        setUp("test.html");
-
-        page.executeJavaScript("onhostmessage(function(msg) { window.initTestOK=msg.data.initTest; }, window, false, 'test');");
-        page.executeJavaScript("sendMessage({initTest: true}, 'test')");
-
-        Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
-        assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
-    }
-
-    @Test
-    public void testMainPubSub() throws Exception {
+    public void testHostToIFramePubSub() throws Exception {
         setUp("test.html");
 
         page.executeJavaScript("var testListener = function(msg) { initTestOK=msg.initTest; };");
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFrame.Main.subscribe('test', testListener, window);");
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFrame.Main.publish('test', {initTest: true})");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.subscribe('test', testListener, window);");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('test', {initTest: true})");
 
         Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
         assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
 
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFrame.Main.unSubscribe('test', testListener, window);");
-        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFrame.Main.publish('test', {initTest: false})");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.unsubscribe('test', testListener, window);");
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('test', {initTest: false})");
 
         assertTrue(Boolean.TRUE.equals(window.get("initTestOK")));
     }
@@ -62,8 +49,7 @@ public class InitializationTest extends AbstractTemplateComposerTest {
     public void testInitialisation() throws Exception {
         setUp("test.html");
         initializeTemplateComposer(false, true);
-
-        assertTrue(!isMessageSend("iframeexception"));
+        assertFalse(isPublished(hostToIFrameMessages, "exception"));
     }
 
     @Test
@@ -82,12 +68,8 @@ public class InitializationTest extends AbstractTemplateComposerTest {
         assertNotNull(containerDiv);
         assertFalse(isMetaDataConsumed(containerDiv));
 
-        page.executeJavaScript("sendMessage(" +
-            "{ getName: function(id) { " +
-                "return (id === 'cf291fdc-d962-4c14-a5ba-3111fec861fd')? 'containerItem1' : 'containerItem2'; } " +
-            "}, 'buildOverlay');");
-
-        assertFalse(isMessageSend("iframeexception"));
+        page.executeJavaScript("Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('buildoverlay');");
+        assertFalse(isPublished(hostToIFrameMessages, "exception"));
 
         // test if hst meta data is consumed
         assertTrue(isMetaDataConsumed(containerDiv));
@@ -105,7 +87,7 @@ public class InitializationTest extends AbstractTemplateComposerTest {
 
         initializeTemplateComposer(false, false);
 
-        assertFalse(isMessageSend("iframeexception"));
+        assertFalse(isPublished(hostToIFrameMessages, "exception"));
     }
 
 }
