@@ -356,7 +356,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
     }
 
     protected boolean validateDelete() {
-        return checkWhetherSubtypesHaveEditorTemplates();
+        return false;
     }
 
     protected void registerChildTrackers() {
@@ -445,7 +445,8 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         }
     }
 
-    private boolean checkWhetherSubtypesHaveEditorTemplates() {
+    // A utility method to check for subtypes whether they have editor templates or not
+    protected boolean checkWhetherSubtypesHaveEditorTemplates() {
         IPluginContext context = getPluginContext();
         IPluginConfig config = getPluginConfig();
         BuilderContext builderContext = getBuilderContext();

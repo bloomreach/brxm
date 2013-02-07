@@ -76,7 +76,7 @@ public class MixinLoaderPluginEditorPlugin extends RenderPluginEditorPlugin {
                     redraw();
                 }
 
-            }, IObserver.class.getName());;
+            }, IObserver.class.getName());
 
             add(new EmptyPanel(TEMPLATE_PARAMETER_EDITOR));
         }
@@ -153,6 +153,11 @@ public class MixinLoaderPluginEditorPlugin extends RenderPluginEditorPlugin {
         } catch (TemplateEngineException ex) {
             log.error("Unable to open property editor", ex);
         }
+    }
+
+    @Override
+    protected boolean validateDelete() {
+        return checkWhetherSubtypesHaveEditorTemplates();
     }
 
     private ITemplateEngine getTemplateEngine() {

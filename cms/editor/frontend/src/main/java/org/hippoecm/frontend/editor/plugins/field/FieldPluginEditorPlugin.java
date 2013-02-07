@@ -201,6 +201,11 @@ public class FieldPluginEditorPlugin extends RenderPluginEditorPlugin {
         }
     }
 
+    @Override
+    protected boolean validateDelete() {
+        return checkWhetherSubtypesHaveEditorTemplates();
+    }
+
     private ITemplateEngine getTemplateEngine() {
         return getPluginContext().getService(getEffectivePluginConfig().getString("engine"), ITemplateEngine.class);
     }
