@@ -23,8 +23,7 @@
  */
 (function () {
     "use strict";
-    var Event = YAHOO.util.Event, HippoAjax = YAHOO.hippo.HippoAjax,
-        oldWindowInitialize, oldWindowBindInit, oldWindowBindClean;
+    var oldWindowInitialize, oldWindowBindInit, oldWindowBindClean;
 
     oldWindowInitialize = Wicket.Window.prototype.initialize;
     Wicket.Window.prototype.initialize = function() {
@@ -57,23 +56,23 @@
         oldWindowBindInit.apply(this, arguments);
 
         //register window resize listener
-        if (Event) {
-            Event.on(window, 'resize', this.onWindowResize, this, true);
+        if (YAHOO.util.Event) {
+            YAHOO.util.Event.on(window, 'resize', this.onWindowResize, this, true);
         }
     };
 
     oldWindowBindClean = Wicket.Window.prototype.bindClean;
     Wicket.Window.prototype.bindClean = function() {
         //HippoAjax cleanup hook.
-        if (HippoAjax) {
-            HippoAjax.cleanupModal(this);
+        if (YAHOO.hippo.HippoAjax) {
+            YAHOO.hippo.HippoAjax.cleanupModal(this);
         }
 
         oldWindowBindClean.apply(this, arguments);
 
         //unregister window resize listener
-        if (Event) {
-            Event.removeListener(window, 'resize', this.onWindowResize);
+        if (YAHOO.util.Event) {
+            YAHOO.util.Event.removeListener(window, 'resize', this.onWindowResize);
         }
     };
 
