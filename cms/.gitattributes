@@ -802,6 +802,7 @@ automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/Auto
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin.java -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin.properties -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin_de.properties -text
+automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin_it.properties -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/Constants.java -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/autoexport_off.png -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/autoexport_on.png -text
@@ -1262,6 +1263,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/Abstrac
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin_de.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin_fr.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/AbstractFieldPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ComparingController$ItemEntry.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ComparingController$ItemEntry_compat.html svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/ComparingController$ItemEntry_leftright.html svneol=native#text/plain
@@ -1274,6 +1276,7 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPl
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin.java -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin_de.properties -text
+editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditorPlugin_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_de.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_fr.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/plugins/field/FieldPluginEditor_it.properties -text
@@ -2188,6 +2191,7 @@ richtext/frontend/src/test/resources/log4j.dtd svneol=native#text/plain
 richtext/frontend/src/test/resources/log4j.xml svneol=native#text/plain
 richtext/frontend/src/test/resources/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent.properties -text
 richtext/frontend/src/test/resources/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent_de.properties -text
+richtext/frontend/src/test/resources/org/hippoecm/frontend/plugins/xinha/json/JsonParserTestDummyComponent_it.properties -text
 richtext/frontend/src/test/resources/xinhatest.cnd -text
 richtext/repository/src/main/resources/hippohtmlcleaner.cnd -text
 richtext/repository/src/main/resources/hippostd-html-template_de.xml -text
