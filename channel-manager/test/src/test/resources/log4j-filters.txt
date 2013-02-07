@@ -16,3 +16,4 @@
 
 Error parsing CSS selectors from ' >
 TypeError: Cannot read property "dom" from null (http://localhost:8888/resources/org/wicketstuff/js/ext/ext-all-debug.js#11582)
+TypeError: Cannot call method "addListener" of undefined (http://localhost:8888/resources/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IFramePanel.js
