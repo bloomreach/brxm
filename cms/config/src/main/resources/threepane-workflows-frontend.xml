@@ -174,45 +174,6 @@
       <sv:property sv:name="workflow.translated" sv:type="String">
         <sv:value>new-translated-folder</sv:value>
       </sv:property>
-      <sv:node sv:name="filters"
-        xmlns:frontend="http://www.onehippo.org/jcr/frontend/nt/2.0" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:node sv:name="hideTranslation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideTranslationsType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippotranslation:translations</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideFacnavType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippofacnav:facetnavigation</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
     </sv:node>
     <sv:node sv:name="hipposys:config" h:merge="combine">
       <sv:property sv:name="modify-on-copy" sv:type="String">
@@ -244,45 +205,6 @@
       <sv:property sv:name="workflow.translated" sv:type="String">
         <sv:value>new-translated-folder</sv:value>
       </sv:property>
-      <sv:node sv:name="filters"
-               xmlns:frontend="http://www.onehippo.org/jcr/frontend/nt/2.0" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
-        <sv:property sv:name="jcr:primaryType" sv:type="Name">
-          <sv:value>frontend:pluginconfig</sv:value>
-        </sv:property>
-        <sv:node sv:name="hideTranslation">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippo:translation</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideTranslationsType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippotranslation:translations</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-        <sv:node sv:name="hideFacnavType">
-          <sv:property sv:name="jcr:primaryType" sv:type="Name">
-            <sv:value>frontend:pluginconfig</sv:value>
-          </sv:property>
-          <sv:property sv:name="child" sv:type="String">
-            <sv:value>hippofacnav:facetnavigation</sv:value>
-          </sv:property>
-          <sv:property sv:name="display" sv:type="Boolean">
-            <sv:value>false</sv:value>
-          </sv:property>
-        </sv:node>
-      </sv:node>
     </sv:node>
     <sv:node sv:name="hipposys:config" h:merge="combine">
       <sv:property sv:name="modify-on-copy" sv:type="String">
