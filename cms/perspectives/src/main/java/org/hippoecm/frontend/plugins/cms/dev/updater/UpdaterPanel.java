@@ -126,7 +126,6 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
             @Override
             public void breadCrumbRemoved(final IBreadCrumbParticipant breadCrumbParticipant) {
-                System.out.println("breadCrumbRemoved");
                 if (breadCrumbParticipant == UpdaterPanel.this) {
                     breadCrumbModel.removeListener(this);
                     context.unregisterService(treeModel, IObserver.class.getName());
