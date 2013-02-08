@@ -115,6 +115,12 @@
     <appender-ref ref="console"/>
   </logger>
 
+  <logger additivity="false" name="freemarker">
+    <level value="info"/>
+    <appender-ref ref="site"/>
+    <appender-ref ref="console"/>
+  </logger>
+
   <!-- too many caching warnings -->
   <logger name="org.apache.jackrabbit.core.state">
     <level value="error"/>
