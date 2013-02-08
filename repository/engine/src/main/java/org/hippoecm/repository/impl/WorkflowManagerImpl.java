@@ -689,12 +689,11 @@ public class WorkflowManagerImpl implements WorkflowManager {
             workflowName = (String) input.readObject();
             String uuid = (String) input.readObject();
             workflowSubject = new Document(uuid);
-            String className = (String) input.readObject();
             methodName = (String) input.readObject();
             int length = input.readInt();
             parameterTypes = new Class[length];
             for(int i=0; i<length; i++) {
-                parameterTypes[i] = Class.forName((String)input.readObject());
+                parameterTypes[i] = (Class) input.readObject();
             }
             arguments = (Object[]) input.readObject();
             interactionId = (String) input.readObject();
@@ -706,7 +705,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
                 output.writeObject(category);
                 output.writeObject(workflowName);
                 output.writeObject(workflowSubjectNode.getUUID());
-                output.writeObject(method.getClass().getName());
                 output.writeObject(method.getName());
                 Class[] parameterTypes = method.getParameterTypes();
                 output.writeInt(parameterTypes.length);
