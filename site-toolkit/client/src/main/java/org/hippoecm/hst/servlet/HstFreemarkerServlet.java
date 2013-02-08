@@ -102,7 +102,7 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
             super.doGet(request, response);
         } catch (ServletException e) {
             if (log.isDebugEnabled()) {
-                log.debug("Freemarker template exception : ", e);
+                log.warn("Freemarker template exception : ", e);
             } else {
                 log.warn("Freemarker template exception : {}", e.toString());
             }
