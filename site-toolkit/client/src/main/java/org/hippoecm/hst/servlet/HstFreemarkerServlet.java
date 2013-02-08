@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.servlet;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -32,6 +33,8 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.freemarker.HstClassTemplateLoader;
 import org.hippoecm.hst.freemarker.RepositoryTemplateLoader;
 import org.hippoecm.hst.proxy.ProxyFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
@@ -40,10 +43,14 @@ import freemarker.ext.servlet.AllHttpScopesHashModel;
 import freemarker.ext.servlet.FreemarkerServlet;
 import freemarker.template.Configuration;
 import freemarker.template.ObjectWrapper;
+import freemarker.template.TemplateException;
+import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
 
 public class HstFreemarkerServlet extends FreemarkerServlet {
+
+    private static final Logger log = LoggerFactory.getLogger(HstFreemarkerServlet.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -67,7 +74,8 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
          */  
         
         Configuration conf = super.getConfiguration();
-        
+        conf.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+
         TemplateLoader classTemplateLoader =  new HstClassTemplateLoader(getClass());
         TemplateLoader defaultLoader = conf.getTemplateLoader();
         // repository template loader
@@ -88,6 +96,18 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
     }
 
 
+    @Override
+    public void doGet(final HttpServletRequest request, final HttpServletResponse response) throws ServletException, IOException {
+        try {
+            super.doGet(request, response);
+        } catch (ServletException e) {
+            if (log.isDebugEnabled()) {
+                log.debug("Freemarker template exception : ", e);
+            } else {
+                log.warn("Freemarker template exception : {}", e.toString());
+            }
+        }
+    }
 
     /**
      * Special dispatch info is included when the request contains the attribute {@link ContainerConstants#DISPATCH_URI_SCHEME}. For example
