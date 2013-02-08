@@ -440,13 +440,11 @@
         _initIFrameListeners: function() {
             var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
 
-            iframe.purgeListeners();
+            iframe.iframeToHost.unsubscribeAll();
+            iframe.un('locationchanged', this._onIframeDOMReady, this);
 
             this.subscribeToIFrameMessages();
-
-            iframe.on('locationchanged', function() {
-                this._onIframeDOMReady();
-            }, this);
+            iframe.on('locationchanged', this._onIframeDOMReady, this);
         },
 
         _onIframeDOMReady: function() {

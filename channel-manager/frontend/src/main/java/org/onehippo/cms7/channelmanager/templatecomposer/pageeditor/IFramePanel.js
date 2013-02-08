@@ -20,7 +20,7 @@
 
     Hippo.ChannelManager.TemplateComposer.IFramePanel = Ext.extend(Ext.Panel, (function () {
         // private variables
-        var frameName, frameId, lastLocation, instance;
+        var frameName, frameId, lastLocation, instance, resizeTask;
 
         frameName = Ext.id();
         frameId = Ext.id();
@@ -79,6 +79,18 @@
             }
         }
 
+        function doResize() {
+            instance.hostToIFrame.publish('resize');
+        }
+
+        function onResize() {
+            // throttle the number of 'resize' events send to the iframe
+            if (resizeTask === undefined) {
+                resizeTask = new Ext.util.DelayedTask(doResize);
+            }
+            resizeTask.delay(25);
+        }
+
         // public methods
         return {
 
@@ -117,9 +129,7 @@
                 var frameElement = Ext.getCmp(frameId).el;
                 frameElement.addListener('load', onFrameLoad, this);
 
-                this.on('resize', function() {
-                    this.hostToIFrame.publish('resize');
-                }, this);
+                this.on('resize', onResize, this);
             },
 
             setLocation: function(url) {
