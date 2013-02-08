@@ -60,6 +60,8 @@ public class FilterImpl implements Filter {
     @Deprecated
     public FilterImpl(Session session ){
         this(session, Resolution.EXPENSIVE_PRECISE);
+        HstServices.getLogger(FQCN, FQCN).warn("Use HstQuery#createFilter() or FilterImpl(Session, Resolution) instead of this deprecated constructor. Fast Date Range " +
+                "Searches are not supported with this constructor");
     }
 
     public FilterImpl(final Session session, final Resolution resolution) {
