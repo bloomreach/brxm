@@ -100,9 +100,11 @@ public class CurrentActivityPlugin extends RenderPlugin<Node> {
         protected Iterator getItemModels() {
             final IDataProvider dataProvider = (IDataProvider) getDefaultModel();
             return new Iterator() {
-                final Iterator upstream = dataProvider.iterator(0,0);
-                Object next = null;
-                int fetched = 0;
+
+                private final Iterator upstream = dataProvider.iterator(0,0);
+                private Object next = null;
+                private int fetched = 0;
+
                 @Override
                 public boolean hasNext() {
                     if (next == null) {
