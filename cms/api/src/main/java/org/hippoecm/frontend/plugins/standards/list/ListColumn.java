@@ -21,18 +21,23 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
+import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.util.string.AppendingStringBuffer;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListAttributeModifier;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.NameRenderer;
@@ -133,8 +138,15 @@ public class ListColumn<T> extends AbstractColumn<T> {
         super.detach();
     }
 
+    protected boolean isLink() {
+        return true;
+    }
+
+
     public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> model) {
         final ListCell cell = new ListCell(componentId, model, renderer, attributeModifier, context);
+        populateCell(cell, model);
+
         if (attributeModifier != null) {
             AttributeModifier[] columnModifiers;
             if (attributeModifier instanceof AbstractListAttributeModifier) {
@@ -170,6 +182,32 @@ public class ListColumn<T> extends AbstractColumn<T> {
             }
         }
         item.add(cell);
+
+        addCssClasses(item);
+    }
+
+    protected void addCssClasses(Item<ICellPopulator<T>> item) {
+        if (isLink()) {
+            item.add(new CssClassAppender(Model.of("link")));
+        }
+    }
+
+    protected void populateCell(final Component cell, final IModel<T> model) {
+        if (isLink()) {
+            cell.add(new AjaxEventBehavior("onclick") {
+                private static final long serialVersionUID = 1L;
+
+                protected CharSequence getEventHandler() {
+                    return new AppendingStringBuffer(super.getEventHandler()).append("; return false;");
+                }
+
+                @Override
+                protected void onEvent(AjaxRequestTarget target) {
+                    ListDataTable dataTable = cell.findParent(ListDataTable.class);
+                    dataTable.getSelectionListener().selectionChanged(model);
+                }
+            });
+        }
     }
 
 }

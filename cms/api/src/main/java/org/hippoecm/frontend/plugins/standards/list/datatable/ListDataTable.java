@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.MarkupContainer;
-import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
@@ -237,15 +236,6 @@ public class ListDataTable<T> extends DataTable<T> {
                 }
             }
         }, " "));
-
-        item.add(new AjaxEventBehavior("onclick") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected void onEvent(AjaxRequestTarget target) {
-                selectionListener.selectionChanged(model);
-            }
-        });
 
         if (context != null && model instanceof IObservable) {
             IObserver observer = newObserver(item, model);
