@@ -7,6 +7,10 @@ api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin$Workfl
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin$WorkflowAction$DestinationDialog_it.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin$WorkflowAction$DestinationDialog_nl.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/CompatibilityWorkflowPlugin.java -text
+api/src/main/java/org/hippoecm/addon/workflow/DestinationDialog.properties -text
+api/src/main/java/org/hippoecm/addon/workflow/DestinationDialog_de.properties -text
+api/src/main/java/org/hippoecm/addon/workflow/DestinationDialog_it.properties -text
+api/src/main/java/org/hippoecm/addon/workflow/DestinationDialog_nl.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/FutureDateValidator_de.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/TextDialog.properties -text
 api/src/main/java/org/hippoecm/addon/workflow/TextDialog_de.properties -text

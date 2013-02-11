@@ -349,8 +349,7 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected Dialog createRequestDialog() {
-                destination = new NodeModelWrapper(getFolder()) {
-                };
+                destination = new NodeModelWrapper(getFolder()) {};
                 CopyNameHelper copyNameHelper = new CopyNameHelper(getNodeNameCodec(), new StringResourceModel(
                         "copyof", FullReviewedActionsWorkflowPlugin.this, null).getString());
                 try {
@@ -377,15 +376,17 @@ public class FullReviewedActionsWorkflowPlugin extends RenderPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                JcrNodeModel folderModel = new JcrNodeModel("/");
+                JcrNodeModel folderModel;
                 if (destination != null) {
                     folderModel = destination.getNodeModel();
+                } else {
+                    folderModel = new JcrNodeModel("/");
                 }
                 StringCodec codec = getNodeNameCodec();
                 String nodeName = codec.encode(name);
                 FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) wf;
 
-                workflow.copy(new Document(folderModel.getNode().getUUID()), nodeName);
+                workflow.copy(new Document(folderModel.getNode().getIdentifier()), nodeName);
                 JcrNodeModel resultModel = new JcrNodeModel(folderModel.getItemModel().getPath() + "/" + nodeName);
                 Node result = resultModel.getNode();
 

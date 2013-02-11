@@ -36,6 +36,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
+import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,8 +141,12 @@ public abstract class DestinationDialog extends AbstractDialog implements IWorkf
     protected void onOk() {
         try {
             invokeWorkflow();
+        } catch (WorkflowException e) {
+            log.info("Could not execute workflow.", e);
+            error(e);
         } catch (Exception e) {
-            log.error("Could not execute workflow.", e);
+            log.info("Could not execute workflow.", e);
+            error(e);
         }
     }
 
