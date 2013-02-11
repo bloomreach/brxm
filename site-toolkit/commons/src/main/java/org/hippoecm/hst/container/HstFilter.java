@@ -199,10 +199,10 @@ public class HstFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
     ServletException {
         
-    	if (request.getAttribute(ContainerConstants.HST_RESET_FILTER) != null) {
-    		request.removeAttribute(FILTER_DONE_KEY);
-    		request.removeAttribute(ContainerConstants.HST_RESET_FILTER);
-    	}
+        if (request.getAttribute(ContainerConstants.HST_RESET_FILTER) != null) {
+            request.removeAttribute(FILTER_DONE_KEY);
+            request.removeAttribute(ContainerConstants.HST_RESET_FILTER);
+        }
 
 		if (request.getAttribute(FILTER_DONE_KEY) != null) {
 			chain.doFilter(request, response);
