@@ -67,6 +67,7 @@ public class LogoutDialog extends AbstractDialog {
             }
             userSession.logout();
         }
+        super.onClose();
     }
     
     @Override

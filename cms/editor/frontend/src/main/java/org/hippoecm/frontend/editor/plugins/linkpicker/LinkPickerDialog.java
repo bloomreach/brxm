@@ -87,6 +87,7 @@ public class LinkPickerDialog extends AbstractDialog<String> {
     @Override
     public final void onClose() {
         controller.onClose();
+        super.onClose();
     }
 
     @Override

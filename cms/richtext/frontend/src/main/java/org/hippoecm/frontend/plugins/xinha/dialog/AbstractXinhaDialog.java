@@ -84,6 +84,8 @@ public abstract class AbstractXinhaDialog<T extends IPersisted> extends Abstract
             target.getHeaderResponse().renderOnDomReadyJavascript(cancelled ? getCancelScript() : getCloseScript());
         }
         onCloseDialog();
+
+        super.onClose();
     }
 
     void onCloseInternal() {
