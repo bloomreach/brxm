@@ -164,7 +164,8 @@ if (!YAHOO.hippo.Upload) {
             this.elements.uploaderContainer.appendChild(this.elements.selectFiles);
 
             this.elements.selectFilesLink = new YAHOO.util.Element(document.createElement('div'));
-            this.elements.selectFilesLink.setContent(this.config.translations['select.files.link']);
+            this.elements.selectFilesLink.get('element').innerHTML = this.config.translations['select.files.link'];
+
             Dom.addClass(this.elements.selectFilesLink, 'selectFilesLink');
             this.elements.selectFiles.appendChild(this.elements.selectFilesLink);
 
@@ -178,8 +179,7 @@ if (!YAHOO.hippo.Upload) {
 
             this.initializeUploader();
 
-            var tmpElement = this.elements.selectFilesLink;
-            YAHOO.hippo.HippoAjax.registerDestroyFunction(tmpElement, this.destroy, this);
+            YAHOO.hippo.HippoAjax.registerDestroyFunction(this.elements.selectFilesLink, this.destroy, this);
         };
 
         YAHOO.hippo.UploadWidget.prototype = {
