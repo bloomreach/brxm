@@ -64,9 +64,10 @@ public class PluginUserSession extends UserSession {
 
     private static final Logger log = LoggerFactory.getLogger(UserSession.class);
 
-    private static Session fallbackSession = null;
+    private static UserCredentials fallbackCredentials;
     private static final Map<UserSession, JcrSessionReference> jcrSessions = new WeakHashMap<UserSession, JcrSessionReference>();
 
+    private Session fallbackSession;
     private final IModel<ClassLoader> classLoader;
     private final IModel<WorkflowManager> workflowManager;
     private transient FacetRootsObserver facetRootsObserver;
@@ -83,7 +84,7 @@ public class PluginUserSession extends UserSession {
     }
 
     public static void setCredentials(UserCredentials credentials) throws RepositoryException {
-        fallbackSession = JcrSessionModel.login(credentials);
+        fallbackCredentials = credentials;
     }
 
     public static PluginUserSession get() {
@@ -178,10 +179,17 @@ public class PluginUserSession extends UserSession {
         Session session = getJcrSessionInternal();
         if (session == null) {
             Main main = (Main) Application.get();
+            if (fallbackCredentials == null) {
+                try {
+                    main.getRepository(); // side effect of reinitializing fallback credentials
+                } catch (RepositoryException ignored) {
+                }
+            }
             if (fallbackSession == null) {
                 try {
-                    main.getRepository(); // side effect of reinitializing fallback session
-                } catch (RepositoryException ignored) {
+                    fallbackSession = JcrSessionModel.login(fallbackCredentials);
+                } catch (RepositoryException e) {
+                    log.warn("Cannot login fallback session: " + e.getMessage());
                 }
             }
             session = fallbackSession;
@@ -189,6 +197,9 @@ public class PluginUserSession extends UserSession {
                 main.resetConnection();
                 throw new RestartResponseException(NoRepositoryAvailablePage.class);
             }
+        } else if (fallbackSession != null) {
+            fallbackSession.logout();
+            fallbackSession = null;
         }
         return session;
     }
