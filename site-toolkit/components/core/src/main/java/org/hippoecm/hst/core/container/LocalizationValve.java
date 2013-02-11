@@ -98,21 +98,34 @@ public class LocalizationValve extends AbstractValve {
     }
 
     protected Locale findPreferredLocale(HttpServletRequest request, HstRequestContext requestContext) {
-        if(requestContext.getResolvedSiteMapItem() != null) {
+        if (requestContext.getResolvedSiteMapItem() != null) {
             HstSiteMapItem siteMapItem =  requestContext.getResolvedSiteMapItem().getHstSiteMapItem();
-            if(siteMapItem.getLocale() != null) {
-                Locale locale = LocaleUtils.toLocale(siteMapItem.getLocale());
-                log.debug("Preferred locale for request is set to '{}' by sitemap item '{}'", siteMapItem.getLocale(), siteMapItem.getId());
-                return locale;
+            String localeString = siteMapItem.getLocale();
+
+            if (localeString != null) {
+                try {
+                    Locale locale = LocaleUtils.toLocale(localeString);
+                    log.debug("Preferred locale for request is set to '{}' by sitemap item '{}'", localeString, siteMapItem.getId());
+                    return locale;
+                } catch (IllegalArgumentException e) {
+                    log.warn("Invalid locale, '{}', on the sitemap item, '{}'.", localeString, siteMapItem.getId());
+                }
             }
         }
+
         // if we did not yet find a locale, test the Mount
-        if(requestContext.getResolvedMount() != null) {
+        if (requestContext.getResolvedMount() != null) {
             Mount mount = requestContext.getResolvedMount().getMount();
-            if(mount.getLocale() != null) {
-                Locale locale = LocaleUtils.toLocale(mount.getLocale());
-                log.debug("Preferred locale for request is set to '{}' by Mount '{}'", mount.getLocale(), mount.getName());
-                return locale;
+            String localeString = mount.getLocale();
+
+            if (localeString != null) {
+                try {
+                    Locale locale = LocaleUtils.toLocale(localeString);
+                    log.debug("Preferred locale for request is set to '{}' by Mount '{}'", localeString, mount.getName());
+                    return locale;
+                } catch (IllegalArgumentException e) {
+                    log.warn("Invalid locale, '{}', on the mount, '{}'.", localeString, mount.getName());
+                }
             }
         }
         
