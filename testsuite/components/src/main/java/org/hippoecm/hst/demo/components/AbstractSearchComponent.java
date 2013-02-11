@@ -99,7 +99,7 @@ public abstract class AbstractSearchComponent extends BaseHstComponent {
             
             if (query != null) {
                 request.setAttribute("query", StringEscapeUtils.escapeHtml(query));
-                String parsedQuery = SearchInputParsingUtils.parse(query, false);
+                String parsedQuery = SearchInputParsingUtils.parse(query, true);
                 Filter filter = hstQuery.createFilter();
                 filter.addContains(".", parsedQuery);
                 hstQuery.setFilter(filter);
