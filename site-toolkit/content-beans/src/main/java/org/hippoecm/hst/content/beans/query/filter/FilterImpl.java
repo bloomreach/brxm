@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.jcr.Session;
 
-import org.apache.commons.logging.impl.SimpleLog;
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.SearchInputParsingUtils;
