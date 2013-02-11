@@ -54,7 +54,6 @@
       <param name="maxFieldLength" value="10000"/>
       <param name="bufferSize" value="1000"/>
       <param name="cacheSize" value="1000"/>
-      <param name="forceConsistencyCheck" value="true"/>
       <param name="enableConsistencyCheck" value="true"/>
       <param name="autoRepair" value="true"/>
       <param name="analyzer" value="org.hippoecm.repository.query.lucene.StandardHippoAnalyzer"/>

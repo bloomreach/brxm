@@ -16,7 +16,9 @@
 package org.hippoecm.repository.jackrabbit;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jcr.AccessDeniedException;
@@ -41,6 +43,9 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationDispatcher;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.query.QueryHandler;
+import org.apache.jackrabbit.core.query.lucene.ConsistencyCheck;
+import org.apache.jackrabbit.core.query.lucene.ConsistencyCheckError;
+import org.apache.jackrabbit.core.query.lucene.SearchIndex;
 import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ISMLocking;
@@ -50,6 +55,7 @@ import org.apache.jackrabbit.spi.commons.conversion.DefaultNamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.RegistryNamespaceResolver;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
+import org.hippoecm.repository.query.lucene.ServicingSearchIndex;
 import org.hippoecm.repository.replication.ReplicationJournal;
 import org.hippoecm.repository.replication.ReplicationJournalProducer;
 import org.hippoecm.repository.replication.ReplicatorContext;
@@ -71,6 +77,36 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
 
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
+        searchIndexConsistencyCheck();
+    }
+
+    private void searchIndexConsistencyCheck() throws RepositoryException {
+        try {
+            final ServicingSearchIndex searchIndex = (ServicingSearchIndex) getSearchManager("default").getQueryHandler();
+            if (searchIndex.getServicingConsistencyCheckEnabled()) {
+                final ConsistencyCheck consistencyCheck = searchIndex.runConsistencyCheck();
+                List<ConsistencyCheckError> errors = consistencyCheck.getErrors();
+                if (!errors.isEmpty()) {
+                    consistencyCheck.doubleCheckErrors();
+                    errors = consistencyCheck.getErrors();
+                    if (!errors.isEmpty()) {
+                        if (searchIndex.getAutoRepair()) {
+                            consistencyCheck.repair(true);
+                        } else {
+                            for (ConsistencyCheckError error : errors) {
+                                log.warn(error.toString());
+                            }
+                        }
+                    } else {
+                        log.info("No errors detected");
+                    }
+                } else {
+                    log.info("No errors detected");
+                }
+            }
+        } catch (IOException e) {
+            log.error("Search index consistency check failed", e);
+        }
     }
 
     @Override

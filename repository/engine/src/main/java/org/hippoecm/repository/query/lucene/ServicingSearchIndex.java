@@ -99,6 +99,8 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
      */
     private Element indexingConfiguration;
 
+    private boolean servicingConsistencyCheckEnabled;
+
     private final Cache<String, AuthorizationFilter> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
     /**
      * Simple zero argument constructor.
@@ -322,6 +324,21 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             log.warn("Exception parsing " + this.getIndexingConfiguration(), e);
         }
         return indexingConfiguration;
+    }
+
+    @Override
+    public void setForceConsistencyCheck(final boolean b) {
+        super.setForceConsistencyCheck(false);
+    }
+
+    public boolean getServicingConsistencyCheckEnabled() {
+        return servicingConsistencyCheckEnabled;
+    }
+
+    @Override
+    public void setEnableConsistencyCheck(final boolean b) {
+        super.setEnableConsistencyCheck(false);
+        servicingConsistencyCheckEnabled = b;
     }
 
     @Override
