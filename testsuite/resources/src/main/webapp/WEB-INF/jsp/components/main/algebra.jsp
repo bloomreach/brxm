@@ -24,8 +24,14 @@
 <hr/>
 
 <br/>
-<pre>Generated matrix: <c:out value="${matrix}" /></pre>
-<pre>Inverse   matrix: <c:out value="${inverse}" /></pre>
+<pre>Generated matrix:
+  <c:out value="${matrix}" /></pre>
+<br/>
+<pre>Inverse   matrix:
+  <c:out value="${inverse}" /></pre>
+<br/>
+<pre>Multiplication result of the two matrices:
+  <c:out value="${multiplied}" /></pre>
 <br/>
 
 <hr/>

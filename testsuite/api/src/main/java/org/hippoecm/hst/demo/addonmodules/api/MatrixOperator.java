@@ -27,4 +27,12 @@ public interface MatrixOperator {
      */
     double [][] inverse(double[][] matrixData);
 
+    /**
+     * Returns the multiplication result of two matrices.
+     * @param matrixData1
+     * @param matrixData2
+     * @return
+     */
+    double[][] multiply(double [][] matrixData1, double [][] matrixData2);
+
 }

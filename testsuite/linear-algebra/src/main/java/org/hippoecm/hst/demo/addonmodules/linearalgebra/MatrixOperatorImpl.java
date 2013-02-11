@@ -16,6 +16,7 @@
 package org.hippoecm.hst.demo.addonmodules.linearalgebra;
 
 import org.apache.commons.math.linear.Array2DRowRealMatrix;
+import org.apache.commons.math.linear.LUDecompositionImpl;
 import org.apache.commons.math.linear.RealMatrix;
 import org.hippoecm.hst.demo.addonmodules.api.MatrixOperator;
 
@@ -23,7 +24,13 @@ public class MatrixOperatorImpl implements MatrixOperator {
 
     public double[][] inverse(double[][] matrixData) {
         RealMatrix m = new Array2DRowRealMatrix(matrixData);
-        return m.inverse().getData();
+        return new LUDecompositionImpl(m).getSolver().getInverse().getData();
     }
 
+    public double[][] multiply(double [][] matrixData1, double [][] matrixData2) {
+        RealMatrix m1 = new Array2DRowRealMatrix(matrixData1);
+        RealMatrix m2 = new Array2DRowRealMatrix(matrixData2);
+        RealMatrix result = m1.multiply(m2);
+        return result.getData();
+    }
 }

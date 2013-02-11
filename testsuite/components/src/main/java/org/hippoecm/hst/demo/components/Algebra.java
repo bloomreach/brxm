@@ -33,20 +33,23 @@ public class Algebra extends BaseHstComponent {
     public void doBeforeRender(final HstRequest request, final HstResponse response) throws HstComponentException {
         RandomGenerator randomGenerator = HstServices.getComponentManager().getComponent("randomGenerator", RANDOM_NUMBERS_MODULE_NAME);
         MatrixOperator matrixOperator = HstServices.getComponentManager().getComponent("matrixOperator", LINEAR_ALGEBRA_MODULE_NAME);
-        
-        double [][] data = new double[2][2];
-        
+
+        double [][] matrixData = new double[2][2];
+
         for (int i = 0; i < 2; i++) {
             double [] randomNums = randomGenerator.generate(2);
             for (int j = 0; j < 2; j++) {
-                data[i][j] = randomNums[j];
+                matrixData[i][j] = randomNums[j];
             }
         }
-        
-        double [][] inverseData = matrixOperator.inverse(data);
-        
-        request.setAttribute("matrix", ArrayUtils.toString(data));
-        request.setAttribute("inverse", ArrayUtils.toString(inverseData));
+
+        double [][] inverseMatrixData = matrixOperator.inverse(matrixData);
+
+        request.setAttribute("matrix", ArrayUtils.toString(matrixData));
+        request.setAttribute("inverse", ArrayUtils.toString(inverseMatrixData));
+
+        double [][] multiplied = matrixOperator.multiply(matrixData, inverseMatrixData);
+        request.setAttribute("multiplied", ArrayUtils.toString(multiplied));
     }
 
 }
