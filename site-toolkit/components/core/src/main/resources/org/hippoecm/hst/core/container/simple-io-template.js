@@ -42,7 +42,7 @@ Hippo.Hst.AsyncPage = {
                 this.sendRequest(element.id, function(xmlHttp) {
                     var fragment, tmpDiv, parent;
                     fragment = document.createDocumentFragment();
-                    tmpDiv = document.createElement('tmpDiv');
+                    tmpDiv = document.createElement('div');
                     tmpDiv.innerHTML = xmlHttp.responseText;
                     while (tmpDiv.firstChild) {
                         fragment.appendChild(tmpDiv.firstChild);
@@ -55,12 +55,10 @@ Hippo.Hst.AsyncPage = {
     },
 
     sendRequest : function(url, callback) {
-        var self, xmlHttpRequest;
+        var xmlHttpRequest;
         try {
             xmlHttpRequest = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
             xmlHttpRequest.open("GET", url, true);
-            xmlHttpRequest.setRequestHeader('User-Agent', 'XMLHTTP/1.0');
-            self = this;
             xmlHttpRequest.onreadystatechange = function () {
                 if (xmlHttpRequest.readyState !== 4) {
                     return;
@@ -68,7 +66,7 @@ Hippo.Hst.AsyncPage = {
                 if (xmlHttpRequest.status !== 200 && xmlHttpRequest.status !== 304) {
                     return;
                 }
-                callback.call(self, xmlHttpRequest);
+                callback(xmlHttpRequest);
             };
 
             xmlHttpRequest.send();
