@@ -147,23 +147,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hst:site</sv:value>
     </sv:property>
-    <sv:node sv:name="hst:content">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>hippo:facetselect</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:docbase" sv:type="String">
-        <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:facets" sv:type="String" sv:multiple="true">
-        <sv:value>hippo:availability</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:modes" sv:type="String" sv:multiple="true">
-        <sv:value>single</sv:value>
-      </sv:property>
-      <sv:property sv:name="hippo:values" sv:type="String" sv:multiple="true">
-        <sv:value>live</sv:value>
-      </sv:property>
-    </sv:node>
   </sv:node>
   <sv:node sv:name="hst:mount">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
