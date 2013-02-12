@@ -89,11 +89,11 @@ public interface ComponentManager
      * Implementation may also look up a component by translating the specified type into a conventional FQCN string of the type
      * if a component is not found by the specified type.
      * Returns null if no component is found.
-     * If there is not exactly single matching component found by the specified type, then it throws a {@link NoSuchComponentException}.
+     * If there is not exactly single matching component found by the specified type, then it throws a {@link ComponentsException}.
      * 
      * @param requiredType type the bean must match; can be an interface or superclass.
      * @return component matching the required type or null if not found by the specified type
-     * @throws NoSuchComponentException
+     * @throws ComponentsException
      */
     <T> T getComponent(Class<T> requiredType) throws ComponentsException;
 
@@ -127,7 +127,7 @@ public interface ComponentManager
      * Implementation may also look up a component by translating the specified type into a conventional FQCN string of the type
      * if a component is not found by the specified type.
      * Returns null if no component is found.
-     * If there is not exactly single matching component found by the specified type, then it throws a {@link NoSuchComponentException}.
+     * If there is not exactly single matching component found by the specified type, then it throws a {@link ComponentsException}.
      * If <CODE>addonModuleNames</CODE> consists of multiple items, then 
      * each <CODE>addonModuleNames</CODE> item is regarded as child addon module name 
      * in the descendant hierarchy, as ordered.

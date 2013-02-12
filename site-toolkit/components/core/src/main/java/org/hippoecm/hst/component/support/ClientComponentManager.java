@@ -32,7 +32,6 @@ import org.hippoecm.hst.core.container.ComponentManagerAware;
 import org.hippoecm.hst.core.container.ComponentsException;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
-import org.hippoecm.hst.core.container.NoSuchComponentException;
 import org.hippoecm.hst.core.container.ServletContextAware;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.container.DefaultComponentManagerApplicationContext;
@@ -188,7 +187,7 @@ public class ClientComponentManager implements ComponentManager, ServletContextA
         }
 
         if (bean == null) {
-            throw new NoSuchComponentException("No component found, not exactly matching a single component by the specified type, " + requiredType);
+            throw new ComponentsException("No component found, not exactly matching a single component by the specified type, " + requiredType);
         }
 
         return bean;

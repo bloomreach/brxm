@@ -25,7 +25,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.addon.module.ModuleInstance;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ComponentManagerAware;
-import org.hippoecm.hst.core.container.NoSuchComponentException;
+import org.hippoecm.hst.core.container.ComponentsException;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.container.ApplicationContextUtils;
@@ -171,7 +171,7 @@ public class ModuleInstanceImpl implements ModuleInstance, ComponentManagerAware
         }
 
         if (bean == null) {
-            throw new NoSuchComponentException("No component found, not exactly matching a single component by the specified type, " + requiredType);
+            throw new ComponentsException("No component found, not exactly matching a single component by the specified type, " + requiredType);
         }
 
         return bean;

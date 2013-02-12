@@ -35,7 +35,6 @@ import org.hippoecm.hst.core.container.ComponentsException;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.hippoecm.hst.core.container.ContainerConfigurationImpl;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
-import org.hippoecm.hst.core.container.NoSuchComponentException;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.site.addon.module.runtime.ModuleInstanceImpl;
 import org.slf4j.Logger;
@@ -307,7 +306,7 @@ public class SpringComponentManager implements ComponentManager {
         }
 
         if (bean == null) {
-            throw new NoSuchComponentException("No component found, not exactly matching a single component by the specified type, " + requiredType);
+            throw new ComponentsException("No component found, not exactly matching a single component by the specified type, " + requiredType);
         }
 
         return bean;

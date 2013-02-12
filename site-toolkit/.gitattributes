@@ -148,7 +148,6 @@ api/src/main/java/org/hippoecm/hst/core/container/HstContainerURLProvider.java s
 api/src/main/java/org/hippoecm/hst/core/container/HstNavigationalStateCodec.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstRequestProcessor.java -text
 api/src/main/java/org/hippoecm/hst/core/container/ModuleNotFoundException.java -text
-api/src/main/java/org/hippoecm/hst/core/container/NoSuchComponentException.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageCacheContext.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageCacheKey.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageErrorHandler.java svneol=native#text/plain
