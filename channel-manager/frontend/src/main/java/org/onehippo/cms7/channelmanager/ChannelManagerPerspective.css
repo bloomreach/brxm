@@ -439,3 +439,12 @@
 .ext-gecko .x-window-body .templateComposerPropertiesForm .x-form-item .x-form-element {
     padding-left: 0px;
 }
+
+#x-form-el-contentRoot .x-form-field-wrap {
+    display: inline;
+}
+
+#x-form-el-contentRoot .x-form-text {
+    width: 425px !important;
+}
+
