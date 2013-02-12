@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -63,6 +62,7 @@ import org.hippoecm.frontend.custom.ServerCookie;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.util.AclChecker;
 import org.hippoecm.frontend.util.WebApplicationHelper;
@@ -77,11 +77,13 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     private final static Map<String, String> causeKeys;
 
     static {
-        causeKeys = new HashMap<String, String>(3);
-        causeKeys.put(org.hippoecm.frontend.session.LoginException.CAUSE.INCORRECT_CREDENTIALS.name(), "invalid.login");
-        causeKeys.put(org.hippoecm.frontend.session.LoginException.CAUSE.INCORRECT_CAPTACHA.name(), "invalid.captcha");
-        causeKeys.put(org.hippoecm.frontend.session.LoginException.CAUSE.ACCESS_DENIED.name(), "access.denied");
-        causeKeys.put(org.hippoecm.frontend.session.LoginException.CAUSE.REPOSITORY_ERROR.name(), "repository.error");
+        causeKeys = new HashMap<String, String>(6);
+        causeKeys.put(LoginException.CAUSE.INCORRECT_CREDENTIALS.name(), "invalid.login");
+        causeKeys.put(LoginException.CAUSE.INCORRECT_CAPTCHA.name(), "invalid.captcha");
+        causeKeys.put(LoginException.CAUSE.ACCESS_DENIED.name(), "access.denied");
+        causeKeys.put(LoginException.CAUSE.REPOSITORY_ERROR.name(), "repository.error");
+        causeKeys.put(LoginException.CAUSE.PASSWORD_EXPIRED.name(), "password.expired");
+        causeKeys.put(LoginException.CAUSE.ACCOUNT_EXPIRED.name(), "account.expired");
     }
 
     private static final int COOKIE_DEFAULT_MAX_AGE = 1209600;
@@ -153,6 +155,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
             username = new String(Base64.decodeBase64(strings[1]));
             password = strings[0] + "$" + strings[2];
 
+            // final LoginStatusTuple loginStatus = signInForm.login();
             if (signInForm.login()) {
                 signInForm.redirect(true);
             }
@@ -286,6 +289,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
 
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
+                    // final LoginStatusTuple loginStatus = SignInForm.this.login();
                     if (SignInForm.this.login()) {
                         redirect(true);
                     } else {
@@ -326,22 +330,21 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 if (captchaImage.isVisible() && captchaTextField.isVisible()) {
                     success = captchaTextValue.equalsIgnoreCase(imagePass);
                     if (!success) {
-                        throw new org.hippoecm.frontend.session.LoginException(
-                                org.hippoecm.frontend.session.LoginException.CAUSE.INCORRECT_CAPTACHA);
+                        throw new LoginException(LoginException.CAUSE.INCORRECT_CAPTCHA);
 
                     }
                 }
 
                 userSession.login(new UserCredentials(new SimpleCredentials(username, password.toCharArray())));
                 AclChecker.checkAccess(getPluginConfig(), userSession.getJcrSession());
-            } catch (org.hippoecm.frontend.session.LoginException le) {
+            } catch (LoginException le) {
                 success = false;
                 loginExceptionPageParameters = buildPageParameters(le.getLoginExceptionCause());
             } catch (AccessControlException ace) {
                 success = false;
                 // Invalidate the current obtained JCR session and create an anonymous one
                 userSession.login();
-                loginExceptionPageParameters = buildPageParameters(org.hippoecm.frontend.session.LoginException.CAUSE.ACCESS_DENIED);
+                loginExceptionPageParameters = buildPageParameters(LoginException.CAUSE.ACCESS_DENIED);
             } catch (RepositoryException re) {
                 success = false;
                 // Invalidate the current obtained JCR session and create an anonymous one
@@ -352,7 +355,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                             + "'", re);
                 }
 
-                loginExceptionPageParameters = buildPageParameters(org.hippoecm.frontend.session.LoginException.CAUSE.REPOSITORY_ERROR);
+                loginExceptionPageParameters = buildPageParameters(LoginException.CAUSE.REPOSITORY_ERROR);
             }
 
             if (success) {
@@ -396,14 +399,12 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                                         RememberMeLoginPlugin.this.getPluginConfig().getAsBoolean("use.httponly.cookies",
                                                 false));
                             } else {
-                                loginExceptionPageParameters = buildPageParameters(org.hippoecm.frontend.session.LoginException.CAUSE.REPOSITORY_ERROR);
+                                loginExceptionPageParameters = buildPageParameters(LoginException.CAUSE.REPOSITORY_ERROR);
                                 handleLoginFailure(loginExceptionPageParameters, userSession);
                                 success = false;
                             }
                         } catch (NoSuchAlgorithmException ex) {
                             log.error(ex.getClass().getName() + ": " + ex.getMessage());
-                        } catch (LoginException ex) {
-                            log.info("Invalid login as user: " + username);
                         } catch (RepositoryException ex) {
                             log.error(ex.getClass().getName() + ": " + ex.getMessage());
                         }
@@ -541,8 +542,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
     private void handleLoginFailure(PageParameters loginExceptionPageParameters, PluginUserSession userSession) {
         String key = DEFAULT_KEY;
         if (loginExceptionPageParameters != null) {
-            Object loginExceptionCause = loginExceptionPageParameters
-                    .get(org.hippoecm.frontend.session.LoginException.CAUSE.class.getName());
+            Object loginExceptionCause = loginExceptionPageParameters.get(LoginException.CAUSE.class.getName());
 
             if (loginExceptionCause instanceof String) {
                 key = causeKeys.get(loginExceptionCause);

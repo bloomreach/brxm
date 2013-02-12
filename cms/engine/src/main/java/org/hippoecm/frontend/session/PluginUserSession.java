@@ -24,6 +24,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
+import javax.security.auth.login.AccountExpiredException;
+import javax.security.auth.login.CredentialExpiredException;
+import javax.security.auth.login.FailedLoginException;
 
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.wicket.Application;
@@ -38,6 +41,7 @@ import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NoRepositoryAvailablePage;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.model.JcrSessionModel;
+import org.hippoecm.frontend.model.SessionTuple;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.observation.FacetRootsObserver;
 import org.hippoecm.frontend.observation.JcrObservationManager;
@@ -137,7 +141,7 @@ public class PluginUserSession extends UserSession {
     }
 
     @Deprecated
-    public PluginUserSession(Request request, LoadableDetachableModel<Session> jcrSessionModel) {
+    public PluginUserSession(Request request, LoadableDetachableModel<SessionTuple> jcrSessionModel) {
         super(request);
         classLoader = new LoadableDetachableModel<ClassLoader>() {
             private static final long serialVersionUID = 1L;
@@ -155,13 +159,18 @@ public class PluginUserSession extends UserSession {
                 return null;
             }
         };
-        login(null, jcrSessionModel);
+
+        try {
+            login(null, jcrSessionModel);
+        } catch (LoginException ignore) {
+        }
+
         //Calling the dirty() method causes this wicket session to be reset in the http session
         //so that it knows that the wicket session has changed (we've just added the jcr session model etc.)
         dirty();
     }
 
-    private IModel<Session> getJcrSessionModel() {
+    private IModel<SessionTuple> getJcrSessionModel() {
         synchronized (jcrSessions) {
             JcrSessionReference ref = jcrSessions.get(this);
             if (ref != null) {
@@ -205,9 +214,9 @@ public class PluginUserSession extends UserSession {
     }
 
     private Session getJcrSessionInternal() {
-        IModel<Session> sessionModel = getJcrSessionModel();
+        IModel<SessionTuple> sessionModel = getJcrSessionModel();
         if (sessionModel != null) {
-            Session result = sessionModel.getObject();
+            Session result = sessionModel.getObject().session;
             if (result != null && result.isLive()) {
                 return result;
             }
@@ -220,7 +229,7 @@ public class PluginUserSession extends UserSession {
      * of saving any pending changes.  Event listeners will remain registered and will reregister with a new session.
      */
     public void releaseJcrSession() {
-        IModel<Session> sessionModel = getJcrSessionModel();
+        IModel<SessionTuple> sessionModel = getJcrSessionModel();
         if (sessionModel != null) {
             sessionModel.detach();
         }
@@ -230,35 +239,45 @@ public class PluginUserSession extends UserSession {
     }
 
     public void login() {
-        login(null, null);
+        try {
+            login(null, null);
+        } catch (LoginException ignore) {}
     }
 
     public void login(UserCredentials credentials) throws LoginException {
-        boolean success = login(credentials, null);
-
-        if (!success) {
-            throw new LoginException(LoginException.CAUSE.INCORRECT_CREDENTIALS);
-        }
+        login(credentials, null);
 
         IApplicationFactory factory = getApplicationFactory();
         final IPluginConfigService application = factory.getApplication(getApplicationName());
         if (application != null && !application.isSaveOnExitEnabled()) {
-            IModel<Session> sessionModel = getJcrSessionModel();
+            IModel<SessionTuple> sessionModel = getJcrSessionModel();
             if (sessionModel instanceof JcrSessionModel) {
                 ((JcrSessionModel) sessionModel).setSaveOnExit(false);
             }
         }
     }
 
+    private void handleLoginException(javax.jcr.LoginException le) throws LoginException {
+        final Throwable rootCause = le.getCause();
+
+        if (rootCause instanceof FailedLoginException) {
+            throw new LoginException(LoginException.CAUSE.INCORRECT_CREDENTIALS);
+        } else if (rootCause instanceof CredentialExpiredException) {
+            throw new LoginException(LoginException.CAUSE.PASSWORD_EXPIRED);
+        } else if (rootCause instanceof AccountExpiredException) {
+            throw new LoginException(LoginException.CAUSE.ACCOUNT_EXPIRED);
+        }
+    }
+
     @Deprecated
-    public boolean login(UserCredentials credentials, LoadableDetachableModel<Session> sessionModel) {
+    public void login(UserCredentials credentials, LoadableDetachableModel<SessionTuple> sessionModel) throws LoginException {
         if (sessionModel == null) {
             sessionModel = new JcrSessionModel(credentials);
         }
         classLoader.detach();
         workflowManager.detach();
         facetRootsObserver = null;
-        IModel<Session> oldModel = null;
+        IModel<SessionTuple> oldModel = null;
         synchronized (jcrSessions) {
             JcrSessionReference sessionRef = jcrSessions.get(this);
             if (sessionRef != null) {
@@ -274,7 +293,13 @@ public class PluginUserSession extends UserSession {
         if (oldModel != null) {
             oldModel.detach();
         }
-        return sessionModel.getObject() != null;
+
+        final SessionTuple sessionTuple = sessionModel.getObject();
+
+        if (sessionTuple != null && sessionTuple.exception != null) {
+            handleLoginException(sessionTuple.exception);
+        }
+
     }
 
     public void logout() {
@@ -282,7 +307,7 @@ public class PluginUserSession extends UserSession {
         workflowManager.detach();
         facetRootsObserver = null;
 
-        IModel<Session> oldModel = null;
+        IModel<SessionTuple> oldModel = null;
         synchronized (jcrSessions) {
             JcrSessionReference sessionRef = jcrSessions.get(this);
             if (sessionRef != null) {

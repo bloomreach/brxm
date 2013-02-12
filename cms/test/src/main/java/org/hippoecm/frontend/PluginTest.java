@@ -30,6 +30,7 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.SessionTuple;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.DummyPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -37,6 +38,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
+import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.junit.After;
@@ -74,15 +76,19 @@ public abstract class PluginTest extends RepositoryTestCase {
         @Override
         public PluginUserSession newSession(org.apache.wicket.Request request, org.apache.wicket.Response response) {
             PluginUserSession userSession = (PluginUserSession) super.newSession(request, response);
-            userSession.login(USER_CREDENTIALS, new LoadableDetachableModel<Session>() {
-                private static final long serialVersionUID = 1L;
 
-                @Override
-                protected Session load() {
-                    return session;
-                }
-                
-            });
+            try {
+                userSession.login(USER_CREDENTIALS, new LoadableDetachableModel<SessionTuple>() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    protected SessionTuple load() {
+                        return new SessionTuple(session, null);
+                    }
+
+                });
+            } catch (LoginException ignore) {}
+
             return userSession;
         }
     }

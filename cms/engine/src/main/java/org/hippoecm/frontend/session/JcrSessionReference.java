@@ -18,9 +18,8 @@ package org.hippoecm.frontend.session;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
-import javax.jcr.Session;
-
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.SessionTuple;
 
 /**
  * Maintains a reference to a JCR session model, based on a Wicket session.
@@ -40,7 +39,7 @@ class JcrSessionReference extends WeakReference<UserSession> {
         }
     }
 
-    IModel<Session> jcrSession;
+    IModel<SessionTuple> jcrSession;
 
     JcrSessionReference(UserSession referent) {
         super(referent, refQueue);
