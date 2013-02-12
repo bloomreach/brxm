@@ -44,22 +44,7 @@ public class RepositoryUserManager extends AbstractUserManager {
         maintenanceMode = context.isMaintenanceMode();
     }
 
-    @Override
-    public UserSecurityStatus getUserSecurityStatus(String rawUserId) throws RepositoryException {
-        UserSecurityStatus userSecurityStatus = super.getUserSecurityStatus(rawUserId);
-
-        if (userSecurityStatus == UserSecurityStatus.INACTIVE) {
-            return UserSecurityStatus.INACTIVE;
-        }
-
-        if (isPasswordExpired(rawUserId)) {
-            return UserSecurityStatus.PASSWORD_EXPIRED;
-        }
-
-        return userSecurityStatus;
-    }
-
-    private boolean isPasswordExpired(String rawUserId) throws RepositoryException {
+     public boolean isPasswordExpired(String rawUserId) throws RepositoryException {
         if (isSystemUser(rawUserId)) {
             // system users password does not expire
             return false;

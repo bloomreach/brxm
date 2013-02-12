@@ -342,13 +342,11 @@ public abstract class AbstractUserManager implements UserManager {
         }
     }
 
-    public UserSecurityStatus getUserSecurityStatus(String rawUserId) throws RepositoryException {
-        if (JcrUtils.getBooleanProperty(getUser(rawUserId), HippoNodeType.HIPPO_ACTIVE, true)) {
-            return UserSecurityStatus.ACTIVE;
-        } else {
-            return UserSecurityStatus.INACTIVE;
-        }
+    public boolean isActive(final String rawUserId) throws RepositoryException {
+        return JcrUtils.getBooleanProperty(getUser(rawUserId), HippoNodeType.HIPPO_ACTIVE, true);
     }
+
+    public abstract boolean isPasswordExpired(final String rawUserId) throws RepositoryException;
 
     public boolean isSystemUser(String rawUserId) throws RepositoryException {
         return JcrUtils.getBooleanProperty(getUser(rawUserId), HippoNodeType.HIPPO_SYSTEM, false);

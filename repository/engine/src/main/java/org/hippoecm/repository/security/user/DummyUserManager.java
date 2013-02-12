@@ -34,6 +34,11 @@ public class DummyUserManager extends AbstractUserManager {
         providerId = PROVIDER_ID;
     }
 
+    @Override
+    public boolean isPasswordExpired(String rawUserId) throws RepositoryException {
+        return false;
+    }
+
     public void initManager(ManagerContext context) throws RepositoryException {
         initialized = true;
     }

@@ -35,7 +35,6 @@ import javax.naming.ldap.LdapContext;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
 import org.hippoecm.repository.security.user.AbstractUserManager;
-import org.hippoecm.repository.security.user.UserSecurityStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,8 +138,16 @@ public class LdapUserManager extends AbstractUserManager {
      * a user is active, or sync the status to the hippo:active property.
      */
     @Override
-    public UserSecurityStatus getUserSecurityStatus(String userId) throws RepositoryException {
-        return UserSecurityStatus.ACTIVE;
+    public boolean isActive(final String userId) throws RepositoryException {
+        return true;
+    }
+
+    /**
+     * TODO: This needs to be checked against the LDAP server
+     */
+    @Override
+    public boolean isPasswordExpired(final String userId) throws RepositoryException {
+        return false;
     }
 
     /**

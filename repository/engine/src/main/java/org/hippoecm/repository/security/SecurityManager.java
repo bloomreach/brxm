@@ -78,7 +78,6 @@ import org.hippoecm.repository.security.role.DummyRoleManager;
 import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.AbstractUserManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
-import org.hippoecm.repository.security.user.UserSecurityStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -314,11 +313,10 @@ public class SecurityManager implements HippoSecurityManager {
             GroupManager groupMgr = providers.get(providerId).getGroupManager();
 
             // Check if user is active
-            final UserSecurityStatus userSecurityStatus = userMgr.getUserSecurityStatus(userId);
-            if (userSecurityStatus == UserSecurityStatus.INACTIVE) {
+            if (!userMgr.isActive(userId)) {
                 log.debug("Inactive user: {}, provider: {}", userId, providerId);
                 return AuthenticationStatus.ACCOUNT_EXPIRED;
-            } else if (userSecurityStatus == UserSecurityStatus.PASSWORD_EXPIRED) {
+            } else if (userMgr.isPasswordExpired(userId)) {
                 log.debug("Password expired for user: {}, provider: {}", userId, providerId);
                 return AuthenticationStatus.CREDENTIAL_EXPIRED;
             }
