@@ -21,7 +21,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.wicket.AttributeModifier;
-import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -144,9 +143,15 @@ public class ListColumn<T> extends AbstractColumn<T> {
 
 
     public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> model) {
-        final ListCell cell = new ListCell(componentId, model, renderer, attributeModifier, context);
-        populateCell(cell, model);
+        addLinkBehavior(item, model);
 
+        addCssClasses(item);
+
+        addCell(item, componentId, model);
+    }
+
+    protected void addCell(Item<ICellPopulator<T>> item, String componentId, IModel<T> model) {
+        final ListCell cell = new ListCell(componentId, model, renderer, attributeModifier, context);
         if (attributeModifier != null) {
             AttributeModifier[] columnModifiers;
             if (attributeModifier instanceof AbstractListAttributeModifier) {
@@ -182,19 +187,11 @@ public class ListColumn<T> extends AbstractColumn<T> {
             }
         }
         item.add(cell);
-
-        addCssClasses(item);
     }
 
-    protected void addCssClasses(Item<ICellPopulator<T>> item) {
+    protected void addLinkBehavior(final Item<ICellPopulator<T>> item, final IModel<T> model) {
         if (isLink()) {
-            item.add(new CssClassAppender(Model.of("link")));
-        }
-    }
-
-    protected void populateCell(final Component cell, final IModel<T> model) {
-        if (isLink()) {
-            cell.add(new AjaxEventBehavior("onclick") {
+            item.add(new AjaxEventBehavior("onclick") {
                 private static final long serialVersionUID = 1L;
 
                 protected CharSequence getEventHandler() {
@@ -203,10 +200,16 @@ public class ListColumn<T> extends AbstractColumn<T> {
 
                 @Override
                 protected void onEvent(AjaxRequestTarget target) {
-                    ListDataTable dataTable = cell.findParent(ListDataTable.class);
+                    ListDataTable dataTable = item.findParent(ListDataTable.class);
                     dataTable.getSelectionListener().selectionChanged(model);
                 }
             });
+        }
+    }
+
+    protected void addCssClasses(Item<ICellPopulator<T>> item) {
+        if (isLink()) {
+            item.add(new CssClassAppender(Model.of("link")));
         }
     }
 
