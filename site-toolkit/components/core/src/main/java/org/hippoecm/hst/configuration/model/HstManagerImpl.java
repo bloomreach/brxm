@@ -409,8 +409,11 @@ public class HstManagerImpl implements MutableHstManager {
                             log.warn("Model failed to built. Serve old virtualHosts model.");
                             consecutiveBuildFailCounter++;
                             state = BuilderState.FAILED;
-                            return prevVirtualHosts;
                         }
+                    }
+                    if (state == BuilderState.FAILED) {
+                        // do not flush pageCache but return old prev virtual host instance instead
+                        return prevVirtualHosts;
                     }
                     log.info("Flushing page cache after new model is loaded");
                     pageCache.clear();
