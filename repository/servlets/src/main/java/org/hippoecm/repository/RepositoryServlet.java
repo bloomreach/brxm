@@ -70,6 +70,7 @@ import org.slf4j.LoggerFactory;
 public class RepositoryServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(HippoRepository.class);
 
     /** Parameter name of the repository storage directory */
@@ -81,11 +82,15 @@ public class RepositoryServlet extends HttpServlet {
     /** Parameter name of the repository config file */
     public static final String REPOSITORY_CONFIG_PARAM = "repository-config";
 
+    public static final String START_REMOTE_SERVER = "start-remote-server";
+
     /** Default repository storage directory */
     public static final String DEFAULT_REPOSITORY_DIRECTORY = "WEB-INF/storage";
 
     /** Default binding address for server */
     public static final String DEFAULT_REPOSITORY_BINDING = "rmi://localhost:1099/hipporepository";
+
+    public static final String DEFAULT_START_REMOTE_SERVER = "false";
 
     /** Default config file */
     public static final String DEFAULT_REPOSITORY_CONFIG = "repository.xml";
@@ -103,6 +108,7 @@ public class RepositoryServlet extends HttpServlet {
     String bindingAddress;
     String storageLocation;
     String repositoryConfig;
+    boolean startRemoteServer;
     private AuditLogger listener;
     private GuavaHippoEventBus hippoEventBus;
 
@@ -114,6 +120,7 @@ public class RepositoryServlet extends HttpServlet {
         bindingAddress = getConfigurationParameter(REPOSITORY_BINDING_PARAM, DEFAULT_REPOSITORY_BINDING);
         repositoryConfig = getConfigurationParameter(REPOSITORY_CONFIG_PARAM, DEFAULT_REPOSITORY_CONFIG);
         storageLocation = getConfigurationParameter(REPOSITORY_DIRECTORY_PARAM, DEFAULT_REPOSITORY_DIRECTORY);
+        startRemoteServer = Boolean.valueOf(getConfigurationParameter(START_REMOTE_SERVER, DEFAULT_START_REMOTE_SERVER));
 
         // check for absolute path
         if (!storageLocation.startsWith("/") && !storageLocation.startsWith("file:")) {
@@ -176,21 +183,23 @@ public class RepositoryServlet extends HttpServlet {
             repository = HippoRepositoryFactory.getHippoRepository(storageLocation);
             HippoRepositoryFactory.setDefaultRepository(repository);
 
-            // the the remote repository
-            RepositoryUrl url = new RepositoryUrl(bindingAddress);
-            rmiRepository = new ServerServicingAdapterFactory(url).getRemoteRepository(repository.getRepository());
-            System.setProperty("java.rmi.server.useCodebaseOnly", "true");
+            if (startRemoteServer) {
+                // the the remote repository
+                RepositoryUrl url = new RepositoryUrl(bindingAddress);
+                rmiRepository = new ServerServicingAdapterFactory(url).getRemoteRepository(repository.getRepository());
+                System.setProperty("java.rmi.server.useCodebaseOnly", "true");
 
-            // Get or start registry and bind the remote repository
-            try {
-                registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
-                registry.rebind(url.getName(), rmiRepository); // connection exception happens here
-                log.info("Using existing rmi server on " + url.getHost() + ":" + url.getPort());
-            } catch (ConnectException e) {
-                registry = LocateRegistry.createRegistry(url.getPort());
-                registry.rebind(url.getName(), rmiRepository);
-                log.info("Started an RMI registry on port " + url.getPort());
-                registryIsEmbedded = true;
+                // Get or start registry and bind the remote repository
+                try {
+                    registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+                    registry.rebind(url.getName(), rmiRepository); // connection exception happens here
+                    log.info("Using existing rmi server on " + url.getHost() + ":" + url.getPort());
+                } catch (ConnectException e) {
+                    registry = LocateRegistry.createRegistry(url.getPort());
+                    registry.rebind(url.getName(), rmiRepository);
+                    log.info("Started an RMI registry on port " + url.getPort());
+                    registryIsEmbedded = true;
+                }
             }
         } catch (MalformedURLException ex) {
             log.error("MalformedURLException exception: " + bindingAddress, ex);
@@ -218,36 +227,57 @@ public class RepositoryServlet extends HttpServlet {
         // done
         log.info("Repository closed.");
 
-        // unbinding from registry
-        String name = null;
-        try {
-            name = new RepositoryUrl(bindingAddress).getName();
-            log.info("Unbinding '"+name+"' from registry.");
-            registry.unbind(name);
-        } catch (RemoteException e) {
-            log.error("Error during unbinding '" + name + "': " + e.getMessage());
-        } catch (NotBoundException e) {
-            log.error("Error during unbinding '" + name + "': " + e.getMessage());
-        } catch (MalformedURLException e) {
-            log.error("MalformedURLException while parsing '" + bindingAddress + "': " + e.getMessage());
-        }
-
-        // unexporting from registry
-        try {
-            log.info("Unexporting rmi repository: " + bindingAddress);
-            UnicastRemoteObject.unexportObject(rmiRepository, true);
-        } catch (NoSuchObjectException e) {
-            log.error("Error during rmi shutdown for address: " + bindingAddress, e);
-        }
-
-        // shutdown registry
-        if (registryIsEmbedded) {
+        if (startRemoteServer) {
+            // unbinding from registry
+            String name = null;
             try {
-                log.info("Closing rmiregistry: " + bindingAddress);
-                UnicastRemoteObject.unexportObject(registry, true);
+                name = new RepositoryUrl(bindingAddress).getName();
+                log.info("Unbinding '"+name+"' from registry.");
+                registry.unbind(name);
+            } catch (RemoteException e) {
+                log.error("Error during unbinding '" + name + "': " + e.getMessage());
+            } catch (NotBoundException e) {
+                log.error("Error during unbinding '" + name + "': " + e.getMessage());
+            } catch (MalformedURLException e) {
+                log.error("MalformedURLException while parsing '" + bindingAddress + "': " + e.getMessage());
+            }
+
+            // unexporting from registry
+            try {
+                log.info("Unexporting rmi repository: " + bindingAddress);
+                UnicastRemoteObject.unexportObject(rmiRepository, true);
             } catch (NoSuchObjectException e) {
                 log.error("Error during rmi shutdown for address: " + bindingAddress, e);
             }
+
+            // shutdown registry
+            if (registryIsEmbedded) {
+                try {
+                    log.info("Closing rmiregistry: " + bindingAddress);
+                    UnicastRemoteObject.unexportObject(registry, true);
+                } catch (NoSuchObjectException e) {
+                    log.error("Error during rmi shutdown for address: " + bindingAddress, e);
+                }
+            }
+
+            // force the distributed GC to fire, otherwise in tomcat with embedded
+            // rmi registry the process won't end
+            // this procedure is necessary specifically for Tomcat
+            log.info("Repository terminated, waiting for garbage to clear");
+            Thread garbageClearThread = new Thread("garbage clearer") {
+                public void run() {
+                    for(int i=0; i < 5; i++) {
+                        try {
+                            Thread.sleep(3000);
+                            System.gc();
+                        } catch(InterruptedException ignored) {
+                        }
+                    }
+                }
+            };
+            garbageClearThread.setDaemon(true);
+            garbageClearThread.start();
+
         }
 
         hippoEventBus.unregister(listener);
@@ -255,23 +285,6 @@ public class RepositoryServlet extends HttpServlet {
         HippoServiceRegistry.unregisterService(hippoEventBus, HippoEventBus.class);
         hippoEventBus = null;
 
-        // force the distributed GC to fire, otherwise in tomcat with embedded
-        // rmi registry the process won't end
-        // this procedure is necessary specifically for Tomcat
-        log.info("Repository terminated, waiting for garbage to clear");
-        Thread garbageClearThread = new Thread("garbage clearer") {
-            public void run() {
-                for(int i=0; i < 5; i++) {
-                    try {
-                        Thread.sleep(3000);
-                        System.gc();
-                    } catch(InterruptedException ex) {
-                    }
-                }
-            }
-        };
-        garbageClearThread.setDaemon(true);
-        garbageClearThread.start();
     }
 
     @Override
