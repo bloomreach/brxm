@@ -82,9 +82,8 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
 
     private JcrPropertyModel newPropertyModel(JcrNodeModel model) {
         IFieldDescriptor field = getFieldHelper().getField();
-        JcrItemModel itemModel = new JcrItemModel(model.getItemModel().getPath() + "/"
-                + field.getPath());
-        return new JcrPropertyModel(itemModel);
+        String fieldAbsPath = model.getItemModel().getPath() + "/" + field.getPath();
+        return new JcrPropertyModel(fieldAbsPath);
     }
 
     protected void subscribe() {

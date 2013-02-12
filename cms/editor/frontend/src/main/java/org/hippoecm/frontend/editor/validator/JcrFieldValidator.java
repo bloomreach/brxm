@@ -99,7 +99,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             if (fieldType.isNode()) {
                 provider = new ChildNodeProvider(field, null, nodeModel.getItemModel());
             } else {
-                JcrItemModel itemModel = new JcrItemModel(nodeModel.getItemModel().getPath() + "/" + field.getPath());
+                JcrItemModel itemModel = new JcrItemModel(nodeModel.getItemModel().getPath() + "/" + field.getPath(), true);
                 provider = new PropertyValueProvider(field, null, itemModel);
             }
             Iterator<? extends IModel> iter = provider.iterator(0, provider.size());

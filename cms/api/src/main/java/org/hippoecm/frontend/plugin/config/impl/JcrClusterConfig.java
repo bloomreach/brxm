@@ -230,7 +230,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                     String path = event.getPath();
                     path = path.substring(0, path.lastIndexOf('/'));
 
-                    JcrItemModel model = new JcrItemModel(path);
+                    JcrItemModel model = new JcrItemModel(path, isPropertyEvent(event));
                     Node root = getNode();
                     while (model != null && !root.isSame((Node) model.getObject())) {
                         if (model.exists()) {
@@ -251,6 +251,12 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                 collection.add(new ClusterConfigEvent(JcrClusterConfig.this, null,
                         ClusterConfigEvent.EventType.PLUGIN_CHANGED));
             }
+        }
+
+        private boolean isPropertyEvent(final Event event) {
+            return event.getType() == Event.PROPERTY_ADDED
+                    || event.getType() == Event.PROPERTY_CHANGED
+                    || event.getType() == Event.PROPERTY_REMOVED;
         }
 
         private Node getNode() {

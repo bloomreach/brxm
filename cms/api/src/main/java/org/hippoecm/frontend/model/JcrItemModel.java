@@ -23,6 +23,7 @@ import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -53,7 +54,8 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
     private String uuid;
     private String relPath;
     private int hash;
-    
+    private boolean property;
+
     // the path of the item, used to retrieve the item when the uuid has not been
     // determined yet or the uuid cannot be resolved.
     private String absPath = null;
@@ -68,14 +70,15 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         relPath = null;
         uuid = null;
         if (item != null) {
+            property = item instanceof Property;
             doSave();
         }
     }
 
-    public JcrItemModel(String path) {
-        super();
+    public JcrItemModel(String path, boolean property) {
         uuid = null;
         absPath = path;
+        this.property = property;
     }
 
     /**
@@ -141,12 +144,12 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
             int idx = path.lastIndexOf('/');
             if (idx > 0) {
                 String parent = path.substring(0, path.lastIndexOf('/'));
-                return new JcrItemModel<Node>(parent);
+                return new JcrItemModel<Node>(parent, false);
             } else if (idx == 0) {
                 if (path.equals("/")) {
                     return null;
                 }
-                return new JcrItemModel<Node>("/");
+                return new JcrItemModel<Node>("/", false);
             } else {
                 log.error("Unrecognised path " + path);
             }
@@ -178,12 +181,20 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
                     } else {
                         absPath = node.getPath() + "/" + relPath;
                     }
-                    return (T) session.getItem(absPath);
+                    if (property) {
+                        return (T) session.getProperty(absPath);
+                    } else {
+                        return (T) session.getNode(absPath);
+                    }
                 } catch (InvalidItemStateException ex) {
                    if (absPath != null) {
-                        uuid = null;
-                        relPath = null;
-                        return (T) session.getItem(absPath);
+                       uuid = null;
+                       relPath = null;
+                       if (property) {
+                           return (T) session.getProperty(absPath);
+                       } else {
+                           return (T) session.getNode(absPath);
+                       }
                     } else {
                         throw ex;
                     }
@@ -191,13 +202,21 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
                     if (absPath != null) {
                         uuid = null;
                         relPath = null;
-                        return (T) session.getItem(absPath);
+                        if (property) {
+                            return (T) session.getProperty(absPath);
+                        } else {
+                            return (T) session.getNode(absPath);
+                        }
                     } else {
                         throw ex;
                     }
                 }
             } else if (absPath != null) {
-                return (T) session.getItem(absPath);
+                if (property) {
+                    return (T) session.getProperty(absPath);
+                } else {
+                    return (T) session.getNode(absPath);
+                }
             } else {
                 log.debug("Neither path nor uuid present for item model, returning null");
             }

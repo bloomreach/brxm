@@ -39,8 +39,8 @@ public abstract class ItemModelWrapper<T> implements IChainingModel<T> {
         itemModel = new JcrItemModel(item);
     }
 
-    public ItemModelWrapper(String path) {
-        itemModel = new JcrItemModel(path);
+    public ItemModelWrapper(String path, boolean property) {
+        itemModel = new JcrItemModel(path, property);
     }
 
     public JcrItemModel getItemModel() {

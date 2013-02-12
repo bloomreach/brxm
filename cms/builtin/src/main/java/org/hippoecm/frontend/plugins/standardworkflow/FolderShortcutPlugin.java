@@ -502,7 +502,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                         }
                         jcrSession.refresh(true);
 
-                        JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
+                        JcrNodeModel nodeModel = new JcrNodeModel(path);
                         select(nodeModel, browseServiceRef, editServiceRef);
                     } else {
                         log.error("no workflow defined on model for selected node");

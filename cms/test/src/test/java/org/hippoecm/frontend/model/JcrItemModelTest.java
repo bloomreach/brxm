@@ -71,7 +71,7 @@ public class JcrItemModelTest extends PluginTest {
         Node test = this.root.addNode("test", "nt:unstructured");
 
         // non-existing prop
-        JcrItemModel itemModel = new JcrItemModel(test.getPath() + "/prop");
+        JcrItemModel itemModel = new JcrItemModel(test.getPath() + "/prop", true);
         assertFalse("JcrItemModel reports that item exists while it doesn't", itemModel.exists());
 
         // existing node
@@ -83,7 +83,7 @@ public class JcrItemModelTest extends PluginTest {
     @Test
     public void testPathConstructor() throws Exception {
         Node test = this.root.addNode("test", "nt:unstructured");
-        JcrItemModel itemModel = new JcrItemModel("/test");
+        JcrItemModel itemModel = new JcrItemModel("/test", false);
         Node verify = (Node) itemModel.getObject();
         assertTrue("Node found by path is incorrect", test.isSame(verify));
 
@@ -98,7 +98,7 @@ public class JcrItemModelTest extends PluginTest {
         test.addMixin("mix:referenceable");
         root.save();
 
-        JcrItemModel itemModel = new JcrItemModel("/test/bla");
+        JcrItemModel itemModel = new JcrItemModel("/test/bla", true);
         assertTrue(((Node) itemModel.getParentModel().getObject()).isSame(test));
     }
 
@@ -117,7 +117,7 @@ public class JcrItemModelTest extends PluginTest {
         test.addMixin("mix:referenceable");
         root.save();
 
-        JcrItemModel itemModel = new JcrItemModel("/test");
+        JcrItemModel itemModel = new JcrItemModel("/test", false);
         itemModel.detach();
 
         test.remove();

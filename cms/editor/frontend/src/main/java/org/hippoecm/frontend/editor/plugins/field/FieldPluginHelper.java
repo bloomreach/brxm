@@ -130,8 +130,4 @@ public class FieldPluginHelper implements IDetachable {
                 IModelReference.class).getModel();
     }
 
-    public JcrItemModel getFieldItemModel() {
-        return new JcrItemModel(getNodeModel().getItemModel().getPath() + "/" + field.getPath());
-    }
-
 }

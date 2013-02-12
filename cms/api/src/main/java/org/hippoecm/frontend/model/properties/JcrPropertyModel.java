@@ -76,7 +76,7 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
     }
 
     public JcrPropertyModel(String path) {
-        super(path);
+        super(path, true);
     }
 
     // The wrapped jcr property
@@ -214,7 +214,7 @@ public class JcrPropertyModel<T> extends ItemModelWrapper<Property> implements I
                         case Event.PROPERTY_REMOVED:
                         case Event.PROPERTY_CHANGED:
                             String path = event.getPath();
-                            JcrItemModel eventModel = new JcrItemModel(path);
+                            JcrItemModel eventModel = new JcrItemModel(path, true);
                             if (eventModel.equals(getItemModel())) {
                                 filtered.add(jcrEvent);
                             }

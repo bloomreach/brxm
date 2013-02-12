@@ -70,7 +70,7 @@ public class JcrNodeModel extends ItemModelWrapper<Node> implements IObservable 
      * @param path the JCR path to the Node.
      */
     public JcrNodeModel(String path) {
-        super(path);
+        super(path, false);
     }
 
     /**

@@ -120,7 +120,7 @@ public class EditmodelWorkflowPlugin extends CompatibilityWorkflowPlugin {
                         String path = workflow.copy(name);
                         UserSession.get().getJcrSession().refresh(true);
 
-                        JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
+                        JcrNodeModel nodeModel = new JcrNodeModel(path);
                         if (path != null) {
                             IPluginContext context = EditmodelWorkflowPlugin.this.getPluginContext();
                             IPluginConfig config = EditmodelWorkflowPlugin.this.getPluginConfig();

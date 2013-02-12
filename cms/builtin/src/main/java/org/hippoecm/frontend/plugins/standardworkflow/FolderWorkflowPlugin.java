@@ -316,7 +316,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                                 String path = workflow.add(category, addDocumentModel.getPrototype(), arguments);
                                 UserSession.get().getJcrSession().refresh(true);
-                                JcrNodeModel nodeModel = new JcrNodeModel(new JcrItemModel(path));
+                                JcrNodeModel nodeModel = new JcrNodeModel(path);
                                 select(nodeModel);
                                 if (!nodeName.equals(localName)) {
                                     WorkflowManager workflowMgr = UserSession.get().getWorkflowManager();

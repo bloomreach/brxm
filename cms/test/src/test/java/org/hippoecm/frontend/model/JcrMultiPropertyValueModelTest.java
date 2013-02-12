@@ -67,7 +67,7 @@ public class JcrMultiPropertyValueModelTest extends PluginTest {
     public void testNonExistingPropertyIsCreated() throws Exception {
         Node test = this.root.addNode("test", "frontendtest:model");
 
-        JcrPropertyModel propModel = new JcrPropertyModel(new JcrItemModel("/test/frontendtest:strings"));
+        JcrPropertyModel propModel = new JcrPropertyModel("/test/frontendtest:strings");
         JcrMultiPropertyValueModel valueModel = new JcrMultiPropertyValueModel<String>(propModel.getItemModel());
         List<String> list = new ArrayList<String>(1);
         list.add("y");
@@ -101,7 +101,7 @@ public class JcrMultiPropertyValueModelTest extends PluginTest {
     public void testNonExistingRelaxedPropertyIsCreated() throws Exception {
         Node test = this.root.addNode("test", "frontendtest:relaxed");
 
-        JcrPropertyModel propModel = new JcrPropertyModel(new JcrItemModel("/test/strings"));
+        JcrPropertyModel propModel = new JcrPropertyModel("/test/strings");
         JcrMultiPropertyValueModel valueModel = new JcrMultiPropertyValueModel<String>(propModel.getItemModel());
         List<String> list = new ArrayList<String>(1);
         list.add("y");
