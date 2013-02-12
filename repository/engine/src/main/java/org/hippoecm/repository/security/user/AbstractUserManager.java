@@ -127,11 +127,7 @@ public abstract class AbstractUserManager implements UserManager {
             statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append("'").append(']');
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
             QueryResult result = q.execute();
-            if (result.getNodes().hasNext()) {
-                return true;
-            } else {
-                return false;
-            }
+            return ((result.getNodes().hasNext()) ? true : false);
         } else {
             String path = buildUserPath(rawUserId);
             if (session.getRootNode().hasNode(path)) {
@@ -224,7 +220,6 @@ public abstract class AbstractUserManager implements UserManager {
      * Helper for building user path including the username itself. Takes care of the encoding
      * of the path AND the userId (the eventual node name)
      * @param rawUserId unencoded userId
-     * @param dirLevels
      * @return the fully encoded normalized path
      */
     private String buildUserPath(String rawUserId) {
@@ -263,7 +258,7 @@ public abstract class AbstractUserManager implements UserManager {
         }
     }
 
-    private final void setDirLevels() {
+    private void setDirLevels() {
         dirLevels = 0;
         String relPath = providerPath + "/" + HippoNodeType.NT_USERPROVIDER;
         try {
@@ -347,8 +342,12 @@ public abstract class AbstractUserManager implements UserManager {
         }
     }
 
-    public boolean isActive(String rawUserId) throws RepositoryException {
-        return JcrUtils.getBooleanProperty(getUser(rawUserId), HippoNodeType.HIPPO_ACTIVE, true);
+    public UserSecurityStatus getUserSecurityStatus(String rawUserId) throws RepositoryException {
+        if (JcrUtils.getBooleanProperty(getUser(rawUserId), HippoNodeType.HIPPO_ACTIVE, true)) {
+            return UserSecurityStatus.ACTIVE;
+        } else {
+            return UserSecurityStatus.INACTIVE;
+        }
     }
 
     public boolean isSystemUser(String rawUserId) throws RepositoryException {
@@ -394,7 +393,7 @@ public abstract class AbstractUserManager implements UserManager {
      * {@link AbstractUserManager}.
      * @param context The {@link ManagerContext} with params for the backend
      * @throws RepositoryException
-     * @See ManagerContext
+     * @see ManagerContext
      */
     public abstract void initManager(ManagerContext context) throws RepositoryException;
 

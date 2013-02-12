@@ -45,10 +45,20 @@ public class RepositoryUserManager extends AbstractUserManager {
     }
 
     @Override
-    public boolean isActive(String rawUserId) throws RepositoryException {
-        return super.isActive(rawUserId) && !isPasswordExpired(rawUserId);
+    public UserSecurityStatus getUserSecurityStatus(String rawUserId) throws RepositoryException {
+        UserSecurityStatus userSecurityStatus = super.getUserSecurityStatus(rawUserId);
+
+        if (userSecurityStatus == UserSecurityStatus.INACTIVE) {
+            return UserSecurityStatus.INACTIVE;
+        }
+
+        if (isPasswordExpired(rawUserId)) {
+            return UserSecurityStatus.PASSWORD_EXPIRED;
+        }
+
+        return userSecurityStatus;
     }
-    
+
     private boolean isPasswordExpired(String rawUserId) throws RepositoryException {
         if (isSystemUser(rawUserId)) {
             // system users password does not expire
@@ -119,7 +129,6 @@ public class RepositoryUserManager extends AbstractUserManager {
      * The backend is the repository, no need to sync anything.
      */
     public void syncUserInfo(String userId) {
-        return;
     }
 
     /**

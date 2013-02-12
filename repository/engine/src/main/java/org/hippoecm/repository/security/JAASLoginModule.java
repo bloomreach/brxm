@@ -92,8 +92,8 @@ public class JAASLoginModule implements LoginModule {
                 }
                 validLogin = true;
             }
-        } catch (UnsupportedCallbackException ex) {
-        } catch (IOException ex) {
+        } catch (UnsupportedCallbackException ignored) {
+        } catch (IOException ignored) {
         }
 
         if (!validCredentials) {
@@ -123,8 +123,8 @@ public class JAASLoginModule implements LoginModule {
                         }
                     }
                 }
-            } catch (UnsupportedCallbackException ex) {
-            } catch (IOException ex) {
+            } catch (UnsupportedCallbackException ignored) {
+            } catch (IOException ignored) {
             }
         }
 
@@ -141,8 +141,8 @@ public class JAASLoginModule implements LoginModule {
                 if(username != null) {
                     validCredentials = true;
                 }
-            } catch (UnsupportedCallbackException ex) {
-            } catch (IOException ex) {
+            } catch (UnsupportedCallbackException ignored) {
+            } catch (IOException ignored) {
             }
         }
 
@@ -156,7 +156,7 @@ public class JAASLoginModule implements LoginModule {
                 if(repositoryCallback.getSession() != null) {
                     securityManager =  ((HippoSecurityManager) ((RepositoryImpl) repositoryCallback.getSession().getRepository()).getSecurityManager());
                 }
-            } catch(RepositoryException ex) {
+            } catch(RepositoryException ignored) {
             }
             
             // SimpleCredentials use clone() on the password parameter, so set it to an empty char array if null.
@@ -166,8 +166,9 @@ public class JAASLoginModule implements LoginModule {
             if(!validLogin) {
                 if (username != null) {
                     if (securityManager != null) {
-                        if (!securityManager.authenticate(new SimpleCredentials(username, password))) {
-                            throw new LoginException("invalid login");
+                        final AuthenticationStatus authenticationStatus = securityManager.authenticate(new SimpleCredentials(username, password));
+                        if (authenticationStatus != AuthenticationStatus.SUCCEEDED) {
+                            UnsuccessfulAuthenticationHandler.handle(authenticationStatus, username);
                         }
                     } else {
                         throw new LoginException("unable to authenticate");
@@ -183,8 +184,8 @@ public class JAASLoginModule implements LoginModule {
                     principals.add(new UserPrincipal(username));
                 }
             }
-        } catch (UnsupportedCallbackException ex) {
-        } catch (IOException ex) {
+        } catch (UnsupportedCallbackException ignored) {
+        } catch (IOException ignored) {
         }
         return validLogin;
     }

@@ -26,7 +26,6 @@ import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
@@ -81,12 +80,13 @@ public class HippoLoginModule implements LoginModule {
             RepositoryCallback repositoryCallback = new RepositoryCallback();
             callbackHandler.handle(new Callback[] { ccb, repositoryCallback });
             SimpleCredentials creds = (SimpleCredentials) ccb.getCredentials();
+            final String userId = (creds == null) ? "" : creds.getUserID();
             HippoSecurityManager securityManager = ((HippoSecurityManager)((RepositoryImpl)repositoryCallback.getSession().getRepository()).getSecurityManager());
 
             ImpersonationCallback impersonationCallback = new ImpersonationCallback();
             try {
                 callbackHandler.handle(new Callback[] { impersonationCallback });
-            } catch(UnsupportedCallbackException ex) {
+            } catch(UnsupportedCallbackException ignored) {
             }
 
             // check for impersonation
@@ -94,7 +94,7 @@ public class HippoLoginModule implements LoginModule {
             if (impersonator != null) {
                 // anonymous cannot impersonate
                 if (!impersonator.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
-                    log.info("Denied Anymous impersonating as {}", creds.getUserID());
+                    log.info("Denied Anymous impersonating as {}", userId);
                     return false;
                 }
 
@@ -107,7 +107,7 @@ public class HippoLoginModule implements LoginModule {
 
                 // check for valid user
                 if (impersonator.getPrincipals(UserPrincipal.class).isEmpty()) {
-                    log.info("Denied unknown user impersonating as {}", creds.getUserID());
+                    log.info("Denied unknown user impersonating as {}", userId);
                     return false;
                 }
 
@@ -115,7 +115,7 @@ public class HippoLoginModule implements LoginModule {
                 String impersonarorId = iup.getName();
                 // TODO: check somehow if the user is allowed to impersonate
 
-                log.info("Impersonating as {} by {}", creds.getUserID(), impersonarorId);
+                log.info("Impersonating as {} by {}", userId, impersonarorId);
                 securityManager.assignPrincipals(principals, creds);
 
                 return (validLogin = true);
@@ -129,20 +129,24 @@ public class HippoLoginModule implements LoginModule {
             }
 
             // basic security check
-            if ("".equals(creds.getUserID()) || creds.getPassword() == null || creds.getPassword().length == 0) {
+            if ("".equals(userId) || creds.getPassword() == null || creds.getPassword().length == 0) {
                 log.debug("Empty username or password not allowed.");
                 return false;
             }
 
-            log.debug("Trying to authenticate as {}", creds.getUserID());
-            if (securityManager.authenticate(creds)) {
-                log.info("Authenticated as {}", creds.getUserID());
+            log.debug("Trying to authenticate as {}", userId);
+            final AuthenticationStatus authenticationStatus = securityManager.authenticate(creds);
+            if (authenticationStatus == AuthenticationStatus.SUCCEEDED) {
+                log.info("Authenticated as {}", userId);
                 securityManager.assignPrincipals(principals, creds);
                 validLogin = true;
             } else {
-                log.info("NOT Authenticated as {}", creds.getUserID());
+                if (authenticationStatus == AuthenticationStatus.FAILED) {
+                    log.info("NOT Authenticated as {}", userId);
+                }
+
                 principals.clear();
-                throw new FailedLoginException("Wrong username or password.");
+                UnsuccessfulAuthenticationHandler.handle(authenticationStatus, userId);
             }
         } catch (ClassCastException e) {
             log.error("Error during login", e);
@@ -176,4 +180,5 @@ public class HippoLoginModule implements LoginModule {
         principals.clear();
         return validLogin;
     }
+
 }

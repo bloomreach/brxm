@@ -78,6 +78,7 @@ import org.hippoecm.repository.security.role.DummyRoleManager;
 import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.AbstractUserManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
+import org.hippoecm.repository.security.user.UserSecurityStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +122,7 @@ public class SecurityManager implements HippoSecurityManager {
         NodeIterator providerIter = result.getNodes();
         while (providerIter.hasNext()) {
             Node provider = providerIter.nextNode();
-            String name = null;
+            String name;
             try {
                 name = provider.getName();
                 log.debug("Found secutiry provider: '{}'", name);
@@ -255,14 +256,16 @@ public class SecurityManager implements HippoSecurityManager {
      * all security providers until a successful authentication is found. It uses the
      * natural node order. If the authentication is successful a user node will be
      * created.
-     * @return true only if the authentication is successful
+     * @return {@link AuthenticationStatus#SUCCEEDED} only if the authentication is successful,
+     * {@link AuthenticationStatus#CREDENTIAL_EXPIRED} if the user credentials are expired,
+     * otherwise {@link AuthenticationStatus#FAILED}
      */
-    public boolean authenticate(SimpleCredentials creds) {
+    public AuthenticationStatus authenticate(SimpleCredentials creds) {
         String userId = creds.getUserID();
         try {
             if (providers.size() == 0) {
                 log.error("No security providers found: login is not possible!");
-                return false;
+                return AuthenticationStatus.FAILED;
             }
 
             Node user = ((AbstractUserManager)providers.get(INTERNAL_PROVIDER).getUserManager()).getUser(userId);
@@ -276,7 +279,7 @@ public class SecurityManager implements HippoSecurityManager {
                     providerId = user.getProperty(HippoNodeType.HIPPO_SECURITYPROVIDER).getString();
                     if (!providers.containsKey(providerId)) {
                         log.info("Unable to authenticate user: {}, no such provider: {}", userId, providerId);
-                        return false;
+                        return AuthenticationStatus.FAILED;
                     }
                 } else {
                     providerId = INTERNAL_PROVIDER;
@@ -285,7 +288,7 @@ public class SecurityManager implements HippoSecurityManager {
                 // check the password
                 if (!((AbstractUserManager)providers.get(providerId).getUserManager()).authenticate(creds)) {
                     log.debug("Invalid username and password: {}, provider: {}", userId, providerId);
-                    return false;
+                    return AuthenticationStatus.FAILED;
                 }
             } else {
                 // loop over providers and try to authenticate.
@@ -300,7 +303,7 @@ public class SecurityManager implements HippoSecurityManager {
                 }
                 if (!authenticated) {
                     log.debug("No provider found or invalid username and password: {}", userId);
-                    return false;
+                    return AuthenticationStatus.FAILED;
                 }
             }
 
@@ -310,15 +313,19 @@ public class SecurityManager implements HippoSecurityManager {
             AbstractUserManager userMgr = (AbstractUserManager)providers.get(providerId).getUserManager();
             GroupManager groupMgr = providers.get(providerId).getGroupManager();
 
-            // check if user is active
-            if (!userMgr.isActive(userId)) {
-                log.debug("User not active: {}, provider: {}", userId, providerId);
-                return false;
+            // Check if user is active
+            final UserSecurityStatus userSecurityStatus = userMgr.getUserSecurityStatus(userId);
+            if (userSecurityStatus == UserSecurityStatus.INACTIVE) {
+                log.debug("Inactive user: {}, provider: {}", userId, providerId);
+                return AuthenticationStatus.ACCOUNT_EXPIRED;
+            } else if (userSecurityStatus == UserSecurityStatus.PASSWORD_EXPIRED) {
+                log.debug("Password expired for user: {}, provider: {}", userId, providerId);
+                return AuthenticationStatus.CREDENTIAL_EXPIRED;
             }
-            
+
             // internal provider doesn't need to sync
             if (INTERNAL_PROVIDER.equals(providerId)) {
-                return true;
+                return AuthenticationStatus.SUCCEEDED;
             }
 
 
@@ -342,10 +349,10 @@ public class SecurityManager implements HippoSecurityManager {
             // TODO: move to cron based solution
             providers.get(providerId).sync();
 
-            return true;
+            return AuthenticationStatus.SUCCEEDED;
         } catch (RepositoryException e) {
             log.warn("Error while trying to authenticate user: " + userId, e);
-            return false;
+            return AuthenticationStatus.FAILED;
         }
     }
 

@@ -35,6 +35,7 @@ import javax.naming.ldap.LdapContext;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
 import org.hippoecm.repository.security.user.AbstractUserManager;
+import org.hippoecm.repository.security.user.UserSecurityStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,8 +139,8 @@ public class LdapUserManager extends AbstractUserManager {
      * a user is active, or sync the status to the hippo:active property.
      */
     @Override
-    public boolean isActive(String userId) throws RepositoryException {
-        return true;
+    public UserSecurityStatus getUserSecurityStatus(String userId) throws RepositoryException {
+        return UserSecurityStatus.ACTIVE;
     }
 
     /**
@@ -150,8 +151,8 @@ public class LdapUserManager extends AbstractUserManager {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized: " + providerId);
         }
-        String dn = null;
-        Node user = null;
+        String dn;
+        Node user;
         try {
             user = getUser(userId);
 
@@ -211,14 +212,14 @@ public class LdapUserManager extends AbstractUserManager {
         boolean usePagedSearch = true;
 
         // ldap search
-        NamingEnumeration<SearchResult> results = null;
+        NamingEnumeration<SearchResult> results;
         SearchControls ctls = new SearchControls();
         ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
         LdapContext ctx = null;
 
         // search results
-        String dn = null;
-        Node user = null;
+        String dn;
+        Node user;
         String userId = null;
         int count = 0;
         int total = 0;
@@ -317,7 +318,7 @@ public class LdapUserManager extends AbstractUserManager {
             ctx = lcf.getSystemLdapContext();
             SearchControls ctls = new SearchControls();
             ctls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-            NamingEnumeration<SearchResult> results = null;
+            NamingEnumeration<SearchResult> results;
 
             for (LdapUserSearch search : searches) {
                 String filter = "(&(" + search.getFilter() + ")(" + search.getNameAttr() + "=" + userId + "))";

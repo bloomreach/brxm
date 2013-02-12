@@ -50,8 +50,11 @@ public interface HippoSecurityManager extends JackrabbitSecurityManager {
      * all security providers until a successful authentication is found. It uses the
      * natural node order. If the authentication is successful a user node will be
      * created.
-     * @param creds
-     * @return true only if the authentication is successful
+     * @param creds Credentials user provided for authentication
+     * @return {@link AuthenticationStatus#SUCCEEDED} only if the authentication is successful or
+     * {@link AuthenticationStatus#CREDENTIAL_EXPIRED} if the user credentials are expired or
+     * {@link AuthenticationStatus#ACCOUNT_EXPIRED} if the user's account is not active anymore or
+     * {@link AuthenticationStatus#FAILED} otherwise
      */
-    boolean authenticate(SimpleCredentials creds);
+    AuthenticationStatus authenticate(SimpleCredentials creds);
 }
