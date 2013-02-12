@@ -15,8 +15,11 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.util.UUID;
+
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -73,7 +76,9 @@ public class BlueprintHandler {
     }
 
     private static boolean readSite(final Node blueprintNode, final Blueprint blueprint) throws RepositoryException {
+        boolean hasSite = false;
         if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
+            hasSite = true;
             final Node siteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
 
             if (siteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
@@ -82,22 +87,52 @@ public class BlueprintHandler {
                 throw new ItemNotFoundException(String.format("Blueprint %s has neither a hst:configuration node prototype or a fixed hst:configurationpath", blueprint.getId()));
             }
 
-            if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE) && !blueprint.getHasContentPrototype()) {
-                final Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-                final String docbase = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+            if (!blueprint.getHasContentPrototype()) {
+                if (siteNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
+                    final Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+                    final String docbase = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
 
-                // Assumption: docbase is always a UUID
-                try {
-                    Node ref = contentNode.getSession().getNodeByIdentifier(docbase);
-                    blueprint.getPrototypeChannel().setContentRoot(ref.getPath());
-                } catch (ItemNotFoundException e) {
-                    log.warn("Blueprint '{}' contains a site node with a broken content root reference (UUID='{}'). This content root will be ignored.",
-                            blueprintNode.getPath(), docbase);
+                    // Assumption: docbase is always a UUID
+                    try {
+                        // test UUID.fromString to check valid uuid
+                        UUID.fromString(docbase);
+                        Node ref = contentNode.getSession().getNodeByIdentifier(docbase);
+                        blueprint.getPrototypeChannel().setContentRoot(ref.getPath());
+                    } catch (ItemNotFoundException e) {
+                        log.warn("Blueprint '{}' contains a site node with a broken content root reference (UUID='{}'). This content root will be ignored.",
+                                blueprintNode.getPath(), docbase);
+                    } catch (IllegalArgumentException e) {
+                        log.warn("Blueprint '{}' contains a site node with a broken (invalid uuid) content root reference (UUID='{}'). This content root will be ignored.",
+                                blueprintNode.getPath(), docbase);
+                    }
+                } else if (siteNode.hasProperty(HstNodeTypes.SITE_CONTENT)){
+                    String siteContentPathOrUuid = siteNode.getProperty(HstNodeTypes.SITE_CONTENT).getString();
+                    if (siteContentPathOrUuid.startsWith("/")) {
+                        try {
+                            Node node = siteNode.getSession().getNode(siteContentPathOrUuid);
+                            blueprint.getPrototypeChannel().setContentRoot(node.getPath());
+                        } catch (PathNotFoundException e) {
+                            log.warn("PathNotFoundException: Cannot lookup content node for path '" + siteContentPathOrUuid + "'. ");
+                        } catch (RepositoryException e) {
+                            log.warn("RepositoryException: Cannot lookup content node for path '" + siteContentPathOrUuid + "'. ", e);
+                        }
+                    } else {
+                        try {
+                            UUID.fromString(siteContentPathOrUuid);
+                            Node ref = siteNode.getSession().getNodeByIdentifier(siteContentPathOrUuid);
+                            blueprint.getPrototypeChannel().setContentRoot(ref.getPath());
+                        } catch (ItemNotFoundException e) {
+                            log.warn("Blueprint '{}' contains a site node with a broken content root reference (UUID='{}'). This content root will be ignored.",
+                                    blueprintNode.getPath(), siteContentPathOrUuid);
+                        } catch (IllegalArgumentException e) {
+                            log.warn("Blueprint '{}' contains a site node with a broken (invalid uuid) content root reference (UUID='{}'). This content root will be ignored.",
+                                    blueprintNode.getPath(), siteContentPathOrUuid);
+                        }
+                    }
                 }
             }
-            return true;
         }
-        return false;
+        return hasSite;
     }
 
     private static void readMount(final boolean hasSite, final Node blueprintNode, final Blueprint blueprint) throws RepositoryException {

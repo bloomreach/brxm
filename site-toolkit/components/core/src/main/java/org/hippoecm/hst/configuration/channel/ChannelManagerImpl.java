@@ -628,26 +628,29 @@ public class ChannelManagerImpl implements MutableChannelManager {
         final String hstConfigPath = reuseOrCopyConfiguration(session, configRoot, blueprintNode, channelId);
         channel.setHstConfigPath(hstConfigPath);
 
-        // Determine the content path to use in the 'site' node. If the blueprint has a content prototype, we will use
-        // '/' for now to ensure valid Hippo mirrors, and fill in the created path *after* creating all HST
-        // configuration (due to the Session.save() in the workflow action, all HST configuration should be created
-        // first to avoid a partial save). Otherwise, we can directly use the existing content path in the channel.
-        Session jcrSession = configRoot.getSession();
-        Node contentRoot = jcrSession.getRootNode();
-        if (!blueprint.getHasContentPrototype()) {
-            String channelContentRoot = channel.getContentRoot();
-            if (StringUtils.isNotEmpty(channelContentRoot) && jcrSession.nodeExists(channelContentRoot)) {
-                contentRoot = jcrSession.getNode(channelContentRoot);
-            } else {
-                throw new ChannelException(
-                        "Blueprint '" + blueprint.getId() + "' does not have a content prototype, and channel '" + channelId + "' refers to a non-existing content root: '" + channelContentRoot + "'");
-            }
+        // Create content if the blueprint contains a content prototype. The path of the created content node has to
+        // be set on the HST site nodes.
+        final String channelContentRootPath;
+        if (blueprint.getHasContentPrototype()) {
+            final Node contentRootNode = createContent(blueprint, session, channelId, channel);
+            channelContentRootPath = contentRootNode.getPath();
+        } else {
+            channelContentRootPath = channel.getContentRoot();
         }
 
         final Node sitesNode = configRoot.getNode(sites);
-        final Node liveSiteNode = copyOrCreateSiteNode(blueprintNode, sitesNode, channelId, "live", contentRoot);
-        final Node previewSiteNode = copyOrCreateSiteNode(blueprintNode, sitesNode, channelId + "-preview", "preview",
-                                                          contentRoot);
+        final Node liveSiteNode = createSiteNode(sitesNode, channelId, channelContentRootPath);
+        final Node previewSiteNode = createSiteNode(sitesNode, channelId + "-preview",
+                channelContentRootPath);
+
+        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
+            Node blueprintSiteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
+            if (blueprintSiteNode.hasProperty(HstNodeTypes.SITE_CONFIGURATIONPATH)) {
+                String explicitConfigPath = blueprintSiteNode.getProperty(HstNodeTypes.SITE_CONFIGURATIONPATH).getString();
+                liveSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
+                previewSiteNode.setProperty(HstNodeTypes.SITE_CONFIGURATIONPATH, explicitConfigPath);
+            }
+        }
 
         final String mountPointPath = liveSiteNode.getPath();
         channel.setHstMountPoint(mountPointPath);
@@ -664,17 +667,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
             mount.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE, locale);
         }
 
-        // Create content if the blueprint contains a content prototype. The path of the created content node has to
-        // be set on the HST site nodes.
-        if (blueprint.getHasContentPrototype()) {
-            final Node contentRootNode = createContent(blueprint, session, channelId, channel);
 
-            final Node liveContentMirror = liveSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-            final Node previewContentMirror = previewSiteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-
-            liveContentMirror.setProperty(HippoNodeType.HIPPO_DOCBASE, contentRootNode.getIdentifier());
-            previewContentMirror.setProperty(HippoNodeType.HIPPO_DOCBASE, contentRootNode.getIdentifier());
-        }
     }
 
     private void copyOrCreateChannelNode(final Node configRoot, final String channelId, final Channel channel) throws RepositoryException {
@@ -757,40 +750,10 @@ public class ChannelManagerImpl implements MutableChannelManager {
         return mount;
     }
 
-    private Node copyOrCreateSiteNode(final Node blueprintNode, final Node sitesNode, final String siteNodeName, final String hippoAvailability, final Node contentRoot) throws RepositoryException {
-
-        if (blueprintNode.hasNode(HstNodeTypes.NODENAME_HST_SITE)) {
-            return copySiteNode(blueprintNode, sitesNode, siteNodeName, contentRoot, hippoAvailability);
-        } else {
-            return createSiteNode(sitesNode, siteNodeName, contentRoot, hippoAvailability);
-        }
-    }
-
-    private Node copySiteNode(final Node blueprintNode, final Node sitesNode, final String siteNodeName, final Node contentRoot, final String hippoAvailability) throws RepositoryException {
-        Node blueprintSiteNode = blueprintNode.getNode(HstNodeTypes.NODENAME_HST_SITE);
-
-        log.debug("Copying site node '{}' to '{}/{}'", new Object[] {blueprintSiteNode.getPath(), sitesNode.getPath(), siteNodeName});
-
-        Node siteNode = copyNodes(blueprintSiteNode, sitesNode, siteNodeName);
-
-        Node contentNode = siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-        contentNode.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{hippoAvailability});
-        contentNode.setProperty(HippoNodeType.HIPPO_DOCBASE, contentRoot.getIdentifier());
-
-        return siteNode;
-    }
-
-    private Node createSiteNode(final Node sitesNode, final String siteNodeName, final Node contentRoot, final String hippoAvailability) throws RepositoryException {
-        log.debug("Creating site node '{}/{}'; content root='{}',hippo:availability='{}'", new Object[] {sitesNode.getPath(), siteNodeName, contentRoot.getPath(), hippoAvailability});
-
+    private Node createSiteNode(final Node sitesNode, final String siteNodeName, final String contentRootPath) throws RepositoryException {
+        log.debug("Creating site node '{}/{}'; content root='{}'", new Object[] {sitesNode.getPath(), siteNodeName, contentRootPath});
         final Node siteNode = sitesNode.addNode(siteNodeName, HstNodeTypes.NODETYPE_HST_SITE);
-
-        final Node contentNode = siteNode.addNode(HstNodeTypes.NODENAME_HST_CONTENTNODE, HippoNodeType.NT_FACETSELECT);
-        contentNode.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{"hippo:availability"});
-        contentNode.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{hippoAvailability});
-        contentNode.setProperty(HippoNodeType.HIPPO_MODES, new String[]{"single"});
-        contentNode.setProperty(HippoNodeType.HIPPO_DOCBASE, contentRoot.getIdentifier());
-
+        siteNode.setProperty(HstNodeTypes.SITE_CONTENT, contentRootPath);
         return siteNode;
     }
 

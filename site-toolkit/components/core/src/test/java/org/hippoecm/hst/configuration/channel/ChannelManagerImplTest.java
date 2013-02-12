@@ -245,8 +245,7 @@ public class ChannelManagerImplTest extends AbstractTestConfigurations {
         assertTrue(getSession().itemExists(sitePath));
 
         Node siteNode = getSession().getNode(sitePath);
-        assertEquals(getSession().getNode("/unittestcontent/documents").getIdentifier(),
-                siteNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE).getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
+        assertEquals("/unittestcontent/documents", siteNode.getProperty(HstNodeTypes.SITE_CONTENT).getString());
     }
 
     @Test
