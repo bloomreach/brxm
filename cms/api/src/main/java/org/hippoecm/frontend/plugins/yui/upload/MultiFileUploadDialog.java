@@ -39,6 +39,10 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.yui.upload.validation.FileUploadValidationService;
 
+import wicket.contrib.input.events.EventType;
+import wicket.contrib.input.events.InputBehavior;
+import wicket.contrib.input.events.key.KeyType;
+
 /**
  * A multi file upload dialog that can be configured by means of the {@link FileUploadWidgetSettings}.
  */
@@ -95,6 +99,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         };
         ajaxButton.setEnabled(true);
         ajaxButton.setVisible(true);
+        ajaxButton.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click));
         addButton(ajaxButton);
 
         closeButton = new AjaxButton(DialogConstants.BUTTON, new Model<String>("Close")) {
@@ -106,6 +111,7 @@ public abstract class MultiFileUploadDialog extends AbstractDialog {
         };
         closeButton.setEnabled(false);
         closeButton.setVisible(false);
+        closeButton.add(new InputBehavior(new KeyType[]{KeyType.Escape}, EventType.click));
         addButton(closeButton);
 
         String serviceId = pluginConfig.getString(FileUploadValidationService.VALIDATE_ID);
