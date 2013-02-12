@@ -33,6 +33,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.freemarker.HstClassTemplateLoader;
 import org.hippoecm.hst.freemarker.RepositoryTemplateLoader;
 import org.hippoecm.hst.proxy.ProxyFactory;
+import org.hippoecm.hst.util.ServletConfigUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +57,10 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
 
     private static final String ATTR_JSP_TAGLIBS_MODEL = ".freemarker.JspTaglibs";
 
+    private static final String CONTINUE_RENDERING_AFTER_EXCEPTION = "continue-rendering-after-exception";
+
+    private boolean continueRenderingAfterException;
+
     private boolean lookupVirtualWebappLibResourcePathsChecked;
 
     private boolean lookupVirtualWebappLibResourcePathsEnabled;
@@ -71,10 +76,19 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
          * we here need to inject our own template loader. We cannot do this in createConfiguration() as we would like,
          * because the FreemarkerServlet sets the template loader in the init() *after* createConfiguration() again, to the default
          * WebappTemplateLoader
-         */  
-        
+         */
+
+        continueRenderingAfterException = Boolean.parseBoolean(getConfigOrContextInitParameter(CONTINUE_RENDERING_AFTER_EXCEPTION, "true"));
+
         Configuration conf = super.getConfiguration();
-        conf.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+
+        if (continueRenderingAfterException) {
+            log.info("FreeMarker servlet will log and *continue* rendering in case of template exceptions");
+            conf.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
+        } else {
+            log.info("FreeMarker servlet will log and *stop* rendering in case of template exceptions");
+            conf.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        }
 
         TemplateLoader classTemplateLoader =  new HstClassTemplateLoader(getClass());
         TemplateLoader defaultLoader = conf.getTemplateLoader();
@@ -189,5 +203,10 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
         }
         
         return params;
+    }
+
+    protected String getConfigOrContextInitParameter(String paramName, String defaultValue) {
+        String value = ServletConfigUtils.getInitParameter(getServletConfig(), getServletConfig().getServletContext(), paramName, defaultValue);
+        return (value != null ? value.trim() : null);
     }
 }
