@@ -26,8 +26,9 @@ public interface HstSiteRootNode extends HstNode{
     /**
      * @return the canonical content path of this {@link HstSiteRootNode}. It can be the same as the {@link #getContentPath()} but
      * it doesn't have to be: the {@link #getContentPath()} can be a virtual entry path
+     * @deprecated since 2.26.00 returns the same value as {@link #getContentPath()}. Use {@link #getContentPath()} instead
      */
-    
+    @Deprecated
     String getCanonicalContentPath();
 
     /**

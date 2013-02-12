@@ -169,9 +169,11 @@
 + hst:catalog (hst:catalog) = hst:catalog
 
 [hst:site] > nt:base, mix:referenceable, mix:versionable
-+ hst:content (hippo:facetselect) mandatory
++ hst:content (hippo:facetselect)
 - hst:configurationpath (string)
 - hst:version (long)
+// uuid or absolute path
+- hst:content (string)
 - hst:portalconfigurationenabled (boolean)
 
 [hst:sites] > nt:base, mix:referenceable, mix:versionable

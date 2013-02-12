@@ -525,9 +525,9 @@ public class MountService implements ContextualizableMount, MutableMount {
                 this.canonicalContentPath = mountPoint;
             } else {
                 // the mountpoint does point to a hst:site. Since we do not need the HstSiteMap because isMapped = false, we only use the content mapping
-                canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
+                canonicalContentPath = hstSiteNodeForMount.getContentPath();
                 //contentPath = hstSiteNodeForMount.getContentPath();
-                contentPath = hstSiteNodeForMount.getCanonicalContentPath();
+                contentPath = hstSiteNodeForMount.getContentPath();
             }
         } else {
              
@@ -539,8 +539,8 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
             
             hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
-            canonicalContentPath = hstSiteNodeForMount.getCanonicalContentPath();
-            contentPath = hstSiteNodeForMount.getCanonicalContentPath();
+            canonicalContentPath = hstSiteNodeForMount.getContentPath();
+            contentPath = hstSiteNodeForMount.getContentPath();
 
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
             
@@ -556,9 +556,9 @@ public class MountService implements ContextualizableMount, MutableMount {
                 previewContentPath = contentPath;
             } else {
                 previewHstSite = new HstSiteService(previewHstSiteNodeForMount, this, hstManager);
-                previewCanonicalContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
+                previewCanonicalContentPath = previewHstSiteNodeForMount.getContentPath();
                 //previewContentPath = previewHstSiteNodeForMount.getContentPath();
-                previewContentPath = previewHstSiteNodeForMount.getCanonicalContentPath();
+                previewContentPath = previewHstSiteNodeForMount.getContentPath();
             }
         }
 

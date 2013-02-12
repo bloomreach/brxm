@@ -19,7 +19,9 @@ import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -33,7 +35,6 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(HstSiteRootNodeImpl.class);
 
     private String contentPath;
-    private String canonicalContentPath;
     private long version = -1;
     private String configurationPath;
     
@@ -42,7 +43,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
         
         // do not load child nodes as this is the entire content
         super(siteRootNode, parent, false);
-        
+        Session session = siteRootNode.getSession();
         try {
             String configurationName = findConfigurationNameForSite();
             if (configurationName == null) {
@@ -54,30 +55,31 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
             
             configurationPath = rootConfigurationsPath + "/" + findConfigurationNameAndVersionForSite(configurationName, version);
 
-            if(siteRootNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
-                Node contentNode = siteRootNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
-                contentPath = contentNode.getPath();
-                
-                // fetch the mandatory hippo:docbase property to retrieve the canonical node
-                if(contentNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
-                    String docbaseUuid = contentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
-                    
+            if (siteRootNode.hasProperty(HstNodeTypes.SITE_CONTENT)) {
+                String siteContentPathOrUuid = siteRootNode.getProperty(HstNodeTypes.SITE_CONTENT).getString();
+                if (siteContentPathOrUuid.startsWith("/")) {
                     try {
-                        // test whether docbaseUuid is valid uuid. If UUID.fromString fails, an IllegalArgumentException is thrown
-                        UUID.fromString(docbaseUuid);
-                        Node node =  contentNode.getSession().getNodeByIdentifier(docbaseUuid);
-                        this.canonicalContentPath = node.getPath();
-
-                    } catch (IllegalArgumentException e) {
-                        log.warn("Docbase from '{}' does not contain a valid uuid. Content mirror is broken", contentNode.getPath());
-                    } catch (ItemNotFoundException e) {
-                        log.warn("ItemNotFoundException: Content mirror is broken. ", e.toString());
+                        Node node = session.getNode(siteContentPathOrUuid);
+                        contentPath = node.getPath();
+                    } catch (PathNotFoundException e) {
+                        log.warn("PathNotFoundException: Cannot lookup content node for path '" + siteContentPathOrUuid + "'. ");
                     } catch (RepositoryException e) {
-                        log.error("RepositoryException: Content mirror is broken. ", e);
+                        log.warn("RepositoryException: Cannot lookup content node for path '" + siteContentPathOrUuid + "'. ", e);
                     }
                 } else {
-                    // contentNode is not a mirror. Take the canonical path to be the same
-                    this.canonicalContentPath = this.contentPath;
+                    contentPath = nodePathForUuid(session, siteRootNode, siteContentPathOrUuid);
+                }
+            } else if(siteRootNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
+                Node facetSelectContentNode = siteRootNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
+                String facetSelectContentPath = facetSelectContentNode.getPath();
+                
+                // fetch the mandatory hippo:docbase property to retrieve the canonical node
+                if(facetSelectContentNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
+                    String docbaseUuid = facetSelectContentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
+                    contentPath = nodePathForUuid(session, facetSelectContentNode, docbaseUuid);
+                } else {
+                    throw new IllegalStateException("Node at path '"+facetSelectContentPath+"' must always be of type '" +
+                            HippoNodeType.NT_FACETSELECT + "'");
                 }
             }
         } catch (RepositoryException e) {
@@ -85,6 +87,22 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
             throw e;
         }
         
+    }
+
+    private String nodePathForUuid(final Session session, final Node forNode, final String docbaseUuid) throws RepositoryException {
+        try {
+            // test whether docbaseUuid is valid uuid. If UUID.fromString fails, an IllegalArgumentException is thrown
+            UUID.fromString(docbaseUuid);
+            Node node =  session.getNodeByIdentifier(docbaseUuid);
+            return node.getPath();
+        } catch (IllegalArgumentException e) {
+            log.warn("Docbase '{}' is not contain a valid uuid. Cannot lookup content node for '{}'.", docbaseUuid, forNode.getPath());
+        } catch (ItemNotFoundException e) {
+            log.warn("ItemNotFoundException: Cannot find content node for uuid '{}'.",docbaseUuid);
+        } catch (RepositoryException e) {
+            log.warn("RepositoryException: Cannot lookup content node for uuid '"+docbaseUuid+"'. ", e);
+        }
+        return null;
     }
 
     private String findConfigurationNameForSite() {
@@ -112,7 +130,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
     
     @Override
     public String getCanonicalContentPath() {
-        return canonicalContentPath;
+        return contentPath;
     }
 
     @Override
