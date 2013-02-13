@@ -102,11 +102,12 @@ public class SetHstBundleTag extends TagSupport {
 
     public static LocalizationContext getLocalizationContext(PageContext pc, String basename, boolean fallbackToJavaResourceBundle) {
         HstRequest hstRequest = HstRequestUtils.getHstRequest((HttpServletRequest) pc.getRequest());
-        Locale locale = (hstRequest != null ? hstRequest.getLocale() : pc.getRequest().getLocale());
+        HttpServletRequest request =  hstRequest == null ? (HttpServletRequest) pc.getRequest() : hstRequest;
+        Locale locale = request.getLocale();
         ResourceBundle bundle = null;
 
         try {
-            bundle = ResourceBundleUtils.getBundle(hstRequest, basename, locale, fallbackToJavaResourceBundle);
+            bundle = ResourceBundleUtils.getBundle(request, basename, locale, fallbackToJavaResourceBundle);
         } catch (Exception e) {
             log.warn("Failed to get bundle for basename: {}. {}", basename, e);
         }
