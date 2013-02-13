@@ -54,7 +54,6 @@ import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.tester.WicketTester;
-import org.hippoecm.frontend.model.SessionTuple;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
@@ -354,12 +353,12 @@ public class HippoTester extends WicketTester {
 
             @Override
             public UserSession newSession(Request request, Response response) {
-                return new PluginUserSession(request, new LoadableDetachableModel<SessionTuple>() {
+                return new PluginUserSession(request, new LoadableDetachableModel<Session>() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected SessionTuple load() {
-                        return new SessionTuple(new DummySession(), null);
+                    protected Session load() {
+                        return new DummySession();
                     }
                     
                 });

@@ -41,7 +41,6 @@ import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NoRepositoryAvailablePage;
 import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.model.JcrSessionModel;
-import org.hippoecm.frontend.model.SessionTuple;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.observation.FacetRootsObserver;
 import org.hippoecm.frontend.observation.JcrObservationManager;
@@ -141,7 +140,7 @@ public class PluginUserSession extends UserSession {
     }
 
     @Deprecated
-    public PluginUserSession(Request request, LoadableDetachableModel<SessionTuple> jcrSessionModel) {
+    public PluginUserSession(Request request, LoadableDetachableModel<Session> jcrSessionModel) {
         super(request);
         classLoader = new LoadableDetachableModel<ClassLoader>() {
             private static final long serialVersionUID = 1L;
@@ -170,7 +169,7 @@ public class PluginUserSession extends UserSession {
         dirty();
     }
 
-    private IModel<SessionTuple> getJcrSessionModel() {
+    private IModel<Session> getJcrSessionModel() {
         synchronized (jcrSessions) {
             JcrSessionReference ref = jcrSessions.get(this);
             if (ref != null) {
@@ -214,9 +213,9 @@ public class PluginUserSession extends UserSession {
     }
 
     private Session getJcrSessionInternal() {
-        IModel<SessionTuple> sessionModel = getJcrSessionModel();
+        IModel<Session> sessionModel = getJcrSessionModel();
         if (sessionModel != null) {
-            Session result = sessionModel.getObject().session;
+            Session result = sessionModel.getObject();
             if (result != null && result.isLive()) {
                 return result;
             }
@@ -229,7 +228,7 @@ public class PluginUserSession extends UserSession {
      * of saving any pending changes.  Event listeners will remain registered and will reregister with a new session.
      */
     public void releaseJcrSession() {
-        IModel<SessionTuple> sessionModel = getJcrSessionModel();
+        IModel<Session> sessionModel = getJcrSessionModel();
         if (sessionModel != null) {
             sessionModel.detach();
         }
@@ -250,7 +249,7 @@ public class PluginUserSession extends UserSession {
         IApplicationFactory factory = getApplicationFactory();
         final IPluginConfigService application = factory.getApplication(getApplicationName());
         if (application != null && !application.isSaveOnExitEnabled()) {
-            IModel<SessionTuple> sessionModel = getJcrSessionModel();
+            IModel<Session> sessionModel = getJcrSessionModel();
             if (sessionModel instanceof JcrSessionModel) {
                 ((JcrSessionModel) sessionModel).setSaveOnExit(false);
             }
@@ -270,14 +269,14 @@ public class PluginUserSession extends UserSession {
     }
 
     @Deprecated
-    public void login(UserCredentials credentials, LoadableDetachableModel<SessionTuple> sessionModel) throws LoginException {
+    public void login(UserCredentials credentials, LoadableDetachableModel<Session> sessionModel) throws LoginException {
         if (sessionModel == null) {
             sessionModel = new JcrSessionModel(credentials);
         }
         classLoader.detach();
         workflowManager.detach();
         facetRootsObserver = null;
-        IModel<SessionTuple> oldModel = null;
+        IModel<Session> oldModel = null;
         synchronized (jcrSessions) {
             JcrSessionReference sessionRef = jcrSessions.get(this);
             if (sessionRef != null) {
@@ -294,10 +293,14 @@ public class PluginUserSession extends UserSession {
             oldModel.detach();
         }
 
-        final SessionTuple sessionTuple = sessionModel.getObject();
-
-        if (sessionTuple != null && sessionTuple.exception != null) {
-            handleLoginException(sessionTuple.exception);
+        if (sessionModel instanceof JcrSessionModel) {
+            try {
+                ((JcrSessionModel) sessionModel).getSessionObject();
+            } catch (javax.jcr.LoginException ex) {
+                handleLoginException(ex);
+            }
+        } else {
+            sessionModel.getObject();
         }
 
     }
@@ -307,7 +310,7 @@ public class PluginUserSession extends UserSession {
         workflowManager.detach();
         facetRootsObserver = null;
 
-        IModel<SessionTuple> oldModel = null;
+        IModel<Session> oldModel = null;
         synchronized (jcrSessions) {
             JcrSessionReference sessionRef = jcrSessions.get(this);
             if (sessionRef != null) {

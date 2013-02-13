@@ -30,7 +30,6 @@ import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.protocol.http.WebRequestCycle;
 import org.apache.wicket.util.value.ValueMap;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.model.SessionTuple;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.plugin.DummyPlugin;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -78,12 +77,12 @@ public abstract class PluginTest extends RepositoryTestCase {
             PluginUserSession userSession = (PluginUserSession) super.newSession(request, response);
 
             try {
-                userSession.login(USER_CREDENTIALS, new LoadableDetachableModel<SessionTuple>() {
+                userSession.login(USER_CREDENTIALS, new LoadableDetachableModel<Session>() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected SessionTuple load() {
-                        return new SessionTuple(session, null);
+                    protected Session load() {
+                        return session;
                     }
 
                 });

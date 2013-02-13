@@ -31,7 +31,6 @@ import org.hippoecm.frontend.Main;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.event.HippoEventConstants;
 import org.onehippo.cms7.event.HippoSecurityEvent;
@@ -46,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Plugins can subclass this model to refine the way the session is obtained.
  */
-public class JcrSessionModel extends LoadableDetachableModel<SessionTuple> {
+public class JcrSessionModel extends LoadableDetachableModel<Session> {
 
     // The jcr session is wrapped in a LoadableDetachableModel because it can't be serialized
     // and therefore cannot be a direct field of the wicket session. Wrapping the jcr session
@@ -58,6 +57,7 @@ public class JcrSessionModel extends LoadableDetachableModel<SessionTuple> {
     private UserCredentials credentials;
     private String remoteAddress;
     private boolean saveOnExit = true;
+    private LoginException lastThrownLoginException;
 
     public JcrSessionModel(UserCredentials credentials) {
         this.credentials = credentials;
@@ -65,7 +65,7 @@ public class JcrSessionModel extends LoadableDetachableModel<SessionTuple> {
     }
 
     protected void flush() {
-        Session session = getObject().session;
+        Session session = getObject();
         if (session != null) {
             if (session.isLive()) {
                 if (saveOnExit) {
@@ -84,7 +84,7 @@ public class JcrSessionModel extends LoadableDetachableModel<SessionTuple> {
 
     public Session getSession() {
         try {
-            Session session = getObject().session;
+            Session session = getObject();
             if (session == null) {
                 return null;
             }
@@ -95,7 +95,7 @@ public class JcrSessionModel extends LoadableDetachableModel<SessionTuple> {
             detach();
         }
         // this will call load() only if detached
-        return getObject().session;
+        return getObject();
     }
 
     @Override
@@ -107,24 +107,23 @@ public class JcrSessionModel extends LoadableDetachableModel<SessionTuple> {
     }
 
     @Override
-    protected SessionTuple load() {
+    protected Session load() {
         Session session = null;
         boolean fatalError = false;
-        LoginException loginException = null;
 
         try {
             if (credentials == null) {
-                return new SessionTuple(null, null);
+                return null;
             }
             session = login(credentials);
             if (isSystemUser(session)) {
                 logHippoEvent(true, credentials.getUsername(), "system user", false);
-                return new SessionTuple(null, null);
+                return null;
             }
             logHippoEvent(true, credentials.getUsername(), "login successful", true);
         } catch (LoginException e) {
             logHippoEvent(true, credentials.getUsername(), "invalid credentials", false);
-            loginException = e;
+            lastThrownLoginException = e;
         } catch (RepositoryException e) {
             fatalError = true;
             log.error("Unable to obtain repository instance, aborting.", e);
@@ -134,7 +133,22 @@ public class JcrSessionModel extends LoadableDetachableModel<SessionTuple> {
             // there's no sense in continuing
             throw new AbortWithHttpStatusException(503, false);
         }
-        return new SessionTuple(session, loginException);
+        return session;
+    }
+
+    public Session getSessionObject() throws LoginException {
+        final Session session = getObject();
+
+        try {
+            if (lastThrownLoginException != null) {
+                throw lastThrownLoginException;
+            }
+        } finally {
+            // Clear the login exception for subsequent calls
+            lastThrownLoginException = null;
+        }
+
+        return session;
     }
 
     public static Session login(UserCredentials credentials) throws LoginException, RepositoryException {
@@ -158,9 +172,8 @@ public class JcrSessionModel extends LoadableDetachableModel<SessionTuple> {
     protected boolean isSystemUser(Session session) {
         try {
             Node userNode = getUserNode(session);
-
-            if (userNode != null) {
-                return JcrUtils.getBooleanProperty(userNode, "hipposys:system", false);
+            if (userNode != null && userNode.hasProperty("hipposys:system")) {
+                return userNode.getProperty("hipposys:system").getBoolean();
             }
         } catch (RepositoryException e) {
             log.warn("Unable to determine if user is a system user: {}", e.getMessage());
