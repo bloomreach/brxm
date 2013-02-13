@@ -44,6 +44,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
 
     private List<? extends TreeNode> children;
 
+    private final int hashCode;
     private boolean reloadChildren = true;
     private boolean reloadChildCount = true;
     private int childCount = -1;
@@ -58,6 +59,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
             throw new RuntimeException("JcrTreeNode instantiated with null model");
         }
         this.parent = parent;
+        this.hashCode = nodeModel.hashCode();
     }
 
     public JcrTreeNode(IModel<Node> nodeModel, IJcrTreeNode parent, Comparator<IJcrTreeNode> comparator) {
@@ -214,7 +216,7 @@ public class JcrTreeNode extends NodeModelWrapper<JcrTreeNode> implements IJcrTr
 
     @Override
     public int hashCode() {
-        return nodeModel.hashCode();
+        return hashCode;
     }
 
     @Override
