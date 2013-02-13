@@ -16,20 +16,23 @@
 package org.hippoecm.frontend;
 
 import org.apache.wicket.Application;
+import org.apache.wicket.Component;
 import org.apache.wicket.IRequestTarget;
 import org.apache.wicket.Page;
-import org.apache.wicket.Request;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.protocol.http.WebRequestCycleProcessor;
 import org.apache.wicket.protocol.http.request.CryptedUrlWebRequestCodingStrategy;
 import org.apache.wicket.request.IRequestCodingStrategy;
-import org.apache.wicket.request.RequestParameters;
-import org.apache.wicket.request.target.coding.IRequestTargetUrlCodingStrategy;
 import org.apache.wicket.request.target.component.BookmarkablePageRequestTarget;
 import org.apache.wicket.request.target.component.IPageRequestTarget;
+import org.apache.wicket.request.target.component.listener.BehaviorRequestTarget;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PluginRequestCycleProcessor extends WebRequestCycleProcessor {
+
+    static final Logger log = LoggerFactory.getLogger(PluginRequestCycleProcessor.class);
 
     @Override
     public void processEvents(RequestCycle requestCycle) {
@@ -47,7 +50,15 @@ public class PluginRequestCycleProcessor extends WebRequestCycleProcessor {
     @Override
     public void respond(RequestCycle requestCycle) {
         IRequestTarget target = requestCycle.getRequestTarget();
-        if (target instanceof IPageRequestTarget) {
+        if (target instanceof BehaviorRequestTarget) {
+            BehaviorRequestTarget brt = (BehaviorRequestTarget) target;
+            Component component = brt.getTarget();
+            WebRequest request = (WebRequest) requestCycle.getRequest();
+            if (!request.isAjax() && !component.isVisibleInHierarchy() || !component.isEnabledInHierarchy()) {
+                log.warn("Ignoring non-ajax request to invisible component");
+                return;
+            }
+        } else if (target instanceof IPageRequestTarget) {
             Page page = ((IPageRequestTarget) target).getPage();
             if (page instanceof Home) {
                 if (target instanceof PluginRequestTarget) {
@@ -70,10 +81,10 @@ public class PluginRequestCycleProcessor extends WebRequestCycleProcessor {
                 ((Home) page).render((PluginRequestTarget) null);
             }
         }
-        
+
         super.respond(requestCycle);
     }
-    
+
     @Override
     protected IRequestCodingStrategy newRequestCodingStrategy() {
         Main main = (Main) Application.get();
