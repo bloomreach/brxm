@@ -17,8 +17,6 @@ package org.hippoecm.hst.tag;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -27,13 +25,12 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.rewriter.ContentRewriter;
 import org.hippoecm.hst.content.rewriter.ImageVariant;
 import org.hippoecm.hst.content.rewriter.impl.SimpleContentRewriter;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,18 +81,15 @@ public class HstHtmlTag extends TagSupport {
     @Override
     public int doEndTag() throws JspException{
 
-        HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
-        HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
-        HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
-        HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
-        
-        if(hstRequest == null || hstResponse == null) {
-            log.error("Cannot continue HstHtmlTag because response/request not an instance of hst response/request");
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        if(requestContext == null) {
+            log.error("Cannot continue HstHtmlTag because no HstRequestContext available");
             cleanup();
             return EVAL_PAGE;
         }
-        
-        String characterEncoding = hstResponse.getCharacterEncoding();
+
+        String characterEncoding = pageContext.getResponse().getCharacterEncoding();
         
         if (characterEncoding == null) {
             characterEncoding = "UTF-8";
@@ -115,7 +109,7 @@ public class HstHtmlTag extends TagSupport {
             }
             contentRewriter.setFullyQualifiedLinks(fullyQualifiedLinks);
             contentRewriter.setImageVariant(imageVariant);
-            html = contentRewriter.rewrite(html, hippoHtml.getNode(), hstRequest.getRequestContext());
+            html = contentRewriter.rewrite(html, hippoHtml.getNode(), requestContext);
         } else {
             log.warn("Node should be a HippoNode and response a HstResponse");
         }

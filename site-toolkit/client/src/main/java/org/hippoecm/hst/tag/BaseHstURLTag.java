@@ -29,7 +29,6 @@ import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;

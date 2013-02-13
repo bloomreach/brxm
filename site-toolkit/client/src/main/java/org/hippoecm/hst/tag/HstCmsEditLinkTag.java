@@ -30,11 +30,10 @@ import javax.servlet.jsp.tagext.VariableInfo;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.EncodingUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -95,16 +94,16 @@ public class HstCmsEditLinkTag extends TagSupport  {
             }
 
             HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
-            HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
 
-            if(hstRequest == null) {
+            HstRequestContext requestContext = RequestContextProvider.get();
+
+            if(requestContext == null) {
                 log.warn("Cannot create a cms edit url outside the hst request processing for '{}'", this.hippoBean.getPath());
                 return EVAL_PAGE;
             }
 
-            HstRequestContext hstRequestContext = HstRequestUtils.getHstRequestContext(servletRequest);
 
-            if(!hstRequestContext.isPreview()) {
+            if(!requestContext.isPreview()) {
                 log.debug("Skipping cms edit url because not in preview.");
                 return EVAL_PAGE;
             }
@@ -113,7 +112,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
                 return EVAL_PAGE;
             }
 
-            ContextualizableMount mount = (ContextualizableMount)hstRequestContext.getResolvedMount().getMount();
+            ContextualizableMount mount = (ContextualizableMount)requestContext.getResolvedMount().getMount();
 
 
             // cmsBaseUrl is something like : http://localhost:8080
@@ -170,7 +169,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
                 return EVAL_PAGE;
             }
 
-            String encodedPath = EncodingUtils.getEncodedPath(nodeLocation, hstRequest);
+            String encodedPath = EncodingUtils.getEncodedPath(nodeLocation, servletRequest);
 
             String cmsEditLink = cmsBaseUrl + "?path="+encodedPath;
 

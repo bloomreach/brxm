@@ -23,7 +23,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
@@ -58,10 +57,9 @@ public class HstIncludeTag extends TagSupport {
         try {
             HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
             HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
-            HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
             HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
 
-            if (hstRequest == null || hstResponse == null) {
+            if (hstResponse == null) {
                 return EVAL_PAGE;
             }
 

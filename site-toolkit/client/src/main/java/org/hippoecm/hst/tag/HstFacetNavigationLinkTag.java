@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -31,12 +30,10 @@ import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagSupport;
 import javax.servlet.jsp.tagext.VariableInfo;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.facetnavigation.HippoFacetSubNavigation;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,19 +81,13 @@ public class HstFacetNavigationLinkTag extends TagSupport {
                 return EVAL_PAGE;
             }
 
-            HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
-            HttpServletResponse servletResponse = (HttpServletResponse) pageContext.getResponse();
-            HstRequest hstRequest = HstRequestUtils.getHstRequest(servletRequest);
-            HstResponse hstResponse = HstRequestUtils.getHstResponse(servletRequest, servletResponse);
-
-            if(hstRequest == null) {
-                log.warn("The request is not an HstRequest. Cannot create an HstLink outside the hst request processing. Return");
+            final HstRequestContext requestContext = RequestContextProvider.get();
+            if(requestContext == null) {
+                log.warn("There is no HstRequestContext. Cannot create an HstLink outside the hst request processing. Return");
                 return EVAL_PAGE;
             }
 
-            HstRequestContext reqContext = HstRequestUtils.getHstRequestContext(servletRequest);
-
-            HstLink link = reqContext.getHstLinkCreator().create(current.getNode(), reqContext,null, true, true);
+            HstLink link = requestContext.getHstLinkCreator().create(current.getNode(), requestContext,null, true, true);
 
             if(link == null || link.getPath() == null) {
                 log.warn("Unable to rewrite link for '{}'. Return EVAL_PAGE", current.getPath());
@@ -124,11 +115,13 @@ public class HstFacetNavigationLinkTag extends TagSupport {
                 }
             }
             link.setPath(path);
-            String urlString = link.toUrlForm(reqContext, false);
+            String urlString = link.toUrlForm(requestContext, false);
 
+
+            HttpServletRequest servletRequest = (HttpServletRequest) pageContext.getRequest();
             // append again the current queryString as we are context relative
-            if(hstRequest.getQueryString() != null && !"".equals(hstRequest.getQueryString())) {
-                urlString += "?"+hstRequest.getQueryString();
+            if(servletRequest.getQueryString() != null && !"".equals(servletRequest.getQueryString())) {
+                urlString += "?"+servletRequest.getQueryString();
             }
 
             if (var == null) {
