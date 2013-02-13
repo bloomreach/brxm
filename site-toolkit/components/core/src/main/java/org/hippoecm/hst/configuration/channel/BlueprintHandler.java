@@ -99,7 +99,7 @@ public class BlueprintHandler {
                         Node ref = contentNode.getSession().getNodeByIdentifier(docbase);
                         blueprint.getPrototypeChannel().setContentRoot(ref.getPath());
 
-                        log.warn("Having a hst:content node at '{}' is deprecated. Instead, at '{}' add a String property 'hst:content' with value " +
+                        log.warn("Deprecation: Having a hst:content node at '{}' is deprecated. Instead, at '{}' add a String property 'hst:content' with value " +
                                 "'{}' OR value '{}'. Note that the path '{}' is preferred above setting a uuid.",
                                 new String[]{contentNode.getPath(), siteNode.getPath(), ref.getPath(), docbase, ref.getPath()});
                     } catch (ItemNotFoundException e) {

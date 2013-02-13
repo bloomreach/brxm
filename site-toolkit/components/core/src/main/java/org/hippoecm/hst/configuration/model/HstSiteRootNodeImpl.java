@@ -77,7 +77,7 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
                 if(facetSelectContentNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                     String docbaseUuid = facetSelectContentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                     contentPath = nodePathForUuid(session, facetSelectContentNode, docbaseUuid);
-                    log.warn("Having a hst:content node at '{}' is deprecated. Instead, at '{}' add a String property 'hst:content' with value " +
+                    log.warn("Deprecation: Having a hst:content node at '{}' is deprecated. Instead, at '{}' add a String property 'hst:content' with value " +
                             "'{}' OR value '{}'. Note that the path '{}' is preferred above setting a uuid.",
                             new String[]{facetSelectContentNode.getPath(), siteRootNode.getPath(), contentPath, docbaseUuid, contentPath});
                 } else {
