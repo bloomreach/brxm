@@ -72,11 +72,14 @@ public class HstSiteRootNodeImpl extends HstNodeImpl implements HstSiteRootNode 
             } else if(siteRootNode.hasNode(HstNodeTypes.NODENAME_HST_CONTENTNODE)) {
                 Node facetSelectContentNode = siteRootNode.getNode(HstNodeTypes.NODENAME_HST_CONTENTNODE);
                 String facetSelectContentPath = facetSelectContentNode.getPath();
-                
+
                 // fetch the mandatory hippo:docbase property to retrieve the canonical node
                 if(facetSelectContentNode.isNodeType(HippoNodeType.NT_FACETSELECT)) {
                     String docbaseUuid = facetSelectContentNode.getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                     contentPath = nodePathForUuid(session, facetSelectContentNode, docbaseUuid);
+                    log.warn("Having a hst:content node at '{}' is deprecated. Instead, at '{}' add a String property 'hst:content' with value " +
+                            "'{}' OR value '{}'. Note that the path '{}' is preferred above setting a uuid.",
+                            new String[]{facetSelectContentNode.getPath(), siteRootNode.getPath(), contentPath, docbaseUuid, contentPath});
                 } else {
                     throw new IllegalStateException("Node at path '"+facetSelectContentPath+"' must always be of type '" +
                             HippoNodeType.NT_FACETSELECT + "'");
