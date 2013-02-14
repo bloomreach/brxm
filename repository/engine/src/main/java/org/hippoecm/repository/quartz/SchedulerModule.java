@@ -65,6 +65,7 @@ public class SchedulerModule implements DaemonModule {
 
     private Session session;
     private JCRScheduler scheduler = null;
+    private RepositoryScheduler service;
 
 
     private static boolean isEnabled() {
@@ -87,7 +88,7 @@ public class SchedulerModule implements DaemonModule {
         } catch (SchedulerException e) {
             log.error("Failed to initialize quartz scheduler", e);
         }
-        HippoServiceRegistry.registerService(new RepositoryScheduler() {
+        HippoServiceRegistry.registerService(service = new RepositoryScheduler() {
             @Override
             public void scheduleJob(final RepositoryJobInfo jobInfo, final RepositoryJobTrigger trigger)
                     throws RepositoryException {
@@ -111,7 +112,9 @@ public class SchedulerModule implements DaemonModule {
 
     @Override
     public void shutdown() {
-        HippoServiceRegistry.unregisterService(this, RepositoryScheduler.class);
+        if (service != null) {
+            HippoServiceRegistry.unregisterService(service, RepositoryScheduler.class);
+        }
         if(scheduler != null) {
             scheduler.shutdown(true);
         }
