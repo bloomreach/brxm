@@ -3,7 +3,7 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:domain</sv:value>
   </sv:property>
-  <sv:node sv:name="hippo:authrole"o>
+  <sv:node sv:name="hippo:authrole">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>hipposys:authrole</sv:value>
     </sv:property>
