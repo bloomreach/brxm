@@ -179,7 +179,7 @@ if (!YAHOO.hippo.Upload) {
 
             this.initializeUploader();
 
-            YAHOO.hippo.HippoAjax.registerDestroyFunction(this.elements.selectFilesLink, this.destroy, this);
+            YAHOO.hippo.HippoAjax.registerDestroyFunction(this.elements.selectFilesLink.get('element'), this.destroy, this);
         };
 
         YAHOO.hippo.UploadWidget.prototype = {
