@@ -52,6 +52,7 @@ import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.types.TypeHelper;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -629,8 +630,8 @@ public class TemplateBuilder implements IDetachable, IObservable {
                                 NodeType nt = getJcrNodeType(typeDescriptor.getType());
                                 primaryNodeTypeContainsMixin = ((nt != null) && nt.isNodeType(mixin));
                             } catch (RepositoryException e) {
-                                log.error("Unable to check whether removed mixin " + mixin +
-                                        " is part of the JCR primary node type", e);
+                                log.error("Unable to check whether removed mixin '" + mixin +
+                                        "' is part of the JCR primary node type", e);
                             }
 
                             if (!primaryNodeTypeContainsMixin) {
@@ -951,6 +952,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     }
                     if (!currentTypes.contains(superType)) {
                         prototype.addMixin(superType);
+                        JcrUtils.createMandatoryProperties(prototype, prototype.getSession().getWorkspace().getNodeTypeManager().getNodeType(superType));
                     }
                 }
                 for (String currentType : currentTypes) {

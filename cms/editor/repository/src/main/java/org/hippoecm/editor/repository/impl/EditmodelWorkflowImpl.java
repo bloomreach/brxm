@@ -17,7 +17,6 @@ package org.hippoecm.editor.repository.impl;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -29,19 +28,14 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
-import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.nodetype.NodeTypeTemplate;
 import javax.jcr.nodetype.PropertyDefinition;
-import javax.jcr.version.VersionException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.editor.NamespaceValidator;
@@ -52,6 +46,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,8 +130,8 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
             List<String> superStrings = new LinkedList<String>();
             if (reference.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
                 Value[] supers = reference.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
-                for (int i = 0; i < supers.length; i++) {
-                    superStrings.add(supers[i].getString());
+                for (Value zuper : supers) {
+                    superStrings.add(zuper.getString());
                 }
             }
             return superStrings;
@@ -317,7 +312,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 } else if (newType.isNodeType(HippoNodeType.NT_REQUEST)) {
                     clone.addMixin("mix:referenceable");
                 }
-                createMandatoryProperties(clone, newType);
+                JcrUtils.createMandatoryProperties(clone, newType);
 
                 current = draft;
                 draft.remove();
@@ -332,49 +327,6 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
         void revert() throws RepositoryException {
             if (draft != null) {
                 draft.remove();
-            }
-        }
-    }
-
-    private static void createMandatoryProperties(Node draftPrototype, NodeType nt) throws RepositoryException,
-            ValueFormatException, VersionException, LockException, ConstraintViolationException {
-        NodeType[] supers = nt.getSupertypes();
-        NodeType[] all = new NodeType[supers.length + 1];
-        System.arraycopy(supers, 0, all, 0, supers.length);
-        all[supers.length] = nt;
-        for (NodeType type : all) {
-            for (PropertyDefinition pdef : type.getPropertyDefinitions()) {
-                if (pdef.getDeclaringNodeType() == type) {
-                    if (pdef.isMandatory() && !pdef.isProtected() && !"*".equals(pdef.getName())
-                            && !draftPrototype.hasProperty(pdef.getName())) {
-                        if (pdef.isMultiple()) {
-                            draftPrototype.setProperty(pdef.getName(), new Value[0]);
-                        } else {
-                            switch (pdef.getRequiredType()) {
-                            case PropertyType.LONG:
-                                draftPrototype.setProperty(pdef.getName(), 0);
-                                break;
-                            case PropertyType.DOUBLE:
-                                draftPrototype.setProperty(pdef.getName(), 0.0f);
-                                break;
-                            case PropertyType.DATE:
-                                draftPrototype.setProperty(pdef.getName(), Calendar.getInstance());
-                                break;
-                            case PropertyType.REFERENCE:
-                                draftPrototype.setProperty(pdef.getName(), draftPrototype.getSession().getRootNode());
-                                break;
-                            case PropertyType.STRING:
-                                String[] constraints = pdef.getValueConstraints();
-                                if (constraints != null && constraints.length > 0) {
-                                    draftPrototype.setProperty(pdef.getName(), constraints[0]);
-                                    break;
-                                }
-                            default:
-                                draftPrototype.setProperty(pdef.getName(), "");
-                            }
-                        }
-                    }
-                }
             }
         }
     }
