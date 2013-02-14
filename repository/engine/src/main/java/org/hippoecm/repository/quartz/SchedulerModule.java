@@ -111,6 +111,7 @@ public class SchedulerModule implements DaemonModule {
 
     @Override
     public void shutdown() {
+        HippoServiceRegistry.unregisterService(this.scheduler, RepositoryScheduler.class);
         if(scheduler != null) {
             scheduler.shutdown(true);
         }
