@@ -36,3 +36,6 @@
 
 [hipposched:workflowjob] > hipposched:job
 - hipposched:methodName (string) mandatory
+
+[hipposched:jobgroup] > nt:base
++ * (hipposched:job) = hipposched:job
