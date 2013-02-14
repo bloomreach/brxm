@@ -29,16 +29,17 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
     (function() {
-        
-        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, tmpFunc;
+        "use strict";
+
+        var Dom = YAHOO.util.Dom, Lang = YAHOO.lang, wicketProcessComponent, wicketLogError;
 
         YAHOO.hippo.HippoAjaxImpl = function() {};
-        
+
         YAHOO.hippo.HippoAjaxImpl.prototype = {
             prefix : 'hippo-destroyable-',
             callbacks : new YAHOO.hippo.HashMap(),
             _scrollbarWidth : null,
-            
+
             loadJavascript : function(url, callback, scope) {
                 var evt = !YAHOO.env.ua.ie ? "onload" : 'onreadystatechange',
                     element = document.createElement("script");
@@ -46,7 +47,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                 element.src = url;
                 if (callback) {
                     element[evt] = function() {
-                        if (YAHOO.env.ua.ie && ( !( /loaded|complete/.test(window.event.srcElement.readyState) ) )) {
+                        if (YAHOO.env.ua.ie && (!(/loaded|complete/.test(window.event.srcElement.readyState)))) {
                             return;
                         }
                         callback.call(scope);
@@ -59,7 +60,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
             getScrollbarWidth : function() {
                 var inner, outer, w1, w2;
 
-                if(this._scrollbarWidth === null) {
+                if (this._scrollbarWidth === null) {
                     inner = document.createElement('p');
                     inner.style.width = "100%";
                     inner.style.height = "200px";
@@ -72,9 +73,9 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                     outer.style.width = "200px";
                     outer.style.height = "150px";
                     outer.style.overflow = "hidden";
-                    outer.appendChild (inner);
+                    outer.appendChild(inner);
 
-                    document.body.appendChild (outer);
+                    document.body.appendChild(outer);
                     w1 = inner.offsetWidth;
                     outer.style.overflow = 'scroll';
                     w2 = inner.offsetWidth;
@@ -82,29 +83,29 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                         w2 = outer.clientWidth;
                     }
 
-                    document.body.removeChild (outer);
+                    document.body.removeChild(outer);
 
                     this._scrollbarWidth = w1 - w2;
                 }
                 return this._scrollbarWidth;
             },
-            
+
             getScrollbarHeight : function() {
                 //I'm lazy so return scrollbarWidth for now
                 return this.getScrollbarWidth();
             },
-            
+
             registerDestroyFunction : function(el, func, context, args) {
                 var id = this.prefix + Dom.generateId();
                 el.HippoDestroyID = id;
-                if(!Lang.isArray(args)) {
+                if (!Lang.isArray(args)) {
                     args = [args];
                 }
                 this.callbacks.put(id, {func: func, context: context, args: args});
             },
-            
+
             callDestroyFunction : function(id) {
-                if(this.callbacks.containsKey(id)) {
+                if (this.callbacks.containsKey(id)) {
                     var callback = this.callbacks.remove(id);
                     callback.func.apply(callback.context, callback.args);
                 }
@@ -121,10 +122,10 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                 }
             }
         };
-        
+
         YAHOO.hippo.HippoAjax = new YAHOO.hippo.HippoAjaxImpl();
-        
-        tmpFunc = Wicket.Ajax.Call.prototype.processComponent;
+
+        wicketProcessComponent = Wicket.Ajax.Call.prototype.processComponent;
         Wicket.Ajax.Call.prototype.processComponent = function(steps, node) {
             var compId, el, els, i, len;
 
@@ -145,13 +146,66 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                 //console.timeEnd('HippoAjax.processComponent.purgeElement');
                 //console.timeEnd("HippoAjax.processComponent.cleanup");
             }
-            tmpFunc.call(this, steps, node);
+            wicketProcessComponent.call(this, steps, node);
         };
 
+        wicketLogError = WicketAjaxDebug.logError;
+        WicketAjaxDebug.logError = function(msg) {
+            if (Lang.isFunction(console.error)) {
+                console.error(msg);
+            }
+            wicketLogError.apply(WicketAjaxDebug, [msg]);
+        };
+
+        Wicket.Ajax.Call.prototype.processEvaluation = function(steps, node) {
+            steps.push(function(notify) {
+                // get the javascript body
+                var text = Wicket._readTextNode(node),
+                    encoding = node.getAttribute("encoding"),
+                    res;
+
+                // unescape it if necessary
+                if (encoding !== null) {
+                    text = Wicket.decode(encoding, text);
+                }
+
+                // test if the javascript is in form of identifier|code
+                // if it is, we allow for letting the javascript decide when the rest of processing will continue
+                // by invoking identifier();
+                res = text.match(new RegExp("^([a-z|A-Z_][a-z|A-Z|0-9_]*)\\|((.|\\n)*)$"));
+
+                if (res !== null) {
+
+                    text = "var f = function(" + res[1] + ") {" + res[2] + "};";
+
+                    try {
+                        // do the evaluation
+                        eval(text + "\n//@ sourceURL=wicket-eval.js");
+                        f(notify);
+                    } catch (e1) {
+                        Wicket.Log.error("Wicket.Ajax.Call.processEvaluation: Exception evaluating javascript: " + e1);
+                        Wicket.Log.error("Wicket.Ajax.Call.processEvaluation: Eval value: " + text);
+                    }
+
+                } else {
+                    // just evaluate the javascript
+                    try {
+                        // do the evaluation
+                        eval(text + "\n//@ sourceURL=wicket-eval.js");
+                    } catch (e2) {
+                        Wicket.Log.error("Wicket.Ajax.Call.processEvaluation: Exception evaluating javascript: " + e2);
+                        Wicket.Log.error("Wicket.Ajax.Call.processEvaluation: Eval value: " + text);
+                    }
+                    // continue to next step
+                    notify();
+                }
+            });
+        };
     }());
 
     YAHOO.register("hippoajax", YAHOO.hippo.HippoAjax, {
-        version: "2.8.1", build: "19"
+        version: "2.8.1",
+        build: "19"
     });
 }
 

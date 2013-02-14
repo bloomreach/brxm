@@ -215,6 +215,7 @@
             <exclude>org/hippoecm/frontend/plugins/yui/tree/init_tree.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/upload/ajax/add_upload.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/widget/widget_template.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/yui/inc/hippo/281/hippoajax/hippoajax-debug.js</exclude>
           </excludes>
           <predefinedVars>
             Ext,
