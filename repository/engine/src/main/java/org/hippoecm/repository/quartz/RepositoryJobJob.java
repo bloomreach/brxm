@@ -32,7 +32,7 @@ import org.quartz.JobExecutionException;
 /**
  * Quartz {@link Job} that calls a scheduled {@link RepositoryJob}.
  */
-class RepositoryJobJob implements Job {
+public class RepositoryJobJob implements Job {
 
     @Override
     public void execute(final JobExecutionContext context) throws JobExecutionException {
