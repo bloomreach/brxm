@@ -390,6 +390,8 @@
                 <!-- repository content XML -->
                 <exclude>engine/src/test/resources/export/*.xml</exclude>
                 <exclude>engine/src/test/resources/import/*.xml</exclude>
+                <exclude>test/checker-repository.xml</exclude>
+                <exclude>test/checker-storage/**</exclude>
               </excludes>
             </configuration>
           </plugin>

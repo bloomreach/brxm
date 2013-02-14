@@ -26,6 +26,7 @@ import org.onehippo.repository.scheduling.RepositoryJob;
 import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
 import org.onehippo.repository.scheduling.RepositoryJobInfo;
 import org.onehippo.repository.scheduling.RepositoryJobSimpleTrigger;
+import org.onehippo.repository.scheduling.RepositoryJobTrigger;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -49,7 +50,8 @@ public class SchedulerTest extends RepositoryTestCase {
         final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
         final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
         testJobInfo.addAttribute("foo", "bar");
-        scheduler.scheduleJob(testJobInfo, new RepositoryJobSimpleTrigger("test", new Date()));
+        final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date());
+        scheduler.scheduleJob(testJobInfo, testJobTrigger);
         waitUntilExecuted();
         if (failureMessage != null) {
             fail(failureMessage);
