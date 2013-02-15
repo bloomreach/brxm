@@ -32,6 +32,7 @@ import org.hippoecm.hst.component.support.spring.util.MetadataReaderClasspathRes
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.container.HstFilter;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.ContentNodeBinder;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
@@ -110,53 +111,89 @@ public class BaseHstComponent extends GenericHstComponent {
     }
 
     /**
+     * @see {@link #getComponentParameter(String)}
+     * @deprecated  since 2.26.01. Use {@link #getComponentParameter(String)} instead
+     */
+    @Deprecated
+    public String getParameter(String name, HstRequest request) {
+        return this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
+    }
+
+
+    /**
      * Returns resolved parameter from HstComponentConfiguration : resolved means that possible property placeholders like
      * ${1} or ${year}, where the first refers to the first wildcard matcher in a resolved sitemap item, and the latter
      * to a resolved parameter in the resolved HstSiteMapItem
-     * 
-     * The parameter map used has inherited parameters from ancestor components, which have precedence over child components) 
-     * 
+     *
+     * The parameter map used has inherited parameters from ancestor components, which have precedence over child components)
+     *
      * @param name
-     * @param request
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
-    public String getParameter(String name, HstRequest request) {
-        return (String)this.getComponentConfiguration().getParameter(name, request.getRequestContext().getResolvedSiteMapItem());
+    public String getComponentParameter(String name) {
+        return this.getComponentConfiguration().getParameter(name, RequestContextProvider.get().getResolvedSiteMapItem());
     }
-    
+
+
     /**
-     * See {@link #getParameter(String, HstRequest)}, where we now return all resolved parameters (thus with inheritance of 
-     * ancestor components)
-     * @param request
-     * @return Map of all parameters, and when no parameters present, return empty map.
+     * @see {@link #getComponentParameters()}
+     * @deprecated  since 2.26.01. Use #getComponentParameters(} instead
      */
+    @Deprecated
     public  Map<String,String> getParameters(HstRequest request){
         return this.getComponentConfiguration().getParameters(request.getRequestContext().getResolvedSiteMapItem());
     }
-    
+
+
     /**
-     * See {@link #getParameter(String, HstRequest)}, but now, only resolved parameters directly on the HstComponent are taken into
-     * acoount: in other words, no inheritance of parameters is applied
-     * @param name
-     * @param request
-     * @return the resolved parameter value for this name, or <code>null</null> if not present
+     * See {@link #getComponentParameter(String)}, where we now return all resolved parameters (thus with inheritance of
+     * ancestor components)
+     * @return Map of all parameters, and when no parameters present, return empty map.
      */
+    public  Map<String,String> getComponentParameters(){
+        return this.getComponentConfiguration().getParameters(RequestContextProvider.get().getResolvedSiteMapItem());
+    }
+
+    /**
+     * @see {@link #getComponentLocalParameter(String)}
+     * @deprecated  since 2.26.01. Use {@link #getComponentLocalParameter(String)} instead
+     */
+    @Deprecated
     public String getLocalParameter(String name, HstRequest request) {
         return (String)this.getComponentConfiguration().getLocalParameter(name, request.getRequestContext().getResolvedSiteMapItem());
     }
-    
+
     /**
-     * See {@link #getParameters(HstRequest)}, but now, only resolved parameter map of parameters is returned that is directly on
-     * the HstComponenConfiguration, thus, no inheritance is applied
-     * @param request
-     * @return Map of all parameters, and when no parameters present, return empty map.
+     * See {@link #getComponentParameter(String)}, but now, only resolved parameters directly on the HstComponent are taken into
+     * acoount: in other words, no inheritance of parameters is applied
+     * @param name
+     * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
+    public String getComponentLocalParameter(String name) {
+        return (String)this.getComponentConfiguration().getLocalParameter(name, RequestContextProvider.get().getResolvedSiteMapItem());
+    }
+
+    /**
+     * @see {@link #getComponentParameters()}
+     * @deprecated  since 2.26.01. Use {@link #getComponentParameters()} instead
+     */
+    @Deprecated
     public  Map<String,String> getLocalParameters(HstRequest request){
         return this.getComponentConfiguration().getLocalParameters(request.getRequestContext().getResolvedSiteMapItem());
     }
-    
+
     /**
-     * A public request parameter is a request parameter that is not namespaced. Thus for example ?foo=bar. Typically,
+     * See {@link #getComponentParameters()}, but now, only resolved parameter map of parameters is returned that is directly on
+     * the HstComponenConfiguration, thus, no inheritance is applied
+     * @return Map of all parameters, and when no parameters present, return empty map.
+     */
+    public  Map<String,String> getComponentLocalParameters(){
+        return this.getComponentConfiguration().getLocalParameters(RequestContextProvider.get().getResolvedSiteMapItem());
+    }
+
+
+    /**
+     * A public request parameter is a {@link javax.servlet.http.HttpServletRequest} parameter that is not namespaced. Thus for example ?foo=bar. Typically,
      * a namespaced request parameter for example looks like ?r1_r4:foo=bar. 
      * Public request parameters are used when some parameter from some hst component needs to be readable by another hst 
      * component. For example when you have a search box in the top of your webpage. The input value there should be
@@ -610,6 +647,15 @@ public class BaseHstComponent extends GenericHstComponent {
      * @param request the HST request
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
+    protected <T> T getComponentParametersInfo(final HstRequest request) {
+        return (T) ParameterUtils.getParametersInfo(this, getComponentConfiguration(), request);
+    }
+
+    /**
+     * @see {@link #getComponentParametersInfo(org.hippoecm.hst.core.component.HstRequest)}
+     * @deprecated  since 2.26.01. Use #getComponentParametersInfo(org.hippoecm.hst.core.component.HstRequest)} instead
+     */
+    @Deprecated
     protected <T> T getParametersInfo(final HstRequest request) {
         return (T) ParameterUtils.getParametersInfo(this, getComponentConfiguration(), request);
     }

@@ -167,14 +167,14 @@ public class TestBaseHstComponent {
         hstRequest.setRequestContext(requestContext);
         
         
-        ANewsArticleComponentParametersInfo paramsInfo = component.getParametersInfo(hstRequest);
+        ANewsArticleComponentParametersInfo paramsInfo = component.getComponentParametersInfo(hstRequest);
         assertNotNull(paramsInfo);
         assertEquals(10, paramsInfo.getPageSize());
         assertEquals("Test description", paramsInfo.getDescription());
         assertEquals(Color.RED, paramsInfo.getColor());
         
         // should return same object for the same hstRequest.
-        assertTrue(paramsInfo == component.getParametersInfo(hstRequest));
+        assertTrue(paramsInfo == component.getComponentParametersInfo(hstRequest));
 
         assertEquals("testValue", paramsInfo.getHiddenPropertyInChannelManagerUI());
     }
