@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer;
 
+import java.security.AccessControlException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -25,7 +26,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.query.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.iterator.NodeIterable;
@@ -50,6 +50,7 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.util.AclChecker;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.json.JSONArray;
@@ -80,12 +81,8 @@ public class PageEditor extends ExtPanel {
     // default initial connection timeout in milliseconds
     private static final long DEFAULT_INITIAL_CONNECTION_TIMEOUT = 60000L;
 
-    private static final String SELECT_ADMIN_GROUPS_QUERY = "SELECT * FROM hipposys:group WHERE jcr:primaryType='hipposys:group' AND fn:name() = 'admin' AND hipposys:members='{}'";
-
     private static final Boolean DEFAULT_PREVIEW_MODE = Boolean.TRUE;
     private static final Boolean DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT = Boolean.TRUE;
-    private static final String DEFAULT_VARIANT_ADDER_XTYPE = "Hippo.ChannelManager.TemplateComposer.ComboBoxVariantAdder";
-    private static final String DEFAULT_PROPERTIES_EDITOR_XTYPE = "Hippo.ChannelManager.TemplateComposer.FormPropertiesEditor";
 
     @ExtProperty
     private Boolean debug = false;
@@ -164,7 +161,21 @@ public class PageEditor extends ExtPanel {
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
-        this.canUnlockChannels = isUserAdministrator(UserSession.get().getJcrSession());
+
+        // Check whether user can unlock channels or not
+        try {
+            AclChecker.checkAccess(config, UserSession.get().getJcrSession(), "channel.unlock", "hippo:admin", "/hst:hst/hst:channels");
+            this.canUnlockChannels = Boolean.TRUE;
+        } catch(AccessControlException ex) {
+            log.info("User '{}' is not allowed to unlock channels.", this.cmsUser);
+        } catch (RepositoryException ex) {
+            if (log.isDebugEnabled()) {
+                log.warn("Problems while checking if user '" + this.cmsUser + "' can unlock channels or not", ex);
+            } else {
+                log.warn("Problems while checking if user '{}' can unlock channels or not. {}", this.cmsUser, ex);
+            }
+        }
+
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
@@ -471,17 +482,17 @@ public class PageEditor extends ExtPanel {
         }
     }
 
-    private boolean isUserAdministrator(final javax.jcr.Session session) {
-        try {
-            String selectGroupsStatement = SELECT_ADMIN_GROUPS_QUERY.replace("{}", session.getUserID());
-            @SuppressWarnings("deprecation")
-            Query selectGroupsQuery = session.getWorkspace().getQueryManager().createQuery(selectGroupsStatement, Query.SQL);
-            return selectGroupsQuery.execute().getNodes().hasNext();
-        } catch (RepositoryException e) {
-            log.error("Unable to determine group membership", e);
-        }
-        return false;
-    }
+//    private boolean isUserAdministrator(final javax.jcr.Session session) {
+//        try {
+//            String selectGroupsStatement = SELECT_ADMIN_GROUPS_QUERY.replace("{}", session.getUserID());
+//            @SuppressWarnings("deprecation")
+//            Query selectGroupsQuery = session.getWorkspace().getQueryManager().createQuery(selectGroupsStatement, Query.SQL);
+//            return selectGroupsQuery.execute().getNodes().hasNext();
+//        } catch (RepositoryException e) {
+//            log.error("Unable to determine group membership", e);
+//        }
+//        return false;
+//    }
 
     private class DocumentObserver extends Observer<JcrNodeModel> {
 
