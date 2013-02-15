@@ -37,15 +37,19 @@ public class AclChecker {
     private static final String PRIVILEGES_PATH_CONFIGURATION_PARAM_POSTFIX = ".privileges.path";
 
     /**
-     * Check whether a certain user which obtained a JCR session has access to a certain frontend application or not 
-     * 
+     * Check whether a certain user which obtained a JCR session has access to a certain frontend application or not
+     *
      * @param config - A plugin configuration from which some configuration parameters will be retrieved
      * @param session - A JCR session to check access with
-     * @throws RepositoryException If any repository error happened
-     * @throws AccessControlException If permission is denied
+     * @param prefix - The prefix to use to lookup configuration properties of the access control
+     * @param defaultPrivilege - Default value for the privilege in case there is no one defined
+     * @param defaultPath - Default value for privilege path in case there is no one defined
+     * @throws AccessControlException If access is not allowed using {@code privilege}, either the configured or the
+     * provided default value, to {@code path}, either the configured or the default value
+     * @throws RepositoryException
      */
-    public static void checkAccess(IPluginConfig config, Session session) throws AccessControlException,
-            RepositoryException {
+    public static void checkAccess(final IPluginConfig config, final Session session, final String prefix,
+                                   final String defaultPrivilege, final String defaultPath) throws AccessControlException, RepositoryException {
 
         // Validate parameters
         if (config == null) {
@@ -56,20 +60,36 @@ public class AclChecker {
             throw new IllegalArgumentException("A null session parameter has been passed");
         }
 
-        // Do the magic here
-        final String applicationName = PluginApplication.get().getPluginApplicationName();
-        final String privileges = config.getString(applicationName + PRIVILEGES_CONFIGURATION_PARAM_POSTFIX);
-        final String privilegesPath = config.getString(applicationName + PRIVILEGES_PATH_CONFIGURATION_PARAM_POSTFIX);
+        final String aclPropertiesPrefix = (StringUtils.isBlank(prefix)) ? "" : prefix;
+        String aclPrivilege = config.getString(aclPropertiesPrefix + PRIVILEGES_CONFIGURATION_PARAM_POSTFIX);
+        aclPrivilege = (StringUtils.isBlank(aclPrivilege)) ? defaultPrivilege : aclPrivilege;
+        String aclPrivilegePath = config.getString(aclPropertiesPrefix + PRIVILEGES_PATH_CONFIGURATION_PARAM_POSTFIX);
+        aclPrivilegePath = (StringUtils.isBlank(aclPrivilegePath)) ? defaultPath : aclPrivilegePath;
 
-        if (StringUtils.isBlank(privileges) || StringUtils.isBlank(privilegesPath)) {
-            log.info("No privileges check configured for application: " + applicationName);
-            log.debug("No privileges check configured for application: " + applicationName + ", privileges: " + privileges + ", and privileges path: "
-                    + privilegesPath);
+        if (StringUtils.isBlank(aclPropertiesPrefix) || StringUtils.isBlank(aclPrivilege) || StringUtils.isBlank(aclPrivilegePath)) {
+            log.info("No privileges check configured for application/component: '{}'", aclPropertiesPrefix);
+            log.debug("No privileges check configured for application/component: '{}', privileges: '{}', and privileges path: '{}'",
+                    new Object[] {aclPropertiesPrefix, aclPrivilege, aclPrivilegePath});
+
         } else {
-            log.debug("Applying check for application " + applicationName + " with privileges: " + privileges + ", and privileges path: "
-                    + privilegesPath);
-            session.checkPermission(privilegesPath, privileges);
+            log.debug("Applying check for application/component '{}' with privileges: '{}' , and privileges path: '{}'",
+                    new Object[] {aclPropertiesPrefix, aclPrivilege, aclPrivilegePath});
+
+            session.checkPermission(aclPrivilegePath, aclPrivilege);
         }
+    }
+
+    public static void checkAccess(final IPluginConfig config, final Session session) throws AccessControlException,
+            RepositoryException {
+
+        checkAccess(config, session, PluginApplication.get().getPluginApplicationName());
+    }
+
+
+    public static void checkAccess(final IPluginConfig config, final Session session, final String prefix) throws AccessControlException,
+            RepositoryException {
+
+        checkAccess(config, session, prefix, null, null);
     }
 
 }
