@@ -15,14 +15,15 @@
  */
 package org.onehippo.cms7.services.search.commons;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.onehippo.cms7.services.search.binder.LazyContentBeanProxyFactory;
+import org.onehippo.cms7.services.search.binder.MapPropertyValueProvider;
 import org.onehippo.cms7.services.search.binder.PropertyValueProvider;
-import org.onehippo.cms7.services.search.commons.Bar;
+
+import static org.junit.Assert.assertEquals;
 
 public class TestLazyContentBeanProxyFactory {
 

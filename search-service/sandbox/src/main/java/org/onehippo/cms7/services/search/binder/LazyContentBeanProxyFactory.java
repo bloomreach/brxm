@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import org.aopalliance.aop.Advice;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.onehippo.cms7.services.search.annotation.Field;
-import org.onehippo.cms7.services.search.commons.util.ContentBeanPropertyUtils;
+import org.onehippo.cms7.services.search.util.ContentBeanPropertyUtils;
 import org.springframework.aop.MethodBeforeAdvice;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.framework.ProxyFactory;

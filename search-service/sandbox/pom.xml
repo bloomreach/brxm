@@ -26,7 +26,6 @@
   <name>Hippo Search Service Sandbox</name>
   <description>Hippo Search Service Sandbox</description>
   <artifactId>hippo-search-service-sandbox</artifactId>
-  <packaging>pom</packaging>
 
   <dependencies>
 
