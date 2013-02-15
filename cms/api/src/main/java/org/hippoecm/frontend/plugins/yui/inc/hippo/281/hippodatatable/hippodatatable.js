@@ -28,13 +28,20 @@ YAHOO.namespace('hippo');
 
 if (!YAHOO.hippo.DataTable) {
     (function() {
-        var Dom = YAHOO.util.Dom;
+        var Dom = YAHOO.util.Dom,
+            ie8 = YAHOO.env.ua.ie === 8,
+            thin = ie8 ? 1 : 2, medium = ie8 ? 3 : 4, thick = ie8 ? 5 : 6;
 
         function getPixels(el, attr) {
             var style, pixels;
             style = Dom.getStyle(el, attr);
             pixels = 0;
             if (style && style !== 'auto') {
+                switch (style) {
+                    case 'thin': return thin;
+                    case 'medium': return medium;
+                    case 'thick': return thick;
+                }
                 pixels = parseInt(style, 10);
             }
             if (isNaN(pixels)) {
