@@ -33,7 +33,7 @@ public class Banner extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 
-        BannerInfo paramsInfo = getParametersInfo(request);
+        BannerInfo paramsInfo = getComponentParametersInfo(request);
 
         int width = paramsInfo.getBannerWidth();
 

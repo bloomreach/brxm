@@ -113,13 +113,13 @@ public class TodoList extends BaseHstComponent {
             String todoItemsQuery = DEFAULT_TODO_ITEMS_QUERY;
             long queryLimit = DEFAULT_QUERY_LIMIT;
 
-            String param = getParameter("todoItemsQuery", request);
+            String param = getComponentParameter("todoItemsQuery");
 
             if (param != null) {
                 todoItemsQuery = param;
             }
 
-            param = getParameter("queryLimit", request);
+            param = getComponentParameter("queryLimit");
 
             if (param != null) {
                 queryLimit = Long.parseLong(param);

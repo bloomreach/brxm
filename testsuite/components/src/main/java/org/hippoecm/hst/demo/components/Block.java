@@ -34,7 +34,7 @@ public class Block extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
         super.doBeforeRender(request, response);
 
-        BlockInfo paramsInfo = getParametersInfo(request);
+        BlockInfo paramsInfo = getComponentParametersInfo(request);
 
         request.setAttribute("info",  paramsInfo);
     }
