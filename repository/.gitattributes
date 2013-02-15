@@ -17,6 +17,10 @@ api/src/main/java/org/hippoecm/repository/ext/InternalWorkflow.java -text
 api/src/main/java/org/hippoecm/repository/ext/WorkflowInvocationHandlerModuleFactory.java -text
 api/src/main/java/org/hippoecm/repository/ext/WorkflowManagerModule.java -text
 api/src/main/java/org/hippoecm/repository/ext/WorkflowManagerRegister.java -text
+api/src/main/java/org/hippoecm/repository/util/DateTools.java -text
+api/src/main/java/org/hippoecm/repository/util/JcrUtils.java -text
+api/src/main/java/org/hippoecm/repository/util/NodeIterable.java -text
+api/src/main/java/org/hippoecm/repository/util/PropertyIterable.java -text
 api/src/main/java/org/onehippo/repository/scheduling/RepositoryJob.java -text
 api/src/main/java/org/onehippo/repository/scheduling/RepositoryJobCronTrigger.java -text
 api/src/main/java/org/onehippo/repository/scheduling/RepositoryJobExecutionContext.java -text
@@ -392,11 +396,7 @@ upgrade/src/test/resources/repository-testsubns2.cnd -text
 upgrade/src/test/resources/repository-testsuperns.cnd -text
 upgrade/src/test/resources/repository-testsuperns2.cnd -text
 utilities/pom.xml svneol=native#text/plain
-utilities/src/main/java/org/hippoecm/repository/util/DateTools.java -text
-utilities/src/main/java/org/hippoecm/repository/util/JcrUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java -text
-utilities/src/main/java/org/hippoecm/repository/util/NodeIterable.java -text
-utilities/src/main/java/org/hippoecm/repository/util/PropertyIterable.java -text
 utilities/src/main/java/org/hippoecm/repository/util/RepoUtils.java -text
 utilities/src/main/java/org/hippoecm/repository/util/Utilities.java -text
 utilities/src/test/java/org/hippoecm/repository/util/RepoUtilsTest.java -text
