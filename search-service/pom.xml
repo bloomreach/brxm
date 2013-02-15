@@ -428,20 +428,14 @@
     </plugins>
   </reporting>
 
-  <profiles>
+  <modules>
+    <module>api</module>
+    <module>commons</module>
+    <module>jcr</module>
+    <module>sandbox</module>
+  </modules>
 
-    <profile>
-      <id>all</id>
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
-      <modules>
-        <module>api</module>
-        <module>commons</module>
-        <module>jcr</module>
-        <module>sandbox</module>
-      </modules>
-    </profile>
+  <profiles>
 
     <profile>
       <id>pedantic</id>
