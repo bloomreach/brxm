@@ -124,7 +124,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                 if (messages != null) {
                     if (keys.length != messages.length) {
                         String state = preview ? "preview" : "live";
-                        throw new Exception("keys and messages must be of equal length but was not the case for '"+state+"'");
+                        throw new IllegalArgumentException("keys and messages must be of equal length but was not the case for '"+state+"'");
                     }
                     Object[][] contents = createListResourceBundleContents(keys, messages);
                     ResourceBundle defaultBundle = new SimpleListResourceBundle(contents);
@@ -157,7 +157,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                     if (localizedMessages != null) {
                         if (keys.length != localizedMessages.length) {
                             String state = preview ? "preview" : "live";
-                            throw new Exception("keys and messages must be of equal length but was not the case for '"+state+"'");
+                            throw new IllegalArgumentException("keys and messages must be of equal length but was not the case for '"+state+"'");
                         }
                         Object[][] contents = createListResourceBundleContents(keys, localizedMessages);
                         ResourceBundle localizedBundle = new SimpleListResourceBundle(contents);
