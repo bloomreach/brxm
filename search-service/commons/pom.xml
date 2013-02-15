@@ -18,7 +18,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>com.onehippo.cms7</groupId>
+    <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-search-service</artifactId>
     <version>1.01.00-SNAPSHOT</version>
   </parent>
