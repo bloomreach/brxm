@@ -1,0 +1,5 @@
+* text=auto !eol
+/LICENSE -text
+/NOTICE -text
+jcr/src/main/resources/hipposearch.cnd -text
+jcr/src/test/resources/testproject-types.cnd -text

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+-->
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="unittestcontent">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>hippostd:directory</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+    <sv:value>hippo:harddocument</sv:value>
+  </sv:property>
+  <sv:property sv:name="jcr:uuid" sv:type="String">
+    <sv:value>abababab-511b-49e0-92b5-126970694fa8</sv:value>
+  </sv:property>
+  <sv:property sv:name="hippostd:foldertype" sv:type="String">
+    <sv:value>New Document</sv:value>
+    <sv:value>New Folder</sv:value>
+  </sv:property>
+  <sv:node sv:name="documents">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hippostd:folder</sv:value>
+    </sv:property>
+    <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+      <sv:value>hippo:harddocument</sv:value>
+    </sv:property>
+    <sv:property sv:name="hippostd:foldertype" sv:type="String">
+      <sv:value>New Folder</sv:value>
+      <sv:value>New Document</sv:value>
+    </sv:property>
+    <sv:node sv:name="testproject">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hippostd:folder</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:uuid" sv:type="String">
+        <sv:value>abababab-5fa8-48a8-b03b-4524373d992a</sv:value>
+      </sv:property>
+      <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippo:harddocument</sv:value>
+      </sv:property>
+      <sv:property sv:name="hippostd:foldertype" sv:type="String">
+        <sv:value>New Folder</sv:value>
+        <sv:value>New Document</sv:value>
+      </sv:property>
+      <sv:node sv:name="common">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:folder</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:uuid" sv:type="String">
+          <sv:value>cbcbcbcb-5fa8-48a8-b03b-4524373d992a</sv:value>
+        </sv:property>
+        <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+          <sv:value>hippo:harddocument</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippostd:foldertype" sv:type="String">
+          <sv:value>new-translated-folder</sv:value>
+          <sv:value>new-document</sv:value>
+        </sv:property>
+        <sv:node sv:name="homepage">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hippo:handle</sv:value>
+          </sv:property>
+          <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:hardhandle</sv:value>
+            <sv:value>hippo:translated</sv:value>
+          </sv:property>
+          <sv:node sv:name="homepage">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>testproject:textpage</sv:value>
+            </sv:property>
+            <sv:property sv:name="jcr:mixinTypes" sv:type="Name">
+              <sv:value>hippo:harddocument</sv:value>
+            </sv:property>
+            <sv:property sv:name="testproject:date" sv:type="Date">
+              <sv:value>2009-08-10T10:05:07.580+02:00</sv:value>
+            </sv:property>
+            <sv:property sv:name="testproject:summary" sv:type="String">
+              <sv:value>Summary of the homepage</sv:value>
+            </sv:property>
+            <sv:property sv:name="testproject:title" sv:type="String">
+              <sv:value>This is the homepage</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:holder" sv:type="String">
+              <sv:value>admin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:state" sv:type="String">
+              <sv:value>unpublished</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostd:stateSummary" sv:type="String">
+              <sv:value>new</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostdpubwf:lastModifiedBy" sv:type="String">
+              <sv:value>admin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostdpubwf:lastModificationDate" sv:type="Date">
+              <sv:value>2010-01-22T12:34:11.055+02:00</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostdpubwf:createdBy" sv:type="String">
+              <sv:value>admin</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippostdpubwf:creationDate" sv:type="Date">
+              <sv:value>2010-01-21T12:34:11.055+02:00</sv:value>
+            </sv:property>
+            <sv:node sv:name="testproject:body">
+              <sv:property sv:name="jcr:primaryType" sv:type="Name">
+                <sv:value>hippostd:html</sv:value>
+              </sv:property>
+              <sv:property sv:name="hippostd:content" sv:type="String">
+                <sv:value>This is the content of the homepage</sv:value>
+              </sv:property>
+            </sv:node>
+          </sv:node>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value/>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>Home Page</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+
+  </sv:node>
+</sv:node>

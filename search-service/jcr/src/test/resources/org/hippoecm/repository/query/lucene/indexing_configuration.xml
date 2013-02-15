@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+-->
+<!DOCTYPE configuration SYSTEM "http://jackrabbit.apache.org/dtd/indexing-configuration-1.0.dtd">
+<configuration xmlns:hippostd="http://www.onehippo.org/jcr/hippostd/nt/2.0" xmlns:hippostdpubwf="http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0">
+    <!-- hippo aggregates -->
+    <aggregates>
+        <nodetype>hippostd:html</nodetype>
+        <childtype>hippostd:date</childtype>
+    </aggregates>
+    
+    <excludefromnodescope>
+        <nodetype>hippo:paths</nodetype>
+        <nodetype>hippo:docbase</nodetype>
+        <nodetype>hippostd:state</nodetype>
+        <nodetype>hippostd:stateSummary</nodetype>
+        <nodetype>hippostd:holder</nodetype>
+        <nodetype>hippostdpubwf:createdBy</nodetype>
+        <nodetype>hippostdpubwf:lastModifiedBy</nodetype>
+    </excludefromnodescope>
+    
+    <nosingleindexterm>
+        <property>hippostd:content</property>
+    </nosingleindexterm>
+    
+    <facets>
+        <excludeproperty>hippostd:content</excludeproperty>
+    </facets>
+    
+</configuration>
