@@ -122,6 +122,10 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                 String[] messages = getPropertyAsStringArray(bundleNode, "resourcebundle:messages");
 
                 if (messages != null) {
+                    if (keys.length != messages.length) {
+                        String state = preview ? "preview" : "live";
+                        throw new Exception("keys and messages must be of equal length but was not the case for '"+state+"'");
+                    }
                     Object[][] contents = createListResourceBundleContents(keys, messages);
                     ResourceBundle defaultBundle = new SimpleListResourceBundle(contents);
 
@@ -132,7 +136,11 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                     }
                 }
             } catch (Exception e) {
-                log.warn("Failed to load default resource bundle", e);
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to load default resource bundle from '"+bundleNode.getPath()+"'.", e);
+                } else {
+                    log.warn("Failed to load default resource bundle from '{}' : {}.",bundleNode.getPath(), e.toString());
+                }
             }
         }
 
@@ -147,6 +155,10 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                     String[] localizedMessages = getPropertyAsStringArray(prop);
 
                     if (localizedMessages != null) {
+                        if (keys.length != localizedMessages.length) {
+                            String state = preview ? "preview" : "live";
+                            throw new Exception("keys and messages must be of equal length but was not the case for '"+state+"'");
+                        }
                         Object[][] contents = createListResourceBundleContents(keys, localizedMessages);
                         ResourceBundle localizedBundle = new SimpleListResourceBundle(contents);
 
@@ -157,7 +169,12 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                         }
                     }
                 } catch (Exception e) {
-                    log.warn("Failed to load resource bundle for locale: " + locale, e);
+                    if (log.isDebugEnabled()) {
+                        log.warn("Failed to load default resource bundle from '"+bundleNode.getPath()+"' for locale: " + locale, e);
+                    } else {
+                        log.warn("Failed to load default resource bundle from '{}' for locale '{}' : {}.",
+                                new String[]{bundleNode.getPath(), locale.toString(), e.toString()});
+                    }
                 }
             }
         }
