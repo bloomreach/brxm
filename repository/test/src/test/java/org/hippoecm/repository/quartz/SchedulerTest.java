@@ -49,24 +49,38 @@ public class SchedulerTest extends RepositoryTestCase {
     public void testScheduleRepositoryJobWithSimpleTrigger() throws Exception {
         final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
         final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
-        testJobInfo.addAttribute("foo", "bar");
+        testJobInfo.setAttribute("foo", "bar");
         final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date());
         scheduler.scheduleJob(testJobInfo, testJobTrigger);
-        waitUntilExecuted();
+        if (!waitUntilExecuted()) {
+            fail("RepositoryJob not executed within 5 seconds");
+        }
         if (failureMessage != null) {
             fail(failureMessage);
         }
     }
 
-    private void waitUntilExecuted() throws Exception {
+    @Test
+    public void testScheduleAndDeleteRepositoryJob() throws Exception {
+        final RepositoryScheduler scheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
+        final RepositoryJobInfo testJobInfo = new RepositoryJobInfo("test", TestRepositoryJob.class);
+        final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date(System.currentTimeMillis() + 2500));
+        scheduler.scheduleJob(testJobInfo, testJobTrigger);
+        scheduler.deleteJob(testJobInfo.getName(), testJobInfo.getGroup());
+        if (waitUntilExecuted()) {
+            fail("Deleted job was still executed.");
+        }
+    }
+
+    private boolean waitUntilExecuted() throws Exception {
         int n = 50;
         while (n-- > 0) {
             Thread.sleep(100);
             if (repositoryJobExecuted) {
-                return;
+                return true;
             }
         }
-        throw new Exception("RepositoryJob not executed within 5 seconds");
+        return false;
     }
 
 

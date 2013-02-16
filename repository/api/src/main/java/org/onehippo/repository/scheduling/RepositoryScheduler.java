@@ -34,4 +34,13 @@ public interface RepositoryScheduler {
      */
     public void scheduleJob(RepositoryJobInfo jobInfo, RepositoryJobTrigger trigger) throws RepositoryException;
 
+    /**
+     * Removes a job and its associated triggers.
+     *
+     * @param jobName  name of the job.
+     * @param groupName  name of the group, may be null to indicate the default group.
+     * @throws RepositoryException  if an error occurs while trying to remove the job.
+     */
+    public void deleteJob(String jobName, String groupName) throws RepositoryException;
+
 }

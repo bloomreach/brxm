@@ -16,6 +16,7 @@
 package org.onehippo.repository.scheduling;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,10 +80,10 @@ public class RepositoryJobInfo {
     }
 
     /**
-     * Add an attribute. These will be available to the {@link RepositoryJob}
+     * Set the value of an attribute. Attributes will be available to the {@link RepositoryJob}
      * during execution via the {@link RepositoryJobExecutionContext#}
      */
-    public void addAttribute(String name, String value) {
+    public void setAttribute(String name, String value) {
         attributes.put(name, value);
     }
 
@@ -97,6 +98,6 @@ public class RepositoryJobInfo {
      * @return all the attributes that were added to this info.
      */
     public Collection<String> getAttributeNames() {
-        return attributes.keySet();
+        return Collections.unmodifiableCollection(attributes.keySet());
     }
 }

@@ -131,6 +131,7 @@ engine/src/main/java/org/hippoecm/repository/quartz/AbstractJobStore.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/JCRJobDetail.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/RepositoryJobDetail.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/RepositoryJobJob.java -text
+engine/src/main/java/org/hippoecm/repository/quartz/RepositorySchedulerImpl.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/workflow/AbstractSchedulerInvocationModule.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/workflow/CronSchedulerInvocationModule.java -text
 engine/src/main/java/org/hippoecm/repository/quartz/workflow/DateSchedulerInvocationModule.java -text

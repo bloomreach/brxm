@@ -15,6 +15,8 @@
  */
 package org.onehippo.repository.scheduling;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.jcr.Credentials;
@@ -45,11 +47,20 @@ public class RepositoryJobExecutionContext {
 
     /**
      * Get an attribute value. You can pass attributes to this context object through
-     * {@link RepositoryJobInfo#addAttribute(String, String)}.
+     * {@link RepositoryJobInfo#setAttribute(String, String)}.
+     *
      * @param name  the name of the attribute.
      * @return  the attribute value associated with name.
      */
     public String getAttribute(String name) {
         return attributes.get(name);
     }
+
+    /**
+     * @return  the collection of all the attribute names.
+     */
+    public Collection<String> getAttributeNames() {
+        return Collections.unmodifiableCollection(attributes.keySet());
+    }
+
 }
