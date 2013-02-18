@@ -23,12 +23,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import javax.jcr.*;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.PropertyDefinition;
-import javax.jcr.version.VersionException;
 import javax.jcr.version.VersionManager;
 
 import org.hippoecm.repository.api.HippoNode;
@@ -561,100 +557,6 @@ public class JcrUtils {
         } catch (RepositoryException ignored) {
             return null;
         }
-    }
-
-    /**
-     * Create mandatory properties specified by the given {@link NodeType} and its super-types inclusively on the
-     * given {@link Node}
-     *
-     * <P>
-     * Inclusively means that the created mandatory properties are the one defined on the super-types of {@link NodeType}
-     * in addition to the {@link NodeType} itself
-     * </P>
-     *
-     * @param node
-     * @param nodeType
-     * @throws RepositoryException
-     * @throws ValueFormatException
-     * @throws VersionException
-     * @throws LockException
-     * @throws ConstraintViolationException
-     */
-    public static void createMandatoryProperties(Node node, NodeType nodeType) throws RepositoryException,
-            ValueFormatException, VersionException, LockException, ConstraintViolationException {
-
-        List<NodeType> all = getSuperTypes(nodeType);
-        for (NodeType type : all) {
-            for (PropertyDefinition propertyDefinition : type.getPropertyDefinitions()) {
-                if (propertyDefinition.getDeclaringNodeType() == type) {
-                    if (propertyDefinition.isMandatory() && !propertyDefinition.isProtected() && !"*".equals(propertyDefinition.getName())
-                            && !node.hasProperty(propertyDefinition.getName())) {
-
-                        if (propertyDefinition.isMultiple()) {
-                            node.setProperty(propertyDefinition.getName(), new Value[0]);
-                        } else {
-                            switch (propertyDefinition.getRequiredType()) {
-                                case PropertyType.LONG:
-                                    node.setProperty(propertyDefinition.getName(), 0);
-                                    break;
-                                case PropertyType.DOUBLE:
-                                    node.setProperty(propertyDefinition.getName(), 0.0f);
-                                    break;
-                                case PropertyType.DATE:
-                                    node.setProperty(propertyDefinition.getName(), Calendar.getInstance());
-                                    break;
-                                case PropertyType.REFERENCE:
-                                    node.setProperty(propertyDefinition.getName(), node.getSession().getRootNode());
-                                    break;
-                                case PropertyType.STRING:
-                                    String[] constraints = propertyDefinition.getValueConstraints();
-                                    if (constraints != null && constraints.length > 0) {
-                                        node.setProperty(propertyDefinition.getName(), constraints[0]);
-                                        break;
-                                    }
-                                default:
-                                    node.setProperty(propertyDefinition.getName(), "");
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Retrieve the super-types of a {@link NodeType}
-     *
-     * @param nodeType The {@link NodeType} of which super-types are collected
-     * @param isInclusive Determines whether to include the {@link NodeType} itself in the returned {@link List} or not
-     * @return The {@link List} of {@code nodeType} super-types. {@link NodeType} is included only if {@code isInclusive}
-     * is true
-     */
-    public static List<NodeType> getSuperTypes(final NodeType nodeType, boolean isInclusive) {
-        NodeType[] all;
-        NodeType[] superTypes = nodeType.getSupertypes();
-
-        if (isInclusive) {
-            all = new NodeType[superTypes.length + 1];
-            System.arraycopy(superTypes, 0, all, 0, superTypes.length);
-            all[superTypes.length] = nodeType;
-        } else {
-            all = superTypes;
-        }
-
-        return Arrays.asList(all);
-    }
-
-    /**
-     * @see {@link #getSuperTypes(javax.jcr.nodetype.NodeType, boolean)}
-     *
-     * <p>
-     * This method calls {@link #getSuperTypes(javax.jcr.nodetype.NodeType, boolean)} with a {@code true} value for the
-     * {@code isInclusive} parameter
-     * </p>
-     */
-    public static List<NodeType> getSuperTypes(final NodeType nodeType) {
-        return getSuperTypes(nodeType, true);
     }
 
     private static boolean isAutoCreatedNode(final String childName, Node parent) throws RepositoryException {
