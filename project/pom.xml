@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2007-2013 Hippo B.V. (http://www.onehippo.com)
- 
+
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
- 
+
        http://www.apache.org/licenses/LICENSE-2.0
- 
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,9 +62,9 @@
     <commons-logging-api.version>1.1</commons-logging-api.version>
     <guava.version>12.0.1</guava.version>
 
-    <!-- 
+    <!--
         Below are only the defined versions of some dependencies that are used in multiple projects.
-        Note that there is *no* dependency management for the version properties below.           
+        Note that there is *no* dependency management for the version properties below.
     -->
     <google.gdata.analytics.version>2.1</google.gdata.analytics.version>
     <google.gdata.core.version>1.47.1</google.gdata.core.version>
@@ -72,7 +72,7 @@
     <jackson.version>1.9.5</jackson.version>
     <spring.version>3.0.7.RELEASE</spring.version>
     <spring.js.version>2.0.5.RELEASE</spring.js.version>
-    
+
     <!-- END properties versions with dependency management -->
 
     <maven.plugin.antrun.version>1.7</maven.plugin.antrun.version>
@@ -100,7 +100,7 @@
     <maven.plugin.surefire-report.version>2.12.4</maven.plugin.surefire-report.version>
     <maven.plugin.taglib.version>2.4</maven.plugin.taglib.version>
     <maven.plugin.war.version>2.3</maven.plugin.war.version>
-    
+
     <maven.extension.wagon-http.version>1.0-beta-7</maven.extension.wagon-http.version>
 
     <!-- if you want a remote debugging on a different a address
@@ -123,10 +123,10 @@
     <cargo.tomcat.distribution.url>${cargo.tomcat.distribution.url.prefix}${cargo.tomcat.distribution.url.archive}${cargo.tomcat.distribution.url.postfix}</cargo.tomcat.distribution.url>
     <!-- Extra JVM arguments to pass to Cargo -->
     <cargo.jvm.args />
-    
+
     <!-- default empty javaagent, see also "jrebel" profile below -->
     <javaagent />
-    
+
   </properties>
 
   <licenses>
@@ -137,9 +137,9 @@
     </license>
   </licenses>
 
-  <!-- 
-     Software configuration management (scm): where to find and how to get acces to the source repository 
-     This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html 
+  <!--
+     Software configuration management (scm): where to find and how to get acces to the source repository
+     This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
     <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/project/trunk</connection>
@@ -149,7 +149,7 @@
 
   <issueManagement>
     <system>Jira</system>
-    <url>http://issues.onehippo.org/browse/CMS7</url>
+    <url>https://issues.onehippo.com/browse/CMS7</url>
   </issueManagement>
 
   <inceptionYear>2007</inceptionYear>
@@ -401,7 +401,7 @@
         <updatePolicy>never</updatePolicy>
       </releases>
     </repository>
-    <!-- DISABLED repositories which are often "transitively" pulled in 
+    <!-- DISABLED repositories which are often "transitively" pulled in
         and/or were used in the past
     -->
     <repository>
@@ -464,7 +464,7 @@
       </releases>
       <layout>default</layout>
     </pluginRepository>
-    <!-- DISABLED repositories which are often "transitively" pulled in 
+    <!-- DISABLED repositories which are often "transitively" pulled in
         and/or were used in the past
     -->
    <pluginRepository>
@@ -479,7 +479,7 @@
       </releases>
     </pluginRepository>
   </pluginRepositories>
-  
+
   <dependencyManagement>
     <dependencies>
       <!-- provided third party libraries -->
@@ -577,9 +577,9 @@
     </dependencies>
   </dependencyManagement>
 
-  
+
   <dependencies>
-    
+
     <!-- all shared third party dependencies -->
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -634,7 +634,7 @@
       <artifactId>commons-logging-api</artifactId>
     </dependency>
   </dependencies>
-  
+
   <build>
     <extensions>
       <extension>
@@ -669,7 +669,7 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
           <version>${maven.plugin.deploy.version}</version>
-        </plugin>      
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
@@ -782,9 +782,9 @@
             <source>1.6</source>
           </configuration>
         </plugin>
-        <plugin>      
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-remote-resources-plugin</artifactId>        
+          <artifactId>maven-remote-resources-plugin</artifactId>
           <version>${maven.plugin.remote-resources.version}</version>
           <inherited>true</inherited>
           <executions>
@@ -886,10 +886,10 @@
       </plugins>
     </pluginManagement>
     <plugins>
-      <plugin>      
+      <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-remote-resources-plugin</artifactId>        
+        <artifactId>maven-remote-resources-plugin</artifactId>
       </plugin>
       <plugin>
         <inherited>true</inherited>
