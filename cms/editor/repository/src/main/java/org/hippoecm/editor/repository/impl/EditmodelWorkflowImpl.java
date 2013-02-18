@@ -38,6 +38,7 @@ import javax.jcr.nodetype.NodeTypeTemplate;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.editor.EditorUtils;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -46,7 +47,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.ext.InternalWorkflow;
-import org.hippoecm.repository.util.JcrUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -312,7 +313,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
                 } else if (newType.isNodeType(HippoNodeType.NT_REQUEST)) {
                     clone.addMixin("mix:referenceable");
                 }
-                JcrUtils.createMandatoryProperties(clone, newType);
+                EditorUtils.createMandatoryProperties(clone, newType);
 
                 current = draft;
                 draft.remove();

@@ -19,6 +19,7 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.util.collections.MiniMap;
+import org.hippoecm.editor.EditorUtils;
 import org.hippoecm.editor.prototype.JcrPrototypeStore;
 import org.hippoecm.editor.template.BuiltinTemplateStore;
 import org.hippoecm.editor.template.JcrTemplateStore;
@@ -52,7 +53,7 @@ import org.hippoecm.frontend.types.TypeException;
 import org.hippoecm.frontend.types.TypeHelper;
 import org.hippoecm.frontend.types.TypeLocator;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.util.JcrUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -960,7 +961,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     }
                     if (!currentTypes.contains(superType)) {
                         prototype.addMixin(superType);
-                        JcrUtils.createMandatoryProperties(prototype, prototype.getSession().getWorkspace().getNodeTypeManager().getNodeType(superType));
+                        EditorUtils.createMandatoryProperties(prototype, prototype.getSession().getWorkspace().getNodeTypeManager().getNodeType(superType));
                     }
                 }
 
