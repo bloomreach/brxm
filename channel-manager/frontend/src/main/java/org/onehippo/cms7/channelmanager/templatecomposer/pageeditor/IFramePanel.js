@@ -20,14 +20,13 @@
 
     Hippo.ChannelManager.TemplateComposer.IFramePanel = Ext.extend(Ext.Panel, (function () {
         // private variables
-        var frameName, frameId, lastLocation, instance, resizeTask;
+        var frameId, lastLocation, instance, resizeTask;
 
-        frameName = Ext.id();
         frameId = Ext.id();
 
         // private methods
         function getFrame() {
-            return window.frames[frameName];
+            return document.getElementById(frameId);
         }
 
         function getFrameDom() {
@@ -35,19 +34,7 @@
         }
 
         function getFrameDocument() {
-            var frame = getFrame(),
-                result;
-
-            if (Ext.isDefined(frame)) {
-                result = frame.document;
-                if (!Ext.isDefined(result)) {
-                    result = frame.contentDocument;
-                }
-                if (!Ext.isDefined(result) && Ext.isDefined(frame.contentWindow)) {
-                    result = frame.contentWindow.document;
-                }
-            }
-            return result;
+            return getFrame().contentDocument;
         }
 
         function getFrameLocation() {
@@ -55,9 +42,9 @@
 
             frameDocument = getFrameDocument();
 
-            if (frameDocument !== undefined) {
+            if (frameDocument !== undefined && frameDocument.location !== undefined) {
                 href = frameDocument.location.href;
-                if (href !== '' && href !== 'about:blank') {
+                if (href !== undefined && href !== '' && href !== 'about:blank') {
                     return href;
                 }
             }
@@ -116,7 +103,6 @@
                         id: frameId,
                         autoEl: {
                             tag: 'iframe',
-                            name: frameName,
                             frameborder: 0
                         }
                     }
