@@ -68,6 +68,21 @@
                 }
                 Hippo.Msg.hide();
             }, this);
+
+            this.ping = window.setInterval(function() {
+                if (this.sessionCookie && Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.isValidSession(this.sessionCookie)) {
+                        Ext.Ajax.request({
+                            url: this.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/'
+                    });
+                }
+            }.createDelegate(this), 20000);
+        },
+
+        destroy: function() {
+            window.clearInterval(this.ping);
+            delete this.ping;
+
+            Hippo.ChannelManager.TemplateComposer.PageContainer.superclass.destroy.call(this);
         },
 
         _populateIFrameResourceCache: function() {
