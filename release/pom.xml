@@ -51,9 +51,9 @@
     <hippo.services.version>1.02.02-SNAPSHOT</hippo.services.version>
     <hippo.utilities.version>1.01.03-SNAPSHOT</hippo.utilities.version>
 
-    <forge.content-blocks.version>1.08.04-SNAPSHOT</forge.content-blocks.version>
-    <forge.dashboard-document-wizard.version>1.03.10-SNAPSHOT</forge.dashboard-document-wizard.version>
-    <forge.easy-forms.version>2.12.02-SNAPSHOT</forge.easy-forms.version>
+    <forge.content-blocks.version>1.09.00</forge.content-blocks.version>
+    <forge.dashboard-document-wizard.version>1.03.10</forge.dashboard-document-wizard.version>
+    <forge.easy-forms.version>2.12.03</forge.easy-forms.version>
     <forge.ecm-tagging.version>4.04.03-SNAPSHOT</forge.ecm-tagging.version>
     <forge.gallerypicker.version>1.10.02-SNAPSHOT</forge.gallerypicker.version>
     <forge.poll.version>1.05.07-SNAPSHOT</forge.poll.version>
