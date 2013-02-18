@@ -945,6 +945,14 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     }
                 }
                 List<String> superTypes = typeDescriptor.getSuperTypes();
+                for (String currentType : currentTypes) {
+                    if (HippoNodeType.NT_HARDDOCUMENT.equals(currentType)) {
+                        continue;
+                    }
+                    if (!superTypes.contains(currentType)) {
+                        prototype.removeMixin(currentType);
+                    }
+                }
                 for (String superType : superTypes) {
                     NodeType nodeType = getJcrNodeType(superType);
                     if ((nodeType == null) || !nodeType.isMixin()) {
@@ -953,14 +961,6 @@ public class TemplateBuilder implements IDetachable, IObservable {
                     if (!currentTypes.contains(superType)) {
                         prototype.addMixin(superType);
                         JcrUtils.createMandatoryProperties(prototype, prototype.getSession().getWorkspace().getNodeTypeManager().getNodeType(superType));
-                    }
-                }
-                for (String currentType : currentTypes) {
-                    if (HippoNodeType.NT_HARDDOCUMENT.equals(currentType)) {
-                        continue;
-                    }
-                    if (!superTypes.contains(currentType)) {
-                        prototype.removeMixin(currentType);
                     }
                 }
 
