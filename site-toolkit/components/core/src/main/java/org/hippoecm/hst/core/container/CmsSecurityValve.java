@@ -102,7 +102,16 @@ public class CmsSecurityValve extends AbstractValve {
                     throw new ContainerException("CmsSecurityValve is only available for mounts that are of type MutableMount.");
                 }
 
-                StringBuilder destinationURL = new StringBuilder();
+                final String method = servletRequest.getMethod();
+                if (!"GET".equals(method) && !"HEAD".equals(method)) {
+                    try {
+                        servletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                    } catch (IOException e) {
+                        log.error("Unable to send unauthorized (404) response to client", e);
+                    }
+                    return;
+                }
+
                 String cmsUrl = servletRequest.getHeader("Referer");
                 if (cmsUrl == null) {
                     throw new ContainerException("Could not establish a SSO between CMS & site application because there is no 'Referer' header on the request");
@@ -115,6 +124,7 @@ public class CmsSecurityValve extends AbstractValve {
                     cmsUrl += "/";
                 }
 
+                StringBuilder destinationURL = new StringBuilder();
                 String cmsBaseUrl = getBaseUrl(cmsUrl);
                 destinationURL.append(cmsBaseUrl);
 
