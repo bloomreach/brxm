@@ -43,6 +43,18 @@ public class RootResource extends AbstractConfigResource {
     }
 
     @GET
+    @Path("/keepalive")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response keepalive(@Context HttpServletRequest servletRequest) {
+        HttpSession session = servletRequest.getSession(false);
+        if (session != null) {
+            return ok("OK");
+        } else {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+    }
+
+    @GET
     @Path("/composermode/{renderingHost}/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response composerModeGet(@Context HttpServletRequest servletRequest,
