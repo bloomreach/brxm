@@ -25,7 +25,6 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.model.JcrHelper;
@@ -161,6 +160,8 @@ public class JcrRichTextImageFactory implements IRichTextImageFactory {
                 Item primary = JcrHelper.getPrimaryItem(doc);
                 return (primary.isNode() && ((Node) primary).isNodeType("hippo:resource"));
             }
+        } catch (ItemNotFoundException infe) {
+            return false;
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         }
