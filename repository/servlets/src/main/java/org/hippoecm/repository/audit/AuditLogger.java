@@ -33,9 +33,10 @@ public class AuditLogger {
 
     @Subscribe
     public void logHippoEvent(HippoEvent event) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.putAll(event.getValues());
-
-        AuditLogger.getLogger().info(jsonObject.toString());
+        if (log.isInfoEnabled()) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.putAll(event.getValues());
+            AuditLogger.getLogger().info(jsonObject.toString());
+        }
     }
 }
