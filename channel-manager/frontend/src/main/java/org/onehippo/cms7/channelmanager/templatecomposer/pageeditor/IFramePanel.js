@@ -37,6 +37,10 @@
             return getFrame().contentDocument;
         }
 
+        function getFrameWindow() {
+            return getFrame().contentWindow;
+        }
+
         function getFrameLocation() {
             var frameDocument, href;
 
@@ -133,7 +137,7 @@
 
             reload: function() {
                 detachFrame();
-                getFrame().location.reload(true);
+                getFrameDocument().location.reload(true);
             },
 
             createHeadFragment: function() {
@@ -222,15 +226,15 @@
             },
 
             getScrollPosition: function() {
-                var frame = getFrame();
+                var frameWindow = getFrameWindow();
                 return {
-                    x: frame.pageXOffset,
-                    y: frame.pageYOffset
+                    x: frameWindow.pageXOffset,
+                    y: frameWindow.pageYOffset
                 };
             },
 
             scrollBy: function(x, y) {
-                getFrame().scrollBy(x, y);
+                getFrameWindow().scrollBy(x, y);
             },
 
             isValidSession: function(sessionCookie) {
