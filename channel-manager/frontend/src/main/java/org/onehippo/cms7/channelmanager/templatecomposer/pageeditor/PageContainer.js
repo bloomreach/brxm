@@ -70,9 +70,21 @@
             }, this);
 
             this.ping = window.setInterval(function() {
-                if (this.sessionCookie && Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.isValidSession(this.sessionCookie)) {
-                        Ext.Ajax.request({
-                            url: this.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/'
+                if (this.sessionCookie && this._hasFocus() && Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.isValidSession(this.sessionCookie)) {
+                    Ext.Ajax.request({
+                        url: this.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/',
+                        failure: function() {
+                            delete this.sessionCookie;
+
+                            Hippo.Msg.hide();
+                            Hippo.Msg.confirm(this.resources['hst-exception-title'], this.resources['hst-timeout-message'], function(id) {
+                                if (id === 'yes') {
+                                    this._initializeHstSession();
+                                } else {
+                                    this.fireEvent.apply(this, ['fatalIFrameException', {msg: this.resources['hst-exception']}]);
+                                }
+                            }.createDelegate(this));
+                        }.createDelegate(this)
                     });
                 }
             }.createDelegate(this), 20000);
@@ -176,7 +188,9 @@
                     var responseObj = Ext.util.JSON.decode(response.responseText);
                     this.canEdit = responseObj.data.canWrite;
                     this.sessionCookie = responseObj.data.sessionId;
-                    callback();
+                    if (callback) {
+                        callback();
+                    }
                 }.createDelegate(this),
                 failure: function(exceptionObject) {
                     if (exceptionObject.isTimeout) {
