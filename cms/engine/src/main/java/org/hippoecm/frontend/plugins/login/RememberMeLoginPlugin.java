@@ -336,7 +336,7 @@ public class RememberMeLoginPlugin extends LoginPlugin {
                 }
 
                 userSession.login(new UserCredentials(new SimpleCredentials(username, password.toCharArray())));
-                AclChecker.checkAccess(getPluginConfig(), userSession.getJcrSession());
+                AclChecker.checkAccess(getPluginConfig(), userSession.getJcrSession(), PluginApplication.get().getPluginApplicationName());
             } catch (LoginException le) {
                 success = false;
                 loginExceptionPageParameters = buildPageParameters(le.getLoginExceptionCause());

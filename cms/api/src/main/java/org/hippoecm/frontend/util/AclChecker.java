@@ -21,7 +21,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,13 +78,9 @@ public class AclChecker {
         }
     }
 
-    public static void checkAccess(final IPluginConfig config, final Session session) throws AccessControlException,
-            RepositoryException {
-
-        checkAccess(config, session, PluginApplication.get().getPluginApplicationName());
-    }
-
-
+    /**
+     * @see #checkAccess(org.hippoecm.frontend.plugin.config.IPluginConfig, javax.jcr.Session, String, String, String)
+     */
     public static void checkAccess(final IPluginConfig config, final Session session, final String prefix) throws AccessControlException,
             RepositoryException {
 
