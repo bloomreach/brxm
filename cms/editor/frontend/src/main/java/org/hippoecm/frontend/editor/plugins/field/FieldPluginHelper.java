@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
-import org.apache.jackrabbit.commons.predicate.DepthPredicate;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
