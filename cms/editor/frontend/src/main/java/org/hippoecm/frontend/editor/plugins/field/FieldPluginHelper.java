@@ -15,6 +15,7 @@
  */
 package org.hippoecm.frontend.editor.plugins.field;
 
+import org.apache.jackrabbit.commons.predicate.DepthPredicate;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -128,6 +129,11 @@ public class FieldPluginHelper implements IDetachable {
     public JcrNodeModel getNodeModel() {
         return (JcrNodeModel) getPluginContext().getService(getPluginConfig().getString("wicket.model"),
                 IModelReference.class).getModel();
+    }
+
+    public JcrItemModel getFieldItemModel() {
+        return new JcrItemModel(getNodeModel().getItemModel().getPath() + "/" + field.getPath(),
+                !field.getTypeDescriptor().isNode());
     }
 
 }

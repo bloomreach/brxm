@@ -70,8 +70,19 @@ public class JcrItemModel<T extends Item> extends LoadableDetachableModel<T> {
         relPath = null;
         uuid = null;
         if (item != null) {
-            property = item instanceof Property;
+            property = !item.isNode();
             doSave();
+        }
+    }
+
+    @Deprecated
+    public JcrItemModel(String path) {
+        absPath = path;
+        try {
+            final Item item = UserSession.get().getJcrSession().getItem(path);
+            property = !item.isNode();
+        } catch (RepositoryException e) {
+            log.warn("Instantiation of item model by path failed: " + e);
         }
     }
 
