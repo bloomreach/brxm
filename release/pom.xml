@@ -59,10 +59,10 @@
     <forge.poll.version>1.06.00</forge.poll.version>
     <forge.properties.version>2.08.00</forge.properties.version>
     <forge.relateddocs.version>2.08.09</forge.relateddocs.version>
-    <forge.robotstxt.version>1.05.02-SNAPSHOT</forge.robotstxt.version>
-    <forge.selection.version>2.06.01-SNAPSHOT</forge.selection.version>
-    <forge.sitemap.version>1.03.01-SNAPSHOT</forge.sitemap.version>
-    <forge.taxonomy.version>1.08.08-SNAPSHOT</forge.taxonomy.version>
+    <forge.robotstxt.version>1.06.00</forge.robotstxt.version>
+    <forge.selection.version>2.06.01</forge.selection.version>
+    <forge.sitemap.version>1.03.01</forge.sitemap.version>
+    <forge.taxonomy.version>1.09.00</forge.taxonomy.version>
     <forge.tcmp.version>1.06.02-SNAPSHOT</forge.tcmp.version>
 
   </properties>
