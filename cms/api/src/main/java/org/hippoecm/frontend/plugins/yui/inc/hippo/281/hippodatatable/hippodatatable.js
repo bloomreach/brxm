@@ -36,18 +36,27 @@ if (!YAHOO.hippo.DataTable) {
 
         function getPixels(el, attr) {
             var style, pixels;
+
             style = Dom.getStyle(el, attr);
             pixels = 0;
-            if (style && style !== 'auto') {
-                switch (style) {
-                    case 'thin': return thin;
-                    case 'medium': return medium;
-                    case 'thick': return thick;
+
+            if (style) {
+                if (style === 'auto') {
+                    switch (attr) {
+                        case 'width': return el.offsetWidth;
+                        case 'height': return el.offsetHeight;
+                    }
+                } else {
+                    switch (style) {
+                        case 'thin': return thin;
+                        case 'medium': return medium;
+                        case 'thick': return thick;
+                    }
                 }
                 pixels = parseInt(style, 10);
-            }
-            if (isNaN(pixels)) {
-                pixels = 0;
+                if (isNaN(pixels)) {
+                    pixels = 0;
+                }
             }
             return pixels;
         }
