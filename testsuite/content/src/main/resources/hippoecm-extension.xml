@@ -26,7 +26,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10050</sv:value>
+      <sv:value>30050</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:namespace" sv:type="String">
       <sv:value>http://www.hippoecm.org/hst/nt/demosite/1.0</sv:value>
@@ -41,7 +41,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10051</sv:value>
+      <sv:value>30051</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>demosite-namespace.xml</sv:value>
@@ -56,7 +56,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10053</sv:value>
+      <sv:value>30053</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>default-ecm-content.xml</sv:value>
@@ -71,7 +71,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10054</sv:value>
+      <sv:value>30054</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hst-sites.xml</sv:value>
@@ -86,7 +86,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10054.1</sv:value>
+      <sv:value>30054.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hst-channels.xml</sv:value>
@@ -101,7 +101,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10054.1</sv:value>
+      <sv:value>30054.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hst-blueprint.xml</sv:value>
@@ -115,7 +115,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10054.2</sv:value>
+      <sv:value>30054.2</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hst-blueprint-reusecontent.xml</sv:value>
@@ -130,7 +130,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10054.1</sv:value>
+      <sv:value>30054.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hst-subsite-template.xml</sv:value>
@@ -145,7 +145,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10054</sv:value>
+      <sv:value>30054</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hst-configurations.xml</sv:value>
@@ -160,7 +160,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10056</sv:value>
+      <sv:value>30056</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite/sitemap.xml</sv:value>
@@ -176,7 +176,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10056.1</sv:value>
+      <sv:value>30056.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_fr/sitemap.xml</sv:value>
@@ -191,7 +191,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10056.1</sv:value>
+      <sv:value>30056.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_it/sitemap.xml</sv:value>
@@ -205,7 +205,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10056.1</sv:value>
+      <sv:value>30056.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_de/sitemap.xml</sv:value>
@@ -219,7 +219,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10056.1</sv:value>
+      <sv:value>30056.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_nl/sitemap.xml</sv:value>
@@ -235,7 +235,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10057</sv:value>
+      <sv:value>30057</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite/sitemenus.xml</sv:value>
@@ -251,7 +251,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10057.5</sv:value>
+      <sv:value>30057.5</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_fr/sitemenus.xml</sv:value>
@@ -266,7 +266,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10057.1</sv:value>
+      <sv:value>30057.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite/sitemapitemhandlers.xml</sv:value>
@@ -281,7 +281,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10057.2</sv:value>
+      <sv:value>30057.2</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite/pages.xml</sv:value>
@@ -296,7 +296,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10057.3</sv:value>
+      <sv:value>30057.3</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite/components.xml</sv:value>
@@ -311,7 +311,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10057.4</sv:value>
+      <sv:value>30057.4</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite/templates.xml</sv:value>
@@ -327,7 +327,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10057.5</sv:value>
+      <sv:value>30057.5</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_fr/templates.xml</sv:value>
@@ -342,7 +342,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10058</sv:value>
+      <sv:value>30058</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/democommon/pages.xml</sv:value>
@@ -357,7 +357,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10059</sv:value>
+      <sv:value>30059</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/democommon/components.xml</sv:value>
@@ -372,7 +372,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10060</sv:value>
+      <sv:value>30060</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/democommon/templates.xml</sv:value>
@@ -387,7 +387,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10061</sv:value>
+      <sv:value>30061</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/democommon/catalog.xml</sv:value>
@@ -403,7 +403,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10061.1</sv:value>
+      <sv:value>30061.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_test_many/sitemap.xml</sv:value>
@@ -418,7 +418,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10061.2</sv:value>
+      <sv:value>30061.2</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_test_many/sitemenus.xml</sv:value>
@@ -433,7 +433,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10061.3</sv:value>
+      <sv:value>30061.3</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_test_many/pages.xml</sv:value>
@@ -448,7 +448,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10061.4</sv:value>
+      <sv:value>30061.4</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>hstconfiguration/demosite_test_many/templates.xml</sv:value>
@@ -467,7 +467,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10404</sv:value>
+      <sv:value>30404</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent/demosite-common.xml</sv:value>
@@ -482,7 +482,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10404.1</sv:value>
+      <sv:value>30404.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent_fr/demo-common-fr.xml</sv:value>
@@ -497,7 +497,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10404.1</sv:value>
+      <sv:value>30404.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent_fr/demo-wikipedia-fr.xml</sv:value>
@@ -512,7 +512,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10404.1</sv:value>
+      <sv:value>30404.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent_de/demo-wikipedia-de.xml</sv:value>
@@ -527,7 +527,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10404.1</sv:value>
+      <sv:value>30404.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent_it/demo-wikipedia-it.xml</sv:value>
@@ -542,7 +542,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10404.1</sv:value>
+      <sv:value>30404.1</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent_nl/demo-wikipedia-nl.xml</sv:value>
@@ -557,7 +557,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10405</sv:value>
+      <sv:value>30405</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent/demosite-news.xml</sv:value>
@@ -573,7 +573,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10406</sv:value>
+      <sv:value>30406</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent/demosite-gallery.xml</sv:value>
@@ -588,7 +588,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10406</sv:value>
+      <sv:value>30406</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent/demosite-assets.xml</sv:value>
@@ -604,7 +604,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10406</sv:value>
+      <sv:value>30406</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent/demosite-facetproducts.xml</sv:value>
@@ -619,7 +619,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>10406</sv:value>
+      <sv:value>30406</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent/demosite-products.xml</sv:value>
@@ -635,7 +635,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30000.3</sv:value>
+      <sv:value>30400.3</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>democontent/demosite-wikipedia.xml</sv:value>
@@ -650,7 +650,7 @@
       <sv:value>hippo:initializeitem</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>30001.0</sv:value>
+      <sv:value>30401.0</sv:value>
     </sv:property>
     <sv:property sv:name="hippo:contentresource" sv:type="String">
       <sv:value>resourcebundles.xml</sv:value>
