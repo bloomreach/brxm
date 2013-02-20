@@ -340,6 +340,7 @@ public class EditmodelWorkflowImpl implements EditmodelWorkflow, InternalWorkflo
 
     public EditmodelWorkflowImpl(Session userSession, Session rootSession, Node subject) throws RemoteException,
             RepositoryException {
+
         this.rootSession = rootSession;
         this.subject = rootSession.getNodeByIdentifier(subject.getIdentifier());
         this.prefix = this.subject.getParent().getName();

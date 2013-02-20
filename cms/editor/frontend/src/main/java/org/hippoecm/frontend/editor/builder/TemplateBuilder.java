@@ -993,7 +993,7 @@ public class TemplateBuilder implements IDetachable, IObservable {
             return UserSession.get().getJcrSession().getWorkspace().getNodeTypeManager().getNodeType(superType);
         } catch (NoSuchNodeTypeException e) {
             if (log.isDebugEnabled()) {
-                log.warn("Could not retrieve node type '{}'. Maybe it is not committed yet.", superType, e);
+                log.warn("Could not retrieve node type '" + superType + "'. Maybe it is not committed yet.", e);
             } else {
                 log.warn("Could not retrieve node type '{}'. Maybe it is not committed yet. {}", superType, e.toString());
             }
