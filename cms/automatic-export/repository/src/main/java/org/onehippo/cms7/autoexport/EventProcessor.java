@@ -69,6 +69,7 @@ public class EventProcessor implements EventListener {
         ignored.add("/hst:hst/hst:configuration/hst:default");
         ignored.add(CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
         ignored.add("/hippo:configuration/hippo:modules/brokenlinks");
+        ignored.add("/hippo:configuration/hippo:modules/scheduler");
         ignored.add("/hippo:configuration/hippo:temporary");
         ignored.add("/hippo:configuration/hippo:initialize");
         ignored.add("/formdata");
