@@ -796,6 +796,7 @@
       <description>
         Flag whether or not to fall back to the Java standard resource bundles
         if no resource bundle is found from the HST ResourceBundleRegistry by the basename.
+        The default value is true.
       </description>
       <name>fallbackToJavaResourceBundle</name>
       <required>false</required>
