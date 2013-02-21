@@ -34,28 +34,28 @@ public class SitesOverview extends BaseHstComponent {
     public static final Logger log = LoggerFactory.getLogger(SitesOverview.class);
 
     private static volatile int counter = 0;
-    
-    
+
+
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
- 
-       
+
+
         String hostGroupName = request.getRequestContext().getResolvedMount().getMount().getVirtualHost().getHostGroupName();
 
         List<Mount> mountsForHostGroup = request.getRequestContext().getResolvedMount().getMount().getVirtualHost().getVirtualHosts().getMountsByHostGroup(hostGroupName);
-        
-        
+
+
         request.setAttribute("mounts", mountsForHostGroup);
-        
+
     }
 
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-       
+
         Session writableSession = null;
         try {
             writableSession = this.getPersistableSession(request);
-            
+
             if(request.getParameter("touch") != null) {
                 Node hstHostsNode = writableSession.getNode("/hst:hst/hst:hosts");
                 hstHostsNode.setProperty("hst:pagenotfound", "error " + ++counter);
@@ -64,58 +64,54 @@ public class SitesOverview extends BaseHstComponent {
                 String numberStr = request.getParameter("number");
                 int numberToAdd = Integer.parseInt(numberStr);
                 int tryToAdd = 1;
-    
+
                 String copyComponentsStr = request.getParameter("copycomponents");
                 boolean copyComponents = copyComponentsStr != null ? Boolean.parseBoolean(copyComponentsStr) : true;
-    
+
                 while(numberToAdd > 0) {
                     //System.out.println("numberToAdd " + numberToAdd);
                     numberToAdd--;
-    
+
                     // add a new host first: First check the first non-existing 'com' + integer host:
                     Node localHost = writableSession.getNode("/hst:hst/hst:hosts/dev-test-many/localhost");
                     while(localHost.hasNode("com" + tryToAdd)) {
                         tryToAdd++;
                     }
-                    
+
                     Node host = localHost.addNode("com" + tryToAdd, "hst:virtualhost");
                     Node mount = host.addNode("hst:root", "hst:mount");
                     mount.setProperty("hst:mountpoint", "/hst:hst/hst:sites/demosite-test-many"+tryToAdd);
                     mount.setProperty("hst:alias", "mount"+tryToAdd);
-                    
+
                     // add a new hst:site
-                    
+
                     Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
-                    Node content = site.addNode("hst:content", "hippo:facetselect");
-                    String[] availability = {"hippo:availability"};
-                    content.setProperty("hippo:facets", availability);
-                    String[] values = {"live"};
-                    content.setProperty("hippo:values", values);
-                    String[] modes = {"single"};
-                    content.setProperty("hippo:modes", modes);
-                    content.setProperty("hippo:docbase", writableSession.getNode("/hst:hst/hst:sites/demosite-test-many/hst:content").getProperty("hippo:docbase").getString());
-    
+                    site.setProperty("hst:content", "/content/documents/demosite");
+
+                    Node preview = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many" + tryToAdd + "-preview", "hst:site");
+                    preview.setProperty("hst:content", "/content/documents/demosite");
+
                     writableSession.save();
-    
+
                     // now copy the hst:configurations
-    
+
                     Node config = writableSession.getNode("/hst:hst/hst:configurations").addNode("demosite-test-many" + tryToAdd, "hst:configuration");
                     String[] inherits = {"../democommon"};
                     config.setProperty("hst:inheritsfrom", inherits);
-    
+
                     writableSession.save();
-    
-    
+
+
                     writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemap", config.getPath() + "/hst:sitemap");
                     writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:sitemenus", config.getPath() + "/hst:sitemenus");
-    
+
                     if (copyComponents) {
                         writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
                         writableSession.getWorkspace().copy("/hst:hst/hst:configurations/demosite-test-many/hst:templates", config.getPath()  + "/hst:templates");
                     }
                 }
             }
-            
+
         } catch (RepositoryException e) {
             log.error(e.toString(),e);
         } catch (NumberFormatException e) {
@@ -125,7 +121,7 @@ public class SitesOverview extends BaseHstComponent {
                 writableSession.logout();
             }
         }
-        
+
     }
 
 }
