@@ -48,8 +48,8 @@ public class EditorUtils {
      * in addition to the {@link NodeType} itself
      * </P>
      *
-     * @param node
-     * @param nodeType
+     * @param node The {@link Node} on which to create the mandatory properties
+     * @param nodeType The {@link NodeType} from which to check for which mandatory properties need to be created if any
      * @throws RepositoryException
      * @throws ValueFormatException
      * @throws VersionException
@@ -66,13 +66,11 @@ public class EditorUtils {
         for (NodeType type : all) {
             final Node prototypeNode = getPrototypeNode(type.getName(), node.getSession());
 
-            for (PropertyDefinition propertyDefinition : type.getPropertyDefinitions()) {
-                if (propertyDefinition.getDeclaringNodeType() == type) {
-                    if (propertyDefinition.isMandatory() && !propertyDefinition.isProtected() && !"*".equals(propertyDefinition.getName())
-                            && !node.hasProperty(propertyDefinition.getName())) {
+            for (PropertyDefinition propertyDefinition : type.getDeclaredPropertyDefinitions()) {
+                if (propertyDefinition.isMandatory() && !propertyDefinition.isProtected() && !"*".equals(propertyDefinition.getName())
+                        && !node.hasProperty(propertyDefinition.getName())) {
 
-                        setProperty(node, propertyDefinition, prototypeNode);
-                    }
+                    setProperty(node, propertyDefinition, prototypeNode);
                 }
             }
         }
