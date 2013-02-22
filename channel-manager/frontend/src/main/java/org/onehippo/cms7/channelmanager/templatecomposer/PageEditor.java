@@ -50,7 +50,6 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.frontend.util.AclChecker;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.json.JSONArray;
@@ -157,25 +156,26 @@ public class PageEditor extends ExtPanel {
             this.previewMode = config.getAsBoolean("previewMode", DEFAULT_PREVIEW_MODE);
             variantsPath = config.getString("variantsPath");
             this.initializeHstConfigEditorWithPreviewContext = config.getAsBoolean("initializeHstConfigEditorWithPreviewContext", DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT);
+
+            // Check whether user can unlock channels or not
+            try {
+                final String unlocckChannelPrivilege = config.getString("channel.unlock.privileges", "hippo:admin");
+                final String unlocckChannelPathToCheck = config.getString("channel.unlock.privileges.path", "/hst:hst/hst:channels");
+                UserSession.get().getJcrSession().checkPermission(unlocckChannelPathToCheck, unlocckChannelPrivilege);
+                this.canUnlockChannels = true;
+            } catch(AccessControlException ex) {
+                log.info("User '{}' is not allowed to unlock channels.", this.cmsUser);
+            } catch (RepositoryException ex) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Problems while checking if user '" + this.cmsUser + "' can unlock channels or not", ex);
+                } else {
+                    log.warn("Problems while checking if user '{}' can unlock channels or not. {}", this.cmsUser, ex);
+                }
+            }
         }
         this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
         this.locale = Session.get().getLocale().toString();
         this.cmsUser = UserSession.get().getJcrSession().getUserID();
-
-        // Check whether user can unlock channels or not
-        try {
-            AclChecker.checkAccess(config, UserSession.get().getJcrSession(), "channel.unlock", "hippo:admin", "/hst:hst/hst:channels");
-            this.canUnlockChannels = Boolean.TRUE;
-        } catch(AccessControlException ex) {
-            log.info("User '{}' is not allowed to unlock channels.", this.cmsUser);
-        } catch (RepositoryException ex) {
-            if (log.isDebugEnabled()) {
-                log.warn("Problems while checking if user '" + this.cmsUser + "' can unlock channels or not", ex);
-            } else {
-                log.warn("Problems while checking if user '{}' can unlock channels or not. {}", this.cmsUser, ex);
-            }
-        }
-
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
@@ -481,18 +481,6 @@ public class PageEditor extends ExtPanel {
             observer.getObservable().detach();
         }
     }
-
-//    private boolean isUserAdministrator(final javax.jcr.Session session) {
-//        try {
-//            String selectGroupsStatement = SELECT_ADMIN_GROUPS_QUERY.replace("{}", session.getUserID());
-//            @SuppressWarnings("deprecation")
-//            Query selectGroupsQuery = session.getWorkspace().getQueryManager().createQuery(selectGroupsStatement, Query.SQL);
-//            return selectGroupsQuery.execute().getNodes().hasNext();
-//        } catch (RepositoryException e) {
-//            log.error("Unable to determine group membership", e);
-//        }
-//        return false;
-//    }
 
     private class DocumentObserver extends Observer<JcrNodeModel> {
 
