@@ -20,7 +20,7 @@ import javax.jcr.Session;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
+import org.hippoecm.repository.util.DateTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory {
 
     @Override
     public HstQueryManager createQueryManager(Session session, ObjectConverter objectConverter) {
-        Filter.Resolution resolution = Filter.Resolution.fromString(defaultQueryDateRangeResolution);
+        DateTools.Resolution resolution = fromString(defaultQueryDateRangeResolution);
         log.info("Default query date range resolution is : {}", resolution);
         HstQueryManager mngr = new HstQueryManagerImpl(session, objectConverter, resolution);
         return mngr;
@@ -39,5 +39,32 @@ public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory {
 
     public void setDefaultQueryDateRangeResolution(String defaultQueryDateRangeResolution) {
         this.defaultQueryDateRangeResolution = defaultQueryDateRangeResolution;
+    }
+
+    /**
+     * @param resolution the name of the resolution, for example, year, Year,YEAR. if resolution is <code>null</code>,
+     *            {@link org.hippoecm.repository.util.DateTools.Resolution#MILLISECOND} is returned.
+     * @return Resolution for <code>name</code>. <code>name</code> is compared case-insensitive. If non matches,
+     *         <code>{@link org.hippoecm.repository.util.DateTools.Resolution#MILLISECOND}</code> is returned
+     */
+    private DateTools.Resolution fromString(String resolution) {
+        if (resolution == null) {
+            return DateTools.Resolution.MILLISECOND;
+        }
+        resolution = resolution.toLowerCase().trim();
+        if (resolution.equals("year")) {
+            return DateTools.Resolution.YEAR;
+        }
+        if (resolution.equals("month")) {
+            return DateTools.Resolution.MONTH;
+        }
+        if (resolution.equals("day")) {
+            return DateTools.Resolution.DAY;
+        }
+        if (resolution.equals("hour")) {
+            return DateTools.Resolution.HOUR;
+        }
+        log.warn("Unknown resolution '{}'. Return MILLISECOND resolution.", resolution);
+        return DateTools.Resolution.MILLISECOND;
     }
 }

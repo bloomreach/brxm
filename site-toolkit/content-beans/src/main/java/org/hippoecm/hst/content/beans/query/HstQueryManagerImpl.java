@@ -23,11 +23,11 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
-import org.hippoecm.hst.content.beans.query.filter.Filter;
 import org.hippoecm.hst.content.beans.query.filter.IsNodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.NodeTypeFilter;
 import org.hippoecm.hst.content.beans.query.filter.PrimaryNodeTypeFilterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.repository.util.DateTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,20 +38,20 @@ public class HstQueryManagerImpl implements HstQueryManager {
 
     private ObjectConverter objectConverter;
     private Session session;
-    private final Filter.Resolution defaultResolution;
+    private final DateTools.Resolution defaultResolution;
 
     /**
-     * @deprecated since 2.24.13 / 2.16.01. Use {@link #HstQueryManagerImpl(Session, ObjectConverter, Filter.Resolution)}
+     * @deprecated since 2.24.13 / 2.16.01. Use {@link #HstQueryManagerImpl(Session, ObjectConverter, DateTools.Resolution)}
      * instead
      */
     @Deprecated
     public HstQueryManagerImpl(Session session, ObjectConverter objectConverter) {
-        this(session, objectConverter, Filter.Resolution.EXPENSIVE_PRECISE);
+        this(session, objectConverter, DateTools.Resolution.MILLISECOND);
         log.warn("Using deprecated HstQueryManagerImpl constructor. No Filter.Resolution is specified. Use default" +
                 " Filter.Resolution.EXPENSIVE_PRECISE");
     }
 
-    public HstQueryManagerImpl(final Session session, final ObjectConverter objectConverter, final Filter.Resolution resolution) {
+    public HstQueryManagerImpl(final Session session, final ObjectConverter objectConverter, final DateTools.Resolution resolution) {
         this.session = session;
         this.objectConverter = objectConverter;
         defaultResolution = resolution;

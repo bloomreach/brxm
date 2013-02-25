@@ -19,43 +19,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
+import org.hippoecm.repository.util.DateTools;
 
 
 public interface Filter extends BaseFilter {
-
-    /**
-     * The supported resolutions/granularities for <b>fast</b> date range queries and fast equals on dates
-     * Note that EXPENSIVE_PRECISE resolution will be precise, but expensive
-     */
-    enum Resolution {
-        YEAR, MONTH, DAY,HOUR, EXPENSIVE_PRECISE;
-
-        /**
-         * @param resolution the name of the resolution, for example, year, Year,YEAR. if resolution is <code>null</code>,
-         *            EXPENSIVE_PRECISE is returned.
-         * @return Resolution for <code>name</code>. <code>name</code> is compared case-insensitive. If non matches,
-         *         <code>EXPENSIVE_PRECISE</code> is returned
-         */
-        public static Resolution fromString(String resolution) {
-            if (resolution == null) {
-                return EXPENSIVE_PRECISE;
-            }
-            resolution = resolution.toLowerCase();
-            if (resolution.equals("year")) {
-                return YEAR;
-            }
-            if (resolution.equals("month")) {
-                return MONTH;
-            }
-            if (resolution.equals("day")) {
-                return DAY;
-            }
-            if (resolution.equals("hour")) {
-                return HOUR;
-            }
-            return EXPENSIVE_PRECISE;
-        }
-    }
 
     /**
      * Adds a fulltext search to this Filter. A fulltext search is a search on the indexed text of the <code>scope</code>. When the 
@@ -87,7 +54,7 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
-     *     <strong>should</strong> use {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     <strong>should</strong> use {@link #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)}
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
@@ -108,7 +75,7 @@ public interface Filter extends BaseFilter {
      * @param resolution the resolution to use to compare dates. The higher the Resolution (year is highest) the better the performan
      * @throws FilterException
      */
-    void addBetween(String fieldAttributeName, Calendar start, Calendar end, Resolution resolution) throws FilterException;
+    void addBetween(String fieldAttributeName, Calendar start, Calendar end, DateTools.Resolution resolution) throws FilterException;
 
     /**
      * <p>
@@ -117,7 +84,7 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
-     *     <strong>should</strong> use {@link #addNotBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     <strong>should</strong> use {@link #addNotBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)}
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
@@ -129,9 +96,9 @@ public interface Filter extends BaseFilter {
     void addNotBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException ;
 
     /**
-     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)} but now negated
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)} but now negated
      */
-    void addNotBetween(String fieldAttributeName, Calendar start, Calendar end, Resolution resolution) throws FilterException;
+    void addNotBetween(String fieldAttributeName, Calendar start, Calendar end, DateTools.Resolution resolution) throws FilterException;
 
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is equal to <code>value</code>
@@ -147,7 +114,7 @@ public interface Filter extends BaseFilter {
      * then all nodes/documents where the property <code>fieldAttributeName</code> as a Calendar value with the <string>same</string>
      * date rounded to days (eg 20130128) has the same value as <code>calendar</code> rounded to days, will match.
      */
-    void addEqualTo(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
+    void addEqualTo(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
    
     /**
      * Adds a constraint that the value <code>fieldAttributeName</code> is NOT equal to <code>value</code>
@@ -158,9 +125,9 @@ public interface Filter extends BaseFilter {
     void addNotEqualTo(String fieldAttributeName, Object value) throws FilterException;
 
     /**
-     * @see {@link #addEqualTo(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)} only now negated
+     * @see {@link #addEqualTo(String, java.util.Calendar, DateTools.Resolution)} only now negated
      */
-    void addNotEqualTo(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
+    void addNotEqualTo(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
     /**
      * <p>
@@ -168,7 +135,7 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
-     *     <strong>should</strong> use {@link #addGreaterOrEqualThan(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     <strong>should</strong> use {@link #addGreaterOrEqualThan(String, java.util.Calendar, DateTools.Resolution)}
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
@@ -179,10 +146,10 @@ public interface Filter extends BaseFilter {
     void addGreaterOrEqualThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)}
      * but now no upper bound
      */
-    void addGreaterOrEqualThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
+    void addGreaterOrEqualThan(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
     /**
      * <p>
@@ -190,7 +157,7 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
-     *     <strong>should</strong> use {@link #addGreaterThan(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     <strong>should</strong> use {@link #addGreaterThan(String, java.util.Calendar, DateTools.Resolution)}
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
@@ -201,10 +168,10 @@ public interface Filter extends BaseFilter {
     void addGreaterThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)}
      * but now no upper bound and lower bound not included
      */
-    void addGreaterThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
+    void addGreaterThan(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
     /**
      * <p>
@@ -212,7 +179,7 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
-     *     <strong>should</strong> use {@link #addLessOrEqualThan(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     <strong>should</strong> use {@link #addLessOrEqualThan(String, java.util.Calendar, DateTools.Resolution)}
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
@@ -223,10 +190,10 @@ public interface Filter extends BaseFilter {
     void addLessOrEqualThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)}
      * but now no lower bound
      */
-    void addLessOrEqualThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
+    void addLessOrEqualThan(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
     /**
      * <p>
@@ -234,7 +201,7 @@ public interface Filter extends BaseFilter {
      * </p>
      * <p>
      *     <strong>note</strong> that for range queries on calendar/date instances where the granularity of, say Day, is enough, you
-     *     <strong>should</strong> use {@link #addLessThan(String, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     *     <strong>should</strong> use {@link #addLessThan(String, java.util.Calendar, DateTools.Resolution)}
      *     with the highest resolution that is acceptable for your use case, as this performs much better, OR make sure
      *     that your application runs with a default resolution set to for example 'day'
      * </p>
@@ -245,10 +212,10 @@ public interface Filter extends BaseFilter {
     void addLessThan(String fieldAttributeName, Object value) throws FilterException ;
 
     /**
-     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     * @see {@link #addBetween(String, java.util.Calendar, java.util.Calendar, DateTools.Resolution)}
      * but now no lower bound and upper bound not included
      */
-    void addLessThan(String fieldAttributeName, Calendar calendar, Resolution resolution) throws FilterException;
+    void addLessThan(String fieldAttributeName, Calendar calendar, DateTools.Resolution resolution) throws FilterException;
 
     /**
      * <b>Try to not use this method as it blows up searches. This is Lucene (inverted indexes) related</b>

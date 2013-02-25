@@ -53,22 +53,22 @@ public class FilterImpl implements Filter {
     }
 
     /**
-     * @deprecated since 2.24.13 / 2.26.01 : Use {@link #FilterImpl(javax.jcr.Session, org.hippoecm.hst.content.beans.query.filter.Filter.Resolution)}
+     * @deprecated since 2.24.13 / 2.26.01 : Use {@link #FilterImpl(javax.jcr.Session, DateTools.Resolution)}
      * instead
      */
     @Deprecated
     public FilterImpl(Session session ){
-        this(session, Resolution.EXPENSIVE_PRECISE);
+        this(session, DateTools.Resolution.MILLISECOND);
         HstServices.getLogger(FQCN, FQCN).warn("Use HstQuery#createFilter() or FilterImpl(Session, Resolution) instead of this deprecated constructor. Fast Date Range " +
                 "Searches are not supported with this constructor");
     }
 
-    public FilterImpl(final Session session, final Resolution resolution) {
+    public FilterImpl(final Session session, final DateTools.Resolution resolution) {
         this.session = session;
         if (resolution == null) {
             defaultResolution = DateTools.Resolution.MILLISECOND;
         } else {
-            defaultResolution = getDateToolsResolution(resolution);
+            defaultResolution = resolution;
         }
     }
 
@@ -186,8 +186,8 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public void addBetween(final String fieldAttributeName, final Calendar start, final Calendar end, final Resolution resolution) throws FilterException {
-        addBetween(fieldAttributeName, start, end, getDateToolsResolution(resolution), false);
+    public void addBetween(final String fieldAttributeName, final Calendar start, final Calendar end, final DateTools.Resolution resolution) throws FilterException {
+        addBetween(fieldAttributeName, start, end, resolution, false);
     }
 
     public void addNotBetween(String fieldAttributeName, Object value1, Object value2) throws FilterException {
@@ -195,8 +195,8 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public void addNotBetween(final String fieldAttributeName, final Calendar start, final Calendar end, final Resolution resolution) throws FilterException {
-        addBetween(fieldAttributeName, start, end, getDateToolsResolution(resolution), true);
+    public void addNotBetween(final String fieldAttributeName, final Calendar start, final Calendar end, final DateTools.Resolution resolution) throws FilterException {
+        addBetween(fieldAttributeName, start, end, resolution, true);
     }
 
     private void addConstraintWithOperator(final String fieldAttributeName,final Object value, final String operator, boolean isRangeConstraint) throws FilterException{
@@ -243,8 +243,8 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public void addEqualTo(final String fieldAttributeName, final Calendar calendar, final Resolution resolution) throws FilterException {
-        addConstraintWithOperator(fieldAttributeName, calendar, getDateToolsResolution(resolution), " = ");
+    public void addEqualTo(final String fieldAttributeName, final Calendar calendar, final DateTools.Resolution resolution) throws FilterException {
+        addConstraintWithOperator(fieldAttributeName, calendar, resolution, " = ");
     }
 
     @Override
@@ -253,8 +253,8 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public void addNotEqualTo(final String fieldAttributeName, final Calendar calendar, final Resolution resolution) throws FilterException {
-        addConstraintWithOperator(fieldAttributeName, calendar, getDateToolsResolution(resolution), " != ");
+    public void addNotEqualTo(final String fieldAttributeName, final Calendar calendar, final DateTools.Resolution resolution) throws FilterException {
+        addConstraintWithOperator(fieldAttributeName, calendar, resolution, " != ");
     }
 
     @Override
@@ -263,8 +263,8 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public void addGreaterOrEqualThan(final String fieldAttributeName, final Calendar calendar, final Resolution resolution) throws FilterException {
-        addConstraintWithOperator(fieldAttributeName, calendar, getDateToolsResolution(resolution), " >= ");
+    public void addGreaterOrEqualThan(final String fieldAttributeName, final Calendar calendar, final DateTools.Resolution resolution) throws FilterException {
+        addConstraintWithOperator(fieldAttributeName, calendar, resolution, " >= ");
     }
 
     @Override
@@ -273,8 +273,8 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public void addGreaterThan(final String fieldAttributeName, final Calendar calendar, final Resolution resolution) throws FilterException {
-        addConstraintWithOperator(fieldAttributeName, calendar, getDateToolsResolution(resolution), " > ");
+    public void addGreaterThan(final String fieldAttributeName, final Calendar calendar, final DateTools.Resolution resolution) throws FilterException {
+        addConstraintWithOperator(fieldAttributeName, calendar, resolution, " > ");
     }
 
     @Override
@@ -283,8 +283,8 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public void addLessOrEqualThan(final String fieldAttributeName, final Calendar calendar, final Resolution resolution) throws FilterException {
-        addConstraintWithOperator(fieldAttributeName, calendar, getDateToolsResolution(resolution), " <= ");
+    public void addLessOrEqualThan(final String fieldAttributeName, final Calendar calendar, final DateTools.Resolution resolution) throws FilterException {
+        addConstraintWithOperator(fieldAttributeName, calendar, resolution, " <= ");
     }
 
     @Override
@@ -293,8 +293,8 @@ public class FilterImpl implements Filter {
     }
 
     @Override
-    public void addLessThan(final String fieldAttributeName, final Calendar calendar, final Resolution resolution) throws FilterException {
-        addConstraintWithOperator(fieldAttributeName, calendar, getDateToolsResolution(resolution), " < ");
+    public void addLessThan(final String fieldAttributeName, final Calendar calendar, final DateTools.Resolution resolution) throws FilterException {
+        addConstraintWithOperator(fieldAttributeName, calendar, resolution, " < ");
     }
 
     private void addLike(String fieldAttributeName, Object value, boolean isNot) throws FilterException{
@@ -560,18 +560,4 @@ public class FilterImpl implements Filter {
         }
     }
 
-    private DateTools.Resolution getDateToolsResolution(final Resolution resolution) {
-        if (resolution == null) {
-            HstServices.getLogger(FQCN, FQCN).warn("Resolution is null, return default exact expensive resolution on milliseconds");
-            return DateTools.Resolution.MILLISECOND;
-        }
-        switch (resolution) {
-            case YEAR: return DateTools.Resolution.YEAR;
-            case MONTH: return DateTools.Resolution.MONTH;
-            case DAY: return DateTools.Resolution.DAY;
-            case HOUR: return DateTools.Resolution.HOUR;
-            case EXPENSIVE_PRECISE: return DateTools.Resolution.MILLISECOND;
-        }
-        throw new IllegalStateException("Resolution must be of supported type");
-    }
 }
