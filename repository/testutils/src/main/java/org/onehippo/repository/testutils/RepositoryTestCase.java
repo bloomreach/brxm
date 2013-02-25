@@ -16,11 +16,6 @@
 package org.onehippo.repository.testutils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.jar.JarInputStream;
-import java.util.zip.ZipEntry;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -37,8 +32,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for writing tests against repository.
@@ -60,15 +53,13 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class RepositoryTestCase {
 
-    private static final Logger log = LoggerFactory.getLogger(RepositoryTestCase.class);
-
     /**
      * System property indicating whether to use the same repository server across all
      * test invocations. If this property is false or not present a new repository will be created
      * for every test. Sometimes this is unavoidable because you need a clean repository. If you don't
      * then your test performance will benefit greatly by setting this property.
      */
-    private static final String KEEPSERVER_PROP = "org.onehippo.repository.test.keepserver";
+    private static final String KEEPSERVER_SYSPROP = "org.onehippo.repository.test.keepserver";
 
     protected static final String SYSTEMUSER_ID = "admin";
     protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
@@ -78,90 +69,21 @@ public abstract class RepositoryTestCase {
     protected HippoRepository server = null;
     protected Session session = null;
 
-    public RepositoryTestCase() {
-    }
-
     @BeforeClass
     public static void setUpClass() throws Exception {
-        setUpClass(false);
-    }
-
-    protected static void setUpClass(boolean clearRepository) throws Exception {
-        if (clearRepository) {
-            clear();
+        if (background == null && external == null) {
+            background = HippoRepositoryFactory.getHippoRepository();
         }
     }
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-        tearDownClass(false);
-    }
-
-    public static void tearDownClass(boolean clearRepository) throws Exception {
-        if (clearRepository) {
-            clear();
+        if (!Boolean.getBoolean(KEEPSERVER_SYSPROP)) {
+            clearRepository();
         }
     }
 
-    @Before
-    public void setUp() throws Exception {
-        setUp(false);
-    }
-
-    protected void setUp(boolean clearRepository) throws Exception {
-        if (external != null) {
-            if (clearRepository) {
-                throw new IllegalArgumentException("Cannot clear the repository in a remote test");
-            }
-            server = external;
-        } else {
-            if (clearRepository) {
-                clear();
-            }
-            if (Boolean.getBoolean(KEEPSERVER_PROP)) {
-                if (background != null) {
-                    server = background;
-                } else {
-                    server = background = HippoRepositoryFactory.getHippoRepository();
-                }
-            } else {
-                server = HippoRepositoryFactory.getHippoRepository();
-            }
-        }
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        while (session.nodeExists("/test")) {
-            session.getNode("/test").remove();
-            session.save();
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        tearDown(false);
-    }
-
-    public void tearDown(boolean clearRepository) throws Exception {
-        if (session != null) {
-            session.refresh(false);
-            while (session.nodeExists("/test")) {
-                session.getNode("/test").remove();
-                session.save();
-            }
-            session.logout();
-            session = null;
-        }
-        if (external == null && server != null) {
-            if (!Boolean.getBoolean(KEEPSERVER_PROP)) {
-                server.close();
-            }
-            server = null;
-        }
-        if (clearRepository) {
-            clear();
-        }
-    }
-
-    public static void clear() {
+    public static void clearRepository() {
         if (background != null) {
             background.close();
             background = null;
@@ -176,50 +98,49 @@ public abstract class RepositoryTestCase {
         external = repository;
     }
 
-    protected static void prepareFixture() {
-        File fixtureDump = new File("../src/test/fixtures/dump.zip");
-        if (fixtureDump.exists()) {
-            FileInputStream fixtureStream = null;
-            try {
-                fixtureStream = new FileInputStream(fixtureDump);
-                JarInputStream istream = new JarInputStream(fixtureStream);
-                ZipEntry ze;
-                do {
-                    ze = istream.getNextEntry();
-                    if (ze != null) {
-                        if (ze.isDirectory()) {
-                            String name = ze.getName();
-                            File file = new File(name);
-                            file.mkdir();
-                        } else {
-                            FileOutputStream ostream = new FileOutputStream(ze.getName());
-                            byte[] buffer = new byte[1024];
-                            int len;
-                            do {
-                                len = istream.read(buffer);
-                                if (len >= 0) {
-                                    ostream.write(buffer, 0, len);
-                                }
-                            } while (len >= 0);
-                            ostream.close();
-                        }
-                    }
-                } while (ze != null);
-                istream.close();
-                fixtureStream.close();
-            } catch (IOException ex) {
-                log.error("Error while loading fixture: " + ex.getClass().getName() + ": " + ex.getMessage());
-                try {
-                    if (fixtureStream != null) {
-                        fixtureStream.close();
-                    }
-                } catch (IOException e) {
-                    clear();
-                }
-            }
+    @Before
+    public void setUp() throws Exception {
+        this.setUp(false);
+    }
+
+    protected void setUp(boolean clearRepository) throws Exception {
+        if (clearRepository) {
+            clearRepository();
+        }
+        if (background == null && external == null) {
+            background = HippoRepositoryFactory.getHippoRepository();
+        }
+        if (external != null) {
+            server = external;
+        } else {
+            server = background;
+        }
+        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        while (session.nodeExists("/test")) {
+            session.getNode("/test").remove();
+            session.save();
         }
     }
 
+    @After
+    public void tearDown() throws Exception {
+        this.tearDown(false);
+    }
+
+    protected void tearDown(boolean clearRepository) throws Exception {
+        if (session != null) {
+            session.refresh(false);
+            while (session.nodeExists("/test")) {
+                session.getNode("/test").remove();
+                session.save();
+            }
+            session.logout();
+            session = null;
+        }
+        if (clearRepository) {
+            clearRepository();
+        }
+    }
 
     protected void build(Session session, String[] contents) throws RepositoryException {
         Node node = null;

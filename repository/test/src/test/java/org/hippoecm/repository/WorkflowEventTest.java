@@ -95,15 +95,11 @@ public class WorkflowEventTest extends RepositoryTestCase {
     @Before
     @Override
     public void setUp() throws Exception {
-        super.setUp(false);
-        root = session.getRootNode();
-        while (root.hasNode("test")) {
-            root.getNode("test").remove();
-        }
+        super.setUp();
         if (session.getRootNode().hasNode("hippo:configuration/hippo:queries/hippo:templates/test")) {
             session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates/test").remove();
         }
-        root = root.addNode("test");
+        root = session.getRootNode().addNode("test");
         session.save();
         build(session, content);
         session.save();
@@ -114,10 +110,6 @@ public class WorkflowEventTest extends RepositoryTestCase {
     @After
     @Override
     public void tearDown() throws Exception {
-        root = session.getRootNode();
-        while (root.hasNode("test")) {
-            root.getNode("test").remove();
-        }
         if (session.getRootNode().hasNode("hippo:configuration/hippo:queries/hippo:templates/test")) {
             session.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates/test").remove();
         }

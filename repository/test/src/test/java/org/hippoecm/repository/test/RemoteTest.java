@@ -74,13 +74,13 @@ public class RemoteTest extends Suite
         HippoRepositoryServer backgroundServer = null;
         HippoRepository server = null;
         try {
-            RepositoryTestCase.clear();
+            RepositoryTestCase.clearRepository();
             backgroundServer = new HippoRepositoryServer();
             backgroundServer.run(true);
             Thread.sleep(3000);
             server = HippoRepositoryFactory.getHippoRepository("rmi://localhost:1099/hipporepository");
             RepositoryTestCase.setRepository(server);
-            HippoRepositoryFactory.setDefaultRepository((String)null);
+            HippoRepositoryFactory.setDefaultRepository((String) null);
 
             super.run(notifier);
 
@@ -106,7 +106,7 @@ public class RemoteTest extends Suite
             if (backgroundServer != null) {
                 backgroundServer.close();
             }
-            RepositoryTestCase.clear();
+            RepositoryTestCase.clearRepository();
             RepositoryTestCase.setRepository(null);
             HippoRepositoryFactory.setDefaultRepository((String)null);
         }

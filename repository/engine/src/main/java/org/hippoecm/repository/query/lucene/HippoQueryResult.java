@@ -43,6 +43,8 @@ public class HippoQueryResult extends QueryResultImpl {
      */
     protected final boolean[] orderSpecs;
 
+    protected final String[] orderFuncs;
+
     public HippoQueryResult(SearchIndex index,
                             SessionContext sessionContext,
                             AbstractQueryImpl queryImpl,
@@ -50,13 +52,14 @@ public class HippoQueryResult extends QueryResultImpl {
                             ColumnImpl[] columns,
                             Path[] orderProps,
                             boolean[] orderSpecs,
-                            boolean documentOrder,
+                            final String[] orderFuncs, boolean documentOrder,
                             long offset,
                             long limit) throws RepositoryException {
         super(index, sessionContext, queryImpl, null, columns, documentOrder, offset, limit);
         this.query = query;
         this.orderProps = orderProps;
         this.orderSpecs = orderSpecs;
+        this.orderFuncs = orderFuncs;
         // if document order is requested get all results right away
         getResults(docOrder ? Integer.MAX_VALUE : index.getResultFetchSize());
     }
@@ -67,7 +70,7 @@ public class HippoQueryResult extends QueryResultImpl {
     protected MultiColumnQueryHits executeQuery(long resultFetchHint)
             throws IOException {
         MultiColumnQueryHits hits = index.executeQuery(sessionContext.getSessionImpl(), queryImpl, query,
-                orderProps, orderSpecs, resultFetchHint);
+                orderProps, orderSpecs, orderFuncs, resultFetchHint);
         totalSize = hits.getSize();
         return hits;
     }

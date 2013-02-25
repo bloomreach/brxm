@@ -134,10 +134,10 @@ public class FacetsAvailableNavigationProvider extends AbstractFacetNavigationPr
                 if(log.isDebugEnabled()) {
                     start   = System.currentTimeMillis();
                 }
-                
+
                 facetedResult = facetedEngine.view(null, initialQuery, facetedContext, currentSearch, currentRanges, (context != null ? context.getParameterQuery(facetedEngine) : null),
                     facetSearchResultMap, filters, hitsRequested);
-                
+
                 if(log.isDebugEnabled()) {
                     log.debug("Creating facetResult took '{}' ms for '{}' number of unique facet values.", (System.currentTimeMillis() - start),  facetSearchResult.size());
                 }

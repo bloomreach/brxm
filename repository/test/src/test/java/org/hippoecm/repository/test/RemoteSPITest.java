@@ -70,7 +70,7 @@ public class RemoteSPITest extends Suite
         HippoRepositoryServer backgroundServer = null;
         HippoRepository server = null;
         try {
-            RepositoryTestCase.clear();
+            RepositoryTestCase.clearRepository();
             backgroundServer = new HippoRepositoryServer();
             backgroundServer.run(true);
             Thread.sleep(3000);
@@ -101,6 +101,9 @@ public class RemoteSPITest extends Suite
             if (backgroundServer != null) {
                 backgroundServer.close();
             }
+            RepositoryTestCase.clearRepository();
+            RepositoryTestCase.setRepository(null);
+            HippoRepositoryFactory.setDefaultRepository((String)null);
         }
     }
 }

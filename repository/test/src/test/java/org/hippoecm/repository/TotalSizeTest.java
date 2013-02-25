@@ -36,22 +36,6 @@ import static org.junit.Assert.assertTrue;
 
 public class TotalSizeTest extends RepositoryTestCase {
 
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp(true);
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        while(session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-            session.save();
-        }
-        super.tearDown();
-    }
-
     @Test
     public void testTotalSize() throws RepositoryException {
         Session authorSession = server.login("author", "author".toCharArray());

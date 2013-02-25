@@ -33,30 +33,17 @@ import static org.junit.Assert.fail;
 
 public class StringCodecTest extends RepositoryTestCase {
 
-    Node root, node;
-    StringCodecFactory factory;
+    private StringCodecFactory factory;
 
     @Before
     @Override
     public void setUp() throws Exception {
-        super.setUp(true);
-        root = session.getRootNode();
-        if(root.hasNode("test"))
-            root.getNode("test").remove();
-        root = root.addNode("test");
+        super.setUp();
+        session.getRootNode().addNode("test");
         session.save();
         Map<String,StringCodec> codecs = new TreeMap<String,StringCodec>();
         codecs.put("encoding.node", new StringCodecFactory.UriEncoding());
         factory = new StringCodecFactory(codecs);
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        root = session.getRootNode();
-        if(root.hasNode("test"))
-            root.getNode("test").remove();
-        super.tearDown();
     }
 
     @Test
@@ -74,7 +61,7 @@ public class StringCodecTest extends RepositoryTestCase {
             if (encoded.equals(""))
                 continue;
             try {
-                node = root.addNode(encoded);
+                session.getNode("/test").addNode(encoded);
                 session.save();
             } catch (RepositoryException ex) {
                 fail("failed to create node with name \"" + encoded + "\": " + ex.getMessage());

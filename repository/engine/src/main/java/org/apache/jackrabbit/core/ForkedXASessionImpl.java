@@ -263,9 +263,7 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
      * @return transaction context
      */
     private TransactionContext createTransaction(Xid xid) {
-        TransactionContext tx = new TransactionContext(
-                xid, txResources,
-                getTransactionTimeout(), repositoryContext.getTimer());
+        TransactionContext tx = new TransactionContext(xid, txResources);
         txGlobal.put(xid, tx);
         return tx;
     }
@@ -317,11 +315,11 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
      * {@inheritDoc}
      */
     public int prepare(Xid xid) throws XAException {
-        TransactionContext tx = (TransactionContext) txGlobal.get(xid);
+        TransactionContext tx = txGlobal.get(xid);
         if (tx == null) {
             throw new XAException(XAException.XAER_NOTA);
         }
-        tx.prepare(false);
+        tx.prepare();
         return XA_OK;
     }
 
@@ -329,16 +327,18 @@ public class ForkedXASessionImpl extends SessionImpl implements XASession, XARes
      * {@inheritDoc}
      */
     public void commit(Xid xid, boolean onePhase) throws XAException {
-        TransactionContext tx = (TransactionContext) txGlobal.get(xid);
+        TransactionContext tx = txGlobal.get(xid);
         if (tx == null) {
             throw new XAException(XAException.XAER_NOTA);
         }
-        if (onePhase) {
-            tx.prepare(onePhase);
+        try {
+            if (onePhase) {
+                tx.prepare();
+            }
+            tx.commit();
+        } finally {
+            txGlobal.remove(xid);
         }
-        tx.commit(onePhase);
-
-        txGlobal.remove(xid);
     }
 
     /**

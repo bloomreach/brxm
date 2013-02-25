@@ -311,6 +311,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
     }
 
+    @Override
+    public void checkRepositoryPermission(final int permissions) throws AccessDeniedException, RepositoryException {
+        // no repository restrictions yet
+    }
+
     /**
      * @see AccessManager#isGranted(ItemId, int)
      * @deprecated

@@ -215,7 +215,6 @@ public class FacetResultSetProvider extends HippoVirtualProvider
                 filters.put(entry.getKey().toString(), entry.getValue());
             }
         }
-        long start = System.currentTimeMillis();
         facetedResult = facetedEngine.view(queryname, initialQuery, facetedContext, currentFacetQuery, currentRanges, (context != null ? context.getParameterQuery(facetedEngine) : null), null, filters,
                                            hitsRequested);
         
@@ -237,20 +236,24 @@ public class FacetResultSetProvider extends HippoVirtualProvider
         state.addPropertyName(countName);
 
         for(NodeId upstream : facetedResult) {
-            if(upstream == null)
+            if(upstream == null) {
                 continue;
-            /* The next statements are painfull performance wise.
+            }
+            /* The next statements are painful performance wise.
              * Only to obtain the child node name, we have to retrieve the parent state.
              */
             NodeState upstreamState = getCanonicalNodeState(upstream);
-            if(upstreamState == null)
+            if(upstreamState == null) {
                 continue;
+            }
             NodeId parentId = upstreamState.getParentId();
-            if(parentId == null)
+            if(parentId == null) {
                 continue;
+            }
             NodeState parentNodeState = getCanonicalNodeState(parentId);
-            if(parentNodeState == null || !parentNodeState.hasChildNodeEntry(upstream))
+            if(parentNodeState == null || !parentNodeState.hasChildNodeEntry(upstream)) {
                 continue;
+            }
             Name name = parentNodeState.getChildNodeEntry(upstream).getName();
         
             state.addChildNodeEntry(name, subNodesProvider.newViewNodeId(state.getNodeId(), null, upstream, context, name, view, order , singledView));

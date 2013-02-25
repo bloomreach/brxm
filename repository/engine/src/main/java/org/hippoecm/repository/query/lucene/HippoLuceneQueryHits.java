@@ -25,7 +25,6 @@ import org.apache.jackrabbit.core.query.lucene.ScoreNode;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.HitCollector;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Scorer;
@@ -54,31 +53,38 @@ public class HippoLuceneQueryHits implements QueryHits {
     public HippoLuceneQueryHits(IndexReader reader, Filter filter, IndexSearcher searcher, Query query) throws IOException {
         this.reader = reader;
         this.filter = filter.getDocIdSet(reader).iterator();
-        this.scorer = query.weight(searcher).scorer(reader);
+        // We rely on Scorer#nextDoc() and Scorer#advance(int) so enable
+        // scoreDocsInOrder
+        this.scorer = query.weight(searcher).scorer(reader, true, false);
     }
 
     /**
      * {@inheritDoc}
      */
     public ScoreNode nextScoreNode() throws IOException {
-        /**
-         * find next match, code verbally copied from
-            {@link IndexSearcher#search(Query, Filter, HitCollector)}
-         */
-        boolean more = filter.next() && scorer.skipTo(filter.doc());
-        while (more) {
-            int filterDocId = filter.doc();
-            if (filterDocId > scorer.doc() && !scorer.skipTo(filterDocId)) {
-                more = false;
-            } else {
-                int scorerDocId = scorer.doc();
-                if (scorerDocId == filterDocId) { // permitted by filter
-                    return getScoreNode(scorerDocId);
-                } else {
-                    more = filter.skipTo(scorerDocId);
+        if (scorer == null) {
+            return null;
+        }
+        if (filter == null) {
+            return null;
+        }
+
+        int filterDocId = filter.nextDoc();
+        int scorerDocId = scorer.advance(filterDocId);
+
+        while (true) {
+            if (filterDocId == scorerDocId) {
+                if (scorerDocId == DocIdSetIterator.NO_MORE_DOCS) {
+                    break;
                 }
+                return getScoreNode(scorerDocId);
+            } else if (scorerDocId > filterDocId) {
+                filterDocId = filter.advance(scorerDocId);
+            } else {
+                scorerDocId = scorer.advance(filterDocId);
             }
         }
+
         return null;
     }
 
@@ -91,8 +97,13 @@ public class HippoLuceneQueryHits implements QueryHits {
      * {@inheritDoc}
      */
     public void close() throws IOException {
-        // make sure scorer frees resources
-        scorer.skipTo(Integer.MAX_VALUE);
+        // make sure scorer and filter free resources
+        if (scorer != null) {
+            scorer.advance(Integer.MAX_VALUE);
+        }
+        if (filter != null) {
+            filter.advance(Integer.MAX_VALUE);
+        }
     }
 
     /**

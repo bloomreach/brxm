@@ -22,11 +22,13 @@ import javax.jcr.query.QueryResult;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class OrderByNodeNameTest extends RepositoryTestCase {
 
     private Node testPath;

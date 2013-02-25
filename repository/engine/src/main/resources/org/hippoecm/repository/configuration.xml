@@ -91,7 +91,7 @@
         <sv:value>xpath</sv:value>
       </sv:property>
       <sv:property sv:name="jcr:statement" sv:type="String">
-        <sv:value>//element(*,hippo:document)[@jcr:uuid='MAGICidCIGAM']/ancestor::element(*,hippo:document) order by jcr:path desc</sv:value>
+        <sv:value>//element(*,hippo:document)[@jcr:uuid='MAGICidCIGAM']/ancestor::element(*,hippo:document) order by @jcr:path desc</sv:value>
         <!-- sv:value>//element(*,hippo:document)[@jcr:uuid='9495acfe-f074-4639-b851-06ac6905e8cc']/ancestor::element(*,hippo:document) order by jcr:path desc</sv:value -->
         <!-- sv:value>//element(*,hippo:document)[@jcr:uuid='9495acfe-f074-4639-b851-06ac6905e8cc']/ancestor::element(*,hippo:document) order by jcr:path desc</sv:value -->
       </sv:property>

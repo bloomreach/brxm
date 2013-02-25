@@ -32,6 +32,7 @@ import org.apache.jackrabbit.core.cluster.UpdateEventChannel;
 import org.apache.jackrabbit.core.cluster.UpdateEventListener;
 import org.apache.jackrabbit.core.id.ItemId;
 import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.id.NodeIdFactory;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
@@ -68,8 +69,9 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
 
     private Set<HandleListener> handleListeners = Collections.synchronizedSet(new HashSet<HandleListener>());
 
-    public HippoSharedItemStateManager(RepositoryImpl repository, PersistenceManager persistMgr, NodeId rootNodeId, NodeTypeRegistry ntReg, boolean usesReferences, ItemStateCacheFactory cacheFactory, ISMLocking locking) throws ItemStateException {
-        super(persistMgr, rootNodeId, ntReg, usesReferences, cacheFactory, locking);
+    public HippoSharedItemStateManager(RepositoryImpl repository, PersistenceManager persistMgr, NodeId rootNodeId, NodeTypeRegistry ntReg, boolean usesReferences,
+                                       ItemStateCacheFactory cacheFactory, ISMLocking locking, final NodeIdFactory nodeIdFactory) throws ItemStateException {
+        super(persistMgr, rootNodeId, ntReg, usesReferences, cacheFactory, locking, nodeIdFactory);
         this.repository = repository;
         this.nodeTypeRegistry = ntReg;
         super.setEventChannel(new DocumentChangeNotifyingEventChannelDecorator());

@@ -21,7 +21,9 @@ import java.security.NoSuchAlgorithmException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
 
+import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.hippoecm.repository.PasswordHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
@@ -127,6 +129,11 @@ public class RepositoryUserManager extends AbstractUserManager {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public Authorizable getAuthorizableByPath(final String path) throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UnsupportedRepositoryOperationException();
     }
 
     public boolean isAutoSave() {

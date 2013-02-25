@@ -57,8 +57,8 @@ import org.apache.lucene.search.Query;
  */
 public class HippoSearchManager extends SearchManager {
 
-    public HippoSearchManager(final RepositoryContext repositoryContext, final QueryHandlerFactory qhf, final SharedItemStateManager itemMgr, final PersistenceManager pm, final NodeId rootNodeId, final SearchManager parentMgr, final NodeId excludedNodeId) throws RepositoryException {
-        super(repositoryContext, qhf, itemMgr, pm, rootNodeId, parentMgr, excludedNodeId);
+    public HippoSearchManager(final String workspace, final RepositoryContext repositoryContext, final QueryHandlerFactory qhf, final SharedItemStateManager itemMgr, final PersistenceManager pm, final NodeId rootNodeId, final SearchManager parentMgr, final NodeId excludedNodeId) throws RepositoryException {
+        super(workspace, repositoryContext, qhf, itemMgr, pm, rootNodeId, parentMgr, excludedNodeId);
     }
 
     @Override

@@ -18,6 +18,7 @@ package org.hippoecm.repository.security.user;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 
+import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
 
@@ -57,6 +58,11 @@ public class DummyUserManager extends AbstractUserManager {
 
     public boolean isCaseSensitive() {
         return true;
+    }
+
+    @Override
+    public Authorizable getAuthorizableByPath(final String path) throws RepositoryException {
+        return null;
     }
 
     @Override

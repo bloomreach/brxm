@@ -82,11 +82,13 @@ import org.hippoecm.repository.LocalHippoRepository;
 import org.hippoecm.repository.Modules;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.decorating.RepositoryDecorator;
 import org.hippoecm.repository.ext.UpdaterContext;
 import org.hippoecm.repository.ext.UpdaterItemVisitor;
 import org.hippoecm.repository.ext.UpdaterModule;
 import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.HippoCompactNodeTypeDefReader;
+import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.util.JcrCompactNodeTypeDefWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -568,7 +570,8 @@ public class UpdaterEngine {
 
     private void close() throws RepositoryException {
         UpdaterException exception = null;
-        NamespaceRegistryImpl nsreg = (NamespaceRegistryImpl) session.getWorkspace().getNamespaceRegistry();
+        RepositoryImpl repository = (RepositoryImpl) RepositoryDecorator.unwrap(session.getRepository());
+        NamespaceRegistryImpl nsreg = repository.getNamespaceRegistry();
         log.info("migration close cycle");
         for (ModuleRegistration module : modules) {
             log.info("migration close cycle for module "+module.name);

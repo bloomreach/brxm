@@ -20,9 +20,9 @@ import java.util.List;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.ConstantScoreRangeQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.TermRangeQuery;
 import org.hippoecm.repository.FacetRange;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public class FacetRangeQuery {
                         constraint = new FacetPropExistsQuery(rangeFields.compoundInternalName).getQuery();
                     } else {
                         // rangeFields.begin and rangeFields.end are allowed to be null in ConstantScoreRangeQuery
-                        constraint = new ConstantScoreRangeQuery(rangeFields.internalFacetName, rangeFields.begin, rangeFields.end, true, false);
+                        constraint = new TermRangeQuery(rangeFields.internalFacetName, rangeFields.begin, rangeFields.end, true, false);
                     }
                     query.add(constraint, Occur.MUST);
                    

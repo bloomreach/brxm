@@ -50,12 +50,7 @@ public class FailingWorkflowTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
-        Node root = session.getRootNode();
-        if(root.hasNode("test")) {
-            root.getNode("test").remove();
-            session.save();
-        }
+        super.setUp();
 
         build(session, content);
         session.save();
@@ -70,15 +65,6 @@ public class FailingWorkflowTest extends RepositoryTestCase {
         }
 
         session.save();
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Node root = session.getRootNode();
-        if(root.hasNode("test")) {
-            root.getNode("test").remove();
-        }
-        super.tearDown();
     }
 
     @Test

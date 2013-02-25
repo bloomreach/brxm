@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.naming.NamingEnumeration;
@@ -32,6 +33,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
 
+import org.apache.jackrabbit.api.security.user.Authorizable;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.ManagerContext;
 import org.hippoecm.repository.security.user.AbstractUserManager;
@@ -446,6 +448,11 @@ public class LdapUserManager extends AbstractUserManager {
 
     public boolean isCaseSensitive() {
         return isCaseSensitive;
+    }
+
+    @Override
+    public Authorizable getAuthorizableByPath(final String path) throws UnsupportedRepositoryOperationException, RepositoryException {
+        throw new UnsupportedRepositoryOperationException();
     }
 
     public boolean isAutoSave() {

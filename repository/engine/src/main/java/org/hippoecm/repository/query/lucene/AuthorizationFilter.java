@@ -45,33 +45,37 @@ public class AuthorizationFilter extends Filter {
         }
 
         @Override
-        public DocIdSetIterator iterator() {
+        public DocIdSetIterator iterator() throws IOException {
             return new DocIdSetIterator() {
 
+                int docID = -1;
                 int docOffset = 0;
                 int docIdSetIndex = 0;
                 DocIdSetIterator currentDocIdSetIterator = (docIdSets.length == 0) ? null : docIdSets[0].iterator();
 
                 @Override
-                public int doc() {
-                    return docOffset + currentDocIdSetIterator.doc();
+                public int docID() {
+                    return docID;
                 }
 
                 @Override
-                public boolean next() throws IOException {
+                public int nextDoc() throws IOException {
                     while (currentDocIdSetIterator != null) {
-                        if (currentDocIdSetIterator.next()) {
-                            return true;
+                        int currentDocIdSetDocId = currentDocIdSetIterator.nextDoc();
+                        if (currentDocIdSetDocId != NO_MORE_DOCS) {
+                            docID = docOffset + currentDocIdSetDocId;
+                            return docID;
                         }
                         pointCurrentToNextIterator();
                     }
-                    return false;
+                    docID = NO_MORE_DOCS;
+                    return docID;
                 }
 
                 /**
                  * if there is no next iterator, currentDocIdSetIterator becomes null
                  */
-                private void pointCurrentToNextIterator() {
+                private void pointCurrentToNextIterator() throws IOException {
                     currentDocIdSetIterator = null;
                     if (docIdSets.length == (docIdSetIndex + 1)) {
                         return;
@@ -84,13 +88,9 @@ public class AuthorizationFilter extends Filter {
                 }
 
                 @Override
-                public boolean skipTo(final int target) throws IOException {
-                    do {
-                        if (!next()) {
-                            return false;
-                        }
-                    } while (target > doc());
-                    return true;
+                public int advance(final int target) throws IOException {
+                    while (docID < target && nextDoc() != NO_MORE_DOCS) {}
+                    return docID;
                 }
             };
         }

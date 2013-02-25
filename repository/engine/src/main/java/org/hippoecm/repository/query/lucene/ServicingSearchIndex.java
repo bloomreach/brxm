@@ -52,6 +52,7 @@ import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.FilterMultiColumnQueryHits;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
+import org.apache.jackrabbit.core.query.lucene.LowerCaseSortComparator;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
 import org.apache.jackrabbit.core.query.lucene.MultiColumnQuery;
 import org.apache.jackrabbit.core.query.lucene.MultiColumnQueryHits;
@@ -59,7 +60,11 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.Ordering;
 import org.apache.jackrabbit.core.query.lucene.QueryImpl;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
+import org.apache.jackrabbit.core.query.lucene.SharedFieldCache;
+import org.apache.jackrabbit.core.query.lucene.SharedFieldComparatorSource;
+import org.apache.jackrabbit.core.query.lucene.UpperCaseSortComparator;
 import org.apache.jackrabbit.core.query.lucene.Util;
+import org.apache.jackrabbit.core.query.lucene.sort.AbstractFieldComparator;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -77,6 +82,8 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.FieldComparator;
+import org.apache.lucene.search.FieldComparatorSource;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -102,6 +109,69 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     private boolean servicingConsistencyCheckEnabled;
 
     private final Cache<String, AuthorizationFilter> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
+
+//    private SharedFieldComparatorSource scs;
+//
+//    /**
+//     * A <code>FieldComparator</code> which works for order by clauses on node name
+//     */
+//    static final class NodeNameFieldComparator extends AbstractFieldComparator {
+//
+//        /**
+//         * The term look ups of the index segments.
+//         */
+//        protected SharedFieldCache.ValueIndex[] indexes;
+//
+//        /**
+//         * Create a new instance of the <code>FieldComparator</code>.
+//         *
+//         * @param numHits       the number of values
+//         */
+//        public NodeNameFieldComparator(int numHits) {
+//            super(numHits);
+//        }
+//
+//        @Override
+//        public void setNextReader(IndexReader reader, int docBase) throws IOException {
+//            super.setNextReader(reader, docBase);
+//
+//            indexes = new SharedFieldCache.ValueIndex[readers.size()];
+//
+//            for (int i = 0; i < readers.size(); i++) {
+//                IndexReader r = readers.get(i);
+//                indexes[i] = ;
+//            }
+//        }
+//
+//        @Override
+//        protected Comparable<?> sortValue(int doc) {
+//            int idx = readerIndex(doc);
+//            return indexes[idx].getValue(doc - starts[idx]);
+//        }
+//
+//    }
+//
+//    @Override
+//    protected SharedFieldComparatorSource getSortComparatorSource() {
+//        return scs;
+//    }
+//
+//    @Override
+//    protected void doInit() throws IOException {
+//        super.doInit();
+//        scs = new SharedFieldComparatorSource(FieldNames.PROPERTIES, getContext().getItemStateManager(),
+//                getContext().getHierarchyManager(), getNamespaceMappings()) {
+//            @Override
+//            public FieldComparator newComparator(final String propertyName, final int numHits, final int sortPos, final boolean reversed)
+//                    throws IOException {
+//                if (ServicingFieldNames.HIPPO_SORTABLE_NODENAME.equals(propertyName)) {
+//                    return new NodeNameFieldComparator(numHits);
+//                }
+//                return super.newComparator(propertyName, numHits, sortPos, reversed);
+//            }
+//        };
+//    }
+
     /**
      * Simple zero argument constructor.
      */
@@ -159,11 +229,12 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                                              Query query,
                                              Path[] orderProps,
                                              boolean[] orderSpecs,
+                                             String[] orderFuncs,
                                              long resultFetchHint)
             throws IOException {
         checkOpen();
-        Sort sort = new Sort(createSortFields(orderProps, orderSpecs));
-        final IndexReader reader = getIndex().getIndexReader();
+        Sort sort = new Sort(createSortFields(orderProps, orderSpecs, orderFuncs));
+        final IndexReader reader = getIndexReader();
         // an authorizationFilter that is equal to null means: no filter for bitset
         AuthorizationFilter authorizationFilter = getAuthorizationFilter(session);
         final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationFilter);
@@ -198,7 +269,7 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
             throws IOException {
         checkOpen();
 
-        final IndexReader reader = getIndex().getIndexReader();
+        final IndexReader reader = getIndexReader();
         AuthorizationFilter authorizationFilter = getAuthorizationFilter(session);
         final HippoIndexSearcher searcher = new HippoIndexSearcher(session, reader, getContext().getItemStateManager(), authorizationFilter);
         searcher.setSimilarity(getSimilarity());
@@ -249,15 +320,17 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                 }
                 Path[] orderProperties = new Path[orderSpecs.length];
                 boolean[] ascSpecs = new boolean[orderSpecs.length];
+                String[] orderFuncs = new String[orderSpecs.length];
                 for (int i = 0; i < orderSpecs.length; i++) {
                     orderProperties[i] = orderSpecs[i].getPropertyPath();
                     ascSpecs[i] = orderSpecs[i].isAscending();
+                    orderFuncs[i] = orderSpecs[i].getFunction();
                 }
 
 
                 return new HippoQueryResult(index, sessionContext,
                         this, query,
-                        getColumns(), orderProperties, ascSpecs,
+                        getColumns(), orderProperties, ascSpecs, orderFuncs,
                         orderProperties.length == 0 && getRespectDocumentOrder(),
                         offset, limit);
             }
@@ -386,7 +459,6 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
         return createDocument(node, nsMappings, indexFormatVersion, false);
     }
-
 
     protected Document createDocument(NodeState node, NamespaceMappings nsMappings,
                                       IndexFormatVersion indexFormatVersion, boolean aggregateDescendants) throws RepositoryException {
@@ -561,15 +633,28 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     // TODO remove when jackrabbit supports sorting on nodename
     @Override
-    protected SortField[] createSortFields(Path[] orderProps, boolean[] orderSpecs) {
-        SortField[] sortFields = super.createSortFields(orderProps, orderSpecs);
+    protected SortField[] createSortFields(Path[] orderProps, boolean[] orderSpecs, String[] orderFuncs) {
+        SortField[] sortFields = super.createSortFields(orderProps, orderSpecs, orderFuncs);
         for (int i = 0; i < orderProps.length; i++) {
             // replace the one created by the one from Jackrabbit, because the jackrabbit cannot sort on jcr:name (core < 1.4.6)
             if (orderProps[i].getString().equals(NameConstants.JCR_NAME.toString())) {
-                sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, /*getSortComparatorSource(),*/ !orderSpecs[i]);
+                FieldComparatorSource fcs = getSortComparatorSource();
+                if ("upper-case".equals(orderFuncs[i])) {
+                    fcs = new UpperCaseSortComparator(fcs);
+                } else if ("lower-case".equals(orderFuncs[i])) {
+                    fcs = new LowerCaseSortComparator(fcs);
+                }
+                sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, fcs, !orderSpecs[i]);
             } else if(orderProps[i].getString().endsWith("/" + NameConstants.JCR_NAME.toString())) {
                 try {
-                    sortFields[i] = new SortField(orderProps[i].getAncestor(1).getString()+"/"+ServicingFieldNames.HIPPO_SORTABLE_NODENAME, /*getSortComparatorSource()*/ !orderSpecs[i]);
+                    String field = orderProps[i].getAncestor(1).getString()+"/"+ServicingFieldNames.HIPPO_SORTABLE_NODENAME;
+                    FieldComparatorSource fcs = getSortComparatorSource();
+                    if ("upper-case".equals(orderFuncs[i])) {
+                        fcs = new UpperCaseSortComparator(fcs);
+                    } else if ("lower-case".equals(orderFuncs[i])) {
+                        fcs = new LowerCaseSortComparator(fcs);
+                    }
+                    sortFields[i] = new SortField(field, fcs, !orderSpecs[i]);
                 } catch(PathNotFoundException ex) {
                     // ignore
                 } catch(RepositoryException ex) {

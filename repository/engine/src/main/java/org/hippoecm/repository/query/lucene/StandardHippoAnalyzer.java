@@ -16,28 +16,34 @@
 package org.hippoecm.repository.query.lucene;
 
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
+import org.apache.lucene.analysis.ASCIIFoldingFilter;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.ISOLatin1AccentFilter;
 import org.apache.lucene.analysis.LowerCaseFilter;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.standard.ClassicTokenizer;
 import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.util.Version;
 
 /**
  * The standard multi language ECM analyzer, taking care of removing diacritics and stopwords for most common languages
  *
  */
-public class StandardHippoAnalyzer extends Analyzer{
+public final class StandardHippoAnalyzer extends Analyzer {
 
     @Override
     public TokenStream tokenStream(String fieldName, Reader reader) {
-        TokenStream result = new StandardTokenizer(reader);
-        result = new StandardFilter(result);
-        result = new LowerCaseFilter(result);
-        result = new StopFilter(result, DEFAULT_STOP_SET);
-        result = new ISOLatin1AccentFilter(result);
+        TokenStream result = new ClassicTokenizer(Version.LUCENE_36, reader);
+        result = new StandardFilter(Version.LUCENE_36, result);
+        result = new LowerCaseFilter(Version.LUCENE_36, result);
+        result = new StopFilter(Version.LUCENE_36, result, new HashSet<Object>(Arrays.asList(DEFAULT_STOP_SET)));
+        result = new ASCIIFoldingFilter(result);
         return result;
     }
  
@@ -68,7 +74,6 @@ public class StandardHippoAnalyzer extends Analyzer{
 
         System.arraycopy(CZECH_STOP_WORDS, 0, DEFAULT_STOP_SET, destPos, CZECH_STOP_WORDS.length);
         destPos += CZECH_STOP_WORDS.length;
-
     }
 
     

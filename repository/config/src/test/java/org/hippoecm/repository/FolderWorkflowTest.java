@@ -91,9 +91,8 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
-        root = session.getRootNode();
-        root = root.addNode("test");
+        super.setUp();
+        root = session.getRootNode().addNode("test");
         session.save();
 
         build(session, content);

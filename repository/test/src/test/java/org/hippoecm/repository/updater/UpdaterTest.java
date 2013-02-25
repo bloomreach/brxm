@@ -55,7 +55,7 @@ public class UpdaterTest extends RepositoryTestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
         build(session, content);
         session.save();
     }

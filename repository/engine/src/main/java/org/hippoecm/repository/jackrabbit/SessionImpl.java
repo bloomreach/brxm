@@ -81,10 +81,12 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
     protected AccessManager createAccessManager(Subject subject) throws AccessDeniedException, RepositoryException {
         AccessManagerConfig amConfig = context.getRepository().getConfig().getAccessManagerConfig();
         try {
-            HippoAMContext ctx = new HippoAMContext(new File(((RepositoryImpl)context.getRepository()).getConfig().getHomeDir()),
+            HippoAMContext ctx = new HippoAMContext(
+                    new File((context.getRepository()).getConfig().getHomeDir()),
                     context.getRepositoryContext().getFileSystem(),
-                    this, subject, context.getHierarchyManager(), this, getWorkspace().getName(), context.getNodeTypeManager(), getItemStateManager());
-            AccessManager accessMgr = (AccessManager)amConfig.newInstance(AccessManager.class);
+                    this, subject, context.getHierarchyManager(), context.getPrivilegeManager(),
+                    this, getWorkspace().getName(), context.getNodeTypeManager(), getItemStateManager());
+            AccessManager accessMgr = amConfig.newInstance(AccessManager.class);
             accessMgr.init(ctx);
             if (accessMgr instanceof ItemStateListener) {
                 context.getItemStateManager().addListener((ItemStateListener) accessMgr);

@@ -30,7 +30,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.TopFieldDocCollector;
+import org.apache.lucene.search.TopFieldCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -160,7 +160,7 @@ public class HippoSortedLuceneQueryHits extends AbstractQueryHits {
     //-------------------------------< internal >-------------------------------
 
     private void getHits() throws IOException {
-        TopFieldDocCollector collector = new TopFieldDocCollector(reader, sort, numHits);
+        TopFieldCollector collector = TopFieldCollector.create(sort, numHits, false, true, false, false);
 
         if (authorizationFilter != null) {
             searcher.search(query, authorizationFilter, collector);

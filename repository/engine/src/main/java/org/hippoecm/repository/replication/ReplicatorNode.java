@@ -26,6 +26,7 @@ import org.apache.jackrabbit.core.cluster.ClusterRecordProcessor;
 import org.apache.jackrabbit.core.cluster.LockRecord;
 import org.apache.jackrabbit.core.cluster.NamespaceRecord;
 import org.apache.jackrabbit.core.cluster.NodeTypeRecord;
+import org.apache.jackrabbit.core.cluster.PrivilegeRecord;
 import org.apache.jackrabbit.core.cluster.WorkspaceRecord;
 import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.journal.FileRevision;
@@ -176,7 +177,7 @@ public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordC
      * {@inheritDoc}
      */
     public InstanceRevision getInstanceRevision(String path) throws JournalException {
-        return new FileRevision(new File(path + File.separator + getId() + "." + "revision"));
+        return new FileRevision(new File(path + File.separator + getId() + "." + "revision"), true);
     }
 
     /**
@@ -337,6 +338,11 @@ public class ReplicatorNode implements Runnable, ClusterRecordProcessor, RecordC
      * {@inheritDoc}
      */
     public void process(NodeTypeRecord record) {
+        // Not implemented
+    }
+
+    @Override
+    public void process(final PrivilegeRecord record) {
         // Not implemented
     }
 

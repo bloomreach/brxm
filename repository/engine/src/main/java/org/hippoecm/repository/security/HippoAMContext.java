@@ -21,6 +21,7 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NodeTypeManager;
 import javax.security.auth.Subject;
 
+import org.apache.jackrabbit.api.security.authorization.PrivilegeManager;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.security.AMContext;
@@ -62,11 +63,12 @@ public class HippoAMContext extends AMContext {
                      Session session,
                      Subject subject,
                      HierarchyManager hierMgr,
+                     PrivilegeManager privilegeMgr,
                      NamePathResolver npResolver,
                      String workspaceName,
                      NodeTypeManager ntMgr,
                      SessionItemStateManager itemMgr) {
-        super(physicalHomeDir, fs, session, subject, hierMgr, npResolver, workspaceName);
+        super(physicalHomeDir, fs, session, subject, hierMgr, privilegeMgr, npResolver, workspaceName);
         this.ntMgr = ntMgr;
         this.itemMgr = itemMgr;
     }

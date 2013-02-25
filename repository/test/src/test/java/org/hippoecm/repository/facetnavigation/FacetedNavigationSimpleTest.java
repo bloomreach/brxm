@@ -22,6 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.commons.iterator.NodeIterable;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -73,14 +74,13 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         assertTrue(node.getNode("hippo:resultset").hasProperty("hippo:count"));
         assertEquals(5L , node.getNode("hippo:resultset").getProperty("hippo:count").getLong());
         assertEquals(5L , node.getNode("hippo:resultset").getNodes().getSize());
-        
+
         // assert some facetednavigation nodes exists
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/hippo:resultset"));
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/grey"));
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:color/grey/hippo:resultset"));
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:product/car"));
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:product/car/hippo:color/grey"));
-
         // assert that after iterating the same key-value twice, there are no child nodes below this node:
         assertTrue(node.hasNode("hippo:brand/peugeot/hippo:brand/peugeot"));
         assertFalse(node.getNode("hippo:brand/peugeot/hippo:brand/peugeot").hasNodes());
@@ -688,9 +688,8 @@ public class FacetedNavigationSimpleTest extends RepositoryTestCase {
         node = node.addNode("facetnavigation");
         node.addMixin("mix:referenceable");
         node = node.addNode("hippo:navigation", FacNavNodeType.NT_FACETNAVIGATION);
-        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getNode("test/documents").getIdentifier());
-        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:brand", "hippo:color",
-                "hippo:product" });
+        node.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getNode("/test/documents").getIdentifier());
+        node.setProperty(FacNavNodeType.HIPPOFACNAV_FACETS, new String[] { "hippo:brand", "hippo:color", "hippo:product" });
 
     }
     

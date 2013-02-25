@@ -35,7 +35,7 @@ public class DropboxTest extends RepositoryTestCase {
 
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
         Node node = session.getRootNode().getNode("hippo:configuration/hippo:workflows");
         if (node.hasNode("test")) {
             node.getNode("test").remove();
@@ -45,8 +45,6 @@ public class DropboxTest extends RepositoryTestCase {
         node.setProperty("hipposys:nodetype", "hippo:document");
         node.setProperty("hipposys:classname", TestWorkflowImpl.class.getName());
         node.setProperty("hipposys:display", "Test workflow");
-        while(session.getRootNode().hasNode("test"))
-            session.getRootNode().getNode("test").remove();
         session.save();
         TestWorkflowImpl.invocationCountNoArg = 0;
         TestWorkflowImpl.invocationCountDateArg = 0;
@@ -61,9 +59,6 @@ public class DropboxTest extends RepositoryTestCase {
          if(node.hasNode("test")) {
              node.getNode("test").remove();
          }
-         node = session.getRootNode();
-         if(node.hasNode("test"))
-             node.getNode("test").remove();
         session.save();
         super.tearDown();
     }

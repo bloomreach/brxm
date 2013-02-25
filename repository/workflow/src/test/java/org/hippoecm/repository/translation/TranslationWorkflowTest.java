@@ -64,11 +64,8 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
-        Node root = session.getRootNode();
-        if (root.hasNode("test"))
-            root.getNode("test").remove();
-        root = root.addNode("test");
+        super.setUp();
+        session.getRootNode().addNode("test");
         session.save();
 
         build(session, content);
@@ -104,15 +101,6 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
 
         session.save();
         session.refresh(false);
-    }
-
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        Node root = session.getRootNode();
-        if (root.hasNode("test"))
-            root.getNode("test").remove();
-        super.tearDown();
     }
 
     @Test

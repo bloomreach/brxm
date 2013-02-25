@@ -182,7 +182,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
             ISMLocking locking) throws ItemStateException {
         return new HippoSharedItemStateManager(this, persistMgr, context.getRootNodeId(),
                 context.getNodeTypeRegistry(), true, context.getItemStateCacheFactory(),
-                locking);
+                locking, context.getNodeIdFactory());
     }
                
 
@@ -216,7 +216,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
         return context.getFileSystem();
     }
 
-    protected NamespaceRegistryImpl getNamespaceRegistry() {
+    public NamespaceRegistryImpl getNamespaceRegistry() {
         return context.getNamespaceRegistry();
     }
 
@@ -331,7 +331,7 @@ public class RepositoryImpl extends org.apache.jackrabbit.core.RepositoryImpl {
                 if (searchMgr == null && getConfig().isSearchEnabled()) {
                     // search manager is lazily instantiated in order to avoid
                     // 'chicken & egg' bootstrap problems
-                    searchMgr = new HippoSearchManager(
+                    searchMgr = new HippoSearchManager(getName(),
                         context, HippoWorkspaceInfo.this.getConfig(), HippoWorkspaceInfo.this.getItemStateProvider(),
                               HippoWorkspaceInfo.this.getPersistenceManager(), context.getRootNodeId(),
                               getSystemSearchManager(HippoWorkspaceInfo.this.getName()),

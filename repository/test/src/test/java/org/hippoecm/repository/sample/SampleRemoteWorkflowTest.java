@@ -15,164 +15,90 @@
  */
 package org.hippoecm.repository.sample;
 
-import java.io.File;
-import java.io.IOException;
+import java.rmi.ConnectException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
-import javax.transaction.TransactionManager;
 
-import com.atomikos.icatch.jta.UserTransactionManager;
-
-import org.hippoecm.repository.HippoRepository;
-import org.hippoecm.repository.HippoRepositoryFactory;
-import org.hippoecm.repository.HippoRepositoryServer;
+import org.apache.jackrabbit.rmi.remote.RemoteRepository;
+import org.hippoecm.repository.RepositoryUrl;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
-import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.hippoecm.repository.sample.SampleWorkflowSetup.commonEnd;
+import static org.hippoecm.repository.sample.SampleWorkflowSetup.commonStart;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-public class SampleRemoteWorkflowTest {
+public class SampleRemoteWorkflowTest extends RepositoryTestCase {
 
-    private HippoRepositoryServer backgroundServer;
-    private HippoRepository server;
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-        RepositoryTestCase.clear();
-    }
-    
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        RepositoryTestCase.clear();
-        HippoRepositoryFactory.setDefaultRepository((String)null);
-    }
+    private RemoteRepository repository;
+    private Registry registry;
+    private Session session;
 
     @Before
     public void setUp() throws Exception {
+        super.setUp();
         String bindingAddress = "rmi://localhost:1098/hipporepository";
-        backgroundServer = new HippoRepositoryServer(new File(System.getProperty("user.dir")).getAbsolutePath(), bindingAddress);
-        backgroundServer.run(true);
-        Thread.sleep(3000);
-        server = HippoRepositoryFactory.getHippoRepository(bindingAddress);
+        RepositoryUrl url = new RepositoryUrl(bindingAddress);
+        repository = new ServerServicingAdapterFactory(url).getRemoteRepository(background.getRepository());
+
+        // Get or start registry and bind the remote repository
+        try {
+            registry = LocateRegistry.getRegistry(url.getHost(), url.getPort());
+            registry.rebind(url.getName(), repository);
+        } catch (ConnectException e) {
+            registry = LocateRegistry.createRegistry(url.getPort());
+            registry.rebind(url.getName(), repository);
+        }
+        commonStart(background);
+        session = server.login("admin", "admin".toCharArray());
     }
 
     @After
     public void tearDown() throws Exception {
-        server.close();
-        backgroundServer.close();
-        Thread.sleep(3000);
+        commonEnd(background);
+        if (session != null) {
+            session.logout();
+        }
     }
 
     @Test
     public void testWorkflow() throws Exception {
-        SampleWorkflowSetup.commonStart(backgroundServer);
-        try {
 
-            Session session = server.login("admin", "admin".toCharArray());
+        Node node = session.getNode("/files/myarticle");
+        assertEquals(node.getProperty("sample:authorId").getLong(), SampleWorkflowSetup.oldAuthorId);
 
-            // UserTransaction ut = server.getUserTransaction(getTransactionManager(), session);
-            // ut.begin();
+        WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
 
-            Node root = session.getRootNode();
+        Workflow workflow = manager.getWorkflow("mycategory", node);
+        assertNotNull("workflow not found", workflow);
+        assertTrue("workflow not of proper type", workflow instanceof SampleWorkflow);
+        ((SampleWorkflow) workflow).renameAuthor("Jan Smit");
 
-            Node node = root.getNode("files/myarticle");
-            assertEquals(node.getProperty("sample:authorId").getLong(), SampleWorkflowSetup.oldAuthorId);
+        session.save();
+        assertEquals(node.getProperty("sample:authorId").getLong(), SampleWorkflowSetup.newAuthorId);
 
-            WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-
-            try {
-                Workflow workflow = manager.getWorkflow("mycategory", node);
-                assertNotNull(workflow);
-                if (workflow instanceof SampleWorkflow) {
-                    SampleWorkflow myworkflow = (SampleWorkflow) workflow;
-                    myworkflow.renameAuthor("Jan Smit");
-                } else {
-                    fail("workflow not of proper type " + workflow.getClass().getName());
-                }
-            } catch (Exception ex) {
-                System.err.println(ex.getMessage());
-                ex.printStackTrace(System.err);
-                // ut.rollback();
-                throw ex;
-            }
-
-            session.save();
-            session.refresh(false);
-            assertEquals(node.getProperty("sample:authorId").getLong(), SampleWorkflowSetup.newAuthorId);
-
-            session.logout();
-        } catch (NotSupportedException ex) {
-            System.err.println("NotSupportedException: " + ex.getMessage());
-            ex.printStackTrace(System.err);
-            fail("NotSupportedException: " + ex.getMessage());
-        } catch (SystemException ex) {
-            System.err.println("SystemException: " + ex.getMessage());
-            ex.printStackTrace(System.err);
-            fail("SystemException: " + ex.getMessage());
-        } finally {
-            SampleWorkflowSetup.commonEnd(backgroundServer);
-        }
     }
 
     @Test
-    public void testReturnDocument() throws RepositoryException, WorkflowException, IOException, Exception {
-        SampleWorkflowSetup.commonStart(backgroundServer);
-        try {
-
-            Session session = server.login("admin", "admin".toCharArray());
-
-            Node root = session.getRootNode();
-
-            Node node = root.getNode("files/myarticle");
-
-            WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
-
-            try {
-                Workflow workflow = manager.getWorkflow("mycategory", node);
-                assertNotNull(workflow);
-                if (workflow instanceof SampleWorkflow) {
-                    SampleWorkflow myworkflow = (SampleWorkflow) workflow;
-                    Document document = myworkflow.getArticle();
-                    assertTrue(node.getIdentifier().equals(document.getIdentity()));
-                } else {
-                    fail("workflow not of proper type " + workflow.getClass().getName());
-                }
-            } catch (Exception ex) {
-                System.err.println(ex.getMessage());
-                ex.printStackTrace(System.err);
-                throw ex;
-            }
-
-            session.save();
-            session.refresh(false);
-
-            session.logout();
-        } catch (NotSupportedException ex) {
-            System.err.println("NotSupportedException: " + ex.getMessage());
-            ex.printStackTrace(System.err);
-            fail("NotSupportedException: " + ex.getMessage());
-        } catch (SystemException ex) {
-            System.err.println("SystemException: " + ex.getMessage());
-            ex.printStackTrace(System.err);
-            fail("SystemException: " + ex.getMessage());
-        } finally {
-            SampleWorkflowSetup.commonEnd(backgroundServer);
-        }
+    public void testReturnDocument() throws Exception {
+        Node node = session.getNode("/files/myarticle");
+        WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Workflow workflow = manager.getWorkflow("mycategory", node);
+        assertNotNull(workflow);
+        assertTrue("workflow not of proper type", workflow instanceof SampleWorkflow);
+        Document document = ((SampleWorkflow) workflow).getArticle();
+        assertTrue(node.getIdentifier().equals(document.getIdentity()));
     }
 }

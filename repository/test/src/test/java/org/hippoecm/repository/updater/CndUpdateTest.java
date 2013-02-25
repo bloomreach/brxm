@@ -41,7 +41,7 @@ public class CndUpdateTest extends RepositoryTestCase {
     @Override
     @Before
     public void setUp() throws Exception {
-        super.setUp(true);
+        super.setUp();
         session.getRootNode().addNode("test");
         session.save();
     }
