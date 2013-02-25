@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -62,7 +61,6 @@ import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.FacetedNavigationEngine.Context;
 import org.hippoecm.repository.FacetedNavigationEngine.Query;
 import org.hippoecm.repository.Modules;
-import org.hippoecm.repository.SessionStateThresholdEnum;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.DataProviderContext;
 import org.hippoecm.repository.dataprovider.DataProviderModule;

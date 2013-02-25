@@ -21,7 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.EnumSet;
 import java.util.Map;
 import java.util.Properties;
 
@@ -33,7 +32,6 @@ import javax.sql.DataSource;
 
 import org.apache.jackrabbit.api.JackrabbitRepository;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
-import org.hippoecm.repository.SessionStateThresholdEnum;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

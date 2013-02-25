@@ -15,9 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.util.EnumSet;
-
-import javax.jcr.InvalidItemStateException;
 import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 
@@ -30,8 +27,6 @@ import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
-import org.hippoecm.repository.LocalHippoRepository;
-import org.hippoecm.repository.SessionStateThresholdEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
