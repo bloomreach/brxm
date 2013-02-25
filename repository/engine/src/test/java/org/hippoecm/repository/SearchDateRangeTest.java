@@ -25,7 +25,6 @@ import javax.jcr.query.QueryResult;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.DateTools;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -78,7 +77,7 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         withNoResolution.setLimit(limit);
         final Node firstResultNoResolution = withNoResolution.execute().getNodes().nextNode();
 
-        for (DateTools.Resolution resolution : DateTools.getSupportedQueryResolutions()){
+        for (DateTools.Resolution resolution : DateTools.getSupportedDateResolutions()){
             String dateResolutionStart = DateTools.createXPathConstraint(session, calStart, resolution);
             String dateResolutionEnd = DateTools.createXPathConstraint(session, calStart, resolution);
             String lastModifiedPropertyForResolution = DateTools.getPropertyForResolution("hippo:lastModified", resolution);
@@ -139,7 +138,7 @@ public class SearchDateRangeTest extends RepositoryTestCase {
         calToday.set(Calendar.HOUR, 8);
         createDocumentsWithUniqueLastModified(nrDocsToday, calToday, Calendar.SECOND);
 
-        for (DateTools.Resolution resolution : DateTools.getSupportedQueryResolutions()){
+        for (DateTools.Resolution resolution : DateTools.getSupportedDateResolutions()){
             String dateWithResolution = DateTools.createXPathConstraint(session, calToday, resolution);
             String lastModifiedPropertyForResolution = DateTools.getPropertyForResolution("hippo:lastModified", resolution);
             String xpathWithResolution = "//element(*,"+NT_SEARCHDOCUMENT+")[@"+lastModifiedPropertyForResolution+" = " + dateWithResolution +"] order by @hippo:lastModified ascending";

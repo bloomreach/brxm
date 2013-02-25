@@ -249,7 +249,7 @@ public class DateTools {
             DateTools.Resolution.DAY,
             DateTools.Resolution.HOUR};
 
-    public static Resolution[] getSupportedQueryResolutions() {
+    public static Resolution[] getSupportedDateResolutions() {
         return supportedResolutions;
     }
 

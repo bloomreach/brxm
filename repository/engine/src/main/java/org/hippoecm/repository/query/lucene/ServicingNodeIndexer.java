@@ -135,7 +135,7 @@ public class ServicingNodeIndexer extends NodeIndexer {
         super.addCalendarValue(doc, fieldName, internalValue);
 
         final long timeInMillis = internalValue.getTimeInMillis();
-        for (DateTools.Resolution resolution : DateTools.getSupportedQueryResolutions()) {
+        for (DateTools.Resolution resolution : DateTools.getSupportedDateResolutions()) {
             String propertyNameForResolution = DateTools.getPropertyForResolution(fieldName, resolution);
             Calendar roundedForResolution = DateTools.roundDate(timeInMillis, resolution);
             super.addCalendarValue(doc, propertyNameForResolution, roundedForResolution);
