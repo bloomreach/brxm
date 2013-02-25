@@ -18,24 +18,9 @@ package org.hippoecm.repository.ext;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-/**
- * 
- * @author berry
- */
 public interface DaemonModule {
-    /**
-     * 
-     */
 
-    /**
-     * 
-     * @param session
-     * @throws javax.jcr.RepositoryException
-     */
     public void initialize(Session session) throws RepositoryException;
 
-    /**
-     * 
-     */
     public void shutdown();
 }
