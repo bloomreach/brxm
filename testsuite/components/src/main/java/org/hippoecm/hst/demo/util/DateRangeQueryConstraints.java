@@ -16,10 +16,10 @@
 package org.hippoecm.hst.demo.util;
 
 import java.util.Calendar;
-import java.util.Date;
 
 import org.hippoecm.hst.content.beans.query.exceptions.FilterException;
 import org.hippoecm.hst.content.beans.query.filter.Filter;
+import org.hippoecm.repository.util.DateTools;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public class DateRangeQueryConstraints {
     final private String property;
     final private Calendar fromDate;
     final private Calendar toDate;
-    final Filter.Resolution resolution;
+    final DateTools.Resolution resolution;
 
     public DateRangeQueryConstraints(final String property, final Calendar fromDate, final Calendar toDate, final String resolutionString) {
         this.property = property;
@@ -39,21 +39,21 @@ public class DateRangeQueryConstraints {
         this.resolution = fromString(resolutionString);
     }
 
-    private Filter.Resolution fromString(final String resolutionString) {
+    private DateTools.Resolution fromString(final String resolutionString) {
         if (resolutionString == null) {
             return null;
         }
         if (resolutionString.equals("year")) {
-            return Filter.Resolution.YEAR;
+            return DateTools.Resolution.YEAR;
         }
         if (resolutionString.equals("month")) {
-            return Filter.Resolution.MONTH;
+            return DateTools.Resolution.MONTH;
         }
         if (resolutionString.equals("day")) {
-            return Filter.Resolution.DAY;
+            return DateTools.Resolution.DAY;
         }
         if (resolutionString.equals("hour")) {
-            return Filter.Resolution.HOUR;
+            return DateTools.Resolution.HOUR;
         }
         log.warn("Unknown resolution '{}'", resolutionString);
         return null;
