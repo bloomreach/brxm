@@ -77,19 +77,9 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         origDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         origDoc.setProperty(HippoTranslationNodeType.LOCALE, "en");
         origDoc.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
-
+        origDoc.addNode(HippoTranslationNodeType.TRANSLATIONS, HippoTranslationNodeType.TRANSLATIONS);
         session.save();
         session.refresh(false);
-    }
-
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        if (session.getRootNode().hasNode("test")) {
-            session.getRootNode().getNode("test").remove();
-        }
-        session.save();
-        super.tearDown();
     }
 
     @Test
@@ -228,7 +218,8 @@ public class TranslationVirtualProviderTest extends RepositoryTestCase {
         docsFolder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         docsFolder.setProperty(HippoTranslationNodeType.LOCALE, "nl");
         docsFolder.setProperty(HippoTranslationNodeType.ID, FOLDER_T9N_ID);
-
+        docsFolder.addNode(HippoTranslationNodeType.TRANSLATIONS, HippoTranslationNodeType.TRANSLATIONS);
+        
         Node filter = session.getRootNode().getNode("test").addNode("filter", "hippo:facetselect");
         filter.setProperty("hippo:docbase", session.getRootNode().getNode("test/docs").getUUID());
         filter.setProperty("hippo:facets", new String[] { "state" });
