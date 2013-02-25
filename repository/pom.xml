@@ -72,7 +72,7 @@
     <notice.project.name>Hippo Repository</notice.project.name>
 
     <hippo.commons.version>1.02.01</hippo.commons.version>
-    <hippo.services.version>1.02.02-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>1.02.02</hippo.services.version>
     <hippo.utilities.version>1.01.02</hippo.utilities.version>
 
     <!-- Test dependencies  -->
