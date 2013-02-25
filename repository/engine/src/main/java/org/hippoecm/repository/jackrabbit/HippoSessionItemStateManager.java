@@ -52,28 +52,6 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
         }
     }
 
-    public boolean stateThresholdExceeded(EnumSet<SessionStateThresholdEnum> interests) {
-        if (interests == null || (interests.contains(SessionStateThresholdEnum.MISCELLANEOUS) ||  interests.contains(SessionStateThresholdEnum.PARAMETERIZED) || interests.contains(SessionStateThresholdEnum.VIEWS))) {
-            if (localStateMgr.stateThresholdExceeded(interests)) {
-                return true;
-            }
-        }
-        if (interests == null || interests.contains(SessionStateThresholdEnum.UNPERSISTED)) {
-            try {
-                int count = 0;
-                for (ItemState state : getDescendantTransientItemStates(rootNodeId)) {
-                    ++count;
-                }
-                return count >= LocalHippoRepository.batchThreshold;
-            } catch (InvalidItemStateException ex) {
-                return true;
-            } catch (RepositoryException ex) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     public void disposeAllTransientItemStates() {
         /* It is imperative that the stateMgr.refresh() method is ONLY called after a

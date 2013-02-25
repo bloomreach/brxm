@@ -91,10 +91,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
      */
     static final int ITEM_TYPE_VIRTUAL = 0x02;
 
-    /** Threshold of the number of virtual state deemed to be acceptable to hold in memory.
-     */
-    static final int VIRTUALSTATE_THRESHOLD = 10000;
-
     private NodeTypeRegistry ntReg;
     private org.apache.jackrabbit.core.SessionImpl session;
     private HierarchyManager hierMgr;
@@ -598,31 +594,6 @@ public class HippoLocalItemStateManager extends ForkedXAItemStateManager impleme
     boolean isHandle(ItemState state) {
         if (handleNodeName != null && state.isNode()) {
             return handleNodeName.equals(((NodeState) state).getNodeTypeName());
-        }
-        return false;
-    }
-
-    public boolean stateThresholdExceeded(EnumSet<SessionStateThresholdEnum> interests) {
-        if (interests == null || interests.contains(SessionStateThresholdEnum.PARAMETERIZED) || interests.contains(SessionStateThresholdEnum.MISCELLANEOUS)) {
-            if (parameterizedView) {
-                return true;
-            }
-        }
-        if (interests == null || interests.contains(SessionStateThresholdEnum.VIEWS)) {
-            int count = 0;
-            ChangeLog changelog = getChangeLog();
-            if (changelog != null) {
-                for (Iterator iter = changelog.modifiedStates().iterator(); iter.hasNext(); iter.next()) {
-                    ++count;
-                }
-                for (Iterator iter = changelog.addedStates().iterator(); iter.hasNext(); iter.next()) {
-                    ++count;
-                }
-                for (Iterator iter = changelog.deletedStates().iterator(); iter.hasNext(); iter.next()) {
-                    ++count;
-                }
-            }
-            return count > VIRTUALSTATE_THRESHOLD;
         }
         return false;
     }

@@ -197,29 +197,4 @@ public class FacetedSearchFreeTextTest extends RepositoryTestCase {
         assertTrue(search3.hasNode("b"));
     }
 
-    @Test
-    public void testThresholdExceeded() throws RepositoryException {
-        if (external != null) {
-            return; // not a valid test for remote repositories
-        }
-        Node testRoot = session.getRootNode();
-        {
-            Node search = testRoot.getNode("test/nav1");
-            for(NodeIterator nodeIter = search.getNodes(); nodeIter.hasNext(); ) {
-                Node child = nodeIter.nextNode();
-            }
-            assertFalse(server.stateThresholdExceeded(session, null));
-        }
-        session.refresh(false);
-        assertFalse(server.stateThresholdExceeded(session, null));
-        {
-            Node search = testRoot.getNode("test/nav1[[aap]]");
-            for(NodeIterator nodeIter = search.getNodes(); nodeIter.hasNext(); ) {
-                Node child = nodeIter.nextNode();
-            }
-            assertTrue(server.stateThresholdExceeded(session, null));
-        }
-        session.refresh(false);
-        assertFalse(server.stateThresholdExceeded(session, null));
-    }
 }

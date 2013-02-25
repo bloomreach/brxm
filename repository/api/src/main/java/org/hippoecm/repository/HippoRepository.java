@@ -122,19 +122,6 @@ public interface HippoRepository {
     public ValueMap getValueMap(Node node) throws RepositoryException;
 
     /**
-     * <b>This call is not (yet) part of the API, but under evaluation.</b><p/>
-     * returns true whenever the session has grown to such an extend that it is advisable to persist or flush changes.
-     * @param session the session for which to compute the resource consumption
-     * @param interests the states for which the threshold should be inspected, or null for any state
-     * @return true when it is advisable to flush the state of the session, either by calling
-     * session.save() or session.refresh(false)
-     * @deprecated since 2.23.05 : This method has no replacement as it has never been possible to properly use it. It will be
-     * removed from 2.25.xx
-     */
-    @Deprecated
-    public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests);
-
-    /**
      * @return An {@link InitializationProcessor} for this repository for doing initialization tasks
      */
     public InitializationProcessor getInitializationProcessor();

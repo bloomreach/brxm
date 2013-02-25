@@ -142,7 +142,4 @@ class BootstrapHippoRepository extends HippoRepositoryImpl {
         super.close();
     }
 
-    public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
-        return false;
-    }
 }

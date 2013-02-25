@@ -114,16 +114,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** When during startup a situation is detected that a restart is required, this flag signals this, but only one restart should be appropriate */
     boolean needsRestart = false;
 
-    public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
-        session = org.hippoecm.repository.decorating.SessionDecorator.unwrap(session);
-        session = org.hippoecm.repository.impl.SessionDecorator.unwrap(session);
-        if(session instanceof org.apache.jackrabbit.core.SessionImpl) {
-            HippoSessionItemStateManager sessionISM = ((InternalHippoSession) session).getItemStateManager();
-            return sessionISM.stateThresholdExceeded(interests);
-        }
-        return false;
-    }
-
     private static enum UpgradeFlag {
         TRUE, FALSE, ABORT
     }

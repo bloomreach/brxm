@@ -40,7 +40,4 @@ class RemoteHippoRepository extends HippoRepositoryImpl {
         return new RemoteHippoRepository(location);
     }
 
-    public boolean stateThresholdExceeded(Session session, EnumSet<SessionStateThresholdEnum> interests) {
-        return false; // FIXME: unimplemented
-    }
 }

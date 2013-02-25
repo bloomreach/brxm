@@ -171,27 +171,4 @@ public class PendingChangesTest extends RepositoryTestCase {
         assertEquals(1, paths.size());
     }
 
-    @Test
-    public void testThresholdExceeded() throws Exception {
-        if (external != null) {
-            return; // not a valid test for remote repositories
-        }
-        assertFalse(server.stateThresholdExceeded(session, null));
-        int count = 0;
-        for (count = 0; count < 100; count++) {
-            Node node = root.addNode("n" + count, "nt:unstructured");
-            /*for (int i = 0; i < 25; i++) {
-                Node child = node.addNode("c" + i, "nt:unstructured");
-                for (int p = 0; p < 25; p++) {
-                    child.setProperty("p" + p, "");
-                }
-            }*/
-            if (server.stateThresholdExceeded(session, null))
-                break;
-        }
-        assertTrue(count > 2);
-        assertTrue(server.stateThresholdExceeded(session, null));
-        session.refresh(false);
-        assertFalse(server.stateThresholdExceeded(session, null));
-    }
 }
