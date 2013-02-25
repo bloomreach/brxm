@@ -91,7 +91,7 @@
     <hippo.commons.version>1.02.01</hippo.commons.version>
     <hippo.repository.version>2.24.02-SNAPSHOT</hippo.repository.version>
     <hippo.utilities.version>1.01.02</hippo.utilities.version>
-    <hippo.services.version>1.02.02-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>1.02.02</hippo.services.version>
 
     <htmlcleaner.version>2.2</htmlcleaner.version>
 
