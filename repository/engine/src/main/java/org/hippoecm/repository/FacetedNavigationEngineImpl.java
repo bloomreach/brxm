@@ -337,7 +337,6 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         NamespaceMappings nsMappings = getNamespaceMappings();
 
         IndexReader indexReader = null;
-        boolean debug = Boolean.getBoolean("unico.is.testing");
         try {
             indexReader = getIndexReader();
 
@@ -820,17 +819,12 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
         private final TreeSet<Integer> docIds = new TreeSet<Integer>();
 
         private SetDocIdSet(DocIdSet docIdSet) throws IOException {
-            try {
-
-                final DocIdSetIterator iterator = docIdSet.iterator();
-                if (iterator != null) {
-                    int doc;
-                    while ((doc = iterator.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
-                        docIds.add(doc);
-                    }
+            final DocIdSetIterator iterator = docIdSet.iterator();
+            if (iterator != null) {
+                int doc;
+                while ((doc = iterator.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
+                    docIds.add(doc);
                 }
-            } catch (NullPointerException e) {
-                System.out.println(e);
             }
         }
 
