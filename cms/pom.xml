@@ -87,7 +87,7 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo CMS</notice.project.name>
 
-    <hippo.commons.version>1.02.01</hippo.commons.version>
+    <hippo.commons.version>1.02.02</hippo.commons.version>
     <hippo.services.version>1.02.02</hippo.services.version>
     <hippo.repository.version>2.24.02</hippo.repository.version>
 
@@ -120,8 +120,7 @@
     <xerces.version>2.8.1</xerces.version>
     <cglib.version>2.1_3</cglib.version>
     <wicket.version>1.4.21-h2</wicket.version>
-    <wicket-extjs.version>0.17</wicket-extjs.version>
-    <yui.sources.version>1.01.11-SNAPSHOT</yui.sources.version>
+    <wicket-extjs.version>0.18</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <dom4j.version>1.6.1</dom4j.version>
     <httpclient.version>4.2.2</httpclient.version>
@@ -132,11 +131,12 @@
     <jackrabbit.version>2.2.12-h1</jackrabbit.version>
     <tika.version>0.9</tika.version>
     <drewnoakes-extractor.version>2.4.0-beta-1</drewnoakes-extractor.version>
-
-    <hippo.htmlcleaner.version>1.02.08-SNAPSHOT</hippo.htmlcleaner.version>
-    <hippo.htmldiff.version>1.01.03-SNAPSHOT</hippo.htmldiff.version>
-    <hippo.jcrdiff.version>1.01.03-SNAPSHOT</hippo.jcrdiff.version>
     <sanselan.version>0.97-incubator</sanselan.version>
+
+    <yui.sources.version>1.01.11</yui.sources.version>
+    <hippo.htmlcleaner.version>1.02.08</hippo.htmlcleaner.version>
+    <hippo.htmldiff.version>1.01.03</hippo.htmldiff.version>
+    <hippo.jcrdiff.version>1.01.03</hippo.jcrdiff.version>
 
     <sonar.l10n.locales>nl,fr,it,de</sonar.l10n.locales>
 
