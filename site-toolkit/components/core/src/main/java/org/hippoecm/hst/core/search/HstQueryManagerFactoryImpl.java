@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.search;
 
 import javax.jcr.Session;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryManagerImpl;
@@ -48,7 +49,7 @@ public class HstQueryManagerFactoryImpl implements HstQueryManagerFactory {
      *         <code>{@link org.hippoecm.repository.util.DateTools.Resolution#MILLISECOND}</code> is returned
      */
     private DateTools.Resolution fromString(String resolution) {
-        if (resolution == null) {
+        if (resolution == null || StringUtils.isEmpty(resolution)) {
             return DateTools.Resolution.MILLISECOND;
         }
         resolution = resolution.toLowerCase().trim();
