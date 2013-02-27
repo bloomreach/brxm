@@ -65,6 +65,9 @@ public class Detail extends BaseHstComponent {
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
 
+
+        System.out.println(request.getParameter("bar"));
+
         super.doBeforeRender(request, response);
         HippoBean crBean = this.getContentBean(request);
 
@@ -72,7 +75,7 @@ public class Detail extends BaseHstComponent {
 
         request.setAttribute("cmsApplicationUrl", cmsApplicationUrl);
 
-        // we only have a goBackLink for sitemap items that have configured one. 
+        // we only have a goBackLink for sitemap items that have configured one.
         String goBackLink = request.getRequestContext().getResolvedSiteMapItem().getParameter("go-back-link");
         request.setAttribute("goBackLink", goBackLink);
 
@@ -110,82 +113,84 @@ public class Detail extends BaseHstComponent {
 
     }
 
-    @Persistable
-    @Override
-    public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
-        HstRequestContext requestContext = request.getRequestContext();
-        String type = request.getParameter("type");
+@Persistable
+@Override
+public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
+    HstRequestContext requestContext = request.getRequestContext();
+    String type = request.getParameter("type");
 
-        if ("add".equals(type)) {
-            String title = request.getParameter("title");
-            String comment = request.getParameter("comment");
-            HippoBean commentTo = this.getContentBean(request);
-            if (!(commentTo instanceof HippoDocumentBean)) {
-                log.warn("Cannot comment on non documents");
-                return;
-            }
-            String commentToUuidOfHandle = ((HippoDocumentBean) commentTo).getCanonicalHandleUUID();
-            if (title != null && !"".equals(title.trim()) && comment != null) {
-                WorkflowPersistenceManager wpm = null;
+    if ("add".equals(type)) {
+        String title = request.getParameter("title");
+        String comment = request.getParameter("comment");
+        HippoBean commentTo = this.getContentBean(request);
+        if (!(commentTo instanceof HippoDocumentBean)) {
+            log.warn("Cannot comment on non documents");
+            return;
+        }
+        String commentToUuidOfHandle = ((HippoDocumentBean) commentTo).getCanonicalHandleUUID();
+        if (title != null && !"".equals(title.trim()) && comment != null) {
+            WorkflowPersistenceManager wpm = null;
 
-                try {
-                    wpm = getWorkflowPersistenceManager(requestContext.getSession());
-                    wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
-                        public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
-                            FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
-                            fraw.requestPublication();
-                        }
-                    });
-
-                    // it is not important where we store comments. WE just use some (canonical) time path below our project content
-                    String siteCanonicalBasePath = request.getRequestContext().getResolvedMount().getMount().getCanonicalContentPath();
-                    Calendar currentDate = Calendar.getInstance();
-
-                    String commentsFolderPath = siteCanonicalBasePath + "/comment/" + currentDate.get(Calendar.YEAR) + "/"
-                            + currentDate.get(Calendar.MONTH) + "/" + currentDate.get(Calendar.DAY_OF_MONTH);
-                    // comment node name is simply a concatenation of 'comment-' and current time millis. 
-                    String commentNodeName = "comment-for-" + commentTo.getName() + "-" + System.currentTimeMillis();
-
-                    // create comment node now
-                    wpm.createAndReturn(commentsFolderPath, "demosite:commentdocument", commentNodeName, true);
-
-                    // retrieve the comment content to manipulate
-                    CommentBean commentBean = (CommentBean) wpm.getObject(commentsFolderPath + "/" + commentNodeName);
-                    // update content properties
-                    if (commentBean == null) {
-                        throw new HstComponentException("Failed to add Comment");
+            try {
+                wpm = getWorkflowPersistenceManager(requestContext.getSession());
+                wpm.setWorkflowCallbackHandler(new WorkflowCallbackHandler<FullReviewedActionsWorkflow>() {
+                    public void processWorkflow(FullReviewedActionsWorkflow wf) throws Exception {
+                        FullReviewedActionsWorkflow fraw = (FullReviewedActionsWorkflow) wf;
+                        fraw.requestPublication();
                     }
-                    commentBean.setTitle(SimpleHtmlExtractor.getText(title));
+                });
 
-                    commentBean.setHtml(SimpleHtmlExtractor.getText(comment));
+                // it is not important where we store comments. WE just use some timestamp path below our project content
+                String siteCanonicalBasePath = request.getRequestContext().getResolvedMount().getMount().getCanonicalContentPath();
+                Calendar currentDate = Calendar.getInstance();
 
-                    commentBean.setDate(currentDate);
+                String commentsFolderPath = siteCanonicalBasePath + "/comment/" + currentDate.get(Calendar.YEAR) + "/"
+                        + currentDate.get(Calendar.MONTH) + "/" + currentDate.get(Calendar.DAY_OF_MONTH);
+                // comment node name is simply a concatenation of 'comment-' and current time millis.
+                String commentNodeName = "comment-for-" + commentTo.getName() + "-" + System.currentTimeMillis();
 
-                    commentBean.setCommentTo(commentToUuidOfHandle);
+                // create comment node now
+                wpm.createAndReturn(commentsFolderPath, "demosite:commentdocument", commentNodeName, true);
 
-                    // update now
-                    wpm.update(commentBean);
-                    wpm.save();
+                // retrieve the comment content to manipulate
+                CommentBean commentBean = (CommentBean) wpm.getObject(commentsFolderPath + "/" + commentNodeName);
+                // update content properties
+                if (commentBean == null) {
+                    throw new HstComponentException("Failed to add Comment");
+                }
+                commentBean.setTitle(SimpleHtmlExtractor.getText(title));
 
-                } catch (Exception e) {
-                    log.warn("Failed to create a comment: ", e);
+                commentBean.setHtml(SimpleHtmlExtractor.getText(comment));
 
-                    if (wpm != null) {
-                        try {
-                            wpm.refresh();
-                        } catch (ObjectBeanPersistenceException e1) {
-                            log.warn("Failed to refresh: ", e);
-                        }
+                commentBean.setDate(currentDate);
+
+                commentBean.setCommentTo(commentToUuidOfHandle);
+
+                // update now
+                wpm.update(commentBean);
+                wpm.save();
+
+            } catch (Exception e) {
+                log.warn("Failed to create a comment: ", e);
+
+                if (wpm != null) {
+                    try {
+                        wpm.refresh();
+                    } catch (ObjectBeanPersistenceException e1) {
+                        log.warn("Failed to refresh: ", e);
                     }
                 }
             }
-        } else if ("remove".equals(type)) {
         }
+    } else if ("remove".equals(type)) {
     }
+}
 
     @Persistable
     @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
+
+        System.out.println(request.getParameter("bar"));
 
         super.doBeforeServeResource(request, response);
 
