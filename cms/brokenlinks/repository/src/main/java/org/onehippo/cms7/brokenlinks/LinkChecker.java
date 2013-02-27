@@ -98,6 +98,11 @@ public class LinkChecker {
         runCheckerThreads(links);
     }
 
+    public void shutdown() {
+        // see http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d5e635
+        httpClient.getConnectionManager().shutdown();
+    }
+
     private void runCheckerThreads(final Iterable<Link> links) {
         
         ConcurrentLinkedQueue<Link> queue = new ConcurrentLinkedQueue<Link>();
@@ -173,15 +178,6 @@ public class LinkChecker {
             } catch (NoSuchElementException ex) {
                 // Deliberate ignore, end of run
             }
-
-            // The thread is done with the {@link HttpClient} and hence it is a good practice to direct the connection
-            // manager to shutdown to release any remaining resources
-            // Also based on the usage of the {@link LinkChecker} from {@link CheckBrokenLinksWorkflow}
-            // and its implementation class {@link CheckBrokenLinksWorkflowImpl} for each run a new {@link LinkChecker}
-            // is created and hence it is again better to direct the connection manager to shutdown
-            //
-            // @see http://hc.apache.org/httpcomponents-client-ga/tutorial/html/connmgmt.html#d5e635
-            httpClient.getConnectionManager().shutdown();
         }
     }
 

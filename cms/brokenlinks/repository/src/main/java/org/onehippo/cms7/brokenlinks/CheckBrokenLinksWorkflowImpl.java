@@ -147,9 +147,10 @@ public class CheckBrokenLinksWorkflowImpl extends WorkflowImpl implements CheckB
         start = System.currentTimeMillis();
         // this set keeps track of scanned links to avoid needless double scanning
 
-        // Now first check all external links whether they are available : The linkChecker runs multi-threaded thus 
+        // Now first check all external links whether they are available : The linkChecker runs multi-threaded thus
         // to utilize the multi-threading best, it is best to scan all Links combined, not just the ones for a single handle
         linkChecker.run(linksByURL.values());
+        linkChecker.shutdown();
 
         log.info("Finished testing availability of all URLs. Tested '{}' URLs in {} seconds.", String.valueOf(linksByURL.size()), String.valueOf((scanningTook / 1000.0)));
 
