@@ -37,5 +37,9 @@ public interface ContextCredentialsProvider {
      * @return
      */
     Credentials getWritableCredentials(HstRequestContext requestContext);
-    
+
+    /**
+     * @return the used credentials domain separator
+     */
+    String getCredentialsDomainSeparator();
 }

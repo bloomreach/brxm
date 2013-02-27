@@ -30,19 +30,30 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
     protected Credentials defaultCredentials;
     protected Credentials defaultCredentialsForPreviewMode;
     protected Credentials writableCredentials;
+    protected String credentialsDomainSeparator = String.valueOf('\uFFFF');
     
-    public DefaultContextCredentialsProvider(Credentials defaultCredentials) {
+    public DefaultContextCredentialsProvider(final Credentials defaultCredentials) {
         this(defaultCredentials, null);
     }
     
-    public DefaultContextCredentialsProvider(Credentials defaultCredentials, Credentials defaultCredentialsForPreviewMode) {
+    public DefaultContextCredentialsProvider(final Credentials defaultCredentials,
+                                             final Credentials defaultCredentialsForPreviewMode) {
         this(defaultCredentials, defaultCredentialsForPreviewMode, null);
     }
-    
-    public DefaultContextCredentialsProvider(Credentials defaultCredentials, Credentials defaultCredentialsForPreviewMode, Credentials writableCredentials) {
+
+    public DefaultContextCredentialsProvider(final Credentials defaultCredentials,
+                                             final Credentials defaultCredentialsForPreviewMode,
+                                             final Credentials writableCredentials) {
+        this(defaultCredentials, defaultCredentialsForPreviewMode, null, null);
+    }
+    public DefaultContextCredentialsProvider(final Credentials defaultCredentials,
+                                             final Credentials defaultCredentialsForPreviewMode,
+                                             final Credentials writableCredentials,
+                                             final String credentialsDomainSeparator) {
         this.defaultCredentials = defaultCredentials;
         this.defaultCredentialsForPreviewMode = defaultCredentialsForPreviewMode;
         this.writableCredentials = writableCredentials;
+        this.credentialsDomainSeparator = credentialsDomainSeparator;
     }
     
     public Credentials getDefaultCredentials(HstRequestContext requestContext) {
@@ -55,5 +66,10 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
     
     public Credentials getWritableCredentials(HstRequestContext requestContext) {
         return writableCredentials;
+    }
+
+    @Override
+    public String getCredentialsDomainSeparator() {
+        return credentialsDomainSeparator;
     }
 }

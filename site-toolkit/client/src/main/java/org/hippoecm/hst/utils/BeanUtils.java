@@ -16,6 +16,7 @@
 package org.hippoecm.hst.utils;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -24,6 +25,7 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
@@ -39,10 +41,12 @@ import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
+import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.ContentBeanUtils;
 import org.hippoecm.hst.util.PathUtils;
@@ -470,22 +474,44 @@ public class BeanUtils {
      * @throws HstComponentException
      */
     public static Session getDisposablePoolSession(HstRequestContext requestContext, String disposablePoolIdentifier) throws HstComponentException {
-        Credentials cred = requestContext.getContextCredentialsProvider().getDefaultCredentials(requestContext);
 
-        String userID =  ((SimpleCredentials)cred).getUserID();
-        char[] passwd = ((SimpleCredentials)cred).getPassword();
-
-        String disposablePoolSessionUserId = userID + ";"+disposablePoolIdentifier + ";disposable";
-
-        String disposableKey = DISPOSABLE_SESSION_KEY_PREFIX + ";" + disposablePoolSessionUserId;
-        Session session = (Session)requestContext.getAttribute(disposableKey);
-        if (session != null) {
-            log.debug("There is already a disposable session for '{}' on the request context. Return that session", disposablePoolSessionUserId);
-            return session;
-        }
-        SimpleCredentials disposablePoolSessionCredentials = new SimpleCredentials(disposablePoolSessionUserId, passwd);
-        Repository repo = HstServices.getComponentManager().getComponent(Repository.class.getName());
         try {
+            String userID = null;
+            Credentials cred = null;
+            // if there exists subject based session, do use the credentials of that session to create session from disposable pool
+            Session existingSession = requestContext.getSession(false);
+            if (existingSession instanceof LazySession) {
+                existingSession.getUserID();
+                Subject subject = HstSubject.getSubject(null);
+                if (subject != null) {
+                    Set<Credentials> repoCredsSet = subject.getPrivateCredentials(Credentials.class);
+                    if (!repoCredsSet.isEmpty()) {
+                        cred = repoCredsSet.iterator().next();
+                        // this userID does not contain the mandatory credential domain separator needed for the lazy pools
+                        // hence we append it with [separator]lazy, for example @lazy
+                        userID = ((SimpleCredentials) cred).getUserID() +
+                                requestContext.getContextCredentialsProvider().getCredentialsDomainSeparator() + "lazy";
+                    }
+                }
+            }
+            if (cred == null) {
+                cred = requestContext.getContextCredentialsProvider().getDefaultCredentials(requestContext);
+                userID = ((SimpleCredentials) cred).getUserID();
+            }
+
+            char[] passwd = ((SimpleCredentials) cred).getPassword();
+
+            String disposablePoolSessionUserId = userID + ";" + disposablePoolIdentifier + ";disposable";
+
+            String disposableKey = DISPOSABLE_SESSION_KEY_PREFIX + ";" + disposablePoolSessionUserId;
+            Session session = (Session) requestContext.getAttribute(disposableKey);
+            if (session != null) {
+                log.debug("There is already a disposable session for '{}' on the request context. Return that session", disposablePoolSessionUserId);
+                return session;
+            }
+            SimpleCredentials disposablePoolSessionCredentials = new SimpleCredentials(disposablePoolSessionUserId, passwd);
+            Repository repo = HstServices.getComponentManager().getComponent(Repository.class.getName());
+
             session = repo.login(disposablePoolSessionCredentials);
             requestContext.setAttribute(disposableKey, session);
             return session;
