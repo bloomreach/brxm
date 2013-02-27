@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-class ModuleRegistration implements Comparable<ModuleRegistration> {
+class ModuleRegistration {
 
     private final String moduleName;
     private final Class<? extends DaemonModule> moduleClass;
@@ -67,31 +67,4 @@ class ModuleRegistration implements Comparable<ModuleRegistration> {
         return Collections.emptyList();
     }
 
-    boolean requires(ModuleRegistration module) {
-        final Collection<Class<?>> requirements = requirements();
-        if (!requirements.isEmpty()) {
-            for (Class<?> service : module.provides()) {
-                if (requirements.contains(service)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    @Override
-    public int compareTo(final ModuleRegistration o) {
-        if (this.requires(o)) {
-            return 1;
-        }
-        if (o.requires(this)) {
-            return -1;
-        }
-        return 0;
-    }
-
-    @Override
-    public String toString() {
-        return moduleName;
-    }
 }

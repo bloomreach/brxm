@@ -68,7 +68,7 @@ public class ModuleManager {
         registry.checkDependencyGraph();
     }
 
-    private void registerModule(DaemonModule module) {
+    private void registerModule(DaemonModule module) throws RepositoryException {
         registry.registerModule(module);
     }
 

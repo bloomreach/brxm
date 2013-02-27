@@ -16,12 +16,11 @@
 package org.onehippo.repository.modules;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
@@ -36,23 +35,66 @@ class ModuleRegistry {
 
     ModuleRegistry() {}
 
-    void registerModule(DaemonModule module) {
-        registrations.add(new ModuleRegistration(module));
+    void registerModule(DaemonModule module) throws RepositoryException {
+        addRegistration(new ModuleRegistration(module));
     }
 
-    void registerModule(String moduleName, Class<? extends DaemonModule> moduleClass) {
-        registrations.add(new ModuleRegistration(moduleName, moduleClass));
+    void registerModule(String moduleName, Class<? extends DaemonModule> moduleClass) throws RepositoryException {
+        addRegistration(new ModuleRegistration(moduleName, moduleClass));
+    }
+
+    private void addRegistration(ModuleRegistration registration) throws RepositoryException {
+        if (registrations.isEmpty()) {
+            registrations.add(registration);
+        } else {
+            final Collection<Class<?>> requirements = registration.requirements();
+            int insertAfter = -1;
+            if (!requirements.isEmpty()) {
+                for (Class<?> service : requirements) {
+                    for (ModuleRegistration other : registrations) {
+                        if (other.provides().contains(service)) {
+                            int index = registrations.indexOf(other);
+                            if (insertAfter == -1 || index > insertAfter) {
+                                insertAfter = index;
+                            }
+                        }
+                    }
+                }
+            }
+            final Collection<Class<?>> provides = registration.provides();
+            int insertBefore = -1;
+            if (!provides.isEmpty()) {
+                for (Class<?> service : provides) {
+                    for (ModuleRegistration other : registrations) {
+                        if (other.requirements().contains(service)) {
+                            int index = registrations.indexOf(other);
+                            if (insertBefore == -1 || index < insertBefore) {
+                                insertBefore = index;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (insertBefore > -1 && insertBefore < insertAfter) {
+                final String moduleName = registration.getModuleName();
+                final String requiredBy = registrations.get(insertBefore).getModuleName();
+                final String dependsOn = registrations.get(insertAfter).getModuleName();
+                throw new RepositoryException("Circular dependency detected: '"
+                        + moduleName + "' " + "depends on '" + dependsOn
+                        + "' and is required by '" + requiredBy + "'");
+            }
+
+            registrations.add(insertAfter+1, registration);
+        }
     }
 
     List<ModuleRegistration> getModuleRegistrations() {
-        final ArrayList<ModuleRegistration> moduleRegistrations = new ArrayList<ModuleRegistration>(registrations);
-        Collections.sort(moduleRegistrations);
-        return Collections.unmodifiableList(moduleRegistrations);
+        return Collections.unmodifiableList(registrations);
     }
 
     List<ModuleRegistration> getModuleRegistrationsReverseOrder() {
         final ArrayList<ModuleRegistration> moduleRegistrations = new ArrayList<ModuleRegistration>(registrations);
-        Collections.sort(moduleRegistrations);
         Collections.reverse(moduleRegistrations);
         return Collections.unmodifiableList(moduleRegistrations);
     }
@@ -64,40 +106,13 @@ class ModuleRegistry {
                 provided.put(aClass, registration);
             }
         }
-        final Map<ModuleRegistration, List<ModuleRegistration>> requirements =
-                new HashMap<ModuleRegistration, List<ModuleRegistration>>();
         for (ModuleRegistration registration : registrations) {
-            final List<ModuleRegistration> requires = new ArrayList<ModuleRegistration>();
             for (Class<?> requiredClass : registration.requirements()) {
-                if (provided.containsKey(requiredClass)) {
-                    requires.add(provided.get(requiredClass));
-                } else {
+                if (!provided.containsKey(requiredClass)) {
                     log.warn("Module {} has unsatisfied dependency on service {}",
                             registration.getModuleName(), requiredClass);
                 }
             }
-            requirements.put(registration, requires);
-        }
-        for (ModuleRegistration registration : registrations) {
-            detectCircularDependency(registration, requirements, new HashSet<ModuleRegistration>());
-        }
-    }
-
-    private void detectCircularDependency(final ModuleRegistration module,
-                                          final Map<ModuleRegistration, List<ModuleRegistration>> requirements,
-                                          final Set<ModuleRegistration> modules) throws RepositoryException {
-        if (modules.contains(module)) {
-            final StringBuilder sb = new StringBuilder();
-            for (ModuleRegistration m: modules) {
-                sb.append(m.getModuleName() != null ? m.getModuleName() : m.getModuleClass());
-                sb.append(", ");
-            }
-            sb.append(module.getModuleName() != null ? module.getModuleName() : module.getModuleClass());
-            throw new RepositoryException("Circular dependency detected among modules: " + sb);
-        }
-        modules.add(module);
-        for (ModuleRegistration requirement : requirements.get(module)) {
-            detectCircularDependency(requirement, requirements, new HashSet<ModuleRegistration>(modules));
         }
     }
 

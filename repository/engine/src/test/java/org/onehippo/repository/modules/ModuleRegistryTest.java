@@ -28,19 +28,19 @@ import static junit.framework.Assert.fail;
 public class ModuleRegistryTest {
 
     @Test
-    public void testDetectCircularDependencies() {
+    public void testDetectCircularDependencies() throws Exception {
         ModuleRegistry registry = new ModuleRegistry();
         registry.registerModule(new Test1Module());
         registry.registerModule(new Test2Module());
-        registry.registerModule(new CircularTest3Module());
         try {
-            registry.checkDependencyGraph();
+            registry.registerModule(new CircularTest3Module());
             fail("Circular dependencies not detected");
-        } catch (RepositoryException expected) {}
+        } catch (RepositoryException expected) {
+        }
     }
 
     @Test
-    public void testOrderModules() {
+    public void testOrderModules() throws Exception {
         ModuleRegistry registry = new ModuleRegistry();
         registry.registerModule("test1", Test1Module.class);
         registry.registerModule("test2", Test2Module.class);
