@@ -26,9 +26,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.EnumSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Properties;
 
 import javax.jcr.AccessDeniedException;
@@ -56,15 +53,13 @@ import org.apache.jackrabbit.core.fs.FileSystemException;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
-import org.hippoecm.repository.ext.DaemonModule;
 import org.hippoecm.repository.impl.DecoratorFactoryImpl;
 import org.hippoecm.repository.impl.InitializationProcessorImpl;
 import org.hippoecm.repository.impl.ReferenceWorkspaceImpl;
-import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
-import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.util.RepoUtils;
+import org.onehippo.repository.modules.ModuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +113,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         TRUE, FALSE, ABORT
     }
 
-    List<DaemonModule> daemonModules = new LinkedList<DaemonModule>();
+    private ModuleManager moduleManager;
 
     protected LocalHippoRepository() throws RepositoryException {
         super();
@@ -386,18 +381,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
                 migrate(jcrRootSession);
             }
 
-            for(DaemonModule module : new Modules<DaemonModule>(Modules.getModules(), DaemonModule.class)) {
-                Session moduleSession = syncSession.impersonate(new SimpleCredentials("system", new char[]{}));
-                moduleSession = DecoratorFactoryImpl.getSessionDecorator(moduleSession);
-                try {
-                    module.initialize(moduleSession);
-                    daemonModules.add(module);
-                } catch(RepositoryException ex) {
-                    log.error("Module "+module.toString()+" failed to initialize", ex);
-                }
-            }
+            moduleManager = new ModuleManager(jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+            moduleManager.start();
 
-            syncSession.logout(); // the spawned impersonated sessions should remain active though
+            syncSession.logout();
 
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);
@@ -520,14 +507,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     @Override
     public synchronized void close() {
-        for(DaemonModule module : daemonModules) {
-            try {
-                module.shutdown();
-            } catch (Exception e) {
-                log.error("Error while shutting down deamon module", e);
-            }
-        }
-        daemonModules.clear();
+
+        moduleManager.stop();
 
         Session session = null;
         if (dump && repository != null) {

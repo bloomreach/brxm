@@ -12,8 +12,5 @@ Hippo-Modules: org.hippoecm.repository.jackrabbit.ViewVirtualProvider
  .FacetNavigationProvider org.hippoecm.repository.jackrabbit.facetnavi
  gation.FacetsAvailableNavigationProvider org.hippoecm.repository.jack
  rabbit.facetnavigation.FacetSubNavigationProvider org.hippoecm.reposi
- tory.jackrabbit.SubtypedDataProvider org.hippoecm.repository.logging.
- RepositoryLogger org.hippoecm.repository.logging.EventLogCleanupModul
- e org.hippoecm.repository.translation.impl.TranslationVirtualProvider
-  org.hippoecm.repository.events.BroadcastModule
+ tory.jackrabbit.SubtypedDataProvider org.hippoecm.repository.translation.impl.TranslationVirtualProvider
 

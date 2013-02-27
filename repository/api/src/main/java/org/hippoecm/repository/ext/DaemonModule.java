@@ -15,12 +15,9 @@
  */
 package org.hippoecm.repository.ext;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-
-public interface DaemonModule {
-
-    public void initialize(Session session) throws RepositoryException;
-
-    public void shutdown();
+/**
+ * @deprecated Use {@link org.onehippo.repository.modules.DaemonModule} instead.
+ */
+@Deprecated
+public interface DaemonModule extends org.onehippo.repository.modules.DaemonModule {
 }

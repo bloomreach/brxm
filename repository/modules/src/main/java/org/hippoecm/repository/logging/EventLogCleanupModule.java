@@ -32,7 +32,8 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.api.HippoNodeIterator;
-import org.hippoecm.repository.ext.DaemonModule;
+import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -55,10 +56,10 @@ import org.slf4j.LoggerFactory;
  * - property 'maxitems' (Long) the maximum number of items to keep in the logs. Defaults to -1, which means no maximum.
  * - property 'keepitemsfor' (Long) the number of milliseconds to keep items in the logs.
  */
-public class EventLogCleanupModule implements DaemonModule {
+public class EventLogCleanupModule implements ConfigurableDaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(EventLogCleanupModule.class);
-    private static final String CONFIG_NODE_PATH = "/hippo:configuration/hippo:modules/eventlogcleanup/hippo:moduleconfig";
+    private static final String CONFIG_MODULECONFIGPATH = "moduleconfigpath";
     private static final String CONFIG_MAXITEMS_PROPERTY = "maxitems";
     private static final String CONFIG_KEEP_ITEMS_FOR = "keepitemsfor";
     private static final String CONFIG_CRONEXPRESSION_PROPERTY = "cronexpression";
@@ -88,12 +89,14 @@ public class EventLogCleanupModule implements DaemonModule {
     private EventListener configurationListener;
     private JobDetail job;
     private String quartzNamePostfix = "";
+    private String moduleConfigPath;
 
     public EventLogCleanupModule() {
     }
 
     /* Constructor for testing. */
-    EventLogCleanupModule(String cronExpression, long maxitems, long itemstimeout, JobListener jobListener, Session session) throws RepositoryException, SchedulerException, ParseException {
+    EventLogCleanupModule(String moduleConfigPath, String cronExpression, long maxitems, long itemstimeout, JobListener jobListener, Session session) throws RepositoryException, SchedulerException, ParseException {
+        this.moduleConfigPath = moduleConfigPath;
         this.cronExpression = cronExpression;
         this.maxitems = maxitems;
         this.itemtimeout = itemstimeout;
@@ -134,6 +137,7 @@ public class EventLogCleanupModule implements DaemonModule {
             job = new JobDetail("EventLogCleanupJob" + quartzNamePostfix, EventLogCleanupJob.class);
             job.getJobDataMap().put(CONFIG_MAXITEMS_PROPERTY, maxitems);
             job.getJobDataMap().put(CONFIG_KEEP_ITEMS_FOR, itemtimeout);
+            job.getJobDataMap().put(CONFIG_MODULECONFIGPATH, moduleConfigPath);
             job.getJobDataMap().put("session", session);
             CronTrigger trigger = new CronTrigger("EventLogCleanupTrigger" + quartzNamePostfix);
             trigger.setCronExpression(cronExpression);
@@ -149,32 +153,21 @@ public class EventLogCleanupModule implements DaemonModule {
         scheduler.deleteJob(job.getName(), job.getGroup());
     }
 
-    private void configure() throws RepositoryException {
-        cronExpression = null;
-        maxitems = -1;
-        itemtimeout = -1;
-        if (session.nodeExists(CONFIG_NODE_PATH)) {
-            Node configNode = session.getNode(CONFIG_NODE_PATH);
-            if (configNode.hasProperty(CONFIG_CRONEXPRESSION_PROPERTY)) {
-                cronExpression = configNode.getProperty(CONFIG_CRONEXPRESSION_PROPERTY).getString();
-            }
-            if (configNode.hasProperty(CONFIG_MAXITEMS_PROPERTY)) {
-                maxitems = configNode.getProperty(CONFIG_MAXITEMS_PROPERTY).getLong();
-            }
-            if (configNode.hasProperty(CONFIG_KEEP_ITEMS_FOR)) {
-                itemtimeout = configNode.getProperty(CONFIG_KEEP_ITEMS_FOR).getLong();
-            }
-        }
+    @Override
+    public void configure(final Node moduleConfig) throws RepositoryException {
+        moduleConfigPath = moduleConfig.getPath();
+        cronExpression = JcrUtils.getStringProperty(moduleConfig, CONFIG_CRONEXPRESSION_PROPERTY, null);
+        maxitems = JcrUtils.getLongProperty(moduleConfig, CONFIG_MAXITEMS_PROPERTY, -1l);
+        itemtimeout = JcrUtils.getLongProperty(moduleConfig, CONFIG_KEEP_ITEMS_FOR, -1l);
     }
 
     @Override
     public void initialize(final Session session) throws RepositoryException {
         this.session = session;
-        configure();
         startScheduler();
         scheduleJob();
         configurationListener = new ConfigurationListener();
-        session.getWorkspace().getObservationManager().addEventListener(configurationListener, EVENT_TYPES, CONFIG_NODE_PATH, false, null, null, true);
+        session.getWorkspace().getObservationManager().addEventListener(configurationListener, EVENT_TYPES, moduleConfigPath, false, null, null, true);
     }
 
     @Override
@@ -210,10 +203,11 @@ public class EventLogCleanupModule implements DaemonModule {
             }
 
             Session session = (Session) context.getMergedJobDataMap().get("session");
+            String moduleConfigPath = (String) context.getMergedJobDataMap().get(CONFIG_MODULECONFIGPATH);
 
             try {
                 // make sure only one cluster node runs the scheduled cleanup job
-                if (!lock(session)) {
+                if (!lock(session, moduleConfigPath)) {
                     return;
                 }
 
@@ -227,23 +221,23 @@ public class EventLogCleanupModule implements DaemonModule {
             } catch (RepositoryException e) {
                 log.error("Error while cleaning up event log", e);
             } finally {
-                unlock(session);
+                unlock(session, moduleConfigPath);
                 buzy = false;
             }
 
         }
         
-        private boolean lock(Session session) {
+        private boolean lock(Session session, String moduleConfigPath) {
             try {
-                Node lockable = session.getNode(CONFIG_NODE_PATH);
+                Node lockable = session.getNode(moduleConfigPath);
                 if (!lockable.isNodeType("mix:lockable")) {
-                    log.error("Node " + CONFIG_NODE_PATH + " must be lockable");
+                    log.error("Node " + moduleConfigPath + " must be lockable");
                     return false;
                 }
                 LockManager lockManager = session.getWorkspace().getLockManager();
-                if (!lockManager.isLocked(CONFIG_NODE_PATH)) {
+                if (!lockManager.isLocked(moduleConfigPath)) {
                     try {
-                        lockManager.lock(CONFIG_NODE_PATH, false, false, ONE_WEEK, getClusterNodeId(session));
+                        lockManager.lock(moduleConfigPath, false, false, ONE_WEEK, getClusterNodeId(session));
                         return true;
                     } catch (LockException e) {
                         log.warn("Failed to obtain lock: " + e.getMessage() + ". Event log cleanup will not run");
@@ -255,12 +249,12 @@ public class EventLogCleanupModule implements DaemonModule {
             return false;
         }
         
-        private void unlock(Session session) {
+        private void unlock(Session session, String moduleConfigPath) {
             try {
                 LockManager lockManager = session.getWorkspace().getLockManager();
-                Lock lock = lockManager.getLock(CONFIG_NODE_PATH);
+                Lock lock = lockManager.getLock(moduleConfigPath);
                 if (lock.isLockOwningSession()) {
-                    lockManager.unlock(CONFIG_NODE_PATH);
+                    lockManager.unlock(moduleConfigPath);
                 }
             } catch (RepositoryException e) {
                 log.error("Error releasing lock", e);
@@ -367,7 +361,7 @@ public class EventLogCleanupModule implements DaemonModule {
                 try {
                     synchronized (EventLogCleanupModule.this) {
                         unscheduleJob();
-                        configure();
+                        configure(session.getNode(moduleConfigPath));
                         scheduleJob();
                     }
                 } catch (RepositoryException e) {

@@ -36,7 +36,7 @@ import javax.jcr.observation.EventListener;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.ext.DaemonModule;
+import org.onehippo.repository.modules.DaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

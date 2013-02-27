@@ -242,11 +242,13 @@
 + * (hipposys:securityprovider) = hipposys:securityprovider
 
 [hipposys:module] > nt:base
+- hipposys:className (string)
 + hippo:moduleconfig
 
 [hipposys:modulefolder] > nt:base
 + * (hipposys:module) = hipposys:module
 
+// autoexport nodetype def is deprecated
 [hipposys:autoexport] > nt:base
 - hipposys:enabled (boolean) = 'true' mandatory autocreated
 - hipposys:excluded (string) multiple

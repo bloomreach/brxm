@@ -21,6 +21,10 @@ api/src/main/java/org/hippoecm/repository/util/DateTools.java -text
 api/src/main/java/org/hippoecm/repository/util/JcrUtils.java -text
 api/src/main/java/org/hippoecm/repository/util/NodeIterable.java -text
 api/src/main/java/org/hippoecm/repository/util/PropertyIterable.java -text
+api/src/main/java/org/onehippo/repository/modules/AbstractReconfigurableDaemonModule.java -text
+api/src/main/java/org/onehippo/repository/modules/ConfigurableDaemonModule.java -text
+api/src/main/java/org/onehippo/repository/modules/ProvidesService.java -text
+api/src/main/java/org/onehippo/repository/modules/RequiresService.java -text
 api/src/main/java/org/onehippo/repository/scheduling/RepositoryJob.java -text
 api/src/main/java/org/onehippo/repository/scheduling/RepositoryJobCronTrigger.java -text
 api/src/main/java/org/onehippo/repository/scheduling/RepositoryJobExecutionContext.java -text
@@ -53,7 +57,6 @@ config/src/main/resources/domain-hippomodules.xml -text
 config/src/main/resources/domain-hipporequests.xml svneol=native#text/plain
 config/src/main/resources/domain-workflow.xml -text svneol=unset#text/plain
 config/src/main/resources/embedded-workflows.xml -text
-config/src/main/resources/eventlogcleanup-module.xml -text
 config/src/main/resources/group-author.xml -text svneol=unset#text/plain
 config/src/main/resources/group-editor.xml -text svneol=unset#text/plain
 config/src/main/resources/group-everybody.xml -text svneol=unset#text/plain
@@ -72,6 +75,7 @@ config/src/main/resources/role-jcrread.xml -text svneol=unset#text/plain
 config/src/main/resources/scheduler-module.xml -text
 config/src/main/resources/shortcuts-workflows.xml svneol=native#text/plain
 config/src/main/resources/updater-configuration.xml -text
+config/src/main/resources/updater-execution-module.xml -text
 config/src/main/resources/versioning-workflows.xml -text
 config/src/test/resources/hippoecm-extension.xml svneol=native#text/plain
 config/src/test/resources/repository-test.cnd -text
@@ -172,12 +176,14 @@ engine/src/main/java/org/hippoecm/repository/standardworkflow/EventLoggerImpl.ja
 engine/src/main/java/org/hippoecm/repository/standardworkflow/FolderWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/NullWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/WorkflowEventLoggerWorkflowImpl.java -text
+engine/src/main/java/org/onehippo/repository/modules/ModuleManager.java -text
+engine/src/main/java/org/onehippo/repository/modules/ModuleRegistration.java -text
+engine/src/main/java/org/onehippo/repository/modules/ModuleRegistry.java -text
 engine/src/main/java/org/onehippo/repository/update/GroovyUpdaterClassLoader.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionModule.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutionReport.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterExecutor.java -text
 engine/src/main/java/org/onehippo/repository/update/UpdaterInfo.java -text
-engine/src/main/resources/META-INF/MANIFEST.MF -text
 engine/src/main/resources/hippo.cnd -text
 engine/src/main/resources/hippofacnav.cnd -text
 engine/src/main/resources/hipposched.cnd -text
@@ -205,6 +211,7 @@ engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/DereferencedExportTe
 engine/src/test/java/org/hippoecm/repository/jackrabbit/xml/ImportTest.java -text
 engine/src/test/java/org/hippoecm/repository/quartz/JCRJobStoreTest.java -text
 engine/src/test/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCacheTest.java -text svneol=unset#text/plain
+engine/src/test/java/org/onehippo/repository/modules/ModuleRegistryTest.java -text
 engine/src/test/java/org/onehippo/repository/update/GroovyUpdaterClassLoaderTest.java -text
 engine/src/test/resources/InvalidJobDetail.ser -text
 engine/src/test/resources/domain-defaultread.xml svneol=native#text/plain
@@ -260,7 +267,9 @@ modules/src/main/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetsA
 modules/src/main/java/org/hippoecm/repository/logging/EventLogCleanupModule.java -text
 modules/src/main/java/org/hippoecm/repository/logging/RepositoryLogger.java -text
 modules/src/main/resources/META-INF/MANIFEST.MF -text
+modules/src/main/resources/eventlogcleanup-module.xml -text
 modules/src/main/resources/hippobroadcast.cnd -text
+modules/src/main/resources/repository-logger-module.xml -text
 modules/src/test/java/org/hippoecm/repository/jackrabbit/FacetSearchEntryCompareTest.java -text svneol=unset#text/plain
 modules/src/test/java/org/hippoecm/repository/jackrabbit/facetnavigation/FacetNavigationEntryCompareTest.java -text svneol=unset#text/plain
 provider/src/main/java/org/hippoecm/repository/FacetFilters.java svneol=native#text/plain

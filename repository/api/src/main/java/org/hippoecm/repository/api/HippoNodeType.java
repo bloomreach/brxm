@@ -38,6 +38,8 @@ public interface HippoNodeType {
 
     public static final String INITIALIZE_PATH = "hippo:initialize";
 
+    public static final String MODULES_PATH = "hippo:modules";
+
     public static final String NAMESPACES_PATH = "hippo:namespaces";
 
     public static final String PLUGIN_PATH = "hippo:plugins";
@@ -400,4 +402,5 @@ public interface HippoNodeType {
     public static final String HIPPOSYS_LOG = "hipposys:log";
 
     public static final String HIPPOSYS_LOGTAIL = "hipposys:logtail";
+
 }

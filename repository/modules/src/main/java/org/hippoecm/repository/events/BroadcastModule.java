@@ -30,16 +30,16 @@ import com.google.common.collect.Multimap;
 import com.google.common.eventbus.HippoAnnotationHandlerFinder;
 import com.google.common.eventbus.HippoSynchronizedEventHandler;
 
-import org.hippoecm.repository.ext.DaemonModule;
 import org.onehippo.cms7.services.HippoServiceRegistration;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.events.HippoWorkflowEvent;
 import org.onehippo.repository.events.Persisted;
+import org.onehippo.repository.modules.ConfigurableDaemonModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BroadcastModule implements DaemonModule, BroadcastService {
+public class BroadcastModule implements ConfigurableDaemonModule, BroadcastService {
 
     private static final Logger log = LoggerFactory.getLogger(BroadcastModule.class);
 
@@ -49,8 +49,14 @@ public class BroadcastModule implements DaemonModule, BroadcastService {
     private Session session;
     private String clusterId;
     private BroadcastThread broadcastThread;
+    private String moduleConfigPath;
 
     public BroadcastModule() {
+    }
+
+    @Override
+    public void configure(final Node moduleConfig) throws RepositoryException {
+        this.moduleConfigPath = moduleConfig.getPath();
     }
 
     public void initialize(Session session) throws RepositoryException {
@@ -79,9 +85,8 @@ public class BroadcastModule implements DaemonModule, BroadcastService {
 
     protected void configure(final BroadcastThread broadcastThread) throws RepositoryException {
         try {
-            if (session.nodeExists(BroadcastConstants.MODULE_CONFIG_PATH)) {
-                Node moduleConfigNode = session.getNode(BroadcastConstants.MODULE_CONFIG_PATH);
-                
+            if (session.nodeExists(moduleConfigPath)) {
+                final Node moduleConfigNode = session.getNode(moduleConfigPath);
                 if (moduleConfigNode != null) {
                     if (moduleConfigNode.hasProperty("queryLimit")) {
                         broadcastThread.setQueryLimit(moduleConfigNode.getProperty("queryLimit").getLong());
@@ -106,8 +111,8 @@ public class BroadcastModule implements DaemonModule, BroadcastService {
 
         try {
             String clusterId = getClusterId();
-            if (session.nodeExists(BroadcastConstants.MODULE_CONFIG_PATH)) {
-                Node moduleConfigNode = session.getNode(BroadcastConstants.MODULE_CONFIG_PATH);
+            if (session.nodeExists(moduleConfigPath)) {
+                Node moduleConfigNode = session.getNode(moduleConfigPath);
 
                 if (moduleConfigNode.hasNode(clusterId)) {
                     Node clusterNode = moduleConfigNode.getNode(clusterId);
@@ -139,8 +144,8 @@ public class BroadcastModule implements DaemonModule, BroadcastService {
             session.refresh(true);
 
             String clusterId = getClusterId();
-            if (session.nodeExists(BroadcastConstants.MODULE_CONFIG_PATH)) {
-                Node moduleConfigNode = session.getNode(BroadcastConstants.MODULE_CONFIG_PATH);
+            if (session.nodeExists(moduleConfigPath)) {
+                Node moduleConfigNode = session.getNode(moduleConfigPath);
 
                 Node clusterNode;
                 if (moduleConfigNode.hasNode(clusterId)) {

@@ -77,7 +77,8 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
         logEvent("userName", "className", "methodName");
 
         // run cleanup module with maximum items of 1 and no item timeout
-        EventLogCleanupModule module = new EventLogCleanupModule("0/2 * * * * ?", 1l, -1l, new TestJobListener(), session);
+        EventLogCleanupModule module = new EventLogCleanupModule("/hippo:configuration/hippo:modules/eventlogcleanup/hippo:moduleconfig",
+                "0/2 * * * * ?", 1l, -1l, new TestJobListener(), session);
 
         synchronized (monitor) {
             while (!jobExecuted) {
@@ -98,7 +99,8 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
         logEvent("userName", "className", "methodName");
 
         // run cleanup module with no maximum to the number of items and all items timed out
-        EventLogCleanupModule module = new EventLogCleanupModule("0/2 * * * * ?", -1l, 0l, new TestJobListener(), session);
+        EventLogCleanupModule module = new EventLogCleanupModule("/hippo:configuration/hippo:modules/eventlogcleanup/hippo:moduleconfig",
+                "0/2 * * * * ?", -1l, 0l, new TestJobListener(), session);
 
         synchronized (monitor) {
             while (!jobExecuted) {

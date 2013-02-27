@@ -17,8 +17,6 @@ package org.hippoecm.repository.events;
 
 public interface BroadcastConstants {
 
-    String MODULE_CONFIG_PATH = "/hippo:configuration/hippo:modules/broadcast/hippo:moduleconfig";
-
     String NT_CLUSTERNODE = "hippobroadcast:clusternode";
     String NT_SUBSCRIBER = "hippobroadcast:subscriber";
 

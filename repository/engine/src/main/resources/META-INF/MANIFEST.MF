@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Specification-Title: Repository Engine
-Specification-Vendor: Hippo
-Implementation-Title: Repository Engine
-Implementation-Vendor-Id: org.onehippo.cms7
-Implementation-Vendor: Hippo
-Hippo-Modules: org.hippoecm.repository.quartz.SchedulerModule org.hippoecm.repository.quartz.workflow.SchedulerWorkflowModule org.onehippo.repository.update.UpdaterExecutionModule

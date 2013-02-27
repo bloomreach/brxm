@@ -20,8 +20,9 @@ import java.util.Properties;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.ext.DaemonModule;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.modules.DaemonModule;
+import org.onehippo.repository.modules.ProvidesService;
 import org.onehippo.repository.scheduling.RepositoryScheduler;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -32,6 +33,7 @@ import org.quartz.simpl.SimpleThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@ProvidesService(types = { RepositoryScheduler.class } )
 public class SchedulerModule implements DaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(SchedulerModule.class);
@@ -52,7 +54,6 @@ public class SchedulerModule implements DaemonModule {
     private Session session;
     private JCRScheduler scheduler = null;
     private RepositoryScheduler service;
-
 
     private static boolean isEnabled() {
         return !Boolean.getBoolean("hippo.scheduler.disabled");
