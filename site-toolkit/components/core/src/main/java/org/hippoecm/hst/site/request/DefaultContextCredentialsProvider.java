@@ -44,7 +44,7 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
     public DefaultContextCredentialsProvider(final Credentials defaultCredentials,
                                              final Credentials defaultCredentialsForPreviewMode,
                                              final Credentials writableCredentials) {
-        this(defaultCredentials, defaultCredentialsForPreviewMode, null, null);
+        this(defaultCredentials, defaultCredentialsForPreviewMode, writableCredentials, null);
     }
     public DefaultContextCredentialsProvider(final Credentials defaultCredentials,
                                              final Credentials defaultCredentialsForPreviewMode,
