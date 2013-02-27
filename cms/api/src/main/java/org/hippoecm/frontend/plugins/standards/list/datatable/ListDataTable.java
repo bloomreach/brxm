@@ -158,7 +158,7 @@ public class ListDataTable<T> extends DataTable<T> {
     }
 
     public void render(PluginRequestTarget target) {
-        if (target != null && dirty.size() > 0) {
+        if (target != null && !dirty.isEmpty()) {
             int count = getRowsPerPage();
             int offset = getCurrentPage() * getRowsPerPage();
             if (offset + count > provider.size()) {
