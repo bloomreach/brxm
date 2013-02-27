@@ -88,11 +88,13 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
 
         Node document = session.getRootNode().getNode("test/folder/document/document");
         document.addMixin("hippo:harddocument");
+        document.addNode(HippoTranslationNodeType.TRANSLATIONS, HippoTranslationNodeType.TRANSLATIONS);
 
         Node folder = session.getRootNode().getNode("test/folder");
         folder.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
         folder.setProperty(HippoTranslationNodeType.LOCALE, "en");
         folder.setProperty(HippoTranslationNodeType.ID, FOLDER_T9N_ID);
+        folder.addNode(HippoTranslationNodeType.TRANSLATIONS, HippoTranslationNodeType.TRANSLATIONS);
 
         Node folderNl = session.getRootNode().getNode("test/folder_nl");
         folderNl.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
