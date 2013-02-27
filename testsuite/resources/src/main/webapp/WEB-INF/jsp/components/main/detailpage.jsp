@@ -150,8 +150,9 @@
 </form>
 
 <hst:headContribution category="jsInline">
+
+<hst:link var="yuiBase" path="/javascript/yui/"/>
 <script type="text/javascript" language="javascript">
-<![CDATA[<!--]]>
 //Instantiate and configure Loader:
 var loader = new YAHOO.util.YUILoader({
 
@@ -160,7 +161,7 @@ var loader = new YAHOO.util.YUILoader({
     require: ["container", "menu", "button", "editor", "json", "resize"],
 
     // Configure loader to retrieve the libraries locally
-    base: '<hst:link path="/javascript/yui/yuiloader/yuiloader-min.js'.replace(/\/yuiloader\/yuiloader-min.js$/, '\/'),
+    base: '${yuiBase}',
 
     // Configure loader to pull in optional dependencies.  For example, animation
     // is an optional dependency for slider.
@@ -194,6 +195,5 @@ var loader = new YAHOO.util.YUILoader({
 // configuration object, and in this case we have configured everything in
 // the constructor, so we don't need to pass anything to insert().
 loader.insert();
-<![CDATA[//-->]]>
 </script>
 </hst:headContribution>
