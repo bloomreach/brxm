@@ -508,7 +508,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     @Override
     public synchronized void close() {
 
-        moduleManager.stop();
+        if (moduleManager != null) {
+            moduleManager.stop();
+            moduleManager = null;
+        }
 
         Session session = null;
         if (dump && repository != null) {
