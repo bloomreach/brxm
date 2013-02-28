@@ -745,6 +745,17 @@
                     })
                 ]
             });
+
+            // Enable mouse events in the iframe while the properties window is dragged. When the mouse pointer is moved
+            // quickly it can end up outside the window above the iframe. The iframe should then send mouse events back
+            // to the host in order to update the position of the dragged window.
+            window.on('startdrag', function() {
+                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('enablemouseevents');
+            });
+            window.on('enddrag', function() {
+                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('disablemouseevents');
+            });
+
             return window;
         },
 

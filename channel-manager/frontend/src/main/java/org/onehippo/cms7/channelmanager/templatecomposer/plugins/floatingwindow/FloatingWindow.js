@@ -58,6 +58,8 @@ Hippo.ux.window.FloatingWindow = Ext.extend(Ext.Window, {
             }
         }));
 
+        this.addEvents('startdrag', 'enddrag');
+
         Hippo.ux.window.FloatingWindow.superclass.initComponent.apply(this, arguments);
     },
 
@@ -148,8 +150,15 @@ Hippo.ux.window.FloatingWindow.DD = function(win) {
 };
 
 Ext.extend(Hippo.ux.window.FloatingWindow.DD, Ext.Window.DD, {
+
+    startDrag: function() {
+        Hippo.ux.window.FloatingWindow.DD.superclass.startDrag.apply(this);
+        this.win.fireEvent('startdrag');
+    },
+
     endDrag: function() {
         Hippo.ux.window.FloatingWindow.DD.superclass.endDrag.apply(this);
         this.win.saveRelativePosition();
+        this.win.fireEvent('enddrag');
     }
 });
