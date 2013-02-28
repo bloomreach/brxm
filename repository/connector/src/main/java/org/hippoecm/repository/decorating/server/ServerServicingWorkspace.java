@@ -30,8 +30,10 @@ import org.hippoecm.repository.api.WorkflowManager;
 
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
+import org.hippoecm.repository.decorating.remote.RemoteSecurityService;
 import org.hippoecm.repository.decorating.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
+import org.onehippo.repository.security.SecurityService;
 
 public class ServerServicingWorkspace extends ServerWorkspace implements RemoteServicingWorkspace {
 
@@ -78,5 +80,11 @@ public class ServerServicingWorkspace extends ServerWorkspace implements RemoteS
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }
+    }
+
+    @Override
+    public RemoteSecurityService getSecurityService() throws RepositoryException, RemoteException {
+        final SecurityService securityService = workspace.getSecurityService();
+        return ((RemoteServicingAdapterFactory) getFactory()).getRemoteSecurityService(securityService);
     }
 }

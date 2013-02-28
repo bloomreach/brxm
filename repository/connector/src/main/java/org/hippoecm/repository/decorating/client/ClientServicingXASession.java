@@ -53,6 +53,7 @@ import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
+import org.hippoecm.repository.decorating.remote.RemoteUser;
 import org.onehippo.repository.security.User;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -155,7 +156,11 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
 
     @Override
     public User getUser() throws RepositoryException {
-        return remote.getUser();
+        try {
+            return new ClientUser(remote.getUser());
+        } catch (RemoteException e) {
+            throw new RemoteRepositoryException(e);
+        }
     }
 
     @Override

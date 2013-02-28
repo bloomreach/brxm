@@ -32,8 +32,9 @@ import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.server.ServerSession;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
-import org.onehippo.repository.security.User;
+import org.hippoecm.repository.decorating.remote.RemoteUser;
 
 public class ServerServicingSession extends ServerSession implements RemoteServicingSession {
 
@@ -96,7 +97,7 @@ public class ServerServicingSession extends ServerSession implements RemoteServi
     }
 
     @Override
-    public User getUser() throws RepositoryException {
-        return session.getUser();
+    public RemoteUser getUser() throws RepositoryException, RemoteException {
+        return new ServerUser(session.getUserID(), ((HippoWorkspace) session.getWorkspace()).getSecurityService(), getFactory());
     }
 }

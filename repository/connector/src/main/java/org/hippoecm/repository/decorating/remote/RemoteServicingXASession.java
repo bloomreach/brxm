@@ -26,7 +26,6 @@ import javax.jcr.security.AccessControlException;
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteXASession;
-import org.onehippo.repository.security.User;
 
 public interface RemoteServicingXASession extends RemoteXASession, Remote, Serializable {
 
@@ -43,5 +42,5 @@ public interface RemoteServicingXASession extends RemoteXASession, Remote, Seria
 
     public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException;
 
-    public User getUser() throws RepositoryException;
+    public RemoteUser getUser() throws RepositoryException, RemoteException;
 }

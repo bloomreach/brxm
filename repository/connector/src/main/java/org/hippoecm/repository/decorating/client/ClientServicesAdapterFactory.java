@@ -32,6 +32,7 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
+import org.hippoecm.repository.decorating.remote.RemoteSecurityService;
 import org.hippoecm.repository.decorating.remote.RemoteServicingNode;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingWorkspace;
@@ -39,6 +40,7 @@ import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteRepository;
+import org.onehippo.repository.security.SecurityService;
 
 public class ClientServicesAdapterFactory extends ClientAdapterFactory implements LocalServicingAdapterFactory {
 
@@ -85,6 +87,11 @@ public class ClientServicesAdapterFactory extends ClientAdapterFactory implement
 
     public HierarchyResolver getHierarchyResolver(Session session, RemoteHierarchyResolver remote) {
         return new ClientHierarchyResolver(session, remote, this);
+    }
+
+    @Override
+    public SecurityService getSecurityService(final Session session, final RemoteSecurityService remote) {
+        return new ClientSecurityService(session, remote, this);
     }
 
     @Override

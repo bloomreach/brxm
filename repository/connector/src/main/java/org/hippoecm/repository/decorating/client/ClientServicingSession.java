@@ -152,7 +152,11 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
 
     @Override
     public User getUser() throws RepositoryException {
-        return remote.getUser();
+        try {
+            return new ClientUser(remote.getUser());
+        } catch (RemoteException e) {
+            throw new RemoteRepositoryException(e);
+        }
     }
 
     @Override

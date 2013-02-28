@@ -47,7 +47,9 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteRepository;
+import org.hippoecm.repository.decorating.remote.RemoteSecurityService;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
+import org.onehippo.repository.security.SecurityService;
 
 public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {
 
@@ -107,6 +109,11 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
     public RemoteHierarchyResolver getRemoteHierarchyResolver(HierarchyResolver hierarchyResolver, Session session)
         throws RemoteException {
         return new ServerHierarchyResolver(hierarchyResolver, this, session);
+    }
+
+    @Override
+    public RemoteSecurityService getRemoteSecurityService(final SecurityService securityService) throws RemoteException {
+        return new ServerSecurityService(securityService, this);
     }
 
     void export(Workflow workflow) throws RepositoryException {
