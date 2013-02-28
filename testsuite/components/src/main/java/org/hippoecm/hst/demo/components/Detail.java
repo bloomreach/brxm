@@ -65,9 +65,6 @@ public class Detail extends BaseHstComponent {
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
 
-
-        System.out.println(request.getParameter("bar"));
-
         super.doBeforeRender(request, response);
         HippoBean crBean = this.getContentBean(request);
 
@@ -168,7 +165,6 @@ public void doAction(HstRequest request, HstResponse response) throws HstCompone
 
                 // update now
                 wpm.update(commentBean);
-                wpm.save();
 
             } catch (Exception e) {
                 log.warn("Failed to create a comment: ", e);
@@ -189,8 +185,6 @@ public void doAction(HstRequest request, HstResponse response) throws HstCompone
     @Persistable
     @Override
     public void doBeforeServeResource(HstRequest request, HstResponse response) throws HstComponentException {
-
-        System.out.println(request.getParameter("bar"));
 
         super.doBeforeServeResource(request, response);
 
@@ -235,7 +229,7 @@ public void doAction(HstRequest request, HstResponse response) throws HstCompone
 
                 // update now
                 cpm.update(page);
-                cpm.save();
+
             } catch (Exception e) {
                 log.warn("Failed to create a comment: ", e);
 
