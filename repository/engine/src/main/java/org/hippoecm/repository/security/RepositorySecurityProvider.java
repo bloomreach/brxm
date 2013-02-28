@@ -16,16 +16,21 @@
 package org.hippoecm.repository.security;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
+import org.apache.jackrabbit.api.security.user.UserManager;
+import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.group.RepositoryGroupManager;
 import org.hippoecm.repository.security.user.AbstractUserManager;
 import org.hippoecm.repository.security.user.RepositoryUserManager;
 
 public class RepositorySecurityProvider extends AbstractSecurityProvider {
 
-
+    private SecurityProviderContext context;
 
     public void init(SecurityProviderContext context) throws RepositoryException {
+        this.context = context;
+
         ManagerContext mgrContext;
 
         mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getUsersPath(), context.isMaintenanceMode());
@@ -35,5 +40,23 @@ public class RepositorySecurityProvider extends AbstractSecurityProvider {
         mgrContext = new ManagerContext(context.getSession(), context.getProviderPath(), context.getGroupsPath(), context.isMaintenanceMode());
         groupManager = new RepositoryGroupManager();
         groupManager.init(mgrContext);
+    }
+
+    @Override
+    public UserManager getUserManager(final Session session) throws RepositoryException {
+        final ManagerContext mgrContext = new ManagerContext(session, context.getProviderPath(),
+                context.getUsersPath(), context.isMaintenanceMode());
+        final RepositoryUserManager userManager = new RepositoryUserManager();
+        userManager.init(mgrContext);
+        return userManager;
+    }
+
+    @Override
+    public GroupManager getGroupManager(final Session session) throws RepositoryException {
+        final ManagerContext mgrContext = new ManagerContext(session, context.getProviderPath(),
+                context.getGroupsPath(), context.isMaintenanceMode());
+        final RepositoryGroupManager groupManager = new RepositoryGroupManager();
+        groupManager.init(mgrContext);
+        return groupManager;
     }
 }

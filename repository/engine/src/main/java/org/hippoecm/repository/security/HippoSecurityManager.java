@@ -19,9 +19,11 @@ import java.security.Principal;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
+import org.hippoecm.repository.security.group.GroupManager;
 
 public interface HippoSecurityManager extends JackrabbitSecurityManager {
 
@@ -57,4 +59,9 @@ public interface HippoSecurityManager extends JackrabbitSecurityManager {
      * {@link AuthenticationStatus#FAILED} otherwise
      */
     AuthenticationStatus authenticate(SimpleCredentials creds);
+
+
+    GroupManager getGroupManager(Session session) throws RepositoryException;
+
+
 }

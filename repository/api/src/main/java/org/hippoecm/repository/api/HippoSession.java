@@ -33,6 +33,7 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.transaction.xa.XAResource;
 
+import org.onehippo.repository.security.User;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -183,7 +184,14 @@ public interface HippoSession extends Session {
      * @throws RepositoryException  a generic error while accessing the repository
      */
     public ClassLoader getSessionClassLoader() throws RepositoryException;
-    
+
+    /**
+     * Get the {@link User} object identified by this session's user id.
+     * @return  the {@link User} object identified by this session's user id.
+     * @throws RepositoryException
+     */
+    public User getUser() throws RepositoryException;
+
     /**
      * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
      * This registers a callback at a JCR session, which will be called when the
@@ -196,7 +204,7 @@ public interface HippoSession extends Session {
      * that will be informed when a session is closed.
      */
     public void registerSessionCloseCallback(CloseCallback callback);
-    
+
     /**
      * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>
      * The interface of the callback handler that is called when the session is
@@ -208,4 +216,5 @@ public interface HippoSession extends Session {
          */
         public void close();
     }
+
 }

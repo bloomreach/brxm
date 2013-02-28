@@ -655,8 +655,13 @@ public class SecurityManager implements HippoSecurityManager {
         return uid;
     }
 
-    public org.apache.jackrabbit.api.security.user.UserManager getUserManager(Session session) throws RepositoryException {
-        return providers.get(INTERNAL_PROVIDER).getUserManager();
+    public AbstractUserManager getUserManager(Session session) throws RepositoryException {
+        return (AbstractUserManager) providers.get(INTERNAL_PROVIDER).getUserManager(session);
+    }
+
+    @Override
+    public GroupManager getGroupManager(final Session session) throws RepositoryException {
+        return providers.get(INTERNAL_PROVIDER).getGroupManager(session);
     }
 
     public void dispose(String workspace) {
@@ -779,6 +784,16 @@ public class SecurityManager implements HippoSecurityManager {
         }
         public RoleManager getRoleManager() throws RepositoryException {
             return roleManager;
+        }
+
+        @Override
+        public UserManager getUserManager(final Session session) throws RepositoryException {
+            return userManager;
+        }
+
+        @Override
+        public GroupManager getGroupManager(final Session session) throws RepositoryException {
+            return groupManager;
         }
     }
 }

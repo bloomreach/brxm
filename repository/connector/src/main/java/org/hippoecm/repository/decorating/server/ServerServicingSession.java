@@ -33,6 +33,7 @@ import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.server.ServerSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
+import org.onehippo.repository.security.User;
 
 public class ServerServicingSession extends ServerSession implements RemoteServicingSession {
 
@@ -92,5 +93,10 @@ public class ServerServicingSession extends ServerSession implements RemoteServi
 
     public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException {
         session.checkPermission(path, actions);
+    }
+
+    @Override
+    public User getUser() throws RepositoryException {
+        return session.getUser();
     }
 }

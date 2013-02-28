@@ -55,6 +55,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
 import org.apache.jackrabbit.spi.Path;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
@@ -67,6 +68,7 @@ import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
 import org.hippoecm.repository.jackrabbit.xml.HippoDocumentViewExporter;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
+import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -144,6 +146,11 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     @Override
     public XAResource getXAResource() {
         return ((XASession) session).getXAResource();
+    }
+
+    @Override
+    public User getUser() throws RepositoryException {
+        return ((HippoWorkspace) getWorkspace()).getSecurityService().getUser(getUserID());
     }
 
     @Override

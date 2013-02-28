@@ -50,6 +50,7 @@ import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
+import org.onehippo.repository.security.User;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -147,6 +148,11 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     @Override
     public ClassLoader getSessionClassLoader() throws RepositoryException {
         return Thread.currentThread().getContextClassLoader();
+    }
+
+    @Override
+    public User getUser() throws RepositoryException {
+        return remote.getUser();
     }
 
     @Override

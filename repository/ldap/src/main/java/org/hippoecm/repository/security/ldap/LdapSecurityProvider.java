@@ -150,7 +150,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
 
     public synchronized void reloadConfig() throws RepositoryException {
         try {
-            log.info("Reading config for security provider: '{}'.", context.getProviderId());
+            log.info("Reading config for security pro vider: '{}'.", context.getProviderId());
 
             context.getSession().refresh(false);
             Node providerNode = context.getSession().getRootNode().getNode(context.getProviderPath());

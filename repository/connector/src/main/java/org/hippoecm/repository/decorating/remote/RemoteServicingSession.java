@@ -29,6 +29,7 @@ import javax.transaction.xa.XAResource;
 import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
+import org.onehippo.repository.security.User;
 
 public interface RemoteServicingSession extends RemoteSession, Remote, Serializable {
 
@@ -45,4 +46,6 @@ public interface RemoteServicingSession extends RemoteSession, Remote, Serializa
     public XAResource getXAResource();
 
     public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException;
+
+    User getUser() throws RepositoryException;
 }

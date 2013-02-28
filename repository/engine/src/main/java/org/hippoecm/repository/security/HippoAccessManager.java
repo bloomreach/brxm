@@ -96,8 +96,6 @@ import org.slf4j.LoggerFactory;
  */
 public class HippoAccessManager implements AccessManager, AccessControlManager, ItemStateListener {
 
-    /** SVN id placeholder */
-
     /**
      * Subject whose access rights this AccessManager should reflect
      */

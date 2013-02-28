@@ -139,12 +139,6 @@ public abstract class WorkspaceDecorator extends AbstractDecorator implements Hi
         return factory.getQueryManagerDecorator(session, workspace.getQueryManager());
     }
 
-    public abstract DocumentManager getDocumentManager() throws RepositoryException;
-
-    public abstract WorkflowManager getWorkflowManager() throws RepositoryException;
-
-    public abstract HierarchyResolver getHierarchyResolver() throws RepositoryException;
-
     /**
      * Forwards the method call to the underlying workspace.
      */

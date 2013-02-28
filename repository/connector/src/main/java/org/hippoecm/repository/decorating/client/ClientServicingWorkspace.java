@@ -32,6 +32,7 @@ import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
+import org.onehippo.repository.security.SecurityService;
 
 public class ClientServicingWorkspace extends ClientWorkspace implements HippoWorkspace {
 
@@ -71,4 +72,10 @@ public class ClientServicingWorkspace extends ClientWorkspace implements HippoWo
             throw new RemoteRepositoryException(ex);
         }
     }
+
+    @Override
+    public SecurityService getSecurityService() throws RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
 }

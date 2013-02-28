@@ -49,22 +49,13 @@ import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.api.XASession;
 import org.hippoecm.repository.api.HippoSession;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-/**
- */
 public abstract class SessionDecorator implements XASession, HippoSession {
 
-    private static Logger log = LoggerFactory.getLogger(SessionDecorator.class);
-
-
     protected final DecoratorFactory factory;
-
     protected final Repository repository;
-
     protected final Session session;
 
     protected SessionDecorator(DecoratorFactory factory, Repository repository, Session session) {
@@ -83,7 +74,6 @@ public abstract class SessionDecorator implements XASession, HippoSession {
         if (session == null) {
             return null;
         } else if (session instanceof SessionDecorator) {
-            session = (SessionDecorator)session;
             while(session instanceof SessionDecorator)
                 session = ((SessionDecorator)session).session;
             return session;

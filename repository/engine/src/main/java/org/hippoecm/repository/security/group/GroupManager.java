@@ -71,7 +71,6 @@ public interface GroupManager {
     /**
      * Create a (skeleton) node for the group in the repository
      * @param groupId
-     * @param the nodeType for the group. This must be a derivative of hippo:group
      * @return the newly created user node
      * @throws RepositoryException
      */
@@ -80,7 +79,6 @@ public interface GroupManager {
     /**
      * Helper method the returns the group node and
      * @param groupId
-     * @param nodeType
      * @return
      * @throws RepositoryException
      */

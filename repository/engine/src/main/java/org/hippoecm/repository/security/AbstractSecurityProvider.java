@@ -15,6 +15,9 @@
  */
 package org.hippoecm.repository.security;
 
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
@@ -23,7 +26,6 @@ import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
 
 public abstract class AbstractSecurityProvider implements SecurityProvider {
-
 
     protected UserManager userManager = new DummyUserManager();
     protected GroupManager groupManager = new DummyGroupManager();
@@ -62,6 +64,20 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
      */
     public RoleManager getRoleManager() {
         return roleManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public UserManager getUserManager(Session session) throws RepositoryException {
+        return userManager;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public GroupManager getGroupManager(Session session) throws RepositoryException {
+        return groupManager;
     }
 
 }

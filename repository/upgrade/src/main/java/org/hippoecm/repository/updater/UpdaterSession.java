@@ -65,7 +65,7 @@ import javax.transaction.xa.XAResource;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.impl.NodeDecorator;
-import org.hippoecm.repository.impl.SessionDecorator;
+import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -550,6 +550,11 @@ final public class UpdaterSession implements HippoSession {
 
     @Deprecated
     public ClassLoader getSessionClassLoader() throws RepositoryException {
+        throw new UpdaterException("illegal method");
+    }
+
+    @Override
+    public User getUser() throws RepositoryException {
         throw new UpdaterException("illegal method");
     }
 
