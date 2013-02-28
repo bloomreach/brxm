@@ -18,6 +18,7 @@ package org.hippoecm.repository;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.annotation.Annotation;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -57,6 +58,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.audit.AuditLogger;
 import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
@@ -290,7 +292,7 @@ public class RepositoryServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // explicitly set character encoding
-        
+
         req.setCharacterEncoding("UTF-8");
         res.setContentType("text/html;charset=UTF-8");
 
@@ -302,7 +304,10 @@ public class RepositoryServlet extends HttpServlet {
         SimpleCredentials creds = BasicAuth.parseAuthoriztionHeader(req);
 
         String path = req.getRequestURI();
-        if (!path.endsWith("/")) res.sendRedirect(path + "/");
+        if (!path.endsWith("/")) {
+            res.sendRedirect(path + "/");
+            return;
+        }
         if (path.startsWith(req.getContextPath())) {
             path = path.substring(req.getContextPath().length());
         }
@@ -319,6 +324,13 @@ public class RepositoryServlet extends HttpServlet {
                 session = repository.login();
             } else {
                 session = repository.login(creds);
+            }
+
+            if (((HippoSession)session).getUser().isSystemUser()) {
+                final InetAddress address = InetAddress.getByName(req.getRemoteHost());
+                if (!address.isAnyLocalAddress() && !address.isLoopbackAddress()) {
+                    throw new LoginException();
+                }
             }
 
             writer.println("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"");
@@ -627,6 +639,7 @@ public class RepositoryServlet extends HttpServlet {
                     }
                 }
             }
+            writer.println("</body></html>");
         } catch (LoginException ex) {
             BasicAuth.setRequestAuthorizationHeaders(res, "Repository");
         } catch (RepositoryException ex) {
@@ -634,11 +647,11 @@ public class RepositoryServlet extends HttpServlet {
             writer.println("<pre>" + ex.getClass().getName() + ": " + ex.getMessage());
             ex.printStackTrace(writer);
             writer.println("</pre>");
+            writer.println("</body></html>");
         } finally {
             if (session != null) {
                 session.logout();
             }
         }
-        writer.println("</body></html>");
     }
 }
