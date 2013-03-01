@@ -23,7 +23,6 @@
     <constructor-arg ref="javax.jcr.Credentials.default" />
     <constructor-arg ref="javax.jcr.Credentials.preview" />
     <constructor-arg ref="javax.jcr.Credentials.writable" />
-    <constructor-arg value="${repository.pool.user.name.separator}"/>
   </bean>
   
   <!-- Commons configuration from collab.properties -->

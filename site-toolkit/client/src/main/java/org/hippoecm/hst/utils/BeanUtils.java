@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.utils;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.jcr.Credentials;
@@ -28,7 +27,6 @@ import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
@@ -36,7 +34,6 @@ import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetNavigationBean;
 import org.hippoecm.hst.content.beans.standard.HippoResultSetBean;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -48,7 +45,6 @@ import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
-import org.hippoecm.hst.util.ContentBeanUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +59,8 @@ public class BeanUtils {
     private final static Logger log = LoggerFactory.getLogger(BeanUtils.class);
 
     private static final String DISPOSABLE_SESSION_KEY_PREFIX = BeanUtils.class.getName() + ";disposableSession";
-    
+    private static String credentialsDomainSeparator;
+
 
     /**
      * <p>
@@ -461,16 +458,18 @@ public class BeanUtils {
 
 
     /**
-     * This method tries to get a {@link Session} from a disposable pool which is identified by <code>disposablePoolIdentifier</code>
+     * This method tries to get a {@link Session} from a disposable pool which is identified by
+     * <code>disposablePoolIdentifier</code>
+     * <p/>
+     * If <code>disposablePoolIdentifier</code> is empty or <code>null</code> an HstComponentException will be thrown.
+     * If it is not possible to return a {@link Session} for the <code>disposablePoolIdentifier</code>, for example
+     * because there is configured a MultipleRepositoryImpl instead of LazyMultipleRepositoryImpl, also a {@link
+     * HstComponentException} will be thrown.
      *
-     * If <code>disposablePoolIdentifier</code> is empty or <code>null</code> an HstComponentException will be thrown. If it is not possible to return a 
-     * {@link Session} for the <code>disposablePoolIdentifier</code>, for example because there is configured a MultipleRepositoryImpl instead of 
-     * LazyMultipleRepositoryImpl, also a {@link HstComponentException} will be thrown.
-     *
-     *
-     * @param requestContext the hstRequest for this HstComponent
-     * @param disposablePoolIdentifier the identifier for this disposable pool. It is not allowed to be empty or <code>null</code> 
-     * @return a jcr {@link Session} from a disposable pool 
+     * @param requestContext           the hstRequest for this HstComponent
+     * @param disposablePoolIdentifier the identifier for this disposable pool. It is not allowed to be empty or
+     *                                 <code>null</code>
+     * @return a jcr {@link Session} from a disposable pool
      * @throws HstComponentException
      */
     public static Session getDisposablePoolSession(HstRequestContext requestContext, String disposablePoolIdentifier) throws HstComponentException {
@@ -489,8 +488,7 @@ public class BeanUtils {
                         cred = repoCredsSet.iterator().next();
                         // this userID does not contain the mandatory credential domain separator needed for the lazy pools
                         // hence we append it with [separator]lazy, for example @lazy
-                        userID = ((SimpleCredentials) cred).getUserID() +
-                                requestContext.getContextCredentialsProvider().getCredentialsDomainSeparator() + "lazy";
+                        userID = ((SimpleCredentials) cred).getUserID() + getCredentialsDomainSeparator() + "lazy";
                     }
                 }
             }
@@ -532,4 +530,7 @@ public class BeanUtils {
         return getDisposablePoolSession(hstRequest.getRequestContext(), disposablePoolIdentifier);
      }
 
+    public static String getCredentialsDomainSeparator() {
+        return HstServices.getComponentManager().getContainerConfiguration().getString("repository.pool.user.name.separator");
+    }
 }

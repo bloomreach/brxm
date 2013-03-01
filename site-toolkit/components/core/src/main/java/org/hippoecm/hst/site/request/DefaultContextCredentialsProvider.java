@@ -30,7 +30,6 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
     protected Credentials defaultCredentials;
     protected Credentials defaultCredentialsForPreviewMode;
     protected Credentials writableCredentials;
-    protected String credentialsDomainSeparator = String.valueOf('\uFFFF');
     
     public DefaultContextCredentialsProvider(final Credentials defaultCredentials) {
         this(defaultCredentials, null);
@@ -44,18 +43,11 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
     public DefaultContextCredentialsProvider(final Credentials defaultCredentials,
                                              final Credentials defaultCredentialsForPreviewMode,
                                              final Credentials writableCredentials) {
-        this(defaultCredentials, defaultCredentialsForPreviewMode, writableCredentials, null);
-    }
-    public DefaultContextCredentialsProvider(final Credentials defaultCredentials,
-                                             final Credentials defaultCredentialsForPreviewMode,
-                                             final Credentials writableCredentials,
-                                             final String credentialsDomainSeparator) {
         this.defaultCredentials = defaultCredentials;
         this.defaultCredentialsForPreviewMode = defaultCredentialsForPreviewMode;
         this.writableCredentials = writableCredentials;
-        this.credentialsDomainSeparator = credentialsDomainSeparator;
     }
-    
+
     public Credentials getDefaultCredentials(HstRequestContext requestContext) {
         if (defaultCredentialsForPreviewMode != null && requestContext.isPreview()) {
             return defaultCredentialsForPreviewMode;
@@ -68,8 +60,4 @@ public class DefaultContextCredentialsProvider implements ContextCredentialsProv
         return writableCredentials;
     }
 
-    @Override
-    public String getCredentialsDomainSeparator() {
-        return credentialsDomainSeparator;
-    }
 }
