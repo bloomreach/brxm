@@ -27,7 +27,6 @@
   <name>Hippo Test Suite Components</name>
   <description>Hippo Test Suite Components</description>
   <artifactId>hippo-testsuite-components</artifactId>
-  <version>1.04.01-SNAPSHOT</version>
 
   <dependencies>
 

@@ -26,6 +26,5 @@
   <name>Hippo Test Suite API </name>
   <description>Hippo Test Suite Site</description>
   <artifactId>hippo-testsuite-api</artifactId>
-  <version>1.04.01-SNAPSHOT</version>
 
 </project>

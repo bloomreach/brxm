@@ -25,7 +25,6 @@ limitations under the License. -->
 
   <name>Hippo Test Suite Solr</name>
   <artifactId>hippo-testsuite-solr</artifactId>
-  <version>1.04.01-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <dependencies>

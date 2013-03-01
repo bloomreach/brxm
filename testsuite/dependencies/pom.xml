@@ -27,7 +27,6 @@
   <name>Hippo Test Suite Dependencies</name>
   <description>Hippo Test Suite Dependencies</description>
   <artifactId>hippo-testsuite-dependencies</artifactId>
-  <version>1.04.01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <modules>

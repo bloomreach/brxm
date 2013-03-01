@@ -27,6 +27,5 @@
   <name>Hippo Test Suite Content</name>
   <description>Hippo Test Suite Content</description>
   <artifactId>hippo-testsuite-content</artifactId>
-  <version>1.04.01-SNAPSHOT</version>
 
 </project>

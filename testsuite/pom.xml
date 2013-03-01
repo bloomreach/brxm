@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-release</artifactId>
-    <version>7.8.1-SNAPSHOT</version>
+    <version>7.8.1</version>
   </parent>
 
   <artifactId>hippo-testsuite</artifactId>
@@ -51,7 +51,7 @@
     <portals-bridges-common.version>2.0</portals-bridges-common.version>
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
-    <yui.sources.version>1.01.11-SNAPSHOT</yui.sources.version>
+    <yui.sources.version>1.01.11</yui.sources.version>
 
     <jmxremote.port>9875</jmxremote.port>
 

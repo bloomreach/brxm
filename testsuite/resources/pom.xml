@@ -26,7 +26,6 @@
   <name>Hippo Test Suite Site Resources</name>
   <description>Hippo Test Suite Site Resources</description>
   <artifactId>hippo-testsuite-site-resources</artifactId>
-  <version>1.04.01-SNAPSHOT</version>
   <packaging>war</packaging>
 
   <build>

@@ -27,7 +27,6 @@
   <name>Hippo Test Suite CMS Dependencies</name>
   <description>Hippo Test Suite CMS Dependencies</description>
   <artifactId>hippo-testsuite-cms-dependencies</artifactId>
-  <version>1.04.01-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <dependencies>

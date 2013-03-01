@@ -26,13 +26,12 @@
   <name>Hippo Test Suite Random Numbers</name>
   <description>Hippo Test Suite Random Numbers</description>
   <artifactId>hippo-testsuite-random-numbers</artifactId>
-  <version>1.04.01-SNAPSHOT</version>
 
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-testsuite-api</artifactId>
-      <version>1.04.01-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
