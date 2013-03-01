@@ -71,7 +71,8 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         super(servletRequest);
         this.lifecyclePhase = lifecyclePhase;
         this.requestContext = requestContext;
-        this.referenceNamespaceIgnored = this.requestContext.getURLFactory().isReferenceNamespaceIgnored();
+        // only for lifecyclePhase RENDER_PHASE we support parameter namespacing ignored
+        this.referenceNamespaceIgnored = this.requestContext.getURLFactory().isReferenceNamespaceIgnored() && RENDER_PHASE.equals(lifecyclePhase);
         this.componentWindow = componentWindow;
         this.parameterNameComponentSeparator = requestContext.getContainerURLProvider().getParameterNameComponentSeparator();
     }
