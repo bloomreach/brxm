@@ -218,6 +218,9 @@ api/src/main/java/org/hippoecm/hst/core/request/SiteMapItemHandlerConfiguration.
 api/src/main/java/org/hippoecm/hst/core/request/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/search/HstQueryManagerFactory.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/search/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/AbstractFilterChainAwareHstSiteMapItemHandler.java -text
+api/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/AbstractHstSiteMapItemHandler.java -text
+api/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/FilterChainAwareHstSiteMapItemHandler.java -text
 api/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/HstSiteMapItemHandler.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/HstSiteMapItemHandlerException.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/HstSiteMapItemHandlerFactory.java -text svneol=unset#text/plain

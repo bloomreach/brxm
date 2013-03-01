@@ -23,8 +23,9 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 
 /**
- * TODO A HstSiteMapItemHandler can be invoked by .... 
- * 
+ * A HstSiteMapItemHandler can be invoked by HstFilter when the resolved sitemap item
+ * is configured with custom sitemap item handler IDs in the HST configurations.
+ * HstSiteMapItemHandler is provided to enable custom request processing for the resolved sitemap item.
  */
 public interface HstSiteMapItemHandler {
     
@@ -38,6 +39,11 @@ public interface HstSiteMapItemHandler {
     void init(ServletContext servletContext, SiteMapItemHandlerConfiguration handlerConfig) throws HstSiteMapItemHandlerException;
     
     /**
+     * Does custom request processing.
+     * <P>
+     * This method can return the original resolvedSiteMapItem or a new resolved sitemap item to serve a different one.
+     * Or it can return null when it completes the custom request processing by itself so HstFilter needs to stop the request processing.
+     * </P>
      * 
      * @param resolvedSiteMapItem
      * @param request

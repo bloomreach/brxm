@@ -62,6 +62,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.core.sitemapitemhandler.FilterChainAwareHstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandler;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerException;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
@@ -422,7 +423,7 @@ public class HstFilter implements Filter {
                         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
                     }
 
-                    processResolvedSiteMapItem(containerRequest, res, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers, logger);
+                    processResolvedSiteMapItem(containerRequest, res, chain, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers, logger);
 
                 }
                 else {
@@ -738,8 +739,25 @@ public class HstFilter implements Filter {
             }
         }
     }
-    
+
+    /**
+     * @deprecated Use {@link #processResolvedSiteMapItem(HttpServletRequest, HttpServletResponse, FilterChain, HstManager, HstSiteMapItemHandlerFactory, HstMutableRequestContext, boolean, Logger)}.
+     * @param req
+     * @param res
+     * @param hstSitesManager
+     * @param siteMapItemHandlerFactory
+     * @param requestContext
+     * @param processHandlers
+     * @param logger
+     * @throws ContainerException
+     */
+    @Deprecated
     protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, HstManager hstSitesManager, 
+            HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
+        processResolvedSiteMapItem(req, res, null, hstSitesManager, siteMapItemHandlerFactory, requestContext, processHandlers, logger);
+    }
+
+    protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain, HstManager hstSitesManager, 
             HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
     	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
 
@@ -747,7 +765,7 @@ public class HstFilter implements Filter {
             initializeResourceLifecycleManagements();
         	// run the sitemap handlers if present: the returned resolvedSiteMapItem can be a different one then the one that is put in
             try {
-                resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , req, res);
+                resolvedSiteMapItem = processHandlers(resolvedSiteMapItem, siteMapItemHandlerFactory , req, res, filterChain);
                 if(resolvedSiteMapItem == null) {
                     // one of the handlers has finished the request/response already
                     // call clean up of the resourceLifecycleManagements as there might have been taken a jcr session from some session
@@ -802,10 +820,29 @@ public class HstFilter implements Filter {
             requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
             requestContext.setBaseURL(hstSitesManager.getUrlFactory().getContainerURLProvider().createURL(requestContext.getBaseURL(), forwardPathInfo));
 
-            processResolvedSiteMapItem(req, res, hstSitesManager, siteMapItemHandlerFactory, requestContext, true, logger);
+            processResolvedSiteMapItem(req, res, filterChain, hstSitesManager, siteMapItemHandlerFactory, requestContext, true, logger);
         }
 
 		return;
+    }
+
+    /**
+     * This method is invoked for every {@link HstSiteMapItemHandler} from the resolvedSiteMapItem that was matched from {@link ResolvedMount#matchSiteMapItem(String)}.
+     * If in the for loop the <code>orginalResolvedSiteMapItem</code> switches to a different newResolvedSiteMapItem, then still
+     * the handlers for  <code>orginalResolvedSiteMapItem</code> are processed and not the one from <code>newResolvedSiteMapItem</code>. If some intermediate
+     * {@link HstSiteMapItemHandler#process(ResolvedSiteMapItem, HttpServletRequest, HttpServletResponse)} returns <code>null</code>, the loop and processing is stooped,
+     * and <code>null</code> is returned. Entire request processing at that point is assumed to be completed already by one of the {@link HstSiteMapItemHandler}s (for
+     * example if one of the handlers is a caching handler). When <code>null</code> is returned, request processing is stopped.
+     * @deprecated Use {@link #processHandlers(ResolvedSiteMapItem, HstSiteMapItemHandlerFactory, HttpServletRequest, HttpServletResponse, FilterChain).
+     * @param orginalResolvedSiteMapItem
+     * @param siteMapItemHandlerFactory 
+     * @param req
+     * @param res
+     * @return a new or original {@link ResolvedSiteMapItem}, or <code>null</code> when request processing can be stopped
+     */
+    @Deprecated
+    protected ResolvedSiteMapItem processHandlers(ResolvedSiteMapItem orginalResolvedSiteMapItem, HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HttpServletRequest req, HttpServletResponse res) {
+        return processHandlers(orginalResolvedSiteMapItem, siteMapItemHandlerFactory, req, res, null);
     }
 
     /**
@@ -821,7 +858,7 @@ public class HstFilter implements Filter {
      * @param res
      * @return a new or original {@link ResolvedSiteMapItem}, or <code>null</code> when request processing can be stopped
      */
-    protected ResolvedSiteMapItem processHandlers(ResolvedSiteMapItem orginalResolvedSiteMapItem, HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HttpServletRequest req, HttpServletResponse res) {
+    protected ResolvedSiteMapItem processHandlers(ResolvedSiteMapItem orginalResolvedSiteMapItem, HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) {
         Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
 
         ResolvedSiteMapItem newResolvedSiteMapItem = orginalResolvedSiteMapItem;
@@ -830,7 +867,11 @@ public class HstFilter implements Filter {
            HstSiteMapItemHandler handler = siteMapItemHandlerFactory.getSiteMapItemHandlerInstance(requestContainerConfig, handlerConfig);
            logger.debug("Processing siteMapItemHandler for configuration handler '{}'", handlerConfig.getName() );
            try {
-               newResolvedSiteMapItem = handler.process(newResolvedSiteMapItem, req, res);
+               if (handler instanceof FilterChainAwareHstSiteMapItemHandler) {
+                   newResolvedSiteMapItem = ((FilterChainAwareHstSiteMapItemHandler) handler).process(newResolvedSiteMapItem, req, res, filterChain);
+               } else {
+                   newResolvedSiteMapItem = handler.process(newResolvedSiteMapItem, req, res);
+               }
                if(newResolvedSiteMapItem == null) {
                    logger.debug("handler for '{}' return null. Request processing done. Return null", handlerConfig.getName());
                    return null;
