@@ -77,14 +77,11 @@ public class AuthorizationFilter extends Filter {
                  */
                 private void pointCurrentToNextIterator() throws IOException {
                     currentDocIdSetIterator = null;
-                    if (docIdSets.length == (docIdSetIndex + 1)) {
-                        return;
-                    }
-                    if (docIdSetIndex >= 0) {
+                    while (currentDocIdSetIterator == null && docIdSetIndex+1 < docIdSets.length) {
                         docOffset += maxDocs[docIdSetIndex];
+                        docIdSetIndex++;
+                        currentDocIdSetIterator = docIdSets[docIdSetIndex].iterator();
                     }
-                    docIdSetIndex++;
-                    currentDocIdSetIterator = docIdSets[docIdSetIndex].iterator();
                 }
 
                 @Override
