@@ -527,9 +527,9 @@ public class BeanUtils {
      */
     public static Session getDisposablePoolSession(HstRequest hstRequest, String disposablePoolIdentifier) throws HstComponentException {
         return getDisposablePoolSession(hstRequest.getRequestContext(), disposablePoolIdentifier);
-     }
+    }
 
-    public static String getCredentialsDomainSeparator() {
+    private static String getCredentialsDomainSeparator() {
         return HstServices.getComponentManager().getContainerConfiguration().getString("repository.pool.user.name.separator");
     }
 }
