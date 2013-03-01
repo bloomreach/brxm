@@ -59,7 +59,6 @@ public class BeanUtils {
     private final static Logger log = LoggerFactory.getLogger(BeanUtils.class);
 
     private static final String DISPOSABLE_SESSION_KEY_PREFIX = BeanUtils.class.getName() + ";disposableSession";
-    private static String credentialsDomainSeparator;
 
 
     /**
