@@ -16,13 +16,17 @@
 package org.hippoecm.repository.decorating.server;
 
 import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.server.RemoteAdapterFactory;
 import org.apache.jackrabbit.rmi.server.ServerObject;
+import org.hippoecm.repository.decorating.remote.RemoteGroup;
 import org.hippoecm.repository.decorating.remote.RemoteUser;
+import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.SecurityService;
 
 public class ServerUser extends ServerObject implements RemoteUser {
@@ -52,7 +56,12 @@ public class ServerUser extends ServerObject implements RemoteUser {
     }
 
     @Override
-    public Set<String> getMemberships() throws RepositoryException, RemoteException {
-        return securityService.getUser(userId).getMemberships();
+    public Set<RemoteGroup> getMemberships() throws RepositoryException, RemoteException {
+        final Set<RemoteGroup> memberships = new HashSet<RemoteGroup>();
+        for (Group group : securityService.getUser(userId).getMemberships()) {
+            memberships.add(new ServerGroup(group.getId(), securityService, getFactory()));
+        }
+        return Collections.unmodifiableSet(memberships);
     }
+
 }

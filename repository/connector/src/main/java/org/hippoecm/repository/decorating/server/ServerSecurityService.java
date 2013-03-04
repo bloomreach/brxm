@@ -16,6 +16,8 @@
 package org.hippoecm.repository.decorating.server;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.RepositoryException;
 
@@ -25,6 +27,9 @@ import org.hippoecm.repository.decorating.remote.RemoteGroup;
 import org.hippoecm.repository.decorating.remote.RemoteSecurityService;
 import org.hippoecm.repository.decorating.remote.RemoteUser;
 import org.onehippo.repository.security.SecurityService;
+import org.onehippo.repository.security.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerSecurityService extends ServerObject implements RemoteSecurityService {
 
@@ -53,6 +58,15 @@ public class ServerSecurityService extends ServerObject implements RemoteSecurit
     @Override
     public RemoteGroup getGroup(final String groupId) throws RepositoryException, RemoteException {
         return new ServerGroup(groupId, securityService, getFactory());
+    }
+
+    @Override
+    public Iterable<String> listUsers() throws RepositoryException, RemoteException {
+        List<String> users = new ArrayList<String>();
+        for (User user : securityService.listUsers()) {
+            users.add(user.getId());
+        }
+        return users;
     }
 
 }

@@ -15,6 +15,8 @@
  */
 package org.hippoecm.repository;
 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.hippoecm.repository.api.HippoSession;
@@ -22,6 +24,7 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.junit.Test;
 import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.SecurityService;
+import org.onehippo.repository.security.User;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static junit.framework.Assert.assertEquals;
@@ -39,7 +42,11 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
     @Test
     public void testGetMemberships() throws Exception {
-        final Set<String> groupIds = ((HippoSession) session).getUser().getMemberships();
+        final Set<Group> memberships = ((HippoSession) session).getUser().getMemberships();
+        final Set<String> groupIds = new HashSet<String>();
+        for (Group group : memberships) {
+            groupIds.add(group.getId());
+        }
         assertTrue(groupIds.contains("everybody"));
         assertTrue(groupIds.contains("admin"));
     }
@@ -55,7 +62,19 @@ public class SecurityServiceTest extends RepositoryTestCase {
     public void testGetMembers() throws Exception {
         final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
         final Group group = securityService.getGroup("admin");
-        final Set<String> members = group.getMembers();
-        assertTrue(members.contains("admin"));
+        final Set<User> members = group.getMembers();
+        final Set<String> userIds = new HashSet<String>();
+        for (User member : members) {
+            userIds.add(member.getId());
+        }
+        assertTrue(userIds.contains("admin"));
+    }
+
+    @Test
+    public void testListUsers() throws Exception {
+        final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
+        final Iterator<User> users = securityService.listUsers().iterator();
+        assertTrue(users.hasNext());
+        users.next();
     }
 }

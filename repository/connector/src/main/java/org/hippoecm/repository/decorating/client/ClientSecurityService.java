@@ -16,6 +16,7 @@
 package org.hippoecm.repository.decorating.client;
 
 import java.rmi.RemoteException;
+import java.util.Iterator;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
@@ -24,12 +25,18 @@ import javax.jcr.Session;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.hippoecm.repository.decorating.remote.RemoteSecurityService;
+import org.hippoecm.repository.decorating.remote.RemoteUser;
+import org.hippoecm.repository.decorating.server.ServerUser;
 import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ClientSecurityService implements SecurityService {
+
+    private static final Logger log = LoggerFactory.getLogger(ClientSecurityService.class);
 
     private final RemoteSecurityService remote;
 
@@ -57,7 +64,39 @@ public class ClientSecurityService implements SecurityService {
 
     @Override
     public Iterable<User> listUsers() throws RepositoryException {
-        return null;
+        final Iterator<String> iterator;
+        try {
+            iterator = remote.listUsers().iterator();
+        } catch (RemoteException e) {
+            throw new RemoteRepositoryException(e);
+        }
+        return new Iterable<User>() {
+            @Override
+            public Iterator<User> iterator() {
+                return new Iterator<User>() {
+
+                    @Override
+                    public boolean hasNext() {
+                        return iterator.hasNext();
+                    }
+
+                    @Override
+                    public User next() {
+                        try {
+                            return getUser(iterator.next());
+                        } catch (RepositoryException e) {
+                            log.error("Failed to get next user: " + e.toString());
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        };
     }
 
     @Override

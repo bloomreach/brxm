@@ -27,6 +27,6 @@ public interface RemoteGroup extends Remote, Serializable {
 
     String getId() throws RemoteException;
 
-    Set<String> getMembers() throws RepositoryException, RemoteException;
+    Set<RemoteUser> getMembers() throws RepositoryException, RemoteException;
 
 }

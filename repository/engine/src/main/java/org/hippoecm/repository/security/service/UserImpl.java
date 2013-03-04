@@ -15,12 +15,15 @@
  */
 package org.hippoecm.repository.security.service;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.user.AbstractUserManager;
+import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.User;
 
 public class UserImpl implements User {
@@ -51,8 +54,12 @@ public class UserImpl implements User {
     }
 
     @Override
-    public Set<String> getMemberships() throws RepositoryException {
-        return groupManager.getMemberships(id);
+    public Set<Group> getMemberships() throws RepositoryException {
+        final Set<Group> memberships = new HashSet<Group>();
+        for (String groupId : groupManager.getMemberships(id)) {
+            memberships.add(new GroupImpl(groupId, groupManager, userManager));
+        }
+        return Collections.unmodifiableSet(memberships);
     }
 
 }

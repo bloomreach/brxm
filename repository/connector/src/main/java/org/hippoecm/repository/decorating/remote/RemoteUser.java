@@ -31,6 +31,6 @@ public interface RemoteUser extends Remote, Serializable {
 
     boolean isActive() throws RepositoryException, RemoteException;
 
-    Set<String> getMemberships() throws RepositoryException, RemoteException;
+    Set<RemoteGroup> getMemberships() throws RepositoryException, RemoteException;
 
 }

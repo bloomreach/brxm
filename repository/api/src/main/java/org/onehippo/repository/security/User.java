@@ -49,11 +49,11 @@ public interface User {
     public boolean isActive() throws RepositoryException;
 
     /**
-     * Get the ids of the {@link Group}s this user is a member of.
+     * Get the {@link Group}s this user is a member of.
      *
      * @return the ids of the {@link Group}s this user is a member of.
      * @throws RepositoryException
      */
-    public Set<String> getMemberships() throws RepositoryException;
+    public Set<Group> getMemberships() throws RepositoryException;
 
 }

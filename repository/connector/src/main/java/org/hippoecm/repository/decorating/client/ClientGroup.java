@@ -17,13 +17,17 @@ package org.hippoecm.repository.decorating.client;
 
 
 import java.rmi.RemoteException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.rmi.client.RemoteRuntimeException;
 import org.hippoecm.repository.decorating.remote.RemoteGroup;
+import org.hippoecm.repository.decorating.remote.RemoteUser;
 import org.onehippo.repository.security.Group;
+import org.onehippo.repository.security.User;
 
 public class ClientGroup implements Group {
 
@@ -43,9 +47,13 @@ public class ClientGroup implements Group {
     }
 
     @Override
-    public Set<String> getMembers() throws RepositoryException {
+    public Set<User> getMembers() throws RepositoryException {
         try {
-            return remote.getMembers();
+            final Set<User> members = new HashSet<User>();
+            for (RemoteUser remoteUser : remote.getMembers()) {
+                members.add(new ClientUser(remoteUser));
+            }
+            return Collections.unmodifiableSet(members);
         } catch (RemoteException e) {
             throw new RemoteRuntimeException(e);
         }

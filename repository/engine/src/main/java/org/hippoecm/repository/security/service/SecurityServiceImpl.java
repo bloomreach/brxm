@@ -100,7 +100,7 @@ public class SecurityServiceImpl implements SecurityService {
         if (!groupManager.hasGroup(groupId)) {
             throw new ItemNotFoundException("No such group: " + groupId);
         }
-        return new GroupImpl(groupId, groupManager);
+        return new GroupImpl(groupId, groupManager, userManager);
     }
 
 }

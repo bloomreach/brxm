@@ -34,10 +34,11 @@ public interface Group {
     String getId() throws RepositoryException;
 
     /**
-     * Get the {@link User} ids of the members of this group.
-     * @return  the {@link User} ids of the members of this group
+     * Get the members of this group.
+     *
+     * @return  the {@link User}s that are members of this group.
      * @throws RepositoryException
      */
-    Set<String> getMembers() throws RepositoryException;
+    Set<User> getMembers() throws RepositoryException;
 
 }

@@ -31,4 +31,6 @@ public interface RemoteSecurityService extends Remote {
 
     RemoteGroup getGroup(String groupId) throws RepositoryException, RemoteException;
 
+    Iterable<String> listUsers() throws RepositoryException, RemoteException;
+
 }

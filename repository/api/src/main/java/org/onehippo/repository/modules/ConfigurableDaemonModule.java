@@ -30,6 +30,7 @@ public interface ConfigurableDaemonModule extends DaemonModule {
      * Lifecycle callback to allow a {@link DaemonModule} to configure itself.
      * This method is called on startup iff there is module config node,
      * and before {@link #initialize} is called.
+     *
      * @param moduleConfig  the node containing the configuration of this module
      * @throws javax.jcr.RepositoryException
      */
