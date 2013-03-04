@@ -68,7 +68,7 @@ public class ModuleManager {
     }
 
     private void registerModule(DaemonModule module) throws RepositoryException {
-        registry.registerModule(module);
+        registry.registerModule(module.getClass().getName(), module);
     }
 
     private void registerModule(Node node) {
@@ -80,12 +80,17 @@ public class ModuleManager {
                 try {
                     final Class<?> moduleClass = Class.forName(className);
                     if (DaemonModule.class.isAssignableFrom(moduleClass)) {
-                        registry.registerModule(moduleName, (Class<? extends DaemonModule>) moduleClass);
+                        final DaemonModule module = (DaemonModule) moduleClass.newInstance();
+                        registry.registerModule(moduleName, module);
                     } else {
                         log.warn("Cannot register {}: not a DaemonModule", moduleName);
                     }
                 } catch (ClassNotFoundException e) {
                     log.error("Cannot start module {} of class {}: class not found", moduleName, className);
+                } catch (IllegalAccessException e) {
+                    log.error("Failed to create daemon module {}: " + e, moduleName);
+                } catch (InstantiationException e) {
+                    log.error("Failed to create daemon module {}: " + e, moduleName);
                 }
 
             }
@@ -102,14 +107,7 @@ public class ModuleManager {
 
     private void startModule(final ModuleRegistration registration) {
         final String moduleName = registration.getModuleName();
-        DaemonModule module = null;
-        try {
-            module = registration.getModule();
-        } catch (IllegalAccessException e) {
-            log.error("Failed to create daemon module {}: " + e, moduleName);
-        } catch (InstantiationException e) {
-            log.error("Failed to create daemon module {}: " + e, moduleName);
-        }
+        final DaemonModule module = registration.getModule();
         if (module != null) {
             log.info("Starting module {}", moduleName);
             try {
@@ -132,6 +130,7 @@ public class ModuleManager {
                 }
                 try {
                     module.initialize(moduleSession);
+                    registration.setSession(moduleSession);
                 } catch (Exception e) {
                     log.error("Initializing module {} failed", moduleName, e);
                 }
@@ -146,6 +145,10 @@ public class ModuleManager {
             log.info("Shutting down module {}", registration.getModuleName());
             try {
                 registration.getModule().shutdown();
+                final Session moduleSession = registration.getSession();
+                if (moduleSession != null && moduleSession.isLive()) {
+                    moduleSession.logout();
+                }
             } catch (Exception e) {
                 log.error("Error while shutting down daemon module", e);
             }

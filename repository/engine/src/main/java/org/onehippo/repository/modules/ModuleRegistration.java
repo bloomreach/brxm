@@ -22,19 +22,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.jcr.Session;
+
 class ModuleRegistration {
 
     private final String moduleName;
     private final Class<? extends DaemonModule> moduleClass;
     private DaemonModule module;
+    private Session session;
 
-    ModuleRegistration(String moduleName, Class<? extends DaemonModule> moduleClass) {
+    ModuleRegistration(final String moduleName, final DaemonModule module) {
         this.moduleName = moduleName;
-        this.moduleClass = moduleClass;
-    }
-
-    ModuleRegistration(DaemonModule module) {
-        this(module.getClass().getName(), module.getClass());
+        this.moduleClass = module.getClass();
         this.module = module;
     }
 
@@ -46,10 +45,7 @@ class ModuleRegistration {
         return moduleClass;
     }
 
-    DaemonModule getModule() throws IllegalAccessException, InstantiationException {
-        if (module == null) {
-            module = moduleClass.newInstance();
-        }
+    DaemonModule getModule() {
         return module;
     }
 
@@ -115,5 +111,13 @@ class ModuleRegistration {
             }
         }
         return 0;
+    }
+
+    void setSession(final Session session) {
+        this.session = session;
+    }
+
+    Session getSession() {
+        return session;
     }
 }

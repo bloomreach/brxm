@@ -37,23 +37,18 @@ class ModuleRegistry {
 
     ModuleRegistry() {}
 
-    void registerModule(DaemonModule module) throws RepositoryException {
-        addRegistration(new ModuleRegistration(module));
+    void registerModule(final String moduleName, final DaemonModule module) throws RepositoryException {
+        addRegistration(new ModuleRegistration(moduleName, module));
     }
 
-    void registerModule(String moduleName, Class<? extends DaemonModule> moduleClass) throws RepositoryException {
-        addRegistration(new ModuleRegistration(moduleName, moduleClass));
-    }
-
-    private void addRegistration(ModuleRegistration registration) throws RepositoryException {
+    void addRegistration(final ModuleRegistration registration) throws RepositoryException {
         final List<ModuleRegistration> updated = new ArrayList<ModuleRegistration>(registrations);
         updated.add(registration);
         checkDependencyGraph(updated);
-        sortModules(updated);
         registrations = updated;
     }
 
-    private void sortModules(final List<ModuleRegistration> registrations) throws RepositoryException {
+    private void sortModules(final List<ModuleRegistration> registrations) {
         Collections.sort(registrations, new Comparator<ModuleRegistration>() {
             @Override
             public int compare(final ModuleRegistration o1, final ModuleRegistration o2) {
@@ -63,10 +58,12 @@ class ModuleRegistry {
     }
 
     List<ModuleRegistration> getModuleRegistrations() {
+        sortModules(registrations);
         return Collections.unmodifiableList(registrations);
     }
 
     List<ModuleRegistration> getModuleRegistrationsReverseOrder() {
+        sortModules(registrations);
         final ArrayList<ModuleRegistration> moduleRegistrations = new ArrayList<ModuleRegistration>(registrations);
         Collections.reverse(moduleRegistrations);
         return Collections.unmodifiableList(moduleRegistrations);

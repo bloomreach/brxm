@@ -30,10 +30,10 @@ public class ModuleRegistryTest {
     @Test
     public void testDetectCircularDependencies() throws Exception {
         ModuleRegistry registry = new ModuleRegistry();
-        registry.registerModule(new Test1Module());
-        registry.registerModule(new Test2Module());
+        registry.registerModule("test1", new Test1Module());
+        registry.registerModule("test2", new Test2Module());
         try {
-            registry.registerModule(new CircularTest3Module());
+            registry.registerModule("circularTest3", new CircularTest3Module());
             fail("Circular dependencies not detected");
         } catch (RepositoryException expected) {
         }
@@ -42,9 +42,9 @@ public class ModuleRegistryTest {
     @Test
     public void testOrderModules() throws Exception {
         ModuleRegistry registry = new ModuleRegistry();
-        registry.registerModule("test1", Test1Module.class);
-        registry.registerModule("test2", Test2Module.class);
-        registry.registerModule("test3", Test3Module.class);
+        registry.registerModule("test1", new Test1Module());
+        registry.registerModule("test2", new Test2Module());
+        registry.registerModule("test3", new Test3Module());
 
         final List<ModuleRegistration> registrations = registry.getModuleRegistrations();
 

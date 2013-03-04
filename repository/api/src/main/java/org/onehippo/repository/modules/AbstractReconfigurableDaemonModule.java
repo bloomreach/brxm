@@ -91,6 +91,16 @@ public abstract class AbstractReconfigurableDaemonModule implements Configurable
      */
     protected abstract void doShutdown();
 
+    /**
+     * Called when the module configuration has changed. The default implementation
+     * just calls {@link #doConfigure(javax.jcr.Node)} but this method may be overridden.
+     * @param moduleConfig  the new module configuration node
+     * @throws RepositoryException
+     */
+    protected void onConfigurationChange(final Node moduleConfig) throws RepositoryException {
+        doConfigure(moduleConfig);
+    }
+
     private class ModuleConfigurationListener implements EventListener {
 
         private static final int EVENT_TYPES = Event.NODE_ADDED | Event.NODE_REMOVED | Event.NODE_MOVED
@@ -118,7 +128,7 @@ public abstract class AbstractReconfigurableDaemonModule implements Configurable
             try {
                 final Node moduleConfig = JcrUtils.getNodeIfExists(moduleConfigPath, session);
                 if (moduleConfig != null) {
-                    doConfigure(moduleConfig);
+                    onConfigurationChange(moduleConfig);
                 } else {
                     log.warn("Configuration for module {} not found", moduleName);
                 }
