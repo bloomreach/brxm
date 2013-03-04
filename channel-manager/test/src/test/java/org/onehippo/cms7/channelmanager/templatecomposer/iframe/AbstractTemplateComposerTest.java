@@ -83,6 +83,13 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         injectJavascript(PageEditorBundle.class, PageEditorBundle.MESSAGE_BUS);
         injectJavascript(InitializationTest.class, "mockIFramePanel.js");
 
+        Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
+        ScriptableObject instance = getScriptableObject(window, "Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance");
+        ScriptableObject hostToIFrame = (ScriptableObject)instance.get("hostToIFrame");
+        ScriptableObject iframeToHost = (ScriptableObject)instance.get("iframeToHost");
+        interceptMessages(hostToIFrame, hostToIFrameMessages);
+        interceptMessages(iframeToHost, iframeToHostMessages);
+
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_CORE);
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_CLASS_PLUGIN);
         injectJavascript(JQueryBundle.class, JQueryBundle.JQUERY_NAMESPACE_PLUGIN);
@@ -96,14 +103,6 @@ abstract public class AbstractTemplateComposerTest extends AbstractJavascriptTes
         injectJavascript(IFrameBundle.class, IFrameBundle.WIDGETS);
         injectJavascript(IFrameBundle.class, IFrameBundle.SURFANDEDIT);
         injectJavascript(IFrameBundle.class, IFrameBundle.LAST);
-
-        Window window = (Window) page.getWebClient().getCurrentWindow().getScriptObject();
-        ScriptableObject instance = getScriptableObject(window, "Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance");
-        ScriptableObject hostToIFrame = (ScriptableObject)instance.get("hostToIFrame");
-        ScriptableObject iframeToHost = (ScriptableObject)instance.get("iframeToHost");
-
-        interceptMessages(hostToIFrame, hostToIFrameMessages);
-        interceptMessages(iframeToHost, iframeToHostMessages);
     }
 
     private ScriptableObject getScriptableObject(Window window, String namespacedName) {
