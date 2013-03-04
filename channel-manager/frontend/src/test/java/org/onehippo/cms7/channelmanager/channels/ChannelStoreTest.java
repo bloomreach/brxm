@@ -26,7 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.wicketstuff.js.ext.data.ExtField;
+import org.wicketstuff.js.ext.data.ExtDataField;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -59,7 +59,7 @@ public class ChannelStoreTest {
         expect(mockedChannelService.getChannels()).andReturn(Collections.singletonList(channel));
         replay(mockedChannelService);
 
-        final List<ExtField> fields = Arrays.asList(new ExtField("id"), new ExtField("locale"), new ExtField("hostname"));
+        final List<ExtDataField> fields = Arrays.asList(new ExtDataField("id"), new ExtDataField("locale"), new ExtDataField("hostname"));
         ChannelStore store = new ChannelStore("testStoreId", fields, "dummySortName", ChannelStore.SortOrder.ascending,
                 createNiceMock(LocaleResolver.class), mockedProxyService);
 
@@ -80,7 +80,7 @@ public class ChannelStoreTest {
         expect(mockedChannelService.getChannels()).andReturn(Collections.singletonList(channel));
         replay(mockedChannelService);
 
-        final List<ExtField> dummyFields = Collections.emptyList();
+        final List<ExtDataField> dummyFields = Collections.emptyList();
         ChannelStore store = new ChannelStore("testStoreId", dummyFields, "dummySortName", ChannelStore.SortOrder.ascending,
                 createNiceMock(LocaleResolver.class), mockedProxyService);
 

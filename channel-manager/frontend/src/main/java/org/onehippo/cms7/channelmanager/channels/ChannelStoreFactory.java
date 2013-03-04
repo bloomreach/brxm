@@ -28,7 +28,7 @@ import org.hippoecm.frontend.translation.ILocaleProvider;
 import org.onehippo.cms7.channelmanager.channels.util.rest.RestClientProxyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.data.ExtField;
+import org.wicketstuff.js.ext.data.ExtDataField;
 
 public final class ChannelStoreFactory {
 
@@ -46,9 +46,9 @@ public final class ChannelStoreFactory {
         Set<String> storeFieldNames = parseChannelFields(config);
 
         // then create a list of all the Ext fields in the store
-        List<ExtField> fieldList = new ArrayList<ExtField>();
+        List<ExtDataField> fieldList = new ArrayList<ExtDataField>();
         for (String storeFieldName : storeFieldNames) {
-            fieldList.add(new ExtField(storeFieldName));
+            fieldList.add(new ExtDataField(storeFieldName));
         }
 
         // Retrieve the Hippo locale provider to resolve locales of new channels

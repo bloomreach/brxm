@@ -74,10 +74,8 @@ public class ChannelManagerPerspective extends Perspective implements IChannelMa
                 add(new WireframeBehavior(wfSettings));
             }
 
-            rootPanel = new RootPanel(context, config, "root-panel-div");
-            final Fragment rootPanelFragment = new Fragment("channel-root", "root-fragment", this);
-            rootPanelFragment.add(rootPanel);
-            add(rootPanelFragment);
+            rootPanel = new RootPanel(context, config, "channel-root");
+            add(rootPanel);
 
             final String channelManagerServiceId = config.getString("channel.manager.service.id", IChannelManagerService.class.getName());
             context.registerService(this, channelManagerServiceId);

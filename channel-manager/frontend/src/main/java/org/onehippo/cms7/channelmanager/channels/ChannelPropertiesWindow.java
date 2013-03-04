@@ -60,7 +60,6 @@ import org.onehippo.cms7.channelmanager.widgets.ImageSetPathWidget;
 import org.onehippo.cms7.channelmanager.widgets.JcrPathWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.ExtBoxComponent;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.data.ActionFailedException;
 import org.wicketstuff.js.ext.form.ExtFormPanel;
@@ -131,6 +130,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         super();
 
         this.channelStore = channelStore;
+
         final WebMarkupContainer container = new WebMarkupContainer("channel-properties-container");
         container.add(new AttributeModifier("class", true, new PropertyModel(this, "channelPropertiesContainerClass")));
         container.add(new ListView<FieldGroupInfo>(WICKET_ID_FIELDGROUPS, new LoadableDetachableModel<List<FieldGroupInfo>>() {
@@ -190,9 +190,7 @@ public class ChannelPropertiesWindow extends ExtFormPanel {
         });
 
         container.setOutputMarkupId(true);
-        ExtBoxComponent box = new ExtBoxComponent();
-        box.add(container);
-        add(box);
+        add(container);
 
         addEventListener(EVENT_SELECT_CHANNEL, new ExtEventListener() {
             @Override

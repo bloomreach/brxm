@@ -13,18 +13,10 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-
 <html xmlns:wicket="http://wicket.apache.org/">
-<wicket:panel>
-  <div yui:id="template-composer-plugin-wrapper" class="hippo-panel-plugin template-composer-perspective">
-    <div yui:id="template-composer-perspective-center">
-      <div yui:id="template-composer-perspective-center-body">
-        <div class="channel-manager" wicket:id="channel-root"></div>
-      </div>
+<wicket:extend>
+    <div wicket:id="hst-config-editor-container">
+        <span wicket:id="label-mountpoint"></span>
     </div>
-  </div>
-  <wicket:fragment wicket:id="dimmed-root-fragment">
-    <div wicket:id="dimmed-root-panel-div" />
-  </wicket:fragment>
-</wicket:panel>
+</wicket:extend>
 </html>

@@ -53,7 +53,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ActionFailedException;
-import org.wicketstuff.js.ext.data.ExtField;
+import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtGroupingStore;
 import org.wicketstuff.js.ext.util.ExtClass;
 
@@ -120,7 +120,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     private String channelRegionIconPath = DEFAULT_CHANNEL_ICON_PATH;
     private String channelTypeIconPath = DEFAULT_CHANNEL_ICON_PATH;
 
-    public ChannelStore(String storeId, List<ExtField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver, IRestProxyService restProxyService) {
+    public ChannelStore(String storeId, List<ExtDataField> fields, String sortFieldName, SortOrder sortOrder, LocaleResolver localeResolver, IRestProxyService restProxyService) {
 
         super(fields);
         this.storeId = storeId;
@@ -167,7 +167,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             Map<String, Object> channelProperties = channel.getProperties();
             JSONObject object = new JSONObject();
 
-            for (ExtField field : getFields()) {
+            for (ExtDataField field : getFields()) {
                 String fieldValue = ReflectionUtil.getStringValue(channel, field.getName());
                 if (fieldValue == null) {
                     Object value = channelProperties.get(field.getName());

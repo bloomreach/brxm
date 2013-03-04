@@ -34,7 +34,6 @@ import org.hippoecm.hst.plugins.frontend.HstEditorPerspective;
 import org.hippoecm.hst.plugins.frontend.ViewController;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ChannelManagerPerspective;
-import org.wicketstuff.js.ext.ExtBoxComponent;
 import org.wicketstuff.js.ext.ExtPanel;
 import org.wicketstuff.js.ext.util.ExtClass;
 
@@ -89,9 +88,7 @@ public class HstConfigEditor extends ExtPanel {
             }
         }, HstConfigEditor.class.getName() + ".hst-editor");
 
-        ExtBoxComponent box = new ExtBoxComponent();
-        box.add(container);
-        add(box);
+        add(container);
 
         setOutputMarkupId(true);
     }
