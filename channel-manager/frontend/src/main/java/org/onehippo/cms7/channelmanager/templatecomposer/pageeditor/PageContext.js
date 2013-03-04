@@ -170,55 +170,63 @@
 
             return new Hippo.Future(function(onSuccess, onFail) {
                 var self = this;
+
+                function handleResponse(response) {
+                    var pageId, mountId, lockedBy, futures;
+                    pageId = response.getResponseHeader('HST-Page-Id');
+                    mountId = response.getResponseHeader('HST-Mount-Id');
+                    if (pageId === undefined || mountId === undefined) {
+                        onFail('No page and/or mount information found');
+                        return;
+                    }
+
+                    self.renderedVariant = response.getResponseHeader('HST-Render-Variant');
+                    self.hasPreviewHstConfig = self._getBoolean(response.getResponseHeader('HST-Site-HasPreviewConfig'));
+                    if (!self.hasPreviewHstConfig || !canEdit) {
+                        self.previewMode = true;
+                    }
+
+                    lockedBy = response.getResponseHeader('HST-Mount-LockedBy');
+                    if (lockedBy !== undefined) {
+                        self.locked = self.pageContainer.cmsUser !== lockedBy;
+                        self.lockedBy = lockedBy;
+                        self.lockedOn = parseInt(response.getResponseHeader('HST-Mount-LockedOn'), 10);
+                        self.unlockable = response.getResponseHeader('HST-Mount-Unlockable') === 'true' ? true : false;
+                    } else {
+                        self.locked = false;
+                        self.lockedBy = "";
+                        self.lockedOn = 0;
+                        self.unlockable = false;
+                    }
+
+                    console.log('hstMetaDataResponse: url:' + encodedUrl + ', pageId:' + pageId + ', mountId:' + mountId);
+
+                    if (canEdit) {
+                        futures = [
+                            self._initToolkitStore.call(self, mountId),
+                            self._initPageModelStore.apply(self, [mountId, pageId])
+                        ];
+                        Hippo.Future.join(futures).when(function() {
+                            onSuccess();
+                        }).otherwise(function() {
+                                onFail("Failed to initialize page model for url '" + encodedUrl + "'");
+                            });
+                    } else {
+                        onSuccess();
+                    }
+                }
+
                 Ext.Ajax.request({
                     method: "HEAD",
                     url: encodedUrl,
-                    success: function(responseObject) {
-                        var pageId, mountId, lockedBy, futures;
-                        pageId = responseObject.getResponseHeader('HST-Page-Id');
-                        mountId = responseObject.getResponseHeader('HST-Mount-Id');
-                        if (pageId === undefined || mountId === undefined) {
-                            onFail('No page and/or mount information found');
-                            return;
-                        }
-
-                        self.renderedVariant = responseObject.getResponseHeader('HST-Render-Variant');
-                        self.hasPreviewHstConfig = self._getBoolean(responseObject.getResponseHeader('HST-Site-HasPreviewConfig'));
-                        if (!self.hasPreviewHstConfig || !canEdit) {
-                            self.previewMode = true;
-                        }
-
-                        lockedBy = responseObject.getResponseHeader('HST-Mount-LockedBy');
-                        if (lockedBy !== undefined) {
-                            self.locked = self.pageContainer.cmsUser !== lockedBy;
-                            self.lockedBy = lockedBy;
-                            self.lockedOn = parseInt(responseObject.getResponseHeader('HST-Mount-LockedOn'), 10);
-                            self.unlockable = responseObject.getResponseHeader('HST-Mount-Unlockable') === 'true' ? true : false;
+                    success: handleResponse,
+                    failure: function(response) {
+                        var statusCode = parseInt(response.status, 10);
+                        if (statusCode >= 500) {
+                            onFail('Server returned status code ' + statusCode);
                         } else {
-                            self.locked = false;
-                            self.lockedBy = "";
-                            self.lockedOn = 0;
-                            self.unlockable = false;
+                            handleResponse(response);
                         }
-
-                        console.log('hstMetaDataResponse: url:' + encodedUrl + ', pageId:' + pageId + ', mountId:' + mountId);
-
-                        if (canEdit) {
-                            futures = [
-                                self._initToolkitStore.call(self, mountId),
-                                self._initPageModelStore.apply(self, [mountId, pageId])
-                            ];
-                            Hippo.Future.join(futures).when(function() {
-                                onSuccess();
-                            }).otherwise(function() {
-                                onFail("Failed to initialize page model for url '" + encodedUrl + "'");
-                            });
-                        } else {
-                            onSuccess();
-                        }
-                    },
-                    failure: function() {
-                        onFail("HST-Meta-Data request failed for URL '" + encodedUrl + "'");
                     }
                 });
             }.createDelegate(this));

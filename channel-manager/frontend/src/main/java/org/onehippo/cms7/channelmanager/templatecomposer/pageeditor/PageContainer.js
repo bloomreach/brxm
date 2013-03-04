@@ -504,15 +504,26 @@
                 this._complete();
             }, this);
             this.pageContext.on('pageContextInitializationFailed', function(error) {
+                var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+
                 this.previewMode = this.pageContext.previewMode;
-                if (!Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.isValidSession(this.sessionCookie)) {
+
+                if (!iframe.isValidSession(this.sessionCookie)) {
                     console.log("invalid session!");
                     this._initializeHstSession(this._complete.createDelegate(this));
                 } else {
                     console.error(this.resources['page-context-initialization-failed-message']);
                     console.error(error);
                     if (this._hasFocus()) {
-                        Hippo.Msg.alert(this.resources['page-context-initialization-failed-title'], this.resources['page-context-initialization-failed-message'], this);
+                        Hippo.Msg.alert(
+                            this.resources['iframe-page-error-message-title'],
+                            this.resources['iframe-page-error-message-message'],
+                            function() {
+                                if (!iframe.goBack()) {
+                                    Ext.getCmp('rootPanel').showChannelManager();
+                                }
+                            }
+                        );
                     }
                     this._complete();
                 }

@@ -20,7 +20,7 @@
 
     Hippo.ChannelManager.TemplateComposer.IFramePanel = Ext.extend(Ext.Panel, (function () {
         // private variables
-        var frameId, lastLocation, instance, resizeTask;
+        var frameId, currentLocation, previousLocation, instance, resizeTask;
 
         frameId = Ext.id();
 
@@ -56,16 +56,17 @@
         }
 
         function detachFrame() {
-            lastLocation = undefined;
+            currentLocation = undefined;
             instance.hostToIFrame.unsubscribeAll();
         }
 
         function onFrameLoad() {
-            var frameLocation = getFrameLocation();
+            var newLocation = getFrameLocation();
 
-            if (frameLocation !== lastLocation) {
+            if (newLocation !== currentLocation) {
+                previousLocation = currentLocation;
                 detachFrame();
-                lastLocation = frameLocation;
+                currentLocation = newLocation;
                 instance.fireEvent('locationchanged');
             }
         }
@@ -123,12 +124,22 @@
             },
 
             setLocation: function(url) {
+                previousLocation = currentLocation;
                 detachFrame();
                 getFrameDom().src = url;
             },
 
             getLocation: function() {
                 return getFrameLocation();
+            },
+
+            goBack: function() {
+                if (!Ext.isEmpty(previousLocation)) {
+                    this.setLocation(previousLocation);
+                    previousLocation = undefined;
+                    return true;
+                }
+                return false;
             },
 
             getElement: function(id) {
