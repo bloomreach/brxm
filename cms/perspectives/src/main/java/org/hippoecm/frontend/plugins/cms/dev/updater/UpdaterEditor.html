@@ -16,35 +16,37 @@
     limitations under the License.
 
 -->
-<wicket:panel xmlns:wicket="http://wicket.apache.org/">
-  <form wicket:id="updater-form">
-      <div wicket:id="feedback" class="hippo-modal-feedback">[info/warn/error messages]</div>
-      <div>
-          <input type="submit" value="Save" wicket:id="save-button"/>
-          <input type="submit" value="Dry run" wicket:id="dryrun-button"/>
-          <input type="submit" value="Execute" wicket:id="execute-button"/>
-          <input type="submit" value="Undo" wicket:id="undo-button"/>
-          <input type="submit" value="Stop" wicket:id="stop-button"/>
-          <input type="submit" value="Delete" wicket:id="delete-button"/>
-      </div>
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+    <form wicket:id="updater-form">
+        <div wicket:id="feedback" class="hippo-modal-feedback">[info/warn/error messages]</div>
+        <div>
+            <input type="submit" value="Save" wicket:id="save-button"/>
+            <input type="submit" value="Dry run" wicket:id="dryrun-button"/>
+            <input type="submit" value="Execute" wicket:id="execute-button"/>
+            <input type="submit" value="Undo" wicket:id="undo-button"/>
+            <input type="submit" value="Stop" wicket:id="stop-button"/>
+            <input type="submit" value="Delete" wicket:id="delete-button"/>
+        </div>
+        <p>&nbsp;</p>
+      <span wicket:id="radios">
+          <table width="100%">
+              <tr wicket:id="name"/>
+              <tr wicket:id="path"/>
+              <tr wicket:id="query"/>
+              <tr wicket:id="batch-size"/>
+              <tr wicket:id="throttle"/>
+              <tr wicket:id="dryrun"/>
+          </table>
+      </span>
       <p>&nbsp;</p>
-    <span wicket:id="radios">
-        <table width="100%">
-            <tr wicket:id="name"/>
-            <tr wicket:id="path"/>
-            <tr wicket:id="query"/>
-            <tr wicket:id="batch-size"/>
-            <tr wicket:id="throttle"/>
-            <tr wicket:id="dryrun"/>
-        </table>
-    </span>
-    <p>&nbsp;</p>
-    <p>Script</p>
-    <p>&nbsp;</p>
-    <fieldset id="script">
-      <textarea wicket:id="script-editor"></textarea>
-    </fieldset>
-    <p>&nbsp;</p>
-    <div wicket:id="updater-output"/>
-  </form>
-</wicket:panel>
+      <p>Script</p>
+      <p>&nbsp;</p>
+      <fieldset id="script">
+        <textarea wicket:id="script-editor"></textarea>
+      </fieldset>
+      <p>&nbsp;</p>
+      <div wicket:id="updater-output"/>
+    </form>
+  </wicket:panel>
+</html>

@@ -14,19 +14,21 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<wicket:extend>
-  <h2><wicket:message key="system-info-title"/></h2>
-  <div class="hippo-controlpanel-actions-top">
-    <input type="button" href="#" wicket:id="refresh" wicket:message="value:system-info-refresh" />
-    <input type="button" href="#" wicket:id="gc" wicket:message="value:system-info-gc" />
-    </div>
-      <table class="hippo-controlpanel-table-default hippo-list-details">
-      <tbody>
-      <tr wicket:id="rows">
-        <td wicket:id="cells">
-          <span wicket:id="cell">cell content goes here</span>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-</wicket:extend>
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:extend>
+    <h2><wicket:message key="system-info-title"/></h2>
+    <div class="hippo-controlpanel-actions-top">
+      <input type="button" href="#" wicket:id="refresh" wicket:message="value:system-info-refresh" />
+      <input type="button" href="#" wicket:id="gc" wicket:message="value:system-info-gc" />
+      </div>
+        <table class="hippo-controlpanel-table-default hippo-list-details">
+        <tbody>
+        <tr wicket:id="rows">
+          <td wicket:id="cells">
+            <span wicket:id="cell">cell content goes here</span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+  </wicket:extend>
+</html>

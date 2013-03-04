@@ -13,20 +13,22 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<wicket:panel xmlns:wicket="http://wicket.apache.org/">
-  <form wicket:id="form">
-    <label for="upload">
-      <wicket:message key="select-file-label"/>
-    </label>
-    <input class="hippo-select-file" size="62" wicket:id="input" id="upload" type="file"/>
-    <wicket:enclosure child="type">
-      <label for="typeselect">
-        <wicket:message key="file-type-label"/>
+<html xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+    <form wicket:id="form">
+      <label for="upload">
+        <wicket:message key="select-file-label"/>
       </label>
-      <select wicket:id="type" id="typeselect"/>
-    </wicket:enclosure>
-    <div class="hippo-window-buttons">
-      <input style="margin-right: 115px" type="submit" value="label comes here" wicket:message="value:upload-label"/>
-    </div>
-  </form>
-</wicket:panel>
+      <input class="hippo-select-file" size="62" wicket:id="input" id="upload" type="file"/>
+      <wicket:enclosure child="type">
+        <label for="typeselect">
+          <wicket:message key="file-type-label"/>
+        </label>
+        <select wicket:id="type" id="typeselect"/>
+      </wicket:enclosure>
+      <div class="hippo-window-buttons">
+        <input style="margin-right: 115px" type="submit" value="label comes here" wicket:message="value:upload-label"/>
+      </div>
+    </form>
+  </wicket:panel>
+</html>

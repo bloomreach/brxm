@@ -13,14 +13,15 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<wicket:panel>
-    <div class="hippo-picker-navigation-buttons">
-      <input wicket:id="up" type="image" class="up" src="skin/images/hippo-picker-navigation-buttons-back-off.png"/>
-    </div>
-    <ul class="hippo-picker-navigation-breadcrumbs">
-      <li class="hippo-picker-navigation-breadcrumb" wicket:id="crumbs">
-        <a wicket:id="link"><span wicket:id="name">[ Link name ]</span></a>
-      </li>
-    </ul>
-</wicket:panel>
-
+<html  xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+      <div class="hippo-picker-navigation-buttons">
+        <input wicket:id="up" type="image" class="up" src="skin/images/hippo-picker-navigation-buttons-back-off.png"/>
+      </div>
+      <ul class="hippo-picker-navigation-breadcrumbs">
+        <li class="hippo-picker-navigation-breadcrumb" wicket:id="crumbs">
+          <a wicket:id="link"><span wicket:id="name">[ Link name ]</span></a>
+        </li>
+      </ul>
+  </wicket:panel>
+</html>

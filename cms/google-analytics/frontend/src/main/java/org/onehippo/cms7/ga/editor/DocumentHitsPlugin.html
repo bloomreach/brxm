@@ -13,15 +13,17 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<wicket:panel xmlns:wicket="http://wicket.apache.org/">
-  <div class="hippo-editor-field">
-    <h3 class="hippo-editor-field-title">
-      <span><wicket:message key="document.hits.caption">Document Views</wicket:message></span>
-    </h3>
-    <span wicket:id="ajax-lazy-load-panel">
-    </span>
-    <wicket:fragment wicket:id="lazy-load-document-hits-container">
-       &nbsp;&nbsp;<img wicket:id="document-hits-image" />&nbsp;&nbsp;<span wicket:id="document-hits-label">X hits during the last day/week/month/year</span>
-    </wicket:fragment>
-  </div>
-</wicket:panel>
+<html  xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+    <div class="hippo-editor-field">
+      <h3 class="hippo-editor-field-title">
+        <span><wicket:message key="document.hits.caption">Document Views</wicket:message></span>
+      </h3>
+      <span wicket:id="ajax-lazy-load-panel">
+      </span>
+      <wicket:fragment wicket:id="lazy-load-document-hits-container">
+         &nbsp;&nbsp;<img wicket:id="document-hits-image" />&nbsp;&nbsp;<span wicket:id="document-hits-label">X hits during the last day/week/month/year</span>
+      </wicket:fragment>
+    </div>
+  </wicket:panel>
+</html>

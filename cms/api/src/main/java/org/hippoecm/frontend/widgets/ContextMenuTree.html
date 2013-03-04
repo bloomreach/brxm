@@ -12,20 +12,22 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
-  -->
-<wicket:panel>
-  <div class="hippo-tree">
-    <div class="wicket-tree">
-      <div wicket:id="i">
-        <div class="a_">
-          <span wicket:id="indent"></span><a wicket:id="link"><span wicket:id="image"/></a>
-          <a wicket:id="nodeLink"><span class="icon" wicket:id="icon"></span><span wicket:id="label"></span></a>
+-->
+<html  xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+    <div class="hippo-tree">
+      <div class="wicket-tree">
+        <div wicket:id="i">
+          <div class="a_">
+            <span wicket:id="indent"></span><a wicket:id="link"><span wicket:id="image"/></a>
+            <a wicket:id="nodeLink"><span class="icon" wicket:id="icon"></span><span wicket:id="label"></span></a>
+          </div>
+          <span class="hippo-tree-dropdown-icon-container" wicket:id="contextLink">
+            <a class="hippo-tree-dropdown-icon" wicket:id="menuimage"></a>
+          </span>
+          <span wicket:id="contextContent" class="hippo-tree-dropdown"></span>
         </div>
-        <span class="hippo-tree-dropdown-icon-container" wicket:id="contextLink">
-          <a class="hippo-tree-dropdown-icon" wicket:id="menuimage"></a>
-        </span>
-        <span wicket:id="contextContent" class="hippo-tree-dropdown"></span>
       </div>
     </div>
-  </div>
-</wicket:panel>
+  </wicket:panel>
+</html>

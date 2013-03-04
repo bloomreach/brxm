@@ -13,12 +13,14 @@
   * See the License for the specific language governing permissions and
   * limitations under the License.
 -->
-<wicket:panel>
-  <div class="wizard-button-bar">
-    <input wicket:id="cancel" type="submit" value="cancel" style="float:left;" class="wizard-button"/>
-    <input wicket:id="finish" type="submit" value="finish" style="float:right" wicket:message="value:wizard.finish" class="wizard-button"/>
-    <input wicket:id="next" type="submit" value="next" style="float:right" wicket:message="value:wizard.next" class="wizard-button"/>
-    <input wicket:id="previous" type="submit" value="previous" style="float:right" wicket:message="value:wizard.previous" class="wizard-button"/>
-    <input wicket:id="last" type="submit" value="last" style="float:right" class="wizard-button"/>
-  </div>
-</wicket:panel>
+<html  xmlns:wicket="http://wicket.apache.org/">
+  <wicket:panel>
+    <div class="wizard-button-bar">
+      <input wicket:id="cancel" type="submit" value="cancel" style="float:left;" class="wizard-button"/>
+      <input wicket:id="finish" type="submit" value="finish" style="float:right" wicket:message="value:wizard.finish" class="wizard-button"/>
+      <input wicket:id="next" type="submit" value="next" style="float:right" wicket:message="value:wizard.next" class="wizard-button"/>
+      <input wicket:id="previous" type="submit" value="previous" style="float:right" wicket:message="value:wizard.previous" class="wizard-button"/>
+      <input wicket:id="last" type="submit" value="last" style="float:right" class="wizard-button"/>
+    </div>
+  </wicket:panel>
+</html>
