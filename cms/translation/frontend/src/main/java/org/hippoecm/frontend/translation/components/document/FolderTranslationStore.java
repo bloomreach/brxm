@@ -24,7 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.data.ExtField;
+import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
@@ -42,8 +42,8 @@ final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
     private final List<FolderTranslation> translations;
 
     FolderTranslationStore(List<FolderTranslation> translations) {
-        super(Arrays.asList(new ExtField("name"), new ExtField("namefr"), new ExtField("url"),
-                new ExtField("urlfr"), new ExtField("id"), new ExtField("type"), new ExtField(
+        super(Arrays.asList(new ExtDataField("name"), new ExtDataField("namefr"), new ExtDataField("url"),
+                new ExtDataField("urlfr"), new ExtDataField("id"), new ExtDataField("type"), new ExtDataField(
                         "editable", Boolean.class)));
         this.translations = translations;
     }
@@ -61,7 +61,7 @@ final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
                 }
 
                 JSONObject jsonLine = new JSONObject();
-                for (ExtField field : getFields()) {
+                for (ExtDataField field : getFields()) {
                     Object value = PropertyResolver.getValue(field.getName(), data);
                     jsonLine.put(field.getName(), value);
                 }
@@ -83,7 +83,7 @@ final class FolderTranslationStore extends ExtJsonStore<FolderTranslation> {
         JSONArray jsonData = new JSONArray();
         for (FolderTranslation record : translations) {
             JSONObject jsonLine = new JSONObject();
-            for (ExtField field : getFields()) {
+            for (ExtDataField field : getFields()) {
                 Object value = PropertyResolver.getValue(field.getName(), record);
                 jsonLine.put(field.getName(), value);
             }

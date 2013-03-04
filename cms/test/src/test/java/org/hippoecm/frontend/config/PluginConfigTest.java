@@ -15,10 +15,6 @@
  */
 package org.hippoecm.frontend.config;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -46,8 +42,11 @@ import org.hippoecm.frontend.plugin.config.impl.ClusterConfigDecorator;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JcrPluginConfig;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class PluginConfigTest extends PluginTest {
 
@@ -58,29 +57,30 @@ public class PluginConfigTest extends PluginTest {
                 "c", "d",
             "/test/config", "frontend:pluginconfig",
                 "a", "b",
-            "/test/config/sub", "frontend:pluginconfig",
-                "c", "d",
-            "/test/config/typed", "frontendtest:typed",
-                "d1", "3.0",
-                "d2", "3",
-                "l1", "1",
-                "l2", "-1",
-                "b1", "true",
-                "b2", "false",
+                "/test/config/sub", "frontend:pluginconfig",
+                    "c", "d",
+                    "/test/config/typed", "frontendtest:typed",
+                        "d1", "3.0",
+                        "d2", "3",
+                        "l1", "1",
+                        "l2", "-1",
+                        "b1", "true",
+                        "b2", "false",
             "/test/cluster", "frontend:plugincluster",
-            "/test/cluster/plugin", "frontend:plugin",
-                "c", "d",
-                "x", "${cluster.id}",
-            "/test/cluster/plugin/sub", "frontend:pluginconfig",
-                "a", "b",
-                "y", "${cluster.id}",
-            "/test/cluster/plugin/sub/typed", "frontendtest:typed",
-                "d1", "3.0",
-                "d2", "3",
-                "l1", "1",
-                "l2", "-1",
-                "b1", "true",
-                "b2", "false"};
+                "u", "v",
+                "/test/cluster/plugin", "frontend:plugin",
+                    "c", "d",
+                    "x", "${cluster.id}",
+                    "/test/cluster/plugin/sub", "frontend:pluginconfig",
+                        "a", "b",
+                        "y", "${cluster.id}",
+                        "/test/cluster/plugin/sub/typed", "frontendtest:typed",
+                            "d1", "3.0",
+                            "d2", "3",
+                            "l1", "1",
+                            "l2", "-1",
+                            "b1", "true",
+                            "b2", "false"};
 
     @Test
     @SuppressWarnings("unchecked")
@@ -228,6 +228,7 @@ public class PluginConfigTest extends PluginTest {
         IClusterConfig config = getClusterConfig();
         List<IPluginConfig> plugins = config.getPlugins();
         assertEquals(1, plugins.size());
+        assertEquals("v", config.getString("u"));
 
         assertEquals(0, config.getServices().size());
         assertEquals(0, config.getReferences().size());
@@ -290,10 +291,14 @@ public class PluginConfigTest extends PluginTest {
         assertEquals("d", pluginConfig.getString("c"));
         assertEquals("cluster", pluginConfig.getString("x"));
 
+        IPluginConfig clone = new JavaPluginConfig(pluginConfig.getPluginConfig("sub"));
+        assertTrue(clone.containsKey("u"));
+
         IPluginConfig subConfig = pluginConfig.getPluginConfig("sub");
         assertEquals("b", subConfig.getString("a"));
         assertEquals("cluster", subConfig.getString("y"));
-        
+        assertTrue(subConfig.containsKey("u"));
+
         testTypedConfig(subConfig.getPluginConfig("typed"));
     }
 

@@ -42,7 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.data.ExtField;
+import org.wicketstuff.js.ext.data.ExtDataField;
 
 public class BrokenLinksListColumns implements IClusterable {
 
@@ -120,8 +120,8 @@ public class BrokenLinksListColumns implements IClusterable {
         }
     }
 
-    public List<ExtField> getAllExtFields() {
-        List<ExtField> result = new ArrayList<ExtField>(columnNames.size());
+    public List<ExtDataField> getAllExtFields() {
+        List<ExtDataField> result = new ArrayList<ExtDataField>(columnNames.size());
 
         for (IBrokenLinkDocumentListColumn column: getAllColumns()) {
             result.add(column.getExtField());
@@ -186,8 +186,8 @@ public class BrokenLinksListColumns implements IClusterable {
         }
 
         @Override
-        public ExtField getExtField() {
-            return new ExtField(name);
+        public ExtDataField getExtField() {
+            return new ExtDataField(name);
         }
 
         @Override
@@ -234,10 +234,10 @@ public class BrokenLinksListColumns implements IClusterable {
     private static class NameColumn implements IBrokenLinkDocumentListColumn {
 
         private static final String DATA_INDEX = "name";
-        private static final ExtField EXT_FIELD = new ExtField(DATA_INDEX);
+        private static final ExtDataField EXT_FIELD = new ExtDataField(DATA_INDEX);
 
         @Override
-        public ExtField getExtField() {
+        public ExtDataField getExtField() {
             return EXT_FIELD;
         }
 
@@ -265,10 +265,10 @@ public class BrokenLinksListColumns implements IClusterable {
     private static class PathColumn implements IBrokenLinkDocumentListColumn {
 
         private static final String DATA_INDEX = "path";
-        private static final ExtField EXT_FIELD = new ExtField(DATA_INDEX);
+        private static final ExtDataField EXT_FIELD = new ExtDataField(DATA_INDEX);
 
         @Override
-        public ExtField getExtField() {
+        public ExtDataField getExtField() {
             return EXT_FIELD;
         }
 
@@ -286,10 +286,10 @@ public class BrokenLinksListColumns implements IClusterable {
 
     private static class BrokenLinksLinksColumn implements IBrokenLinkDocumentListColumn {
 
-        private static final ExtField EXT_FIELD = new ExtField("brokenlinksLinks");
+        private static final ExtDataField EXT_FIELD = new ExtDataField("brokenlinksLinks");
 
         @Override
-        public ExtField getExtField() {
+        public ExtDataField getExtField() {
             return EXT_FIELD;
         }
 
@@ -321,10 +321,10 @@ public class BrokenLinksListColumns implements IClusterable {
 
     private static class BrokenLinksBrokenSinceColumn implements IBrokenLinkDocumentListColumn {
 
-        private static final ExtField EXT_FIELD = new ExtField("brokenlinksBrokenSince");
+        private static final ExtDataField EXT_FIELD = new ExtDataField("brokenlinksBrokenSince");
 
         @Override
-        public ExtField getExtField() {
+        public ExtDataField getExtField() {
             return EXT_FIELD;
         }
 
@@ -363,10 +363,10 @@ public class BrokenLinksListColumns implements IClusterable {
 
     private static class BrokenLinksStatusColumn implements IBrokenLinkDocumentListColumn {
 
-        private static final ExtField EXT_FIELD = new ExtField("brokenlinksStatus");
+        private static final ExtDataField EXT_FIELD = new ExtDataField("brokenlinksStatus");
 
         @Override
-        public ExtField getExtField() {
+        public ExtDataField getExtField() {
             return EXT_FIELD;
         }
 

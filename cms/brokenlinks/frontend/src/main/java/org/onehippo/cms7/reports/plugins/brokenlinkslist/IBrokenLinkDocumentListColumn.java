@@ -20,11 +20,11 @@ import javax.jcr.RepositoryException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.wicketstuff.js.ext.data.ExtField;
+import org.wicketstuff.js.ext.data.ExtDataField;
 
 public interface IBrokenLinkDocumentListColumn {
 
-    ExtField getExtField();
+    ExtDataField getExtField();
 
     JSONObject getExtColumnConfig() throws JSONException;
 
