@@ -48,7 +48,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     private ValidationResult result;
     private List<Validator> validators;
     private List<String> allowedExtensions;
-    private Bytes maxFileSize;
+    private IValueMap values;
 
     public DefaultUploadValidationService() {
         this(ValueMap.EMPTY_MAP);
@@ -64,7 +64,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
             setAllowedExtensions(getDefaultExtensionsAllowed());
         }
 
-        maxFileSize = Bytes.valueOf(params.getString(MAX_FILE_SIZE, getDefaultMaxFileSize()));
+        values = params;
 
         addValidator(new Validator() {
 
@@ -140,6 +140,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
     private void validateMaxFileSize(final FileUpload upload) {
         Bytes fileSize = Bytes.bytes(upload.getSize());
 
+        final Bytes maxFileSize = Bytes.valueOf(values.getString(MAX_FILE_SIZE, getDefaultMaxFileSize()));
         if (maxFileSize.compareTo(fileSize) == -1) {
             addViolation("file.validation.size",
                     upload.getClientFileName(), fileSize.toString(), maxFileSize.toString());
@@ -170,7 +171,7 @@ public class DefaultUploadValidationService implements FileUploadValidationServi
 
     @Override
     public Bytes getMaxFileSize() {
-        return maxFileSize;
+        return Bytes.valueOf(values.getString(MAX_FILE_SIZE, getDefaultMaxFileSize()));
     }
 
     /**
