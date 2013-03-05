@@ -233,6 +233,29 @@ public class ScaleImageOperationTest {
         checkImageDimensions(scaleOp, "image/gif", 380, 428);
     }
 
+    @Test
+    public void calculateResizeRatio() throws GalleryException, IOException {
+        final ScaleImageOperation scaleOp = new ScaleImageOperation(0, 0, true, ImageUtils.ScalingStrategy.SPEED);
+
+        double ratio = scaleOp.calculateResizeRatio(800, 600, 400, 500);
+        assertTrue("Resize ratio calculated by bounding-box limited width.", ratio == 0.5);
+
+        ratio = scaleOp.calculateResizeRatio(800, 600, 700, 300);
+        assertTrue("Resize ratio calculated by bounding-box limited height.", ratio == 0.5);
+
+        ratio = scaleOp.calculateResizeRatio(800, 600, 400, 0);
+        assertTrue("Resize ratio calculated by bounding-box width.", ratio == 0.5);
+
+        ratio = scaleOp.calculateResizeRatio(800, 600, 0, 300);
+        assertTrue("Resize ratio calculated by bounding-box height.", ratio == 0.5);
+
+        ratio = scaleOp.calculateResizeRatio(800, 600, 1700, 1200);
+        assertTrue("Resize ratio calculated by bounding-box height.", ratio == 2.0);
+
+        ratio = scaleOp.calculateResizeRatio(800, 600, 1600, 1400);
+        assertTrue("Resize ratio calculated by bounding-box width.", ratio == 2.0);
+    }
+
     private void checkImageDimensions(ScaleImageOperation scaleOp, String mimeType, int expectedWidth, int expectedHeight) throws IOException {
         assertEquals(expectedWidth, scaleOp.getScaledWidth());
         assertEquals(expectedHeight, scaleOp.getScaledHeight());
