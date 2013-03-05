@@ -35,7 +35,11 @@ public interface FilterChainAwareHstSiteMapItemHandler extends HstSiteMapItemHan
      * Or it can return null when it completes the custom request processing by itself so HstFilter needs to stop the request processing.
      * </P>
      * <P>
-     * This method also receives FilterChain instance so it can continue the request processing by invoking filterChain.doFilter(..) method.
+     * This method also receives {@link FilterChain} instance so it can short circuit HST request processing and continue
+     * processing next {@link javax.servlet.Filter}s by invoking filterChain.doFilter(..). If you invoke
+     * filterChain.doFilter(..) you <strong>must</strong> return <code>null</code> from
+     * {@link #process(org.hippoecm.hst.core.request.ResolvedSiteMapItem, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain)}
+     * because the HST rendering <strong>must</strong> be short-circuited
      * </P>
      * 
      * @param resolvedSiteMapItem
