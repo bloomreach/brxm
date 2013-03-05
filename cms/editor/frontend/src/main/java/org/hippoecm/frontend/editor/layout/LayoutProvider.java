@@ -77,13 +77,18 @@ public class LayoutProvider implements ILayoutProvider {
     public LayoutProvider(IModel<ClassLoader> loaderModel) {
         this.classLoaderModel = loaderModel;
 
-        ClassLoader loader = classLoaderModel.getObject();
         layouts = new TreeMap<String, LayoutEntry>();
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            dbf.setNamespaceAware(true);
-            dbf.setValidating(false);
+        final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setNamespaceAware(true);
+        dbf.setValidating(false);
 
+        final ClassLoader loader = classLoaderModel.getObject();
+        if (loader == null) {
+            log.error("No class-loader could be obtained from the user session, skip reading layout extensions.");
+            return;
+        }
+
+        try {
             for (Enumeration<URL> iter = loader.getResources("hippoecm-layouts.xml"); iter.hasMoreElements();) {
                 URL configurationURL = iter.nextElement();
                 InputStream stream = configurationURL.openStream();
