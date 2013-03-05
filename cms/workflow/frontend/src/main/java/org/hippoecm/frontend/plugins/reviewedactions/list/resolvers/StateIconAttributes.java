@@ -126,66 +126,74 @@ public class StateIconAttributes implements IObservable, IDetachable {
     }
 
     void load() {
-        if (!loaded) {
-            observable.setTarget(null);
-            try {
-                Node node = nodeModel.getNode();
-                if (node != null) {
-                    Node document = null;
-                    NodeType primaryType = null;
-                    boolean isHistoric = false;
-                    if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
-                        NodeIterator docs = node.getNodes(node.getName());
-                        while (docs.hasNext()) {
-                            document = docs.nextNode();
-                            primaryType = document.getPrimaryNodeType();
-                            retrieveProperties(document, primaryType);
-                            if (document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                                String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                                if ("unpublished".equals(state)) {
-                                    break;
-                                }
-                            }
-                        }
-                    } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                        document = node;
-                        primaryType = document.getPrimaryNodeType();
-                        retrieveProperties(document, primaryType);
-                    } else if (node.isNodeType("nt:version")) {
-                        isHistoric = true;
-                        Node frozen = node.getNode("jcr:frozenNode");
-                        String primary = frozen.getProperty("jcr:frozenPrimaryType").getString();
-                        NodeTypeManager ntMgr = frozen.getSession().getWorkspace().getNodeTypeManager();
-                        primaryType = ntMgr.getNodeType(primary);
-                        if (primaryType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                            document = frozen;
-                        }
-                        retrieveProperties(document, primaryType);
-                    }
-                    if (document != null) {
-                        if (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
-                                || document.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
-                            cssClass = StateIconAttributeModifier.PREFIX
-                                    + (isHistoric ? "prev-" : "")
-                                    + document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString()
-                                    + StateIconAttributeModifier.SUFFIX;
-                            IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(document
-                                    .getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY)));
-                            summary = new TypeTranslator(new JcrNodeTypeModel(
-                                    HippoStdNodeType.NT_PUBLISHABLESUMMARY)).getValueName(
-                                    HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
+        if (loaded) {
+            return;
+        }
 
-                            observable.setTarget(new JcrNodeModel(document));
+        observable.setTarget(null);
+        final Node node = nodeModel.getNode();
+        if (node == null) {
+            return;
+        }
+
+        try {
+            Node document = null;
+            NodeType primaryType = null;
+            boolean isHistoric = false;
+            if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
+                NodeIterator docs = node.getNodes(node.getName());
+                while (docs.hasNext()) {
+                    document = docs.nextNode();
+                    primaryType = document.getPrimaryNodeType();
+                    retrieveProperties(document, primaryType);
+                    if (document.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
+                        String state = document.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
+                        if ("unpublished".equals(state)) {
+                            break;
                         }
                     }
                 }
-            } catch (RepositoryException ex) {
-                log.error("Unable to obtain state properties", ex);
+            } else if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                document = node;
+                primaryType = document.getPrimaryNodeType();
+                retrieveProperties(document, primaryType);
+            } else if (node.isNodeType("nt:version")) {
+                isHistoric = true;
+                Node frozen = node.getNode("jcr:frozenNode");
+                String primary = frozen.getProperty("jcr:frozenPrimaryType").getString();
+                NodeTypeManager ntMgr = frozen.getSession().getWorkspace().getNodeTypeManager();
+                primaryType = ntMgr.getNodeType(primary);
+                if (primaryType.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+                    document = frozen;
+                }
+                retrieveProperties(document, primaryType);
             }
-            loaded = true;
+            if (document != null
+                    && (primaryType.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)
+                    || document.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY))) {
+                cssClass = StateIconAttributeModifier.PREFIX
+                        + (isHistoric ? "prev-" : "")
+                        + document.getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY).getString()
+                        + StateIconAttributeModifier.SUFFIX;
+                IModel stateModel = new JcrPropertyValueModel(new JcrPropertyModel(document
+                        .getProperty(HippoStdNodeType.HIPPOSTD_STATESUMMARY)));
+                summary = new TypeTranslator(new JcrNodeTypeModel(
+                        HippoStdNodeType.NT_PUBLISHABLESUMMARY)).getValueName(
+                        HippoStdNodeType.HIPPOSTD_STATESUMMARY, stateModel).getObject();
+
+                observable.setTarget(new JcrNodeModel(document));
+            }
+        } catch (RepositoryException repositoryException) {
+            try {
+                log.error("Unable to obtain state properties, nodeModel path: " + node.getPath(), repositoryException);
+            } catch (RepositoryException nodeModelPathException) {
+                log.error("Unable to obtain state properties", repositoryException);
+                log.error("Unable to get path of node model", nodeModelPathException);
+            }
         }
+        loaded = true;
     }
-    
+
     private void retrieveProperties(Node document, NodeType primaryType) throws RepositoryException {
         if(document == null || primaryType == null) {
             return;
