@@ -100,7 +100,7 @@
         <sv:value>244px</sv:value>
       </sv:property>
       <sv:property sv:name="fileupload.autoUpload" sv:type="String">
-        <sv:value>true</sv:value>
+        <sv:value>false</sv:value>
       </sv:property>
       <sv:property sv:name="fileupload.clearAfterUpload" sv:type="String">
         <sv:value>true</sv:value>
