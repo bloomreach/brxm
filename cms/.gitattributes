@@ -2035,6 +2035,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/Updater
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanelPlugin.java -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel_de.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterQueueEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterRegistryEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterTemplate.groovy -text
