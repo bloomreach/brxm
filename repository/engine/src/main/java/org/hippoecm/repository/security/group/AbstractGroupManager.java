@@ -156,11 +156,41 @@ public abstract class AbstractGroupManager implements GroupManager {
         return group;
     }
 
+    @Override
+    public NodeIterator listGroups(long offset, long limit) throws RepositoryException {
+        return listGroups(null, offset, limit);
+    }
+
+    @Override
+    public NodeIterator listGroups(final String providerId, long offset, long limit) throws RepositoryException {
+        if (!isInitialized()) {
+            throw new IllegalStateException("Not initialized.");
+        }
+        final StringBuilder statement = new StringBuilder();
+        statement.append("//element");
+        statement.append("(*, ").append(HippoNodeType.NT_GROUP).append(")");
+        if (providerId != null) {
+            statement.append('[');
+            statement.append("@");
+            statement.append(HippoNodeType.HIPPO_SECURITYPROVIDER).append("= '").append(providerId).append("'");
+            statement.append(']');
+        }
+
+        final Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
+        if (offset > 0) {
+            q.setOffset(offset);
+        }
+        if (limit > 0) {
+            q.setLimit(limit);
+        }
+        final QueryResult result = q.execute();
+        return result.getNodes();
+    }
+
     /**
      * Helper for building group path including the groupname itself. Takes care of the encoding
      * of the path AND the groupId (the eventual node name)
      * @param rawGroupId unencoded groupId
-     * @param dirLevels
      * @return the fully encoded normalized path
      */
     private String buildGroupPath(String rawGroupId) {

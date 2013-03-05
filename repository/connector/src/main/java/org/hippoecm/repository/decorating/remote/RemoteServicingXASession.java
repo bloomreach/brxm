@@ -42,5 +42,4 @@ public interface RemoteServicingXASession extends RemoteXASession, Remote, Seria
 
     public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException;
 
-    public RemoteUser getUser() throws RepositoryException, RemoteException;
 }

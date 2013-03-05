@@ -18,6 +18,7 @@ package org.hippoecm.repository.security.group;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.transaction.NotSupportedException;
 
@@ -91,7 +92,6 @@ public interface GroupManager {
      */
     public boolean isManagerForGroup(Node group) throws RepositoryException;
 
-
     /**
      * Get the node type for new group nodes
      * @return the node type
@@ -103,7 +103,6 @@ public interface GroupManager {
      * @return
      */
     public boolean isCaseSensitive();
-
 
     /**
      * Get memberships from the repository for a user
@@ -118,6 +117,22 @@ public interface GroupManager {
      * @throws RepositoryException
      */
     public Set<String> getMembers(Node group) throws RepositoryException;
+
+    /**
+     * Get all the groups, regardless of their provider.
+     *
+     * @return  an iterator of group nodes
+     * @throws RepositoryException
+     */
+    public NodeIterator listGroups(long offset, long limit) throws RepositoryException;
+
+    /**
+     * Get all the groups associated with a particular provider.
+     *
+     * @return an iterator of group nodes
+     * @throws RepositoryException
+     */
+    public NodeIterator listGroups(String providerId, long offset, long limit) throws RepositoryException;
 
     /**
      * Set members of a group

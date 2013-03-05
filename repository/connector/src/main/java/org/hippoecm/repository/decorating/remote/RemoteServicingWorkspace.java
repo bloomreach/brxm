@@ -26,5 +26,5 @@ public interface RemoteServicingWorkspace extends RemoteWorkspace {
     public RemoteDocumentManager getDocumentManager() throws RepositoryException, RemoteException;
     public RemoteWorkflowManager getWorkflowManager() throws RepositoryException, RemoteException;
     public RemoteHierarchyResolver getHierarchyResolver() throws RepositoryException, RemoteException;
-    public RemoteSecurityService getSecurityService() throws RepositoryException, RemoteException;
+
 }

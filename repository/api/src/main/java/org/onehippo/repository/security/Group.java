@@ -16,8 +16,6 @@
 package org.onehippo.repository.security;
 
 
-import java.util.Set;
-
 import javax.jcr.RepositoryException;
 
 /**
@@ -39,6 +37,22 @@ public interface Group {
      * @return  the {@link User}s that are members of this group.
      * @throws RepositoryException
      */
-    Set<User> getMembers() throws RepositoryException;
+    Iterable<User> getMembers() throws RepositoryException;
+
+    /**
+     * Get the description property of this group.
+     *
+     * @return  the description property of this group, or {@code null} if not present
+     * @throws RepositoryException
+     */
+    String getDescription() throws RepositoryException;
+
+    /**
+     * Whether this group is marked as a system group.
+     *
+     * @return  whether this group is a system group
+     * @throws RepositoryException
+     */
+    boolean isSystemGroup() throws RepositoryException;
 
 }

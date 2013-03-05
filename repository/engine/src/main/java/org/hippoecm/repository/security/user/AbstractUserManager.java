@@ -287,11 +287,11 @@ public abstract class AbstractUserManager implements UserManager {
         }
     }
 
-    public final NodeIterator listUsers() throws RepositoryException {
-        return listUsers(null);
+    public final NodeIterator listUsers(long offset, long limit) throws RepositoryException {
+        return listUsers(null, offset, limit);
     }
 
-    public final NodeIterator listUsers(String providerId) throws RepositoryException {
+    public final NodeIterator listUsers(String providerId, long offset, long limit) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
         }
@@ -308,10 +308,15 @@ public abstract class AbstractUserManager implements UserManager {
         }
 
         Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
+        if (offset > 0) {
+            q.setOffset(offset);
+        }
+        if (limit > 0) {
+            q.setLimit(limit);
+        }
         QueryResult result = q.execute();
         return result.getNodes();
     }
-
 
     public final boolean isManagerForUser(Node user) throws RepositoryException {
         if (user.hasProperty(HippoNodeType.HIPPO_SECURITYPROVIDER)) {

@@ -42,7 +42,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
     @Test
     public void testGetMemberships() throws Exception {
-        final Set<Group> memberships = ((HippoSession) session).getUser().getMemberships();
+        final Iterable<Group> memberships = ((HippoSession) session).getUser().getMemberships();
         final Set<String> groupIds = new HashSet<String>();
         for (Group group : memberships) {
             groupIds.add(group.getId());
@@ -62,7 +62,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
     public void testGetMembers() throws Exception {
         final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
         final Group group = securityService.getGroup("admin");
-        final Set<User> members = group.getMembers();
+        final Iterable<User> members = group.getMembers();
         final Set<String> userIds = new HashSet<String>();
         for (User member : members) {
             userIds.add(member.getId());
@@ -73,8 +73,17 @@ public class SecurityServiceTest extends RepositoryTestCase {
     @Test
     public void testListUsers() throws Exception {
         final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
-        final Iterator<User> users = securityService.listUsers().iterator();
+        final Iterator<User> users = securityService.getUsers(-1, -1).iterator();
         assertTrue(users.hasNext());
         users.next();
     }
+
+    @Test
+    public void testListGroups() throws Exception {
+        final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
+        final Iterator<Group> groups = securityService.getGroups(-1, -1).iterator();
+        assertTrue(groups.hasNext());
+        groups.next();
+    }
+
 }

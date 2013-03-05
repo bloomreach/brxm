@@ -46,5 +46,4 @@ public interface RemoteServicingSession extends RemoteSession, Remote, Serializa
 
     public void checkPermission(String path, String actions) throws AccessControlException, RepositoryException, RemoteException;
 
-    RemoteUser getUser() throws RepositoryException, RemoteException;
 }

@@ -15,6 +15,7 @@
  */
 package org.onehippo.repository.security;
 
+import java.util.Calendar;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
@@ -30,7 +31,7 @@ public interface User {
      * @return  the id of the user
      * @throws RepositoryException
      */
-    public String getId() throws RepositoryException;
+    String getId() throws RepositoryException;
 
     /**
      * Whether this user is marked as a system user.
@@ -38,7 +39,7 @@ public interface User {
      * @return  whether this user is marked as a system user.
      * @throws RepositoryException
      */
-    public boolean isSystemUser() throws RepositoryException;
+    boolean isSystemUser() throws RepositoryException;
 
     /**
      * Whether this user is marked as active.
@@ -46,7 +47,7 @@ public interface User {
      * @return  whether this user is marked as active.
      * @throws RepositoryException
      */
-    public boolean isActive() throws RepositoryException;
+    boolean isActive() throws RepositoryException;
 
     /**
      * Get the {@link Group}s this user is a member of.
@@ -54,6 +55,40 @@ public interface User {
      * @return the ids of the {@link Group}s this user is a member of.
      * @throws RepositoryException
      */
-    public Set<Group> getMemberships() throws RepositoryException;
+    Iterable<Group> getMemberships() throws RepositoryException;
+
+
+    /**
+     * Get the first name property of this user.
+     *
+     * @return  the first name property of this user or {@code null} if not present
+     * @throws RepositoryException
+     */
+    String getFirstName() throws RepositoryException;
+
+    /**
+     * Get the last name property of this user.
+     *
+     * @return  the last name property of this user or {@code null} if not present
+     * @throws RepositoryException
+     */
+    String getLastName() throws RepositoryException;
+
+
+    /**
+     * Get the email property of this user.
+     *
+     * @return  the email property of this user or {@code null} if not present
+     * @throws RepositoryException
+     */
+    String getEmail() throws RepositoryException;
+
+    /**
+     * Get the last login property of this user.
+     *
+     * @return  the last login property of this user or {@code null} if not present
+     * @throws RepositoryException
+     */
+    Calendar getLastLogin() throws RepositoryException;
 
 }

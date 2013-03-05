@@ -20,21 +20,19 @@ import java.rmi.server.UnicastRemoteObject;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
-import javax.jcr.Workspace;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Workspace;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import javax.transaction.xa.XAResource;
 
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
+import org.apache.jackrabbit.rmi.remote.RemoteQuery;
 import org.apache.jackrabbit.rmi.remote.RemoteQueryManager;
 import org.apache.jackrabbit.rmi.remote.RemoteSession;
 import org.apache.jackrabbit.rmi.remote.RemoteWorkspace;
-import org.apache.jackrabbit.rmi.remote.RemoteQuery;
 import org.apache.jackrabbit.rmi.server.ServerAdapterFactory;
-
 import org.hippoecm.repository.RepositoryUrl;
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -43,13 +41,10 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowManager;
-
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteRepository;
-import org.hippoecm.repository.decorating.remote.RemoteSecurityService;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
-import org.onehippo.repository.security.SecurityService;
 
 public class ServerServicingAdapterFactory extends ServerAdapterFactory implements RemoteServicingAdapterFactory {
 
@@ -109,11 +104,6 @@ public class ServerServicingAdapterFactory extends ServerAdapterFactory implemen
     public RemoteHierarchyResolver getRemoteHierarchyResolver(HierarchyResolver hierarchyResolver, Session session)
         throws RemoteException {
         return new ServerHierarchyResolver(hierarchyResolver, this, session);
-    }
-
-    @Override
-    public RemoteSecurityService getRemoteSecurityService(final SecurityService securityService) throws RemoteException {
-        return new ServerSecurityService(securityService, this);
     }
 
     void export(Workflow workflow) throws RepositoryException {

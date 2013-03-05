@@ -32,10 +32,7 @@ import org.apache.jackrabbit.rmi.remote.RemoteIterator;
 import org.apache.jackrabbit.rmi.remote.RemoteNode;
 import org.apache.jackrabbit.rmi.server.ServerXASession;
 import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
-import org.hippoecm.repository.decorating.remote.RemoteUser;
-import org.onehippo.repository.security.User;
 
 public class ServerServicingXASession extends ServerXASession implements RemoteServicingXASession {
 
@@ -93,8 +90,4 @@ public class ServerServicingXASession extends ServerXASession implements RemoteS
         session.checkPermission(path, actions);
     }
 
-    @Override
-    public RemoteUser getUser() throws RepositoryException, RemoteException {
-        return new ServerUser(session.getUserID(), ((HippoWorkspace) session.getWorkspace()).getSecurityService(), getFactory());
-    }
 }

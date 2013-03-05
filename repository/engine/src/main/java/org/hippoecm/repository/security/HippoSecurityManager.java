@@ -24,9 +24,9 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
 import org.hippoecm.repository.security.group.GroupManager;
+import org.hippoecm.repository.security.user.AbstractUserManager;
 
 public interface HippoSecurityManager extends JackrabbitSecurityManager {
-
 
     /**
      * Configure the SecurityManager.
@@ -60,8 +60,16 @@ public interface HippoSecurityManager extends JackrabbitSecurityManager {
      */
     AuthenticationStatus authenticate(SimpleCredentials creds);
 
+    /**
+     * Get a {@link AbstractUserManager} for the given {@link Session} from the required {@link SecurityProvider}.
+     * @throws RepositoryException
+     */
+    AbstractUserManager getUserManager(Session session, String providerId) throws RepositoryException;
 
-    GroupManager getGroupManager(Session session) throws RepositoryException;
-
+    /**
+     * Get a {@link GroupManager} for the given {@link Session} from the required {@link SecurityProvider}
+     * @throws RepositoryException
+     */
+    GroupManager getGroupManager(Session session, String providerId) throws RepositoryException;
 
 }

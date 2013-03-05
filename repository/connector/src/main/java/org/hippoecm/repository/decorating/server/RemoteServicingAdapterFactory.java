@@ -22,15 +22,12 @@ import javax.jcr.query.QueryManager;
 
 import org.apache.jackrabbit.rmi.remote.RemoteQueryManager;
 import org.apache.jackrabbit.rmi.server.RemoteAdapterFactory;
-
 import org.hippoecm.repository.api.DocumentManager;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
-import org.hippoecm.repository.decorating.remote.RemoteSecurityService;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
-import org.onehippo.repository.security.SecurityService;
 
 public interface RemoteServicingAdapterFactory extends RemoteAdapterFactory {
 
@@ -39,5 +36,4 @@ public interface RemoteServicingAdapterFactory extends RemoteAdapterFactory {
     public RemoteQueryManager getRemoteQueryManager(QueryManager queryManager, Session session) throws RemoteException;
     public RemoteHierarchyResolver getRemoteHierarchyResolver(HierarchyResolver hierarchyResolver, Session session)
         throws RemoteException;
-    public RemoteSecurityService getRemoteSecurityService(SecurityService securityService) throws RemoteException;
 }

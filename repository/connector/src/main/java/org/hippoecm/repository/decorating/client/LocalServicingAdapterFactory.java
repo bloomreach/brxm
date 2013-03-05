@@ -18,21 +18,16 @@ package org.hippoecm.repository.decorating.client;
 import javax.jcr.Session;
 
 import org.apache.jackrabbit.rmi.client.LocalAdapterFactory;
-
 import org.hippoecm.repository.api.DocumentManager;
-import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.api.HierarchyResolver;
-
+import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.decorating.remote.RemoteDocumentManager;
-import org.hippoecm.repository.decorating.remote.RemoteSecurityService;
-import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
-import org.onehippo.repository.security.SecurityService;
+import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 
 public interface LocalServicingAdapterFactory extends LocalAdapterFactory {
 
     public DocumentManager getDocumentManager(Session session, RemoteDocumentManager remote);
     public WorkflowManager getWorkflowManager(Session session, RemoteWorkflowManager remote);
     public HierarchyResolver getHierarchyResolver(Session session, RemoteHierarchyResolver remote);
-    public SecurityService getSecurityService(Session session, RemoteSecurityService remote);
 }

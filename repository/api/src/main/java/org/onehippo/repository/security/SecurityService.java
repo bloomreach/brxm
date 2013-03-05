@@ -42,12 +42,24 @@ public interface SecurityService {
     User getUser(final String userId) throws ItemNotFoundException, RepositoryException;
 
     /**
-     * List the {@link User}s in the repository.
+     * Get all the {@link User}s in the repository.
      *
-     * @return the list of {@link User}s in the repository.
+     * @return the list of {@link User}s in the repository. Never {@code null}.
+     * @param offset  the start offset of the result; use {@code -1} for no offset; defaults to no offset
+     * @param limit  maximum size of the result; use {@code -1} for no limit; defaults to no limit
      * @throws RepositoryException
      */
-    Iterable<User> listUsers() throws RepositoryException;
+    Iterable<User> getUsers(long offset, long limit) throws RepositoryException;
+
+    /**
+     * Get all the {@link Group}s in the repository.
+     *
+     * @return the list of {@link Group}s in the repository. Never {@code null}.
+     * @param offset  the start offset of the result; use {@code -1} for no offset; defaults to no offset
+     * @param limit  maximum size of the result; use {@code -1} for no limit; defaults to no limit
+     * @throws RepositoryException
+     */
+    Iterable<Group> getGroups(long offset, long limit) throws RepositoryException;
 
     /**
      * Check if the group with given {@code groupId} exists.

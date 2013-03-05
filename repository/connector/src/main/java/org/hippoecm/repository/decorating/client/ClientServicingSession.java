@@ -47,7 +47,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
-
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
 import org.onehippo.repository.security.User;
@@ -152,11 +151,7 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
 
     @Override
     public User getUser() throws RepositoryException {
-        try {
-            return new ClientUser(remote.getUser());
-        } catch (RemoteException e) {
-            throw new RemoteRepositoryException(e);
-        }
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -655,13 +655,19 @@ public class SecurityManager implements HippoSecurityManager {
         return uid;
     }
 
-    public AbstractUserManager getUserManager(Session session) throws RepositoryException {
-        return (AbstractUserManager) providers.get(INTERNAL_PROVIDER).getUserManager(session);
+    @Override
+    public AbstractUserManager getUserManager(final Session session) throws RepositoryException {
+        return getUserManager(session, INTERNAL_PROVIDER);
     }
 
     @Override
-    public GroupManager getGroupManager(final Session session) throws RepositoryException {
-        return providers.get(INTERNAL_PROVIDER).getGroupManager(session);
+    public AbstractUserManager getUserManager(final Session session, final String providerId) throws RepositoryException {
+        return (AbstractUserManager) providers.get(providerId).getUserManager(session);
+    }
+
+    @Override
+    public GroupManager getGroupManager(final Session session, final String providerId) throws RepositoryException {
+        return providers.get(providerId).getGroupManager(session);
     }
 
     public void dispose(String workspace) {
