@@ -40,6 +40,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.onehippo.cms7.brokenlinks.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.data.ExtDataField;
@@ -387,17 +388,24 @@ public class BrokenLinksListColumns implements IClusterable {
             while(linksIterator.hasNext()){
                 final Node linkNode = (Node) linksIterator.next();
                 String statusMessage = "";
+                String errorMessage = linkNode.hasProperty("brokenlinks:errorMessage") ? linkNode.getProperty("brokenlinks:errorMessage").getString() : "";
                 int statusCode = linkNode.hasProperty("brokenlinks:errorCode") ?
                         (int) linkNode.getProperty("brokenlinks:errorCode").getLong() :
-                        -1;
+                        Link.ERROR_CODE;
 
-                if (! SUPPORTED_HTTP_STATUS_CODES.contains(statusCode)){
-                    statusCode = -1;
+                if (statusCode == Link.ERROR_CODE) {
+                    statusMessage = errorMessage;
+                } else if (SUPPORTED_HTTP_STATUS_CODES.contains(statusCode)) {
+                    statusMessage = getResourceValue("httpstatus-" + statusCode);
+                } else if (statusCode == Link.EXCEPTION_CODE) {
+                    try {
+                        statusMessage = getResourceValue("exception-" + errorMessage);
+                    } catch (Exception e) {
+                        statusMessage = getResourceValue("exception-generic").concat(": " + errorMessage);
+                    }
+                } else {
+                    log.info("Unhandled status code: {}", statusCode);
                 }
-
-                statusMessage = statusCode == -1 ?
-                        (linkNode.hasProperty("brokenlinks:errorMessage") ? linkNode.getProperty("brokenlinks:errorMessage").getString() : "") :
-                        getResourceValue("httpstatus-" + statusCode);
 
                 aggregateCell.append(statusMessage).append("<br/>");
             }

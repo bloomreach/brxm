@@ -21,6 +21,8 @@ import java.util.Calendar;
 public class Link implements Comparable<Object>, Serializable {
 
     private static final long serialVersionUID = 1289708150121627355L;
+    public static final int ERROR_CODE = -1;
+    public static final int EXCEPTION_CODE = 1000;
 
     private String url;
     private boolean isBroken;

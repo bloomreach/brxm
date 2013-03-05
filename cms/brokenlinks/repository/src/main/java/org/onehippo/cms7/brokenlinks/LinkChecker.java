@@ -152,7 +152,7 @@ public class LinkChecker {
                             HttpResponse httpResponse = httpClient.execute(httpRequest, httpContext);
                             int headResultCode = httpResponse.getStatusLine().getStatusCode();
                             httpRequest.reset();
-                            if(headResultCode == HttpStatus.SC_METHOD_NOT_ALLOWED) {
+                            if (headResultCode == HttpStatus.SC_METHOD_NOT_ALLOWED) {
                                 httpRequest = new HttpGet(url);
                                 httpResponse = httpClient.execute(httpRequest, httpContext);
                                 headResultCode = httpResponse.getStatusLine().getStatusCode();
@@ -164,10 +164,11 @@ public class LinkChecker {
                                 link.setBrokenSince(Calendar.getInstance());
                                 link.setResultCode(headResultCode);
                             }
-                        } catch (IOException ex) {
+                        } catch (IOException ioException) {
                             link.setBroken(true);
                             link.setBrokenSince(Calendar.getInstance());
-                            link.setResultMessage(ex.toString());
+                            link.setResultCode(Link.EXCEPTION_CODE);
+                            link.setResultMessage(ioException.getClass().getCanonicalName());
                         } finally {
                             if ((httpRequest != null) && (!httpRequest.isAborted())) {
                                 httpRequest.reset();
