@@ -94,7 +94,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
     }
 
     public void showPending() {
-        if (pending.size() > 0) {
+        if (!pending.isEmpty()) {
             show(pending.remove(0));
         }
     }
@@ -108,6 +108,11 @@ public class DialogWindow extends ModalWindow implements IDialogService {
                 respondOnWindowClosed(null);
             }
         }
+    }
+
+    @Override
+    public boolean isShowingDialog() {
+        return isShown();
     }
 
     public void render(PluginRequestTarget target) {
