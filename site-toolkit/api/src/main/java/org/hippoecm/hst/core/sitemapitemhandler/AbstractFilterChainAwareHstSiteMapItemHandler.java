@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.SiteMapItemHandlerConfiguration;
 
 
 /**
@@ -34,7 +35,7 @@ public abstract class AbstractFilterChainAwareHstSiteMapItemHandler extends Abst
     @Override
     public ResolvedSiteMapItem process(ResolvedSiteMapItem resolvedSiteMapItem, HttpServletRequest request,
             HttpServletResponse response) throws HstSiteMapItemHandlerException {
-        return process(resolvedSiteMapItem, request, response, null);
+        throw new IllegalArgumentException("Not allowed to invoke a FilterChainAwareHstSiteMapItemHandler without FilterChain argument.");
     }
 
 }

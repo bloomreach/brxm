@@ -740,23 +740,6 @@ public class HstFilter implements Filter {
         }
     }
 
-    /**
-     * @deprecated Use {@link #processResolvedSiteMapItem(HttpServletRequest, HttpServletResponse, FilterChain, HstManager, HstSiteMapItemHandlerFactory, HstMutableRequestContext, boolean, Logger)}.
-     * @param req
-     * @param res
-     * @param hstSitesManager
-     * @param siteMapItemHandlerFactory
-     * @param requestContext
-     * @param processHandlers
-     * @param logger
-     * @throws ContainerException
-     */
-    @Deprecated
-    protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, HstManager hstSitesManager, 
-            HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
-        processResolvedSiteMapItem(req, res, null, hstSitesManager, siteMapItemHandlerFactory, requestContext, processHandlers, logger);
-    }
-
     protected void processResolvedSiteMapItem(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain, HstManager hstSitesManager, 
             HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HstMutableRequestContext requestContext, boolean processHandlers, Logger logger) throws ContainerException {
     	ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
@@ -833,32 +816,17 @@ public class HstFilter implements Filter {
      * {@link HstSiteMapItemHandler#process(ResolvedSiteMapItem, HttpServletRequest, HttpServletResponse)} returns <code>null</code>, the loop and processing is stooped,
      * and <code>null</code> is returned. Entire request processing at that point is assumed to be completed already by one of the {@link HstSiteMapItemHandler}s (for
      * example if one of the handlers is a caching handler). When <code>null</code> is returned, request processing is stopped.
-     * @deprecated Use {@link #processHandlers(ResolvedSiteMapItem, HstSiteMapItemHandlerFactory, HttpServletRequest, HttpServletResponse, FilterChain).
      * @param orginalResolvedSiteMapItem
      * @param siteMapItemHandlerFactory 
      * @param req
      * @param res
      * @return a new or original {@link ResolvedSiteMapItem}, or <code>null</code> when request processing can be stopped
      */
-    @Deprecated
-    protected ResolvedSiteMapItem processHandlers(ResolvedSiteMapItem orginalResolvedSiteMapItem, HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HttpServletRequest req, HttpServletResponse res) {
-        return processHandlers(orginalResolvedSiteMapItem, siteMapItemHandlerFactory, req, res, null);
-    }
-
-    /**
-     * This method is invoked for every {@link HstSiteMapItemHandler} from the resolvedSiteMapItem that was matched from {@link ResolvedMount#matchSiteMapItem(String)}.
-     * If in the for loop the <code>orginalResolvedSiteMapItem</code> switches to a different newResolvedSiteMapItem, then still
-     * the handlers for  <code>orginalResolvedSiteMapItem</code> are processed and not the one from <code>newResolvedSiteMapItem</code>. If some intermediate
-     * {@link HstSiteMapItemHandler#process(ResolvedSiteMapItem, HttpServletRequest, HttpServletResponse)} returns <code>null</code>, the loop and processing is stooped,
-     * and <code>null</code> is returned. Entire request processing at that point is assumed to be completed already by one of the {@link HstSiteMapItemHandler}s (for
-     * example if one of the handlers is a caching handler). When <code>null</code> is returned, request processing is stopped.
-     * @param orginalResolvedSiteMapItem
-     * @param siteMapItemHandlerFactory 
-     * @param req
-     * @param res
-     * @return a new or original {@link ResolvedSiteMapItem}, or <code>null</code> when request processing can be stopped
-     */
-    protected ResolvedSiteMapItem processHandlers(ResolvedSiteMapItem orginalResolvedSiteMapItem, HstSiteMapItemHandlerFactory siteMapItemHandlerFactory, HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) {
+    protected ResolvedSiteMapItem processHandlers(ResolvedSiteMapItem orginalResolvedSiteMapItem,
+                                                  HstSiteMapItemHandlerFactory siteMapItemHandlerFactory,
+                                                  HttpServletRequest req,
+                                                  HttpServletResponse res,
+                                                  FilterChain filterChain) {
         Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
 
         ResolvedSiteMapItem newResolvedSiteMapItem = orginalResolvedSiteMapItem;
