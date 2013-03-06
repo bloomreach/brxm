@@ -166,9 +166,6 @@
         <configuration>
           <assumeConsoleAlertEtc>true</assumeConsoleAlertEtc>
           <disallowInsecureCharsInRegExp>false</disallowInsecureCharsInRegExp>
-          <excludes>
-            <exclude>org/onehippo/cms7/channelmanager/templatecomposer/plugins/miframe/**/*.js</exclude>
-          </excludes>
           <predefinedVars>
             ActiveXObject,
             Class,
