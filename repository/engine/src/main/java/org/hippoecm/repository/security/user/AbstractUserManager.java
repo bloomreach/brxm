@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * are the normalized id's. All id's MUST be normalized before they are
  * stored in the database.
  */
-public abstract class AbstractUserManager implements UserManager {
+public abstract class AbstractUserManager implements HippoUserManager {
 
 
     /**
@@ -140,6 +140,7 @@ public abstract class AbstractUserManager implements UserManager {
         }
     }
 
+    @Override
     public final Node getUser(String rawUserId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
@@ -188,6 +189,7 @@ public abstract class AbstractUserManager implements UserManager {
      * Create a new user in the repository. Use getNodeType to determine the
      * node's node type.
      */
+    @Override
     public final Node createUser(String rawUserId) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");
@@ -287,10 +289,12 @@ public abstract class AbstractUserManager implements UserManager {
         }
     }
 
+    @Override
     public final NodeIterator listUsers(long offset, long limit) throws RepositoryException {
         return listUsers(null, offset, limit);
     }
 
+    @Override
     public final NodeIterator listUsers(String providerId, long offset, long limit) throws RepositoryException {
         if (!isInitialized()) {
             throw new IllegalStateException("Not initialized.");

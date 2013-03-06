@@ -23,18 +23,26 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.group.GroupManager;
+import org.hippoecm.repository.security.user.HippoUserManager;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GroupImpl implements Group {
 
+    private static final Logger log = LoggerFactory.getLogger(GroupImpl.class);
+
+    private static final String HIPPOSYS_DESCRIPTION = "hipposys:description";
+
     private final String id;
     private final SecurityServiceImpl securityService;
-    private Node node;
+    private final Node node;
 
-    public GroupImpl(final String id, final SecurityServiceImpl securityService) {
-        this.id = id;
+    GroupImpl(final Node node, final SecurityServiceImpl securityService) throws RepositoryException {
+        this.node = node;
+        this.id = node.getName();
         this.securityService = securityService;
     }
 
@@ -46,7 +54,7 @@ public class GroupImpl implements Group {
     @Override
     public Iterable<User> getMembers() throws RepositoryException {
         return new Iterable<User>() {
-            private final Iterator<String> membersIterator = getInternalGroupManager().getMembers(getNode()).iterator();
+            private final Iterator<String> membersIterator = getInternalGroupManager().getMembers(node).iterator();
             @Override
             public Iterator<User> iterator() {
                 return new Iterator<User>() {
@@ -76,7 +84,15 @@ public class GroupImpl implements Group {
 
                     private void fetchNext() {
                         while (next == null && membersIterator.hasNext()) {
-                            next = new UserImpl(membersIterator.next(), securityService);
+                            final String nextMember = membersIterator.next();
+                            try {
+                                final Node nextUser = getInternalUserManager().getUser(nextMember);
+                                if (nextUser != null) {
+                                    next = new UserImpl(nextUser, securityService);
+                                }
+                            } catch (RepositoryException e) {
+                                log.warn("Failed to load next member of group: " + e);
+                            }
                         }
                     }
                 };
@@ -86,27 +102,29 @@ public class GroupImpl implements Group {
 
     @Override
     public String getDescription() throws RepositoryException {
-        return JcrUtils.getStringProperty(getNode(), "hipposys:description", null);
+        return JcrUtils.getStringProperty(node, HIPPOSYS_DESCRIPTION, null);
     }
 
     @Override
     public boolean isSystemGroup() throws RepositoryException {
-        return JcrUtils.getBooleanProperty(getNode(), HippoNodeType.HIPPO_SYSTEM, false);
+        return JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_SYSTEM, false);
+    }
+
+    @Override
+    public String getProperty(final String propertyName) throws RepositoryException {
+        return JcrUtils.getStringProperty(node, propertyName, null);
     }
 
     private String getProviderId() throws RepositoryException {
-        return JcrUtils.getStringProperty(getNode(), HippoNodeType.HIPPO_SECURITYPROVIDER, null);
-    }
-
-    private Node getNode() throws RepositoryException {
-        if (node == null) {
-            node = getInternalGroupManager().getGroup(id);
-        }
-        return node;
+        return JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_SECURITYPROVIDER, null);
     }
 
     private GroupManager getInternalGroupManager() {
         return securityService.getInternalGroupManager();
+    }
+
+    private HippoUserManager getInternalUserManager() {
+        return securityService.getInternalUserManager();
     }
 
     private GroupManager getGroupManager() throws RepositoryException {

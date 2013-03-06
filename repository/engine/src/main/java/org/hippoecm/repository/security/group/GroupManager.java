@@ -106,10 +106,19 @@ public interface GroupManager {
 
     /**
      * Get memberships from the repository for a user
+     *
+     * @param rawUserId the unparsed userId
+     * @throws RepositoryException
+     */
+    public NodeIterator getMemberships(String rawUserId) throws RepositoryException;
+
+    /**
+     * Get memberships from the repository for a user
+     *
      * @param userId the unparsed userId
      * @throws RepositoryException
      */
-    public Set<String> getMemberships(String userId) throws RepositoryException;
+    public Set<String> getMembershipIds(String userId) throws RepositoryException;
 
     /**
      * Get the members of a group

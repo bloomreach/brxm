@@ -15,29 +15,36 @@
  */
 package org.hippoecm.repository.security.service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.group.GroupManager;
-import org.hippoecm.repository.security.user.AbstractUserManager;
+import org.hippoecm.repository.security.user.HippoUserManager;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.User;
 
 public class UserImpl implements User {
 
+    private static final String HIPPOSYS_FIRSTNAME = "hipposys:firstname";
+    private static final String HIPPOSYS_LASTNAME = "hipposys:lastname";
+    private static final String HIPPOSYS_EMAIL = "hipposys:email";
+    private static final String HIPPOSYS_LASTLOGIN = "hipposys:lastlogin";
+
     private final String id;
     private final SecurityServiceImpl securityService;
-    private Node node;
+    private final Node node;
 
-    public UserImpl(final String id, final SecurityServiceImpl securityService) {
-        this.id = id;
+    UserImpl(final Node node, final SecurityServiceImpl securityService) throws RepositoryException {
+        this.node = node;
+        this.id = node.getName();
         this.securityService = securityService;
     }
 
@@ -48,59 +55,58 @@ public class UserImpl implements User {
 
     @Override
     public boolean isSystemUser() throws RepositoryException {
-        return JcrUtils.getBooleanProperty(getNode(), HippoNodeType.HIPPO_SYSTEM, false);
+        return JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_SYSTEM, false);
     }
 
     @Override
     public boolean isActive() throws RepositoryException {
-        return JcrUtils.getBooleanProperty(getNode(), HippoNodeType.HIPPO_ACTIVE, true);
+        return JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_ACTIVE, true);
     }
 
     @Override
     public String getFirstName() throws RepositoryException {
-        return JcrUtils.getStringProperty(getNode(), "hipposys:firstname", null);
+        return JcrUtils.getStringProperty(node, HIPPOSYS_FIRSTNAME, null);
     }
 
     @Override
     public String getLastName() throws RepositoryException {
-        return JcrUtils.getStringProperty(getNode(), "hipposys:lastname", null);
+        return JcrUtils.getStringProperty(node, HIPPOSYS_LASTNAME, null);
     }
 
     @Override
     public String getEmail() throws RepositoryException {
-        return JcrUtils.getStringProperty(getNode(), "hipposys:email", null);
+        return JcrUtils.getStringProperty(node, HIPPOSYS_EMAIL, null);
     }
 
     @Override
     public Calendar getLastLogin() throws RepositoryException {
-        return JcrUtils.getDateProperty(getNode(), "hipposys:lastlogin", null);
+        return JcrUtils.getDateProperty(node, HIPPOSYS_LASTLOGIN, null);
+    }
+
+    @Override
+    public String getProperty(final String propertyName) throws RepositoryException {
+        return JcrUtils.getStringProperty(node, propertyName, null);
     }
 
     @Override
     public Iterable<Group> getMemberships() throws RepositoryException {
-        final Set<Group> memberships = new HashSet<Group>();
-        for (String groupId : getInternalGroupManager().getMemberships(id)) {
-            memberships.add(new GroupImpl(groupId, securityService));
+        final List<Group> memberships = new ArrayList<Group>();
+        final NodeIterator nodes = getInternalGroupManager().getMemberships(id);
+        while (nodes.hasNext()) {
+            memberships.add(new GroupImpl(nodes.nextNode(), securityService));
         }
         return Collections.unmodifiableCollection(memberships);
     }
 
     private String getProviderId() throws RepositoryException {
-        return JcrUtils.getStringProperty(getNode(), HippoNodeType.HIPPO_SECURITYPROVIDER, null);
+        return JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_SECURITYPROVIDER, null);
     }
 
-    private Node getNode() throws RepositoryException {
-        if (node == null) {
-            node = getInternalUserManager().getUser(id);
-        }
-        return node;
-    }
-
-    private AbstractUserManager getInternalUserManager() {
+    private HippoUserManager getInternalUserManager() {
         return securityService.getInternalUserManager();
     }
 
-    private AbstractUserManager getUserManager() throws RepositoryException {
+    private HippoUserManager getUserManager() throws RepositoryException {
         return securityService.getUserManager(getProviderId());
     }
 

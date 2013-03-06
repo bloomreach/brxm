@@ -55,4 +55,13 @@ public interface Group {
      */
     boolean isSystemGroup() throws RepositoryException;
 
+    /**
+     * Get an external group property by name.
+     *
+     * @return  the external property of the group identified by {@code propertyName},
+     * or {@code null} if not present
+     * @throws RepositoryException
+     */
+    String getProperty(String propertyName) throws RepositoryException;
+
 }

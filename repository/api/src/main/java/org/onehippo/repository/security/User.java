@@ -91,4 +91,13 @@ public interface User {
      */
     Calendar getLastLogin() throws RepositoryException;
 
+    /**
+     * Get an external user property by name.
+     *
+     * @return  the external property of the user identified by {@code propertyName},
+     * or {@code null} if not present
+     * @throws RepositoryException
+     */
+    String getProperty(String propertyName) throws RepositoryException;
+
 }

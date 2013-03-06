@@ -78,6 +78,7 @@ import org.hippoecm.repository.security.role.DummyRoleManager;
 import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.AbstractUserManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
+import org.hippoecm.repository.security.user.HippoUserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -356,19 +357,21 @@ public class SecurityManager implements HippoSecurityManager {
 
     /**
      * Get the memberships for a user. See the AbstractUserManager.getMemberships for details.
+     *
+     *
      * @param rawUserId the unparsed userId
      * @return a set of Strings with the memberships or an empty set if no memberships are found.
      */
     private Set<String> getMemberships(String rawUserId, String providerId) {
         try {
             if (providers.containsKey(providerId)) {
-                return providers.get(providerId).getGroupManager().getMemberships(rawUserId);
+                return providers.get(providerId).getGroupManager().getMembershipIds(rawUserId);
             } else {
-                return providers.get(INTERNAL_PROVIDER).getGroupManager().getMemberships(sanitizeUserId(rawUserId, providerId));
+                return providers.get(INTERNAL_PROVIDER).getGroupManager().getMembershipIds(sanitizeUserId(rawUserId, providerId));
             }
         } catch (RepositoryException e) {
             log.warn("Unable to get memberships for userId: " + rawUserId, e);
-            return new HashSet<String>(0);
+            return null;
         }
     }
 
@@ -656,13 +659,13 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     @Override
-    public AbstractUserManager getUserManager(final Session session) throws RepositoryException {
+    public HippoUserManager getUserManager(final Session session) throws RepositoryException {
         return getUserManager(session, INTERNAL_PROVIDER);
     }
 
     @Override
-    public AbstractUserManager getUserManager(final Session session, final String providerId) throws RepositoryException {
-        return (AbstractUserManager) providers.get(providerId).getUserManager(session);
+    public HippoUserManager getUserManager(final Session session, final String providerId) throws RepositoryException {
+        return (HippoUserManager) providers.get(providerId).getUserManager(session);
     }
 
     @Override

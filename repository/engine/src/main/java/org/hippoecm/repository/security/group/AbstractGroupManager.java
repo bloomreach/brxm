@@ -272,15 +272,14 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
     }
 
-    public final Set<String> getMemberships(String rawUserId) {
+    public final NodeIterator getMemberships(String rawUserId) {
         return getMemberships(rawUserId, null);
     }
 
-    public final Set<String> getMemberships(String rawUserId, String providerId) {
+    public final NodeIterator getMemberships(String rawUserId, String providerId) {
         String userId = sanitizeId(rawUserId);
-        Set<String> memberships = new HashSet<String>();
 
-        StringBuffer statement = new StringBuffer();
+        StringBuilder statement = new StringBuilder();
         // Triggers: https://issues.apache.org/jira/browse/JCR-1573 don't use path in query for now
         //statement.append("//").append(groupsPath).append("//element");
         statement.append("//element");
@@ -295,21 +294,31 @@ public abstract class AbstractGroupManager implements GroupManager {
         statement.append(']');
         //log.info("Searching for memberships for user '{}' with query '{}'", userId, statement);
 
-        // find
         try {
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
             QueryResult result = q.execute();
-            NodeIterator groupsIter = result.getNodes();
-            while (groupsIter.hasNext()) {
-                String groupId = groupsIter.nextNode().getName();
-                log.debug("User '{}' is member of group: {}", userId, groupId);
-                memberships.add(groupId);
-            }
-            return memberships;
+            return result.getNodes();
         } catch (RepositoryException e) {
             log.error("Error while finding memberships: ", e);
-            return new HashSet<String>(0);
+            return null;
         }
+    }
+
+    public final Set<String> getMembershipIds(String userId) {
+        return getMembershipIds(userId, null);
+    }
+
+    public final Set<String> getMembershipIds(String userId, String providerId) {
+        final Set<String> groupIds = new HashSet<String>();
+        final NodeIterator nodes = getMemberships(userId, providerId);
+        while (nodes.hasNext()) {
+            try {
+                groupIds.add(nodes.nextNode().getName());
+            } catch (RepositoryException e) {
+                log.warn("Failed to add group id to set of memberships");
+            }
+        }
+        return groupIds;
     }
 
     public final void syncMemberships(Node user) throws RepositoryException {
@@ -318,7 +327,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             return;
         }
         String userId = user.getName();
-        Set<String> repositoryMemberships = getMemberships(userId, providerId);
+        Set<String> repositoryMemberships = getMembershipIds(userId, providerId);
         Set<String> backendMemberships = new HashSet<String>();
         for (String groupId : backendGetMemberships(user)) {
             backendMemberships.add(sanitizeId(groupId));

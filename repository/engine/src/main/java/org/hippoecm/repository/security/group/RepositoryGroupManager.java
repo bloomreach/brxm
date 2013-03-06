@@ -38,7 +38,7 @@ public class RepositoryGroupManager extends AbstractGroupManager {
      * The backend is the repository, so just return the current memberships
      */
     public Set<String> backendGetMemberships(Node user) throws RepositoryException {
-        return getMemberships(user.getName());
+        return getMembershipIds(user.getName());
     }
 
     public String getNodeType() {

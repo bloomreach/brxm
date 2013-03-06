@@ -176,6 +176,7 @@ engine/src/main/java/org/hippoecm/repository/security/role/Role.java svneol=nati
 engine/src/main/java/org/hippoecm/repository/security/service/GroupImpl.java -text
 engine/src/main/java/org/hippoecm/repository/security/service/SecurityServiceImpl.java -text
 engine/src/main/java/org/hippoecm/repository/security/service/UserImpl.java -text
+engine/src/main/java/org/hippoecm/repository/security/user/HippoUserManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/user/RepositoryUserManager.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/standardworkflow/DefaultWorkflowImpl.java -text
 engine/src/main/java/org/hippoecm/repository/standardworkflow/EventLoggerImpl.java svneol=native#text/plain
