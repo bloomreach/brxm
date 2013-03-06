@@ -563,6 +563,9 @@ components/core/src/main/java/org/hippoecm/hst/core/logging/LogEventImpl.java sv
 components/core/src/main/java/org/hippoecm/hst/core/logging/Slf4jLogger.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/logging/Slf4jLoggerFactory.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/logging/TraceToolSlf4jLogger.java svneol=native#text/plain
+components/core/src/main/java/org/hippoecm/hst/core/order/ObjectOrderer.java -text
+components/core/src/main/java/org/hippoecm/hst/core/order/ObjectOrdererRuntimeException.java -text
+components/core/src/main/java/org/hippoecm/hst/core/order/OrderableObjectHolder.java -text
 components/core/src/main/java/org/hippoecm/hst/core/search/HstQueryManagerFactoryImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/HstSiteMapItemHandlerFactoryImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/HstSiteMapItemHandlerRegistryImpl.java -text svneol=unset#text/plain
@@ -663,6 +666,7 @@ components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkForCmsReq
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewriting.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/logging/TestLogEventBuffer.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/logging/TestSlf4jLogger.java -text
+components/core/src/test/java/org/hippoecm/hst/core/order/TestObjectOrderer.java -text
 components/core/src/test/java/org/hippoecm/hst/proxy/IPersonInfo.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/proxy/TestDynaBeanProxyUtils.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/site/container/AlwaysFailingOnStartBean.java -text
