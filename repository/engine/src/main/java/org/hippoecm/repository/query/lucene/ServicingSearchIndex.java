@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.jcr.ItemNotFoundException;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
@@ -52,7 +51,6 @@ import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.FilterMultiColumnQueryHits;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
 import org.apache.jackrabbit.core.query.lucene.IndexingConfigurationEntityResolver;
-import org.apache.jackrabbit.core.query.lucene.LowerCaseSortComparator;
 import org.apache.jackrabbit.core.query.lucene.LuceneQueryBuilder;
 import org.apache.jackrabbit.core.query.lucene.MultiColumnQuery;
 import org.apache.jackrabbit.core.query.lucene.MultiColumnQueryHits;
@@ -60,11 +58,7 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.query.lucene.Ordering;
 import org.apache.jackrabbit.core.query.lucene.QueryImpl;
 import org.apache.jackrabbit.core.query.lucene.SearchIndex;
-import org.apache.jackrabbit.core.query.lucene.SharedFieldCache;
-import org.apache.jackrabbit.core.query.lucene.SharedFieldComparatorSource;
-import org.apache.jackrabbit.core.query.lucene.UpperCaseSortComparator;
 import org.apache.jackrabbit.core.query.lucene.Util;
-import org.apache.jackrabbit.core.query.lucene.sort.AbstractFieldComparator;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -75,18 +69,14 @@ import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.query.OrderQueryNode;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Fieldable;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.FieldComparator;
-import org.apache.lucene.search.FieldComparatorSource;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.util.RepoUtils;
@@ -109,75 +99,6 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     private boolean servicingConsistencyCheckEnabled;
 
     private final Cache<String, AuthorizationFilter> cache = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).build();
-
-//    private SharedFieldComparatorSource scs;
-//
-//    /**
-//     * A <code>FieldComparator</code> which works for order by clauses on node name
-//     */
-//    static final class NodeNameFieldComparator extends AbstractFieldComparator {
-//
-//        /**
-//         * The term look ups of the index segments.
-//         */
-//        protected SharedFieldCache.ValueIndex[] indexes;
-//
-//        /**
-//         * Create a new instance of the <code>FieldComparator</code>.
-//         *
-//         * @param numHits       the number of values
-//         */
-//        public NodeNameFieldComparator(int numHits) {
-//            super(numHits);
-//        }
-//
-//        @Override
-//        public void setNextReader(IndexReader reader, int docBase) throws IOException {
-//            super.setNextReader(reader, docBase);
-//
-//            indexes = new SharedFieldCache.ValueIndex[readers.size()];
-//
-//            for (int i = 0; i < readers.size(); i++) {
-//                IndexReader r = readers.get(i);
-//                indexes[i] = ;
-//            }
-//        }
-//
-//        @Override
-//        protected Comparable<?> sortValue(int doc) {
-//            int idx = readerIndex(doc);
-//            return indexes[idx].getValue(doc - starts[idx]);
-//        }
-//
-//    }
-//
-//    @Override
-//    protected SharedFieldComparatorSource getSortComparatorSource() {
-//        return scs;
-//    }
-//
-//    @Override
-//    protected void doInit() throws IOException {
-//        super.doInit();
-//        scs = new SharedFieldComparatorSource(FieldNames.PROPERTIES, getContext().getItemStateManager(),
-//                getContext().getHierarchyManager(), getNamespaceMappings()) {
-//            @Override
-//            public FieldComparator newComparator(final String propertyName, final int numHits, final int sortPos, final boolean reversed)
-//                    throws IOException {
-//                if (ServicingFieldNames.HIPPO_SORTABLE_NODENAME.equals(propertyName)) {
-//                    return new NodeNameFieldComparator(numHits);
-//                }
-//                return super.newComparator(propertyName, numHits, sortPos, reversed);
-//            }
-//        };
-//    }
-
-    /**
-     * Simple zero argument constructor.
-     */
-    public ServicingSearchIndex() {
-        super();
-    }
 
     /**
      * @return the authorization bitset and <code>null</code> when every bit is allowed to be read
@@ -629,40 +550,6 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
                         + "node with UUID: " + state.getNodeId().toString(), e);
             }
         }
-    }
-
-    // TODO remove when jackrabbit supports sorting on nodename
-    @Override
-    protected SortField[] createSortFields(Path[] orderProps, boolean[] orderSpecs, String[] orderFuncs) {
-        SortField[] sortFields = super.createSortFields(orderProps, orderSpecs, orderFuncs);
-        for (int i = 0; i < orderProps.length; i++) {
-            // replace the one created by the one from Jackrabbit, because the jackrabbit cannot sort on jcr:name (core < 1.4.6)
-            if (orderProps[i].getString().equals(NameConstants.JCR_NAME.toString())) {
-                FieldComparatorSource fcs = getSortComparatorSource();
-                if ("upper-case".equals(orderFuncs[i])) {
-                    fcs = new UpperCaseSortComparator(fcs);
-                } else if ("lower-case".equals(orderFuncs[i])) {
-                    fcs = new LowerCaseSortComparator(fcs);
-                }
-                sortFields[i] = new SortField(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, fcs, !orderSpecs[i]);
-            } else if(orderProps[i].getString().endsWith("/" + NameConstants.JCR_NAME.toString())) {
-                try {
-                    String field = orderProps[i].getAncestor(1).getString()+"/"+ServicingFieldNames.HIPPO_SORTABLE_NODENAME;
-                    FieldComparatorSource fcs = getSortComparatorSource();
-                    if ("upper-case".equals(orderFuncs[i])) {
-                        fcs = new UpperCaseSortComparator(fcs);
-                    } else if ("lower-case".equals(orderFuncs[i])) {
-                        fcs = new LowerCaseSortComparator(fcs);
-                    }
-                    sortFields[i] = new SortField(field, fcs, !orderSpecs[i]);
-                } catch(PathNotFoundException ex) {
-                    // ignore
-                } catch(RepositoryException ex) {
-                    // ignore
-                }
-            }
-        }
-        return sortFields;
     }
 
     private class NodeIdIteratorImpl implements Iterator<NodeId> {

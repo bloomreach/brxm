@@ -67,10 +67,9 @@ public class ServicingNodeIndexer extends NodeIndexer {
 
     private BinaryValue hippoTextValue;
 
-    private QueryHandlerContext queryHandlerContext;
+    private final QueryHandlerContext queryHandlerContext;
 
     protected ServicingIndexingConfiguration servicingIndexingConfig;
-
 
     public ServicingNodeIndexer(NodeState node, QueryHandlerContext context, NamespaceMappings mappings, Parser parser) {
         super(node, context.getItemStateManager(), mappings, context.getExecutor(), parser);
@@ -296,12 +295,13 @@ public class ServicingNodeIndexer extends NodeIndexer {
                     nodeName = prefix + ":" + nodeName;
                 }
 
+                final String jcrName = resolver.getJCRName(NameConstants.JCR_NAME);
+
                 // index the full node name for sorting
-                final Field field = new Field(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, nodeName, Field.Store.NO,
-                        Field.Index.NOT_ANALYZED_NO_NORMS, Field.TermVector.NO);
+                final Field field = createFieldWithoutNorms(jcrName, nodeName, PropertyType.STRING);
                 doc.add(field);
 
-                // index the local name for searching
+                // index the local name for full text search
                 indexNodeLocalName(doc, child.getName().getLocalName());
 
             } catch (ItemStateException e) {
@@ -314,13 +314,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
         return node.getParentId() == null;
     }
 
-    private void indexNodeLocalName(Document doc, final String localName) {
-        String hippoNsPrefix;
-        try {
-            hippoNsPrefix = this.mappings.getPrefix(this.servicingIndexingConfig.getHippoNamespaceURI());
-        } catch (NamespaceException e) {
-            return;
-        }
+    private void indexNodeLocalName(Document doc, final String localName) throws NamespaceException {
+        String hippoNsPrefix = this.mappings.getPrefix(this.servicingIndexingConfig.getHippoNamespaceURI());
         String fieldName = hippoNsPrefix + ":" + FieldNames.FULLTEXT_PREFIX + "_localname";
 
         Field localNameField;
