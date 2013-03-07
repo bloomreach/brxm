@@ -81,7 +81,7 @@
 
   <!-- Pipelining -->
 
-  <bean id="jaxrsHstConfigServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve">
+  <bean id="jaxrsHstConfigServiceValve" class="org.hippoecm.hst.core.container.valves.JaxrsRestServiceValveImpl">
     <constructor-arg ref="jaxrsHstConfigService"/>
   </bean>
 

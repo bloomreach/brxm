@@ -51,24 +51,24 @@
 
   <!-- Pre-processing valves -->
   
-  <bean id="initializationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.InitializationValve">
+  <bean id="initializationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.InitializationValveImpl">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
    
-  <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsSecurityValve">
+  <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.CmsSecurityValveImpl">
     <property name="repository" ref="javax.jcr.Repository.cms"/>
   </bean>
 
-  <bean id="cmsRestSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsRestSecurityValve"/>
+  <bean id="cmsRestSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.CmsRestSecurityValveImpl"/>
 
-  <bean id="cmsRestCredentialsToJcrSessionPropagatorValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsRestCredentialsToJcrSessionPropagatorValve">
+  <bean id="cmsRestCredentialsToJcrSessionPropagatorValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.CmsRestCredentialsToJcrSessionPropagatorValveImpl">
     <property name="repository" ref="javax.jcr.Repository.cms"/>
   </bean>
 
-  <bean id="cmsHostRestRequestContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsHostRestRequestContextValve"/>
+  <bean id="cmsHostRestRequestContextValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.CmsHostRestRequestContextValveImpl"/>
 
   <!-- Generic no-cache response headers setting valve -->
-  <bean id="noCacheResponseHeadersValve" parent="abstractValve" class="org.hippoecm.hst.core.container.GenericResponseHeadersValve">
+  <bean id="noCacheResponseHeadersValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.GenericResponseHeadersValveImpl">
     <property name="settableHeaders">
       <list>
         <bean class="org.hippoecm.hst.util.DefaultKeyValue">
@@ -93,48 +93,48 @@
   
   <!-- Main invocable valves for each request -->
   
-  <bean id="contextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ContextResolvingValve">
+  <bean id="contextResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.ContextResolvingValveImpl">
   </bean>
   
-  <bean id="localizationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.LocalizationValve">
+  <bean id="localizationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.LocalizationValveImpl">
   </bean>
   
-  <bean id="securityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SecurityValve">
+  <bean id="securityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.SecurityValveImpl">
   </bean>
 
-  <bean id="subjectBasedSessionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SubjectBasedSessionValve">
+  <bean id="subjectBasedSessionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.SubjectBasedSessionValveImpl">
     <property name="subjectBasedRepository" ref="javax.jcr.Repository.subjectBased" />
   </bean>
   
-  <bean id="jcrSessionStatefulConcurrencyValve" parent="abstractValve" class="org.hippoecm.hst.core.container.JCRSessionStatefulConcurrencyValve">
+  <bean id="jcrSessionStatefulConcurrencyValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.JCRSessionStatefulConcurrencyValveImpl">
       <property name="maxRefreshIntervalOnLazySession" value="${lazySession.maxRefreshIntervalOnCleanup}" />
   </bean>
   
-  <bean id="siteMenusResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.SiteMenusResolvingValve">
+  <bean id="siteMenusResolvingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.SiteMenusResolvingValveImpl">
   </bean>
 
-  <bean id="actionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ActionValve">
+  <bean id="actionValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.ActionValveImpl">
   </bean>
 
-  <bean id="pageCachingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageCachingValve">
+  <bean id="pageCachingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.PageCachingValveImpl">
      <property name="pageCache" ref="pageCache"/>
   </bean>
 
-  <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
+  <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.AggregationValveImpl">
   </bean>
   
-  <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">
+  <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.ResourceServingValveImpl">
   </bean>
 
-  <bean id="componentRenderingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ComponentRenderingValve">
+  <bean id="componentRenderingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.ComponentRenderingValveImpl">
   </bean>
   <!-- Post-processing valves -->
   
-  <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CleanupValve">
+  <bean id="cleanupValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.CleanupValveImpl">
     <property name="resourceLifecycleManagements" ref="resourceLifecycleManagementList" />
   </bean>
 
-  <bean id="diagnosticReportingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.DiagnosticReportingValve">
+  <bean id="diagnosticReportingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.valves.DiagnosticReportingValveImpl">
   </bean>
 
   <!-- Pipelines -->
@@ -179,7 +179,7 @@
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
              <property name="initializationValves">
               <list>
-                 <bean class="org.hippoecm.hst.core.container.NotFoundValve"/>
+                 <bean class="org.hippoecm.hst.core.container.valves.NotFoundValveImpl"/>
               </list>
              </property>
            </bean>

@@ -39,7 +39,7 @@ public abstract class AbstractOrderableValve extends AbstractValve implements Or
     private String before;
     private String after;
 
-    private boolean orderableInfoSearched;
+    private volatile boolean orderableInfoSearched;
     private Orderable orderableInfo;
     private Class<?> orderableAnnotatedType;
 
@@ -58,7 +58,6 @@ public abstract class AbstractOrderableValve extends AbstractValve implements Or
                         name = role.getName();
                     }
                 }
-
             }
         }
 
@@ -127,28 +126,34 @@ public abstract class AbstractOrderableValve extends AbstractValve implements Or
 
     private void lookupOrderableAnnotation() {
         if (!orderableInfoSearched) {
-            try {
-                Class<?> clazz = getClass();
-
-                orderableInfo = clazz.getAnnotation(Orderable.class);
-
-                if (orderableInfo != null) {
-                    orderableAnnotatedType = clazz;
+            synchronized (this) {
+                if (orderableInfoSearched) {
                     return;
                 }
 
-                if (orderableInfo == null) {
-                    for (Class<?> ifaceClazz : clazz.getInterfaces()) {
-                        orderableInfo = ifaceClazz.getAnnotation(Orderable.class);
-
-                        if (orderableInfo != null) {
-                            orderableAnnotatedType = ifaceClazz;
-                            return;
+                try {
+                    Class<?> clazz = getClass();
+    
+                    orderableInfo = clazz.getAnnotation(Orderable.class);
+    
+                    if (orderableInfo != null) {
+                        orderableAnnotatedType = clazz;
+                        return;
+                    }
+    
+                    if (orderableInfo == null) {
+                        for (Class<?> ifaceClazz : clazz.getInterfaces()) {
+                            orderableInfo = ifaceClazz.getAnnotation(Orderable.class);
+    
+                            if (orderableInfo != null) {
+                                orderableAnnotatedType = ifaceClazz;
+                                return;
+                            }
                         }
                     }
+                } finally {
+                    orderableInfoSearched = true;
                 }
-            } finally {
-                orderableInfoSearched = true;
             }
         }
     }
