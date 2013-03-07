@@ -19,8 +19,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.jcr.Node;
+
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.Test;
 import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.SecurityService;
@@ -86,4 +90,23 @@ public class SecurityServiceTest extends RepositoryTestCase {
         assertEquals("admin", groups.next().getId());
     }
 
+    @Test
+    public void testUserSpecialChars() throws Exception {
+        final Node users = session.getNode("/hippo:configuration/hippo:users");
+        final Node user = users.addNode(NodeNameCodec.encode("'t hart", true), HippoNodeType.NT_USER);
+        session.save();
+        final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
+        assertTrue(securityService.hasUser(user.getName()));
+        assertTrue(securityService.getUser(user.getName()).getId().equals(user.getName()));
+    }
+
+    @Test
+    public void testGroupSpecialChars() throws Exception {
+        final Node groups = session.getNode("/hippo:configuration/hippo:groups");
+        final Node group = groups.addNode(NodeNameCodec.encode("'t hart", true), HippoNodeType.NT_GROUP);
+        session.save();
+        final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
+        assertTrue(securityService.hasGroup(group.getName()));
+        assertTrue(securityService.getGroup(group.getName()).getId().equals(group.getName()));
+    }
 }

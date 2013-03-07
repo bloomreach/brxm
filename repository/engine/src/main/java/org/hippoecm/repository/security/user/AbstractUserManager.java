@@ -36,6 +36,7 @@ import org.apache.jackrabbit.api.security.user.AuthorizableExistsException;
 import org.apache.jackrabbit.api.security.user.Group;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
+import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.ManagerContext;
@@ -124,7 +125,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
             //statement.append("//").append(usersPath).append("//element");
             statement.append("//element");
             statement.append("(*, ").append(HippoNodeType.NT_USER).append(")");
-            statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append("'").append(']');
+            statement.append('[').append("fn:name() = ").append("'").append(ISO9075.encode(NodeNameCodec.encode(userId, true))).append("'").append(']');
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
             QueryResult result = q.execute();
             return result.getNodes().hasNext();
@@ -153,7 +154,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
             //statement.append("//").append(usersPath).append("//element");
             statement.append("//element");
             statement.append("(*, ").append(HippoNodeType.NT_USER).append(")");
-            statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append("'").append(']');
+            statement.append('[').append("fn:name() = ").append("'").append(ISO9075.encode(NodeNameCodec.encode(userId, true))).append("'").append(']');
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
             QueryResult result = q.execute();
             NodeIterator nodeIter = result.getNodes();
