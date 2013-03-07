@@ -16,68 +16,11 @@
 
 package org.hippoecm.hst.core.container;
 
-import java.security.SignatureException;
-
-import javax.jcr.Credentials;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.onehippo.sso.CredentialCipher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.hst.core.container.valves.CmsRestSecurityValveImpl;
 
 /**
- * CmsRestSecurityValve responsible for authenticating CMS REST calls and then then propagates 
- * the relevant {@link Credentials}
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
  */
-public class CmsRestSecurityValve extends BaseCmsRestValve {
-
-    private final static Logger log = LoggerFactory.getLogger(CmsRestSecurityValve.class);
-
-    private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
-
-    private static final String HEADER_CMS_REST_CREDENTIALS = "X-CMSREST-CREDENTIALS";
-
-    @Override
-    public void invoke(ValveContext context) {
-        HttpServletRequest servletRequest = context.getServletRequest();
-        HttpServletResponse servletResponse = context.getServletResponse();
-        HstRequestContext requestContext = context.getRequestContext();
-
-        if(!requestContext.isCmsRequest()) {
-            setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, "Bad CMS REST call");
-            return;
-        }
-
-        log.debug("Request '{}' is invoked from CMS context. Check for credentials and apply security rules or raise proper error!", servletRequest.getRequestURL());
-        // Retrieve encrypted CMS REST username and password and use them as credentials to create a JCR session
-        String cmsRestCredentials = servletRequest.getHeader(HEADER_CMS_REST_CREDENTIALS);
-
-        if (StringUtils.isBlank(cmsRestCredentials)) {
-            log.debug("No CMS REST credentials found");
-            // setResponseError(HttpServletResponse.SC_BAD_REQUEST, servletResponse, ERROR_MESSAGE_NO_CMS_REST_CREDENTIALS_FOUND);
-            // return;
-        }
-
-        try {
-            if (StringUtils.isNotBlank(cmsRestCredentials)) {
-                CredentialCipher credentialCipher = CredentialCipher.getInstance();
-                Credentials cred = credentialCipher.decryptFromString(CREDENTIAL_CIPHER_KEY, cmsRestCredentials);
-                propagateCrendentials(servletRequest, cred);
-            }
-            context.invokeNext();
-        } catch (SignatureException se) {
-            ContainerException ce = new ContainerException(se);
-            log.warn("Error while processing CMS REST credentails -  {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
-            setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
-            return;
-        } catch (ContainerException ce) {
-            log.warn("Error while processing CMS REST call -  {} : {}", new String[] {ce.getClass().getName(), ce.toString()});
-            setResponseError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, servletResponse);
-            return;
-        }
-    }
-
+@Deprecated
+public class CmsRestSecurityValve extends CmsRestSecurityValveImpl {
 }

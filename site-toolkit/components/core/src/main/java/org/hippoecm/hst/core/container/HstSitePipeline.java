@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.core.order.ObjectOrderer;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +47,7 @@ public class HstSitePipeline implements Pipeline
     protected Valve [] cleanupValves;
     
     private Valve [] mergedProcessingValves;
+    private Valve [] mergedCleanupValves;
     
     public HstSitePipeline() throws Exception
     {
@@ -106,6 +109,7 @@ public class HstSitePipeline implements Pipeline
             this.cleanupValves = new Valve[cleanupValve.length];
             System.arraycopy(cleanupValve, 0, this.cleanupValves, 0, cleanupValve.length);
         }
+        mergedCleanupValves = null;
     }
 
     
@@ -114,6 +118,7 @@ public class HstSitePipeline implements Pipeline
      */
     public void addCleanupValve(Valve cleanupValve) {
         cleanupValves = add(cleanupValves, cleanupValve);
+        mergedCleanupValves = null;
     }
 
     private Valve[] add(Valve[] valves, Valve valve) {
@@ -140,14 +145,26 @@ public class HstSitePipeline implements Pipeline
 
     public void invoke(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
         if (mergedProcessingValves == null) {
-            mergedProcessingValves = (Valve[]) ArrayUtils.addAll(initializationValves, processingValves);
+            mergedProcessingValves = mergeProcessingValves();
+
+            if (log.isInfoEnabled()) {
+                log.info("mergedProcessingValves:\n\t{}", StringUtils.join(mergedProcessingValves, "\n\t"));
+            }
         }
-        
+
         invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, mergedProcessingValves);
     }
 
     public void cleanup(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ContainerException {
-        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, cleanupValves);
+        if (mergedCleanupValves == null) {
+            mergedCleanupValves = mergeCleanupValves();
+
+            if (log.isInfoEnabled()) {
+                log.info("mergedCleanupValves:\n\t{}", StringUtils.join(mergedCleanupValves, "\n\t"));
+            }
+        }
+
+        invokeValves(requestContainerConfig, requestContext, servletRequest, servletResponse, mergedCleanupValves);
     }
     
     private void invokeValves(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve [] valves) throws ContainerException {
@@ -157,8 +174,59 @@ public class HstSitePipeline implements Pipeline
     }
 
     public void destroy() throws ContainerException {
-    }    
-    
+    }
+
+    protected Valve[] mergeProcessingValves() {
+        ObjectOrderer<Valve> orderer = new ObjectOrderer<Valve>("initializationValves");
+
+        if (initializationValves != null) {
+            for (Valve valve : initializationValves) {
+                if (valve instanceof OrderableValve) {
+                    OrderableValve ov = (OrderableValve) valve;
+                    orderer.add(ov, ov.getName(), ov.getAfter(), ov.getBefore());
+                } else {
+                    orderer.add(valve, valve.toString(), null, null);
+                }
+            }
+        }
+
+        Valve [] orderedInitializationValves = orderer.getOrderedObjects().toArray(new Valve[0]);
+
+        orderer = new ObjectOrderer<Valve>("processingValves");
+
+        if (processingValves != null) {
+            for (Valve valve : processingValves) {
+                if (valve instanceof OrderableValve) {
+                    OrderableValve ov = (OrderableValve) valve;
+                    orderer.add(ov, ov.getName(), ov.getAfter(), ov.getBefore());
+                } else {
+                    orderer.add(valve, valve.toString(), null, null);
+                }
+            }
+        }
+
+        Valve [] orderedProcessingValves = orderer.getOrderedObjects().toArray(new Valve[0]);
+
+        return (Valve[]) ArrayUtils.addAll(orderedInitializationValves, orderedProcessingValves);
+    }
+
+    protected Valve[] mergeCleanupValves() {
+        ObjectOrderer<Valve> orderer = new ObjectOrderer<Valve>("cleanupValves");
+
+        if (cleanupValves != null) {
+            for (Valve valve : cleanupValves) {
+                if (valve instanceof OrderableValve) {
+                    OrderableValve ov = (OrderableValve) valve;
+                    orderer.add(ov, ov.getName(), ov.getAfter(), ov.getBefore());
+                } else {
+                    orderer.add(valve, valve.toString(), null, null);
+                }
+            }
+        }
+
+        return orderer.getOrderedObjects().toArray(new Valve[0]);
+    }
+
     static final class Invocation implements ValveContext
     {
 

@@ -15,101 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.jcr.Repository;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.jcr.LazySession;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.container.valves.SubjectBasedSessionValveImpl;
 
 /**
- * StatefulSessionValve
- * 
- * @version $Id$
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
  */
-public class SubjectBasedSessionValve extends AbstractValve {
-    
-    public static final String SUBJECT_BASED_SESSION_ATTR_NAME = SubjectBasedSessionValve.class.getName() + ".session";
-    
-    protected Repository subjectBasedRepository;
-    
-    public void setSubjectBasedRepository(Repository subjectBasedRepository) {
-        this.subjectBasedRepository = subjectBasedRepository;
-    }
-    
-    @Override
-    public void invoke(ValveContext context) throws ContainerException {
-        HttpServletRequest servletRequest = (HttpServletRequest) context.getServletRequest();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-        ResolvedMount resolvedMount = requestContext.getResolvedMount();
-        boolean subjectBasedSession = resolvedMount.isSubjectBasedSession();
-        boolean sessionStateful = resolvedMount.isSessionStateful();
-        
-        if (subjectBasedSession) {
-            if (requestContext.getSubject() == null) {
-                log.debug("Subject based session cannot be set because no subject is found.");
-            } else {
-                // we could include the session userId in the cachekey, but instead we mark the
-                // request as uncacheable for subjectbased request rendering
-                markRequestUncacheable(context);
-                setSubjectSession(context, requestContext, sessionStateful);
-            }
-        }
-        context.invokeNext();
-    }
-
-    private void markRequestUncacheable(final ValveContext context) {
-        context.getPageCacheContext().markUncacheable("Page response marked as uncacheable " +
-                "because subjectBasedSession request rendering.");
-    }
-
-    protected void setSubjectSession(ValveContext valveContext, HstRequestContext requestContext, boolean sessionStateful) throws ContainerException {
-        LazySession lazySession = null;
-        
-        if (sessionStateful) {
-            HttpSession httpSession = valveContext.getServletRequest().getSession(false);
-            lazySession = (httpSession != null ? (LazySession) httpSession.getAttribute(SUBJECT_BASED_SESSION_ATTR_NAME) : (LazySession) null);
-            
-            if (lazySession != null) {
-                boolean isLive = false;
-                
-                try {
-                    isLive = lazySession.isLive();
-                } catch (Exception e) {
-                    log.error("Error during checking lazy session", e);
-                }
-                
-                if (!isLive) {
-                    try {
-                        lazySession.logout();
-                    } catch (Exception e) {
-                        log.warn("Exception logging out lazySession", e);
-                    } finally {
-                        lazySession = null;
-                    }
-                }
-            }
-        } else {
-            lazySession = (LazySession) requestContext.getAttribute(SUBJECT_BASED_SESSION_ATTR_NAME);
-        }
-        
-        if (lazySession == null) {
-            try {
-                lazySession = (LazySession) subjectBasedRepository.login();
-            } catch (Exception e) {
-                throw new ContainerException("Failed to create session based on subject.", e);
-            }
-        }
-
-        if (sessionStateful) {
-            valveContext.getServletRequest().getSession(true).setAttribute(SUBJECT_BASED_SESSION_ATTR_NAME, lazySession);
-            
-        } else {
-            requestContext.setAttribute(SUBJECT_BASED_SESSION_ATTR_NAME, lazySession);
-        }
-        
-        ((HstMutableRequestContext) requestContext).setSession(lazySession);
-    }
+@Deprecated
+public class SubjectBasedSessionValve extends SubjectBasedSessionValveImpl {
 }

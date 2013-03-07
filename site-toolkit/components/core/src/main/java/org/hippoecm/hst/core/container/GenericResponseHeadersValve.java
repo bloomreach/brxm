@@ -15,73 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.hippoecm.hst.util.KeyValue;
+import org.hippoecm.hst.core.container.valves.GenericResponseHeadersValveImpl;
 
 /**
- * GenericResponseHeadersValve
- * 
- * @version $Id$
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
  */
-public class GenericResponseHeadersValve extends AbstractValve {
-    
-    private List<KeyValue<String, Object>> settableHeaders;
-    private List<KeyValue<String, Object>> addableHeaders;
-    
-    public void setSettableHeaders(List<KeyValue<String, Object>> settableHeaders) {
-        this.settableHeaders = settableHeaders;
-    }
-    
-    public void setAddableHeaders(List<KeyValue<String, Object>> addableHeaders) {
-        this.addableHeaders = addableHeaders;
-    }
-    
-    @Override
-    public void invoke(ValveContext context) throws ContainerException
-    {
-        HttpServletResponse servletResponse = context.getServletResponse();
-        
-        String key = null;
-        Object value = null;
-        
-        if (settableHeaders != null) {
-            for (KeyValue<String, Object> pair : settableHeaders) {
-                key = pair.getKey();
-                value = pair.getValue();
-                
-                if (value != null) {
-                    if (value instanceof Long) {
-                        servletResponse.setDateHeader(key, ((Long) value).longValue());
-                    } else if (value instanceof Integer) {
-                        servletResponse.setIntHeader(key, ((Integer) value).intValue());
-                    } else {
-                        servletResponse.setHeader(key, value.toString());
-                    }
-                }
-            }
-        }
-        
-        if (addableHeaders != null) {
-            for (KeyValue<String, Object> pair : addableHeaders) {
-                key = pair.getKey();
-                value = pair.getValue();
-                
-                if (value != null) {
-                    if (value instanceof Long) {
-                        servletResponse.addDateHeader(key, ((Long) value).longValue());
-                    } else if (value instanceof Integer) {
-                        servletResponse.addIntHeader(key, ((Integer) value).intValue());
-                    } else {
-                        servletResponse.addHeader(key, value.toString());
-                    }
-                }
-            }
-        }
-        
-        // continue
-        context.invokeNext();
-    }
+@Deprecated
+public class GenericResponseHeadersValve extends GenericResponseHeadersValveImpl {
 }

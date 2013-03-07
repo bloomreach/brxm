@@ -16,50 +16,11 @@
 
 package org.hippoecm.hst.core.container;
 
-import java.io.IOException;
-
-import javax.jcr.Credentials;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.hst.core.container.valves.BaseCmsRestValveImpl;
 
 /**
- * Base class for CMS REST {@link Valve}(s)
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
  */
-public abstract class BaseCmsRestValve extends AbstractValve {
-
-    private final static Logger log = LoggerFactory.getLogger(BaseCmsRestValve.class);
-
-    private static final String CREDENTIALS_ATTRIBUTE_NAME = BaseCmsRestValve.class.getName() + "_CMS_REST_CREDENTIALS";
-
-    @Override
-    public abstract void invoke(ValveContext context);
-
-    protected void propagateCrendentials(HttpServletRequest request, Credentials credentials) {
-        request.setAttribute(CREDENTIALS_ATTRIBUTE_NAME, credentials);
-    }
-
-    protected Credentials getPropagatedCredentials(HttpServletRequest request) {
-        return (Credentials)request.getAttribute(CREDENTIALS_ATTRIBUTE_NAME);
-    }
-
-    protected void setResponseError(int scError, HttpServletResponse response) {
-        setResponseError(scError, response, null);
-    }
-
-    protected void setResponseError(int scError, HttpServletResponse response, String message) {
-        try {
-            if (StringUtils.isBlank(message)) {
-                response.sendError(scError);
-            } else {
-                response.sendError(scError, message);
-            }
-        } catch (IOException ioe) {
-            log.warn("Exception while sending HTTP error response", ioe);
-        }
-    }
-
+@Deprecated
+public abstract class BaseCmsRestValve extends BaseCmsRestValveImpl {
 }

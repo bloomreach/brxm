@@ -15,44 +15,17 @@
  */
 package org.hippoecm.hst.core.container;
 
+import org.hippoecm.hst.core.container.valves.JaxrsRestServiceValveImpl;
 import org.hippoecm.hst.jaxrs.JAXRSService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * JaxrsRestServiceValve
- * 
- * @version $Id$
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
  */
-public class JaxrsRestServiceValve extends AbstractValve {
-    
-    private static final Logger log = LoggerFactory.getLogger(JaxrsRestServiceValve.class);
-    
-    private JAXRSService service;
-    
+@Deprecated
+public class JaxrsRestServiceValve extends JaxrsRestServiceValveImpl {
+
     public JaxrsRestServiceValve(JAXRSService service) {
-    	this.service = service;
-    }
-    
-    @Override
-    public void invoke(ValveContext context) throws ContainerException {
-        try {
-            service.invoke(context.getRequestContext(), context.getServletRequest(), context.getServletResponse()); 
-        }
-        catch (ContainerException ce) {
-        	throw ce;
-        } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.error("Failed to invoke jaxrs service.", e);
-            } else {
-                log.error("Failed to invoke jaxrs service. {}", e.toString());
-            }
-            throw new ContainerException(e);
-        }
+        super(service);
     }
 
-    @Override
-    public void destroy() {
-        service.destroy();
-    }
 }

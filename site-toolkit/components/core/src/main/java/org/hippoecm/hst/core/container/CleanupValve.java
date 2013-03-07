@@ -15,88 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.hippoecm.hst.core.ResourceLifecycleManagement;
-import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.jcr.LazySession;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.container.valves.CleanupValveImpl;
 
 /**
- * CleanupValve
- * 
- * @version $Id$
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
  */
-public class CleanupValve extends AbstractValve
-{
-    protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
-    
-    
-    public void setResourceLifecycleManagements(List<ResourceLifecycleManagement> resourceLifecycleManagements) {
-        this.resourceLifecycleManagements = resourceLifecycleManagements;
-    }
-    
-    
-    @Override
-    public void invoke(ValveContext context) throws ContainerException
-    {
-        if (this.resourceLifecycleManagements != null) {
-            for (ResourceLifecycleManagement resourceLifecycleManagement : this.resourceLifecycleManagements) {
-                resourceLifecycleManagement.disposeAllResources();
-            }
-        }
-        
-        HttpServletRequest servletRequest = context.getServletRequest();
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-        ResolvedMount resolvedMount = requestContext.getResolvedMount();
-        boolean subjectBasedSession = resolvedMount.isSubjectBasedSession();
-        boolean sessionStateful = resolvedMount.isSessionStateful();
-        
-        if (subjectBasedSession) {
-            clearSubjectSession(context, requestContext, sessionStateful);
-        }
-        
-    	// ensure Session isn't tried to reuse again (it has been returned to the pool anyway)
-        ((HstMutableRequestContext) requestContext).setSession(null);
-        
-        if (servletRequest.getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) == null) {
-            getRequestContextComponent().release(requestContext);
-        }
-        
-        // continue
-        context.invokeNext();
-    }
-    
-    protected void clearSubjectSession(ValveContext valveContext, HstRequestContext requestContext, boolean sessionStateful) throws ContainerException {
-        LazySession lazySession = null;
-        
-        if (sessionStateful) {
-            /*
-             *  We do not log out or refresh session stateful jcr session: This is done by either:
-             *  1) The JCRSessionStatefulConcurrencyValve refreshes the jcr session when needed
-             *  2) When the HttpSession container the jcr session is invalidated (unbinded), the LazySession logs itself out in the finally part
-             */
-        } else {
-            lazySession = (LazySession) requestContext.getAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);
-            
-            if (lazySession != null) {
-                try {
-                    if (lazySession.isLive()) {
-                        lazySession.logout();
-                    }
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Failed to logout session.", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Failed to logout session. " + e);
-                    }
-                }
-                
-                requestContext.removeAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);
-            }
-        }
-    }
+@Deprecated
+public class CleanupValve extends CleanupValveImpl {
 }

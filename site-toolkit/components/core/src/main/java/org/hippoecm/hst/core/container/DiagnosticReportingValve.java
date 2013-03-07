@@ -15,38 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.diagnosis.HDC;
-import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.hst.util.TaskLogFormatter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.hst.core.container.valves.DiagnosticReportingValveImpl;
 
-public class DiagnosticReportingValve extends AbstractValve {
-
-    private static Logger log = LoggerFactory.getLogger(DiagnosticReportingValve.class);
-
-    @Override
-    public void invoke(ValveContext context) throws ContainerException {
-        if (context.getServletRequest().getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
-            // continue
-            context.invokeNext();
-            return;
-        }
-
-        if (HDC.isStarted()) {
-            HDC.getRootTask().stop();
-            logDiagnosticSummary();
-        }
-
-        // continue
-        context.invokeNext();
-    }
-
-    private void logDiagnosticSummary() {
-        if (log.isInfoEnabled()) {
-            Task rootTask = HDC.getRootTask();
-            log.info("Diagnostic Summary:\n{}", TaskLogFormatter.getTaskLog(rootTask));
-        }
-    }
-
+/**
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
+ */
+@Deprecated
+public class DiagnosticReportingValve extends DiagnosticReportingValveImpl {
 }

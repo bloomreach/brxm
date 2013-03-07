@@ -15,55 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.container.valves.ComponentRenderingValveImpl;
 
 /**
- * ComponentRenderingValve
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
  */
-public class ComponentRenderingValve extends AbstractValve {
-
-    @Override
-    public void invoke(ValveContext context) throws ContainerException {
-        HstRequestContext requestContext = context.getRequestContext();
-        String componentRenderingWindowReferenceNamespace = requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace();
-
-        if (componentRenderingWindowReferenceNamespace != null) {
-
-            HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), componentRenderingWindowReferenceNamespace);
-
-            if (window == null) {
-                log.warn("Illegal request for componen rendering URL found because there is no component for id '{}' for matched " +
-                        "sitemap item '{}'. Set 404 on response.", componentRenderingWindowReferenceNamespace, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
-                try {
-                    context.getServletResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
-                } catch (IOException e) {
-                    throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
-                }
-                return;
-            }
-            if (context.getRequestContext().isCmsRequest()) {
-                setNoCacheHeaders(context.getServletResponse());
-            }
-            if(window.getComponentInfo().isStandalone()) {
-                // set the current window as the root window because the backing componentInfo is standalone
-                context.setRootComponentWindow(window);
-            } else {
-                // the component is not standalone: All HstComponent's should have their doBeforeRender called,
-                // but only the renderer/dispatcher of the found window should be invoked
-                context.setRootComponentRenderingWindow(window);
-            }
-        }
-        context.invokeNext();
-    }
-
-    private static void setNoCacheHeaders(final HttpServletResponse response) {
-        response.setDateHeader("Expires", -1);
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Cache-Control", "no-cache");
-    }
-
+@Deprecated
+public class ComponentRenderingValve extends ComponentRenderingValveImpl {
 }

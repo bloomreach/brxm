@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.core.container.valves;
 
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.expect;
@@ -26,25 +26,26 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.core.container.ContainerConstants;
+import org.hippoecm.hst.core.container.ContainerSecurityException;
 import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
- * TestSecurityValve
- * @version $Id$
+ * TestSecurityValveImpl
  */
-public class TestSecurityValve {
+public class TestSecurityValveImpl {
     
-    private SecurityValve securityValve;
+    private SecurityValveImpl securityValve;
     private Principal userPrincipal;
 
     @Before
     public void setUp() throws Exception {
-        securityValve = new SecurityValve();
+        securityValve = new SecurityValveImpl();
         
         userPrincipal = new Principal() {
             public String getName() {

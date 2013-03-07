@@ -46,10 +46,34 @@ api/src/main/java/org/hippoecm/hst/configuration/sitemenu/package-info.java svne
 api/src/main/java/org/hippoecm/hst/container/HstContainerRequest.java -text
 api/src/main/java/org/hippoecm/hst/container/HstPortalContextProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/container/HstPortletRequestDispatcherPathProvider.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/container/annotations/Orderable.java -text
 api/src/main/java/org/hippoecm/hst/container/event/ComponentManagerBeforeReplacedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/event/HttpSessionCreatedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/event/HttpSessionDestroyedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/container/valves/AbstractOrderableValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/AbstractValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/ActionValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/AggregationValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/CleanupValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/CmsHostRestRequestContextValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/CmsRestCredentialsToJcrSessionPropagatorValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/CmsRestSecurityValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/CmsSecurityValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/ComponentRenderingValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/ContextResolvingValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/DiagnosticReportingValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/GenericResponseHeadersValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/InitializationValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/JCRSessionStatefulConcurrencyValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/JaxrsRestServiceValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/LocalizationValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/NotFoundValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/PageCachingValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/ResourceServingValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/SecurityValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/SiteMenusResolvingValve.java -text
+api/src/main/java/org/hippoecm/hst/container/valves/SubjectBasedSessionValve.java -text
 api/src/main/java/org/hippoecm/hst/content/annotations/Persistable.java -text
 api/src/main/java/org/hippoecm/hst/content/beans/ContentNodeBinder.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/content/beans/ContentNodeBindingException.java svneol=native#text/plain
@@ -148,6 +172,7 @@ api/src/main/java/org/hippoecm/hst/core/container/HstContainerURLProvider.java s
 api/src/main/java/org/hippoecm/hst/core/container/HstNavigationalStateCodec.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/HstRequestProcessor.java -text
 api/src/main/java/org/hippoecm/hst/core/container/ModuleNotFoundException.java -text
+api/src/main/java/org/hippoecm/hst/core/container/OrderableValve.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageCacheContext.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageCacheKey.java -text
 api/src/main/java/org/hippoecm/hst/core/container/PageErrorHandler.java svneol=native#text/plain
@@ -266,6 +291,7 @@ api/src/main/java/org/hippoecm/hst/util/ClasspathResourceScanner.java -text
 api/src/main/java/org/hippoecm/hst/util/KeyValue.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/util/package-info.java svneol=native#text/plain
 api/src/site/site.xml -text
+api/src/test/java/org/hippoecm/hst/container/valves/TestAbstractOrderableValve.java -text
 api/src/test/java/org/hippoecm/hst/core/component/TestGenericHstComponent.java -text
 client-modules/cms-rest/pom.xml -text
 client-modules/cms-rest/src/main/java/org/hippoecm/hst/cmsrest/services/DocumentsResource.java -text
@@ -407,6 +433,7 @@ commons/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoProxyFacto
 commons/src/main/java/org/hippoecm/hst/core/component/HstPortletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstServletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/WrapperElementImpl.java -text
+commons/src/main/java/org/hippoecm/hst/core/container/DelegatingOrderableValve.java -text
 commons/src/main/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualCmsHostAugmenter.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualHostAugmenter.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/jcr/AsynchronousDispatchingEventListener.java -text svneol=unset#text/plain
@@ -539,6 +566,30 @@ components/core/src/main/java/org/hippoecm/hst/core/container/ResourceServingVal
 components/core/src/main/java/org/hippoecm/hst/core/container/SecurityValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/SiteMenusResolvingValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/SubjectBasedSessionValve.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/AbstractBaseOrderableValve.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/ActionValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/AggregationValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/BaseCmsRestValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/CleanupValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/CmsHostRestRequestContextValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/CmsRestCredentialsToJcrSessionPropagatorValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/CmsRestSecurityValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/CmsSecurityValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/ComponentRenderingValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/ContextResolvingValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/DiagnosticReportingValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/GenericResponseHeadersValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/InitializationValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/JCRSessionStatefulConcurrencyValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/JaxrsRestServiceValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/LocalizationValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/NoContentValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/NotFoundValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/PageCachingValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/ResourceServingValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/SecurityValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/SiteMenusResolvingValveImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/valves/SubjectBasedSessionValveImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/DelegatingRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositorySessionsRefreshEventListener.java -text
@@ -656,11 +707,12 @@ components/core/src/test/java/org/hippoecm/hst/core/container/TestGenericRespons
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstComponentWindowImpl.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstContainerURL.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestHstNavigationalStateCodec.java svneol=native#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/container/TestHstSitePipeline.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageCacheContextAndKey.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageCachingValve.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.java svneol=native#text/plain
-components/core/src/test/java/org/hippoecm/hst/core/container/TestSecurityValve.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/session/TestHttpSessionEventPublisher.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/valves/TestSecurityValveImpl.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkForCmsRequest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewriting.java -text svneol=unset#text/plain

@@ -15,43 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.util.HstRequestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.hippoecm.hst.core.container.valves.NotFoundValveImpl;
 
 /**
- * NotFoundValve set a 404 status code and directly returns.
- *
- * Note that it is not entirely http spec compliant to set a status code other than the 200 and 300 ranges, but
- * this is in practice never a problem
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
  */
-public class NotFoundValve implements Valve {
-
-    private final static Logger log = LoggerFactory.getLogger(NotFoundValve.class);
-
-    @Override
-    public void invoke(ValveContext context) throws ContainerException
-    {
-        HttpServletResponse servletResponse = context.getServletResponse();
-        String url = HstRequestUtils.getFarthestRequestHost(context.getServletRequest()) +  context.getServletRequest().getRequestURI();
-        if (!StringUtils.isEmpty(context.getServletRequest().getQueryString())) {
-            url += "?" + context.getServletRequest().getQueryString();
-        }
-        log.warn("Return HttpServletResponse.SC_NOT_FOUND (404) because NoopPipeline was invoked for request {}", url);
-        servletResponse.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        // do not call invoke next as we already return no content
-    }
-
-    @Override
-    public void initialize() throws ContainerException {
-        
-    }
-
-    @Override
-    public void destroy() {
-        
-    }
+@Deprecated
+public class NotFoundValve extends NotFoundValveImpl {
 }

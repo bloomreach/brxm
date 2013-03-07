@@ -264,7 +264,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         return (Enumeration<String>) IteratorUtils.asEnumeration(Collections.emptySet().iterator());
     }
     
-    protected void setResponseState(HstResponseState responseState) {
+    public void setResponseState(HstResponseState responseState) {
         this.responseState = responseState;
     }
 

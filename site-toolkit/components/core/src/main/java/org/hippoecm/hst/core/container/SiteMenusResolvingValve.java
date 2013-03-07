@@ -15,24 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
-import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.request.HstRequestContext;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
+import org.hippoecm.hst.core.container.valves.SiteMenusResolvingValveImpl;
 
 /**
- * SiteMenusResolvingValve
- * 
- * @version $Id$
+ * @deprecated Use the base class instead. This is provided only for backward compatibility from either code or bean configuration.
  */
-public class SiteMenusResolvingValve extends AbstractValve {
-
-    @Override
-    public void invoke(ValveContext context) throws ContainerException {
-        HstRequestContext requestContext = context.getRequestContext();
-        HstSiteMenus siteMenus = this.siteMenusManager.getSiteMenus(requestContext);
-        ((HstMutableRequestContext)requestContext).setHstSiteMenus(siteMenus);
-        
-        context.invokeNext();
-    }
-
+@Deprecated
+public class SiteMenusResolvingValve extends SiteMenusResolvingValveImpl {
 }
