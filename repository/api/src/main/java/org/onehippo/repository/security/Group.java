@@ -26,7 +26,7 @@ public interface Group {
     /**
      * Get the id of the group.
      *
-     * @return  the id of the user
+     * @return  the id of the group
      * @throws RepositoryException
      */
     String getId() throws RepositoryException;

@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class SecurityServiceImpl implements SecurityService {
+public final class SecurityServiceImpl implements SecurityService {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityServiceImpl.class);
     private static final String INTERNAL_PROVIDER = "internal";
@@ -46,8 +46,8 @@ public class SecurityServiceImpl implements SecurityService {
     private final HippoUserManager internalUserManager;
     private final GroupManager internalGroupManager;
 
-    private Map<String, HippoUserManager> userManagers;
-    private Map<String, GroupManager> groupManagers;
+    private final Map<String, HippoUserManager> userManagers = new HashMap<String, HippoUserManager>(2);
+    private final Map<String, GroupManager> groupManagers = new HashMap<String, GroupManager>(2);
 
     public SecurityServiceImpl(HippoSecurityManager securityManager, Session session) throws RepositoryException {
         this.securityManager = securityManager;
@@ -182,18 +182,19 @@ public class SecurityServiceImpl implements SecurityService {
         return internalGroupManager;
     }
 
+    HippoUserManager getInternalUserManager() {
+        return internalUserManager;
+    }
+
     GroupManager getGroupManager(final String providerId) throws RepositoryException {
         if (providerId == null || providerId.equals(INTERNAL_PROVIDER)) {
             return internalGroupManager;
         }
-        if (groupManagers != null && groupManagers.containsKey(providerId)) {
+        if (groupManagers.containsKey(providerId)) {
             return groupManagers.get(providerId);
         }
         final GroupManager groupManager = securityManager.getGroupManager(session, providerId);
         if (groupManager != null) {
-            if (groupManagers == null) {
-                groupManagers = new HashMap<String, GroupManager>(2);
-            }
             groupManagers.put(providerId, groupManager);
         }
         return groupManager;
@@ -203,21 +204,14 @@ public class SecurityServiceImpl implements SecurityService {
         if (providerId == null || providerId.equals(INTERNAL_PROVIDER)) {
             return internalUserManager;
         }
-        if (userManagers != null && userManagers.containsKey(providerId)) {
+        if (userManagers.containsKey(providerId)) {
             return userManagers.get(providerId);
         }
         final HippoUserManager userManager = securityManager.getUserManager(session, providerId);
         if (userManager != null) {
-            if (userManagers == null) {
-                userManagers = new HashMap<String, HippoUserManager>(2);
-            }
             userManagers.put(providerId, userManager);
         }
         return userManager;
-    }
-
-    HippoUserManager getInternalUserManager() {
-        return internalUserManager;
     }
 
 }

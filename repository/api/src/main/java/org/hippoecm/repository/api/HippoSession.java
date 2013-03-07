@@ -21,6 +21,7 @@ import java.io.OutputStream;
 
 import javax.jcr.InvalidSerializedDataException;
 import javax.jcr.ItemExistsException;
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -188,9 +189,10 @@ public interface HippoSession extends Session {
     /**
      * Get the {@link User} object identified by this session's user id.
      * @return  the {@link User} object identified by this session's user id.
+     * @throws ItemNotFoundException  if the user could not be found in the repository.
      * @throws RepositoryException
      */
-    public User getUser() throws RepositoryException;
+    public User getUser() throws ItemNotFoundException, RepositoryException;
 
     /**
      * <b>DO NOT USE THIS METHOD.  This call is not yet part of the API.</b><br/>

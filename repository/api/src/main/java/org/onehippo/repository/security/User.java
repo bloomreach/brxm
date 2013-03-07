@@ -52,7 +52,7 @@ public interface User {
     /**
      * Get the {@link Group}s this user is a member of.
      *
-     * @return the ids of the {@link Group}s this user is a member of.
+     * @return the {@link Group}s this user is a member of.
      * @throws RepositoryException
      */
     Iterable<Group> getMemberships() throws RepositoryException;

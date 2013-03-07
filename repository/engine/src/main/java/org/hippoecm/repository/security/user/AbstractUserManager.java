@@ -127,7 +127,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
             statement.append('[').append("fn:name() = ").append("'").append(NodeNameCodec.encode(userId, true)).append("'").append(']');
             Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
             QueryResult result = q.execute();
-            return ((result.getNodes().hasNext()) ? true : false);
+            return result.getNodes().hasNext();
         } else {
             String path = buildUserPath(rawUserId);
             if (session.getRootNode().hasNode(path)) {
@@ -310,6 +310,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
             statement.append(HippoNodeType.HIPPO_SECURITYPROVIDER).append("= '").append(providerId).append("'");
             statement.append(']');
         }
+        statement.append(" order by @jcr:name");
 
         Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
         if (offset > 0) {

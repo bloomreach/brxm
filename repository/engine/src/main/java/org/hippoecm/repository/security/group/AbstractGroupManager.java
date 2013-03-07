@@ -44,7 +44,6 @@ import org.slf4j.LoggerFactory;
 */
 public abstract class AbstractGroupManager implements GroupManager {
 
-
     /**
      * The system/root session
      */
@@ -175,6 +174,7 @@ public abstract class AbstractGroupManager implements GroupManager {
             statement.append(HippoNodeType.HIPPO_SECURITYPROVIDER).append("= '").append(providerId).append("'");
             statement.append(']');
         }
+        statement.append(" order by @jcr:name");
 
         final Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
         if (offset > 0) {
@@ -272,11 +272,11 @@ public abstract class AbstractGroupManager implements GroupManager {
         }
     }
 
-    public final NodeIterator getMemberships(String rawUserId) {
+    public final NodeIterator getMemberships(String rawUserId) throws RepositoryException {
         return getMemberships(rawUserId, null);
     }
 
-    public final NodeIterator getMemberships(String rawUserId, String providerId) {
+    public final NodeIterator getMemberships(String rawUserId, String providerId) throws RepositoryException {
         String userId = sanitizeId(rawUserId);
 
         StringBuilder statement = new StringBuilder();
@@ -294,14 +294,9 @@ public abstract class AbstractGroupManager implements GroupManager {
         statement.append(']');
         //log.info("Searching for memberships for user '{}' with query '{}'", userId, statement);
 
-        try {
-            Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
-            QueryResult result = q.execute();
-            return result.getNodes();
-        } catch (RepositoryException e) {
-            log.error("Error while finding memberships: ", e);
-            return null;
-        }
+        Query q = session.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.XPATH);
+        QueryResult result = q.execute();
+        return result.getNodes();
     }
 
     public final Set<String> getMembershipIds(String userId) {
@@ -310,13 +305,17 @@ public abstract class AbstractGroupManager implements GroupManager {
 
     public final Set<String> getMembershipIds(String userId, String providerId) {
         final Set<String> groupIds = new HashSet<String>();
-        final NodeIterator nodes = getMemberships(userId, providerId);
-        while (nodes.hasNext()) {
-            try {
-                groupIds.add(nodes.nextNode().getName());
-            } catch (RepositoryException e) {
-                log.warn("Failed to add group id to set of memberships");
+        try {
+            final NodeIterator nodes = getMemberships(userId, providerId);
+            while (nodes.hasNext()) {
+                try {
+                    groupIds.add(nodes.nextNode().getName());
+                } catch (RepositoryException e) {
+                    log.warn("Failed to add group id to set of memberships of user {}: " + e, userId);
+                }
             }
+        } catch (RepositoryException e) {
+            log.error("Error while getting membership ids", e);
         }
         return groupIds;
     }

@@ -30,7 +30,7 @@ import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class GroupImpl implements Group {
+public final class GroupImpl implements Group {
 
     private static final Logger log = LoggerFactory.getLogger(GroupImpl.class);
 
@@ -129,6 +129,11 @@ public class GroupImpl implements Group {
 
     private GroupManager getGroupManager() throws RepositoryException {
         return securityService.getGroupManager(getProviderId());
+    }
+
+    @Override
+    public String toString() {
+        return "Group: " + getId();
     }
 
 }

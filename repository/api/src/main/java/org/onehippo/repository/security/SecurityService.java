@@ -36,7 +36,7 @@ public interface SecurityService {
      *
      * @param userId  the id of the user to obtain.
      * @return  the {@link User} identified by the given {@code userId}
-     * @throws ItemNotFoundException if no user with the given id exists
+     * @throws ItemNotFoundException if no user with the given id could be found
      * @throws RepositoryException
      */
     User getUser(final String userId) throws ItemNotFoundException, RepositoryException;
@@ -45,8 +45,9 @@ public interface SecurityService {
      * Get all the {@link User}s in the repository.
      *
      * @return the list of {@link User}s in the repository. Never {@code null}.
-     * @param offset  the start offset of the result; use {@code -1} for no offset; defaults to no offset
-     * @param limit  maximum size of the result; use {@code -1} for no limit; defaults to no limit
+     * @param offset  the start offset of the result; only has effect when value is larger than zero;
+     *                defaults to no offset
+     * @param limit  maximum size of the result; only has effect when value is larger than zero; defaults to no limit
      * @throws RepositoryException
      */
     Iterable<User> getUsers(long offset, long limit) throws RepositoryException;
@@ -55,8 +56,9 @@ public interface SecurityService {
      * Get all the {@link Group}s in the repository.
      *
      * @return the list of {@link Group}s in the repository. Never {@code null}.
-     * @param offset  the start offset of the result; use {@code -1} for no offset; defaults to no offset
-     * @param limit  maximum size of the result; use {@code -1} for no limit; defaults to no limit
+     * @param offset  the start offset of the result; only has effect when value is larger than zero;
+     *                defaults to no offset
+     * @param limit  maximum size of the result; only has effect when value is larger than zero; defaults to no limit
      * @throws RepositoryException
      */
     Iterable<Group> getGroups(long offset, long limit) throws RepositoryException;
@@ -74,7 +76,7 @@ public interface SecurityService {
      *
      * @param groupId  the id of the group to obtain.
      * @return  the {@link Group} identified by the given {@code groupId}
-     * @throws ItemNotFoundException  if no group with the given id exists
+     * @throws ItemNotFoundException  if no group with the given id could be found
      * @throws RepositoryException
      */
     Group getGroup(final String groupId) throws ItemNotFoundException, RepositoryException;

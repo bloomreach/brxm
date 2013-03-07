@@ -59,7 +59,7 @@ public interface HippoUserManager extends UserManager {
     NodeIterator listUsers(long offset, long limit) throws RepositoryException;
 
     /**
-     * Get all the groups managed by a particular provider.
+     * Get all the users managed by a particular provider.
      *
      * @return an iterator of group nodes
      * @throws RepositoryException

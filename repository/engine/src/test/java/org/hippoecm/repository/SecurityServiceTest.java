@@ -75,7 +75,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
         final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
         final Iterator<User> users = securityService.getUsers(-1, -1).iterator();
         assertTrue(users.hasNext());
-        users.next();
+        assertEquals("admin", users.next().getId());
     }
 
     @Test
@@ -83,7 +83,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
         final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
         final Iterator<Group> groups = securityService.getGroups(-1, -1).iterator();
         assertTrue(groups.hasNext());
-        groups.next();
+        assertEquals("admin", groups.next().getId());
     }
 
 }

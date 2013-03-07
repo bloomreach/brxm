@@ -31,7 +31,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.User;
 
-public class UserImpl implements User {
+public final class UserImpl implements User {
 
     private static final String HIPPOSYS_FIRSTNAME = "hipposys:firstname";
     private static final String HIPPOSYS_LASTNAME = "hipposys:lastname";
@@ -114,4 +114,8 @@ public class UserImpl implements User {
         return securityService.getInternalGroupManager();
     }
 
+    @Override
+    public String toString() {
+        return "User: " + getId();
+    }
 }
