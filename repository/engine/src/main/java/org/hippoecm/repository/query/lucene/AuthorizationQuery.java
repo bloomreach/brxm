@@ -18,7 +18,6 @@ package org.hippoecm.repository.query.lucene;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +35,7 @@ import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
+import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
@@ -100,19 +100,13 @@ public class AuthorizationQuery {
                                    final NamespaceMappings nsMappings,
                                    final NodeTypeManager ntMgr) {
         BooleanQuery authQuery = new BooleanQuery(true);
-        Iterator<FacetAuthPrincipal> facetAuthsIt = facetAuths.iterator();
-        while (facetAuthsIt.hasNext()) {
-            FacetAuthPrincipal facetAuthPrincipal = facetAuthsIt.next();
+        for (final FacetAuthPrincipal facetAuthPrincipal : facetAuths) {
             if (!facetAuthPrincipal.getPrivileges().contains("jcr:read")) {
                 continue;
             }
-            Iterator<DomainRule> domainRulesIt = facetAuthPrincipal.getRules().iterator();
-            while (domainRulesIt.hasNext()) {
-                DomainRule domainRule = domainRulesIt.next();
-                Iterator<FacetRule> facetRuleIt = domainRule.getFacetRules().iterator();
+            for (final DomainRule domainRule : facetAuthPrincipal.getRules()) {
                 BooleanQuery facetQuery = new BooleanQuery(true);
-                while (facetRuleIt.hasNext()) {
-                    FacetRule facetRule = facetRuleIt.next();
+                for (final FacetRule facetRule : domainRule.getFacetRules()) {
                     Query q = getFacetRuleQuery(facetRule, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (q == null) {
                         continue;
@@ -171,7 +165,7 @@ public class AuthorizationQuery {
                             return getPropertyQuery(facetRule, value, fieldName, internalNameTerm);
                         }
                     } else {
-                        log.warn("Property " + facetName.getNamespaceURI() + ":" + facetName.getLocalName() + " not allowed for facetted search. " +
+                        log.warn("Property " + facetName.getNamespaceURI() + ":" + facetName.getLocalName() + " not allowed for faceted search. " +
                                          "Add the property to the indexing configuration to be defined as FACET");
                     }
                 } catch (IllegalNameException e) {
@@ -189,7 +183,7 @@ public class AuthorizationQuery {
                 } else if (NODETYPE.equalsIgnoreCase(nodeNameString)) {
                     return getNodeTypeDescendantQuery(facetRule, ntMgr, session, nsMappings);
                 } else if (NODENAME.equalsIgnoreCase(nodeNameString)) {
-                    return getNodeNameQuery(facetRule, session, roles, memberships);
+                    return getNodeNameQuery(facetRule, session, roles, memberships, nsMappings);
                 } else {
                     try {
                         if ("jcr:primaryType".equals(nodeNameString)) {
@@ -281,8 +275,8 @@ public class AuthorizationQuery {
             query = new TermQuery(terms.get(0));
         } else {
             BooleanQuery b = new BooleanQuery(true);
-            for (Iterator<Term> it = terms.iterator(); it.hasNext();) {
-                b.add(new TermQuery(it.next()), Occur.SHOULD);
+            for (final Term term : terms) {
+                b.add(new TermQuery(term), Occur.SHOULD);
             }
             query = b;
         }
@@ -322,28 +316,34 @@ public class AuthorizationQuery {
         return query;
     }
 
-    private Query getNodeNameQuery(FacetRule facetRule, InternalHippoSession session, Set<String> roles, Set<String> memberShips) {
-        Query nodeNameQuery;
-        String value = facetRule.getValue();
-        if (FacetAuthConstants.WILDCARD.equals(value)) {
-            if (facetRule.isEqual()) {
-                return new MatchAllDocsQuery();
+    private Query getNodeNameQuery(FacetRule facetRule, InternalHippoSession session, Set<String> roles, Set<String> memberShips, final NamespaceMappings nsMappings) {
+        try {
+            String fieldName = ServicingNameFormat.getInternalFacetName(NameConstants.JCR_NAME, nsMappings);
+            String value = facetRule.getValue();
+            if (FacetAuthConstants.WILDCARD.equals(value)) {
+                if (facetRule.isEqual()) {
+                    return new MatchAllDocsQuery();
+                } else {
+                    return QueryHelper.getNoHitsQuery();
+                }
+            } else if (FacetAuthConstants.EXPANDER_USER.equals(value)) {
+                return expandUser(fieldName, facetRule, session);
+            } else if (FacetAuthConstants.EXPANDER_ROLE.equals(value)) {
+                return expandRole(fieldName, facetRule, roles);
+            } else if (FacetAuthConstants.EXPANDER_GROUP.equals(value)) {
+                return expandGroup(fieldName, facetRule, memberShips);
             } else {
-                return QueryHelper.getNoHitsQuery();
+                Query nodeNameQuery;
+                nodeNameQuery = new TermQuery(new Term(fieldName, value));
+                if (facetRule.isEqual()) {
+                    return nodeNameQuery;
+                } else {
+                    return QueryHelper.negateQuery(nodeNameQuery);
+                }
             }
-        } else if (FacetAuthConstants.EXPANDER_USER.equals(value)) {
-            return expandUser(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, facetRule, session);
-        } else if (FacetAuthConstants.EXPANDER_ROLE.equals(value)) {
-            return expandRole(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, facetRule, roles);
-        } else if (FacetAuthConstants.EXPANDER_GROUP.equals(value)) {
-            return expandGroup(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, facetRule, memberShips);
-        } else {
-            nodeNameQuery = new TermQuery(new Term(ServicingFieldNames.HIPPO_SORTABLE_NODENAME, value));
-            if (facetRule.isEqual()) {
-                return nodeNameQuery;
-            } else {
-                return QueryHelper.negateQuery(nodeNameQuery);
-            }
+        } catch (IllegalNameException e) {
+            log.error("Failed to create node name query: " + e);
+            return QueryHelper.getNoHitsQuery();
         }
     }
 

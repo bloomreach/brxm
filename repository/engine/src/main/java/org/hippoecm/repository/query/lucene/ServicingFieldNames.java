@@ -24,11 +24,6 @@ public interface ServicingFieldNames {
     public static final char DOUBLE_POSTFIX = '\uFAFD';
     public static final char STRING_DELIMITER = '\uFAFF';
     public static final String STRING_CHAR_POSTFIX = "chars";
-    
-    /**
-     * Lucene field name which is used to index the localname of a node to be able to sort on nodes
-     */
-    public static final String HIPPO_SORTABLE_NODENAME = "HIPPOSORTABLE:".intern();
 
     /**
      * Prefix for all field names that are facet properties.

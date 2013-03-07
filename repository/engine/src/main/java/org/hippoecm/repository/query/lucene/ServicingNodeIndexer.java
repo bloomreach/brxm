@@ -301,6 +301,8 @@ public class ServicingNodeIndexer extends NodeIndexer {
                 final Field field = createFieldWithoutNorms(jcrName, nodeName, PropertyType.STRING);
                 doc.add(field);
 
+                indexFacet(doc, jcrName, nodeName);
+
                 // index the local name for full text search
                 indexNodeLocalName(doc, child.getName().getLocalName());
 
