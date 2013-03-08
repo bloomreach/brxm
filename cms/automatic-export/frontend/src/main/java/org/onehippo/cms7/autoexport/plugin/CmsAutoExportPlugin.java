@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012 Hippo.
+ *  Copyright 2012-2013 Hippo.
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,4 +30,11 @@ public class CmsAutoExportPlugin extends AutoExportPlugin {
     protected boolean isLinkVisible() {
         return isExportAvailable();
     }
+
+    @Override
+    public boolean isVisible()
+   	{
+   		return isLinkVisible();
+   	}
+
 }
