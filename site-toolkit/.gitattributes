@@ -713,6 +713,7 @@ components/core/src/test/java/org/hippoecm/hst/core/container/TestPageCachingVal
 components/core/src/test/java/org/hippoecm/hst/core/container/TestPageErrors.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/container/session/TestHttpSessionEventPublisher.java -text
 components/core/src/test/java/org/hippoecm/hst/core/container/valves/TestSecurityValveImpl.java -text
+components/core/src/test/java/org/hippoecm/hst/core/container/valves/TestValveImplementationsInBestPractice.java -text
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkForCmsRequest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewriting.java -text svneol=unset#text/plain
