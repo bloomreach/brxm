@@ -807,10 +807,10 @@ automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/Auto
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin.properties -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin_de.properties -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/AutoExportPlugin_it.properties -text
+automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/CmsAutoExportPlugin.java -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/Constants.java -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/autoexport_off.png -text
 automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/autoexport_on.png -text
-automatic-export/frontend/src/main/java/org/onehippo/cms7/autoexport/plugin/empty.gif -text
 automatic-export/pom.xml -text
 automatic-export/repository/pom.xml -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/AutoExportModule.java -text
@@ -832,6 +832,7 @@ automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Initializ
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/InitializeItemRegistry.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/LocationMapper.java -text
 automatic-export/repository/src/main/java/org/onehippo/cms7/autoexport/Module.java -text
+automatic-export/repository/src/main/resources/automatic-export-cms-plugin.xml -text
 automatic-export/repository/src/main/resources/automatic-export-plugin.xml -text
 automatic-export/repository/src/main/resources/hippo-configuration/hippo-modules/autoexport-module.xml -text
 automatic-export/repository/src/main/resources/hippoecm-extension.xml -text

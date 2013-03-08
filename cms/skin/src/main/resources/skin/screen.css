@@ -239,6 +239,29 @@ body.hippo-root #doc3 {
   font-weight: bold;
 }
 
+.hippo-header-items-right {
+    position: absolute;
+    top: 5px;
+    right: 100px;
+}
+.hippo-header-items-right li {
+    float: left;
+    margin-right: 10px;
+}
+.hippo-header-items-right span span a {
+    color: #ffffff;
+}
+
+/* AutoExport states */
+/* ================= */
+.auto-export-state-disabled {
+    color: #ff3f4b;
+}
+
+.auto-export-state-enabled {
+    color: #7fff1d;
+}
+
 /* TabsPlugin perspective switcher (left buttons) */
 /* ================================================ */
 .tabbed-panel-layout-left {

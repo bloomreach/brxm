@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="autoexport">
+  <sv:property sv:name="jcr:primaryType" sv:type="Name">
+    <sv:value>frontend:plugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="plugin.class" sv:type="String">
+    <sv:value>org.onehippo.cms7.autoexport.plugin.CmsAutoExportPlugin</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.id" sv:type="String">
+    <sv:value>header.bar.right</sv:value>
+  </sv:property>
+  <sv:property sv:name="wicket.model" sv:type="String">
+    <sv:value>service.model</sv:value>
+  </sv:property>
+</sv:node>

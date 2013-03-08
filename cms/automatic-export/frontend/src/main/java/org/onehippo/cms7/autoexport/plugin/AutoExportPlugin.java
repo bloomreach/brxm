@@ -65,31 +65,28 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             }
         });
         label.setOutputMarkupId(true);
-        label.add(new AttributeModifier("style", true, new Model<String>() {
+        label.add(new AttributeModifier("class", true, new Model<String>() {
             private static final long serialVersionUID = 1L;
             @Override
             public String getObject() {
                 if (!isExportAvailable()) {
-                    return "color:grey";
+                    return "auto-export-state-unavailable";
                 }
-                return isExportEnabled() ? "color:green" : "color:red";
+                return isExportEnabled() ? "auto-export-state-enabled" : "auto-export-state-disabled";
             }
         }));
         // set up icon component
         final Image icon = new Image("icon") {
             private static final long serialVersionUID = 1L;
-            private final ResourceReference emptyGif = new ResourceReference(AutoExportPlugin.class, "empty.gif");
             private final ResourceReference on = new ResourceReference(AutoExportPlugin.class, "autoexport_on.png");
             private final ResourceReference off = new ResourceReference(AutoExportPlugin.class, "autoexport_off.png");
             @Override
             protected ResourceReference getImageResourceReference() {
-                if (!isExportAvailable()) {
-                    return emptyGif;
-                }
                 return isExportEnabled() ? on : off;
             }
         };
         icon.setOutputMarkupId(true);
+        icon.setVisible(isExportAvailable());
         add(icon);
         AjaxLink<Void> link = new AjaxLink<Void>("link") {
 
@@ -105,10 +102,11 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         };
         link.add(label);
         link.setEnabled(isExportAvailable());
+        link.setVisible(isLinkVisible());
         add(link);
     }
     
-    private boolean isExportAvailable() {
+    protected boolean isExportAvailable() {
         String configDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
         return configDir != null && !configDir.isEmpty();
     }
@@ -148,5 +146,9 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
     
     private Session getJcrSession() {
         return UserSession.get().getJcrSession();
+    }
+
+    protected boolean isLinkVisible() {
+        return true;
     }
 }

@@ -264,3 +264,18 @@ body.hippo-root div.yui-log-container {
   left: 25px;
   top: 3px;
 }
+
+/* AutoExport states */
+/* ================= */
+.auto-export-state-unavailable {
+    color: grey;
+}
+
+.auto-export-state-disabled {
+    color: red;
+}
+
+.auto-export-state-enabled {
+    color: green;
+}
+
