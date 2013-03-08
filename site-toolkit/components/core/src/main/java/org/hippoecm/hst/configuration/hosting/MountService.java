@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -308,19 +309,10 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_SCHEME)) {
-            this.scheme = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_SCHEME);
-            if(this.scheme == null || "".equals(this.scheme)) {
-                this.scheme = VirtualHostsService.DEFAULT_SCHEME;
-            } else {
-                this.scheme = StringPool.get(scheme);
-            }
-        } else {
-           // try to get the one from the parent
-            if(parent != null) {
-                this.scheme = parent.getScheme();
-            } else {
-                this.scheme = virtualHost.getScheme();
-            }
+            scheme = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_SCHEME));
+        }
+        if (StringUtils.isBlank(scheme)) {
+            scheme = parent != null ? parent.getScheme() : virtualHost.getScheme();
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {

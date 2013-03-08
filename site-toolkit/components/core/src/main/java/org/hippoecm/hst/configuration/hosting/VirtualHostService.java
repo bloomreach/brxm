@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
@@ -80,6 +81,7 @@ public class VirtualHostService implements MutableVirtualHost {
     
     private boolean showPort;
     private String scheme;
+    private int schemeNotMatchingResponseCode;
     private String cmsLocation;
     private Integer defaultPort;
     private final boolean cacheable;
@@ -127,20 +129,12 @@ public class VirtualHostService implements MutableVirtualHost {
         }
         
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME)) {
-            this.scheme = virtualHostNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME);
-            if(this.scheme == null || "".equals(this.scheme)) {
-                this.scheme = VirtualHostsService.DEFAULT_SCHEME;
-            }
-        } else {
-           // try to get the one from the parent
-            if(parentHost != null) {
-                this.scheme = parentHost.scheme;
-            } else {
-                this.scheme = virtualHosts.getScheme();
-            }
+            scheme = StringPool.get(virtualHostNode.getValueProvider().getString(HstNodeTypes.VIRTUALHOST_PROPERTY_SCHEME));
         }
-        scheme = StringPool.get(scheme);
-        
+        if (StringUtils.isBlank(scheme)) {
+            scheme = parentHost != null ? parentHost.getScheme() : virtualHosts.getScheme();
+        }
+
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
             this.locale = virtualHostNode.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
         } else {

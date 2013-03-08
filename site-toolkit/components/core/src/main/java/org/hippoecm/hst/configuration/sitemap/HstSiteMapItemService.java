@@ -128,7 +128,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String extension;
     private String prefix;
     private final boolean cacheable;
-    private final String scheme;
+    private String scheme;
     private final String resourceBundleId;
 
     public HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
@@ -334,11 +334,12 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             this.cacheable = mount.isCacheable();
         }
 
+        scheme = null;
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME)) {
-            String scheme = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME));
-            this.scheme = StringUtils.isNotBlank(scheme) ? scheme : VirtualHosts.DEFAULT_SCHEME;
-        } else {
-            this.scheme = parentItem != null ? parentItem.getScheme() : mount.getScheme();
+            scheme = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_SCHEME));
+        }
+        if (StringUtils.isBlank(scheme)) {
+            scheme = parentItem != null ? parentItem.getScheme() : mount.getScheme();
         }
 
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)) {
