@@ -118,7 +118,7 @@ public abstract class AbstractOrderableValve extends AbstractValve implements Or
     /**
      * Sets prerequisite valve names that should follow this valve.
      * The <code>after</code> can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
-     * @param before
+     * @param after
      */
     public void setAfter(String after) {
         this.after = after;
