@@ -314,6 +314,23 @@ public class HstRequestUtils {
     public static String getFarthestRequestHost(HttpServletRequest request, boolean checkRenderHost) {
         return getRequestHosts(request, checkRenderHost)[0];
     }
+
+    public static String getFarthestRequestScheme(HttpServletRequest request) {
+       String scheme = request.getHeader("X-Forwarded-Proto");
+       if (scheme != null && scheme.length() > 0) {
+           return scheme;
+       }
+       scheme = request.getHeader("X-Forwarded-Scheme");
+       if (scheme != null && scheme.length() > 0) {
+           return scheme;
+       }
+
+       String sslEnabled = request.getHeader("X-SSL-Enabled");
+       if (sslEnabled != null && sslEnabled.equalsIgnoreCase("on")) {
+           return "https";
+       }
+       return request.getScheme();
+    }
     
     /**
      * Returns the original host's server name requested by the client.

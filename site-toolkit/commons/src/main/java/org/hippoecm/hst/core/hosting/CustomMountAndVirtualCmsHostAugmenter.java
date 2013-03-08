@@ -391,12 +391,9 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
         @Override
         public String getBaseURL(HttpServletRequest request) {
-            StringBuilder builder = new StringBuilder();
-            String scheme = this.getScheme();
-            if (scheme == null) {
-                scheme = "http";
-            }
-            String serverName = HstRequestUtils.getFarthestRequestHost(request, false);
+            final StringBuilder builder = new StringBuilder();
+            final String scheme = HstRequestUtils.getFarthestRequestScheme(request);
+            final String serverName = HstRequestUtils.getFarthestRequestHost(request, false);
             builder.append(scheme);
             builder.append("://").append(serverName);
             return builder.toString();

@@ -97,4 +97,29 @@ public class TestHstRequestUtils {
         assertEquals("renderHost should take port from forwarded host","localhost:8080", renderHost);
     }
 
+    @Test
+    public void testForwardedProto()  throws Exception {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
+        replay(request);
+        assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
+    }
+
+    @Test
+    public void testForwardedScheme()  throws Exception {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getHeader("X-Forwarded-Scheme")).andReturn("https");
+        replay(request);
+        assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
+    }
+
+
+    @Test
+    public void testSSLEnabled()  throws Exception {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getHeader("X-SSL-Enabled")).andReturn("On");
+        replay(request);
+        assertEquals("https", HstRequestUtils.getFarthestRequestScheme(request));
+    }
+
 }

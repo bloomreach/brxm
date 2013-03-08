@@ -295,10 +295,9 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
 
         @Override
         public String getBaseURL(HttpServletRequest request) {
-            StringBuilder builder = new StringBuilder();
-            String serverName = HstRequestUtils.getFarthestRequestHost(request, false);
-            builder.append(this.getScheme());
-            builder.append("://").append(serverName);
+            final StringBuilder builder = new StringBuilder();
+            builder.append(HstRequestUtils.getFarthestRequestScheme(request));
+            builder.append("://").append(HstRequestUtils.getFarthestRequestHost(request, false));
             return builder.toString();
         }
 
