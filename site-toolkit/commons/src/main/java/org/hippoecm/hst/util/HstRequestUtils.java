@@ -253,14 +253,15 @@ public class HstRequestUtils {
         if (hostName == null) {
             return null;
         }
-        int offset = hostName.indexOf(":");
-        if (offset > 0) {
+        if (!hostName.contains(":")) {
             // the rendering host does not contain a portnumber. Use the portnumber of the hostname 
             // that the request was done with
             String farthestHostName = getFarthestRequestHost(request, false);
-            int portNumber = Integer.parseInt(farthestHostName.substring(offset+1));
-            if (portNumber != 80 && portNumber != 443) {
-                hostName += ":" + portNumber;
+            if (farthestHostName.contains(":")) {
+                int portNumber = Integer.parseInt(farthestHostName.substring(farthestHostName.indexOf(":")+1));
+                if (portNumber != 80 && portNumber != 443) {
+                    hostName += ":" + portNumber;
+                }
             }
         }
         return hostName;

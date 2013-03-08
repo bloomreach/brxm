@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.junit.Test;
 
 /**
@@ -84,5 +85,16 @@ public class TestHstRequestUtils {
         assertTrue("parsedQueryStringMap must contain lux.", parsedQueryStringMap.containsKey("lux"));
         assertTrue("parsedQueryStringMap must have 1 value for lux.", parsedQueryStringMap.get("lux").length == 1);
     }
-    
+
+    @Test
+    public void forcedRenderHostWithoutPortUsesPortFromForwardedHostHeader() {
+        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+        expect(request.getHeader("X-Forwarded-Host")).andReturn("www.example.org:8080");
+        expect(request.getParameter("FORCE_CLIENT_HOST")).andReturn("false");
+        expect(request.getParameter(ContainerConstants.RENDERING_HOST)).andReturn("localhost");
+        replay(request);
+        final String renderHost = HstRequestUtils.getFarthestRequestHost(request, true);
+        assertEquals("renderHost should take port from forwarded host","localhost:8080", renderHost);
+    }
+
 }
