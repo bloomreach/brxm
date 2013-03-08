@@ -129,6 +129,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String prefix;
     private final boolean cacheable;
     private String scheme;
+    private int schemeNotMatchingResponseCode = -1;
     private final String resourceBundleId;
 
     public HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
@@ -342,6 +343,18 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             scheme = parentItem != null ? parentItem.getScheme() : mount.getScheme();
         }
 
+        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
+            schemeNotMatchingResponseCode = (int)node.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
+        }
+        if (schemeNotMatchingResponseCode < 200 || schemeNotMatchingResponseCode > 599) {
+            if (schemeNotMatchingResponseCode != -1) {
+                log.warn("Invalid '{}' configured on '{}'. Use inherited value.", HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
+                        node.getValueProvider().getPath());
+            }
+            schemeNotMatchingResponseCode = parentItem != null ?
+                    parentItem.getSchemeNotMatchingResponseCode() : mount.getSchemeNotMatchingResponseCode();
+        }
+
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID)) {
             this.resourceBundleId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RESOURCE_BUNDLE_ID));
         } else {
@@ -475,6 +488,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     @Override
     public String getScheme() {
         return scheme;
+    }
+
+    @Override
+    public int getSchemeNotMatchingResponseCode() {
+        return schemeNotMatchingResponseCode;
     }
 
     @Override

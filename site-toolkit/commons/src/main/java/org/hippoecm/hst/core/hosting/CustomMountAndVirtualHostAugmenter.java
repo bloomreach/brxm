@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -276,6 +277,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public String getScheme() {
             return "http";
+        }
+
+        @Override
+        public int getSchemeNotMatchingResponseCode() {
+            return HttpServletResponse.SC_OK;
         }
 
         @Override
@@ -544,6 +550,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public String getScheme() {
             return "http";
+        }
+
+        @Override
+        public int getSchemeNotMatchingResponseCode() {
+            return HttpServletResponse.SC_OK;
         }
 
         @Override

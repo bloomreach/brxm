@@ -208,6 +208,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String onlyForContextPath;
 
     private String scheme;
+    private int schemeNotMatchingResponseCode = -1;
     
     /**
      * The locale for this {@link Mount}. When the backing configuration does not contain a locale, the value from a parent {@link Mount} is used. If there is
@@ -313,6 +314,18 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
         if (StringUtils.isBlank(scheme)) {
             scheme = parent != null ? parent.getScheme() : virtualHost.getScheme();
+        }
+
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
+            schemeNotMatchingResponseCode = (int)mount.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
+        }
+        if (schemeNotMatchingResponseCode < 200 || schemeNotMatchingResponseCode > 599) {
+            if (schemeNotMatchingResponseCode != -1) {
+                log.warn("Invalid '{}' configured on '{}'. Use inherited value.", HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
+                        mount.getValueProvider().getPath());
+            }
+            schemeNotMatchingResponseCode = parent != null ?
+                    parent.getSchemeNotMatchingResponseCode() : virtualHost.getSchemeNotMatchingResponseCode();
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_HOMEPAGE)) {
@@ -664,9 +677,12 @@ public class MountService implements ContextualizableMount, MutableMount {
         return parent;
     }
 
-  
     public String getScheme() {
         return scheme;
+    }
+
+    public int getSchemeNotMatchingResponseCode() {
+        return schemeNotMatchingResponseCode;
     }
 
     public String getLocale() {

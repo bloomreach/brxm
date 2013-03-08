@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
@@ -88,6 +90,11 @@ public class VirtualHostsService implements MutableVirtualHosts {
     
     private boolean virtualHostsConfigured;
     private String scheme;
+    /**
+     * if the request is for example http but https is required, the default response code is SC_MOVED_PERMANENTLY. If nothing
+     * needs to be done, set a 200. Not found 404 and not authorized Forbidden
+     */
+    private int schemeNotMatchingResponseCode = HttpServletResponse.SC_MOVED_PERMANENTLY;
     private boolean contextPathInUrl = true;
     /**
      * if configured, this field will contain the default contextpath through which is hst webapp can be accessed
@@ -193,6 +200,17 @@ public class VirtualHostsService implements MutableVirtualHosts {
         }
         if(scheme == null || "".equals(scheme)) {
             scheme = DEFAULT_SCHEME;
+        }
+        if (vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
+            Long statusCode = vHostConfValueProvider.getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE);
+            if (statusCode > 0) {
+                schemeNotMatchingResponseCode = (int)statusCode.longValue();
+                if (schemeNotMatchingResponseCode < 200 || schemeNotMatchingResponseCode > 599) {
+                    log.warn("Invalid '{}' configured on '{}'. Use default 301 instead", HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
+                            vHostConfValueProvider.getPath());
+                    schemeNotMatchingResponseCode = HttpServletResponse.SC_MOVED_PERMANENTLY;
+                }
+            }
         }
 
         defaultResourceBundleId = vHostConfValueProvider.getString(HstNodeTypes.GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID);
@@ -519,6 +537,10 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     public String getScheme(){
         return scheme;
+    }
+
+    public int getSchemeNotMatchingResponseCode() {
+        return schemeNotMatchingResponseCode;
     }
 
     public String getLocale() {

@@ -43,6 +43,7 @@ import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.MutableHstManager;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -423,6 +424,34 @@ public class HstFilter implements Filter {
                         requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
                     }
 
+                    final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
+                    if (hstSiteMapItem.getScheme() != null &&
+                            !hstSiteMapItem.getScheme().equals(HstRequestUtils.getFarthestRequestScheme(req))) {
+
+                       switch (hstSiteMapItem.getSchemeNotMatchingResponseCode()) {
+                           case HttpServletResponse.SC_OK:
+                                // just continue;
+                                break;
+                           case HttpServletResponse.SC_MOVED_PERMANENTLY :
+                               res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                               // create fully qualified redirect to scheme from sitemap item
+                               res.setHeader("Location", getFullyQualifiedURLforScheme(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
+                               return;
+                           case HttpServletResponse.SC_MOVED_TEMPORARILY:
+                               // create fully qualified redirect to scheme from sitemap item
+                               res.sendRedirect(getFullyQualifiedURLforScheme(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
+                               return;
+                           case HttpServletResponse.SC_NOT_FOUND:
+                               sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                               return;
+                           case HttpServletResponse.SC_FORBIDDEN:
+                               sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
+                               return;
+                           default :
+                               logger.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", hstSiteMapItem.getSchemeNotMatchingResponseCode());
+                       }
+                    }
+
                     processResolvedSiteMapItem(containerRequest, res, chain, hstManager, siteMapItemHandlerFactory, requestContext, processSiteMapItemHandlers, logger);
 
                 }
@@ -432,6 +461,29 @@ public class HstFilter implements Filter {
                         sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
                     }
                     else {
+                        Mount mount = resolvedMount.getMount();
+                        switch (mount.getSchemeNotMatchingResponseCode()) {
+                            case HttpServletResponse.SC_OK:
+                                // just continue;
+                                break;
+                            case HttpServletResponse.SC_MOVED_PERMANENTLY :
+                                res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                                // create fully qualified redirect to scheme from sitemap item
+                                res.setHeader("Location", getFullyQualifiedURLforScheme(mount.getScheme(), mount, req));
+                                return;
+                            case HttpServletResponse.SC_MOVED_TEMPORARILY:
+                                // create fully qualified redirect to scheme from sitemap item
+                                res.sendRedirect(getFullyQualifiedURLforScheme(mount.getScheme(), mount, req));
+                                return;
+                            case HttpServletResponse.SC_NOT_FOUND:
+                                sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                                return;
+                            case HttpServletResponse.SC_FORBIDDEN:
+                                sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
+                                return;
+                            default :
+                                logger.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", mount.getSchemeNotMatchingResponseCode());
+                        }
                         logger.info("Processing request for pipeline '{}'", resolvedMount.getNamedPipeline());
                         HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());
                     }
@@ -474,6 +526,19 @@ public class HstFilter implements Filter {
                 HDC.cleanUp();
             }
     	}
+    }
+
+    private String getFullyQualifiedURLforScheme(final String scheme, final Mount mount, final HttpServletRequest req) {
+        String contextPath = "";
+        if (mount.isContextPathInUrl() && mount.onlyForContextPath() != null) {
+            contextPath = mount.onlyForContextPath();
+        }
+        StringBuilder location = new StringBuilder(scheme).append("://").append(HstRequestUtils.getFarthestRequestHost(req, false))
+                .append(contextPath).append(req.getRequestURI());
+        if (req.getQueryString() != null) {
+            location.append("?").append(req.getQueryString());
+        }
+        return location.toString();
     }
 
     private HstManager getHstManager() {

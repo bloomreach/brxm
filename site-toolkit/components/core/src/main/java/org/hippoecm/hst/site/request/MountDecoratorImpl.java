@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -295,6 +297,12 @@ public class MountDecoratorImpl implements MountDecorator {
         @Override
         public String getScheme() {
             return delegatee.getScheme();
+        }
+
+        @Override
+        public int getSchemeNotMatchingResponseCode() {
+            // TODO Test this, I think preview just return ok
+            return HttpServletResponse.SC_OK;
         }
 
         @Override

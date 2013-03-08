@@ -300,6 +300,24 @@ public interface HstSiteMapItem {
     String getScheme();
 
     /**
+     * <p>
+     * @return the response code the HST sets when {@link javax.servlet.http.HttpServletRequest} <code>scheme</code> does not match {@link #getScheme()}.
+     * Default response code is {@link javax.servlet.http.HttpServletResponse#SC_MOVED_PERMANENTLY}. Typically the following response
+     * code results in:
+     * </p>
+     * <p>
+     *     <ol>
+     *         <li>200 : no behavior, ignored</li>
+     *         <li>301 : when request has different scheme than {@link #getScheme()}, permanent redirect to the correct scheme is done</li>
+     *         <li>307 : when request has different scheme than {@link #getScheme()}, temporal redirect to the correct scheme is done</li>
+     *         <li>403 : when request has different scheme than {@link #getScheme()}, a page forbidden is returned</li>
+     *         <li>404 : when request has different scheme than {@link #getScheme()}, a page not found is returned</li>
+     *     </ol>
+     * </p>
+     */
+    int getSchemeNotMatchingResponseCode();
+
+    /**
      * @return resource bundle for this sitemapitem and descendants to use, for example org.example.resources.MyResources, or <code>null</code>
      * when not configured on this {@link HstSiteMapItem} and <code>null</code> from ancestor {@link HstSiteMapItem} or when root
      * sitemapitem from {@link org.hippoecm.hst.configuration.hosting.Mount#getDefaultResourceBundleId()}

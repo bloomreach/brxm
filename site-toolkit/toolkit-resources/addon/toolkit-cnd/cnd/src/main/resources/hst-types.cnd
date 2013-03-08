@@ -120,6 +120,7 @@
 - hst:users (string) multiple
 - hst:locale (string)
 - hst:scheme (string)
+- hst:schemenotmatchresponsecode (long)
 - hst:componentconfigurationmappingnames (string) multiple
 - hst:componentconfigurationmappingvalues (string) multiple
 - hst:cacheable (boolean)
@@ -222,6 +223,7 @@
 // for embedded delegation of sites a mountpath needs to point to the delegated mount. This is only relevant for portal environment
 - hst:embeddedmountpath
 - hst:scheme (string)
+- hst:schemenotmatchresponsecode (long)
 // whether the port should be visible in the created urls
 - hst:showport (boolean)
 // the hst:defaultsitemapitemhandlerids that all sitemap items get that do not define their own hst:sitemapitemhandlerids
@@ -268,6 +270,7 @@
 // whether the port should be visible in the created urls
 - hst:showport (boolean)
 - hst:scheme (string)
+- hst:schemenotmatchresponsecode (long)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:homepage (string)
@@ -293,6 +296,7 @@
 - hst:prefixexclusions (string) multiple
 - hst:suffixexclusions (string) multiple
 - hst:scheme (string)
+- hst:schemenotmatchresponsecode (long)
 - hst:defaulthostname (string)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple

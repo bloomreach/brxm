@@ -101,6 +101,24 @@ public interface VirtualHost {
      * @return the scheme to use for creating external urls, for example http / https
      */
     String getScheme();
+
+    /**
+     * <p>
+     * the response code the HST sets when {@link javax.servlet.http.HttpServletRequest} <code>scheme</code> does not match {@link #getScheme()}.
+     * Default response code is {@link javax.servlet.http.HttpServletResponse#SC_MOVED_PERMANENTLY}. Typically the following response
+     * code results in:
+     * </p>
+     * <p>
+     *     <ol>
+     *         <li>200 : no behavior, ignored</li>
+     *         <li>301 : when request has different scheme than {@link #getScheme()}, permanent redirect to the correct scheme is done</li>
+     *         <li>307 : when request has different scheme than {@link #getScheme()}, temporal redirect to the correct scheme is done</li>
+     *         <li>403 : when request has different scheme than {@link #getScheme()}, a page forbidden is returned</li>
+     *         <li>404 : when request has different scheme than {@link #getScheme()}, a page not found is returned</li>
+     *     </ol>
+     * </p>
+     */
+    int getSchemeNotMatchingResponseCode();
     
 
     /**

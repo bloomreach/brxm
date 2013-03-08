@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -81,7 +82,7 @@ public class VirtualHostService implements MutableVirtualHost {
     
     private boolean showPort;
     private String scheme;
-    private int schemeNotMatchingResponseCode;
+    private int schemeNotMatchingResponseCode = -1;
     private String cmsLocation;
     private Integer defaultPort;
     private final boolean cacheable;
@@ -133,6 +134,18 @@ public class VirtualHostService implements MutableVirtualHost {
         }
         if (StringUtils.isBlank(scheme)) {
             scheme = parentHost != null ? parentHost.getScheme() : virtualHosts.getScheme();
+        }
+
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
+            schemeNotMatchingResponseCode = (int)virtualHostNode.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
+        }
+        if (schemeNotMatchingResponseCode < 200 || schemeNotMatchingResponseCode > 599) {
+            if (schemeNotMatchingResponseCode != -1) {
+                log.warn("Invalid '{}' configured on '{}'. Use inherited value.", HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
+                        virtualHostNode.getValueProvider().getPath());
+            }
+            schemeNotMatchingResponseCode = parentHost != null ?
+                    parentHost.getSchemeNotMatchingResponseCode() : virtualHosts.getSchemeNotMatchingResponseCode();
         }
 
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
@@ -292,6 +305,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.cmsLocation = cmsLocation;
         this.defaultPort = defaultPort;
         this.scheme = parent.scheme;
+        this.schemeNotMatchingResponseCode = parent.schemeNotMatchingResponseCode;
         this.locale = parent.locale;
         this.homepage = parent.homepage;
         this.pageNotFound = parent.pageNotFound;
@@ -355,6 +369,10 @@ public class VirtualHostService implements MutableVirtualHost {
     
     public String getScheme(){
         return this.scheme;
+    }
+
+    public int getSchemeNotMatchingResponseCode() {
+       return schemeNotMatchingResponseCode;
     }
 
     public String getLocale() {

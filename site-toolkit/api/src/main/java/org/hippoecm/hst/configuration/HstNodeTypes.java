@@ -60,6 +60,7 @@ public interface HstNodeTypes {
     static final String GENERAL_PROPERTY_VERSION_IN_PREVIEW_HEADER =  "hst:versioninpreviewheader" ;
     static final String GENERAL_PROPERTY_CACHEABLE = "hst:cacheable";
     static final String GENERAL_PROPERTY_DEFAULT_RESOURCE_BUNDLE_ID = "hst:defaultresourcebundleid";
+    static final String GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE = "hst:schemenotmatchresponsecode";
     
     static final String COMPONENT_PROPERTY_COMPONENT_CONTEXTNAME = "hst:componentcontextname";
     static final String COMPONENT_PROPERTY_COMPONENT_CLASSNAME = "hst:componentclassname";
