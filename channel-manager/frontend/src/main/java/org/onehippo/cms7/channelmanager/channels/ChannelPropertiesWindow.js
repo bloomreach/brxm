@@ -70,9 +70,15 @@
         },
 
         initComponent: function() {
-            this.on('beforeexpand', function(self, animate) {
+            this.on('beforeexpand', function() {
                 return this.channelId !== null;
             }, this);
+            this.on('show', function() {
+                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('enablemouseevents');
+            });
+            this.on('hide', function() {
+                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('disablemouseevents');
+            });
 
             this.addEvents('selectchannel', 'savechannel');
             Hippo.ChannelManager.ChannelPropertiesWindow.superclass.initComponent.apply(this, arguments);
