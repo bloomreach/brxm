@@ -15,11 +15,8 @@
  */
 package org.onehippo.cms7.autoexport.plugin;
 
-import java.util.Iterator;
-
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -32,10 +29,6 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.event.IObservable;
-import org.hippoecm.frontend.model.event.IObserver;
-import org.hippoecm.frontend.model.event.Observer;
-import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -55,17 +48,16 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
 
     public AutoExportPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
-
+        
         // set up label component
         final Label label = new Label("link-text", new Model<String>() {
             private static final long serialVersionUID = 1L;
-
+            
             private final String unavailable = new StringResourceModel("unavailable", AutoExportPlugin.this, null).getObject();
             private final String disable = new StringResourceModel("disable", AutoExportPlugin.this, null).getObject();
             private final String enable = new StringResourceModel("enable", AutoExportPlugin.this, null).getObject();
-
-            @Override
-            public String getObject() {
+            
+            @Override public String getObject() {
                 if (!isExportAvailable()) {
                     return unavailable;
                 }
@@ -75,7 +67,6 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         label.setOutputMarkupId(true);
         label.add(new AttributeModifier("class", true, new Model<String>() {
             private static final long serialVersionUID = 1L;
-
             @Override
             public String getObject() {
                 if (!isExportAvailable()) {
@@ -89,7 +80,6 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             private static final long serialVersionUID = 1L;
             private final ResourceReference on = new ResourceReference(AutoExportPlugin.class, "autoexport_on.png");
             private final ResourceReference off = new ResourceReference(AutoExportPlugin.class, "autoexport_off.png");
-
             @Override
             protected ResourceReference getImageResourceReference() {
                 return isExportEnabled() ? on : off;
@@ -108,30 +98,14 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
                 target.addComponent(label);
                 target.addComponent(icon);
             }
-
+            
         };
         link.add(label);
         link.setEnabled(isExportAvailable());
         link.setVisible(isLinkVisible());
         add(link);
-
-        // redraw plugin when config has changed
-        try {
-            Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
-            Property enabled = node.getProperty(CONFIG_ENABLED_PROPERTY_NAME);
-            context.registerService(new Observer<IObservable>(new JcrPropertyModel(enabled)) {
-                @Override
-                public void onEvent(final Iterator events) {
-                    redraw();
-                }
-            }, IObserver.class.getName());
-        } catch (PathNotFoundException e) {
-            log.warn("No such item: " + CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
-        } catch (RepositoryException e) {
-            log.error("An error occurred starting observation", e);
-        }
     }
-
+    
     protected boolean isExportAvailable() {
         String configDir = System.getProperty(PROJECT_BASEDIR_PROPERTY);
         return configDir != null && !configDir.isEmpty();
@@ -146,16 +120,16 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             log.warn("No such item: " + CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
         } catch (RepositoryException e) {
             log.error("An error occurred reading export enabled flag", e);
-        }
+        } 
         return enabled;
     }
-
+    
     private void setExportEnabled(boolean enabled) {
         Session session = null;
         try {
             // we use a separate session in order that other changes made in the console
             // don't get persisted upon save() here
-            session = getJcrSession().impersonate(new SimpleCredentials(getJcrSession().getUserID(), new char[]{}));
+            session = getJcrSession().impersonate(new SimpleCredentials(getJcrSession().getUserID(),new char[] {}));
             Node node = session.getNode(CONFIG_NODE_PATH);
             node.setProperty(CONFIG_ENABLED_PROPERTY_NAME, enabled);
             session.save();
@@ -169,7 +143,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
             }
         }
     }
-
+    
     private Session getJcrSession() {
         return UserSession.get().getJcrSession();
     }

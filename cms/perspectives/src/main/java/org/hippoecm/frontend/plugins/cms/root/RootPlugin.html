@@ -25,12 +25,11 @@
             <div class="hippo-header">
               <a class="hippo-header-home">Hippo CMS 7</a>
               <div wicket:id="top" class="hippo-tabs-documents hippo-tabs-documents-top">tabs container here please</div>
-              <div class="hippo-header-logout">
+              <div class="hippo-header-logout" wicket:id="logout">
                 <span class="hippo-logout-username" wicket:id="username">[ user ]</span>
-                <ul class="hippo-header-items-right">
-                  <li class="hippo-header-item" wicket:id="view"><span wicket:id="item" /></li>
-                  <li class="hippo-header-item" wicket:id="logout">
-                    <a class="hippo-logout" href="#" wicket:id="logout-link"><wicket:message key="logout-label"/></a>
+                <ul class="hippo-logout">
+                  <li>
+                    <a href="#" wicket:id="logout-link"><wicket:message key="logout-label"/></a>  
                   </li>
                 </ul>
               </div>
