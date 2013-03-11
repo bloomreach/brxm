@@ -20,8 +20,10 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -29,6 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
@@ -42,15 +46,18 @@ public class ParametersInfoProcessor {
     private final Set<CacheKey> failedBundlesToLoad = Collections.newSetFromMap(new ConcurrentHashMap<CacheKey, Boolean>());
 
     public List<ContainerItemComponentPropertyRepresentation> getProperties(ParametersInfo parameterInfo, Locale locale, String currentMountCanonicalContentPath) {
-        final List<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
-
         final Class<?> classType = parameterInfo.type();
         if (classType == null) {
-            return properties;
+            return Collections.emptyList();
         }
 
-        ResourceBundle[] resourceBundles = getResourceBundles(parameterInfo, locale);
+        final ResourceBundle[] resourceBundles = getResourceBundles(parameterInfo, locale);
+        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = createPropertyMap(currentMountCanonicalContentPath, classType, resourceBundles);
+        return orderPropertiesByFieldGroup(classType, resourceBundles, propertyMap);
+    }
 
+    private Map<String, ContainerItemComponentPropertyRepresentation> createPropertyMap(final String currentMountCanonicalContentPath, final Class<?> classType, final ResourceBundle[] resourceBundles) {
+        final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap = new LinkedHashMap<String, ContainerItemComponentPropertyRepresentation>();
         for (Method method : classType.getMethods()) {
             if (method.isAnnotationPresent(Parameter.class)) {
                 final Parameter propAnnotation = method.getAnnotation(Parameter.class);
@@ -60,21 +67,16 @@ public class ParametersInfoProcessor {
                 prop.setDescription(propAnnotation.description());
                 prop.setRequired(propAnnotation.required());
                 prop.setHiddenInChannelManager(propAnnotation.hideInChannelManager());
-                boolean labelSet = false;
-                for (ResourceBundle resourceBundle : resourceBundles) {
-                    if (resourceBundle.containsKey(propAnnotation.name())) {
-                        prop.setLabel(resourceBundle.getString(propAnnotation.name()));
-                        labelSet = true;
-                        break;
-                    }
-                }
-                if (!labelSet) {
+
+                String label = getResourceValue(resourceBundles, propAnnotation.name(), null);
+                if (label == null) {
                     if (propAnnotation.displayName().equals("")) {
-                        prop.setLabel(propAnnotation.name());
+                        label = propAnnotation.name();
                     } else {
-                        prop.setLabel(propAnnotation.displayName());
+                        label = propAnnotation.displayName();
                     }
                 }
+                prop.setLabel(label);
 
                 final Annotation annotation = ParameterType.getTypeAnnotation(method);
                 if (annotation instanceof DocumentLink) {
@@ -99,17 +101,7 @@ public class ParametersInfoProcessor {
 
                     for (int i = 0; i < values.length; i++) {
                         final String resourceKey = propAnnotation.name() + "/" + values[i];
-                        boolean displayValueSet = false;
-                        for (ResourceBundle resourceBundle : resourceBundles) {
-                            if (resourceBundle.containsKey(resourceKey)) {
-                                displayValues[i] = resourceBundle.getString(resourceKey);
-                                displayValueSet = true;
-                                break;
-                            }
-                        }
-                        if (!displayValueSet) {
-                            displayValues[i] = values[i];
-                        }
+                        displayValues[i] = getResourceValue(resourceBundles, resourceKey, values[i]);
                     }
 
                     prop.setDropDownListValues(values);
@@ -119,12 +111,43 @@ public class ParametersInfoProcessor {
                 final ParameterType type = ParameterType.getType(method, annotation);
                 prop.setType(type);
 
-                // Set the value to be default value before setting it with original value
-                properties.add(prop);
+                propertyMap.put(prop.getName(), prop);
             }
         }
+        return propertyMap;
+    }
 
+    private List<ContainerItemComponentPropertyRepresentation> orderPropertiesByFieldGroup(final Class<?> classType, final ResourceBundle[] resourceBundles, final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap) {
+        final ArrayList<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<ContainerItemComponentPropertyRepresentation>(propertyMap.size());
+
+        final FieldGroupList fieldGroupList = classType.getAnnotation(FieldGroupList.class);
+        if (fieldGroupList == null) {
+            properties.addAll(propertyMap.values());
+        } else {
+            FieldGroup[] fieldGroups = fieldGroupList.value();
+            if (fieldGroups == null || fieldGroups.length == 0) {
+                properties.addAll(propertyMap.values());
+            } else {
+                for (FieldGroup fieldGroup : fieldGroups) {
+                    final String groupLabel = getResourceValue(resourceBundles, fieldGroup.titleKey(), null);
+                    for (final String propertyName : fieldGroup.value()) {
+                        final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
+                        property.setGroupLabel(groupLabel);
+                        properties.add(property);
+                    }
+                }
+            }
+        }
         return properties;
+    }
+
+    private String getResourceValue(ResourceBundle[] bundles, String key, String defaultValue) {
+        for (ResourceBundle bundle : bundles) {
+            if (bundle.containsKey(key)) {
+                return bundle.getString(key);
+            }
+        }
+        return defaultValue;
     }
 
     /**

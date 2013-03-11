@@ -23,6 +23,8 @@ import java.util.Locale;
 
 import org.hippoecm.hst.core.parameters.Color;
 import org.hippoecm.hst.core.parameters.DocumentLink;
+import org.hippoecm.hst.core.parameters.FieldGroup;
+import org.hippoecm.hst.core.parameters.FieldGroupList;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.junit.Test;
@@ -293,6 +295,70 @@ public class ParametersInfoProcessorTest {
         ContainerItemComponentPropertyRepresentation docLocProperty = properties.get(1);
         assertEquals("datefield", docLocProperty.getType());
 
+    }
+
+    @ParametersInfo(type=FieldGroupInterface.class)
+    static class FieldGroupComponent {
+    }
+
+    @Test
+    public void testFieldGroupList() {
+        ParametersInfo parameterInfo = FieldGroupComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertEquals(properties.size(), 3);
+
+        assertNameAndGroupLabel(properties.get(0), "three", "Group1");
+        assertNameAndGroupLabel(properties.get(1), "one", "Group1");
+        assertNameAndGroupLabel(properties.get(2), "two", "Group2");
+    }
+
+    @FieldGroupList({})
+    static interface EmptyFieldGroupListInterface {
+        @Parameter(name = "one")
+        String getOne();
+    }
+
+    @ParametersInfo(type=EmptyFieldGroupListInterface.class)
+    static class EmptyFieldGroupListComponent {
+    }
+
+    @Test
+    public void testEmptyFieldGroupList() {
+        ParametersInfo parameterInfo = EmptyFieldGroupListComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertEquals(properties.size(), 1);
+
+        assertNameAndGroupLabel(properties.get(0), "one", null);
+    }
+
+    @FieldGroupList({
+            @FieldGroup({"two", "one"})
+    })
+    static interface FieldGroupWithoutTitleInterface {
+        @Parameter(name = "one")
+        String getOne();
+
+        @Parameter(name = "two")
+        String getTwo();
+    }
+
+    @ParametersInfo(type=FieldGroupWithoutTitleInterface.class)
+    static class FieldGroupWithoutTitleComponent {
+    }
+
+    @Test
+    public void testFieldGroupWithoutTitle() {
+        ParametersInfo parameterInfo = FieldGroupWithoutTitleComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertEquals(properties.size(), 2);
+
+        assertNameAndGroupLabel(properties.get(0), "two", null);
+        assertNameAndGroupLabel(properties.get(1), "one", null);
+    }
+
+    private void assertNameAndGroupLabel(ContainerItemComponentPropertyRepresentation property, String name, String groupLabel) {
+        assertEquals("name", name, property.getName());
+        assertEquals("group label", groupLabel, property.getGroupLabel());
     }
 
 }

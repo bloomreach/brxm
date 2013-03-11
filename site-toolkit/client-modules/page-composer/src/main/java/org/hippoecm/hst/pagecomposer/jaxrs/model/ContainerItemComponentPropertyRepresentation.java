@@ -23,6 +23,7 @@ public class ContainerItemComponentPropertyRepresentation {
     private String defaultValue;
     private String description;
     private boolean required;
+    private String groupLabel;
 
     private String docType;
     private boolean allowCreation;
@@ -109,6 +110,14 @@ public class ContainerItemComponentPropertyRepresentation {
 
     public void setRequired(boolean required) {
         this.required = required;
+    }
+
+    public String getGroupLabel() {
+        return groupLabel;
+    }
+
+    public void setGroupLabel(final String groupLabel) {
+        this.groupLabel = groupLabel;
     }
 
     public void setDocType(final String docType) {
