@@ -361,4 +361,23 @@ public class ParametersInfoProcessorTest {
         assertEquals("group label", groupLabel, property.getGroupLabel());
     }
 
+    @FieldGroupList({
+            @FieldGroup({"nosuchparameter"})
+    })
+    static interface FieldGroupWithUnknownParameterInterface {
+        @Parameter(name = "parameter")
+        String getParameter();
+    }
+
+    @ParametersInfo(type=FieldGroupWithUnknownParameterInterface.class)
+    static class FieldGroupWithUnknownParameterComponent {
+    }
+
+    @Test
+    public void testFieldGroupWithUnknownParameter() {
+        ParametersInfo parameterInfo = FieldGroupWithUnknownParameterComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertTrue(properties.isEmpty());
+    }
+
 }

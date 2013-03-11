@@ -132,8 +132,13 @@ public class ParametersInfoProcessor {
                     final String groupLabel = getResourceValue(resourceBundles, fieldGroup.titleKey(), null);
                     for (final String propertyName : fieldGroup.value()) {
                         final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
-                        property.setGroupLabel(groupLabel);
-                        properties.add(property);
+                        if (property != null) {
+                            property.setGroupLabel(groupLabel);
+                            properties.add(property);
+                        } else {
+                            log.warn("Ignoring unknown parameter '{}' in parameters info interface '{}'",
+                                    propertyName, classType.getCanonicalName());
+                        }
                     }
                 }
             }
