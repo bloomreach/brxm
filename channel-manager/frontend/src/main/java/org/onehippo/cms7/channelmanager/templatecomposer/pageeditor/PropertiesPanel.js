@@ -525,7 +525,7 @@
 
         _loadProperties: function(records) {
             this.records = records;
-            var length = records.length, i, record, value, defaultValue;
+            var length = records.length, i, record, groupLabel, lastGroupLabel, value, defaultValue;
             if (length === 0) {
                 this.add({
                     html: "<div style='padding:5px' align='center'>" + Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['properties-panel-no-properties'] + "</div>",
@@ -538,6 +538,16 @@
                 for (i = 0; i < length; i++) {
                     record = records[i];
                     if (record.get('hiddenInChannelManager') === false) {
+                        groupLabel = record.get('groupLabel');
+                        if (groupLabel !== lastGroupLabel) {
+                            this.add({
+                                cls: 'field-group-title ' + (lastGroupLabel === undefined ? 'first-field-group-title' : ''),
+                                text: Ext.util.Format.htmlEncode(groupLabel),
+                                xtype: 'label'
+                            });
+                            lastGroupLabel = groupLabel;
+                        }
+
                         value = record.get('value');
                         defaultValue = record.get('defaultValue');
                         if (!value || value.length === 0) {
@@ -710,7 +720,7 @@
                     root: 'properties',
                     fields: ['name', 'value', 'label', 'required', 'description', 'docType', 'type', 'docLocation', 'allowCreation', 'defaultValue',
                         'pickerConfiguration', 'pickerInitialPath', 'pickerRemembersLastVisited', 'pickerPathIsRelative', 'pickerRootPath', 'pickerSelectableNodeTypes',
-                        'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager' ],
+                        'dropDownListValues', 'dropDownListDisplayValues', 'hiddenInChannelManager', 'groupLabel' ],
                     url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/' + this.locale + '?FORCE_CLIENT_HOST=true'
                 });
 

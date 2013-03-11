@@ -247,6 +247,16 @@
 	  opacity: 0.6;
 }
 
+.channel-manager .component-properties .field-group-title {
+    display: block;
+    font-weight: bold;
+    margin: 10px 0 5px;
+}
+
+.channel-manager .component-properties .first-field-group-title {
+    margin: 0 0 5px;
+}
+
 #Iframe .ext-el-mask {
     background: url(loading.gif) no-repeat center;
     -moz-opacity: 0.9;
