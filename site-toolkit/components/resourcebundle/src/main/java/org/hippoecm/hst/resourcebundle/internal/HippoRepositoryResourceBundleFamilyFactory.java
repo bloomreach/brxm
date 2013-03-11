@@ -15,10 +15,9 @@
  */
 package org.hippoecm.hst.resourcebundle.internal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.jcr.Credentials;
@@ -33,6 +32,8 @@ import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.resourcebundle.PlaceHolderEmptyResourceBundleFamily;
@@ -199,12 +200,23 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         return (stringValues != null ? stringValues : ArrayUtils.EMPTY_STRING_ARRAY);
     }
 
-    private Object[][] createListResourceBundleContents(String [] keys, String [] messages) {
+    protected Object[][] createListResourceBundleContents(String [] keys, String [] messages) {
         Object [][] contents = new Object[keys.length][];
 
+        Map<String, String> contentsMap = new LinkedHashMap<String, String>();
+
         for (int i = 0; i < keys.length; i++) {
-            String message = (i < messages.length ? messages[i] : null);
-            contents[i] = new Object[] { keys[i], message };
+            String message = (i < messages.length ? messages[i] : "");
+            contentsMap.put(keys[i], message);
+            contents[i] = new Object[] { keys[i], null };
+        }
+
+        // use commons-configuration in order to translate variables (e.g., ${key1}) for the values of the following keys
+        Configuration config = new MapConfiguration(contentsMap);
+
+        for (int i = 0; i < keys.length; i++) {
+            String key = (String) contents[i][0];
+            contents[i][1] = config.getString(key);
         }
 
         return contents;

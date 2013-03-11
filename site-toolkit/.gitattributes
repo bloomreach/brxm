@@ -865,6 +865,7 @@ components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleEventListener.java -text
 components/resourcebundle/src/main/java/org/hippoecm/hst/resourcebundle/internal/HippoRepositoryResourceBundleFamilyFactory.java -text
 components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/TestDefaultResourceBundleRegistry.java -text
+components/resourcebundle/src/test/java/org/hippoecm/hst/resourcebundle/internal/TestHippoRepositoryResourceBundleFamilyFactory.java -text
 components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages.properties -text
 components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_en.properties -text
 components/resourcebundle/src/test/resources/org/hippoecm/hst/resourcebundle/TestMessages_en_CA.properties -text
