@@ -30,6 +30,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
  *     <li>fileupload.clearAfterUpload = if <code>true</code> the dialog is cleared after all files are uploaded</li>
  *     <li>fileupload.clearTimeout = defines the timeout before clearing the dialog after the upload</li>
  *     <li>fileupload.hideBrowseDuringUpload = if <code>true</code> the browse button will be hidden during the upload</li>
+ *     <li>fileupload.concurrentUploads = maximum allowed concurrent file uploads</li>
  * </ul>
  * Backwards compatibility:
  * <ul>
@@ -47,12 +48,14 @@ public class FileUploadWidgetSettings implements IClusterable {
     public static final String FILEUPLOAD_CLEAR_AFTER_UPLOAD = "fileupload.clearAfterUpload";
     public static final String FILEUPLOAD_CLEAR_TIMEOUT = "fileupload.clearTimeout";
     public static final String FILEUPLOAD_HIDE_BROWSE_DURING_UPLOAD = "fileupload.hideBrowseDuringUpload";
+    public static final String FILEUPLOAD_CONCURRENT_UPLOADS = "fileupload.concurrentUploads";
 
     //backwards compatibility
     public static final String FILE_EXTENSIONS_SETTING = "file.extensions";
 
     private String[] fileExtensions = new String[0];
     private int maxNumberOfFiles = 1;
+    private int simultaneousUploadLimit = 3;
     private boolean autoUpload;
     private boolean clearAfterUpload;
     private int clearTimeout = 1000;
@@ -150,40 +153,59 @@ public class FileUploadWidgetSettings implements IClusterable {
         this.flashUploadEnabled = flashUploadEnabled;
     }
 
+    public int getSimultaneousUploadLimit() {
+        return simultaneousUploadLimit;
+    }
+
+    public void setSimultaneousUploadLimit(final int simultaneousUploadLimit) {
+        this.simultaneousUploadLimit = simultaneousUploadLimit;
+    }
+
     private void parsePluginConfig(final IPluginConfig pluginConfig) {
+
         if (pluginConfig.containsKey(FILEUPLOAD_FLASH_ENABLED_SETTING)) {
             this.flashUploadEnabled = pluginConfig.getAsBoolean(FILEUPLOAD_FLASH_ENABLED_SETTING);
         }
+
         if (pluginConfig.containsKey(FILEUPLOAD_MAX_ITEMS_SETTING)) {
             this.maxNumberOfFiles = pluginConfig.getAsInteger(FILEUPLOAD_MAX_ITEMS_SETTING);
         }
+
         // for backwards compatibility
-        if(pluginConfig.containsKey(FILE_EXTENSIONS_SETTING)) {
+        if (pluginConfig.containsKey(FILE_EXTENSIONS_SETTING)) {
             this.fileExtensions = pluginConfig.getStringArray(FILE_EXTENSIONS_SETTING);
         }
-        if(pluginConfig.containsKey(FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING)) {
+
+        if (pluginConfig.containsKey(FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING)) {
             this.fileExtensions = pluginConfig.getStringArray(FILEUPLOAD_ALLOWED_EXTENSIONS_SETTING);
         }
 
-        if(pluginConfig.containsKey(FILEUPLOAD_AUTOUPLOAD_SETTING)) {
+        if (pluginConfig.containsKey(FILEUPLOAD_AUTOUPLOAD_SETTING)) {
             this.autoUpload = pluginConfig.getAsBoolean(FILEUPLOAD_AUTOUPLOAD_SETTING);
         }
-        if(pluginConfig.containsKey(FILEUPLOAD_BUTTON_WIDTH)) {
+
+        if (pluginConfig.containsKey(FILEUPLOAD_BUTTON_WIDTH)) {
             this.buttonWidth = pluginConfig.getString(FILEUPLOAD_BUTTON_WIDTH);
         }
-        if(pluginConfig.containsKey(FILEUPLOAD_BUTTON_HEIGHT)) {
+
+        if (pluginConfig.containsKey(FILEUPLOAD_BUTTON_HEIGHT)) {
             this.buttonHeight = pluginConfig.getString(FILEUPLOAD_BUTTON_HEIGHT);
         }
-        if(pluginConfig.containsKey(FILEUPLOAD_CLEAR_AFTER_UPLOAD)) {
+
+        if (pluginConfig.containsKey(FILEUPLOAD_CLEAR_AFTER_UPLOAD)) {
             this.clearAfterUpload = pluginConfig.getAsBoolean(FILEUPLOAD_CLEAR_AFTER_UPLOAD);
         }
-        if(pluginConfig.containsKey(FILEUPLOAD_CLEAR_TIMEOUT)) {
+
+        if (pluginConfig.containsKey(FILEUPLOAD_CLEAR_TIMEOUT)) {
             this.clearTimeout = pluginConfig.getAsInteger(FILEUPLOAD_CLEAR_TIMEOUT);
         }
-        if(pluginConfig.containsKey(FILEUPLOAD_HIDE_BROWSE_DURING_UPLOAD)) {
+
+        if (pluginConfig.containsKey(FILEUPLOAD_HIDE_BROWSE_DURING_UPLOAD)) {
             this.hideBrowseDuringUpload = pluginConfig.getAsBoolean(FILEUPLOAD_HIDE_BROWSE_DURING_UPLOAD);
         }
 
+        if (pluginConfig.containsKey(FILEUPLOAD_CONCURRENT_UPLOADS)) {
+            this.simultaneousUploadLimit = pluginConfig.getAsInteger(FILEUPLOAD_CONCURRENT_UPLOADS);
+        }
     }
-
 }

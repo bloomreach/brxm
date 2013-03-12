@@ -151,6 +151,7 @@ public class FileUploadWidget extends Panel {
         ajaxSettings.setHideBrowseDuringUpload(settings.isHideBrowseDuringUpload());
         ajaxSettings.setAjaxIndicatorId(getAjaxIndicatorId());
         ajaxSettings.setButtonWidth(settings.getButtonWidth());
+        ajaxSettings.setSimultaneousUploadLimit(settings.getSimultaneousUploadLimit());
         replace(panel = new AjaxMultiFileUploadComponent(COMPONENT_ID, ajaxSettings) {
 
             @Override

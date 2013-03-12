@@ -89,7 +89,8 @@ if (!YAHOO.hippo.Upload) {
                     var id = v.id,
                         config = v.config,
                         el = Dom.get(id);
-                    if (el !== null && el !== undefined) {
+
+                    if (Lang.isValue(el)) {
                         if (Lang.isUndefined(el.uploadWidget)) {
                             el.uploadWidget = new YAHOO.hippo.UploadWidget(id, config);
                         } else {
@@ -104,25 +105,25 @@ if (!YAHOO.hippo.Upload) {
             },
 
             upload : function() {
-                if (this.latest !== null && this.latest !== undefined) {
+                if (Lang.isValue(this.latest)) {
                     this.latest.upload();
                 }
             },
 
             stopIndicator : function() {
-                if (this.latest !== null && this.latest !== undefined) {
+                if (Lang.isValue(this.latest)) {
                     this.latest.stopIndicator();
                 }
             },
 
             restoreScrollPosition : function(posY) {
-                if (this.latest !== null && this.latest !== undefined) {
+                if (Lang.isValue(this.latest)) {
                     this.latest.restoreScrollPosition(posY);
                 }
             },
 
             removeItem : function(oRecord) {
-                if (this.latest !== null && this.latest !== undefined) {
+                if (Lang.isValue(this.latest)) {
                     this.latest.removeItem(oRecord);
                 }
             }
@@ -220,7 +221,6 @@ if (!YAHOO.hippo.Upload) {
                         pixFromBottom = el.scrollHeight - sc;
                         this.scrollData = '&scrollPosY=' + pixFromBottom;
                     }
-
                 }
             },
 
