@@ -31,8 +31,6 @@ import org.slf4j.LoggerFactory;
 
 class ModuleRegistry {
 
-    private static final Logger log = LoggerFactory.getLogger(ModuleRegistry.class);
-
     private List<ModuleRegistration> registrations = new ArrayList<ModuleRegistration>();
 
     ModuleRegistry() {}
@@ -76,16 +74,12 @@ class ModuleRegistry {
                 provided.put(aClass, registration);
             }
         }
-        final Map<ModuleRegistration, List<ModuleRegistration>> requirements =
-                new HashMap<ModuleRegistration, List<ModuleRegistration>>();
+        final Map<ModuleRegistration, List<ModuleRegistration>> requirements = new HashMap<ModuleRegistration, List<ModuleRegistration>>();
         for (ModuleRegistration registration : registrations) {
             final List<ModuleRegistration> requires = new ArrayList<ModuleRegistration>();
             for (Class<?> requiredClass : registration.requirements()) {
                 if (provided.containsKey(requiredClass)) {
                     requires.add(provided.get(requiredClass));
-                } else {
-                    log.warn("Module {} has unsatisfied dependency on service {}",
-                            registration.getModuleName(), requiredClass);
                 }
             }
             requirements.put(registration, requires);
