@@ -75,7 +75,7 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
     }
     
     private static final String ITEMS_QUERY_MAX_ITEMS = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
-    private static final String ITEMS_QUERY_ITEM_TIMEOUT = "SELECT * FROM hippolog:item WHERE hippolog:timestamp < $timeoutTimestamp ORDER BY hippolog:timestamp ASC";
+    private static final String ITEMS_QUERY_ITEM_TIMEOUT = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
     private static final int EVENT_TYPES = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
     private static final long ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
     private static Boolean buzy = false;
@@ -263,71 +263,69 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
         
         private void removeTooManyItems(long maxitems, Session session) throws RepositoryException {
             if (maxitems != -1) {
-                QueryManager queryManager = session.getWorkspace().getQueryManager();
-                Query query = queryManager.createQuery(ITEMS_QUERY_MAX_ITEMS, Query.SQL);
-                NodeIterator nodes = query.execute().getNodes();
-                long totalSize = ((HippoNodeIterator)nodes).getTotalSize();
-                long cleanupSize = totalSize - maxitems;
-                if (cleanupSize > 0) {
-                    log.info("Event log total size is " + totalSize);
-                    log.info("Number of items to clean up is " + cleanupSize);
-                    for (int i = 0; i < cleanupSize; i++) {
-                        try {
-                            Node node = nodes.nextNode();
-                            if (log.isDebugEnabled()) {
-                                log.debug("Removing event log item at " + node.getPath());
-                            }
-                            node.remove();
-                            if (i % 10 == 0) {
-                                session.save();
-                                try { Thread.sleep(100); } catch (InterruptedException ignored) {}
-                            }
-                        } catch (RepositoryException e) {
-                            log.error("Error while cleaning up event log", e);
+                final QueryManager queryManager = session.getWorkspace().getQueryManager();
+                final Query query = queryManager.createQuery(ITEMS_QUERY_MAX_ITEMS, Query.SQL);
+                final NodeIterator nodes = query.execute().getNodes();
+                final long totalSize = ((HippoNodeIterator)nodes).getTotalSize();
+                final long cleanupSize = totalSize - maxitems;
+                for (int i = 0; i < cleanupSize; i++) {
+                    try {
+                        Node node = nodes.nextNode();
+                        if (log.isDebugEnabled()) {
+                            log.debug("Removing event log item at " + node.getPath());
                         }
+                        node.remove();
+                        if (i % 10 == 0) {
+                            session.save();
+                            try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+                        }
+                    } catch (RepositoryException e) {
+                        log.error("Error while cleaning up event log", e);
                     }
-                    if (session.hasPendingChanges()) {
-                        session.save();
-                    }
+                }
+                if (session.hasPendingChanges()) {
+                    session.save();
+                }
+                if (cleanupSize > 0) {
                     log.info("Done cleaning " + cleanupSize + " items");
                 } else {
-                    log.info("Event log total size is less than maximum allowed items: no cleanup needed");
+                    log.info("No excessive amount of items");
                 }
             }
         }
         
         private void removeTimedOutItems(long itemtimeout, Session session) throws RepositoryException {
             if (itemtimeout != -1) {
-                QueryManager queryManager = session.getWorkspace().getQueryManager();
-                long timeoutTimestamp = System.currentTimeMillis() - itemtimeout;
-                String queryString = ITEMS_QUERY_ITEM_TIMEOUT.replace("$timeoutTimestamp", String.valueOf(timeoutTimestamp));
-                Query query = queryManager.createQuery(queryString, Query.SQL);
-                NodeIterator nodes = query.execute().getNodes();
-                long totalSize = ((HippoNodeIterator)nodes).getTotalSize();
-                if (totalSize > 0) {
-                    log.info("Number of items to clean is " + totalSize);
-                    int i = 0;
-                    while (nodes.hasNext()) {
-                        try {
-                            Node node = nodes.nextNode();
-                            if (log.isDebugEnabled()) {
-                                log.debug("Removing event log item at " + node.getPath());
-                            }
-                            node.remove();
-                            if (i++ % 10 == 0) {
-                                session.save();
-                                try { Thread.sleep(100); } catch (InterruptedException ignored) {}
-                            }
-                        } catch (RepositoryException e) {
-                            log.error("Error while cleaning up event log", e);
+                final QueryManager queryManager = session.getWorkspace().getQueryManager();
+                final Query query = queryManager.createQuery(ITEMS_QUERY_ITEM_TIMEOUT, Query.SQL);
+                final NodeIterator nodes = query.execute().getNodes();
+                final long timeoutTimestamp = System.currentTimeMillis() - itemtimeout;
+                int i = 0;
+                while (nodes.hasNext()) {
+                    try {
+                        final Node node = nodes.nextNode();
+                        if (node.getProperty("hippolog:timestamp").getLong() > timeoutTimestamp) {
+                            break;
                         }
+                        if (log.isDebugEnabled()) {
+                            log.debug("Removing event log item at " + node.getPath());
+                        }
+                        node.remove();
+                        if (i++ % 10 == 0) {
+                            session.save();
+                            try { Thread.sleep(100); } catch (InterruptedException ignored) {}
+                        }
+                    } catch (RepositoryException e) {
+                        log.error("Error while cleaning up event log", e);
                     }
-                    if (session.hasPendingChanges()) {
-                        session.save();
-                    }
-                    log.info("Done cleaning " + totalSize + " items");
+                }
+                if (session.hasPendingChanges()) {
+                    session.save();
+                }
+                if (i > 0) {
+                    log.info("Done cleaning " + i + " items");
                 } else {
-                    log.info("No timed out items: no cleanup needed");
+                    log.info("No timed out items");
                 }
             }
         }
