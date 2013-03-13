@@ -57,7 +57,7 @@
     </property>
   </bean>
 
-  <bean id="jaxrsRestPlainServiceValve" class="org.hippoecm.hst.core.container.valves.JaxrsRestServiceValveImpl"
+  <bean id="jaxrsRestPlainServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve"
         init-method="initialize" destroy-method="destroy"> 
     <constructor-arg>
       <bean class="org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService">
@@ -82,6 +82,7 @@
         </property>
       </bean>
     </constructor-arg>
+    <property name="valveName" value="jaxrsRestPlainServiceValve" />
   </bean>
  
   <bean id="jaxrsRestPlainResourceProviders" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">

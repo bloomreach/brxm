@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import static org.junit.Assert.assertArrayEquals;
 
 import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,19 +30,55 @@ public class TestHstSitePipeline {
 
     private static Logger log = LoggerFactory.getLogger(TestHstSitePipeline.class);
 
-    private Valve initializationValve = new InitializationValve();
-    private AbstractBaseOrderableValve cmsSecurityValve = new CmsSecurityValve();
+    private InitializationValve initializationValve;
+    private CmsSecurityValve cmsSecurityValve;
 
-    private Valve localizationValve = new LocalizationValve();
-    private Valve securityValve = new SecurityValve();
-    private Valve contextResolvingValve = new ContextResolvingValve();
-    private Valve actionValve = new ActionValve();
-    private Valve resourceServingValve = new ResourceServingValve();
-    private AbstractBaseOrderableValve pageCachingValve = new PageCachingValve();
-    private Valve aggregationValve = new AggregationValve();
+    private LocalizationValve localizationValve;
+    private SecurityValve securityValve;
+    private ContextResolvingValve contextResolvingValve;
+    private ActionValve actionValve;
+    private ResourceServingValve resourceServingValve;
+    private PageCachingValve pageCachingValve;
+    private AggregationValve aggregationValve;
 
-    private Valve cleanupValve = new CleanupValve();
-    private AbstractBaseOrderableValve diagnosticReportingValve = new DiagnosticReportingValve();
+    private CleanupValve cleanupValve = new CleanupValve();
+    private DiagnosticReportingValve diagnosticReportingValve = new DiagnosticReportingValve();
+
+    @Before
+    public void setUp() throws Exception {
+        initializationValve = new InitializationValve();
+        initializationValve.setValveName(toCamelCaseString(InitializationValve.class.getSimpleName()));
+
+        cmsSecurityValve = new CmsSecurityValve();
+        cmsSecurityValve.setValveName(toCamelCaseString(CmsSecurityValve.class.getSimpleName()));
+
+        localizationValve = new LocalizationValve();
+        localizationValve.setValveName(toCamelCaseString(LocalizationValve.class.getSimpleName()));
+
+        securityValve = new SecurityValve();
+        securityValve.setValveName(toCamelCaseString(SecurityValve.class.getSimpleName()));
+
+        contextResolvingValve = new ContextResolvingValve();
+        contextResolvingValve.setValveName(toCamelCaseString(ContextResolvingValve.class.getSimpleName()));
+
+        actionValve = new ActionValve();
+        actionValve.setValveName(toCamelCaseString(ActionValve.class.getSimpleName()));
+
+        resourceServingValve = new ResourceServingValve();
+        resourceServingValve.setValveName(toCamelCaseString(ResourceServingValve.class.getSimpleName()));
+
+        pageCachingValve = new PageCachingValve();
+        pageCachingValve.setValveName(toCamelCaseString(PageCachingValve.class.getSimpleName()));
+
+        aggregationValve = new AggregationValve();
+        aggregationValve.setValveName(toCamelCaseString(AggregationValve.class.getSimpleName()));
+
+        cleanupValve = new CleanupValve();
+        cleanupValve.setValveName(toCamelCaseString(CleanupValve.class.getSimpleName()));
+
+        diagnosticReportingValve = new DiagnosticReportingValve();
+        diagnosticReportingValve.setValveName(toCamelCaseString(DiagnosticReportingValve.class.getSimpleName()));
+    }
 
     @Test
     public void testBasicValveOrdering() throws Exception {
@@ -58,7 +95,7 @@ public class TestHstSitePipeline {
         pageCachingValve.setBeforeValves(toCamelCaseString(AggregationValve.class.getSimpleName()));
         pipeline.addProcessingValve(pageCachingValve);
 
-        diagnosticReportingValve.setAfterValves(CleanupValve.class.getSimpleName());
+        diagnosticReportingValve.setAfterValves(toCamelCaseString(CleanupValve.class.getSimpleName()));
         pipeline.addCleanupValve(diagnosticReportingValve);
 
         Valve [] mergedProcessingValves = pipeline.mergeProcessingValves();

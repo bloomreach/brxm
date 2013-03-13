@@ -124,7 +124,8 @@
 
   <!-- Pipelining -->
   
-  <bean id="jaxrsCmsRestServiceValve" class="org.hippoecm.hst.core.container.valves.JaxrsRestServiceValveImpl">
+  <bean id="jaxrsCmsRestServiceValve" class="org.hippoecm.hst.core.container.JaxrsRestServiceValve">
+    <property name="valveName" value="jaxrsCmsRestServiceValve" />
     <constructor-arg ref="jaxrsCmsRestService"/>
   </bean>
 
