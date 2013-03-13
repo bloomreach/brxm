@@ -29,19 +29,19 @@ public class TestHstSitePipeline {
 
     private static Logger log = LoggerFactory.getLogger(TestHstSitePipeline.class);
 
-    private Valve initializationValve = new InitializationValveImpl();
-    private AbstractBaseOrderableValve cmsSecurityValve = new CmsSecurityValveImpl();
+    private Valve initializationValve = new InitializationValve();
+    private AbstractBaseOrderableValve cmsSecurityValve = new CmsSecurityValve();
 
-    private Valve localizationValve = new LocalizationValveImpl();
-    private Valve securityValve = new SecurityValveImpl();
-    private Valve contextResolvingValve = new ContextResolvingValveImpl();
-    private Valve actionValve = new ActionValveImpl();
-    private Valve resourceServingValve = new ResourceServingValveImpl();
-    private AbstractBaseOrderableValve pageCachingValve = new PageCachingValveImpl();
-    private Valve aggregationValve = new AggregationValveImpl();
+    private Valve localizationValve = new LocalizationValve();
+    private Valve securityValve = new SecurityValve();
+    private Valve contextResolvingValve = new ContextResolvingValve();
+    private Valve actionValve = new ActionValve();
+    private Valve resourceServingValve = new ResourceServingValve();
+    private AbstractBaseOrderableValve pageCachingValve = new PageCachingValve();
+    private Valve aggregationValve = new AggregationValve();
 
-    private Valve cleanupValve = new CleanupValveImpl();
-    private AbstractBaseOrderableValve diagnosticReportingValve = new DiagnosticReportingValveImpl();
+    private Valve cleanupValve = new CleanupValve();
+    private AbstractBaseOrderableValve diagnosticReportingValve = new DiagnosticReportingValve();
 
     @Test
     public void testBasicValveOrdering() throws Exception {
@@ -51,14 +51,14 @@ public class TestHstSitePipeline {
         pipeline.setProcessingValves(new Valve [] { localizationValve, securityValve, contextResolvingValve, actionValve, resourceServingValve, aggregationValve });
         pipeline.setCleanupValves(new Valve[] { cleanupValve });
 
-        cmsSecurityValve.setAfter(org.hippoecm.hst.container.valves.InitializationValve.class.getName());
+        cmsSecurityValve.setAfter(InitializationValve.class.getName());
         pipeline.addInitializationValve(cmsSecurityValve);
 
-        pageCachingValve.setAfter(org.hippoecm.hst.container.valves.ActionValve.class.getName());
-        pageCachingValve.setBefore(org.hippoecm.hst.container.valves.AggregationValve.class.getName());
+        pageCachingValve.setAfter(ActionValve.class.getName());
+        pageCachingValve.setBefore(AggregationValve.class.getName());
         pipeline.addProcessingValve(pageCachingValve);
 
-        diagnosticReportingValve.setAfter(org.hippoecm.hst.container.valves.CleanupValve.class.getName());
+        diagnosticReportingValve.setAfter(CleanupValve.class.getName());
         pipeline.addCleanupValve(diagnosticReportingValve);
 
         Valve [] mergedProcessingValves = pipeline.mergeProcessingValves();

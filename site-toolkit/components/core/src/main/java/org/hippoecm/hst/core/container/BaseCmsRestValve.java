@@ -31,11 +31,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for CMS REST {@link Valve}(s)
  */
-public abstract class BaseCmsRestValveImpl extends AbstractBaseOrderableValve {
+public abstract class BaseCmsRestValve extends AbstractBaseOrderableValve {
 
-    private final static Logger log = LoggerFactory.getLogger(BaseCmsRestValveImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(BaseCmsRestValve.class);
 
-    private static final String CREDENTIALS_ATTRIBUTE_NAME = BaseCmsRestValveImpl.class.getName() + "_CMS_REST_CREDENTIALS";
+    private static final String CREDENTIALS_ATTRIBUTE_NAME = BaseCmsRestValve.class.getName() + "_CMS_REST_CREDENTIALS";
 
     @Override
     public abstract void invoke(ValveContext context);

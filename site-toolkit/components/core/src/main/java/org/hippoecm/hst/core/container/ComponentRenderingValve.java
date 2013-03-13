@@ -24,7 +24,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 /**
  * ComponentRenderingValve
  */
-public class ComponentRenderingValveImpl extends AbstractBaseOrderableValve {
+public class ComponentRenderingValve extends AbstractBaseOrderableValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {

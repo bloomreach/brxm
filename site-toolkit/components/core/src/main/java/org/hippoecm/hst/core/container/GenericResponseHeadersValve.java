@@ -24,7 +24,7 @@ import org.hippoecm.hst.util.KeyValue;
 /**
  * GenericResponseHeadersValve
  */
-public class GenericResponseHeadersValveImpl extends AbstractBaseOrderableValve {
+public class GenericResponseHeadersValve extends AbstractBaseOrderableValve {
     
     private List<KeyValue<String, Object>> settableHeaders;
     private List<KeyValue<String, Object>> addableHeaders;

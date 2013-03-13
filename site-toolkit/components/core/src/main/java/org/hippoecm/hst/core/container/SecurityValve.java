@@ -44,7 +44,7 @@ import org.hippoecm.hst.security.User;
 /**
  * SecurityValve
  */
-public class SecurityValveImpl extends AbstractBaseOrderableValve {
+public class SecurityValve extends AbstractBaseOrderableValve {
     
     public static final String DESTINATION_ATTR_NAME = "org.hippoecm.hst.security.servlet.destination";
     

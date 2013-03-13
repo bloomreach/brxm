@@ -22,13 +22,13 @@ import org.slf4j.LoggerFactory;
 /**
  * JaxrsRestServiceValve
  */
-public class JaxrsRestServiceValveImpl extends AbstractBaseOrderableValve {
+public class JaxrsRestServiceValve extends AbstractBaseOrderableValve {
     
-    private static final Logger log = LoggerFactory.getLogger(JaxrsRestServiceValveImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(JaxrsRestServiceValve.class);
     
     private JAXRSService service;
     
-    public JaxrsRestServiceValveImpl(JAXRSService service) {
+    public JaxrsRestServiceValve(JAXRSService service) {
     	this.service = service;
     }
     

@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 /**
  * LocalizationValve
  */
-public class LocalizationValveImpl extends AbstractBaseOrderableValve {
+public class LocalizationValve extends AbstractBaseOrderableValve {
 
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(LocalizationValveImpl.class);
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(LocalizationValve.class);
     
     @Override
     public void invoke(ValveContext context) throws ContainerException {

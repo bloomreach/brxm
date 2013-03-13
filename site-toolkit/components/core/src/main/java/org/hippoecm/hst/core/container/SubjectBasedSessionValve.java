@@ -27,9 +27,9 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 /**
  * SubjectBasedSessionValveImpl
  */
-public class SubjectBasedSessionValveImpl extends AbstractBaseOrderableValve {
+public class SubjectBasedSessionValve extends AbstractBaseOrderableValve {
     
-    public static final String SUBJECT_BASED_SESSION_ATTR_NAME = SubjectBasedSessionValveImpl.class.getName() + ".session";
+    public static final String SUBJECT_BASED_SESSION_ATTR_NAME = SubjectBasedSessionValve.class.getName() + ".session";
     
     protected Repository subjectBasedRepository;
     

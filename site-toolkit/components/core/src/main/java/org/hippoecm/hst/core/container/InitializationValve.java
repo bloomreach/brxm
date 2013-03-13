@@ -23,7 +23,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 /**
  * InitializationValve
  */
-public class InitializationValveImpl extends AbstractBaseOrderableValve {
+public class InitializationValve extends AbstractBaseOrderableValve {
 
     protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
     

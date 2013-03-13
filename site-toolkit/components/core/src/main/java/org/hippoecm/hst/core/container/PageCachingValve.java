@@ -44,9 +44,9 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PageCachingValveImpl extends AbstractBaseOrderableValve {
+public class PageCachingValve extends AbstractBaseOrderableValve {
     
-    private static final Logger log = LoggerFactory.getLogger(PageCachingValveImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(PageCachingValve.class);
 
     /**
      * The cache holding the web pages. Ensure that all threads for a given
@@ -195,7 +195,7 @@ public class PageCachingValveImpl extends AbstractBaseOrderableValve {
         requestInfo.append(context.getRequestContext().getBaseURL().getPathInfo()).append(delim);
         final PageCacheKey pageCacheKey = context.getPageCacheContext().getPageCacheKey();
 
-        pageCacheKey.setAttribute(PageCachingValveImpl.class.getName() + ".reqInfo", requestInfo.toString());
+        pageCacheKey.setAttribute(PageCachingValve.class.getName() + ".reqInfo", requestInfo.toString());
     }
 
 

@@ -37,7 +37,7 @@ import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 /**
  * ActionValveImpl
  */
-public class ActionValveImpl extends AbstractBaseOrderableValve {
+public class ActionValve extends AbstractBaseOrderableValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException

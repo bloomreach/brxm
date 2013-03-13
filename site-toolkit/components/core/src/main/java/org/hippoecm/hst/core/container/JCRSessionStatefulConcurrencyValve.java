@@ -33,7 +33,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
  * housekeeping will be blocked as well then. 
  * 
  */
-public class JCRSessionStatefulConcurrencyValveImpl extends AbstractBaseOrderableValve {
+public class JCRSessionStatefulConcurrencyValve extends AbstractBaseOrderableValve {
     
 
     // default max refresh interval for refresh on lazy session is 5 minutes

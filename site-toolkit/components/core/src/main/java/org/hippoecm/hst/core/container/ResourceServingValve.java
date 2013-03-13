@@ -30,7 +30,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 /**
  * ResourceServingValve
  */
-public class ResourceServingValveImpl extends AbstractBaseOrderableValve {
+public class ResourceServingValve extends AbstractBaseOrderableValve {
     
     @Override
     public void invoke(ValveContext context) throws ContainerException {

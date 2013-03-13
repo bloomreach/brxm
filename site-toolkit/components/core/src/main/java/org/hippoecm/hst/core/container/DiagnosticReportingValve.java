@@ -21,9 +21,9 @@ import org.hippoecm.hst.util.TaskLogFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DiagnosticReportingValveImpl extends AbstractBaseOrderableValve {
+public class DiagnosticReportingValve extends AbstractBaseOrderableValve {
 
-    private static Logger log = LoggerFactory.getLogger(DiagnosticReportingValveImpl.class);
+    private static Logger log = LoggerFactory.getLogger(DiagnosticReportingValve.class);
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {

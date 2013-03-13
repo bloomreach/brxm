@@ -45,9 +45,9 @@ import org.onehippo.sso.CredentialCipher;
  * is not <code>null</code> : A non-null render host implies that the CMS requested the page.
  * </p>
  */
-public class CmsSecurityValveImpl extends AbstractBaseOrderableValve {
+public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
-    private final static String CMS_USER_ID_ATTR = CmsSecurityValveImpl.class.getName() + ".cms_user_id";
+    private final static String CMS_USER_ID_ATTR = CmsSecurityValve.class.getName() + ".cms_user_id";
 
     private Repository repository;
 

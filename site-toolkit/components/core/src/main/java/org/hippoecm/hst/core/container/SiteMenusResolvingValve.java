@@ -22,7 +22,7 @@ import org.hippoecm.hst.core.sitemenu.HstSiteMenus;
 /**
  * SiteMenusResolvingValve
  */
-public class SiteMenusResolvingValveImpl extends AbstractBaseOrderableValve {
+public class SiteMenusResolvingValve extends AbstractBaseOrderableValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {

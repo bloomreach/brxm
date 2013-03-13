@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
  * CmsRestSecurityValve responsible for authenticating CMS REST calls and then then propagates 
  * the relevant {@link Credentials}
  */
-public class CmsRestSecurityValveImpl extends BaseCmsRestValveImpl {
+public class CmsRestSecurityValve extends BaseCmsRestValve {
 
-    private final static Logger log = LoggerFactory.getLogger(CmsRestSecurityValveImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(CmsRestSecurityValve.class);
 
     private static final String CREDENTIAL_CIPHER_KEY = "ENC_DEC_KEY";
 

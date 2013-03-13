@@ -21,7 +21,7 @@ import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 /**
  * CmsHostRestRequestContextValve sets an attribute on the request that indicates it is a request from a CMS host context
  */
-public class CmsHostRestRequestContextValveImpl extends AbstractBaseOrderableValve {
+public class CmsHostRestRequestContextValve extends AbstractBaseOrderableValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {

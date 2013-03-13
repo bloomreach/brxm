@@ -32,9 +32,9 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link Valve} class responsible for initiating a JCR Session based on {@link HttpSession} propagated {@link Credentials}
  */
-public class CmsRestCredentialsToJcrSessionPropagatorValveImpl extends BaseCmsRestValveImpl {
+public class CmsRestCredentialsToJcrSessionPropagatorValve extends BaseCmsRestValve {
 
-    private static final Logger log = LoggerFactory.getLogger(CmsRestCredentialsToJcrSessionPropagatorValveImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(CmsRestCredentialsToJcrSessionPropagatorValve.class);
 
     private Repository repository;
 

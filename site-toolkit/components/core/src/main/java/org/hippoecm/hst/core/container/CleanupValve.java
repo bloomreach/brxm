@@ -28,7 +28,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
 /**
  * CleanupValve
  */
-public class CleanupValveImpl extends AbstractBaseOrderableValve {
+public class CleanupValve extends AbstractBaseOrderableValve {
 
     protected List<ResourceLifecycleManagement> resourceLifecycleManagements;
 
@@ -77,7 +77,7 @@ public class CleanupValveImpl extends AbstractBaseOrderableValve {
              *  2) When the HttpSession container the jcr session is invalidated (unbinded), the LazySession logs itself out in the finally part
              */
         } else {
-            lazySession = (LazySession) requestContext.getAttribute(SubjectBasedSessionValveImpl.SUBJECT_BASED_SESSION_ATTR_NAME);
+            lazySession = (LazySession) requestContext.getAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);
             
             if (lazySession != null) {
                 try {
@@ -92,7 +92,7 @@ public class CleanupValveImpl extends AbstractBaseOrderableValve {
                     }
                 }
                 
-                requestContext.removeAttribute(SubjectBasedSessionValveImpl.SUBJECT_BASED_SESSION_ATTR_NAME);
+                requestContext.removeAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);
             }
         }
     }

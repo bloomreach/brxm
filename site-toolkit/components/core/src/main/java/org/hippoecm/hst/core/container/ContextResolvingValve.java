@@ -22,7 +22,7 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 /**
  * ContextResolvingValve
  */
-public class ContextResolvingValveImpl extends AbstractBaseOrderableValve {
+public class ContextResolvingValve extends AbstractBaseOrderableValve {
     
     @Override
     public void invoke(ValveContext context) throws ContainerException

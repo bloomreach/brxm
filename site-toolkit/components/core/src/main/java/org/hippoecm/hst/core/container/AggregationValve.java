@@ -55,7 +55,7 @@ import org.w3c.dom.Element;
 /**
  * AggregationValve
  */
-public class AggregationValveImpl extends AbstractBaseOrderableValve {
+public class AggregationValve extends AbstractBaseOrderableValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
@@ -332,7 +332,7 @@ public class AggregationValveImpl extends AbstractBaseOrderableValve {
 
             if (window.isVisible()) {
                 if (isAsync(window, request)) {
-                    if (request.getAttribute(AggregationValveImpl.class.getName() + ".asyncByAncestor") == Boolean.TRUE) {
+                    if (request.getAttribute(AggregationValve.class.getName() + ".asyncByAncestor") == Boolean.TRUE) {
                         // we are done with this component because one of its ancestors is loaded async
                         continue;
                     }
@@ -343,13 +343,13 @@ public class AggregationValveImpl extends AbstractBaseOrderableValve {
                     hiddenDiv.setAttribute("style", "display:none;");
                     response.addPreamble(hiddenDiv);
 
-                    if (!response.containsHeadElement(AggregationValveImpl.class.getName() + ".async")) {
+                    if (!response.containsHeadElement(AggregationValve.class.getName() + ".async")) {
                         Element headScript = response.createElement("script");
                         headScript.setAttribute("type","text/javascript");
 
                         headScript.setTextContent(getIOScript());
                        
-                        response.addHeadElement(headScript, AggregationValveImpl.class.getName() + ".async");
+                        response.addHeadElement(headScript, AggregationValve.class.getName() + ".async");
 
                         Element endBodyScript = response.createElement("script");
                         endBodyScript.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "scripts");
@@ -461,7 +461,7 @@ public class AggregationValveImpl extends AbstractBaseOrderableValve {
         HstComponentWindow parent = window.getParentWindow();
         while (parent != null) {
             if (parent.getComponentInfo().isAsync()) {
-                request.setAttribute(AggregationValveImpl.class.getName() + ".asyncByAncestor", Boolean.TRUE);
+                request.setAttribute(AggregationValve.class.getName() + ".asyncByAncestor", Boolean.TRUE);
                 return true;
             }
             parent = parent.getParentWindow();
@@ -611,9 +611,9 @@ public class AggregationValveImpl extends AbstractBaseOrderableValve {
     private static final char RANDOM_CHAR1 = (char)('a' + new Random().nextInt(10));
     private static final char RANDOM_CHAR2 =  (char) (RANDOM_CHAR1 + 1);
     private static final char RANDOM_CHAR3 =  (char) (RANDOM_CHAR1 + 2);
-    private static final String OBFUSCATED_ASYNC_VAR = String.valueOf(RANDOM_CHAR3) + AggregationValveImpl.class.hashCode() + "Async";
-    private static final String OBFUSCATED_HIPPO_VAR = String.valueOf(RANDOM_CHAR1) + AggregationValveImpl.class.hashCode();
-    private static final String OBFUSCATED_HIPPO_HST_VAR = OBFUSCATED_HIPPO_VAR + "." + String.valueOf(RANDOM_CHAR2) + AggregationValveImpl.class.hashCode();
+    private static final String OBFUSCATED_ASYNC_VAR = String.valueOf(RANDOM_CHAR3) + AggregationValve.class.hashCode() + "Async";
+    private static final String OBFUSCATED_HIPPO_VAR = String.valueOf(RANDOM_CHAR1) + AggregationValve.class.hashCode();
+    private static final String OBFUSCATED_HIPPO_HST_VAR = OBFUSCATED_HIPPO_VAR + "." + String.valueOf(RANDOM_CHAR2) + AggregationValve.class.hashCode();
 
     private static String obfuscateNamespacedFunctions(final String ioScriptTemplate) {
         log.debug("creating obfuscated io-script with RANDOM CHAR", OBFUSCATED_HIPPO_HST_VAR);
@@ -638,7 +638,7 @@ public class AggregationValveImpl extends AbstractBaseOrderableValve {
     private static String loadScript() {
         InputStream input = null;
         try {
-            input = AggregationValveImpl.class.getResourceAsStream("simple-io-template.js");
+            input = AggregationValve.class.getResourceAsStream("simple-io-template.js");
             if (input == null) {
                 log.warn("Could not load simple-io-template.js");
                 return "";
