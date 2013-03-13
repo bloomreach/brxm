@@ -51,14 +51,14 @@ public class TestHstSitePipeline {
         pipeline.setProcessingValves(new Valve [] { localizationValve, securityValve, contextResolvingValve, actionValve, resourceServingValve, aggregationValve });
         pipeline.setCleanupValves(new Valve[] { cleanupValve });
 
-        cmsSecurityValve.setAfter(InitializationValve.class.getName());
+        cmsSecurityValve.setAfterValves(toCamelCaseString(InitializationValve.class.getSimpleName()));
         pipeline.addInitializationValve(cmsSecurityValve);
 
-        pageCachingValve.setAfter(ActionValve.class.getName());
-        pageCachingValve.setBefore(AggregationValve.class.getName());
+        pageCachingValve.setAfterValves(toCamelCaseString(ActionValve.class.getSimpleName()));
+        pageCachingValve.setBeforeValves(toCamelCaseString(AggregationValve.class.getSimpleName()));
         pipeline.addProcessingValve(pageCachingValve);
 
-        diagnosticReportingValve.setAfter(CleanupValve.class.getName());
+        diagnosticReportingValve.setAfterValves(CleanupValve.class.getSimpleName());
         pipeline.addCleanupValve(diagnosticReportingValve);
 
         Valve [] mergedProcessingValves = pipeline.mergeProcessingValves();
@@ -83,4 +83,11 @@ public class TestHstSitePipeline {
         }, mergedCleanupValves);
     }
 
+    private static String toCamelCaseString(String s) {
+        if (StringUtils.isEmpty(s)) {
+            return s;
+        }
+
+        return new StringBuilder(s.length()).append(Character.toLowerCase(s.charAt(0))).append(s.substring(1)).toString();
+    }
 }

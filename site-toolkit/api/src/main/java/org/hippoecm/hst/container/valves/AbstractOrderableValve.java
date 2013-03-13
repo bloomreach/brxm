@@ -26,26 +26,26 @@ import org.hippoecm.hst.core.container.OrderableValve;
  */
 public abstract class AbstractOrderableValve extends AbstractValve implements OrderableValve {
 
-    private String name;
-    private String before;
-    private String after;
+    private String valveName;
+    private String beforeValves;
+    private String afterValves;
 
     @Override
-    public String getName() {
-        return name;
+    public final String getValveName() {
+        return valveName;
     }
 
     /**
      * Sets the valve name
      * @param name
      */
-    public void setName(String name) {
-        this.name = name;
+    public final void setValveName(String valveName) {
+        this.valveName = valveName;
     }
 
     @Override
-    public String getBefore() {
-        return before;
+    public final String getBeforeValves() {
+        return beforeValves;
     }
 
     /**
@@ -53,13 +53,13 @@ public abstract class AbstractOrderableValve extends AbstractValve implements Or
      * The <code>before</code> can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
      * @param before
      */
-    public void setBefore(String before) {
-        this.before = before;
+    public final void setBeforeValves(String beforeValves) {
+        this.beforeValves = beforeValves;
     }
 
     @Override
-    public String getAfter() {
-        return after;
+    public final String getAfterValves() {
+        return afterValves;
     }
 
     /**
@@ -67,7 +67,7 @@ public abstract class AbstractOrderableValve extends AbstractValve implements Or
      * The <code>after</code> can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
      * @param after
      */
-    public void setAfter(String after) {
-        this.after = after;
+    public final void setAfterValves(String afterValves) {
+        this.afterValves = afterValves;
     }
 }

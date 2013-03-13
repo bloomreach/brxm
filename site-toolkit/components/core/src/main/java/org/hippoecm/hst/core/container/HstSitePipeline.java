@@ -183,7 +183,7 @@ public class HstSitePipeline implements Pipeline
             for (Valve valve : initializationValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
-                    orderer.add(ov, ov.getName(), ov.getAfter(), ov.getBefore());
+                    orderer.add(ov, StringUtils.defaultIfEmpty(ov.getValveName(), valve.toString()), ov.getAfterValves(), ov.getBeforeValves());
                 } else {
                     orderer.add(valve, valve.toString(), null, null);
                 }
@@ -198,7 +198,7 @@ public class HstSitePipeline implements Pipeline
             for (Valve valve : processingValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
-                    orderer.add(ov, ov.getName(), ov.getAfter(), ov.getBefore());
+                    orderer.add(ov, ov.getValveName(), ov.getAfterValves(), ov.getBeforeValves());
                 } else {
                     orderer.add(valve, valve.toString(), null, null);
                 }
@@ -217,7 +217,7 @@ public class HstSitePipeline implements Pipeline
             for (Valve valve : cleanupValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
-                    orderer.add(ov, ov.getName(), ov.getAfter(), ov.getBefore());
+                    orderer.add(ov, StringUtils.defaultIfEmpty(ov.getValveName(), valve.toString()), ov.getAfterValves(), ov.getBeforeValves());
                 } else {
                     orderer.add(valve, valve.toString(), null, null);
                 }

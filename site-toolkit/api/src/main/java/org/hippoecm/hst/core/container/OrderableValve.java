@@ -19,11 +19,11 @@ package org.hippoecm.hst.core.container;
  * Orderable valve interface.
  * <P>
  * When an orderable valve is added into a {@link Pipeline},
- * it can be re-ordered by the execution ordering properties ('before', 'after', etc.).
+ * it can be re-ordered by the execution ordering properties ('beforeValves', 'afterValves', etc.).
  * </P>
  * <P>
- * The postrequisite valve names configured by 'before' property is the valve names that should follow this valve.
- * The prerequisite valve names configured by 'after' property is the valve names that should precede this valve.
+ * The postrequisite valve names configured by 'beforeValves' property is the valve names that should follow this valve.
+ * The prerequisite valve names configured by 'afterValves' property is the valve names that should precede this valve.
  * The postrequisite/prerequisite names can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'.
  * </P>
  */
@@ -33,20 +33,20 @@ public interface OrderableValve extends Valve {
      * Returns the valve name.
      * @return
      */
-    public String getName();
+    public String getValveName();
 
     /**
      * Returns postrequisite valve names that should follow this valve.
      * The return can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
      * @return
      */
-    public String getBefore();
+    public String getBeforeValves();
 
     /**
      * Returns prerequisite valve names that should follow this valve.
      * The return can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
      * @return
      */
-    public String getAfter();
+    public String getAfterValves();
 
 }
