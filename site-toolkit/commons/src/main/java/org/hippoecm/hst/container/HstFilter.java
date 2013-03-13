@@ -425,7 +425,7 @@ public class HstFilter implements Filter {
                     }
 
                     final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
-                    if (hstSiteMapItem.getScheme() != null &&
+                    if (!requestContext.isCmsRequest() && hstSiteMapItem.getScheme() != null &&
                             !hstSiteMapItem.getScheme().equals(HstRequestUtils.getFarthestRequestScheme(req))) {
 
                        switch (hstSiteMapItem.getSchemeNotMatchingResponseCode()) {
@@ -438,6 +438,8 @@ public class HstFilter implements Filter {
                                res.setHeader("Location", getFullyQualifiedURLforScheme(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
                                return;
                            case HttpServletResponse.SC_MOVED_TEMPORARILY:
+                           case HttpServletResponse.SC_SEE_OTHER:
+                           case HttpServletResponse.SC_TEMPORARY_REDIRECT:
                                // create fully qualified redirect to scheme from sitemap item
                                res.sendRedirect(getFullyQualifiedURLforScheme(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
                                return;
@@ -462,27 +464,32 @@ public class HstFilter implements Filter {
                     }
                     else {
                         Mount mount = resolvedMount.getMount();
-                        switch (mount.getSchemeNotMatchingResponseCode()) {
-                            case HttpServletResponse.SC_OK:
-                                // just continue;
-                                break;
-                            case HttpServletResponse.SC_MOVED_PERMANENTLY :
-                                res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                                // create fully qualified redirect to scheme from sitemap item
-                                res.setHeader("Location", getFullyQualifiedURLforScheme(mount.getScheme(), mount, req));
-                                return;
-                            case HttpServletResponse.SC_MOVED_TEMPORARILY:
-                                // create fully qualified redirect to scheme from sitemap item
-                                res.sendRedirect(getFullyQualifiedURLforScheme(mount.getScheme(), mount, req));
-                                return;
-                            case HttpServletResponse.SC_NOT_FOUND:
-                                sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-                                return;
-                            case HttpServletResponse.SC_FORBIDDEN:
-                                sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
-                                return;
-                            default :
-                                logger.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", mount.getSchemeNotMatchingResponseCode());
+                        if (!requestContext.isCmsRequest() && mount.getScheme() != null &&
+                                !mount.getScheme().equals(HstRequestUtils.getFarthestRequestScheme(req))) {
+                            switch (mount.getSchemeNotMatchingResponseCode()) {
+                                case HttpServletResponse.SC_OK:
+                                    // just continue;
+                                    break;
+                                case HttpServletResponse.SC_MOVED_PERMANENTLY :
+                                    res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                                    // create fully qualified redirect to scheme from sitemap item
+                                    res.setHeader("Location", getFullyQualifiedURLforScheme(mount.getScheme(), mount, req));
+                                    return;
+                                case HttpServletResponse.SC_MOVED_TEMPORARILY:
+                                case HttpServletResponse.SC_SEE_OTHER:
+                                case HttpServletResponse.SC_TEMPORARY_REDIRECT:
+                                    // create fully qualified redirect to scheme from sitemap item
+                                    res.sendRedirect(getFullyQualifiedURLforScheme(mount.getScheme(), mount, req));
+                                    return;
+                                case HttpServletResponse.SC_NOT_FOUND:
+                                    sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+                                    return;
+                                case HttpServletResponse.SC_FORBIDDEN:
+                                    sendError(req, res, HttpServletResponse.SC_FORBIDDEN);
+                                    return;
+                                default :
+                                    logger.warn("Unsupported 'schemenotmatchingresponsecode' {} encountered. Continue rendering.", mount.getSchemeNotMatchingResponseCode());
+                            }
                         }
                         logger.info("Processing request for pipeline '{}'", resolvedMount.getNamedPipeline());
                         HstServices.getRequestProcessor().processRequest(this.requestContainerConfig, requestContext, containerRequest, res, resolvedMount.getNamedPipeline());

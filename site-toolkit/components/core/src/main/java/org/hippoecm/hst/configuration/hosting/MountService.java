@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.channel.Channel;
@@ -318,12 +319,12 @@ public class MountService implements ContextualizableMount, MutableMount {
 
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
             schemeNotMatchingResponseCode = (int)mount.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
-        }
-        if (schemeNotMatchingResponseCode < 200 || schemeNotMatchingResponseCode > 599) {
-            if (schemeNotMatchingResponseCode != -1) {
-                log.warn("Invalid '{}' configured on '{}'. Use inherited value.", HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
-                        mount.getValueProvider().getPath());
+            if (ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode(schemeNotMatchingResponseCode)) {
+                log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
+                        mount.getValueProvider().getPath(), ConfigurationUtils.suppertedSchemeNotMatchingResponseCodesAsString()});
             }
+        }
+        if (schemeNotMatchingResponseCode == -1) {
             schemeNotMatchingResponseCode = parent != null ?
                     parent.getSchemeNotMatchingResponseCode() : virtualHost.getSchemeNotMatchingResponseCode();
         }
@@ -590,7 +591,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         // add this Mount to the maps in the VirtualHostsService
         ((VirtualHostsService)virtualHost.getVirtualHosts()).addMount(this);
     }
-    
+
 
     @Override
     public void addMount(MutableMount mount) throws IllegalArgumentException, ServiceException {

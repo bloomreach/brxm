@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
@@ -138,12 +139,13 @@ public class VirtualHostService implements MutableVirtualHost {
 
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
             schemeNotMatchingResponseCode = (int)virtualHostNode.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
-        }
-        if (schemeNotMatchingResponseCode < 200 || schemeNotMatchingResponseCode > 599) {
-            if (schemeNotMatchingResponseCode != -1) {
-                log.warn("Invalid '{}' configured on '{}'. Use inherited value.", HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
-                        virtualHostNode.getValueProvider().getPath());
+            if (ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode(schemeNotMatchingResponseCode)) {
+                log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
+                        virtualHostNode.getValueProvider().getPath(), ConfigurationUtils.suppertedSchemeNotMatchingResponseCodesAsString()});
             }
+        }
+
+        if (schemeNotMatchingResponseCode == -1) {
             schemeNotMatchingResponseCode = parentHost != null ?
                     parentHost.getSchemeNotMatchingResponseCode() : virtualHosts.getSchemeNotMatchingResponseCode();
         }
