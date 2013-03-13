@@ -21,14 +21,14 @@ import java.util.Comparator;
 import javax.jcr.Node;
 
 import org.apache.wicket.IClusterable;
-import org.hippoecm.frontend.plugins.standards.list.comparators.NameComparator;
+import org.hippoecm.frontend.plugins.standards.list.comparators.NodeNameComparator;
 
 public class JcrTreeNodeComparator implements Comparator<IJcrTreeNode>, IClusterable {
 
     private Comparator<Node> nodeComparator;
 
     public JcrTreeNodeComparator() {
-        this.nodeComparator = new NameComparator();
+        this.nodeComparator = new NodeNameComparator();
     }
 
     @Override

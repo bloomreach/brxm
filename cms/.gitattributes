@@ -223,6 +223,7 @@ api/src/main/java/org/hippoecm/frontend/plugins/standards/list/TableDefinition.j
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/but-small.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NameComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NodeComparator.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/NodeNameComparator.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/comparators/TypeComparator.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/datatable/IPagingDefinition.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/frontend/plugins/standards/list/datatable/ListDataTable.html -text
