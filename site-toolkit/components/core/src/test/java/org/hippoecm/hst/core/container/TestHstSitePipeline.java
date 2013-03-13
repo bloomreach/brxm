@@ -18,18 +18,6 @@ package org.hippoecm.hst.core.container;
 import static org.junit.Assert.assertArrayEquals;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.container.valves.AbstractBaseOrderableValve;
-import org.hippoecm.hst.core.container.valves.ActionValveImpl;
-import org.hippoecm.hst.core.container.valves.AggregationValveImpl;
-import org.hippoecm.hst.core.container.valves.CleanupValveImpl;
-import org.hippoecm.hst.core.container.valves.CmsSecurityValveImpl;
-import org.hippoecm.hst.core.container.valves.ContextResolvingValveImpl;
-import org.hippoecm.hst.core.container.valves.DiagnosticReportingValveImpl;
-import org.hippoecm.hst.core.container.valves.InitializationValveImpl;
-import org.hippoecm.hst.core.container.valves.LocalizationValveImpl;
-import org.hippoecm.hst.core.container.valves.PageCachingValveImpl;
-import org.hippoecm.hst.core.container.valves.ResourceServingValveImpl;
-import org.hippoecm.hst.core.container.valves.SecurityValveImpl;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
