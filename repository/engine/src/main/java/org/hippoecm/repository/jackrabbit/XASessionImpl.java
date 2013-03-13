@@ -58,7 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
-public class XASessionImpl extends org.apache.jackrabbit.core.ForkedXASessionImpl implements InternalHippoSession {
+public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl implements InternalHippoSession {
 
     private static Logger log = LoggerFactory.getLogger(XASessionImpl.class);
 

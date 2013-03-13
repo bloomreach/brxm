@@ -86,7 +86,7 @@
     <tika.version>0.9</tika.version>
     <pdfbox.version>1.7.1</pdfbox.version>
     <quartz.version>1.8.5</quartz.version>
-    <jackrabbit.patched.version>2.6-r1447003-h1</jackrabbit.patched.version>
+    <jackrabbit.patched.version>2.6-r1455934-h1</jackrabbit.patched.version>
     <jackrabbit.version>2.6.0</jackrabbit.version>
     <json-lib.version>2.2.2</json-lib.version>
     <groovy.version>2.0.1</groovy.version>
@@ -377,14 +377,6 @@
               <excludes combine.children="append">
                 <!-- forked from Jackrabbit sources -->
                 <exclude>connector/src/main/java/org/apache/jackrabbit/jcr2spi/state/HippoSessionItemStateManager.java</exclude>
-                <exclude>engine/src/main/java/org/apache/jackrabbit/core/ForkedXASessionImpl.java</exclude>
-                <exclude>engine/src/main/java/org/apache/jackrabbit/core/persistence/mem/InMemBundlePersistenceManager.java</exclude>
-                <exclude>engine/src/main/java/org/apache/jackrabbit/core/state/ForkedXAItemStateManager.java</exclude>
-                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedDerbyPersistenceManager.java</exclude>
-                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedOracle9PersistenceManager.java</exclude>
-                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedOraclePersistenceManager.java</exclude>
-                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMSSqlPersistenceManager.java</exclude>
-                <exclude>engine/src/main/java/org/hippoecm/repository/jackrabbit/persistence/ForkedMySqlPersistenceManager.java</exclude>
                 <!-- copied from Maven sources -->
                 <exclude>utilities/src/main/java/org/hippoecm/repository/util/MavenComparableVersion.java</exclude>
                 <!-- repository content XML -->

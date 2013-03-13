@@ -42,7 +42,6 @@ import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.state.ChangeLog;
 import org.apache.jackrabbit.core.state.ChildNodeEntry;
-import org.apache.jackrabbit.core.state.ForkedXAItemStateManager;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -53,6 +52,7 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
+import org.apache.jackrabbit.core.state.XAItemStateManager;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
@@ -71,7 +71,7 @@ import org.hippoecm.repository.dataprovider.StateProviderContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HippoLocalItemStateManager extends ForkedXAItemStateManager implements DataProviderContext, HandleListener {
+public class HippoLocalItemStateManager extends XAItemStateManager implements DataProviderContext, HandleListener {
 
     protected final Logger log = LoggerFactory.getLogger(HippoLocalItemStateManager.class);
 
