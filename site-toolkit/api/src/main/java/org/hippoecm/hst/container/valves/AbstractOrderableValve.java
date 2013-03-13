@@ -21,7 +21,7 @@ import org.hippoecm.hst.core.container.OrderableValve;
  * AbstractOrderableValve
  * <P>
  * This abstract class determines the valve name and other attributes by reading the properties of {@link OrderableValve}.
- * e.g., {@link OrderableValve#getName()}, {@link OrderableValve#getAfter()}, {@link OrderableValve#getBefore()}, etc.
+ * e.g., {@link OrderableValve#getValveName()}, {@link OrderableValve#getAfterValves()}, {@link OrderableValve#getBeforeValves()}, etc.
  * </P>
  */
 public abstract class AbstractOrderableValve extends AbstractValve implements OrderableValve {
