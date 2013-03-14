@@ -668,6 +668,7 @@
                 <exclude>translation/frontend/flags.txt</exclude>
                 <exclude>gallery/frontend/src/main/java/META-INF/services/javax.imageio.spi.ImageWriterSpi</exclude>
                 <!-- repository content XML -->
+                <exclude>automatic-export/repository/src/main/resources/**/*.xml</exclude>
                 <exclude>automatic-export/repository/src/test/resources/**/*.xml</exclude>
                 <exclude>brokenlinks/repository/src/main/resources/*.xml</exclude>
                 <exclude>translations/repository/src/main/resources/*.xml</exclude>
