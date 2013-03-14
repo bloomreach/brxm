@@ -17,8 +17,6 @@ package org.hippoecm.frontend.editor.plugins;
 
 import java.util.Date;
 
-import javax.jcr.RepositoryException;
-
 import org.apache.wicket.datetime.StyleDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
 import org.apache.wicket.model.IModel;
@@ -33,13 +31,15 @@ public class DatePickerPlugin extends RenderPlugin<Date> {
 
     private static final long serialVersionUID = 1L;
 
+    static final Logger log = LoggerFactory.getLogger(org.hippoecm.frontend.editor.plugins.DatePickerPlugin.class);
+
     public static final String DATESTYLE = "LS";
     public static final String EDIT = "edit";
     public static final String MODE = "mode";
     public static final String VIEW = "view";
     public static final String VALUE = "value";
 
-    public DatePickerPlugin(IPluginContext context, IPluginConfig config) throws RepositoryException {
+    public DatePickerPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
         IModel<Date> valueModel = getModel();

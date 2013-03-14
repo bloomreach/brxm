@@ -18,10 +18,6 @@ package org.hippoecm.frontend.plugins.yui.datetime;
 import java.util.Date;
 import java.util.TimeZone;
 
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-
-import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -38,10 +34,6 @@ import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
-import org.apache.wicket.validation.IValidationError;
-import org.apache.wicket.validation.ValidationError;
-import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.joda.time.DateTimeFieldType;
 import org.joda.time.DateTimeZone;
 import org.joda.time.MutableDateTime;
@@ -65,13 +57,11 @@ public class YuiDateTimeField extends DateTimeField {
 
     private YuiDatePickerSettings settings;
 
-    private String propertyName;
-
-    public YuiDateTimeField(String id, IModel<Date> model) throws RepositoryException {
+    public YuiDateTimeField(String id, IModel<Date> model) {
         this(id, model, null);
     }
 
-    public YuiDateTimeField(String id, IModel<Date> model, YuiDatePickerSettings settings) throws RepositoryException {
+    public YuiDateTimeField(String id, IModel<Date> model, YuiDatePickerSettings settings) {
         super(id, model);
 
         if (settings == null) {
@@ -117,9 +107,10 @@ public class YuiDateTimeField extends DateTimeField {
 
             @Override
             public void onClick(AjaxRequestTarget target) {
-                ((FormComponent) YuiDateTimeField.this.get("date")).clearInput();
+                ((FormComponent<Date>) YuiDateTimeField.this.get("date")).clearInput();
                 MutableDateTime date = new MutableDateTime(new Date());
-                int hours = date.getHourOfDay() % (use12HourFormat() ? 12 : 24);
+                boolean use12HourFormat = use12HourFormat();
+                int hours = date.getHourOfDay() % (use12HourFormat ? 12 : 24);
                 setHours(hours);
                 setMinutes(date.getMinuteOfHour());
                 setDate(date.toDate());
@@ -137,6 +128,7 @@ public class YuiDateTimeField extends DateTimeField {
         today.add(new Image("current-date-img", new ResourceReference(YuiDateTimeField.class,
                 "resources/set-now-16.png")));
 
+        //Add change behavior to super fields
         for (String name : new String[] { "date", "hours", "minutes", "amOrPmChoice" }) {
             get(name).add(new AjaxFormComponentUpdatingBehavior("onChange") {
                 private static final long serialVersionUID = 1L;
@@ -148,19 +140,7 @@ public class YuiDateTimeField extends DateTimeField {
             });
         }
 
-        JcrPropertyModel propertyModel = ((JcrPropertyValueModel) model).getJcrPropertymodel();
-        final Property property = propertyModel.getProperty();
-        if (property != null) {
-            propertyName = StringUtils.substringAfter(property.getName(), ":");
-        } else {
-            propertyName = "date";
-        }
-
         add(CSSPackageResource.getHeaderContribution(YuiDateTimeField.class, "yuidatetime.css"));
-    }
-
-    private String getFieldName() {
-        return propertyName;
     }
 
     // callback that the ChangeBehaviour calls when one of the composing fields updates
@@ -173,7 +153,7 @@ public class YuiDateTimeField extends DateTimeField {
     }
 
     private void updateDateTime(Date date, Integer hours, Integer minutes) {
-        if (date != null) {
+        if(date!=null) {
             MutableDateTime datetime = new MutableDateTime(date);
             try {
                 TimeZone zone = getClientTimeZone();
@@ -188,6 +168,7 @@ public class YuiDateTimeField extends DateTimeField {
 
                 // the date will be in the server's timezone
                 setDate(datetime.toDate());
+                //setModelObject(datetime.toDate());
             } catch (RuntimeException e) {
                 error(e.getMessage());
                 invalid();
@@ -236,16 +217,6 @@ public class YuiDateTimeField extends DateTimeField {
             protected DateTimeFormatter getFormat() {
                 return DateTimeFormat.forPattern(getDatePattern()).withLocale(getLocale());
             }
-
-        }) {
-            @Override
-            public void error(final IValidationError error) {
-                if (error instanceof ValidationError) {
-                    ValidationError validationError = (ValidationError) error;
-                    validationError.setVariable("label", getFieldName());
-                }
-                super.error(error);
-            }
-        };
+        });
     }
 }
