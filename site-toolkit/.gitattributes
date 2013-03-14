@@ -644,6 +644,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/site/site.xml -text
 components/core/src/test/java/org/hippoecm/hst/cache/ehcache/TestHstCache.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/ConcurrentChannelManagerAndHstManagerLoadTest.java -text
+components/core/src/test/java/org/hippoecm/hst/configuration/TestConfigurationUtils.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/TestMatchHostAndURL.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSharedHstComponentsConfigurationModels.java -text svneol=unset#text/plain
 components/core/src/test/java/org/hippoecm/hst/configuration/TestSiteMapItemHandler.java -text svneol=unset#text/plain
@@ -675,6 +676,7 @@ components/core/src/test/java/org/hippoecm/hst/core/container/session/TestHttpSe
 components/core/src/test/java/org/hippoecm/hst/core/jcr/TestLazySessionDelegatingRepository.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkForCmsRequest.java -text
 components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewriting.java -text svneol=unset#text/plain
+components/core/src/test/java/org/hippoecm/hst/core/linking/TestHstLinkRewritingCrossScheme.java -text
 components/core/src/test/java/org/hippoecm/hst/core/logging/TestLogEventBuffer.java svneol=native#text/plain
 components/core/src/test/java/org/hippoecm/hst/core/logging/TestSlf4jLogger.java -text
 components/core/src/test/java/org/hippoecm/hst/core/order/TestObjectOrderer.java -text

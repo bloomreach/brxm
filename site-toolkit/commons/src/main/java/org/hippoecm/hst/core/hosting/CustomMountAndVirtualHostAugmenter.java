@@ -553,6 +553,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        public boolean containsMultipleSchemes() {
+            return false;
+        }
+
+        @Override
         public int getSchemeNotMatchingResponseCode() {
             return HttpServletResponse.SC_OK;
         }

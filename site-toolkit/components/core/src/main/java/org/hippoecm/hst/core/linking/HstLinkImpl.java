@@ -15,12 +15,23 @@
  */
 package org.hippoecm.hst.core.linking;
 
+import javax.jcr.PathNotFoundException;
+
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.NotFoundException;
+import org.hippoecm.hst.configuration.hosting.VirtualHost;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
+import org.hippoecm.hst.site.request.ResolvedMountImpl;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.HstSiteMapUtils;
 import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
@@ -33,27 +44,37 @@ public class HstLinkImpl implements HstLink {
     private String path;
     private String subPath;
     private Mount mount;
+    private HstSiteMapItem siteMapItem;
     private boolean containerResource;
     private boolean notFound = false;
-    
     
     public HstLinkImpl(String path, Mount mount) {
         this(path, mount,false);
     }
     
     public HstLinkImpl(String path, Mount mount, boolean containerResource) {
-        this(path, mount,containerResource, true);
-    } 
-    
+        this(path, mount,null,containerResource);
+    }
+
+    public HstLinkImpl(String path, Mount mount, HstSiteMapItem siteMapItem, boolean containerResource) {
+        this(path, mount,siteMapItem,containerResource, true);
+    }
+
+
     public HstLinkImpl(String path, Mount mount, boolean containerResource, boolean rewriteHomePagePath) {
+        this(path, mount, null,containerResource, rewriteHomePagePath);
+    }
+
+    public HstLinkImpl(String path, Mount mount, HstSiteMapItem siteMapItem, boolean containerResource, boolean rewriteHomePagePath) {
         this.path = PathUtils.normalizePath(path);
         this.mount = mount;
+        this.siteMapItem = siteMapItem;
         this.containerResource = containerResource;
         if(rewriteHomePagePath) {
             // check whether path is equal to homepage : if so, replace with ""
             if(this.path != null && !containerResource && mount != null) {
                 // get the homePagePath : the mount.getHomePage can be the homepage path OR the sitemap item refId
-                // with HstSiteMapUtils.getPath we get the homepage path regardless whether mount.getHomePage() is the path of the refId 
+                // with HstSiteMapUtils.getPath we get the homepage path regardless whether mount.getHomePage() is the path of the refId
                 String homePagePath = HstSiteMapUtils.getPath(mount, mount.getHomePage());
                 if(path.equals(homePagePath) || ("/"+path).equals(homePagePath)) {
                     // homepage link : Set path to "";
@@ -62,7 +83,7 @@ public class HstLinkImpl implements HstLink {
             }
         }
     }
-    
+
     public Mount getMount() {
         return mount;
     }
@@ -102,50 +123,50 @@ public class HstLinkImpl implements HstLink {
 
 
     public String toUrlForm(HstRequestContext requestContext, boolean fullyQualified) {
-       
-        if(path == null) {
+
+        if (path == null) {
             log.warn("Unable to rewrite link. Return EVAL_PAGE");
             return null;
         }
 
         Mount requestMount = requestContext.getResolvedMount().getMount();
-        
+
         // check if we need to set an explicit contextPath 
         String explicitContextPath = null;
-        if(requestContext.isCmsRequest()) {
+        if (requestContext.isCmsRequest()) {
             explicitContextPath = requestMount.onlyForContextPath();
-        }else if(mount != null && requestMount != mount) {
-            if(mount.isContextPathInUrl() && mount.onlyForContextPath() != null) {
+        } else if (mount != null && requestMount != mount) {
+            if (mount.isContextPathInUrl() && mount.onlyForContextPath() != null) {
                 explicitContextPath = mount.onlyForContextPath();
             }
         }
 
         String urlString;
         if (this.containerResource) {
-            HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE , null, requestContext, explicitContextPath);
+            HstURL hstUrl = requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, ContainerConstants.CONTAINER_REFERENCE_NAMESPACE, null, requestContext, explicitContextPath);
             hstUrl.setResourceID(path);
             urlString = hstUrl.toString();
         } else {
-            
+
             String subPathDelimeter = requestMount.getVirtualHost().getVirtualHosts().getHstManager().getPathSuffixDelimiter();
-            if(subPath != null) {
+            if (subPath != null) {
                 // subPath is allowed to be empty ""
                 path += subPathDelimeter + subPath;
             } else if (mount != null && !mount.isSite()) {
                 // mount is configured to support subPath: Include the PATH_SUBPATH_DELIMITER for locations that that would be exclused by virtualhosts configuration
                 // like resources ending on .jpg or .pdf etc 
-                if(mount.getVirtualHost().getVirtualHosts().isExcluded(path)) {
+                if (mount.getVirtualHost().getVirtualHosts().isExcluded(path)) {
                     // path should not be excluded for hst request processing because for example it is a REST call for a binary. Add the PATH_SUBPATH_DELIMITER
                     // to avoid this
                     path += subPathDelimeter;
                 }
             }
-            
-            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(mount, requestContext.getBaseURL() , path);
-            urlString  = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext, explicitContextPath).toString();
-            if(StringUtils.isEmpty(path) && StringUtils.isEmpty(urlString)) {
+
+            HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(mount, requestContext.getBaseURL(), path);
+            urlString = requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext, explicitContextPath).toString();
+            if (StringUtils.isEmpty(path) && StringUtils.isEmpty(urlString)) {
                 // homepage with no contextpath : replace urlString with /
-                urlString= "/";
+                urlString = "/";
             }
         }
         
@@ -157,27 +178,25 @@ public class HstLinkImpl implements HstLink {
          * 3) The portnumber is in the url, and the current request Mount has a different portnumber than the Mount for this link
          */
         String renderHost = null;
-        if(mount != null) {
-            if(requestContext.isCmsRequest()) {
+
+        if (mount != null) {
+            if (requestContext.isCmsRequest()) {
                 // check whether the urlString is equal to the contextPath of the mount. If so,
                 // we need to append an extra / to the urlString : This is to avoid a link like 
                 // '/site' in cms preview context: It must there be '/site/'
-                if(urlString.equals(requestMount.onlyForContextPath())) {
+                if (urlString.equals(requestMount.onlyForContextPath())) {
                     urlString += "/";
                 }
             }
-            if(requestContext.getRenderHost() != null && requestMount != mount) {
+            if (requestContext.getRenderHost() != null && requestMount != mount) {
                 // the link is cross-domain, so set the render host
-                renderHost =  mount.getVirtualHost().getHostName();
+                renderHost = mount.getVirtualHost().getHostName();
             } else if (!requestContext.isCmsRequest()) {
                 // the above !requestContext.isCmsRequest() check is to avoid fully qualified links in CMS channel manager:
-                // for the cms, we never want a fully qualified URLs for links at that is managed through the 'renderHost'
-                if (requestContext.isFullyQualifiedURLs() || fullyQualified || requestMount.getVirtualHost() != mount.getVirtualHost()
-                        || (mount.isPortInUrl() && requestMount.getPort() != mount.getPort())
-                        || (mount.getScheme() != null && !mount.getScheme().equals(requestMount.getScheme()))) {
-
-                    String host = mount.getScheme() + "://" + mount.getVirtualHost().getHostName();
-
+                // for the cms, we never want a fully qualified URLs for links as that is managed through the 'renderHost'
+                HstLinkImplCharacteristics hstLinkImplCharacteristics = new HstLinkImplCharacteristics(requestContext, fullyQualified);
+                if (hstLinkImplCharacteristics.isFullyQualified()) {
+                    String host = hstLinkImplCharacteristics.getScheme() + "://" + mount.getVirtualHost().getHostName();
                     if (mount.isPortInUrl()) {
                         int port = mount.getPort();
                         if (port == 0) {
@@ -191,12 +210,11 @@ public class HstLinkImpl implements HstLink {
                         }
                     }
 
-
                     urlString = host + urlString;
                 }
             }
         }
-        
+
         if (renderHost != null && !this.containerResource) {
             // we need to append the render host as a request parameter but it is not needed for resources
             if (urlString.contains("?")) {
@@ -206,10 +224,10 @@ public class HstLinkImpl implements HstLink {
             }
             urlString += ContainerConstants.RENDERING_HOST + '=' + renderHost;
         }
-        
+
         return urlString;
     }
-    
+
     public boolean isNotFound() {
         return notFound;
     }
@@ -217,5 +235,153 @@ public class HstLinkImpl implements HstLink {
     public void setNotFound(boolean notFound) {
         this.notFound = notFound;
     }
+
+    interface MutableResolvedVirtualHost extends ResolvedVirtualHost {
+        void setResolvedMount(ResolvedMount resMount);
+    }
+
+    private class HstLinkImplCharacteristics {
+
+        private final HstRequestContext requestContext;
+        private boolean fullyQualified;
+        private String scheme;
+
+        public HstLinkImplCharacteristics(final HstRequestContext requestContext, final boolean explicitlyFullyQualified) {
+            this.requestContext = requestContext;
+            fullyQualified = explicitlyFullyQualified;
+        }
+
+        public boolean isFullyQualified() {
+            if (fullyQualified) {
+                // was explicitly marked to be fully qualified.
+                return true;
+            }
+            // check whether link really is not needed to be fully qualified. It still needs to be fully qualified for example
+            // if the link is for a different host, different port, or different scheme than current request.
+            if (requestContext.isFullyQualifiedURLs()) {
+                return true;
+            }
+
+            if (containerResource) {
+                // containerResource are only fully qualified if explicitly defined by explicitlyFullyQualified
+                // or by  requestContext.isFullyQualifiedURLs()
+                return false;
+            }
+
+            final Mount requestMount = requestContext.getResolvedMount().getMount();
+
+            if (requestMount.getVirtualHost() != mount.getVirtualHost()) {
+                return true;
+            }
+            if (mount.isPortInUrl() && requestMount.getPort() != mount.getPort()) {
+                return true;
+            }
+
+            if (requestContext.getServletRequest() == null) {
+                // for example in case of unit tests this is possible
+                return false;
+            }
+
+            /*
+             * If this HstLinkImpl is created through linkrewriting using a <code>siteMapItem</code> we use the scheme defined on the
+             * <code>siteMapItem</code>.
+             * When the <code>siteMapItem</code> is <code>null</code>, we have to deduce the <code>scheme</code>. For efficiency,
+             * we first check whether there is a possibility that the <code>scheme</code> can be different than the current request
+             * <code>scheme</code>. This is done by checking <code>mount.containsMultipleSchemes()</code> and
+             * <code>requestMount.containsMultipleSchemes()</code>. If it is possible that the <code>scheme</code> is different,
+             * we need to try to match the pathInfo for the link to a siteMapItem to find out what the <code>scheme</code> on that
+             * siteMapItem would be.
+             */
+
+            if (siteMapItem != null) {
+                if (!HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest()).equals(siteMapItem.getScheme())) {
+                    scheme = siteMapItem.getScheme();
+                    return true;
+                }
+            }
+
+            if (mount.containsMultipleSchemes() || requestMount.containsMultipleSchemes()) {
+                final ResolvedSiteMapItem resolvedSiteMapItem = resolveSiteMapItem();
+                if (resolvedSiteMapItem != null) {
+                    if (!HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest()).equals(resolvedSiteMapItem.getHstSiteMapItem().getScheme())) {
+                        scheme = resolvedSiteMapItem.getHstSiteMapItem().getScheme();
+                        return true;
+                    }
+                }
+            }
+
+            if (!mount.containsMultipleSchemes() && !requestMount.containsMultipleSchemes() &&
+                    !mount.getScheme().equals(requestMount.getScheme())) {
+                // all links for 'mount' have different scheme than all links for 'requestMount' so we do not need to test a matching sitemap item
+                scheme = mount.getScheme();
+                return true;
+            }
+            return false;
+        }
+
+        public String getScheme() {
+            if (scheme != null) {
+                return scheme;
+            }
+            // to avoid more expensive resolveSiteMapItem() we first check whether scheme *can* be different than the one
+            // for the mount
+            if (schemeCannotBeDifferent()) {
+                return mount.getScheme();
+            }
+            final ResolvedSiteMapItem resolvedSiteMapItem = resolveSiteMapItem();
+            if (resolvedSiteMapItem != null) {
+                return resolvedSiteMapItem.getHstSiteMapItem().getScheme();
+            }
+            return mount.getScheme();
+        }
+
+        private boolean schemeCannotBeDifferent() {
+            final Mount requestMount = requestContext.getResolvedMount().getMount();
+            if (!mount.containsMultipleSchemes() && !requestMount.containsMultipleSchemes() &&
+                    mount.getScheme().equals(requestMount.getScheme())) {
+                return true;
+            }
+            return false;
+        }
+
+        private ResolvedSiteMapItem resolveSiteMapItem() {
+            try {
+                MutableResolvedVirtualHost resolvedHostForLink = new MutableResolvedVirtualHost() {
+                    private ResolvedMount resolvedMountForLink = null;
+                    @Override
+                    public VirtualHost getVirtualHost() {
+                        return mount.getVirtualHost();
+                    }
+
+                    @Override
+                    public String getResolvedHostName() {
+                        return mount.getVirtualHost().getHostName();
+                    }
+
+                    @Override
+                    public int getPortNumber() {
+                        return mount.getPort();
+                    }
+
+                    @Override
+                    public ResolvedMount matchMount(final String contextPath, final String requestPath) throws MatchException {
+                        return resolvedMountForLink;
+                    }
+                    @Override
+                    public void setResolvedMount(ResolvedMount resMount) {
+                        this.resolvedMountForLink = resMount;
+                    }
+                };
+
+                ResolvedMount resMount = new ResolvedMountImpl(mount, resolvedHostForLink, mount.getMountPath(), mount.getVirtualHost().getVirtualHosts().getCmsPreviewPrefix());
+                resolvedHostForLink.setResolvedMount(resMount);
+                return mount.getHstSiteMapMatcher().match(path, resMount);
+            } catch (Exception e) {
+                // cannot match a sitemap item
+                return null;
+            }
+        }
+    }
+
 
 }

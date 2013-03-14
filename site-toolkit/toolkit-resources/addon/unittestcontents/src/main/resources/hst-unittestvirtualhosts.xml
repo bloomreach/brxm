@@ -92,12 +92,18 @@
             <sv:property sv:name="hst:locale" sv:type="String">
                 <sv:value>en_EN</sv:value>
             </sv:property>
+            <sv:property sv:name="hst:alias" sv:type="String">
+                <sv:value>root</sv:value>
+            </sv:property>
             <sv:node sv:name="examplecontextpathonly">
               <sv:property sv:name="jcr:primaryType" sv:type="Name">
                  <sv:value>hst:mount</sv:value>
               </sv:property>
               <sv:property sv:name="hst:onlyforcontextpath" sv:type="String">
                  <sv:value>/mycontextpath</sv:value>
+              </sv:property>
+              <sv:property sv:name="hst:alias" sv:type="String">
+                <sv:value>examplecontextpathonly</sv:value>
               </sv:property>
             </sv:node>
             <sv:node sv:name="subsite">
@@ -200,7 +206,7 @@
                       <sv:value>hst:mount</sv:value>
                   </sv:property>
                   <sv:property sv:name="hst:alias" sv:type="String">
-                      <sv:value>test</sv:value>
+                      <sv:value>root</sv:value>
                   </sv:property>
                   <sv:property sv:name="hst:mountpoint" sv:type="String">
                      <sv:value>/hst:hst/hst:sites/unittestproject</sv:value>

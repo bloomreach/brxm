@@ -17,10 +17,18 @@ package org.hippoecm.hst.core.linking;
 
 import java.io.Serializable;
 
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+
 /**
  * 
  */
 public interface ResolvedLocationMapTreeItem extends Serializable{
     
     public String getPath();
+
+    /**
+     * @return {@link HstSiteMapItem} belonging to this {@link ResolvedLocationMapTreeItem}. Returns <code>null</code> if
+     * no {@link HstSiteMapItem} is attached to this  {@link ResolvedLocationMapTreeItem}.
+     */
+    public HstSiteMapItem getSiteMapItem();
 }

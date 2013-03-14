@@ -300,6 +300,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public boolean containsMultipleSchemes() {
+            return false;
+        }
+
+        @Override
         public int getSchemeNotMatchingResponseCode() {
             // TODO Test this, I think preview just return ok
             return HttpServletResponse.SC_OK;

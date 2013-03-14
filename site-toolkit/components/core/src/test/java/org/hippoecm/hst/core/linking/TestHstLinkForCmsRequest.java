@@ -175,13 +175,13 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
             // link will be for www.unit.test Mount because can be created for current renderHost
             HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
             assertEquals("www.unit.test", homePageLink.getMount().getVirtualHost().getHostName());
-    
+
             assertEquals("link.getPath for homepage node should be '", "", homePageLink.getPath());
             // A link in CMS request context for the HOMEPAGE should NOT be /site like for normal site requests,
             // but should be /site/ to work well with PROXIES using /site/ to match on. Hence, /site/ is expected
             // SINCE RENDER HOST stays the same, no render host is included in query string
             assertEquals("wrong absolute link for homepage for CMS context", "/site/", (homePageLink.toUrlForm(requestContext, false)));
-    
+
             // A fully qualified link for CMS request context for should NOT be fully qualified, even for toUrlForm(requestContext, TRUE))
             // CMS links must always be relative to the CMS host! Thus no http://localhost involved
             // SINCE RENDER HOST stays the same, no render host is included in query string
@@ -190,12 +190,12 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
 
         {
             // NOW, ew create homepage link for another MOUNT. This should include a renderhost in the queryString
-    
+
             HstLink homePageLinkForMobile = linkCreator.create(((HippoBean) homeBean).getNode(), requestContext, "mobile");
             String hostName = homePageLinkForMobile.getMount().getVirtualHost().getHostName();
             assertEquals("m.unit.test", hostName);
             assertEquals("link.getPath for homepage node should be '", "", homePageLinkForMobile.getPath());
-          
+
             // renderhost should be included
             assertEquals("wrong absolute link for homepage for CMS context", "/site/?"+ContainerConstants.RENDERING_HOST+"="+hostName, (homePageLinkForMobile.toUrlForm(requestContext, false)));
 
@@ -203,6 +203,8 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
             assertEquals("wrong fully qualified url for homepage for CMS context", "/site/?"+ContainerConstants.RENDERING_HOST+"="+hostName, (homePageLinkForMobile.toUrlForm(requestContext, true)));
         }
     }
+
+
 
     /**
      * Even when a render host is set, when there is also an indication on the request that the client host should be forced, then

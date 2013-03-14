@@ -15,19 +15,27 @@
  */
 package org.hippoecm.hst.core.linking;
 
-public class ResolvedLocationMapTreeItemImpl implements ResolvedLocationMapTreeItem{
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+
+public class ResolvedLocationMapTreeItemImpl implements ResolvedLocationMapTreeItem {
 
     private static final long serialVersionUID = 1L;
+
+    private final String path;
+    private final HstSiteMapItem siteMapItem;
     
-    private String path;
-    
-    public ResolvedLocationMapTreeItemImpl(String path){
+    public ResolvedLocationMapTreeItemImpl(final String path, final HstSiteMapItem siteMapItem){
         this.path = path;
+        this.siteMapItem = siteMapItem;
     }
-    
-    
+
+    @Override
     public String getPath() {
         return path;
     }
 
+    @Override
+    public HstSiteMapItem getSiteMapItem() {
+        return siteMapItem;
+    }
 }

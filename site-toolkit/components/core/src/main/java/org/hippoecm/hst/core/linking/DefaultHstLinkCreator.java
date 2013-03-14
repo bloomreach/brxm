@@ -489,7 +489,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
                 return pageNotFoundLink(mount);
             }
             
-            HstLink link = new HstLinkImpl(linkInfo.pathInfo, linkInfo.mount, linkInfo.containerResource);
+            HstLink link = new HstLinkImpl(linkInfo.pathInfo, linkInfo.mount, linkInfo.siteMapItem, linkInfo.containerResource);
             if(postProcess) {
                 link = postProcess(link);
             }
@@ -656,7 +656,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             List<HstLink>  allLinks = new ArrayList<HstLink>();
             for(LinkInfo info : linkInfoList) {
 
-                HstLink link = new HstLinkImpl(info.pathInfo, info.mount, info.containerResource);
+                HstLink link = new HstLinkImpl(info.pathInfo, info.mount, info.siteMapItem, info.containerResource);
                 if(postProcess) {
                     link = postProcess(link);
                 }
@@ -674,28 +674,30 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
          * @return LinkInfo for <code>tryMount</code>and <code>nodePath</code> or <code>null</code>
          */
         private LinkInfo resolveToLinkInfo(String nodePath, Mount tryMount, ResolverProperties resolverProperties){
-            String pathInfo = null; 
-            boolean containerResource = false;
             if(!resolverProperties.virtual && nodePath.equals(tryMount.getCanonicalContentPath())) {
                 // the root node of the site. Return the homepage
-                pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
+                String pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
+                return pathInfo == null ? null : new LinkInfo(pathInfo, false, tryMount);
             }
             if(!resolverProperties.virtual && nodePath.startsWith(tryMount.getCanonicalContentPath() + "/")) {
                 String relPath = nodePath.substring(tryMount.getCanonicalContentPath().length());
-                pathInfo = resolveToPathInfo(relPath, tryMount, resolverProperties);
+                ResolvedLocationMapTreeItem resolvedLocation = resolveToLocationMapTreeItem(relPath, tryMount, resolverProperties);
+                return (resolvedLocation == null || resolvedLocation.getPath() == null) ? null : new LinkInfo(resolvedLocation, false, tryMount);
             } else if (resolverProperties.virtual && nodePath.equals(tryMount.getContentPath())) { 
                 // the root node of the site. Return the homepage
-                pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
+                String pathInfo = HstSiteMapUtils.getPath(tryMount, tryMount.getHomePage());
+                return pathInfo == null ? null : new LinkInfo(pathInfo, false, tryMount);
             }  else if (resolverProperties.virtual && nodePath.startsWith(tryMount.getContentPath()  + "/")) { 
                 String relPath = nodePath.substring(tryMount.getContentPath().length());
-                pathInfo = resolveToPathInfo(relPath, tryMount, resolverProperties);
+                ResolvedLocationMapTreeItem resolvedLocation = resolveToLocationMapTreeItem(relPath, tryMount, resolverProperties);
+                return (resolvedLocation == null || resolvedLocation.getPath() == null) ? null : new LinkInfo(resolvedLocation, false, tryMount);
             } else if (isBinaryLocation(nodePath)) {
                 log.debug("Binary path, return hstLink prefixing this path with '{}'", DefaultHstLinkCreator.this.getBinariesPrefix());
                 // Do not postProcess binary locations, as the BinariesServlet is not aware about preprocessing links
-                pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+nodePath;
-                containerResource = true;
-            }  
-            return pathInfo == null ? null : new LinkInfo(pathInfo, containerResource, tryMount);
+                String pathInfo = DefaultHstLinkCreator.this.getBinariesPrefix()+nodePath;
+                return pathInfo == null ? null : new LinkInfo(pathInfo, true, tryMount);
+            }
+            return null;
         }    
         /**
          * Tries to translate the <code>path</code> with the {@link Mount} <code>tryMount</code> to a sitemap pathInfo. If
@@ -705,7 +707,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
          * @param tryMount
          * @return pathInfo for <code>tryMount</code> or <code>null</code>
          */
-        private String resolveToPathInfo(String path, Mount tryMount, ResolverProperties resolverProperties){
+        private ResolvedLocationMapTreeItem resolveToLocationMapTreeItem(String path, Mount tryMount, ResolverProperties resolverProperties){
             ResolvedLocationMapTreeItem resolvedLocation = null;
             if (tryMount.isMapped() && tryMount.getHstSite() != null) {
                 if (resolverProperties.preferredItem != null) {
@@ -732,7 +734,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
 
                     log.info("Succesfull linkcreation for path '{}' to new pathInfo '{}'", path, resolvedLocation.getPath());
 
-                    return resolvedLocation.getPath();
+                    return resolvedLocation;
                 }
                 log.debug("Could not create a link for '"+path+"' for mount '{}' (host = {}). Other mounts will be tried if available.", tryMount.getMountPath(), tryMount.getVirtualHost().getHostName());
                 return null;
@@ -740,7 +742,7 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
             } else {
                 // the Mount does not have a HstSite attached to it. Just use the 'nodePath' we have so far as
                 // we do not have a further SiteMap mapping. We only have a site content base path mapping
-                return path;
+                return new ResolvedLocationMapTreeItemImpl(path, null);
             }
         }
         
@@ -769,11 +771,20 @@ public class DefaultHstLinkCreator implements HstLinkCreator {
     }
     
     private class LinkInfo {
-        String pathInfo;
-        boolean containerResource;
-        Mount mount;
-        LinkInfo(String pathInfo, boolean containerResource, Mount mount) {
+        private final String pathInfo;
+        private final HstSiteMapItem siteMapItem;
+        private final boolean containerResource;
+        private final Mount mount;
+
+        private LinkInfo(final String pathInfo, final boolean containerResource, final Mount mount) {
             this.pathInfo = pathInfo;
+            this.containerResource = containerResource;
+            this.mount = mount;
+            this.siteMapItem = null;
+        }
+        private LinkInfo(final ResolvedLocationMapTreeItem resolvedLocationMapTreeItem, final boolean containerResource, final Mount mount) {
+            pathInfo = resolvedLocationMapTreeItem.getPath();
+            siteMapItem = resolvedLocationMapTreeItem.getSiteMapItem();
             this.containerResource = containerResource;
             this.mount = mount;
         }

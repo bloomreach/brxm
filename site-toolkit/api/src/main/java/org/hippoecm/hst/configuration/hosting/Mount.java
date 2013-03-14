@@ -286,6 +286,13 @@ public interface Mount {
     String getScheme();
 
     /**
+     * When this {@link Mount} has a {@link HstSite} attached to it that contains a {@link HstSiteMap} with {@link HstSiteMapItem}'s that
+     * have multiple schemes (http/https) or that have a different scheme than the {@link Mount#getScheme()}.
+     * @return <code>true</code> when this {@link Mount} can contain links with different schemes
+     */
+    boolean containsMultipleSchemes();
+
+    /**
      * <p>
      * the response code the HST sets when {@link javax.servlet.http.HttpServletRequest} <code>scheme</code> does not match {@link #getScheme()}.
      * Default response code is {@link javax.servlet.http.HttpServletResponse#SC_MOVED_PERMANENTLY}. The following response

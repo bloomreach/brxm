@@ -39,6 +39,7 @@ import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.model.HstSiteRootNode;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.site.HstSiteService;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
@@ -209,6 +210,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String onlyForContextPath;
 
     private String scheme;
+    private boolean containsMultipleSchemes = false;
     private int schemeNotMatchingResponseCode = -1;
     
     /**
@@ -547,6 +549,7 @@ public class MountService implements ContextualizableMount, MutableMount {
             hstSite = new HstSiteService(hstSiteNodeForMount, this, hstManager);
             canonicalContentPath = hstSiteNodeForMount.getContentPath();
             contentPath = hstSiteNodeForMount.getContentPath();
+            containsMultipleSchemes = multipleSchemesUsed(hstSite.getSiteMap().getSiteMapItems());
 
             log.info("Succesfull initialized hstSite '{}' for Mount '{}'", hstSite.getName(), getName());
             
@@ -565,6 +568,7 @@ public class MountService implements ContextualizableMount, MutableMount {
                 previewCanonicalContentPath = previewHstSiteNodeForMount.getContentPath();
                 //previewContentPath = previewHstSiteNodeForMount.getContentPath();
                 previewContentPath = previewHstSiteNodeForMount.getContentPath();
+                // we assume containsMultipleSchemes is for preview site same as for live site hence no check here for preview site
             }
         }
 
@@ -590,6 +594,23 @@ public class MountService implements ContextualizableMount, MutableMount {
 
         // add this Mount to the maps in the VirtualHostsService
         ((VirtualHostsService)virtualHost.getVirtualHosts()).addMount(this);
+    }
+
+    /**
+     * @param siteMapItems
+     * @return <code>true</code> if any of the <code>siteMapItems</code> or its descendents uses a different scheme than
+     * the scheme of this {@link MountService}
+     */
+    private boolean multipleSchemesUsed(final List<HstSiteMapItem> siteMapItems) {
+        for (HstSiteMapItem siteMapItem : siteMapItems) {
+            if (!scheme.equals(siteMapItem.getScheme())) {
+                return true;
+            }
+            if (multipleSchemesUsed(siteMapItem.getChildren())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -680,6 +701,11 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public String getScheme() {
         return scheme;
+    }
+
+    @Override
+    public boolean containsMultipleSchemes() {
+        return containsMultipleSchemes;
     }
 
     public int getSchemeNotMatchingResponseCode() {
