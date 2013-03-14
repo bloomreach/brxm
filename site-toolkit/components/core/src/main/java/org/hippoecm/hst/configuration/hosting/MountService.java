@@ -610,6 +610,9 @@ public class MountService implements ContextualizableMount, MutableMount {
      */
     private boolean multipleSchemesUsed(final List<HstSiteMapItem> siteMapItems) {
         for (HstSiteMapItem siteMapItem : siteMapItems) {
+            if (siteMapItem.isSchemeAgnostic()) {
+                continue;
+            }
             if (!scheme.equals(siteMapItem.getScheme())) {
                 return true;
             }
