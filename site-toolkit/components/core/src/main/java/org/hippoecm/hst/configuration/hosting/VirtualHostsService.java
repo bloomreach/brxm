@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -202,14 +203,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
             scheme = DEFAULT_SCHEME;
         }
         if (vHostConfValueProvider.hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
-            Long statusCode = vHostConfValueProvider.getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE);
-            if (statusCode > 0) {
-                schemeNotMatchingResponseCode = (int)statusCode.longValue();
-                if (schemeNotMatchingResponseCode < 200 || schemeNotMatchingResponseCode > 599) {
-                    log.warn("Invalid '{}' configured on '{}'. Use default 301 instead", HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
-                            vHostConfValueProvider.getPath());
-                    schemeNotMatchingResponseCode = HttpServletResponse.SC_MOVED_PERMANENTLY;
-                }
+            int statusCode = (int)vHostConfValueProvider.getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
+            if (ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode(statusCode)) {
+                schemeNotMatchingResponseCode = statusCode;
+            } else {
+                log.warn("Invalid '{}' configured on '{}'. Use inherited value. Supported values are '{}'", new String[]{HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE,
+                        vHostConfValueProvider.getPath(), ConfigurationUtils.suppertedSchemeNotMatchingResponseCodesAsString()});
             }
         }
 
