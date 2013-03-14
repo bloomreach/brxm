@@ -581,11 +581,18 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
     @Test
     public void testHashCodeLink() throws Exception{
         // @see: https://issues.onehippo.com/browse/HSTTWO-2167
-        // hash only link:
-        String url = "/home#chapter1";
-        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+
+        String url = "/#";
+        HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/");
         HstLink link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
         String result = link.toUrlForm(requestContext, false);
+        assertEquals("/site"+ url, result);
+
+        // hash only link:
+        url = "/home#chapter1";
+        requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
+        link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        result = link.toUrlForm(requestContext, false);
         assertEquals("/site"+ url, result);
         // encoding test
         url = "/ho me#chapter1";
@@ -622,7 +629,6 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
         result = link.toUrlForm(requestContext, false);
         assertEquals("/site/ho+me?hint=one#chapter1" + URLEncoder.encode("&delay=two", "UTF-8"), result);
-
     }
         
         public HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(String hostAndPort, String requestURI) throws Exception {

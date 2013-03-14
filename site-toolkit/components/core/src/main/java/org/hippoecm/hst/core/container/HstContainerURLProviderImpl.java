@@ -20,7 +20,6 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -59,9 +58,6 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     protected static final String REQUEST_INFO_SEPARATOR = "|";
 
     protected static final String DEFAULT_HST_URL_NAMESPACE_PREFIX = "_hn:";
-    private static final Pattern PATH_PATTERN = Pattern.compile("/");
-    private static final Pattern QUERY_PATTERN = Pattern.compile("\\?");
-    private static final Pattern HASH_PATTERN = Pattern.compile("#");
 
     protected String urlNamespacePrefix = DEFAULT_HST_URL_NAMESPACE_PREFIX;
     protected String urlNamespacePrefixedPath = '/' + urlNamespacePrefix;
@@ -362,9 +358,11 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         if(containerURL.getPathInfo().startsWith(pathSuffixDelimiter)) {
             includeSlash = false;
         }
-        String[] unEncodedPaths = PATH_PATTERN.split(containerURL.getPathInfo());
-        for(String path : unEncodedPaths) {
-            if (!"".equals(path)) {
+
+        String[] unencodedPaths = StringUtils.splitPreserveAllTokens(containerURL.getPathInfo(), '/');
+
+        for (String path : unencodedPaths) {
+            if (StringUtils.isNotEmpty(path)) {
                 if (includeSlash) {
                     url.append('/');
                 } else {
@@ -373,10 +371,10 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 }
                 // check if we have an anchor link and encode everything behind it, but leave first part as it is:
                 if (path.indexOf('#') != -1) {
-                    String[] hashParts = HASH_PATTERN.split(path);
+                    String[] hashParts = StringUtils.splitPreserveAllTokens(path, '#');
                     // check if preceded with query
                     if (hashParts[0].indexOf('?') != -1) {
-                        String[] parameterParts = QUERY_PATTERN.split(hashParts[0]);
+                        String[] parameterParts = StringUtils.splitPreserveAllTokens(hashParts[0], '?');
                         url.append(URLEncoder.encode(parameterParts[0], characterEncoding))
                                 .append('?').append(parameterParts[1])
                                 .append('#').append(URLEncoder.encode(hashParts[1], characterEncoding));
@@ -387,13 +385,14 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
                 }
                 // check query parameters:
                 else if (path.indexOf('?') != -1) {
-                    String[] parameterParts = QUERY_PATTERN.split(path);
+                    String[] parameterParts = StringUtils.splitPreserveAllTokens(path, '?');
                     url.append(URLEncoder.encode(parameterParts[0], characterEncoding)).append('?').append(parameterParts[1]);
                 } else {
                     url.append(URLEncoder.encode(path, characterEncoding));
                 }
             }
         }
+
         if(pathSuffixDelimiter != null && containerURL.getPathInfo().endsWith(pathSuffixDelimiter) && pathSuffixDelimiter.endsWith("/")) {
             // the trailing slash is removed above, but for ./ we need to append the slash again
             url.append('/');
