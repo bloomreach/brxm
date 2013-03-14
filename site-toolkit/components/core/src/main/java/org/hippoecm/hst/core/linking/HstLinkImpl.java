@@ -196,7 +196,16 @@ public class HstLinkImpl implements HstLink {
                 // for the cms, we never want a fully qualified URLs for links as that is managed through the 'renderHost'
                 HstLinkImplCharacteristics hstLinkImplCharacteristics = new HstLinkImplCharacteristics(requestContext, fullyQualified);
                 if (hstLinkImplCharacteristics.isFullyQualified()) {
-                    String host = hstLinkImplCharacteristics.getScheme() + "://" + mount.getVirtualHost().getHostName();
+
+                    final String scheme;
+                    if (hstLinkImplCharacteristics.getScheme().equals(hstLinkImplCharacteristics.SCHEME_AGNOSTIC)) {
+                        // use scheme from request
+                        scheme = HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest());
+                    } else {
+                        scheme = hstLinkImplCharacteristics.getScheme();
+                    }
+
+                    String host = scheme + "://" + mount.getVirtualHost().getHostName();
                     if (mount.isPortInUrl()) {
                         int port = mount.getPort();
                         if (port == 0) {
@@ -242,6 +251,7 @@ public class HstLinkImpl implements HstLink {
 
     private class HstLinkImplCharacteristics {
 
+        private static final String SCHEME_AGNOSTIC = "scheme_agnostic";
         private final HstRequestContext requestContext;
         private boolean fullyQualified;
         private String scheme;
@@ -294,6 +304,10 @@ public class HstLinkImpl implements HstLink {
              */
 
             if (siteMapItem != null) {
+                if (siteMapItem.isSchemeAgnostic()) {
+                    scheme = SCHEME_AGNOSTIC;
+                    return false;
+                }
                 if (!HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest()).equals(siteMapItem.getScheme())) {
                     scheme = siteMapItem.getScheme();
                     return true;
@@ -303,11 +317,20 @@ public class HstLinkImpl implements HstLink {
             if (mount.containsMultipleSchemes() || requestMount.containsMultipleSchemes()) {
                 final ResolvedSiteMapItem resolvedSiteMapItem = resolveSiteMapItem();
                 if (resolvedSiteMapItem != null) {
+                    if (resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic()) {
+                        scheme = SCHEME_AGNOSTIC;
+                        return false;
+                    }
                     if (!HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest()).equals(resolvedSiteMapItem.getHstSiteMapItem().getScheme())) {
                         scheme = resolvedSiteMapItem.getHstSiteMapItem().getScheme();
                         return true;
                     }
                 }
+            }
+
+            if (mount.isSchemeAgnostic()) {
+                scheme = SCHEME_AGNOSTIC;
+                return false;
             }
 
             if (!mount.containsMultipleSchemes() && !requestMount.containsMultipleSchemes() &&
@@ -326,11 +349,20 @@ public class HstLinkImpl implements HstLink {
             // to avoid more expensive resolveSiteMapItem() we first check whether scheme *can* be different than the one
             // for the mount
             if (schemeCannotBeDifferent()) {
+                if (mount.isSchemeAgnostic()) {
+                    return SCHEME_AGNOSTIC;
+                }
                 return mount.getScheme();
             }
             final ResolvedSiteMapItem resolvedSiteMapItem = resolveSiteMapItem();
             if (resolvedSiteMapItem != null) {
+                if (resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic()) {
+                    return SCHEME_AGNOSTIC;
+                }
                 return resolvedSiteMapItem.getHstSiteMapItem().getScheme();
+            }
+            if (mount.isSchemeAgnostic()) {
+                return SCHEME_AGNOSTIC;
             }
             return mount.getScheme();
         }

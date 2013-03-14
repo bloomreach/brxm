@@ -83,6 +83,7 @@ public class VirtualHostService implements MutableVirtualHost {
     
     private boolean showPort;
     private String scheme;
+    private boolean schemeAgnostic;
     private int schemeNotMatchingResponseCode = -1;
     private String cmsLocation;
     private Integer defaultPort;
@@ -135,6 +136,10 @@ public class VirtualHostService implements MutableVirtualHost {
         }
         if (StringUtils.isBlank(scheme)) {
             scheme = parentHost != null ? parentHost.getScheme() : virtualHosts.getScheme();
+        }
+
+        if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
+            schemeAgnostic = virtualHostNode.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
         }
 
         if(virtualHostNode.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
@@ -307,6 +312,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.cmsLocation = cmsLocation;
         this.defaultPort = defaultPort;
         this.scheme = parent.scheme;
+        this.schemeAgnostic = parent.schemeAgnostic;
         this.schemeNotMatchingResponseCode = parent.schemeNotMatchingResponseCode;
         this.locale = parent.locale;
         this.homepage = parent.homepage;
@@ -371,6 +377,10 @@ public class VirtualHostService implements MutableVirtualHost {
     
     public String getScheme(){
         return this.scheme;
+    }
+
+    public boolean isSchemeAgnostic() {
+        return schemeAgnostic;
     }
 
     public int getSchemeNotMatchingResponseCode() {

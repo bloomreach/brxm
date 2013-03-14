@@ -130,6 +130,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private String prefix;
     private final boolean cacheable;
     private String scheme;
+    private boolean schemeAgnostic;
     private int schemeNotMatchingResponseCode = -1;
     private final String resourceBundleId;
 
@@ -344,6 +345,12 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             scheme = parentItem != null ? parentItem.getScheme() : mount.getScheme();
         }
 
+        if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
+            schemeAgnostic = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
+        } else {
+            schemeAgnostic = parentItem != null ? parentItem.isSchemeAgnostic() : mount.isSchemeAgnostic();
+        }
+
         if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
             schemeNotMatchingResponseCode = (int)node.getValueProvider().getLong(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE).longValue();
             if (ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode(schemeNotMatchingResponseCode)) {
@@ -489,6 +496,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     @Override
     public String getScheme() {
         return scheme;
+    }
+
+    @Override
+    public boolean isSchemeAgnostic() {
+        return schemeAgnostic;
     }
 
     @Override

@@ -103,6 +103,13 @@ public interface VirtualHost {
     String getScheme();
 
     /**
+     * If a {@link VirtualHost} is scheme agnostic, the request gets served regardless whether it is <code>http</code> or
+     * <code>https</code> (assuming {@link Mount} and {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem} do not override the value)
+     * @return <code>true</code> when this {@link VirtualHost} is scheme agnostic
+     */
+    boolean isSchemeAgnostic();
+
+    /**
      * <p>
      * the response code the HST sets when {@link javax.servlet.http.HttpServletRequest} <code>scheme</code> does not match {@link #getScheme()}.
      * Default response code is {@link javax.servlet.http.HttpServletResponse#SC_MOVED_PERMANENTLY}. The following response

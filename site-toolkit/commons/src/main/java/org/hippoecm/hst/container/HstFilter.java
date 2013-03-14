@@ -425,7 +425,7 @@ public class HstFilter implements Filter {
                     }
 
                     final HstSiteMapItem hstSiteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
-                    if (!requestContext.isCmsRequest() && hstSiteMapItem.getScheme() != null &&
+                    if (!requestContext.isCmsRequest() && !hstSiteMapItem.isSchemeAgnostic() &&
                             !hstSiteMapItem.getScheme().equals(HstRequestUtils.getFarthestRequestScheme(req))) {
 
                        switch (hstSiteMapItem.getSchemeNotMatchingResponseCode()) {
@@ -464,7 +464,7 @@ public class HstFilter implements Filter {
                     }
                     else {
                         Mount mount = resolvedMount.getMount();
-                        if (!requestContext.isCmsRequest() && mount.getScheme() != null &&
+                        if (!requestContext.isCmsRequest() && !mount.isSchemeAgnostic() &&
                                 !mount.getScheme().equals(HstRequestUtils.getFarthestRequestScheme(req))) {
                             switch (mount.getSchemeNotMatchingResponseCode()) {
                                 case HttpServletResponse.SC_OK:

@@ -300,6 +300,11 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public boolean isSchemeAgnostic() {
+            return true;
+        }
+
+        @Override
         public boolean containsMultipleSchemes() {
             return false;
         }

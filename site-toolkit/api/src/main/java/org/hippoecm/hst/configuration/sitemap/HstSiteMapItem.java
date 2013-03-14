@@ -300,6 +300,13 @@ public interface HstSiteMapItem {
     String getScheme();
 
     /**
+     * If a {@link HstSiteMapItem} is scheme agnostic, the request gets served regardless whether it is <code>http</code> or
+     * <code>https</code>
+     * @return <code>true</code> when this {@link HstSiteMapItem} is scheme agnostic
+     */
+    boolean isSchemeAgnostic();
+
+    /**
      * <p>
      * the response code the HST sets when {@link javax.servlet.http.HttpServletRequest} <code>scheme</code> does not match {@link #getScheme()}.
      * Default response code is {@link javax.servlet.http.HttpServletResponse#SC_MOVED_PERMANENTLY}. The following response

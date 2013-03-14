@@ -280,6 +280,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        public boolean isSchemeAgnostic() {
+            return true;
+        }
+
+        @Override
         public int getSchemeNotMatchingResponseCode() {
             return HttpServletResponse.SC_OK;
         }
@@ -550,6 +555,11 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         @Override
         public String getScheme() {
             return "http";
+        }
+
+        @Override
+        public boolean isSchemeAgnostic() {
+            return true;
         }
 
         @Override

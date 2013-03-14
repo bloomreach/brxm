@@ -271,6 +271,7 @@
 - hst:showport (boolean)
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)
+- hst:schemeagnostic (boolean)
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 - hst:homepage (string)

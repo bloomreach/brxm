@@ -210,6 +210,7 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String onlyForContextPath;
 
     private String scheme;
+    private boolean schemeAgnostic;
     private boolean containsMultipleSchemes = false;
     private int schemeNotMatchingResponseCode = -1;
     
@@ -317,6 +318,12 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
         if (StringUtils.isBlank(scheme)) {
             scheme = parent != null ? parent.getScheme() : virtualHost.getScheme();
+        }
+
+        if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC)) {
+            schemeAgnostic = mount.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC);
+        } else {
+            schemeAgnostic = parent != null ? parent.isSchemeAgnostic() : virtualHost.isSchemeAgnostic();
         }
 
         if(mount.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_SCHEME_NOT_MATCH_RESPONSE_CODE)) {
@@ -701,6 +708,10 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public String getScheme() {
         return scheme;
+    }
+
+    public boolean isSchemeAgnostic() {
+        return schemeAgnostic;
     }
 
     @Override

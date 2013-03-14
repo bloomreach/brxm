@@ -286,6 +286,13 @@ public interface Mount {
     String getScheme();
 
     /**
+     * If a {@link Mount} is scheme agnostic, the request gets served regardless whether it is <code>http</code> or
+     * <code>https</code> (assuming {@link org.hippoecm.hst.configuration.sitemap.HstSiteMapItem} does not override the value)
+     * @return <code>true</code> when this {@link Mount} is scheme agnostic
+     */
+    boolean isSchemeAgnostic();
+
+    /**
      * When this {@link Mount} has a {@link HstSite} attached to it that contains a {@link HstSiteMap} with {@link HstSiteMapItem}'s that
      * have multiple schemes (http/https) or that have a different scheme than the {@link Mount#getScheme()}.
      * @return <code>true</code> when this {@link Mount} can contain links with different schemes
