@@ -316,20 +316,25 @@ public class HstRequestUtils {
     }
 
     public static String getFarthestRequestScheme(HttpServletRequest request) {
-       String scheme = request.getHeader("X-Forwarded-Proto");
-       if (scheme != null && scheme.length() > 0) {
-           return scheme;
-       }
-       scheme = request.getHeader("X-Forwarded-Scheme");
-       if (scheme != null && scheme.length() > 0) {
-           return scheme;
-       }
+        String scheme = request.getHeader("X-Forwarded-Proto");
+        if (scheme != null && scheme.length() > 0) {
+            return scheme;
+        }
+        scheme = request.getHeader("X-Forwarded-Scheme");
+        if (scheme != null && scheme.length() > 0) {
+            return scheme;
+        }
 
-       String sslEnabled = request.getHeader("X-SSL-Enabled");
-       if (sslEnabled != null && sslEnabled.equalsIgnoreCase("on")) {
-           return "https";
-       }
-       return request.getScheme();
+        String sslEnabled = request.getHeader("X-SSL-Enabled");
+        if (sslEnabled == null) {
+            sslEnabled = request.getHeader("Front-End-Https");
+        }
+        if (sslEnabled != null) {
+            if (sslEnabled.equalsIgnoreCase("on") || sslEnabled.equalsIgnoreCase("yes") || sslEnabled.equalsIgnoreCase("1")) {
+                return "https";
+            }
+        }
+        return request.getScheme();
     }
     
     /**
