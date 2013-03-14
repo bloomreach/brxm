@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
@@ -38,7 +40,7 @@ public class SchedulePublishDialog extends AbstractWorkflowDialog {
     private static final long serialVersionUID = 1L;
 
     public SchedulePublishDialog(IWorkflowInvoker action, JcrNodeModel nodeModel, IModel<Date> dateModel,
-            IEditorManager editorMgr) {
+            IEditorManager editorMgr) throws RepositoryException {
         super(nodeModel, action);
 
         UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(
