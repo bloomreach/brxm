@@ -20,6 +20,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
@@ -393,7 +395,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
         @Deprecated
         public class DateDialog extends WorkflowDialog {
 
-            public DateDialog(IModel question, final PropertyModel<Date> dateModel) {
+            public DateDialog(IModel question, final PropertyModel<Date> dateModel) throws RepositoryException {
                 super();
                 Calendar minimum = Calendar.getInstance();
                 minimum.setTime(dateModel.getObject());

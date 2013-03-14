@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugins.yui.datetime;
 
 import java.util.Date;
 
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -28,7 +30,7 @@ public class DateFieldWidget extends Panel {
 
     private static final long serialVersionUID = 1L;
 
-    public DateFieldWidget(String id, IModel<Date> model, IPluginContext context, IPluginConfig config) {
+    public DateFieldWidget(String id, IModel<Date> model, IPluginContext context, IPluginConfig config) throws RepositoryException {
         super(id, model);
         YuiDatePickerSettings settings = new YuiDatePickerSettings();
         if (config.containsKey("datepicker")) {
