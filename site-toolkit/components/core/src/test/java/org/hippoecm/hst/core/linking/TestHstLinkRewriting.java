@@ -582,13 +582,19 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
     public void testHashCodeLink() throws Exception{
         // @see: https://issues.onehippo.com/browse/HSTTWO-2167
 
+        // hash only link:
         String url = "/#";
         HstRequestContext requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/");
         HstLink link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
         String result = link.toUrlForm(requestContext, false);
         assertEquals("/site"+ url, result);
 
-        // hash only link:
+        url = "/home#";
+        requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/");
+        link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
+        result = link.toUrlForm(requestContext, false);
+        assertEquals("/site"+ url, result);
+
         url = "/home#chapter1";
         requestContext = getRequestContextWithResolvedSiteMapItemAndContainerURL("localhost", "/home");
         link = linkCreator.create(url, requestContext.getResolvedMount().getMount());
