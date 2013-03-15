@@ -128,6 +128,7 @@ api/src/main/java/org/hippoecm/hst/core/component/HstURL.java svneol=native#text
 api/src/main/java/org/hippoecm/hst/core/component/HstURLFactory.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/component/WrapperElement.java -text
 api/src/main/java/org/hippoecm/hst/core/component/package-info.java svneol=native#text/plain
+api/src/main/java/org/hippoecm/hst/core/container/AsynchronousComponentWindowRenderer.java -text
 api/src/main/java/org/hippoecm/hst/core/container/ComponentManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ComponentManagerAware.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ComponentsException.java -text
@@ -511,6 +512,7 @@ components/core/src/main/java/org/hippoecm/hst/core/container/AbstractBaseOrdera
 components/core/src/main/java/org/hippoecm/hst/core/container/AbstractValve.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/ActionValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/AggregationValve.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/AjaxAsynchronousComponentWindowRenderer.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/BaseCmsRestValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/CleanupValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/CmsHostRestRequestContextValve.java -text

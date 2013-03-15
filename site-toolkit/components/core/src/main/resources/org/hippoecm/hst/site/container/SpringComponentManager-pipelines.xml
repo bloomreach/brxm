@@ -138,6 +138,8 @@
 
   <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
     <property name="valveName" value="aggregationValve" />
+    <property name="asynchronousComponentWindowRendererMap" ref="asynchronousComponentWindowRendererMap" />
+    <property name="defaultAsynchronousComponentWindowRenderingMode" value="${default.asynchronous.component.window.rendering.mode}" />
   </bean>
   
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">

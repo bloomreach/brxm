@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
@@ -34,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -56,6 +53,20 @@ import org.w3c.dom.Element;
  * AggregationValve
  */
 public class AggregationValve extends AbstractBaseOrderableValve {
+
+    /** Flag request attribute name to indicate asynchronous component window rendering in an ancestor window already. */
+    private static final String ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME = AggregationValve.class.getName() + ".asyncByAncestor";
+
+    private Map<String, AsynchronousComponentWindowRenderer> asynchronousComponentWindowRendererMap;
+    private String defaultAsynchronousComponentWindowRenderingMode = "ajax";
+
+    public void setAsynchronousComponentWindowRendererMap(Map<String, AsynchronousComponentWindowRenderer> asynchronousComponentWindowRendererMap) {
+        this.asynchronousComponentWindowRendererMap = asynchronousComponentWindowRendererMap;
+    }
+
+    public void setDefaultAsynchronousComponentWindowRenderingMode(String defaultAsynchronousComponentWindowRenderingMode) {
+        this.defaultAsynchronousComponentWindowRenderingMode = StringUtils.defaultIfEmpty(defaultAsynchronousComponentWindowRenderingMode, "ajax");
+    }
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
@@ -332,31 +343,21 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
             if (window.isVisible()) {
                 if (isAsync(window, request)) {
-                    if (request.getAttribute(AggregationValve.class.getName() + ".asyncByAncestor") == Boolean.TRUE) {
+                    if (request.getAttribute(ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME) == Boolean.TRUE) {
                         // we are done with this component because one of its ancestors is loaded async
                         continue;
                     }
-                    HstURL url = response.createComponentRenderingURL();
-                    Element hiddenDiv = response.createElement("div");
-                    hiddenDiv.setAttribute("id", url.toString());
-                    hiddenDiv.setAttribute("class", OBFUSCATED_ASYNC_VAR);
-                    hiddenDiv.setAttribute("style", "display:none;");
-                    response.addPreamble(hiddenDiv);
 
-                    if (!response.containsHeadElement(AggregationValve.class.getName() + ".async")) {
-                        Element headScript = response.createElement("script");
-                        headScript.setAttribute("type","text/javascript");
+                    AsynchronousComponentWindowRenderer asynchronousComponentWindowRenderer = null;
 
-                        headScript.setTextContent(getIOScript());
-                       
-                        response.addHeadElement(headScript, AggregationValve.class.getName() + ".async");
+                    if (asynchronousComponentWindowRendererMap != null) {
+                        asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(defaultAsynchronousComponentWindowRenderingMode);
+                    }
 
-                        Element endBodyScript = response.createElement("script");
-                        endBodyScript.setAttribute(ContainerConstants.HEAD_ELEMENT_CONTRIBUTION_CATEGORY_HINT_ATTRIBUTE, "scripts");
-                        endBodyScript.setAttribute("type","text/javascript");
-                        endBodyScript.setTextContent(OBFUSCATED_HIPPO_HST_VAR + ".AsyncPage.load();");
-                        response.addHeadElement(endBodyScript, "asyncLoad");
-
+                    if (asynchronousComponentWindowRenderer != null) {
+                        asynchronousComponentWindowRenderer.processWindowBeforeRender(window, request, response);
+                    } else {
+                        log.error("Asynchronous component window rendering skipped! No asynchronousComponentWindowRenderer found for mode, '{}'.", defaultAsynchronousComponentWindowRenderingMode);
                     }
                 } else {
                     getComponentInvoker().invokeBeforeRender(requestContainerConfig, request, response);
@@ -443,7 +444,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
     /**
      * returns <code>true</code> when the component window is marked as async. When the component is async
-     * due to a ancestor is async, we also set <code>AggregationValve.class.getName() + ".asyncByAncestor"</code> is <code>true</code> on
+     * due to a ancestor is async, we also set <code>{@link #ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME}</code> is <code>true</code> on
      * the HstRequest to indicate async due to ancestor
      * @param window
      * @param request
@@ -461,7 +462,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         HstComponentWindow parent = window.getParentWindow();
         while (parent != null) {
             if (parent.getComponentInfo().isAsync()) {
-                request.setAttribute(AggregationValve.class.getName() + ".asyncByAncestor", Boolean.TRUE);
+                request.setAttribute(ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME, Boolean.TRUE);
                 return true;
             }
             parent = parent.getParentWindow();
@@ -604,54 +605,5 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         @Override public void setContentType(String type) {}
         @Override public void setLocale(Locale loc) {}
     }
-
-    /**
-     * Some utility methods to get obfuscated inline javascript for loading async pages
-     */
-    private static final char RANDOM_CHAR1 = (char)('a' + new Random().nextInt(10));
-    private static final char RANDOM_CHAR2 =  (char) (RANDOM_CHAR1 + 1);
-    private static final char RANDOM_CHAR3 =  (char) (RANDOM_CHAR1 + 2);
-    private static final String OBFUSCATED_ASYNC_VAR = String.valueOf(RANDOM_CHAR3) + AggregationValve.class.hashCode() + "Async";
-    private static final String OBFUSCATED_HIPPO_VAR = String.valueOf(RANDOM_CHAR1) + AggregationValve.class.hashCode();
-    private static final String OBFUSCATED_HIPPO_HST_VAR = OBFUSCATED_HIPPO_VAR + "." + String.valueOf(RANDOM_CHAR2) + AggregationValve.class.hashCode();
-
-    private static String obfuscateNamespacedFunctions(final String ioScriptTemplate) {
-        log.debug("creating obfuscated io-script with RANDOM CHAR", OBFUSCATED_HIPPO_HST_VAR);
-        String obfuscated = ioScriptTemplate.replaceAll("Hippo.Hst", OBFUSCATED_HIPPO_HST_VAR);
-        obfuscated = obfuscated.replaceAll("Hippo", OBFUSCATED_HIPPO_VAR);
-        obfuscated = obfuscated.replaceAll("_async", OBFUSCATED_ASYNC_VAR);
-        return obfuscated;
-    }
-
-    // no need to be volatile : worst case it is created twice
-    private static String obfuscatedScript = null;
-    
-    private static String getIOScript() {
-        if (obfuscatedScript != null) {
-            return obfuscatedScript;
-        }
-        final String ioScriptTemplate = loadScript();
-        obfuscatedScript =  obfuscateNamespacedFunctions(ioScriptTemplate);
-        return obfuscatedScript; 
-    }
-
-    private static String loadScript() {
-        InputStream input = null;
-        try {
-            input = AggregationValve.class.getResourceAsStream("simple-io-template.js");
-            if (input == null) {
-                log.warn("Could not load simple-io-template.js");
-                return "";
-            }
-            String ioScriptTemplate = IOUtils.toString(input, "UTF-8");
-            return ioScriptTemplate;
-        } catch (IOException e) {
-            log.warn("Could not load simple-io-template.js");
-        } finally {
-            IOUtils.closeQuietly(input);
-        }
-        return "";
-    }
-
 
 }

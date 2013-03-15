@@ -39,5 +39,18 @@
     </aop:aspect>
   </aop:config>
 
+  <!-- AJAX based asynchronous component window renderer -->
+  <bean id="ajaxAsynchronousComponentWindowRenderer" class="org.hippoecm.hst.core.container.AjaxAsynchronousComponentWindowRenderer">
+  </bean>
+
+  <!-- Asynchronous component window renderers map used by AggregationValve -->
+  <bean id="asynchronousComponentWindowRendererMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+    <property name="sourceMap">
+      <map>
+        <entry key="ajax" value-ref="ajaxAsynchronousComponentWindowRenderer" />
+      </map>
+    </property>
+  </bean>
+
 </beans>
 
