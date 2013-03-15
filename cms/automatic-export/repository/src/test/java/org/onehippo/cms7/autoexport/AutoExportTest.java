@@ -135,11 +135,6 @@ public class AutoExportTest extends RepositoryTestCase {
 
     }
 
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-        RepositoryTestCase.tearDownClass(true);
-    }
-
     @Test
     public void testAddNode() throws Exception {
         String[] content = { "/et:simple", "et:node" };
