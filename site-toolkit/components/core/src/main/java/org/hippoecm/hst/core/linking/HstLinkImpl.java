@@ -350,21 +350,27 @@ public class HstLinkImpl implements HstLink {
             // for the mount
             if (schemeCannotBeDifferent()) {
                 if (mount.isSchemeAgnostic()) {
-                    return SCHEME_AGNOSTIC;
+                    scheme =  SCHEME_AGNOSTIC;
+                    return scheme;
                 }
-                return mount.getScheme();
+                scheme =  mount.getScheme();
+                return scheme;
             }
             final ResolvedSiteMapItem resolvedSiteMapItem = resolveSiteMapItem();
             if (resolvedSiteMapItem != null) {
                 if (resolvedSiteMapItem.getHstSiteMapItem().isSchemeAgnostic()) {
-                    return SCHEME_AGNOSTIC;
+                    scheme =  SCHEME_AGNOSTIC;
+                    return scheme;
                 }
-                return resolvedSiteMapItem.getHstSiteMapItem().getScheme();
+                scheme =  resolvedSiteMapItem.getHstSiteMapItem().getScheme();
+                return scheme;
             }
             if (mount.isSchemeAgnostic()) {
-                return SCHEME_AGNOSTIC;
+                scheme =  SCHEME_AGNOSTIC;
+                return scheme;
             }
-            return mount.getScheme();
+            scheme =  mount.getScheme();
+            return scheme;
         }
 
         private boolean schemeCannotBeDifferent() {
