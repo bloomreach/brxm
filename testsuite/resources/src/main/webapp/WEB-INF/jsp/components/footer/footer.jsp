@@ -31,6 +31,8 @@
     <span id="<hst:namespace/>datetime"><hst:include ref="datetime"/></span>
     &nbsp;
     <a href="javascript:<hst:namespace/>refreshTime();">Refresh Time</a>
+    &nbsp;
+    <a href="<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/aresourcepage.jsp'/>/">A Resource URL</a>
   </p>
 </div>
 
