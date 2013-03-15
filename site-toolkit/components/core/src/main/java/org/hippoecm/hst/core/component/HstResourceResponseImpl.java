@@ -22,22 +22,31 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.HstComponentWindow;
+import org.hippoecm.hst.core.container.HstContainerURL;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Element;
 
 /**
- * Factory implementation for creating HTTP Response Wrappers for resource response
- * @version $Id$
+ * HTTP Response Wrappers for resource response
  */
 public class HstResourceResponseImpl extends HttpServletResponseWrapper implements HstResponse
 {
-    
+
+    protected HstRequestContext requestContext;
     protected HstComponentWindow componentWindow;
     protected String serveResourcePath;
 
+    @Deprecated
     public HstResourceResponseImpl(HttpServletResponse response, HstComponentWindow componentWindow) {
+        this(response, RequestContextProvider.get(), componentWindow);
+    }
+
+    public HstResourceResponseImpl(HttpServletResponse response, HstRequestContext requestContext, HstComponentWindow componentWindow) {
         super(response);
+        this.requestContext = requestContext;
         this.componentWindow = componentWindow;
     }
 
@@ -54,28 +63,29 @@ public class HstResourceResponseImpl extends HttpServletResponseWrapper implemen
     }
 
     public HstURL createRenderURL() {
-        throw new UnsupportedOperationException("Resource response is not allowed to invoke createRenderURL().");
+        return requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, componentWindow.getReferenceNamespace(), null, requestContext);
     }
     
     public HstURL createNavigationalURL(String pathInfo) {
-        throw new UnsupportedOperationException("Resource response is not allowed to invoke createRenderURL().");
+        HstContainerURL navURL = requestContext.getContainerURLProvider().createURL(requestContext.getBaseURL(), pathInfo);
+        return requestContext.getURLFactory().createURL(HstURL.RENDER_TYPE, null, navURL, requestContext);
     }
 
     public HstURL createActionURL() {
-        throw new UnsupportedOperationException("Resource response is not allowed to invoke createActionURL().");
+        return requestContext.getURLFactory().createURL(HstURL.ACTION_TYPE, componentWindow.getReferenceNamespace(), null, requestContext);
     }
 
     public HstURL createResourceURL() {
-        throw new UnsupportedOperationException("Resource response is not allowed to invoke createResourceURL().");
+        return createResourceURL(componentWindow.getReferenceNamespace());
     }
 
     public HstURL createResourceURL(String referenceNamespace) {
-        throw new UnsupportedOperationException("Resource response is not allowed to invoke createResourceURL().");
+        return requestContext.getURLFactory().createURL(HstURL.RESOURCE_TYPE, referenceNamespace, null, requestContext);
     }
 
     @Override
     public HstURL createComponentRenderingURL() {
-        throw new UnsupportedOperationException("Resource response is not allowed to invoke createActionURL().");
+        return requestContext.getURLFactory().createURL(HstURL.COMPONENT_RENDERING_TYPE, componentWindow.getReferenceNamespace(), null, requestContext);
     }
 
     public String getNamespace() {

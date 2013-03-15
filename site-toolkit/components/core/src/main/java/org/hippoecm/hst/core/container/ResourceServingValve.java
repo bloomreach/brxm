@@ -55,7 +55,7 @@ public class ResourceServingValve extends AbstractBaseOrderableValve {
             }
 
             HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RESOURCE_PHASE);
-            HstResponse response = new HstResourceResponseImpl(servletResponse, window);
+            HstResponse response = new HstResourceResponseImpl(servletResponse, requestContext, window);
 
             HstComponentInvoker invoker = getComponentInvoker();
 
