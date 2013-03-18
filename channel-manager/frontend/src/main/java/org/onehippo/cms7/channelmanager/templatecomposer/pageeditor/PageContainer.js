@@ -72,7 +72,7 @@
             this.ping = window.setInterval(function() {
                 if (this.sessionCookie && this._hasFocus() && Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.isValidSession(this.sessionCookie)) {
                     Ext.Ajax.request({
-                        url: this.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/',
+                        url: this.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true',
                         failure: function() {
                             delete this.sessionCookie;
 
