@@ -198,7 +198,7 @@ public class HstSitePipeline implements Pipeline
             for (Valve valve : processingValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
-                    orderer.add(ov, ov.getValveName(), ov.getAfterValves(), ov.getBeforeValves());
+                    orderer.add(ov, StringUtils.defaultIfEmpty(ov.getValveName(), valve.toString()), ov.getAfterValves(), ov.getBeforeValves());
                 } else {
                     orderer.add(valve, valve.toString(), null, null);
                 }
