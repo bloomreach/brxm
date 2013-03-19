@@ -156,48 +156,6 @@ public class TestHstSitePipeline {
 
     }
 
-
-    /**
-     * Test below should work different as the test below moves the
-     * actionValve and resourceServingValve behind the aggregationValve.
-     * I think the pipeline.mergeProcessingValves(); in this case should throw a irrecoverable exception : ObjectOrdererRuntimeException?
-     */
-    @Test
-    public void testIncorrectValveOrdering() throws Exception {
-        HstSitePipeline pipeline = new HstSitePipeline();
-
-        pipeline.setInitializationValves(new Valve[] { initializationValve });
-        pipeline.setProcessingValves(new Valve [] { localizationValve, securityValve, contextResolvingValve, actionValve, resourceServingValve, aggregationValve });
-        pipeline.setCleanupValves(new Valve[] { cleanupValve });
-
-        cmsSecurityValve.setAfterValves(toCamelCaseString(InitializationValve.class.getSimpleName()));
-        pipeline.addInitializationValve(cmsSecurityValve);
-
-        pageCachingValve.setBeforeValves(toCamelCaseString(ActionValve.class.getSimpleName() + "," + toCamelCaseString(ResourceServingValve.class.getSimpleName())));
-        pageCachingValve.setAfterValves(toCamelCaseString(AggregationValve.class.getSimpleName()));
-        pipeline.addProcessingValve(pageCachingValve);
-
-        diagnosticReportingValve.setAfterValves(toCamelCaseString(CleanupValve.class.getSimpleName()));
-        pipeline.addCleanupValve(diagnosticReportingValve);
-
-        Valve [] mergedProcessingValves = pipeline.mergeProcessingValves();
-        log.info("merged processing valves: \n\t{}", StringUtils.join(mergedProcessingValves, "\n\t"));
-
-        // TODO the order below should not be achieved.  pipeline.mergeProcessingValves() should throw a ObjectOrdererRuntimeException?
-        assertArrayEquals(new Valve [] {
-                initializationValve,
-                cmsSecurityValve,
-                localizationValve,
-                securityValve,
-                contextResolvingValve,
-                aggregationValve,
-                pageCachingValve,
-                actionValve,
-                resourceServingValve
-        }, mergedProcessingValves);
-
-    }
-
     @Test
     public void testIncorrectCircularValveOrdering() throws Exception {
         HstSitePipeline pipeline = new HstSitePipeline();
