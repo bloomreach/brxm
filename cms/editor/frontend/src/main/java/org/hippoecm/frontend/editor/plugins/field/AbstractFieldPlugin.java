@@ -26,10 +26,13 @@ import javax.jcr.Node;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
@@ -102,17 +105,18 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     private boolean restartTemplates = true;
 
     // view and edit modes
-    protected AbstractProvider<P,C> provider;
+    protected AbstractProvider<P, C> provider;
     private FieldPluginHelper helper;
     private TemplateController<P, C> templateController;
     private boolean managedValidation = false;
     private Map<Object, ValidationFilter> listeners = new HashMap<Object, ValidationFilter>();
+    private ValidationFilter filter;
 
     // compare mode
     private IModel<Node> compareTo;
-    protected AbstractProvider<P,C> oldProvider;
-    protected AbstractProvider<P,C> newProvider;
-    private ComparingController<P,C> comparingController;
+    protected AbstractProvider<P, C> oldProvider;
+    protected AbstractProvider<P, C> newProvider;
+    private ComparingController<P, C> comparingController;
 
     // each validator service id for a started clusters must be unique
     int validatorCount = 0;
@@ -121,7 +125,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         super(context, config);
 
         this.parameters = new JavaPluginConfig(config.getPluginConfig(CLUSTER_OPTIONS));
-        this.maxItems =  config.getInt(MAX_ITEMS, DEFAULT_MAX_ITEMS);
+        this.maxItems = config.getInt(MAX_ITEMS, DEFAULT_MAX_ITEMS);
 
         helper = new FieldPluginHelper(context, config);
         if (helper.getValidationModel() != null && helper.getValidationModel() instanceof IObservable) {
@@ -163,7 +167,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
 
         if (IEditor.Mode.COMPARE == mode) {
-            comparingController = new ComparingController<P,C>(context, config, this, getComparer(), getItemId());
+            comparingController = new ComparingController<P, C>(context, config, this, getComparer(), getItemId());
 
             if (helper.getField().isMultiple()) {
                 // always use managed compare for multi-valued properties
@@ -182,16 +186,12 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
             IFieldDescriptor field = helper.getField();
             if (field != null && !doesTemplateSupportValidation()) {
-                final ValidationFilter filter = new ValidationFilter() {
+                filter = new ValidationFilter() {
                     private static final long serialVersionUID = 1L;
 
                     @Override
                     public void onValidation(IValidationResult validation) {
-                        boolean valid = isFieldValid(validation);
-                        if (valid != isValid()) {
-                            redraw();
-                            setValid(valid);
-                        }
+                        // nothing; is updated on render
                     }
 
                 };
@@ -199,7 +199,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                     IValidationResult validationResult = validationModel.getObject();
                     filter.setValid(isFieldValid(validationResult));
                 }
-                addValidationFilter(this, filter);
 
                 managedValidation = true;
                 if (!field.isMultiple()) {
@@ -209,6 +208,23 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         }
     }
 
+    @Override
+    public void render(final PluginRequestTarget target) {
+        if (isActive()) {
+            if (IEditor.Mode.EDIT == mode && filter != null) {
+                IModel<IValidationResult> validationModel = helper.getValidationModel();
+                if (validationModel != null && validationModel.getObject() != null) {
+                    boolean valid = isFieldValid(validationModel.getObject());
+                    if (valid != filter.isValid()) {
+                        filter.setValid(valid);
+                        target.appendJavascript("Wicket.$('" + getMarkupId() + "').setAttribute('class', '" + filter.getObject() + "');");
+                    }
+                }
+            }
+        }
+        super.render(target);
+    }
+
     /**
      * Checks if a field has any violations attached to it.
      *
@@ -216,7 +232,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
      * @return true if there are no violations present or non of the validation belong to the current field
      */
     private boolean isFieldValid(final IValidationResult validation) {
-        if(!validation.isValid()) {
+        if (!validation.isValid()) {
             IFieldDescriptor field = getFieldHelper().getField();
             for (Violation violation : validation.getViolations()) {
                 Set<ModelPath> paths = violation.getDependentPaths();
@@ -230,7 +246,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
                 }
             }
         }
-        return true;
+        IFeedbackMessageFilter filter = new ContainerFeedbackMessageFilter(this);
+        return !getSession().getFeedbackMessages().hasMessage(filter);
     }
 
     protected IComparer<?> getComparer() {
@@ -337,8 +354,8 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
     }
 
     /**
-     * Factory method for provider of models that will be used to instantiate templates.
-     * This method may be called from the base class constructor.
+     * Factory method for provider of models that will be used to instantiate templates. This method may be called from
+     * the base class constructor.
      *
      * @param descriptor
      * @param type
@@ -346,7 +363,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
      * @return
      */
     protected abstract AbstractProvider<P, C> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-            IModel<Node> parentModel);
+                                                          IModel<Node> parentModel);
 
     protected boolean canAddItem() {
         IFieldDescriptor field = getFieldHelper().getField();
@@ -354,7 +371,7 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
             if (field.isMultiple()) {
                 if (getMaxItems() > 0) {
                     return getNumberOfItems() < getMaxItems();
-            }
+                }
                 return true;
             }
 
@@ -408,48 +425,48 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     @Override
     protected final void onAddRenderService(final org.apache.wicket.markup.repeater.Item<IRenderService> item,
-            IRenderService renderer) {
+                                            IRenderService renderer) {
         super.onAddRenderService(item, renderer);
 
         switch (mode) {
-        case EDIT:
-            final FieldItem itemRenderer = templateController.getFieldItem(renderer);
-            if (managedValidation && getFieldHelper().getField().isMultiple()) {
-                item.setOutputMarkupId(true);
-                ValidationFilter listener = new ValidationFilter() {
-                    private static final long serialVersionUID = 1L;
+            case EDIT:
+                final FieldItem itemRenderer = templateController.getFieldItem(renderer);
+                if (managedValidation && getFieldHelper().getField().isMultiple()) {
+                    item.setOutputMarkupId(true);
+                    ValidationFilter listener = new ValidationFilter() {
+                        private static final long serialVersionUID = 1L;
 
-                    @Override
-                    public void onValidation(IValidationResult result) {
-                        boolean valid = itemRenderer.isValid();
-                        if (valid != this.isValid()) {
-                            AjaxRequestTarget target = AjaxRequestTarget.get();
-                            if (target != null) {
-                                target.addComponent(item);
+                        @Override
+                        public void onValidation(IValidationResult result) {
+                            boolean valid = itemRenderer.isValid();
+                            if (valid != this.isValid()) {
+                                AjaxRequestTarget target = AjaxRequestTarget.get();
+                                if (target != null) {
+                                    target.addComponent(item);
+                                }
+                                setValid(valid);
                             }
-                            setValid(valid);
                         }
-                    }
-                };
-                listener.setValid(itemRenderer.isValid());
-                addValidationFilter(item, listener);
-                item.add(new CssClassAppender(listener));
-            }
-            C model = (C) itemRenderer.getModel();
-            populateEditItem(item, model);
-            break;
-        case COMPARE:
-            populateCompareItem(item);
-            break;
-        case VIEW:
-            populateViewItem(item);
-            break;
+                    };
+                    listener.setValid(itemRenderer.isValid());
+                    addValidationFilter(item, listener);
+                    item.add(new CssClassAppender(listener));
+                }
+                C model = (C) itemRenderer.getModel();
+                populateEditItem(item, model);
+                break;
+            case COMPARE:
+                populateCompareItem(item);
+                break;
+            case VIEW:
+                populateViewItem(item);
+                break;
         }
     }
 
     @Override
     protected final void onRemoveRenderService(org.apache.wicket.markup.repeater.Item<IRenderService> item,
-            IRenderService renderer) {
+                                               IRenderService renderer) {
         removeValidationFilter(item);
         super.onRemoveRenderService(item, renderer);
     }

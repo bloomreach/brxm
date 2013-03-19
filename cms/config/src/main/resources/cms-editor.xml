@@ -32,6 +32,9 @@
   <sv:property sv:name="validator.id" sv:type="String">
     <sv:value>${cluster.id}.validator</sv:value>
   </sv:property>
+  <sv:property sv:name="service.form" sv:type="String">
+    <sv:value>${cluster.id}.form</sv:value>
+  </sv:property>
   <sv:node sv:name="editPerspective">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -70,17 +73,6 @@
       </sv:property>
     </sv:node>
   </sv:node>
-  <sv:node sv:name="validatorPlugin">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.editor.validator.ValidationPlugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.feedback" sv:type="String">
-      <sv:value>${cluster.id}.feedback</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="editorPlugin">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
@@ -90,6 +82,9 @@
     </sv:property>
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>${cluster.id}.editor</sv:value>
+    </sv:property>
+    <sv:property sv:name="wicket.feedback" sv:type="String">
+      <sv:value>${cluster.id}.feedback</sv:value>
     </sv:property>
     <sv:node sv:name="cluster.options">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">

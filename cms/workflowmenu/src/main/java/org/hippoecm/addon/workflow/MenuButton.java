@@ -22,6 +22,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.StringResourceModel;
@@ -39,8 +40,8 @@ class MenuButton extends Panel implements IContextMenu {
         this(id, name, menu, null);
     }
 
-    public MenuButton(final String item, final String key, final MenuDescription menuDescription) {
-        this(item, key, new MenuHierarchy(), menuDescription);
+    public MenuButton(final String item, final String key, final MenuDescription menuDescription, Form form) {
+        this(item, key, new MenuHierarchy(form), menuDescription);
     }
 
     MenuButton(String id, String name, final MenuHierarchy menu, final MenuDescription description) {

@@ -21,7 +21,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
@@ -103,16 +102,26 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
         }, context.getReference(editor).getServiceId());
 
         add(new WorkflowAction("save", new StringResourceModel("save", this, null)) {
+
+            @Override
+            public boolean isFormSubmitted() {
+                return true;
+            }
+
             @Override
             protected String execute(Workflow workflow) throws Exception {
-                validate();
                 return null;
             }
         });
         add(new WorkflowAction("done", new StringResourceModel("done", this, null)) {
+
+            @Override
+            public boolean isFormSubmitted() {
+                return true;
+            }
+
             @Override
             protected String execute(Workflow workflow) throws Exception {
-                validate();
                 if (isValid()) {
                     IEditor editor = context.getService(config.getString("editor.id"), IEditor.class);
                     editor.setMode(IEditor.Mode.VIEW);
@@ -215,8 +224,8 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
         }
 
         public IModel getTitle() {
-            return new StringResourceModel("close-document", this, null, new Object[] { new PropertyModel(
-                    TemplateEditingWorkflowPlugin.this, "model.node.name") }, "Close {0}");
+            return new StringResourceModel("close-document", this, null, new Object[]{new PropertyModel(
+                    TemplateEditingWorkflowPlugin.this, "model.node.name")}, "Close {0}");
         }
 
     }

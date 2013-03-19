@@ -48,6 +48,8 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
         }
     }
 
+    Map<String, ActionDisplay> actions = new HashMap<String, ActionDisplay>();
+
     public ActionDescription(String id) {
         super(id);
     }
@@ -65,8 +67,6 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
         }
     }
 
-    Map<String, ActionDisplay> actions = new HashMap<String, ActionDisplay>();
-
     public final MarkupContainer add(final ActionDisplay component) {
         actions.put(component.getId(), component);
         return null;
@@ -78,6 +78,10 @@ public abstract class ActionDescription extends Panel implements IWorkflowInvoke
         } else {
             return super.get(id);
         }
+    }
+
+    public boolean isFormSubmitted() {
+        return false;
     }
 
     public void run() {

@@ -15,6 +15,12 @@
  */
 package org.hippoecm.frontend.editor.validator;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.type.JcrTypeLocator;
@@ -33,11 +39,6 @@ import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A validation engine that registers itself as an {@link org.hippoecm.frontend.validation.IValidationService}.  All supported
@@ -119,6 +120,7 @@ public class JcrValidationService implements IValidationService, IDetachable {
                 validator = new JcrTypeValidator(descriptor, validatorService);
             }
             result.setViolations(validator.validate(model));
+
             List<IValidationListener> listeners = context.getServices(config.getString(IValidationService.VALIDATE_ID),
                     IValidationListener.class);
             for (IValidationListener listener : new ArrayList<IValidationListener>(listeners)) {

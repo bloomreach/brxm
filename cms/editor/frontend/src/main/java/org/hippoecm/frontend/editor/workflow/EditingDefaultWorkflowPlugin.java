@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.editor.workflow;
 
-import java.util.List;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -32,9 +30,6 @@ import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorFilter;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.IValidationService;
-import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.repository.api.Workflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +40,6 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
 
     private static Logger log = LoggerFactory.getLogger(EditingDefaultWorkflowPlugin.class);
 
-    private boolean isValid = true;
-    
     public EditingDefaultWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -69,12 +62,14 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
 
         add(new StdWorkflow("save", new StringResourceModel("save", this, null, "Save"),
                 new ResourceReference(EditingDefaultWorkflowPlugin.class, "document-save-16.png"), getModel()) {
+
+            @Override
+            public boolean isFormSubmitted() {
+                return true;
+            }
+
             @Override
             protected String execute(Workflow wf) throws Exception {
-                validate();
-                if (!isValid()) {
-                    return null;
-                }
                 getModel().getNode().save();
                 return null;
             }
@@ -84,11 +79,12 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
                 new ResourceReference(getClass(), "document-saveclose-16.png"), getModel()) {
 
             @Override
+            public boolean isFormSubmitted() {
+                return true;
+            }
+
+            @Override
             protected String execute(Workflow wf) throws Exception {
-                validate();
-                if (!isValid()) {
-                    return null;
-                }
                 Node docNode = ((WorkflowDescriptorModel) EditingDefaultWorkflowPlugin.this.getDefaultModel())
                         .getNode();
                 IEditorManager editorMgr = getPluginContext().getService(
@@ -113,20 +109,4 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
         return (WorkflowDescriptorModel) getDefaultModel();
     }
 
-    void validate() throws ValidationException {
-        isValid = true;
-        List<IValidationService> validators = getPluginContext().getServices(
-                getPluginConfig().getString(IValidationService.VALIDATE_ID), IValidationService.class);
-        if (validators != null) {
-            for (IValidationService validator : validators) {
-                validator.validate();
-                IValidationResult result = validator.getValidationResult();
-                isValid = isValid && result.isValid();
-            }
-        }
-    }
-
-    boolean isValid() {
-        return isValid;
-    }
 }

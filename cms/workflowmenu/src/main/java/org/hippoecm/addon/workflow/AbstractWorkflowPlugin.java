@@ -31,10 +31,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.hippoecm.frontend.FrontendNodeType;
+import org.hippoecm.frontend.editor.IFormService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -125,7 +127,9 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
     }
     
     MenuHierarchy buildMenu(Set<Node> nodeSet) {
-        final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories));
+        Form form = getForm();
+
+        final MenuHierarchy menu = new MenuHierarchy(Arrays.asList(categories), form);
         plugins.stopRenderers();
         IPluginContext context = getPluginContext();
         for (IObserver<JcrNodeModel> observer : new ArrayList<IObserver<JcrNodeModel>>(observers)) {
@@ -154,6 +158,17 @@ abstract class AbstractWorkflowPlugin extends RenderPlugin<Node> {
         view.setVisible(false);
 
         return menu;
+    }
+
+    private Form getForm() {
+        final String formServiceId = getPluginConfig().getString("service.form");
+        if (formServiceId != null) {
+            IFormService formService = getPluginContext().getService(formServiceId, IFormService.class);
+            if (formService != null) {
+                return formService.getForm();
+            }
+        }
+        return null;
     }
 
     private void buildCategory(final MenuHierarchy menu, final IPluginContext context, final List<Panel> list, final Node documentNode, final WorkflowManager workflowMgr, final String category) throws RepositoryException {

@@ -24,8 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.wicket.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.wicket.markup.html.form.Form;
 
 class MenuHierarchy implements Serializable {
 
@@ -34,17 +33,20 @@ class MenuHierarchy implements Serializable {
     private Map<String, MenuHierarchy> submenus = new LinkedHashMap<String, MenuHierarchy>();
     private List<ActionDescription> items = new LinkedList<ActionDescription>();
 
-    MenuHierarchy() {
-        this(Collections.<String>emptyList());
+    private final Form form;
+
+    MenuHierarchy(Form form) {
+        this(Collections.<String>emptyList(), form);
     }
 
-    MenuHierarchy(final List<String> categories) {
+    MenuHierarchy(final List<String> categories, Form form) {
         this.categories = categories;
+        this.form = form;
     }
 
     public void put(String category, ActionDescription action) {
         if (!submenus.containsKey(category)) {
-            submenus.put(category, new MenuHierarchy());
+            submenus.put(category, new MenuHierarchy(form));
         }
         submenus.get(category).put(action);
     }
@@ -136,7 +138,7 @@ class MenuHierarchy implements Serializable {
             }
         }
         for (Map.Entry<String, MenuHierarchy> entry : submenus.entrySet()) {
-            MenuHierarchy submenu = new MenuHierarchy();
+            MenuHierarchy submenu = new MenuHierarchy(form);
             for (ActionDescription action : entry.getValue().items) {
                 if (action.isVisible()) {
                     submenu.put(action);
@@ -166,7 +168,7 @@ class MenuHierarchy implements Serializable {
         if (context instanceof MenuBar) {
             for (ActionDescription item : items) {
                 if (!(item.getId().startsWith("info") || item.getId().equals("spacer"))) {
-                    MenuAction menuAction = new MenuAction("item", item);
+                    MenuAction menuAction = new MenuAction("item", item, form);
                     if (menuAction.isVisible()) {
                         list.add(menuAction);
                     }
@@ -196,7 +198,7 @@ class MenuHierarchy implements Serializable {
                     MenuHierarchy hierarchy = submenus.get(category);
                     list.add(new MenuButton("item", category, hierarchy, menus.get(category)));
                 } else if (menus.containsKey(category)) {
-                    list.add(new MenuButton("item", category, menus.get(category)));
+                    list.add(new MenuButton("item", category, menus.get(category), form));
                 } else if (submenus.containsKey(category)) {
                     list.add(new MenuButton("item", category, submenus.get(category)));
                 }
@@ -211,7 +213,7 @@ class MenuHierarchy implements Serializable {
             }
         } else {
             for (ActionDescription item : items) {
-                list.add(new MenuItem("item", item));
+                list.add(new MenuItem("item", item, form));
             }
         }
         return list;

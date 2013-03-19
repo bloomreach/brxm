@@ -71,12 +71,12 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
                 new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-save-16.png"), getModel()) {
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
-                validate();
-                if (!isValid()) {
-                    return null;
-                }
+            public boolean isFormSubmitted() {
+                return true;
+            }
 
+            @Override
+            protected String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
 
@@ -106,12 +106,12 @@ public class EditingReviewedActionsWorkflowPlugin extends RenderPlugin {
                 new ResourceReference(EditingReviewedActionsWorkflowPlugin.class, "document-saveclose-16.png"), getModel()) {
 
             @Override
-            public String execute(Workflow wf) throws Exception {
-                validate();
-                if (!isValid()) {
-                    return null;
-                }
+            public boolean isFormSubmitted() {
+                return true;
+            }
 
+            @Override
+            public String execute(Workflow wf) throws Exception {
                 BasicReviewedActionsWorkflow workflow = (BasicReviewedActionsWorkflow) wf;
                 workflow.commitEditableInstance();
                 UserSession.get().getJcrSession().refresh(true);

@@ -18,6 +18,7 @@ package org.hippoecm.addon.workflow;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.behavior.AttributeAppender;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -29,7 +30,7 @@ class MenuAction extends Panel implements IContextMenu {
 
     private MenuLink link;
     
-    public MenuAction(String id, final ActionDescription wf) {
+    public MenuAction(String id, final ActionDescription wf, final Form form) {
         super(id);
 
         add(link = new MenuLink("link") {
@@ -39,6 +40,15 @@ class MenuAction extends Panel implements IContextMenu {
             public void onClick() {
                 if (wf instanceof StdWorkflow) {
                     ((StdWorkflow)wf).invoke();
+                }
+            }
+
+            @Override
+            protected Form getForm() {
+                if (wf.isFormSubmitted()) {
+                    return form;
+                } else {
+                    return  null;
                 }
             }
 

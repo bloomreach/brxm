@@ -30,7 +30,6 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.AbstractProvider;
-import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.model.event.IEvent;

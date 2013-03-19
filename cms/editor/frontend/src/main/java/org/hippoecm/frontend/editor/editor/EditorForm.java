@@ -20,12 +20,17 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.wicket.Component;
+import org.apache.wicket.feedback.FeedbackMessage;
+import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
+import org.hippoecm.frontend.editor.validator.JcrValidationService;
+import org.hippoecm.frontend.editor.validator.ValidationFeedback;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -38,13 +43,12 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.types.ITypeDescriptor;
-import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorForm extends Form<Node> {
+public class EditorForm extends Form<Node> implements IFeedbackMessageFilter {
 
     private static final long serialVersionUID = 1L;
 
@@ -61,12 +65,26 @@ public class EditorForm extends Form<Node> {
     private ITemplateEngine engine;
     private String engineId;
 
+    private ValidationFeedback component;
+    private ValidationService validation;
+
     public EditorForm(String wicketId, JcrNodeModel model, final IRenderService parent, IPluginContext context,
             IPluginConfig config) {
         super(wicketId, model);
 
         this.context = context;
         this.config = config;
+
+        validation = new ValidationService(context, config);
+        final String editorId = config.getString("editor.id");
+        component = new ValidationFeedback(editorId, validation.getModel());
+        validation.start(component);
+
+        if (config.getString(RenderService.FEEDBACK) != null) {
+            context.registerService(this, config.getString(RenderService.FEEDBACK));
+        } else {
+            log.info("No feedback id {} defined", RenderService.FEEDBACK);
+        }
 
         add(new EmptyPanel("template"));
 
@@ -101,33 +119,37 @@ public class EditorForm extends Form<Node> {
     }
 
     public void destroy() {
-        context.unregisterService(engineFactory, ITemplateEngine.class.getName());
-        context.unregisterTracker(fieldTracker, engineId + ".wicket.root");
         if (cluster != null) {
             cluster.stop();
             modelService.destroy();
         }
+
+        context.unregisterTracker(fieldTracker, engineId + ".wicket.root");
+        context.unregisterService(engineFactory, ITemplateEngine.class.getName());
+        validation.stop();
+    }
+
+    public boolean accept(FeedbackMessage message) {
+        final Component reporter = message.getReporter();
+        if (reporter == null) {
+            return false;
+        }
+        return reporter.getId().equals(component.getId()) || reporter == this || this.contains(reporter, true);
     }
 
     @Override
-    protected void onSubmit() {
-        super.onSubmit();
+    protected void onValidate() {
+        super.onValidate();
 
         // do the validation
-        IValidationService validator = context.getService(config.getString(IValidationService.VALIDATE_ID),
-                IValidationService.class);
-        if (validator != null) {
-            try {
-                validator.validate();
-                IValidationResult result = validator.getValidationResult();
-                if (!result.isValid()) {
-                    log.debug("Invalid model {}", getModel());
-                }
-            } catch (ValidationException e) {
-                log.warn("Failed to validate " + getModel());
+        try {
+            validation.superValidate();
+            IValidationResult result = validation.getValidationResult();
+            if (!result.isValid()) {
+                log.debug("Invalid model {}", getModel());
             }
-        } else {
-            log.info("No validator configured");
+        } catch (ValidationException e) {
+            log.warn("Failed to validate " + getModel());
         }
     }
 
@@ -178,4 +200,19 @@ public class EditorForm extends Form<Node> {
         }
     }
 
+    private class ValidationService extends JcrValidationService {
+
+        public ValidationService(final IPluginContext context, final IPluginConfig config) {
+            super(context, config);
+        }
+
+        private void superValidate() throws ValidationException {
+            super.validate();
+        }
+
+        @Override
+        public void validate() throws ValidationException {
+            EditorForm.this.validate();
+        }
+    }
 }

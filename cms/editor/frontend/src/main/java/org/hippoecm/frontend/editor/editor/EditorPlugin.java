@@ -15,14 +15,16 @@
  */
 package org.hippoecm.frontend.editor.editor;
 
+import org.apache.wicket.markup.html.form.Form;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.editor.IFormService;
 import org.hippoecm.frontend.editor.resources.EditorResources;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
-public class EditorPlugin extends RenderPlugin {
+public class EditorPlugin extends RenderPlugin implements IFormService {
 
     private static final long serialVersionUID = 1L;
 
@@ -30,6 +32,11 @@ public class EditorPlugin extends RenderPlugin {
 
     public EditorPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
+        String formServiceId = config.getString("service.form");
+        if (formServiceId != null) {
+            context.registerService(this, formServiceId);
+        }
 
         add(EditorResources.getCss());
     }
@@ -58,6 +65,11 @@ public class EditorPlugin extends RenderPlugin {
 
     protected EditorForm newForm() {
         return new EditorForm("form", (JcrNodeModel) getDefaultModel(), this, getPluginContext(), getPluginConfig());
+    }
+
+    @Override
+    public Form getForm() {
+        return form;
     }
 
 }

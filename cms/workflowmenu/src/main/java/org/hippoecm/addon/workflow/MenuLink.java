@@ -19,7 +19,9 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxCallDecorator;
 import org.apache.wicket.ajax.calldecorator.CancelEventIfNoAjaxDecorator;
+import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.markup.ComponentTag;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.Link;
 import org.hippoecm.frontend.behaviors.EventStoppingBehavior;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
@@ -34,44 +36,90 @@ abstract class MenuLink extends Link {
         super(id);
 
         if(isEnabled()) {
-            add(new AjaxEventBehavior("onclick") {
-                private static final long serialVersionUID = 1L;
+            Form form = getForm();
+            if (form != null) {
+                add(new AjaxFormSubmitBehavior(form, "onclick") {
 
-                @Override
-                protected void onEvent(AjaxRequestTarget target) {
-                    IContextMenu parent = findParent(IContextMenu.class);
-                    if (parent != null) {
-                        parent.collapse(target);
-                    } else {
-                        IContextMenuManager manager = findParent(IContextMenuManager.class);
-                        if (manager != null) {
-                            manager.collapseAllContextMenus();
+                    @Override
+                    protected void onSubmit(final AjaxRequestTarget target) {
+                        IContextMenu parent = findParent(IContextMenu.class);
+                        if (parent != null) {
+                            parent.collapse(target);
+                        } else {
+                            IContextMenuManager manager = findParent(IContextMenuManager.class);
+                            if (manager != null) {
+                                manager.collapseAllContextMenus();
+                            }
+                        }
+                        onClick();
+                    }
+
+                    @Override
+                    protected void onError(final AjaxRequestTarget target) {
+                    }
+
+                    @Override
+                    protected IAjaxCallDecorator getAjaxCallDecorator() {
+                        return new CancelEventIfNoAjaxDecorator(MenuLink.this.getAjaxCallDecorator());
+                    }
+
+                    @Override
+                    protected CharSequence getPreconditionScript() {
+                        return "return true;";
+                    }
+
+                    @Override
+                    protected void onComponentTag(ComponentTag tag) {
+                        // add the onclick handler only if link is enabled
+                        if (isLinkEnabled()) {
+                            super.onComponentTag(tag);
                         }
                     }
-                    onClick();
-                }
+                });
+            } else {
+                add(new AjaxEventBehavior("onclick") {
+                    private static final long serialVersionUID = 1L;
 
-                @Override
-                protected IAjaxCallDecorator getAjaxCallDecorator() {
-                    return new CancelEventIfNoAjaxDecorator(MenuLink.this.getAjaxCallDecorator());
-                }
-
-                @Override
-                protected CharSequence getPreconditionScript() {
-                    return "return true;";
-                }
-
-                @Override
-                protected void onComponentTag(ComponentTag tag) {
-                    // add the onclick handler only if link is enabled
-                    if (isLinkEnabled()) {
-                        super.onComponentTag(tag);
+                    @Override
+                    protected void onEvent(AjaxRequestTarget target) {
+                        IContextMenu parent = findParent(IContextMenu.class);
+                        if (parent != null) {
+                            parent.collapse(target);
+                        } else {
+                            IContextMenuManager manager = findParent(IContextMenuManager.class);
+                            if (manager != null) {
+                                manager.collapseAllContextMenus();
+                            }
+                        }
+                        onClick();
                     }
-                }
-            });
+
+                    @Override
+                    protected IAjaxCallDecorator getAjaxCallDecorator() {
+                        return new CancelEventIfNoAjaxDecorator(MenuLink.this.getAjaxCallDecorator());
+                    }
+
+                    @Override
+                    protected CharSequence getPreconditionScript() {
+                        return "return true;";
+                    }
+
+                    @Override
+                    protected void onComponentTag(ComponentTag tag) {
+                        // add the onclick handler only if link is enabled
+                        if (isLinkEnabled()) {
+                            super.onComponentTag(tag);
+                        }
+                    }
+                });
+            }
         } else {
             add(new EventStoppingBehavior("onclick"));
         }
+    }
+
+    protected Form getForm() {
+        return null;
     }
 
     @Override

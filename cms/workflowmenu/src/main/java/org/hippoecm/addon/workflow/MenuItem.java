@@ -17,6 +17,7 @@ package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 
@@ -24,7 +25,7 @@ class MenuItem extends Panel {
 
     private static final long serialVersionUID = 1L;
 
-    public MenuItem(String id, final ActionDescription wf) {
+    public MenuItem(String id, final ActionDescription wf, final Form form) {
         super(id);
 
         MenuLink link = new MenuLink("link") {
@@ -33,6 +34,15 @@ class MenuItem extends Panel {
             @Override
             public boolean isEnabled() {
                 return wf.isEnabled();
+            }
+
+            @Override
+            protected Form getForm() {
+                if (wf.isFormSubmitted()) {
+                    return form;
+                } else {
+                    return  null;
+                }
             }
 
             @Override
@@ -61,4 +71,5 @@ class MenuItem extends Panel {
             link.add(fragment);
         }
     }
+
 }

@@ -20,11 +20,11 @@ import org.apache.wicket.markup.MarkupStream;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 
-final class ValidationFeedback extends Component implements IFeedbackLogger {
+public final class ValidationFeedback extends Component implements IFeedbackLogger {
 
     private static final long serialVersionUID = 1L;
 
-    ValidationFeedback(String id, IModel<?> model) {
+    public ValidationFeedback(String id, IModel<?> model) {
         super(id, model);
     }
 
