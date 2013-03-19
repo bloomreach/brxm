@@ -48,8 +48,22 @@ public class ObjectOrderer<T> {
 
     private Node<T> trailerNode;
 
+    /**
+     * Flag to simply suppresses all exceptions (but it will still log them).
+     * It set to true, it does not re-throw the exception.
+     */
+    private boolean ignoreExceptions;
+
     public ObjectOrderer(String objectOrderingName) {
         this.objectOrderingName = objectOrderingName;
+    }
+
+    public boolean isIgnoreExceptions() {
+        return ignoreExceptions;
+    }
+
+    public void setIgnoreExceptions(boolean ignoreExceptions) {
+        this.ignoreExceptions = ignoreExceptions;
     }
 
     /**
@@ -187,7 +201,15 @@ public class ObjectOrderer<T> {
             String name = node.getName();
             OrderableObjectHolder<T> trigger = getOrderableObjectHolder(name);
 
-            log.error("Error in dependency cycle. _objectType: '{}', orderable: {}, trigger object: {}",new String[]{objectOrderingName, orderable.toString(), trigger.getObject().toString()});
+            if (log.isDebugEnabled()) {
+                log.error("Error in dependency cycle. _objectType: '" + objectOrderingName + "', object: " + trigger.getObject(), ex);
+            } else {
+                log.error("Error in dependency cycle. _objectType: '" + objectOrderingName + "', object: {}. {}", trigger.getObject(), ex.toString());
+            }
+
+            if (!ignoreExceptions) {
+                throw ex;
+            }
         }
     }
 
@@ -207,14 +229,22 @@ public class ObjectOrderer<T> {
                 Node<T> prenode = getNode(prename);
     
                 if (prenode == null) {
-                    log.error("Bad dependency for '{}'. prename: {}, ordering: {}", new String[]{objectOrderingName, prename, ordering.toString()});
+                    log.error("Bad dependency for '{}'. prename: {}", objectOrderingName, prename);
                     continue;
                 }
     
                 try {
                     node.addDependency(prenode);
                 } catch (ObjectOrdererRuntimeException ex) {
-                    log.error("Error in dependency cycle. _objectType: '{}', ordering: {}, ordering object: {}", new String[]{objectOrderingName, ordering.toString(), ordering.getObject().toString()});
+                    if (log.isDebugEnabled()) {
+                        log.error("Error in dependency cycle. _objectType: '" + objectOrderingName + "', object: " + ordering.getObject(), ex);
+                    } else {
+                        log.error("Error in dependency cycle. _objectType: '" + objectOrderingName + "', object: {}. {}", ordering.getObject(), ex.toString());
+                    }
+
+                    if (!ignoreExceptions) {
+                        throw ex;
+                    }
                 }
             }
         }
@@ -235,12 +265,20 @@ public class ObjectOrderer<T> {
                 Node<T> postnode = getNode(postname);
     
                 if (postnode == null) {
-                    log.error("Bad dependency for '{}'. prename: {}, ordering: {}",new String[]{objectOrderingName, postname, ordering.toString()});
+                    log.error("Bad dependency for '{}'. postname: {}", objectOrderingName, postname);
                 } else {
                     try {
                         postnode.addDependency(node);
                     } catch (ObjectOrdererRuntimeException ex) {
-                        log.error("Error in dependency cycle. _objectType: '{}', ordering: {}, ordering object: {}", new String[]{objectOrderingName,ordering.toString(), ordering.getObject().toString()});
+                        if (log.isDebugEnabled()) {
+                            log.error("Error in dependency cycle. _objectType: '" + objectOrderingName + "', object: " + ordering.getObject(), ex);
+                        } else {
+                            log.error("Error in dependency cycle. _objectType: '" + objectOrderingName + "', object: {}. {}", ordering.getObject(), ex.toString());
+                        }
+
+                        if (!ignoreExceptions) {
+                            throw ex;
+                        }
                     }
                 }
             }

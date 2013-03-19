@@ -124,6 +124,7 @@ public class TestObjectOrderer {
                 + " A cycle has been detected from the initial object [wilma]");
 
         ObjectOrderer<String> o = new ObjectOrderer<String>("cartoon character");
+        o.setIgnoreExceptions(true);
 
         o.add("FRED", "fred", "wilma", null);
         o.add("BARNEY", "barney", "betty", null);
@@ -140,6 +141,7 @@ public class TestObjectOrderer {
         log.error("[INFO] Unable to order cartoon character 'betty' due to dependency cycle: A cycle has been detected from the initial object [fred]");
 
         ObjectOrderer<String> o = new ObjectOrderer<String>("cartoon character");
+        o.setIgnoreExceptions(true);
 
         o.add("WILMA", "wilma", null, "betty");
         o.add("FRED", "fred", null, "barney");

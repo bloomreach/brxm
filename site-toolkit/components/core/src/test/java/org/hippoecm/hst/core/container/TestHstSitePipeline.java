@@ -16,10 +16,11 @@
 package org.hippoecm.hst.core.container;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.core.order.ObjectOrdererRuntimeException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -210,19 +211,12 @@ public class TestHstSitePipeline {
         contextResolvingValve.setAfterValves("actionValve");
         actionValve.setAfterValves("securityValve");
 
-        Valve [] mergedProcessingValves = pipeline.mergeProcessingValves();
-        log.info("merged processing valves: \n\t{}", StringUtils.join(mergedProcessingValves, "\n\t"));
-
-        // TODO the order below should not be achieved.  pipeline.mergeProcessingValves() should throw a ObjectOrdererRuntimeException?
-        assertArrayEquals(new Valve [] {
-                initializationValve,
-                localizationValve,
-                actionValve,
-                contextResolvingValve,
-                securityValve,
-                resourceServingValve,
-                aggregationValve
-        }, mergedProcessingValves);
+        try {
+            Valve [] mergedProcessingValves = pipeline.mergeProcessingValves();
+            fail("Expected to throw ObjectOrdererRuntimeException, but nothing thrown!!");
+        } catch (ObjectOrdererRuntimeException e) {
+            log.info("Expected ObjectOrdererRuntimeException on the intended circular ordering dependencies.");
+        }
     }
 
     private static String toCamelCaseString(String s) {
