@@ -23,8 +23,11 @@ import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
+import javax.jcr.query.Row;
+import javax.jcr.query.RowIterator;
 import javax.jcr.security.Privilege;
 
 import org.hippoecm.repository.api.HippoNode;
@@ -897,14 +900,25 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
     @Test
     public void testQuerySQL2() throws RepositoryException {
-        QueryManager queryManager = userSession.getWorkspace().getQueryManager();
-        // XPath doesn't like the query from the root
+        final QueryManager queryManager = userSession.getWorkspace().getQueryManager();
         Query query = queryManager.createQuery("SELECT * FROM [hippo:ntunstructured]", Query.JCR_SQL2);
         NodeIterator iter = query.execute().getNodes();
         assertEquals(10L, iter.getSize());
 
-        // The getTotalSize method is not implemented for QOM-based queries, so it will return -1
-        //assertEquals(12L, ((HippoNodeIterator) iter).getTotalSize());
+        query = queryManager.createQuery("SELECT * FROM [hippo:ntunstructured] WHERE [jcr:name] = 'subread'", Query.JCR_SQL2);
+        iter = query.execute().getNodes();
+        assertEquals(2L, iter.getSize());
+
+        query = queryManager.createQuery("SELECT child.[jcr:uuid] AS identifier FROM [hippo:harddocument] AS child " +
+                "INNER JOIN [hippo:ntunstructured] AS parent ON ISCHILDNODE(child,parent)", Query.JCR_SQL2);
+        RowIterator rows = query.execute().getRows();
+        assertEquals(7L, rows.getSize());
+
+        query = queryManager.createQuery("SELECT child.[jcr:uuid] AS identifier FROM [hippo:harddocument] AS child " +
+                "INNER JOIN [hippo:ntunstructured] AS parent ON ISCHILDNODE(child,parent) " +
+                "WHERE parent.[jcr:name] = 'readdoc0'", Query.JCR_SQL2);
+        rows = query.execute().getRows();
+        assertEquals(2L, rows.getSize());
     }
 
     @Test
