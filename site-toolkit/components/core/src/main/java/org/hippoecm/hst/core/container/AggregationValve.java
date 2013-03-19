@@ -351,7 +351,15 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                     AsynchronousComponentWindowRenderer asynchronousComponentWindowRenderer = null;
 
                     if (asynchronousComponentWindowRendererMap != null) {
-                        asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(defaultAsynchronousComponentWindowRenderingMode);
+                        String asyncMode = window.getComponentInfo().getAsyncMode();
+
+                        if (StringUtils.isNotEmpty(asyncMode)) {
+                            asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(asyncMode);
+                        }
+
+                        if (asynchronousComponentWindowRenderer == null) {
+                            asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(defaultAsynchronousComponentWindowRenderingMode);
+                        }
                     }
 
                     if (asynchronousComponentWindowRenderer != null) {

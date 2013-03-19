@@ -55,6 +55,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private boolean inherited;
     private boolean standalone;
     private boolean async;
+    private String asyncMode;
     private boolean compositeCacheable;
     private List<String> variants;
 
@@ -249,6 +250,15 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
 
     public void setAsync(boolean async) {
         this.async = async;
+    }
+
+    @Override
+    public String getAsyncMode() {
+        return asyncMode;
+    }
+
+    public void setAsyncMode(String asyncMode) {
+        this.asyncMode = asyncMode;
     }
 
     @Override

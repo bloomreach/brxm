@@ -68,6 +68,12 @@ public interface HstComponentInfo {
     boolean isAsync();
 
     /**
+     * Optional mode parameter to determine which technology should used for rendering asynchronous component. e.g., 'ajax', 'esi', etc.
+     * @return
+     */
+    String getAsyncMode();
+
+    /**
      * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached. Note that
      * a {@link HstComponentConfiguration} by default is cacheable unless configured not to be cacheable. A {@link HstComponentConfiguration}
      * is only cacheable if and only if <b>all</b> its descendant {@link HstComponentConfiguration}s for the request are cacheable : <b>Note</b>

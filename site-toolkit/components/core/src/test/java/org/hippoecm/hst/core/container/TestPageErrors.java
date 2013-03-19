@@ -158,6 +158,10 @@ public class TestPageErrors {
             return false;
         }
         @Override
+        public String getAsyncMode() {
+            return null;
+        }
+        @Override
         public boolean isCompositeCacheable() {
             return false;
         }

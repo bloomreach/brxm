@@ -122,6 +122,12 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private Boolean async = null;
 
     /**
+     * Optional mode parameter to determine which available rendering/aggregating technology should be used
+     * for the async component. e.g., 'ajax', 'esi', etc.
+     */
+    private String asyncMode = null;
+
+    /**
      * @return <code>true</code> if rendering / resource requests can have their entire page http responses cached. Note that 
      * A {@link HstComponentConfiguration} is only cacheable if and only if <b>none</b> of its descendant {@link HstComponentConfiguration}s for the request
      * are marked as uncacheable : <b>Note</b>  explicitly for 'the request', thus {@link HstComponentConfiguration} that are {@link HstComponentConfiguration#isAsync()}
@@ -268,6 +274,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_ASYNC)) {
             this.async = node.getValueProvider().getBoolean(HstNodeTypes.COMPONENT_PROPERTY_ASYNC);
+        }
+
+        if(node.getValueProvider().hasProperty(HstNodeTypes.COMPONENT_PROPERTY_ASYNC_MODE)) {
+            this.asyncMode = node.getValueProvider().getString(HstNodeTypes.COMPONENT_PROPERTY_ASYNC_MODE);
         }
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
@@ -458,6 +468,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     }
 
     @Override
+    public String getAsyncMode() {
+        return asyncMode;
+    }
+
+    @Override
     public boolean isCompositeCacheable() {
         return compositeCacheable;
     }
@@ -502,6 +517,7 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         copy.inherited = child.inherited;
         copy.standalone = child.standalone;
         copy.async = child.async;
+        copy.asyncMode = child.asyncMode;
         copy.cacheable = child.cacheable;
         copy.parameters = new LinkedHashMap<String, String>(child.parameters);
         copy.parameterNamePrefixSet = new HashSet<String>(child.parameterNamePrefixSet);
@@ -594,6 +610,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 }
                 if (this.async == null) {
                     this.async = referencedComp.async;
+                }
+                if (this.asyncMode == null) {
+                    this.asyncMode = referencedComp.asyncMode;
                 }
                 if (this.cacheable == null) {
                     this.cacheable = referencedComp.cacheable;
@@ -712,6 +731,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
         if (this.async == null) {
             this.async = childToMerge.async;
+        }
+        if (this.asyncMode == null) {
+            this.asyncMode = childToMerge.asyncMode;
         }
         if (this.cacheable == null) {
             this.cacheable = childToMerge.cacheable;

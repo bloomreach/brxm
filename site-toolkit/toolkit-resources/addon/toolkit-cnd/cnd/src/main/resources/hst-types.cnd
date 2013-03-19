@@ -49,6 +49,7 @@
 // use hst:async  = true combined with hst:standalone = false, as then, all doBeforeRenders of
 // all components will be invoked again for the async get. When not set, default async = false
 - hst:async (boolean)
+- hst:asyncmode (string)
 - hst:cacheable (boolean)
 
 
