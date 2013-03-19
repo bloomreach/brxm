@@ -212,8 +212,9 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
         }
 
         // use commons-configuration in order to translate variables (e.g., ${key1}) for the values of the following keys
-        Configuration config = new MapConfiguration(contentsMap);
-
+        MapConfiguration config = new MapConfiguration(contentsMap);
+        config.setDelimiterParsingDisabled(true);
+        config.setTrimmingDisabled(true);
         for (int i = 0; i < keys.length; i++) {
             String key = (String) contents[i][0];
             contents[i][1] = config.getString(key);
