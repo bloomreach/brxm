@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.hippoecm.hst.container.valves.AbstractOrderableValve;
  * <P>
  * An {@link OrderableValve} implementation which delegates to the internal valve.
  * This implementation is useful if you want to wrap a non-orderable valve component
- * with specifying the name, before and after properties.
+ * with specifying the name, beforeValves and afterValves properties.
  * </P>
  */
 public class DelegatingOrderableValve extends AbstractOrderableValve {
