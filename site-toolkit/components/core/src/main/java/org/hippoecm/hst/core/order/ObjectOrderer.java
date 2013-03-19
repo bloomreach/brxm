@@ -187,7 +187,7 @@ public class ObjectOrderer<T> {
             String name = node.getName();
             OrderableObjectHolder<T> trigger = getOrderableObjectHolder(name);
 
-            log.error("Error in dependency cycle. _objectType: '" + objectOrderingName + "', orderable: {}, trigger object: {}", orderable, trigger.getObject());
+            log.error("Error in dependency cycle. _objectType: '{}', orderable: {}, trigger object: {}",new String[]{objectOrderingName, orderable.toString(), trigger.getObject().toString()});
         }
     }
 
@@ -207,14 +207,14 @@ public class ObjectOrderer<T> {
                 Node<T> prenode = getNode(prename);
     
                 if (prenode == null) {
-                    log.error("Bad dependency for '" + objectOrderingName + "'. prename: {}, ordering: {}", prename, ordering);
+                    log.error("Bad dependency for '{}'. prename: {}, ordering: {}", new String[]{objectOrderingName, prename, ordering.toString()});
                     continue;
                 }
     
                 try {
                     node.addDependency(prenode);
                 } catch (ObjectOrdererRuntimeException ex) {
-                    log.error("Error in dependency cycle. _objectType: '" + objectOrderingName + "', ordering: {}, ordering object: {}", ordering, ordering.getObject());
+                    log.error("Error in dependency cycle. _objectType: '{}', ordering: {}, ordering object: {}", new String[]{objectOrderingName, ordering.toString(), ordering.getObject().toString()});
                 }
             }
         }
@@ -235,12 +235,12 @@ public class ObjectOrderer<T> {
                 Node<T> postnode = getNode(postname);
     
                 if (postnode == null) {
-                    log.error("Bad dependency for '" + objectOrderingName + "'. prename: {}, ordering: {}", postname, ordering);
+                    log.error("Bad dependency for '{}'. prename: {}, ordering: {}",new String[]{objectOrderingName, postname, ordering.toString()});
                 } else {
                     try {
                         postnode.addDependency(node);
                     } catch (ObjectOrdererRuntimeException ex) {
-                        log.error("Error in dependency cycle. _objectType: '" + objectOrderingName + "', ordering: {}, ordering object: {}", ordering, ordering.getObject());
+                        log.error("Error in dependency cycle. _objectType: '{}', ordering: {}, ordering object: {}", new String[]{objectOrderingName,ordering.toString(), ordering.getObject().toString()});
                     }
                 }
             }

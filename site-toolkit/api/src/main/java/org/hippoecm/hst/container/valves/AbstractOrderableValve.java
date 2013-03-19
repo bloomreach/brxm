@@ -36,8 +36,9 @@ public abstract class AbstractOrderableValve extends AbstractValve implements Or
     }
 
     /**
-     * Sets the valve name
-     * @param name
+     * Sets the <code>valveName</code> which can be used by other valves in {@link #setAfterValves(String)} or
+     * {@link #setBeforeValves(String)}
+     * @param valveName the name of the current valve
      */
     public final void setValveName(String valveName) {
         this.valveName = valveName;
@@ -50,8 +51,8 @@ public abstract class AbstractOrderableValve extends AbstractValve implements Or
 
     /**
      * Sets postrequisite valve names that should follow this valve.
-     * The <code>before</code> can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
-     * @param before
+     * The <code>beforeValves</code> can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
+     * @param beforeValves the <code>beforeValves</code> for this {@link AbstractOrderableValve}. It can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
      */
     public final void setBeforeValves(String beforeValves) {
         this.beforeValves = beforeValves;
@@ -65,7 +66,7 @@ public abstract class AbstractOrderableValve extends AbstractValve implements Or
     /**
      * Sets prerequisite valve names that should follow this valve.
      * The <code>after</code> can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
-     * @param after
+     * @param afterValves  the <code>afterValves</code> for this {@link AbstractOrderableValve}. It can have multiple valve names, separated by ' ', ',', '\t', '\r' or '\n'
      */
     public final void setAfterValves(String afterValves) {
         this.afterValves = afterValves;
