@@ -124,7 +124,6 @@ public class WorkflowEventTest extends RepositoryTestCase {
     }
 
     @Test
-    @Ignore
     public void testEventFire() throws RepositoryException, WorkflowException, RemoteException {
         Node folder = root.getNode("folder");
         assertEquals(1L, root.getProperty("counter/counter/hippo:counter").getLong());

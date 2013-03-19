@@ -27,7 +27,11 @@ import javax.jcr.nodetype.NodeType;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.QueryResult;
 import javax.jcr.query.qom.Constraint;
+import javax.jcr.query.qom.Join;
+import javax.jcr.query.qom.PropertyExistence;
 import javax.jcr.query.qom.QueryObjectModel;
+import javax.jcr.query.qom.Selector;
+import javax.jcr.query.qom.Source;
 
 import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.SearchManager;
@@ -57,26 +61,49 @@ import org.apache.lucene.search.Query;
  */
 public class HippoSearchManager extends SearchManager {
 
-    public HippoSearchManager(final String workspace, final RepositoryContext repositoryContext, final QueryHandlerFactory qhf, final SharedItemStateManager itemMgr, final PersistenceManager pm, final NodeId rootNodeId, final SearchManager parentMgr, final NodeId excludedNodeId) throws RepositoryException {
+    public HippoSearchManager(final String workspace,
+                              final RepositoryContext repositoryContext,
+                              final QueryHandlerFactory qhf,
+                              final SharedItemStateManager itemMgr,
+                              final PersistenceManager pm,
+                              final NodeId rootNodeId,
+                              final SearchManager parentMgr,
+                              final NodeId excludedNodeId) throws RepositoryException {
         super(workspace, repositoryContext, qhf, itemMgr, pm, rootNodeId, parentMgr, excludedNodeId);
     }
 
     @Override
-    public QueryObjectModel createQueryObjectModel(final SessionContext sessionContext, final QueryObjectModelTree qomTree, final String language, final Node node) throws InvalidQueryException, RepositoryException {
+    public QueryObjectModel createQueryObjectModel(final SessionContext sessionContext,
+                                                   final QueryObjectModelTree qomTree,
+                                                   final String language,
+                                                   final Node node) throws InvalidQueryException, RepositoryException {
         QueryObjectModelImpl qom = new HippoQueryObjectModelImpl();
         qom.init(sessionContext, getQueryHandler(), qomTree, language, node);
         return qom;
     }
 
-    private static class AuthorizationConstraint extends ConstraintImpl {
+    private static class AuthorizationConstraint extends ConstraintImpl implements PropertyExistence {
 
-        public AuthorizationConstraint(final NamePathResolver resolver) {
-            super(resolver);
+        private String selectorName;
+
+        public AuthorizationConstraint(final SessionContext sessionContext, final String selectorName) {
+            super(sessionContext);
+            this.selectorName = selectorName;
         }
 
         @Override
         public Object accept(final QOMTreeVisitor visitor, final Object data) throws Exception {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getSelectorName() {
+            return selectorName;
+        }
+
+        @Override
+        public String getPropertyName() {
+            return "hippo:dummy";
         }
     }
 
@@ -90,17 +117,35 @@ public class HippoSearchManager extends SearchManager {
             final LuceneQueryFactory lqf = new AuthorizedLuceneQueryFactory(sessionContext.getSessionImpl(),
                                                                             (SearchIndex) handler, variables);
 
-            QueryEngine engine = new QueryEngine(sessionContext.getSessionImpl(), lqf, variables);
-            final ConstraintImpl constraint = (ConstraintImpl) getConstraint();
-            final ConstraintImpl authorization = new AuthorizationConstraint(sessionContext);
-            Constraint fullConstraint;
+            final QueryEngine engine = new QueryEngine(sessionContext.getSessionImpl(), lqf, variables);
+            final HippoQueryObjectModelFactoryImpl factory = new HippoQueryObjectModelFactoryImpl(sessionContext);
+
+            final Constraint constraint = getConstraint();
+            final Constraint authorizationConstraint = getAuthorizationConstraint(factory, getSource());
+
+            final Constraint fullConstraint;
             if (constraint != null) {
-                fullConstraint = new HippoQueryObjectModelFactoryImpl(sessionContext).and(constraint, authorization);
+                fullConstraint = new HippoQueryObjectModelFactoryImpl(sessionContext).and(constraint, authorizationConstraint);
             } else {
-                fullConstraint = authorization;
+                fullConstraint = authorizationConstraint;
             }
 
             return engine.execute(getColumns(), getSource(), fullConstraint, getOrderings(), offset, limit);
+        }
+
+        private Constraint getAuthorizationConstraint(final HippoQueryObjectModelFactoryImpl factory, final Source source)
+                throws RepositoryException {
+            final Constraint constraint;
+            if (source instanceof Join) {
+                final Join join = (Join) getSource();
+                final Constraint leftAuthorization = getAuthorizationConstraint(factory, join.getLeft());
+                final Constraint rightAuthorization = getAuthorizationConstraint(factory, join.getRight());
+                constraint = factory.and(leftAuthorization, rightAuthorization);
+            } else {
+                final Selector selector = (Selector) source;
+                constraint = new AuthorizationConstraint(sessionContext, selector.getSelectorName());
+            }
+            return constraint;
         }
 
         @Override
@@ -115,13 +160,15 @@ public class HippoSearchManager extends SearchManager {
 
         private final SessionImpl sessionImpl;
 
-        public AuthorizedLuceneQueryFactory(final SessionImpl session, final SearchIndex index, final Map<String, Value> bindVariables) throws RepositoryException {
+        public AuthorizedLuceneQueryFactory(final SessionImpl session, final SearchIndex index, final Map<String, Value> bindVariables)
+                throws RepositoryException {
             super(session, index, bindVariables);
             this.sessionImpl = session;
         }
 
         @Override
-        protected Query create(final Constraint constraint, final Map<String, NodeType> selectorMap, final JackrabbitIndexSearcher searcher) throws RepositoryException, IOException {
+        protected Query create(final Constraint constraint, final Map<String, NodeType> selectorMap, final JackrabbitIndexSearcher searcher)
+                throws RepositoryException, IOException {
             if (constraint instanceof AuthorizationConstraint) {
                 if (sessionImpl instanceof InternalHippoSession) {
                     return ((InternalHippoSession) sessionImpl).getAuthorizationQuery().getQuery();
