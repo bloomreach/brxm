@@ -847,6 +847,8 @@
                 <exclude>client-modules/page-composer/src/test/resources/**/*.xml</exclude>
                 <exclude>toolkit-resources/addon/repository/src/main/resources/**/*.xml</exclude>
                 <exclude>toolkit-resources/addon/unittestcontents/src/main/resources/**/*.xml</exclude>
+                <!-- javascript file that ends up in browser html is not allowed to show copyright -->
+                <exclude>components/core/src/main/resources/org/hippoecm/hst/core/container/simple-io-template.js</exclude>
               </excludes>
             </configuration>
           </plugin>
