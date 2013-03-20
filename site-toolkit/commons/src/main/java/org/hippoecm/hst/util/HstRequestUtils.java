@@ -449,16 +449,19 @@ public class HstRequestUtils {
         return matcher.replaceAll("");
     }
 
-
-    public static String createURLWithExplicitSchemeForRequest(final String scheme, final Mount mount, final HttpServletRequest req) {
+    /**
+     * Creates the same fully qualified URL as the client used to make the request, only force the scheme of the URL to be equal
+     * to the <code>scheme</code> parameter instead of the scheme of the <code>request</code>.
+     */
+    public static String createURLWithExplicitSchemeForRequest(final String scheme, final Mount mount, final HttpServletRequest request) {
         String contextPath = "";
         if (mount.isContextPathInUrl() && mount.onlyForContextPath() != null) {
             contextPath = mount.onlyForContextPath();
         }
-        StringBuilder url = new StringBuilder(scheme).append("://").append(HstRequestUtils.getFarthestRequestHost(req, false))
-                .append(contextPath).append(req.getRequestURI().substring(req.getContextPath().length()));
-        if (req.getQueryString() != null) {
-            url.append("?").append(req.getQueryString());
+        StringBuilder url = new StringBuilder(scheme).append("://").append(HstRequestUtils.getFarthestRequestHost(request, false))
+                .append(contextPath).append(request.getRequestURI().substring(request.getContextPath().length()));
+        if (request.getQueryString() != null) {
+            url.append("?").append(request.getQueryString());
         }
         return url.toString();
     }
