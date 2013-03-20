@@ -435,13 +435,13 @@ public class HstFilter implements Filter {
                            case HttpServletResponse.SC_MOVED_PERMANENTLY :
                                res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
                                // create fully qualified redirect to scheme from sitemap item
-                               res.setHeader("Location", getFullyQualifiedURLforScheme(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
+                               res.setHeader("Location", HstRequestUtils.createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
                                return;
                            case HttpServletResponse.SC_MOVED_TEMPORARILY:
                            case HttpServletResponse.SC_SEE_OTHER:
                            case HttpServletResponse.SC_TEMPORARY_REDIRECT:
                                // create fully qualified redirect to scheme from sitemap item
-                               res.sendRedirect(getFullyQualifiedURLforScheme(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
+                               res.sendRedirect(HstRequestUtils.createURLWithExplicitSchemeForRequest(hstSiteMapItem.getScheme(), resolvedSiteMapItem.getResolvedMount().getMount(), req));
                                return;
                            case HttpServletResponse.SC_NOT_FOUND:
                                sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
@@ -473,13 +473,13 @@ public class HstFilter implements Filter {
                                 case HttpServletResponse.SC_MOVED_PERMANENTLY :
                                     res.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
                                     // create fully qualified redirect to scheme from sitemap item
-                                    res.setHeader("Location", getFullyQualifiedURLforScheme(mount.getScheme(), mount, req));
+                                    res.setHeader("Location", HstRequestUtils.createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req));
                                     return;
                                 case HttpServletResponse.SC_MOVED_TEMPORARILY:
                                 case HttpServletResponse.SC_SEE_OTHER:
                                 case HttpServletResponse.SC_TEMPORARY_REDIRECT:
                                     // create fully qualified redirect to scheme from sitemap item
-                                    res.sendRedirect(getFullyQualifiedURLforScheme(mount.getScheme(), mount, req));
+                                    res.sendRedirect(HstRequestUtils.createURLWithExplicitSchemeForRequest(mount.getScheme(), mount, req));
                                     return;
                                 case HttpServletResponse.SC_NOT_FOUND:
                                     sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
@@ -535,18 +535,6 @@ public class HstFilter implements Filter {
     	}
     }
 
-    private String getFullyQualifiedURLforScheme(final String scheme, final Mount mount, final HttpServletRequest req) {
-        String contextPath = "";
-        if (mount.isContextPathInUrl() && mount.onlyForContextPath() != null) {
-            contextPath = mount.onlyForContextPath();
-        }
-        StringBuilder location = new StringBuilder(scheme).append("://").append(HstRequestUtils.getFarthestRequestHost(req, false))
-                .append(contextPath).append(req.getRequestURI());
-        if (req.getQueryString() != null) {
-            location.append("?").append(req.getQueryString());
-        }
-        return location.toString();
-    }
 
     private HstManager getHstManager() {
         return HstServices.getComponentManager().getComponent(HstManager.class.getName());
