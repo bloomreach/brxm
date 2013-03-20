@@ -24,13 +24,16 @@ import org.apache.wicket.Component;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.FormComponent;
+import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.impl.TemplateEngineFactory;
+import org.hippoecm.frontend.editor.validator.IFeedbackLogger;
 import org.hippoecm.frontend.editor.validator.JcrValidationService;
-import org.hippoecm.frontend.editor.validator.ValidationFeedback;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -48,7 +51,7 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EditorForm extends Form<Node> implements IFeedbackMessageFilter {
+public class EditorForm extends Form<Node> implements IFeedbackMessageFilter, IFeedbackLogger {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,7 +68,6 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter {
     private ITemplateEngine engine;
     private String engineId;
 
-    private ValidationFeedback component;
     private ValidationService validation;
 
     public EditorForm(String wicketId, JcrNodeModel model, final IRenderService parent, IPluginContext context,
@@ -76,17 +78,13 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter {
         this.config = config;
 
         validation = new ValidationService(context, config);
-        final String editorId = config.getString("editor.id");
-        component = new ValidationFeedback(editorId, validation.getModel());
-        validation.start(component);
+        validation.start(this);
 
         if (config.getString(RenderService.FEEDBACK) != null) {
             context.registerService(this, config.getString(RenderService.FEEDBACK));
         } else {
             log.info("No feedback id {} defined", RenderService.FEEDBACK);
         }
-
-        add(new EmptyPanel("template"));
 
         setMultiPart(true);
 
@@ -115,6 +113,29 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter {
         };
         context.registerTracker(fieldTracker, engineId + ".wicket.root");
 
+        add(new IFormValidator() {
+
+            @Override
+            public FormComponent<?>[] getDependentFormComponents() {
+                return null;
+            }
+
+            @Override
+            public void validate(final Form<?> form) {
+                // do the validation
+                try {
+                    validation.doValidate();
+                    IValidationResult result = validation.getValidationResult();
+                    if (!result.isValid()) {
+                        log.debug("Invalid model {}", getModel());
+                    }
+                } catch (ValidationException e) {
+                    log.warn("Failed to validate " + getModel());
+                }
+            }
+        });
+
+        add(new EmptyPanel("template"));
         createTemplate();
     }
 
@@ -134,23 +155,7 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter {
         if (reporter == null) {
             return false;
         }
-        return reporter.getId().equals(component.getId()) || reporter == this || this.contains(reporter, true);
-    }
-
-    @Override
-    protected void onValidate() {
-        super.onValidate();
-
-        // do the validation
-        try {
-            validation.superValidate();
-            IValidationResult result = validation.getValidationResult();
-            if (!result.isValid()) {
-                log.debug("Invalid model {}", getModel());
-            }
-        } catch (ValidationException e) {
-            log.warn("Failed to validate " + getModel());
-        }
+        return reporter == this || this.contains(reporter, true);
     }
 
     @Override
@@ -167,6 +172,14 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter {
         for (IRenderService child : fields) {
             child.render(target);
         }
+    }
+
+    public void error(String messageKey, Object[] parameters) {
+        error(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey).getObject());
+    }
+
+    public void warn(String messageKey, Object[] parameters) {
+        warn(new StringResourceModel(messageKey, this, getDefaultModel(), parameters, messageKey).getObject());
     }
 
     @Override
@@ -206,7 +219,7 @@ public class EditorForm extends Form<Node> implements IFeedbackMessageFilter {
             super(context, config);
         }
 
-        private void superValidate() throws ValidationException {
+        private void doValidate() throws ValidationException {
             super.validate();
         }
 

@@ -1343,7 +1343,6 @@ editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icon
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/resources/images/icons/workflow-16.png -text svneol=unset#image/png
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/HtmlValidator.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/IFeedbackLogger.java svneol=native#text/plain
-editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/ValidationFeedback.java svneol=native#text/plain
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/ValidationFeedback_de.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/validator/ValidationFeedback_it.properties -text
 editor/frontend/src/main/java/org/hippoecm/frontend/editor/viewer/ComparePlugin.html svneol=native#text/plain
