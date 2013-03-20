@@ -122,6 +122,7 @@
 - hst:locale (string)
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)
+- hst:schemeagnostic (boolean)
 - hst:componentconfigurationmappingnames (string) multiple
 - hst:componentconfigurationmappingvalues (string) multiple
 - hst:cacheable (boolean)
@@ -225,6 +226,7 @@
 - hst:embeddedmountpath
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)
+- hst:schemeagnostic (boolean)
 // whether the port should be visible in the created urls
 - hst:showport (boolean)
 // the hst:defaultsitemapitemhandlerids that all sitemap items get that do not define their own hst:sitemapitemhandlerids
