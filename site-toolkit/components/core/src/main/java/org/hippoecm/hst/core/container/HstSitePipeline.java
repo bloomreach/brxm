@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.container.valves.AbstractOrderableValve;
 import org.hippoecm.hst.core.order.ObjectOrderer;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
@@ -75,22 +76,19 @@ public class HstSitePipeline implements Pipeline
         mergedProcessingValves = null;
     }
 
-    /**
-     * 
-     * @param processingValves
-     */
     public void setProcessingValves(Valve [] processingValves) {
         if (processingValves == null) {
             this.processingValves = null;
         } else {
             this.processingValves = new Valve[processingValves.length];
-            System.arraycopy(processingValves, 0, this.processingValves, 0, processingValves.length);
+            System.arraycopy(processingValves, 0,
+                    this.processingValves, 0, processingValves.length);
         }
         mergedProcessingValves = null;
     }
 
     /**
-     * 
+     *
      * @param processingValve
      */
     public void addProcessingValve(Valve processingValve) {
@@ -180,6 +178,7 @@ public class HstSitePipeline implements Pipeline
         ObjectOrderer<Valve> orderer = new ObjectOrderer<Valve>("initializationValves");
 
         if (initializationValves != null) {
+            imposeImplicitPipelineOrder(initializationValves);
             for (Valve valve : initializationValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
@@ -195,6 +194,7 @@ public class HstSitePipeline implements Pipeline
         orderer = new ObjectOrderer<Valve>("processingValves");
 
         if (processingValves != null) {
+            imposeImplicitPipelineOrder(processingValves);
             for (Valve valve : processingValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
@@ -214,6 +214,7 @@ public class HstSitePipeline implements Pipeline
         ObjectOrderer<Valve> orderer = new ObjectOrderer<Valve>("cleanupValves");
 
         if (cleanupValves != null) {
+            imposeImplicitPipelineOrder(cleanupValves);
             for (Valve valve : cleanupValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
@@ -226,6 +227,31 @@ public class HstSitePipeline implements Pipeline
 
         return orderer.getOrderedObjects().toArray(new Valve[0]);
     }
+
+
+    /**
+     * imposing implicit pipeline order makes sure that adding a new valve with before and after constrainst can *never*
+     * reshuffle existing valves. Thus for example, if you already have the valves a,b,c,d,e in that order, then, adding a
+     * valve 'f' before c and after a can never change the relative order of the already present valves
+     */
+    private void imposeImplicitPipelineOrder(final Valve[] valves) {
+        String prevValveName = null;
+        for (int i = 0; i < valves.length; i++) {
+            Valve current = valves[i];
+            if (current instanceof AbstractOrderableValve) {
+                AbstractOrderableValve ov = (AbstractOrderableValve) current;
+                if (ov.getAfterValves() == null && ov.getBeforeValves() == null) {
+                    if (prevValveName != null) {
+                        ov.setAfterValves(prevValveName);
+                    }
+                }
+                if (ov.getValveName() != null) {
+                    prevValveName = ov.getValveName();
+                }
+            }
+        }
+    }
+
 
     static final class Invocation implements ValveContext
     {

@@ -157,6 +157,34 @@ public class TestHstSitePipeline {
     }
 
     @Test
+    public void testIncorrectValveOrdering() throws Exception {
+        HstSitePipeline pipeline = new HstSitePipeline();
+
+        pipeline.setInitializationValves(new Valve[] { initializationValve });
+        pipeline.setProcessingValves(new Valve [] { localizationValve, securityValve, contextResolvingValve, actionValve, resourceServingValve, aggregationValve });
+        pipeline.setCleanupValves(new Valve[] { cleanupValve });
+
+        cmsSecurityValve.setAfterValves(toCamelCaseString(InitializationValve.class.getSimpleName()));
+        pipeline.addInitializationValve(cmsSecurityValve);
+
+        // inject the pageCachingValve in incompatible way: Namely, before 'actionValve' and after 'aggregationValve' but this would
+        // either have to change the relative ordering of the already existing valves {localizationValve, securityValve, contextResolvingValve, actionValve,
+        // resourceServingValve, aggregationValve} which is not allowed
+        pageCachingValve.setBeforeValves(toCamelCaseString(ActionValve.class.getSimpleName()));
+        pageCachingValve.setAfterValves(toCamelCaseString(AggregationValve.class.getSimpleName()));
+        pipeline.addProcessingValve(pageCachingValve);
+
+
+        try {
+            pipeline.mergeProcessingValves();
+            fail("Expected to throw ObjectOrdererRuntimeException, but nothing thrown!!");
+        } catch (ObjectOrdererRuntimeException e) {
+            log.info("Expected ObjectOrdererRuntimeException on the intended circular ordering dependencies.");
+        }
+
+    }
+
+    @Test
     public void testIncorrectCircularValveOrdering() throws Exception {
         HstSitePipeline pipeline = new HstSitePipeline();
 
@@ -170,7 +198,7 @@ public class TestHstSitePipeline {
         actionValve.setAfterValves("securityValve");
 
         try {
-            Valve [] mergedProcessingValves = pipeline.mergeProcessingValves();
+            pipeline.mergeProcessingValves();
             fail("Expected to throw ObjectOrdererRuntimeException, but nothing thrown!!");
         } catch (ObjectOrdererRuntimeException e) {
             log.info("Expected ObjectOrdererRuntimeException on the intended circular ordering dependencies.");
