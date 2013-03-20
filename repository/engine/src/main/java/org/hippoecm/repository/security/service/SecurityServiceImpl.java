@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.security.service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -73,46 +74,51 @@ public final class SecurityServiceImpl implements SecurityService {
     @Override
     public Iterable<User> getUsers(final long offset, final long limit) throws RepositoryException {
         return new Iterable<User>() {
-            private final NodeIterator nodeIterator = internalUserManager.listUsers(offset, limit);
             @Override
             public Iterator<User> iterator() {
-                return new Iterator<User>() {
+                try {
+                    return new Iterator<User>() {
 
-                    private User next;
+                        private final NodeIterator nodeIterator = internalUserManager.listUsers(offset, limit);
+                        private User next;
 
-                    @Override
-                    public boolean hasNext() {
-                        fetchNext();
-                        return next != null;
-                    }
-
-                    @Override
-                    public User next() {
-                        fetchNext();
-                        if (next == null) {
-                            throw new NoSuchElementException();
+                        @Override
+                        public boolean hasNext() {
+                            fetchNext();
+                            return next != null;
                         }
-                        final User result = next;
-                        next = null;
-                        return result;
-                    }
 
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
+                        @Override
+                        public User next() {
+                            fetchNext();
+                            if (next == null) {
+                                throw new NoSuchElementException();
+                            }
+                            final User result = next;
+                            next = null;
+                            return result;
+                        }
 
-                    private void fetchNext() {
-                        while (next == null && nodeIterator.hasNext()) {
-                            final Node node = nodeIterator.nextNode();
-                            try {
-                                next = new UserImpl(node, SecurityServiceImpl.this);
-                            } catch (RepositoryException e) {
-                                log.warn("Failed to load next user in iterator: " + e);
+                        @Override
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+
+                        private void fetchNext() {
+                            while (next == null && nodeIterator.hasNext()) {
+                                final Node node = nodeIterator.nextNode();
+                                try {
+                                    next = new UserImpl(node, SecurityServiceImpl.this);
+                                } catch (RepositoryException e) {
+                                    log.warn("Failed to load next user in iterator: " + e);
+                                }
                             }
                         }
-                    }
-                };
+                    };
+                } catch (RepositoryException e) {
+                    log.error("Failed to initialize user iterator: " + e);
+                }
+                return Collections.<User>emptyList().iterator();
             }
         };
     }
@@ -120,46 +126,51 @@ public final class SecurityServiceImpl implements SecurityService {
     @Override
     public Iterable<Group> getGroups(final long offset, final long limit) throws RepositoryException {
         return new Iterable<Group>() {
-            private final NodeIterator nodeIterator = internalGroupManager.listGroups(offset, limit);
             @Override
             public Iterator<Group> iterator() {
-                return new Iterator<Group>() {
+                try {
+                    return new Iterator<Group>() {
 
-                    private Group next;
+                        private final NodeIterator nodeIterator = internalGroupManager.listGroups(offset, limit);
+                        private Group next;
 
-                    @Override
-                    public boolean hasNext() {
-                        fetchNext();
-                        return next != null;
-                    }
-
-                    @Override
-                    public Group next() {
-                        fetchNext();
-                        if (next == null) {
-                            throw new NoSuchElementException();
+                        @Override
+                        public boolean hasNext() {
+                            fetchNext();
+                            return next != null;
                         }
-                        final Group result = next;
-                        next = null;
-                        return result;
-                    }
 
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
+                        @Override
+                        public Group next() {
+                            fetchNext();
+                            if (next == null) {
+                                throw new NoSuchElementException();
+                            }
+                            final Group result = next;
+                            next = null;
+                            return result;
+                        }
 
-                    private void fetchNext() {
-                        while (next == null && nodeIterator.hasNext()) {
-                            final Node node = nodeIterator.nextNode();
-                            try {
-                                next = new GroupImpl(node, SecurityServiceImpl.this);
-                            } catch (RepositoryException e) {
-                                log.warn("Failed to load next group in iterator: " + e);
+                        @Override
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+
+                        private void fetchNext() {
+                            while (next == null && nodeIterator.hasNext()) {
+                                final Node node = nodeIterator.nextNode();
+                                try {
+                                    next = new GroupImpl(node, SecurityServiceImpl.this);
+                                } catch (RepositoryException e) {
+                                    log.warn("Failed to load next group in iterator: " + e);
+                                }
                             }
                         }
-                    }
-                };
+                    };
+                } catch (RepositoryException e) {
+                    log.error("Failed to initialize group iterator: " + e);
+                }
+                return Collections.<Group>emptyList().iterator();
             }
         };
     }

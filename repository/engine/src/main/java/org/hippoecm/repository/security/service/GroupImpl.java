@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.security.service;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -54,48 +55,54 @@ public final class GroupImpl implements Group {
     @Override
     public Iterable<User> getMembers() throws RepositoryException {
         return new Iterable<User>() {
-            private final Iterator<String> membersIterator = getInternalGroupManager().getMembers(node).iterator();
             @Override
             public Iterator<User> iterator() {
-                return new Iterator<User>() {
-                    private User next;
+                try {
+                    return new Iterator<User>() {
 
-                    @Override
-                    public boolean hasNext() {
-                        fetchNext();
-                        return next != null;
-                    }
+                        private Iterator<String> membersIterator = getInternalGroupManager().getMembers(node).iterator();
+                        private User next;
 
-                    @Override
-                    public User next() {
-                        fetchNext();
-                        if (next == null) {
-                            throw new NoSuchElementException();
+                        @Override
+                        public boolean hasNext() {
+                            fetchNext();
+                            return next != null;
                         }
-                        final User result = next;
-                        next = null;
-                        return result;
-                    }
 
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
+                        @Override
+                        public User next() {
+                            fetchNext();
+                            if (next == null) {
+                                throw new NoSuchElementException();
+                            }
+                            final User result = next;
+                            next = null;
+                            return result;
+                        }
 
-                    private void fetchNext() {
-                        while (next == null && membersIterator.hasNext()) {
-                            final String nextMember = membersIterator.next();
-                            try {
-                                final Node nextUser = getInternalUserManager().getUser(nextMember);
-                                if (nextUser != null) {
-                                    next = new UserImpl(nextUser, securityService);
+                        @Override
+                        public void remove() {
+                            throw new UnsupportedOperationException();
+                        }
+
+                        private void fetchNext() {
+                            while (next == null && membersIterator.hasNext()) {
+                                final String nextMember = membersIterator.next();
+                                try {
+                                    final Node nextUser = getInternalUserManager().getUser(nextMember);
+                                    if (nextUser != null) {
+                                        next = new UserImpl(nextUser, securityService);
+                                    }
+                                } catch (RepositoryException e) {
+                                    log.warn("Failed to load next member of group: " + e);
                                 }
-                            } catch (RepositoryException e) {
-                                log.warn("Failed to load next member of group: " + e);
                             }
                         }
-                    }
-                };
+                    };
+                } catch (RepositoryException e) {
+                    log.error("Failed to initialize group members iterator: " + e);
+                }
+                return Collections.<User>emptyList().iterator();
             }
         };
     }
