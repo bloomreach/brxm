@@ -14,8 +14,10 @@
  *  limitations under the License.
  */
 
-YAHOO.hippo.FeedbackManager.create("${id}", {
-		visible:false,
-		zIndex:1000,
-		effect:{effect:YAHOO.widget.ContainerEffect.FADE,duration:0.25}
-	});
+Wicket.Event.add(window, 'domready', function() {
+    YAHOO.hippo.FeedbackManager.create("${id}", {
+            visible:false,
+            zIndex:1000,
+            effect:{effect:YAHOO.widget.ContainerEffect.FADE,duration:0.25}
+        });
+});

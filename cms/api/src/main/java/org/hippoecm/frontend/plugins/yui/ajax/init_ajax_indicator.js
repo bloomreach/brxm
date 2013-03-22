@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-//Create new loading indicator
-var indicator = new YAHOO.hippo.AjaxIndicator('${id}');
+
+Wicket.Event.add(window, 'domready', function() {
+    //Create new loading indicator
+    var indicator = new YAHOO.hippo.AjaxIndicator('${id}');
+});

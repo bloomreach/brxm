@@ -68,7 +68,7 @@ public class YuiFeedbackPanel extends Panel {
             Map<String, Object> params = new MiniMap<String,Object>(1);
             params.put("id", feedback.getMarkupId());
             helper.addTemplate(YuiFeedbackPanel.class, "feedback.js", params);
-            helper.addOnWinLoad(new LoadableDetachableModel<String>() {
+            helper.addOnDomLoad(new LoadableDetachableModel<String>() {
                 private static final long serialVersionUID = 1L;
 
                 @Override

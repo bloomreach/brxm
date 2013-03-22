@@ -15,6 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload.ajax;
 
+import java.io.Serializable;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -25,9 +29,6 @@ import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.HippoNamespace;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
 
 public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
@@ -61,7 +62,7 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
         context.addCssReference(new ResourceReference(AjaxMultiFileUploadBehavior.class, "res/skin.css"));
         context.addModule(HippoNamespace.NS, "upload");
         context.addTemplate(template);
-        context.addOnWinLoad("YAHOO.hippo.Upload.render()");
+        context.addOnDomLoad("YAHOO.hippo.Upload.render()");
     }
 
     @Override

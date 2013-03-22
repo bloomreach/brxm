@@ -100,7 +100,7 @@ public class EditorManagerBehavior extends AbstractYuiBehavior {
             }
 
         });
-        context.addOnWinLoad("YAHOO.hippo.EditorManager.render();");
+        context.addOnDomLoad("YAHOO.hippo.EditorManager.render();");
     }
 
     public void setEditorStarted(boolean b) {
