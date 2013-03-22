@@ -178,7 +178,7 @@ public class HstSitePipeline implements Pipeline
         ObjectOrderer<Valve> orderer = new ObjectOrderer<Valve>("initializationValves");
 
         if (initializationValves != null) {
-            imposeImplicitPipelineOrder(initializationValves);
+            imposeImplicitValvesOrdering(initializationValves);
             for (Valve valve : initializationValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
@@ -194,7 +194,7 @@ public class HstSitePipeline implements Pipeline
         orderer = new ObjectOrderer<Valve>("processingValves");
 
         if (processingValves != null) {
-            imposeImplicitPipelineOrder(processingValves);
+            imposeImplicitValvesOrdering(processingValves);
             for (Valve valve : processingValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
@@ -214,7 +214,7 @@ public class HstSitePipeline implements Pipeline
         ObjectOrderer<Valve> orderer = new ObjectOrderer<Valve>("cleanupValves");
 
         if (cleanupValves != null) {
-            imposeImplicitPipelineOrder(cleanupValves);
+            imposeImplicitValvesOrdering(cleanupValves);
             for (Valve valve : cleanupValves) {
                 if (valve instanceof OrderableValve) {
                     OrderableValve ov = (OrderableValve) valve;
@@ -230,23 +230,25 @@ public class HstSitePipeline implements Pipeline
 
 
     /**
-     * imposing implicit pipeline order makes sure that adding a new valve with before and after constrainst can *never*
+     * imposing implicit valves ordering makes sure that adding a new valve with before and after constrainst can *never*
      * reshuffle existing valves. Thus for example, if you already have the valves a,b,c,d,e in that order, then, adding a
      * valve 'f' before c and after a can never change the relative order of the already present valves
      */
-    private void imposeImplicitPipelineOrder(final Valve[] valves) {
-        String prevValveName = null;
-        for (int i = 0; i < valves.length; i++) {
-            Valve current = valves[i];
-            if (current instanceof AbstractOrderableValve) {
-                AbstractOrderableValve ov = (AbstractOrderableValve) current;
-                if (ov.getAfterValves() == null && ov.getBeforeValves() == null) {
-                    if (prevValveName != null) {
-                        ov.setAfterValves(prevValveName);
+    private void imposeImplicitValvesOrdering(final Valve [] valves) {
+        String prevOrderableValveName = null;
+
+        for (Valve valve : valves) {
+            if (valve instanceof OrderableValve) {
+                OrderableValve orderableValve = (OrderableValve) valve;
+
+                if (prevOrderableValveName != null && orderableValve instanceof AbstractOrderableValve) {
+                    if (StringUtils.isEmpty(orderableValve.getAfterValves()) && StringUtils.isEmpty(orderableValve.getBeforeValves())) {
+                        ((AbstractOrderableValve) orderableValve).setAfterValves(prevOrderableValveName);
                     }
                 }
-                if (ov.getValveName() != null) {
-                    prevValveName = ov.getValveName();
+
+                if (StringUtils.isNotEmpty(orderableValve.getValveName())) {
+                    prevOrderableValveName = orderableValve.getValveName();
                 }
             }
         }
