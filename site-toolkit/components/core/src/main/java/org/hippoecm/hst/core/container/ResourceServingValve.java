@@ -17,7 +17,6 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,58 +33,60 @@ public class ResourceServingValve extends AbstractBaseOrderableValve {
     
     @Override
     public void invoke(ValveContext context) throws ContainerException {
-        ServletRequest servletRequest = context.getServletRequest();
-        HttpServletResponse servletResponse = context.getServletResponse();
         HstRequestContext requestContext = context.getRequestContext();
+        HstContainerURL baseURL = requestContext.getBaseURL();
+        String resourceWindowRef = baseURL.getResourceWindowReferenceNamespace();
 
-        if (!context.getServletResponse().isCommitted() && requestContext.getBaseURL().getResourceWindowReferenceNamespace() != null) {
-            HstContainerURL baseURL = requestContext.getBaseURL();
-            String resourceWindowRef = baseURL.getResourceWindowReferenceNamespace();
-            HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), resourceWindowRef);
-
-            if (window == null) {
-                log.warn("Illegal request for resource URL found because there is no component for id '{}' for matched " +
-                        "sitemap item '{}'. Set 404 on response.", resourceWindowRef, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
-                try {
-                    servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-                } catch (IOException e) {
-                    throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
-                }
-                return;
-            }
-
-            HstRequest request = new HstRequestImpl((HttpServletRequest) servletRequest, requestContext, window, HstRequest.RESOURCE_PHASE);
-            HstResponse response = new HstResourceResponseImpl(servletResponse, requestContext, window);
-
-            HstComponentInvoker invoker = getComponentInvoker();
-
-            invoker.invokeBeforeServeResource(context.getRequestContainerConfig(), request, response);
-
-            // page error handling...
-            PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
-            if (pageErrors != null) {
-                PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
-                if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
-                    context.invokeNext();
-                    return;
-                }
-            }
-
-            invoker.invokeServeResource(context.getRequestContainerConfig(), request, response);
-
-            // page error handling...
-            pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
-            if (pageErrors != null) {
-                PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
-                if (handled == PageErrorHandler.Status.HANDLED_TO_STOP) {
-                    context.invokeNext();
-                    return;
-                }
-            }
-
+        if (resourceWindowRef == null) {
+            // not a resource request, so skip it..
+            context.invokeNext();
+            return;
         }
-        
-        // continue
-        context.invokeNext();
+
+        if (context.getServletResponse().isCommitted()) {
+            log.warn("Stopping resource serving. The response is already committed.");
+            context.invokeNext();
+            return;
+        }
+
+        HttpServletRequest servletRequest = context.getServletRequest();
+        HttpServletResponse servletResponse = context.getServletResponse();
+
+        HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(), resourceWindowRef);
+
+        if (window == null) {
+            log.warn("Illegal request for resource URL found because there is no component for id '{}' for matched " +
+                    "sitemap item '{}'. Set 404 on response.", resourceWindowRef, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
+            try {
+                servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+            } catch (IOException e) {
+                throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
+            }
+
+            return;
+        }
+
+        HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.RESOURCE_PHASE);
+        HstResponse response = new HstResourceResponseImpl(servletResponse, requestContext, window);
+
+        HstComponentInvoker invoker = getComponentInvoker();
+
+        invoker.invokeBeforeServeResource(context.getRequestContainerConfig(), request, response);
+
+        // page error handling...
+        PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
+
+        if (pageErrors != null) {
+            handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
+        }
+
+        invoker.invokeServeResource(context.getRequestContainerConfig(), request, response);
+
+        // page error handling...
+        pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
+
+        if (pageErrors != null) {
+            handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
+        }
     }
 }

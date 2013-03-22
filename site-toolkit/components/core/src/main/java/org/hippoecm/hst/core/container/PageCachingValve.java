@@ -46,6 +46,7 @@ import org.hippoecm.hst.cache.esi.ESIFragmentInfo;
 import org.hippoecm.hst.cache.esi.ESIPageInfo;
 import org.hippoecm.hst.cache.esi.ESIPageRenderer;
 import org.hippoecm.hst.cache.esi.ESIPageScanner;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.diagnosis.HDC;
@@ -95,6 +96,16 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
+        HstRequestContext requestContext = context.getRequestContext();
+        HstContainerURL baseURL = requestContext.getBaseURL();
+        String actionWindowReferenceNamespace = baseURL.getActionWindowReferenceNamespace();
+        String resourceWindowRef = baseURL.getResourceWindowReferenceNamespace();
+
+        if (actionWindowReferenceNamespace != null || resourceWindowRef != null) {
+            // either action or resource request, so skip caching...
+            context.invokeNext();
+            return;
+        }
 
         if (!isRequestCacheable(context)) {
             context.invokeNext();
@@ -140,12 +151,18 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
     }
 
     private boolean isRequestCacheable(final ValveContext context) throws ContainerException {
+        HstRequestContext requestContext = context.getRequestContext();
+        HttpServletRequest servletRequest = requestContext.getServletRequest();
+
+        if (!"GET".equals(servletRequest.getMethod())) {
+            log.debug("Only GET requests are cacheable. Skipping it because the request method is '{}'.", servletRequest.getMethod());
+        }
+
         if (!context.getPageCacheContext().isCacheable()) {
             log.debug("Request '{}' is not cacheable because PageCacheContext is marked to not cache this request: {} ", context.getServletRequest().getRequestURI(), context.getPageCacheContext().getReasonsUncacheable());
             return false;
         }
 
-        HstRequestContext requestContext = context.getRequestContext();
         if (requestContext.isCmsRequest()) {
             log.debug("Request '{}' is not cacheable because request is cms request", context.getServletRequest().getRequestURI());
             return false;
@@ -291,13 +308,19 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
     protected PageInfo buildPageInfo(final ValveContext context)
             throws Exception {
 
-        final HttpServletResponse nonWrappedReponse = context.getServletResponse();
+        HstRequestContext requestContext = context.getRequestContext();
+        final HttpServletResponse nonWrappedReponse = requestContext.getServletResponse();
 
         try {
             final ByteArrayOutputStream outstr = new ByteArrayOutputStream(4096);
-            final GenericResponseWrapper responseWrapper = new GenericResponseWrapper(context.getServletResponse(), outstr);
+            final GenericResponseWrapper responseWrapper = new GenericResponseWrapper(nonWrappedReponse, outstr);
 
+            // TODO: each valve may get request/response from either HstRequestContext or ValveContext.
+            //       so, for safety, we have to set it to both, which is not so ideal.
+            //       I think we deprecate ValveContext#getServletRequest(), #getServletResponse(), #setHttpServletResponse() ...
+            ((HstMutableRequestContext) requestContext).setServletResponse(responseWrapper);
             context.setHttpServletResponse(responseWrapper);
+
             context.invokeNext();
             responseWrapper.flush();
 
@@ -343,6 +366,7 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
                         timeToLiveSeconds, responseWrapper.getAllHeaders());
             }
         } finally {
+            ((HstMutableRequestContext) requestContext).setServletResponse(nonWrappedReponse);
             context.setHttpServletResponse(nonWrappedReponse);
         }
     }

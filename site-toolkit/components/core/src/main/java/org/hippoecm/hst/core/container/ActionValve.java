@@ -42,167 +42,167 @@ public class ActionValve extends AbstractBaseOrderableValve {
     @Override
     public void invoke(ValveContext context) throws ContainerException
     {
+        HstRequestContext requestContext = context.getRequestContext();
+        HstContainerURL baseURL = requestContext.getBaseURL();
+        String actionWindowReferenceNamespace = baseURL.getActionWindowReferenceNamespace();
+
+        if (actionWindowReferenceNamespace == null) {
+            // not an action request, so skip it
+            context.invokeNext();
+            return;
+        }
+
         HttpServletRequest servletRequest = context.getServletRequest();
         HttpServletResponse servletResponse = context.getServletResponse();
-        HstRequestContext requestContext = context.getRequestContext();
-        String actionWindowReferenceNamespace = requestContext.getBaseURL().getActionWindowReferenceNamespace();
+
+        HstComponentWindow window = null;
+        window = findComponentWindow(context.getRootComponentWindow(), actionWindowReferenceNamespace);
         
-        if (actionWindowReferenceNamespace != null) {
-            
-            HstContainerURL baseURL = requestContext.getBaseURL();
-            HstComponentWindow window = null;
-            window = findComponentWindow(context.getRootComponentWindow(), actionWindowReferenceNamespace);
-            
-            HstResponseState responseState = null;
-            HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider();
-            
-            if (window == null) {
-                log.warn("Illegal request for action URL found because there is no component for id '{}' for matched " +
-                        "sitemap item '{}'. Set 404 on response.", actionWindowReferenceNamespace, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
-                try {
-                    servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
-                } catch (IOException e) {
-                    throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
-                }
+        HstResponseState responseState = null;
+        HstContainerURLProvider urlProvider = requestContext.getURLFactory().getContainerURLProvider();
+        
+        if (window == null) {
+            log.warn("Illegal request for action URL found because there is no component for id '{}' for matched " +
+                    "sitemap item '{}'. Set 404 on response.", actionWindowReferenceNamespace, requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getId());
+            try {
+                servletResponse.sendError(HttpServletResponse.SC_NOT_FOUND);
+            } catch (IOException e) {
+                throw new ContainerException("Unable to set 404 on response after invalid resource path.", e);
+            }
+            return;
+        }
+        // Check if it is invoked from portlet.
+        responseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
+
+        if (responseState == null) {
+            responseState = new HstServletResponseState(servletRequest, servletResponse);
+        }
+
+        HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
+        HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, responseState, null);
+        ((HstComponentWindowImpl) window).setResponseState(responseState);
+
+        getComponentInvoker().invokeAction(context.getRequestContainerConfig(), request, response);
+
+        // page error handling...
+        PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
+        if (pageErrors != null) {
+            PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
+            String location = responseState.getRedirectLocation();
+            if (handled == PageErrorHandler.Status.HANDLED_TO_STOP && location == null) {
+                context.invokeNext();
                 return;
             }
-            // Check if it is invoked from portlet.
-            responseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
+        }
 
-            if (responseState == null) {
-                responseState = new HstServletResponseState(servletRequest, servletResponse);
-            }
+        Map<String, String []> renderParameters = response.getRenderParameters();
+        response.setRenderParameters(null);
 
-            HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
-            HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, responseState, null);
-            ((HstComponentWindowImpl) window).setResponseState(responseState);
+        if (renderParameters == null) {
+            renderParameters = Collections.emptyMap();
+        }
 
-            getComponentInvoker().invokeAction(context.getRequestContainerConfig(), request, response);
+        String referenceNamespace = window.getReferenceNamespace();
 
-            // page error handling...
-            PageErrors pageErrors = getPageErrors(new HstComponentWindow [] { window }, true);
-            if (pageErrors != null) {
-                PageErrorHandler.Status handled = handleComponentExceptions(pageErrors, context.getRequestContainerConfig(), window, request, response);
-                String location = responseState.getRedirectLocation();
-                if (handled == PageErrorHandler.Status.HANDLED_TO_STOP && location == null) {
-                    context.invokeNext();
-                    return;
+        if (getUrlFactory().isReferenceNamespaceIgnored()) {
+            referenceNamespace = "";
+        }
+
+        urlProvider.mergeParameters(baseURL, referenceNamespace, renderParameters);
+
+        if (responseState.getErrorCode() > 0) {
+            try {
+                int errorCode = responseState.getErrorCode();
+                String errorMessage = responseState.getErrorMessage();
+                String componentClassName = window.getComponentName();
+
+                log.debug("The action window has error status code: {} - {}", errorCode, componentClassName);
+
+                if (errorMessage != null) {
+                    servletResponse.sendError(errorCode, errorMessage);
+                } else {
+                    servletResponse.sendError(errorCode);
+                }
+            } catch (IOException e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Exception invocation on sendError().", e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Exception invocation on sendError().");
                 }
             }
-
-            Map<String, String []> renderParameters = response.getRenderParameters();
-            response.setRenderParameters(null);
-
-            if (renderParameters == null) {
-                renderParameters = Collections.emptyMap();
-            }
-
-            String referenceNamespace = window.getReferenceNamespace();
-
-            if (getUrlFactory().isReferenceNamespaceIgnored()) {
-                referenceNamespace = "";
-            }
-
-            urlProvider.mergeParameters(baseURL, referenceNamespace, renderParameters);
-
-            if (responseState.getErrorCode() > 0) {
-                try {
-                    int errorCode = responseState.getErrorCode();
-                    String errorMessage = responseState.getErrorMessage();
-                    String componentClassName = window.getComponentName();
-
-                    log.debug("The action window has error status code: {} - {}", errorCode, componentClassName);
-
-                    if (errorMessage != null) {
-                        servletResponse.sendError(errorCode, errorMessage);
-                    } else {
-                        servletResponse.sendError(errorCode);
-                    }
-                } catch (IOException e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Exception invocation on sendError().", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Exception invocation on sendError().");
-                    }
-                }
-            } else {
-                if (responseState.getRedirectLocation() == null) {
-                    try {
-                        // Clear action state first
-                        if (baseURL.getActionParameterMap() != null) {
-                            baseURL.getActionParameterMap().clear();
-                        }
-                        baseURL.setActionWindowReferenceNamespace(null);
-
-                        if (requestContext.isPortletContext()) {
-                            responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL, requestContext));
-                        } else {
-                            responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, null));
-                        }
-                    } catch (UnsupportedEncodingException e) {
-                        throw new ContainerException(e);
-                    } catch (IOException e) {
-                        throw new ContainerException(e);
-                    }
-                }
-
-                try {
-                    if (!requestContext.isPortletContext()) {
-                        responseState.flush();
-
-                        String location = responseState.getRedirectLocation();
-
-                        if(StringUtils.isEmpty(location)) {
-                            // location is the homepage (/) and there is no context path in the URL/ replace location with "/"
-                            location = "/";
-                        }
-                        if (location.startsWith("?")) {
-                            location = "/" + location;
-                        }
-                        if (location.startsWith("http:") || location.startsWith("https:")) {
-                            servletResponse.sendRedirect(location);
-                        } else {
-                            if (!location.startsWith("/")) {
-                                throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
-                            }
-
-                            /*
-                             * We will redirect to a URL containing the scheme + hostname + portnumber to avoid problems
-                             * when redirecting behind a proxy by default.
-                             */
-                            if (isAlwaysRedirectLocationToAbsoluteUrl()) {
-                                String absoluteRedirectUrl = requestContext.getVirtualHost().getBaseURL(servletRequest) + location;
-                                servletResponse.sendRedirect(absoluteRedirectUrl);
-                            } else {
-                                servletResponse.sendRedirect(location);
-                            }
-                        }
-                    }
-                    else {
-                        String location = responseState.getRedirectLocation();
-                        if (!(location.startsWith("http:") || location.startsWith("https:"))) {
-                            if (!location.startsWith("/")) {
-                                throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
-                            }
-                            if (!getHstManager().getVirtualHosts().isExcluded(location)) {
-                                ResolvedVirtualHost rvh = requestContext.getResolvedSiteMapItem().getResolvedMount().getResolvedVirtualHost();
-                                String targetContextPath = requestContext.isEmbeddedRequest() ? requestContext.getEmbeddingContextPath() : baseURL.getContextPath();
-                                ResolvedMount mount = rvh.matchMount(targetContextPath, location);
-                                if (mount != null && mount.getMount().isMapped()) {
-                                    // redirectLocation is (at least) matched on a Mount: the portlet should try to render it
-                                    ((HstPortletResponseState)responseState).setRenderRedirect(true);
-                                }
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    log.warn("Unexpected exception during redirect to " + responseState.getRedirectLocation(), e);
-                }
-            }
-
         } else {
-            // continue
-            context.invokeNext();
+            if (responseState.getRedirectLocation() == null) {
+                try {
+                    // Clear action state first
+                    if (baseURL.getActionParameterMap() != null) {
+                        baseURL.getActionParameterMap().clear();
+                    }
+                    baseURL.setActionWindowReferenceNamespace(null);
+
+                    if (requestContext.isPortletContext()) {
+                        responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL, requestContext));
+                    } else {
+                        responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, null));
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    throw new ContainerException(e);
+                } catch (IOException e) {
+                    throw new ContainerException(e);
+                }
+            }
+
+            try {
+                if (!requestContext.isPortletContext()) {
+                    responseState.flush();
+
+                    String location = responseState.getRedirectLocation();
+
+                    if(StringUtils.isEmpty(location)) {
+                        // location is the homepage (/) and there is no context path in the URL/ replace location with "/"
+                        location = "/";
+                    }
+                    if (location.startsWith("?")) {
+                        location = "/" + location;
+                    }
+                    if (location.startsWith("http:") || location.startsWith("https:")) {
+                        servletResponse.sendRedirect(location);
+                    } else {
+                        if (!location.startsWith("/")) {
+                            throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
+                        }
+
+                        /*
+                         * We will redirect to a URL containing the scheme + hostname + portnumber to avoid problems
+                         * when redirecting behind a proxy by default.
+                         */
+                        if (isAlwaysRedirectLocationToAbsoluteUrl()) {
+                            String absoluteRedirectUrl = requestContext.getVirtualHost().getBaseURL(servletRequest) + location;
+                            servletResponse.sendRedirect(absoluteRedirectUrl);
+                        } else {
+                            servletResponse.sendRedirect(location);
+                        }
+                    }
+                }
+                else {
+                    String location = responseState.getRedirectLocation();
+                    if (!(location.startsWith("http:") || location.startsWith("https:"))) {
+                        if (!location.startsWith("/")) {
+                            throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
+                        }
+                        if (!getHstManager().getVirtualHosts().isExcluded(location)) {
+                            ResolvedVirtualHost rvh = requestContext.getResolvedSiteMapItem().getResolvedMount().getResolvedVirtualHost();
+                            String targetContextPath = requestContext.isEmbeddedRequest() ? requestContext.getEmbeddingContextPath() : baseURL.getContextPath();
+                            ResolvedMount mount = rvh.matchMount(targetContextPath, location);
+                            if (mount != null && mount.getMount().isMapped()) {
+                                // redirectLocation is (at least) matched on a Mount: the portlet should try to render it
+                                ((HstPortletResponseState)responseState).setRenderRedirect(true);
+                            }
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                log.warn("Unexpected exception during redirect to " + responseState.getRedirectLocation(), e);
+            }
         }
     }
 }
