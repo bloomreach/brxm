@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -118,32 +119,38 @@ public class ParametersInfoProcessor {
     }
 
     private List<ContainerItemComponentPropertyRepresentation> orderPropertiesByFieldGroup(final Class<?> classType, final ResourceBundle[] resourceBundles, final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap) {
-        final ArrayList<ContainerItemComponentPropertyRepresentation> properties = new ArrayList<ContainerItemComponentPropertyRepresentation>(propertyMap.size());
+        final LinkedHashSet<ContainerItemComponentPropertyRepresentation> properties = new LinkedHashSet<ContainerItemComponentPropertyRepresentation>(propertyMap.size());
 
-        final FieldGroupList fieldGroupList = classType.getAnnotation(FieldGroupList.class);
-        if (fieldGroupList == null) {
-            properties.addAll(propertyMap.values());
-        } else {
-            FieldGroup[] fieldGroups = fieldGroupList.value();
-            if (fieldGroups == null || fieldGroups.length == 0) {
-                properties.addAll(propertyMap.values());
-            } else {
-                for (FieldGroup fieldGroup : fieldGroups) {
-                    final String groupLabel = getResourceValue(resourceBundles, fieldGroup.titleKey(), null);
-                    for (final String propertyName : fieldGroup.value()) {
-                        final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
-                        if (property != null) {
-                            property.setGroupLabel(groupLabel);
-                            properties.add(property);
-                        } else {
-                            log.warn("Ignoring unknown parameter '{}' in parameters info interface '{}'",
-                                    propertyName, classType.getCanonicalName());
+        // First add all properties specified in field groups
+        for (Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
+            final FieldGroupList fieldGroupList = interfaceClass.getAnnotation(FieldGroupList.class);
+            if (fieldGroupList != null) {
+                FieldGroup[] fieldGroups = fieldGroupList.value();
+                if (fieldGroups != null && fieldGroups.length > 0) {
+                    for (FieldGroup fieldGroup : fieldGroups) {
+                        final String titleKey = fieldGroup.titleKey();
+                        final String groupLabel = getResourceValue(resourceBundles, titleKey, titleKey);
+                        for (final String propertyName : fieldGroup.value()) {
+                            final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
+                            if (property == null) {
+                                log.warn("Ignoring unknown parameter '{}' in parameters info interface '{}'",
+                                        propertyName, classType.getCanonicalName());
+                            } else if (properties.contains(property)) {
+                                log.warn("Ignoring duplicate parameter '{}' in field group '{}' of parameters info interface '{}'",
+                                        new Object[]{ propertyName, fieldGroup.titleKey(), classType.getCanonicalName() });
+                            } else {
+                                property.setGroupLabel(groupLabel);
+                                properties.add(property);
+                            }
                         }
                     }
                 }
             }
         }
-        return properties;
+        // Second, include all properties not specified in field groups (the set prevents duplicate properties)
+        properties.addAll(propertyMap.values());
+
+        return new ArrayList<ContainerItemComponentPropertyRepresentation>(properties);
     }
 
     private String getResourceValue(ResourceBundle[] bundles, String key, String defaultValue) {

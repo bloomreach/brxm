@@ -15,10 +15,13 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import org.hippoecm.hst.core.parameters.Color;
@@ -30,6 +33,7 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNull;
 import static junit.framework.Assert.assertTrue;
 
 public class ParametersInfoProcessorTest {
@@ -179,7 +183,7 @@ public class ParametersInfoProcessorTest {
     }
 
     /**
-     * above is a interface hierarchy as follows:
+     * above is an interface hierarchy as follows:
      *
      *                a
      *              /   \
@@ -302,11 +306,10 @@ public class ParametersInfoProcessorTest {
     }
 
     @Test
-    public void testFieldGroupList() {
+    public void fieldGroupListGroupsParameters() {
         ParametersInfo parameterInfo = FieldGroupComponent.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
-        assertEquals(properties.size(), 3);
-
+        assertEquals("number of properties", 3, properties.size());
         assertNameAndGroupLabel(properties.get(0), "three", "Group1");
         assertNameAndGroupLabel(properties.get(1), "one", "Group1");
         assertNameAndGroupLabel(properties.get(2), "two", "Group2");
@@ -323,11 +326,10 @@ public class ParametersInfoProcessorTest {
     }
 
     @Test
-    public void testEmptyFieldGroupList() {
+    public void emptyFieldGroupListIncludesAllParameters() {
         ParametersInfo parameterInfo = EmptyFieldGroupListComponent.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
-        assertEquals(properties.size(), 1);
-
+        assertEquals("number of properties", 1, properties.size());
         assertNameAndGroupLabel(properties.get(0), "one", null);
     }
 
@@ -347,18 +349,35 @@ public class ParametersInfoProcessorTest {
     }
 
     @Test
-    public void testFieldGroupWithoutTitle() {
+    public void fieldGroupWithoutTitleUsesEmptyTitle() {
         ParametersInfo parameterInfo = FieldGroupWithoutTitleComponent.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
-        assertEquals(properties.size(), 2);
-
-        assertNameAndGroupLabel(properties.get(0), "two", null);
-        assertNameAndGroupLabel(properties.get(1), "one", null);
+        assertEquals("number of properties", 2, properties.size());
+        assertNameAndGroupLabel(properties.get(0), "two", "");
+        assertNameAndGroupLabel(properties.get(1), "one", "");
     }
 
-    private void assertNameAndGroupLabel(ContainerItemComponentPropertyRepresentation property, String name, String groupLabel) {
-        assertEquals("name", name, property.getName());
-        assertEquals("group label", groupLabel, property.getGroupLabel());
+    @FieldGroupList({
+            @FieldGroup(
+                    titleKey = "group",
+                    value = {"parameter"}
+            )
+    })
+    static interface FieldGroupWithUntranslatedTitleInterface {
+        @Parameter(name = "parameter")
+        String getParameter();
+    }
+
+    @ParametersInfo(type=FieldGroupWithUntranslatedTitleInterface.class)
+    static class FieldGroupWithUntranslatedTitleComponent {
+    }
+
+    @Test
+    public void fieldGroupWithUntranslatedTitleUsesKeyAsTitle() {
+        ParametersInfo parameterInfo = FieldGroupWithUntranslatedTitleComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertEquals("number of properties", 1, properties.size());
+        assertNameAndGroupLabel(properties.get(0), "parameter", "group");
     }
 
     @FieldGroupList({
@@ -374,10 +393,177 @@ public class ParametersInfoProcessorTest {
     }
 
     @Test
-    public void testFieldGroupWithUnknownParameter() {
+    public void unknownFieldGroupParameterIsIgnored() {
         ParametersInfo parameterInfo = FieldGroupWithUnknownParameterComponent.class.getAnnotation(ParametersInfo.class);
         List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
-        assertTrue(properties.isEmpty());
+        assertEquals("number of properties", 1, properties.size());
+        assertNameAndGroupLabel(properties.get(0), "parameter", null);
+    }
+
+    @FieldGroupList({
+            @FieldGroup(titleKey = "group1",
+                    value = {"parameter"}
+            ),
+            @FieldGroup(titleKey = "group2",
+                    value = {"parameter"}
+            )
+    })
+    static interface FieldGroupWithDuplicateParameterInterface {
+        @Parameter(name = "parameter")
+        String getParameter();
+    }
+
+    @ParametersInfo(type=FieldGroupWithDuplicateParameterInterface.class)
+    static class FieldGroupWithDuplicateParameterComponent {
+    }
+
+    @Test
+    public void duplicateFieldGroupParameterBelongsToFirstGroup() {
+        ParametersInfo parameterInfo = FieldGroupWithDuplicateParameterComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertEquals("number of properties", 1, properties.size());
+        assertNameAndGroupLabel(properties.get(0), "parameter", "group1");
+    }
+
+    @FieldGroupList({
+            @FieldGroup(
+                    titleKey = "group",
+                    value = {"one", "two"}
+            )
+    })
+    static interface FieldGroupWithSubsetOfParametersInterface {
+        @Parameter(name = "one")
+        String getOne();
+
+        @Parameter(name = "two")
+        String getTwo();
+
+        @Parameter(name = "three")
+        String getThree();
+    }
+
+    @ParametersInfo(type=FieldGroupWithSubsetOfParametersInterface.class)
+    static class FieldGroupWithSubsetOfParametersComponent {
+    }
+
+    @Test
+    public void fieldGroupWithSubsetOfParametersIncludesAllOtherParametersInSeparateLastGroup() {
+        ParametersInfo parameterInfo = FieldGroupWithSubsetOfParametersComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertEquals("number of properties", 3, properties.size());
+        assertNameAndGroupLabel(properties.get(0), "one", "group");
+        assertNameAndGroupLabel(properties.get(1), "two", "group");
+        assertNameAndGroupLabel(properties.get(2), "three", null);
+    }
+
+    @FieldGroupList({
+            @FieldGroup(
+                    titleKey = "group-d1",
+                    value = {"d1"}
+            ),
+            @FieldGroup(
+                titleKey = "group-d3",
+                value = {"d3"}
+            )
+    })
+    static interface FieldGroupInheritedInterfaceD {
+        @Parameter(name = "d1")
+        String getD1();
+
+        @Parameter(name = "d2")
+        String getD2();
+
+        @Parameter(name = "d3")
+        String getD3();
+
+        @Parameter(name = "d4")
+        String getD4();
+    }
+
+    static interface FieldGroupInheritedInterfaceC {
+        @Parameter(name = "c1")
+        String getC1();
+
+        @Parameter(name = "c2")
+        String getC2();
+    }
+
+    @FieldGroupList({
+            @FieldGroup(
+                    titleKey = "group-b1-d2",
+                    value = {"b1", "d2"}
+            ),
+            @FieldGroup(
+                    titleKey = "group-b2-d3",
+                    value = {"b2", "d3"}
+            )
+    })
+    static interface FieldGroupInheritedInterfaceB extends FieldGroupInheritedInterfaceD {
+        @Parameter(name = "b1")
+        String getB1();
+
+        @Parameter(name = "b2")
+        String getB2();
+
+        @Parameter(name = "b3")
+        String getB3();
+    }
+
+    @FieldGroupList({
+            @FieldGroup(
+                    titleKey = "group-a1-c2-b3-d1",
+                    value = {"a1", "c2", "b3", "d1"}
+            ),
+            @FieldGroup(
+                    titleKey = "group-a3",
+                    value = {"a3"}
+            )
+
+    })
+    static interface FieldGroupInheritedInterfaceA extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
+        @Parameter(name = "a1")
+        String getA1();
+
+        @Parameter(name = "a2")
+        String getA2();
+
+        @Parameter(name = "a3")
+        String getA3();
+    }
+
+    @ParametersInfo(type=FieldGroupInheritedInterfaceA.class)
+    static class FieldGroupInheritedComponent {
+    }
+
+    @Test
+    public void fieldGroupsAreInherited() {
+        ParametersInfo parameterInfo = FieldGroupInheritedComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertEquals("number of properties", 12, properties.size());
+        assertNameAndGroupLabel(properties.get(0), "a1", "group-a1-c2-b3-d1");
+        assertNameAndGroupLabel(properties.get(1), "c2", "group-a1-c2-b3-d1");
+        assertNameAndGroupLabel(properties.get(2), "b3", "group-a1-c2-b3-d1");
+        assertNameAndGroupLabel(properties.get(3), "d1", "group-a1-c2-b3-d1");
+        assertNameAndGroupLabel(properties.get(4), "a3", "group-a3");
+        assertNameAndGroupLabel(properties.get(5), "b1", "group-b1-d2");
+        assertNameAndGroupLabel(properties.get(6), "d2", "group-b1-d2");
+        assertNameAndGroupLabel(properties.get(7), "b2", "group-b2-d3");
+        assertNameAndGroupLabel(properties.get(8), "d3", "group-b2-d3");
+        assertContains(properties, 9, "a2", "c1", "d4");
+    }
+
+    private void assertContains(List<ContainerItemComponentPropertyRepresentation> properties, int fromIndex, String... propertyNames) {
+        List<String> expectedUngroupedPropertyNames = new ArrayList<String>(Arrays.asList(propertyNames));
+        ListIterator<ContainerItemComponentPropertyRepresentation> iterator = properties.listIterator(fromIndex);
+        while (iterator.hasNext()) {
+            final String propertyName = iterator.next().getName();
+            assertTrue("expected ungrouped property '" + propertyName + "'", expectedUngroupedPropertyNames.remove(propertyName));
+        }
+    }
+
+    private void assertNameAndGroupLabel(ContainerItemComponentPropertyRepresentation property, String name, String groupLabel) {
+        assertEquals("name", name, property.getName());
+        assertEquals("group label", groupLabel, property.getGroupLabel());
     }
 
 }

@@ -216,4 +216,31 @@ public class ContainerItemComponentPropertyRepresentation {
         this.hiddenInChannelManager = hiddenInChannelManager;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final ContainerItemComponentPropertyRepresentation that = (ContainerItemComponentPropertyRepresentation) o;
+
+        if (!name.equals(that.name)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
