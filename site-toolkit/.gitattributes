@@ -410,6 +410,7 @@ commons/src/main/java/org/hippoecm/hst/core/component/HeadElementImpl.java svneo
 commons/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoProxyFactoryImpl.java -text svneol=unset#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstPortletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstServletResponseState.java svneol=native#text/plain
+commons/src/main/java/org/hippoecm/hst/core/component/SerializableElement.java -text
 commons/src/main/java/org/hippoecm/hst/core/component/WrapperElementImpl.java -text
 commons/src/main/java/org/hippoecm/hst/core/container/DelegatingOrderableValve.java -text
 commons/src/main/java/org/hippoecm/hst/core/hosting/CustomMountAndVirtualCmsHostAugmenter.java -text svneol=unset#text/plain
@@ -472,6 +473,16 @@ components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.j
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/CacheElementEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/EhCacheManagerShuttingDownListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/HstCacheEhCacheImpl.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESICommentFragment.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESICommentFragmentInfo.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIElementFragment.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIElementFragmentInfo.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIFragment.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIFragmentInfo.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIFragmentType.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIPageInfo.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIPageRenderer.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/esi/ESIPageScanner.java -text
 components/core/src/main/java/org/hippoecm/hst/component/support/ClientComponentManager.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationUtils.java -text
 components/core/src/main/java/org/hippoecm/hst/configuration/ConfigurationViewUtilities.java svneol=native#text/plain
@@ -646,6 +657,8 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager.xml svneol=native#text/plain
 components/core/src/site/site.xml -text
 components/core/src/test/java/org/hippoecm/hst/cache/ehcache/TestHstCache.java -text
+components/core/src/test/java/org/hippoecm/hst/cache/esi/TestESIPageRenderer.java -text
+components/core/src/test/java/org/hippoecm/hst/cache/esi/TestESIPageScanner.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/ConcurrentChannelManagerAndHstManagerLoadTest.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/TestConfigurationUtils.java -text
 components/core/src/test/java/org/hippoecm/hst/configuration/TestMatchHostAndURL.java svneol=native#text/plain
@@ -735,6 +748,8 @@ components/core/src/test/resources/META-INF/hst-assembly/addon/servletctxaware-m
 components/core/src/test/resources/log4j-filters.txt -text
 components/core/src/test/resources/log4j.xml -text
 components/core/src/test/resources/org/hippoecm/hst/cache/ehcache/TestHstCache.xml -text
+components/core/src/test/resources/org/hippoecm/hst/cache/esi/esi-result-page-1.html -text
+components/core/src/test/resources/org/hippoecm/hst/cache/esi/esi-source-page-1.html -text
 components/core/src/test/resources/org/hippoecm/hst/core/component/TestHstRequest.xml svneol=native#text/plain
 components/core/src/test/resources/org/hippoecm/hst/core/container/AbstractPipelineTestCase.xml -text
 components/core/src/test/resources/org/hippoecm/hst/core/container/TestContainerURLProvider.xml svneol=native#text/plain

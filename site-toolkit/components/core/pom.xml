@@ -97,7 +97,12 @@
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.apache.james</groupId>
+      <artifactId>apache-mime4j</artifactId>
+    </dependency>
+
     <!-- Exclude commons-logging explicitly by a provided dependency. -->
     <dependency> 
       <groupId>commons-logging</groupId> 

@@ -16,12 +16,15 @@
 package org.hippoecm.hst.core.container;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
@@ -33,9 +36,16 @@ import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 import net.sf.ehcache.constructs.web.Header;
 import net.sf.ehcache.constructs.web.PageInfo;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.james.mime4j.util.MimeUtil;
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.HstCacheException;
+import org.hippoecm.hst.cache.esi.ESIFragmentInfo;
+import org.hippoecm.hst.cache.esi.ESIPageInfo;
+import org.hippoecm.hst.cache.esi.ESIPageRenderer;
+import org.hippoecm.hst.cache.esi.ESIPageScanner;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.diagnosis.HDC;
@@ -60,10 +70,27 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
      */
     protected HstCache pageCache;
 
+    private boolean esiFragmentsProcessing;
+
+    private ESIPageScanner esiPageScanner;
+
+    private ESIPageRenderer esiPageRenderer;
+
     public void setPageCache(HstCache pageCache) {
         this.pageCache = pageCache;
     }
 
+    public void setEsiFragmentsProcessing(boolean esiFragmentsProcessing) {
+        this.esiFragmentsProcessing = esiFragmentsProcessing;
+    }
+
+    public void setEsiPageScanner(ESIPageScanner esiPageScanner) {
+        this.esiPageScanner = esiPageScanner;
+    }
+
+    public void setEsiPageRenderer(ESIPageRenderer esiPageRenderer) {
+        this.esiPageRenderer = esiPageRenderer;
+    }
 
     @Override
     public void invoke(ValveContext context) throws ContainerException
@@ -265,6 +292,7 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
             throws Exception {
 
         final HttpServletResponse nonWrappedReponse = context.getServletResponse();
+
         try {
             final ByteArrayOutputStream outstr = new ByteArrayOutputStream(4096);
             final GenericResponseWrapper responseWrapper = new GenericResponseWrapper(context.getServletResponse(), outstr);
@@ -294,9 +322,26 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
                         timeToLiveSeconds, responseWrapper.getAllHeaders());
             }
 
-            return new PageInfo(responseWrapper.getStatus(), responseWrapper.getContentType(),
-                    responseWrapper.getCookies(), outstr.toByteArray(), storeGzipped,
-                    timeToLiveSeconds, responseWrapper.getAllHeaders());
+            String contentType = responseWrapper.getContentType();
+
+            if (esiFragmentsProcessing && StringUtils.startsWith(contentType, "text/")) {
+                Map<String, String> params = MimeUtil.getHeaderParams(contentType);
+                String charset = StringUtils.defaultIfEmpty(params.get("charset"), "UTF-8");
+                String bodyContent = outstr.toString(charset);
+                IOUtils.closeQuietly(outstr);
+                ESIPageInfo esiPageInfo = new ESIPageInfo(responseWrapper.getStatus(), contentType,
+                        responseWrapper.getCookies(), bodyContent, storeGzipped,
+                        timeToLiveSeconds, responseWrapper.getAllHeaders());
+                List<ESIFragmentInfo> fragmentInfos = esiPageScanner.scanFragmentInfos(bodyContent);
+                if (!fragmentInfos.isEmpty()) {
+                    esiPageInfo.addAllFragmentInfos(esiPageScanner.scanFragmentInfos(bodyContent));
+                }
+                return esiPageInfo;
+            } else {
+                return new PageInfo(responseWrapper.getStatus(), contentType,
+                        responseWrapper.getCookies(), outstr.toByteArray(), storeGzipped,
+                        timeToLiveSeconds, responseWrapper.getAllHeaders());
+            }
         } finally {
             context.setHttpServletResponse(nonWrappedReponse);
         }
@@ -417,14 +462,24 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
         }
     }
 
-    protected void writeContent(final HttpServletResponse response, final PageInfo pageInfo)
-            throws IOException {
+    protected void writeContent(final HttpServletResponse response, final PageInfo pageInfo) throws IOException {
+        if (pageInfo instanceof ESIPageInfo) {
+            Writer writer = new BufferedWriter(response.getWriter());
 
-            byte[] body = pageInfo.getUngzippedBody();
+            if (esiFragmentsProcessing) {
+                esiPageRenderer.render(writer, (ESIPageInfo) pageInfo);
+            } else {
+                writer.write(((ESIPageInfo) pageInfo).getBodyContent());
+            }
+
+            writer.flush();
+        } else {
+            byte [] body = pageInfo.getUngzippedBody();
             response.setContentLength(body != null ? body.length : 0);
             OutputStream out = new BufferedOutputStream(response.getOutputStream());
             out.write(body);
             out.flush();
+        }
     }
 
 }
