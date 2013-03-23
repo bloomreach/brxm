@@ -165,7 +165,7 @@
           <systemPropertyVariables>
             <repo.path>${repo.path}</repo.path>
             <repo.config>${repo.config}</repo.config>
-            <org.onehippo.repository.test.keepserver>false</org.onehippo.repository.test.keepserver>
+            <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
           </systemPropertyVariables>
         </configuration>
         <executions>
