@@ -92,17 +92,7 @@ public abstract class RepositoryTestCase {
         final File storage = new File(System.getProperty("repo.path", ""));
         String[] paths = new String[] { ".lock", "repository", "version", "workspaces" };
         for (final String path : paths) {
-            try {
-                final File file = new File(storage, path);
-                if (file.exists()) {
-                    FileUtils.forceDelete(file);
-                } else {
-                    System.out.println("===================> Does not exist: " + file.getAbsolutePath());
-                }
-            } catch (IOException e) {
-                System.out.println("===================> Failed to delete file: " + e);
-            }
-//            FileUtils.deleteQuietly(new File(storage, file));
+            FileUtils.deleteQuietly(new File(storage, path));
         }
     }
 
