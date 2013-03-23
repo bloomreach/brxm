@@ -16,6 +16,7 @@
 package org.onehippo.repository.testutils;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
@@ -89,9 +90,19 @@ public abstract class RepositoryTestCase {
             background = null;
         }
         final File storage = new File(System.getProperty("repo.path", ""));
-        String[] files = new String[] { ".lock", "repository", "version", "workspaces" };
-        for (final String file : files) {
-            FileUtils.deleteQuietly(new File(storage, file));
+        String[] paths = new String[] { ".lock", "repository", "version", "workspaces" };
+        for (final String path : paths) {
+            try {
+                final File file = new File(storage, path);
+                if (file.exists()) {
+                    FileUtils.forceDelete(file);
+                } else {
+                    System.out.println("===================> Does not exist: " + file.getAbsolutePath());
+                }
+            } catch (IOException e) {
+                System.out.println("===================> Failed to delete file: " + e);
+            }
+//            FileUtils.deleteQuietly(new File(storage, file));
         }
     }
 
