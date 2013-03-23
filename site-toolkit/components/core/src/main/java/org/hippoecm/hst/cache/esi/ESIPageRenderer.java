@@ -18,16 +18,11 @@ package org.hippoecm.hst.cache.esi;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.util.PropertyParser;
-import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
 
 /**
  * ESIPageRenderer
@@ -125,30 +120,5 @@ public class ESIPageRenderer {
             source = (String) propertyParser.resolveProperty(getClass().getSimpleName(), source);
             writer.write(source);
         }
-    }
-
-    protected PropertyParser createESIVariablesParser(final HttpServletRequest request) {
-        final HstRequestContext requestContext = RequestContextProvider.get();
-
-        PropertyParser parser = new PropertyParser(null, "$(", ")", null, true);
-
-        parser.setPlaceholderResolver(new PlaceholderResolver() {
-            @Override
-            public String resolvePlaceholder(String name) {
-                if ("HTTP_HOST".equals(name)) {
-                    return requestContext.getResolvedMount().getResolvedVirtualHost().getResolvedHostName();
-                }
-
-                Matcher m = COOKIE_VAR_PATTERN.matcher(name);
-                if (m.matches()) {
-                    String cookieName = m.group(1);
-                    Cookie [] cookies = request.getCookies();
-                }
-
-                return null;
-            }
-        });
-
-        return parser;
     }
 }
