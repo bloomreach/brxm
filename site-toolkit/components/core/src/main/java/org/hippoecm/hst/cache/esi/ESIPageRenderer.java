@@ -18,7 +18,6 @@ package org.hippoecm.hst.cache.esi;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,8 +27,6 @@ import org.hippoecm.hst.core.util.PropertyParser;
  * ESIPageRenderer
  */
 public class ESIPageRenderer {
-
-    private static final Pattern COOKIE_VAR_PATTERN = Pattern.compile("^HTTP_COOKIE\\{([^\\{\\}]+)\\}$");
 
     private PropertyParser propertyParser;
 
