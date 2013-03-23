@@ -45,6 +45,7 @@ public class ESIPageScanner {
 
     private String ESI_COMMENT_START = "<!--esi";
     private String ESI_COMMENT_END = "-->";
+    private String ESI_TAG_START_END = ">";
     private String ESI_TAG_END_EMPTY = "/>";
     private String ESI_INCLUDE_TAG_START = "<esi:include";
     private String ESI_INCLUDE_TAG_END = "</esi:include>";
@@ -52,8 +53,10 @@ public class ESIPageScanner {
     private String ESI_COMMENT_TAG_END = "</esi:comment>";
     private String ESI_REMOVE_TAG_START = "<esi:remove";
     private String ESI_REMOVE_TAG_END = "</esi:remove>";
+    private String ESI_VARS_TAG_START = "<esi:vars";
+    private String ESI_VARS_TAG_END = "</esi:vars>";
 
-    private Pattern ESI_TAG_START_PATTERN = Pattern.compile("(<!--esi|<esi:include|<esi:comment|<esi:remove)", Pattern.DOTALL);
+    private Pattern ESI_TAG_START_PATTERN = Pattern.compile("(<!--esi|<esi:include|<esi:comment|<esi:remove|<esi:vars)", Pattern.DOTALL);
 
     public ESIPageScanner() {
     }
@@ -81,19 +84,20 @@ public class ESIPageScanner {
             end = mr.end();
 
             String prefix = mr.group(1);
+            ESIFragmentType fragmentType = getFragmentTypeByTagPrefix(prefix);
 
-            if (ESI_COMMENT_START.equals(prefix)) {
+            if (fragmentType == ESIFragmentType.COMMENT_BLOCK) {
                 offset = bodyContent.indexOf(ESI_COMMENT_END, end);
 
                 if (offset == -1) {
                     log.warn("Invalid esi comment at index, {}. No comment ending: {}", begin, mr.group());
                 } else {
                     end = offset + ESI_COMMENT_END.length();
-                    String uncommentedFragmentSource = bodyContent.substring(begin + ESI_COMMENT_START.length(), end - ESI_COMMENT_END.length());
-                    log.debug("uncommentedFragmentSource: {}", uncommentedFragmentSource);
+                    String fragmentSource = bodyContent.substring(begin, end);
+                    log.debug("fragmentSource: {}", fragmentSource);
 
                     try {
-                        ESIFragmentInfo fragmentInfo = createCommentFragmentInfo(uncommentedFragmentSource, begin, end);
+                        ESIFragmentInfo fragmentInfo = createCommentFragmentInfo(fragmentSource, begin, end);
                         fragmentInfos.add(fragmentInfo);
                     } catch (Exception e) {
                         if (log.isDebugEnabled()) {
@@ -103,8 +107,12 @@ public class ESIPageScanner {
                         }
                     }
                 }
-            } else if (ESI_INCLUDE_TAG_START.equals(prefix)) {
+            } else {
                 offset = bodyContent.indexOf(ESI_TAG_END_EMPTY, end);
+
+                if (bodyContent.indexOf(ESI_TAG_START_END, end) < offset) {
+                    offset = -1;
+                }
 
                 if (offset != -1) {
                     end = offset + ESI_TAG_END_EMPTY.length();
@@ -112,7 +120,7 @@ public class ESIPageScanner {
                     log.debug("fragmentSource: {}", fragmentSource);
 
                     try {
-                        ESIFragmentInfo fragmentInfo = createIncludeElementFragmentInfo(ESIFragmentType.INCLUDE_TAG, fragmentSource, begin, end);
+                        ESIFragmentInfo fragmentInfo = createElementFragmentInfo(fragmentType, fragmentSource, begin, end);
                         fragmentInfos.add(fragmentInfo);
                     } catch (Exception e) {
                         if (log.isDebugEnabled()) {
@@ -122,97 +130,18 @@ public class ESIPageScanner {
                         }
                     }
                 } else {
-                    offset = bodyContent.indexOf(ESI_INCLUDE_TAG_END, end);
+                    String fragmentEndTag = getEndTagStringByFragmentType(fragmentType);
+                    offset = bodyContent.indexOf(fragmentEndTag, end);
     
                     if (offset == -1) {
-                        log.warn("Invalid esi include at index, {}. No element ending: {}", begin, mr.group());
+                        log.warn("Invalid esi tag at index, {}. No element ending: {}", begin, mr.group());
                     } else {
-                        end = offset + ESI_INCLUDE_TAG_END.length();
+                        end = offset + fragmentEndTag.length();
                         String fragmentSource = bodyContent.substring(begin, end);
                         log.debug("fragmentSource: {}", fragmentSource);
 
                         try {
-                            ESIFragmentInfo fragmentInfo = createIncludeElementFragmentInfo(ESIFragmentType.INCLUDE_TAG, fragmentSource, begin, end);
-                            fragmentInfos.add(fragmentInfo);
-                        } catch (Exception e) {
-                            if (log.isDebugEnabled()) {
-                                log.warn("Failed to create fragment info.", e);
-                            } else {
-                                log.warn("Failed to create fragment info. {}", e.toString());
-                            }
-                        }
-                    }
-                }
-            } else if (ESI_COMMENT_TAG_START.equals(prefix)) {
-                offset = bodyContent.indexOf(ESI_TAG_END_EMPTY, end);
-
-                if (offset != -1) {
-                    end = offset + ESI_TAG_END_EMPTY.length();
-                    String fragmentSource = bodyContent.substring(begin, end);
-                    log.debug("fragmentSource: {}", fragmentSource);
-
-                    try {
-                        ESIFragmentInfo fragmentInfo = createCommentElementFragmentInfo(ESIFragmentType.COMMENT_TAG, fragmentSource, begin, end);
-                        fragmentInfos.add(fragmentInfo);
-                    } catch (Exception e) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("Failed to create fragment info.", e);
-                        } else {
-                            log.warn("Failed to create fragment info. {}", e.toString());
-                        }
-                    }
-                } else {
-                    offset = bodyContent.indexOf(ESI_COMMENT_TAG_END, end);
-    
-                    if (offset == -1) {
-                        log.warn("Invalid esi comment at index, {}. No element ending: {}", begin, mr.group());
-                    } else {
-                        end = offset + ESI_COMMENT_TAG_END.length();
-                        String fragmentSource = bodyContent.substring(begin, end);
-                        log.debug("fragmentSource: {}", fragmentSource);
-
-                        try {
-                            ESIFragmentInfo fragmentInfo = createCommentElementFragmentInfo(ESIFragmentType.COMMENT_TAG, fragmentSource, begin, end);
-                            fragmentInfos.add(fragmentInfo);
-                        } catch (Exception e) {
-                            if (log.isDebugEnabled()) {
-                                log.warn("Failed to create fragment info.", e);
-                            } else {
-                                log.warn("Failed to create fragment info. {}", e.toString());
-                            }
-                        }
-                    }
-                }
-            } else if (ESI_REMOVE_TAG_START.equals(prefix)) {
-                offset = bodyContent.indexOf(ESI_REMOVE_TAG_END, end);
-
-                if (offset != -1) {
-                    end = offset + ESI_REMOVE_TAG_END.length();
-                    String fragmentSource = bodyContent.substring(begin, end);
-                    log.debug("fragmentSource: {}", fragmentSource);
-
-                    try {
-                        ESIFragmentInfo fragmentInfo = createRemoveElementFragmentInfo(ESIFragmentType.REMOVE_TAG, fragmentSource, begin, end);
-                        fragmentInfos.add(fragmentInfo);
-                    } catch (Exception e) {
-                        if (log.isDebugEnabled()) {
-                            log.warn("Failed to create fragment info.", e);
-                        } else {
-                            log.warn("Failed to create fragment info. {}", e.toString());
-                        }
-                    }
-                } else {
-                    offset = bodyContent.indexOf(ESI_TAG_END_EMPTY, end);
-    
-                    if (offset == -1) {
-                        log.warn("Invalid esi remove at index, {}. No element ending: {}", begin, mr.group());
-                    } else {
-                        end = offset + ESI_TAG_END_EMPTY.length();
-                        String fragmentSource = bodyContent.substring(begin, end);
-                        log.debug("fragmentSource: {}", fragmentSource);
-
-                        try {
-                            ESIFragmentInfo fragmentInfo = createRemoveElementFragmentInfo(ESIFragmentType.REMOVE_TAG, fragmentSource, begin, end);
+                            ESIFragmentInfo fragmentInfo = createElementFragmentInfo(fragmentType, fragmentSource, begin, end);
                             fragmentInfos.add(fragmentInfo);
                         } catch (Exception e) {
                             if (log.isDebugEnabled()) {
@@ -240,7 +169,8 @@ public class ESIPageScanner {
      * @return
      * @throws Exception
      */
-    private ESIFragmentInfo createCommentFragmentInfo(String uncommentedFragmentSource, int begin, int end) throws Exception {
+    private ESIFragmentInfo createCommentFragmentInfo(String fragmentSource, int begin, int end) throws Exception {
+        String uncommentedFragmentSource = fragmentSource.substring(ESI_COMMENT_START.length(), fragmentSource.length() - ESI_COMMENT_END.length());
         ESICommentFragment fragment = new ESICommentFragment(ESIFragmentType.COMMENT_BLOCK, uncommentedFragmentSource);
         ESICommentFragmentInfo fragmentInfo = new ESICommentFragmentInfo(fragment, begin, end);
 
@@ -259,7 +189,7 @@ public class ESIPageScanner {
     }
 
     /**
-     * Create esi include element fragment info from the source.
+     * Create esi element such as comment, include, remove, vars, etc.
      * @param type
      * @param fragmentSource
      * @param begin
@@ -267,44 +197,61 @@ public class ESIPageScanner {
      * @return
      * @throws Exception
      */
-    private ESIFragmentInfo createIncludeElementFragmentInfo(ESIFragmentType type, String fragmentSource, int begin, int end) throws Exception {
-        DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
-        Document doc = docBuilder.parse(new InputSource(new StringReader(fragmentSource)));
-        Element element = doc.getDocumentElement();
+    private ESIFragmentInfo createElementFragmentInfo(ESIFragmentType type, String fragmentSource, int begin, int end) throws Exception {
+        if (type == ESIFragmentType.VARS_TAG) {
+            int start = fragmentSource.indexOf(ESI_TAG_START_END);
+            int stop = fragmentSource.indexOf(ESI_VARS_TAG_END);
+
+            if (start != -1 && end != -1 && start < end) {
+                fragmentSource = fragmentSource.substring(start + 1, stop);
+            } else {
+                log.warn("Invalid vars tag fragment: {}", fragmentSource);
+                fragmentSource = "";
+            }
+        }
+
         ESIElementFragment fragment = new ESIElementFragment(type, fragmentSource);
-        fragment.setElement(new SerializableElement(element));
+
+        if (type == ESIFragmentType.INCLUDE_TAG) {
+            DocumentBuilderFactory dbfac = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = dbfac.newDocumentBuilder();
+            Document doc = docBuilder.parse(new InputSource(new StringReader(fragmentSource)));
+            Element element = doc.getDocumentElement();
+            fragment.setElement(new SerializableElement(element));
+        }
+
         ESIElementFragmentInfo fragmentInfo = new ESIElementFragmentInfo(fragment, begin, end);
+
         return fragmentInfo;
     }
 
-    /**
-     * Create esi comment element fragment info from the source.
-     * @param type
-     * @param fragmentSource
-     * @param begin
-     * @param end
-     * @return
-     * @throws Exception
-     */
-    private ESIFragmentInfo createCommentElementFragmentInfo(ESIFragmentType type, String fragmentSource, int begin, int end) throws Exception {
-        ESIElementFragment fragment = new ESIElementFragment(type, fragmentSource);
-        ESIElementFragmentInfo fragmentInfo = new ESIElementFragmentInfo(fragment, begin, end);
-        return fragmentInfo;
+    private ESIFragmentType getFragmentTypeByTagPrefix(String prefix) {
+        if (ESI_COMMENT_START.equals(prefix)) {
+            return ESIFragmentType.COMMENT_BLOCK;
+        } else if (ESI_COMMENT_TAG_START.equals(prefix)) {
+            return ESIFragmentType.COMMENT_TAG;
+        } else if (ESI_INCLUDE_TAG_START.equals(prefix)) {
+            return ESIFragmentType.INCLUDE_TAG;
+        } else if (ESI_REMOVE_TAG_START.equals(prefix)) {
+            return ESIFragmentType.REMOVE_TAG;
+        } else if (ESI_VARS_TAG_START.equals(prefix)) {
+            return ESIFragmentType.VARS_TAG;
+        }
+
+        throw new IllegalArgumentException("Cannot find fragment type by the prefix, '" + prefix + "'.");
     }
 
-    /**
-     * Create esi remove element fragment info from the source.
-     * @param type
-     * @param fragmentSource
-     * @param begin
-     * @param end
-     * @return
-     * @throws Exception
-     */
-    private ESIFragmentInfo createRemoveElementFragmentInfo(ESIFragmentType type, String fragmentSource, int begin, int end) throws Exception {
-        ESIElementFragment fragment = new ESIElementFragment(type, fragmentSource);
-        ESIElementFragmentInfo fragmentInfo = new ESIElementFragmentInfo(fragment, begin, end);
-        return fragmentInfo;
+    private String getEndTagStringByFragmentType(ESIFragmentType type) {
+        if (type == ESIFragmentType.COMMENT_TAG) {
+            return ESI_COMMENT_TAG_END;
+        } else if (type == ESIFragmentType.INCLUDE_TAG) {
+            return ESI_INCLUDE_TAG_END;
+        } else if (type == ESIFragmentType.REMOVE_TAG) {
+            return ESI_REMOVE_TAG_END;
+        } else if (type == ESIFragmentType.VARS_TAG) {
+            return ESI_VARS_TAG_END;
+        }
+
+        throw new IllegalArgumentException("Cannot find fragment end tag string by the type, " + type + ".");
     }
 }

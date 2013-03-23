@@ -30,7 +30,12 @@ public abstract class ESIFragment implements Serializable {
     /** The ESI fragment type. e.g., comment, include or remove */
     private ESIFragmentType type;
 
-    /** The real ESI fragment source */
+    /**
+     * The real effective ESI fragment source.
+     * Comment block fragment excludes the comment start ('<!--esi') and comment end ('-->'),
+     * and vars tag fragment excludes the tag start and end, while
+     * the others contain all the source string as is.
+     */
     private String source;
 
     public ESIFragment(ESIFragmentType type, String source) {

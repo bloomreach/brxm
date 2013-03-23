@@ -41,5 +41,16 @@
     <div><esi:include src='http://example.com/LICENSE' /></div>
   -->
 
+  <esi:vars>
+    <img src="http://www.example.com/$(HTTP_COOKIE{type})/hello.gif"/>
+    <ul>
+      <li>Accept Language: en? $(HTTP_ACCEPT_LANGUAGE{en})</li>
+      <li>Host: $(HTTP_HOST)</li>
+      <li>Referer: $(HTTP_REFERER)</li>
+      <li>User Agent: $(HTTP_USER_AGENT{browser}), $(HTTP_USER_AGENT{version}), $(HTTP_USER_AGENT{os})</li>
+      <li>Query String: $(QUERY_STRING{first}) $(QUERY_STRING{last})</li>
+    </ul>
+  </esi:vars>
+
 </body>
 </html>

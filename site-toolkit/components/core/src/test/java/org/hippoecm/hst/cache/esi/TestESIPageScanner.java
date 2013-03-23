@@ -43,7 +43,7 @@ public class TestESIPageScanner {
         ESIPageScanner scanner = new ESIPageScanner();
         List<ESIFragmentInfo> fragmentInfos = scanner.scanFragmentInfos(bodyContent);
 
-        assertEquals(6, fragmentInfos.size());
+        assertEquals(7, fragmentInfos.size());
 
         ESIFragmentInfo fragmentInfo = fragmentInfos.get(0);
         assertEquals(ESIFragmentType.COMMENT_BLOCK, fragmentInfo.getFragment().getType());
@@ -90,6 +90,13 @@ public class TestESIPageScanner {
         assertTrue(fragmentInfo instanceof ESIElementFragmentInfo);
         assertTrue(fragmentInfo.getFragment() instanceof ESIElementFragment);
         assertEquals("http://example.com/LICENSE", ((ESIElementFragment) fragmentInfo.getFragment()).getElement().getAttribute("src"));
+
+        fragmentInfo = fragmentInfos.get(6);
+        assertEquals(ESIFragmentType.VARS_TAG, fragmentInfo.getFragment().getType());
+        assertTrue(fragmentInfo instanceof ESIElementFragmentInfo);
+        assertTrue(fragmentInfo.getFragment() instanceof ESIElementFragment);
+        assertTrue(StringUtils.contains(fragmentInfo.getFragment().getSource(), "<img src=\"http://www.example.com/$(HTTP_COOKIE{type})/hello.gif\"/>"));
+        assertTrue(StringUtils.contains(fragmentInfo.getFragment().getSource(), "<li>User Agent: $(HTTP_USER_AGENT{browser}), $(HTTP_USER_AGENT{version}), $(HTTP_USER_AGENT{os})</li>"));
     }
 
     private byte [] readURLContentAsByteArray(URL url) throws IOException {

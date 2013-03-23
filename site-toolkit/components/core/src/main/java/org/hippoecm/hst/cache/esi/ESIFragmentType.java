@@ -30,6 +30,9 @@ public enum ESIFragmentType {
     COMMENT_TAG,
 
     /** ESI remove tag block. e.g., "<esi:remove>...</esi:remove>" */
-    REMOVE_TAG
+    REMOVE_TAG,
+
+    /** ESI vars tag block. e.g., "<esi:vars> ... </esi:vars>" */
+    VARS_TAG
 
 }

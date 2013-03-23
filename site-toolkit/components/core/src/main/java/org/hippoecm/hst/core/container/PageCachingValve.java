@@ -46,6 +46,7 @@ import org.hippoecm.hst.cache.esi.ESIFragmentInfo;
 import org.hippoecm.hst.cache.esi.ESIPageInfo;
 import org.hippoecm.hst.cache.esi.ESIPageRenderer;
 import org.hippoecm.hst.cache.esi.ESIPageScanner;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -487,11 +488,13 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
     }
 
     protected void writeContent(final HttpServletResponse response, final PageInfo pageInfo) throws IOException {
+        HstRequestContext requestContext = RequestContextProvider.get();
+
         if (pageInfo instanceof ESIPageInfo) {
             Writer writer = new BufferedWriter(response.getWriter());
 
             if (esiFragmentsProcessing) {
-                esiPageRenderer.render(writer, (ESIPageInfo) pageInfo);
+                esiPageRenderer.render(writer, requestContext.getServletRequest(), (ESIPageInfo) pageInfo);
             } else {
                 writer.write(((ESIPageInfo) pageInfo).getBodyContent());
             }

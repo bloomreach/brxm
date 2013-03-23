@@ -16,6 +16,7 @@
 package org.hippoecm.hst.cache.esi;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import net.sf.ehcache.constructs.web.Header;
@@ -36,6 +38,7 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 /**
  * TestESIPageRenderer
@@ -48,9 +51,24 @@ public class TestESIPageRenderer {
 
     @Test
     public void testESIPageRendering() throws Exception {
+        ArrayList<Cookie> cookies = new ArrayList<Cookie>();
+        cookies.add(new Cookie("id", "571"));
+        cookies.add(new Cookie("type", "expat"));
+        cookies.add(new Cookie("visits", "42"));
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Accept-Language", "da, en-gb, en");
+        request.setCookies(cookies.toArray(new Cookie[cookies.size()]));
+
+        request.setServerName("esi.xyz.com");
+        request.addHeader("Referer", "http://roberts.xyz.com/");
+        request.addHeader("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.7; rv:19.0) Gecko/20100101 Firefox/19.0");
+        request.setQueryString("first=Robin&last=Roberts");
+        request.setParameter("first", "Robin");
+        request.setParameter("last", "Roberts");
+
         int statusCode = HttpServletResponse.SC_OK;
         String contentType = "text/html; charset=UTF-8";
-        Collection cookies = new ArrayList();
         boolean storeGzipped = false;
         long timeToLiveSeconds = 60;
         Collection<Header<? extends Serializable>> headers = new ArrayList<Header<? extends Serializable>>();
@@ -76,12 +94,19 @@ public class TestESIPageRenderer {
             }
         };
 
-        renderer.render(writer, pageInfo);
+        renderer.render(writer, request, pageInfo);
 
         String expectedBodyContent = new String(readURLContentAsByteArray(getClass().getResource("esi-result-page-1.html")), "UTF-8");
         String renderedBodyContent = writer.toString();
         log.info("renderedBodyContent:\n{}", renderedBodyContent);
-        assertEquals(expectedBodyContent, renderedBodyContent);
+
+        String [] expectedLines = StringUtils.split(expectedBodyContent, "\r\n");
+        String [] renderedLines = StringUtils.split(renderedBodyContent, "\r\n");
+
+        for (int i = 0; i < expectedLines.length; i++) {
+            assertTrue(renderedLines.length > i);
+            assertEquals(expectedLines[i], renderedLines[i]);
+        }
     }
 
     private byte [] readURLContentAsByteArray(URL url) throws IOException {
