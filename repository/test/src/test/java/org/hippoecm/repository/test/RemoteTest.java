@@ -60,7 +60,6 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 //  org.hippoecm.frontend.model.event.ObservationTest.class
     org.hippoecm.repository.HREPTWO4999Test.class
 })
-@Ignore
 public class RemoteTest extends Suite
 {
 

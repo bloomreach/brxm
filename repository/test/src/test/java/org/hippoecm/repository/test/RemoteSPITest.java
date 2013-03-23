@@ -55,7 +55,6 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
     org.hippoecm.repository.decorating.PathsTest.class,
     org.hippoecm.repository.decorating.SingledViewFacetSelectTest.class
 })
-@Ignore
 public class RemoteSPITest extends Suite
 {
 
