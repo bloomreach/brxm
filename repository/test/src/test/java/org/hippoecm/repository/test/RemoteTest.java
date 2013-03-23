@@ -24,6 +24,7 @@ import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.HippoRepositoryFactory;
 import org.hippoecm.repository.HippoRepositoryServer;
 import org.hippoecm.repository.SecurityServiceTest;
+import org.junit.Ignore;
 import org.junit.internal.runners.InitializationError;
 import org.junit.runner.RunWith;
 import org.junit.runner.notification.RunNotifier;
@@ -59,6 +60,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 //  org.hippoecm.frontend.model.event.ObservationTest.class
     org.hippoecm.repository.HREPTWO4999Test.class
 })
+@Ignore
 public class RemoteTest extends Suite
 {
 
