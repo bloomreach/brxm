@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.valves.AbstractOrderableValve;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.order.ObjectOrderer;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
@@ -261,8 +262,6 @@ public class HstSitePipeline implements Pipeline
         private final Valve[] valves;
 
         private final HstContainerConfig requestContainerConfig;
-        private final HttpServletRequest servletRequest;
-        private HttpServletResponse servletResponse;
         private HstComponentWindow rootComponentWindow;
         private HstComponentWindow rootComponentRenderingWindow;
         private final HstRequestContext requestContext;
@@ -273,8 +272,8 @@ public class HstSitePipeline implements Pipeline
         public Invocation(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, Valve[] valves) {
             this.requestContainerConfig = requestContainerConfig;
             this.requestContext = requestContext;
-            this.servletRequest = servletRequest;
-            this.servletResponse = servletResponse;
+            ((HstMutableRequestContext)requestContext).setServletRequest(servletRequest);
+            ((HstMutableRequestContext)requestContext).setServletResponse(servletResponse);
             this.valves = valves;
         }
 
@@ -288,22 +287,26 @@ public class HstSitePipeline implements Pipeline
         }
 
         public HstContainerConfig getRequestContainerConfig() {
-            return this.requestContainerConfig;
+            return requestContainerConfig;
         }
         
         public HstRequestContext getRequestContext() {
-            return this.requestContext;
+            return requestContext;
         }
         public HttpServletRequest getServletRequest() {
-            return this.servletRequest;
+            return requestContext.getServletRequest();
         }
 
         public HttpServletResponse getServletResponse() {
-            return this.servletResponse;
+            return requestContext.getServletResponse();
         }
 
+        /**
+         * @deprecated deprecated since 2.26.02. Use {@link org.hippoecm.hst.core.internal.HstMutableRequestContext#setServletResponse(javax.servlet.http.HttpServletResponse)} instead
+         */
+        @Deprecated
         public void setHttpServletResponse(HttpServletResponse servletResponse) {
-            this.servletResponse = servletResponse;
+            ((HstMutableRequestContext)requestContext).setServletResponse(servletResponse);
         }
 
         public void setRootComponentWindow(HstComponentWindow rootComponentWindow) {

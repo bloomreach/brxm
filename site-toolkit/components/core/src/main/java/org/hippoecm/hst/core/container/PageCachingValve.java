@@ -316,11 +316,7 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
             final ByteArrayOutputStream outstr = new ByteArrayOutputStream(4096);
             final GenericResponseWrapper responseWrapper = new GenericResponseWrapper(nonWrappedReponse, outstr);
 
-            // TODO: each valve may get request/response from either HstRequestContext or ValveContext.
-            //       so, for safety, we have to set it to both, which is not so ideal.
-            //       I think we deprecate ValveContext#getServletRequest(), #getServletResponse(), #setHttpServletResponse() ...
             ((HstMutableRequestContext) requestContext).setServletResponse(responseWrapper);
-            context.setHttpServletResponse(responseWrapper);
 
             context.invokeNext();
             responseWrapper.flush();

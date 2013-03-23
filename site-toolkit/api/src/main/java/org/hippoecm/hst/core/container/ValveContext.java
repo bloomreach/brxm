@@ -70,7 +70,9 @@ public interface ValveContext
      * typically useful when for example you want to wrap the response by some {@link javax.servlet.http.HttpServletResponseWrapper} and
      * use this wrapper response for further processing
      * @param servletResponse
+     * @deprecated deprecated since 2.26.02. Use {@link org.hippoecm.hst.core.internal.HstMutableRequestContext#setServletResponse(javax.servlet.http.HttpServletResponse)} instead
      */
+    @Deprecated
     void setHttpServletResponse(HttpServletResponse servletResponse);
     
     /**

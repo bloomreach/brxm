@@ -18,6 +18,7 @@ package org.hippoecm.hst.core.container;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 
+import org.hippoecm.hst.site.request.HstRequestContextImpl;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -101,7 +102,7 @@ public class TestPageCacheContextAndKey {
     }
     
     private ValveContext createEmptyValveContext() {
-        return new HstSitePipeline.Invocation(null,null,null,null,null);
+        return new HstSitePipeline.Invocation(null,new HstRequestContextImpl(null),null,null,null);
     }
 
 }

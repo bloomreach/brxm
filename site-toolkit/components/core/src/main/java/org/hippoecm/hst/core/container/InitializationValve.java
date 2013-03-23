@@ -35,10 +35,7 @@ public class InitializationValve extends AbstractBaseOrderableValve {
     public void invoke(ValveContext context) throws ContainerException
     {
         HstMutableRequestContext requestContext = (HstMutableRequestContext)context.getRequestContext();
-        
-        requestContext.setServletRequest(context.getServletRequest());
-        requestContext.setServletResponse(context.getServletResponse());
-        
+
         if (requestContext.getURLFactory() == null) {
             requestContext.setURLFactory(getUrlFactory());
         }
