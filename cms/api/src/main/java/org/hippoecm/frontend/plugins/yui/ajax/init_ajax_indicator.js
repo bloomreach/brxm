@@ -16,5 +16,8 @@
 
 Wicket.Event.add(window, 'domready', function() {
     //Create new loading indicator
-    var indicator = new YAHOO.hippo.AjaxIndicator('${id}');
+    if (Hippo === undefined) {
+        Hippo = {};
+    }
+    Hippo.indicator = new YAHOO.hippo.AjaxIndicator('${id}');
 });
