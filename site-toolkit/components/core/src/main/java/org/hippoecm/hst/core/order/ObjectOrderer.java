@@ -225,14 +225,14 @@ public class ObjectOrderer<T> {
         if (names != null) {
             for (int i = 0; i < names.length; i++) {
                 String prename = names[i];
-    
+
                 Node<T> prenode = getNode(prename);
-    
+
                 if (prenode == null) {
-                    log.error("Bad dependency for '{}'. prename: {}", objectOrderingName, prename);
+                    log.error("Bad dependency for '{}'. pre node not found by name, '{}'.", objectOrderingName, prename);
                     continue;
                 }
-    
+
                 try {
                     node.addDependency(prenode);
                 } catch (ObjectOrdererRuntimeException ex) {
@@ -261,11 +261,11 @@ public class ObjectOrderer<T> {
         if (names != null) {
             for (int i = 0; i < names.length; i++) {
                 String postname = names[i];
-    
+
                 Node<T> postnode = getNode(postname);
-    
+
                 if (postnode == null) {
-                    log.error("Bad dependency for '{}'. postname: {}", objectOrderingName, postname);
+                    log.error("Bad dependency for '{}'. post node not found by name, '{}'.", objectOrderingName, postname);
                 } else {
                     try {
                         postnode.addDependency(node);
