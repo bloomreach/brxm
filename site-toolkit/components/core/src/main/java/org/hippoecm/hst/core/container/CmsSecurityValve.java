@@ -21,6 +21,7 @@ import java.security.SignatureException;
 
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -48,6 +49,7 @@ import org.onehippo.sso.CredentialCipher;
 public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
     private final static String CMS_USER_ID_ATTR = CmsSecurityValve.class.getName() + ".cms_user_id";
+    private static final String HSTSESSIONID_COOKIE_NAME = "HSTSESSIONID";
 
     private Repository repository;
 
@@ -161,9 +163,11 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                     throw new ContainerException(se);
                 }
             } 
-        } 
+        }
 
-        if(isCmsRestRequestContext(servletRequest)) {
+        updateHstSessionCookie(servletRequest, servletResponse, session);
+
+        if (isCmsRestRequestContext(servletRequest)) {
             // we are in a request for the REST template composer
             // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
             // if another thread flushes this session.
@@ -187,6 +191,26 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             }
         } else {
             context.invokeNext();
+        }
+    }
+
+    private void updateHstSessionCookie(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HttpSession session) {
+        Cookie sessionIdCookie = null;
+        final Cookie[] cookies = servletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (HSTSESSIONID_COOKIE_NAME.equals(cookie.getName()) && session.getId().equals(cookie.getValue())) {
+                    sessionIdCookie = cookie;
+                    break;
+                }
+            }
+        }
+        if (sessionIdCookie == null) {
+            // (java) session cookie may not be available to the client-side javascript code,
+            // as the cookie may be secured by the container (useHttpOnly=true).
+            sessionIdCookie = new Cookie(HSTSESSIONID_COOKIE_NAME, session.getId());
+            sessionIdCookie.setMaxAge(-1);
+            servletResponse.addCookie(sessionIdCookie);
         }
     }
 
