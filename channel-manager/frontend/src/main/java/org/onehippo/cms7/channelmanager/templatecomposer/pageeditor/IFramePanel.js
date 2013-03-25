@@ -248,7 +248,7 @@
                 getFrameWindow().scrollBy(x, y);
             },
 
-            isValidSession: function(sessionCookie) {
+            isValidSession: function(sessionId) {
                 var result = false;
 
                 Ext.each(getFrameDocument().cookie.split(';'), function(keyValue) {
@@ -258,7 +258,7 @@
                     key = keyValue.substr(0, equalsIndex).trim();
                     value = keyValue.substr(equalsIndex + 1).trim();
 
-                    if (key === 'JSESSIONID' && value === sessionCookie) {
+                    if (key === 'HSTSESSIONID' && value === sessionId) {
                         result = true;
                         return false;
                     }

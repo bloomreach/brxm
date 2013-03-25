@@ -70,11 +70,11 @@
             }, this);
 
             this.ping = window.setInterval(function() {
-                if (this.sessionCookie && this._hasFocus() && Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.isValidSession(this.sessionCookie)) {
+                if (this.sessionId && this._hasFocus() && Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.isValidSession(this.sessionId)) {
                     Ext.Ajax.request({
                         url: this.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./keepalive/?FORCE_CLIENT_HOST=true',
                         failure: function() {
-                            delete this.sessionCookie;
+                            delete this.sessionId;
 
                             Hippo.Msg.hide();
                             Hippo.Msg.confirm(this.resources['hst-exception-title'], this.resources['hst-timeout-message'], function(id) {
@@ -187,7 +187,7 @@
                 success: function(response) {
                     var responseObj = Ext.util.JSON.decode(response.responseText);
                     this.canEdit = responseObj.data.canWrite;
-                    this.sessionCookie = responseObj.data.sessionId;
+                    this.sessionId = responseObj.data.sessionId;
                     if (callback) {
                         callback();
                     }
@@ -508,7 +508,7 @@
 
                 this.previewMode = this.pageContext.previewMode;
 
-                if (!iframe.isValidSession(this.sessionCookie)) {
+                if (!iframe.isValidSession(this.sessionId)) {
                     console.log("invalid session!");
                     this._initializeHstSession(this._complete.createDelegate(this));
                 } else {
