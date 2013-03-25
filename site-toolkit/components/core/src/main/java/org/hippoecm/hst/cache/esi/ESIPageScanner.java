@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 /**
- * ESIPageInfoScanner
+ * ESIPageScanner
  * <P>
  * Scanner implementation which parses the page body content and collects all the esi fragment information objects.
  * </P>

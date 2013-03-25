@@ -38,6 +38,18 @@ import org.springframework.util.PropertyPlaceholderHelper.PlaceholderResolver;
  */
 public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
 
+    private static final String USER_AGENT_BROWSER_MSIE = "MSIE";
+    private static final String USER_AGENT_BROWSER_OPERA = "OPERA";
+    private static final String USER_AGENT_BROWSER_CHROME = "CHROME";
+    private static final String USER_AGENT_BROWSER_FIREFOX = "FIREFOX";
+    private static final String USER_AGENT_BROWSER_MOZILLA = "MOZILLA";
+
+    private static final String USER_AGENT_OS_WINDOWS = "WIN";
+    private static final String USER_AGENT_OS_MAC = "MAC";
+    private static final String USER_AGENT_OS_LINUX = "LINUX";
+    private static final String USER_AGENT_OS_UNIX = "UNIX";
+    private static final String USER_AGENT_OS_OTHER = "OTHER";
+
     private static Logger log = LoggerFactory.getLogger(ESIVarsPlaceholderResolver.class);
 
     private static final Pattern DICTIONARY_VAR_PATTERN = Pattern.compile("([^\\{\\}]+)\\{([^\\{\\}]+)\\}");
@@ -151,7 +163,7 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
         return null;
     }
 
-    private UserAgentInfo parseUserAgent(HttpServletRequest request, UserAgentInfo uai) {
+    protected UserAgentInfo parseUserAgent(HttpServletRequest request, UserAgentInfo uai) {
         String userAgent = request.getHeader("User-Agent");
 
         if (userAgent == null) {
@@ -159,22 +171,22 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
         }
 
         if (StringUtils.contains(userAgent, "Windows")) {
-            uai.setOs("WIN");
+            uai.setOs(USER_AGENT_OS_WINDOWS);
         } else if (StringUtils.contains(userAgent, "Macintosh")) {
-            uai.setOs("MAC");
+            uai.setOs(USER_AGENT_OS_MAC);
         } else if (StringUtils.contains(userAgent, "Linux")) {
-            uai.setOs("LINUX");
+            uai.setOs(USER_AGENT_OS_LINUX);
         } else if (StringUtils.contains(userAgent, "X11; U;")) {
-            uai.setOs("UNIX");
+            uai.setOs(USER_AGENT_OS_UNIX);
         } else {
-            uai.setOs("OTHER");
+            uai.setOs(USER_AGENT_OS_OTHER);
         }
 
         boolean done = false;
         Matcher m = UA_MSIE_PATTERN.matcher(userAgent);
 
         if (m.find()) {
-            uai.setBrowser("MSIE");
+            uai.setBrowser(USER_AGENT_BROWSER_MSIE);
             uai.setVersion(m.group(1));
             done = true;
         }
@@ -183,7 +195,7 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
             m = UA_OPERA_PATTERN.matcher(userAgent);
 
             if (m.find()) {
-                uai.setBrowser("OPERA");
+                uai.setBrowser(USER_AGENT_BROWSER_OPERA);
                 uai.setVersion(m.group(1));
                 done = true;
             }
@@ -193,7 +205,7 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
             m = UA_CHROME_PATTERN.matcher(userAgent);
 
             if (m.find()) {
-                uai.setBrowser("CHROME");
+                uai.setBrowser(USER_AGENT_BROWSER_CHROME);
                 uai.setVersion(m.group(1));
                 done = true;
             }
@@ -203,7 +215,7 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
             m = UA_FIREFOX_PATTERN.matcher(userAgent);
 
             if (m.find()) {
-                uai.setBrowser("FIREFOX");
+                uai.setBrowser(USER_AGENT_BROWSER_FIREFOX);
                 uai.setVersion(m.group(1));
                 done = true;
             }
@@ -213,7 +225,7 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
             m = UA_MOZILLA_PATTERN.matcher(userAgent);
 
             if (m.find()) {
-                uai.setBrowser("MOZILLA");
+                uai.setBrowser(USER_AGENT_BROWSER_MOZILLA);
                 uai.setVersion(m.group(1));
                 done = true;
             }
@@ -222,7 +234,7 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
         return uai;
     }
 
-    class UserAgentInfo {
+    public static class UserAgentInfo {
 
         private String browser;
         private String version;

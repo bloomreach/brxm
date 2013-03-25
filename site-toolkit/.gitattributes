@@ -640,6 +640,7 @@ components/core/src/main/resources/org/hippoecm/hst/site/container/SpringCompone
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-channelManager.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-container.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-decorators.xml -text svneol=unset#text/plain
+components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-esi.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-hstManager.xml svneol=native#text/plain
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-invoker.xml -text
 components/core/src/main/resources/org/hippoecm/hst/site/container/SpringComponentManager-jcr.xml svneol=native#text/plain

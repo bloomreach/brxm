@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -83,8 +84,8 @@ public class TestESIPageRenderer {
 
         ESIPageRenderer renderer = new ESIPageRenderer() {
             @Override
-            protected void writeIncludeElementFragment(Writer writer, ESIElementFragment fragment) {
-                if (StringUtils.endsWith(fragment.getElement().getAttribute("src"), "example.com/LICENSE")) {
+            protected void includeRemoteURL(Writer writer, URI uri) {
+                if (StringUtils.endsWith(uri.getHost(), "example.com") && "/LICENSE".equals(uri.getPath())) {
                     try {
                         writer.write(EXAMPLE_LICENSE_TEXT);
                     } catch (IOException e) {

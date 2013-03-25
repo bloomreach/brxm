@@ -104,21 +104,28 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     }
 
     public HstContainerURL parseURL(HttpServletRequest request, ResolvedMount mount, String requestPath) {
+        return parseURL(mount, request.getContextPath(), requestPath, request.getCharacterEncoding());
+    }
+
+    public HstContainerURL parseURL(ResolvedMount mount, String contextPath, String requestPath, String requestCharacterEncoding) {
         HstContainerURLImpl url = new HstContainerURLImpl();
-        url.setContextPath(request.getContextPath());
+        url.setContextPath(contextPath);
         url.setHostName(mount.getResolvedVirtualHost().getResolvedHostName());
         url.setPortNumber(mount.getResolvedVirtualHost().getPortNumber());
-    	url.setResolvedMountPath(mount.getResolvedMountPath());
+        url.setResolvedMountPath(mount.getResolvedMountPath());
         url.setRequestPath(requestPath);
         url.setPathInfo(requestPath.substring(mount.getResolvedMountPath().length()));
-        String characterEncoding = request.getCharacterEncoding();
+        String characterEncoding = requestCharacterEncoding;
         if (characterEncoding == null) {
             characterEncoding = "ISO-8859-1";
         }
         url.setCharacterEncoding(characterEncoding);
+        String [] namespacedPartAndPathInfo = splitPathInfo(requestPath.substring(mount.getResolvedMountPath().length()), characterEncoding);
+        url.setPathInfo(namespacedPartAndPathInfo[1]);
+        parseRequestInfo(url,namespacedPartAndPathInfo[0]);
         return url;
     }
-    
+
     public HstContainerURL parseURL(HstRequestContext requestContext, ResolvedMount mount, String requestPath) {
         HstContainerURLImpl url = new HstContainerURLImpl();
         HstContainerURL baseURL = requestContext.getBaseURL();
@@ -468,33 +475,42 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
      * Splits path info to an array of namespaced path part and remainder. 
      */
     protected String [] splitPathInfo(String requestPath, String characterEncoding) {
-       
-    	String pathInfo = requestPath;
-    	try {
-    		pathInfo = URLDecoder.decode(requestPath, characterEncoding);
-    	}
-    	catch (UnsupportedEncodingException e) {
-    	    log.warn("Invalid request path: {}", requestPath, e);
-    	}
+        String pathInfo = requestPath;
+
+        try {
+            pathInfo = URLDecoder.decode(requestPath, characterEncoding);
+        } catch (UnsupportedEncodingException e) {
+            log.warn("Invalid request path: {}", requestPath, e);
+        }
+
         if (!pathInfo.startsWith(urlNamespacePrefixedPath)) {
             return new String [] { null, pathInfo };
         }
-        
+
         String temp = requestPath.substring(requestPath.indexOf(urlNamespacePrefixedPath));
+        String namespacedPathPart = temp;
         int offset = temp.indexOf('/', 1);
-        String namespacedPathPart = temp.substring(0, offset);
+
+        if (offset != -1) {
+            namespacedPathPart = temp.substring(0, offset);
+        }
+
         pathInfo = "";
 
         try {
             namespacedPathPart = URLDecoder.decode(namespacedPathPart, characterEncoding);
-            pathInfo = URLDecoder.decode(temp.substring(offset), characterEncoding);
+
+            if (offset != -1) {
+                pathInfo = URLDecoder.decode(temp.substring(offset), characterEncoding);
+            }
         } catch (UnsupportedEncodingException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Invalid request uri: {}", requestPath, e);
             } else if (log.isWarnEnabled()) {
                 log.warn("Invalid request uri: {}", requestPath);
             }
-        }        
+        }
+
         return new String [] { namespacedPathPart, pathInfo };
     }
     

@@ -134,6 +134,9 @@
   <bean id="pageCachingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageCachingValve">
     <property name="valveName" value="pageCachingValve" />
     <property name="pageCache" ref="pageCache"/>
+    <property name="esiFragmentsProcessing" value="${esi.default.fragments.processing}" />
+    <property name="esiPageScanner" ref="esiPageScanner" />
+    <property name="esiPageRenderer" ref="esiPageRenderer" />
   </bean>
 
   <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
@@ -201,6 +204,18 @@
               </list>
             </property>
           </bean>
+        </entry>
+        <!-- ESI (component window) Include Rendering Pipeline -->
+        <entry key="ESIIncludePipeline">
+           <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
+             <property name="processingValves">
+              <list>
+                <ref bean="contextResolvingValve" />
+                <ref bean="componentRenderingValve" />
+                <ref bean="aggregationValve" />
+              </list>
+             </property>
+           </bean>
         </entry>
         <!-- A noop pipeline -->
         <entry key="NoopPipeline">

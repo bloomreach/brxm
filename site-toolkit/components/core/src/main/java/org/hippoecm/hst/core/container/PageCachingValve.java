@@ -345,8 +345,11 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
             String contentType = responseWrapper.getContentType();
 
             if (esiFragmentsProcessing && StringUtils.startsWith(contentType, "text/")) {
-                Map<String, String> params = MimeUtil.getHeaderParams(contentType);
-                String charset = StringUtils.defaultIfEmpty(params.get("charset"), "UTF-8");
+                String charset = responseWrapper.getCharacterEncoding();
+                if (StringUtils.isEmpty(charset)) {
+                    Map<String, String> params = MimeUtil.getHeaderParams(contentType);
+                    charset = StringUtils.defaultIfEmpty(params.get("charset"), "UTF-8");
+                }
                 String bodyContent = outstr.toString(charset);
                 IOUtils.closeQuietly(outstr);
                 ESIPageInfo esiPageInfo = new ESIPageInfo(responseWrapper.getStatus(), contentType,
@@ -364,7 +367,6 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
             }
         } finally {
             ((HstMutableRequestContext) requestContext).setServletResponse(nonWrappedReponse);
-            context.setHttpServletResponse(nonWrappedReponse);
         }
     }
 
