@@ -157,6 +157,57 @@ public class TestHstSitePipeline {
     }
 
     @Test
+    public void testBasicValveOrderingMultiplePipelines() throws Exception {
+        HstSitePipeline pipeline1 = new HstSitePipeline();
+        HstSitePipeline pipeline2 = new HstSitePipeline();
+
+        pipeline1.setInitializationValves(new Valve[]{initializationValve});
+        pipeline1.setProcessingValves(new Valve[]{localizationValve, securityValve, contextResolvingValve, actionValve, resourceServingValve, aggregationValve});
+        pipeline1.setCleanupValves(new Valve[]{cleanupValve});
+
+        pipeline2.setInitializationValves(new Valve[]{initializationValve});
+        pipeline2.setProcessingValves(new Valve[]{localizationValve, aggregationValve, securityValve});
+        pipeline2.setCleanupValves(new Valve[]{cleanupValve});
+
+
+        cmsSecurityValve.setAfterValves(toCamelCaseString(InitializationValve.class.getSimpleName()));
+        pipeline1.addInitializationValve(cmsSecurityValve);
+        pipeline2.addInitializationValve(cmsSecurityValve);
+
+        pageCachingValve.setBeforeValves(toCamelCaseString(AggregationValve.class.getSimpleName()));
+
+        pipeline1.addProcessingValve(pageCachingValve);
+        pipeline2.addProcessingValve(pageCachingValve);
+
+        Valve [] mergedProcessingValves1 = pipeline1.mergeProcessingValves();
+        log.info("merged processing valves: \n\t{}", StringUtils.join(mergedProcessingValves1, "\n\t"));
+        assertArrayEquals(new Valve [] {
+                initializationValve,
+                cmsSecurityValve,
+                localizationValve,
+                securityValve,
+                contextResolvingValve,
+                actionValve,
+                resourceServingValve,
+                pageCachingValve,
+                aggregationValve
+        }, mergedProcessingValves1);
+
+        Valve [] mergedProcessingValves2= pipeline2.mergeProcessingValves();
+        log.info("merged processing valves: \n\t{}", StringUtils.join(mergedProcessingValves2, "\n\t"));
+        assertArrayEquals(new Valve [] {
+                initializationValve,
+                cmsSecurityValve,
+                localizationValve,
+                pageCachingValve,
+                aggregationValve,
+                securityValve
+        }, mergedProcessingValves2);
+
+    }
+
+
+    @Test
     public void testIncorrectValveOrdering() throws Exception {
         HstSitePipeline pipeline = new HstSitePipeline();
 

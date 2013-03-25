@@ -19,14 +19,14 @@ package org.hippoecm.hst.core.order;
  * Used by an {@link org.hippoecm.hst.core.order.ObjectOrderer} to organize
  * a single object and its pre- and post-requisites.
  */
-class OrderableObjectHolder<T> {
+public class OrderableObjectHolder<T> {
 
     private String name;
     private T object;
     private String prerequisites;
     private String postrequisites;
 
-    OrderableObjectHolder(T object, String name, String prerequisites, String postrequisites) {
+    public OrderableObjectHolder(T object, String name, String prerequisites, String postrequisites) {
         this.object = object;
         this.name = name;
         this.prerequisites = prerequisites;

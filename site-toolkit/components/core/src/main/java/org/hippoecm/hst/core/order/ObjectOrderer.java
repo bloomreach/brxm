@@ -67,6 +67,23 @@ public class ObjectOrderer<T> {
     }
 
     /**
+     * Adds a new orderable object to the map of to-be-ordered objects
+     * @param o
+     */
+    public void add(OrderableObjectHolder<T> o) {
+        if (orderableObjectHolderMap == null) {
+            orderableObjectHolderMap = new HashMap<String, OrderableObjectHolder<T>>();
+            orderableObjectHolderList = new ArrayList<OrderableObjectHolder<T>>();
+        }
+
+        if (getOrderableObjectHolder(o.getName()) != null) {
+            log.error("Duplicate object by name, '{}'. Original object: {}", o.getName(), o.getObject());
+            return;
+        }
+        orderableObjectHolderMap.put(o.getName(), o);
+        orderableObjectHolderList.add(o);
+    }
+    /**
      * Adds a new object. All invocations of {@link #add(Object, String, String, String)} should
      * occur before invoking {@link #getOrderedObjects()}.
      * 

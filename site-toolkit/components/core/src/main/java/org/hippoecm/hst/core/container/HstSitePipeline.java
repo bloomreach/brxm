@@ -31,6 +31,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.valves.AbstractOrderableValve;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.order.ObjectOrderer;
+import org.hippoecm.hst.core.order.OrderableObjectHolder;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,35 +180,24 @@ public class HstSitePipeline implements Pipeline
         ObjectOrderer<Valve> orderer = new ObjectOrderer<Valve>("initializationValves");
 
         if (initializationValves != null) {
-            imposeImplicitValvesOrdering(initializationValves);
-            for (Valve valve : initializationValves) {
-                if (valve instanceof OrderableValve) {
-                    OrderableValve ov = (OrderableValve) valve;
-                    orderer.add(ov, StringUtils.defaultIfEmpty(ov.getValveName(), valve.toString()), ov.getAfterValves(), ov.getBeforeValves());
-                } else {
-                    orderer.add(valve, valve.toString(), null, null);
-                }
+            OrderableObjectHolder<Valve>[] orderableValves =  imposeImplicitValvesOrdering(initializationValves);
+            for (OrderableObjectHolder<Valve> orderableProcessingValve : orderableValves) {
+                orderer.add(orderableProcessingValve);
             }
         }
 
-        Valve [] orderedInitializationValves = orderer.getOrderedObjects().toArray(new Valve[0]);
+        Valve [] orderedInitializationValves = orderer.getOrderedObjects().toArray(new Valve[orderer.getOrderedObjects().size()]);
 
         orderer = new ObjectOrderer<Valve>("processingValves");
 
         if (processingValves != null) {
-            imposeImplicitValvesOrdering(processingValves);
-            for (Valve valve : processingValves) {
-                if (valve instanceof OrderableValve) {
-                    OrderableValve ov = (OrderableValve) valve;
-                    orderer.add(ov, StringUtils.defaultIfEmpty(ov.getValveName(), valve.toString()), ov.getAfterValves(), ov.getBeforeValves());
-                } else {
-                    orderer.add(valve, valve.toString(), null, null);
-                }
+            OrderableObjectHolder<Valve>[] orderableValves =  imposeImplicitValvesOrdering(processingValves);
+            for (OrderableObjectHolder<Valve> orderableProcessingValve : orderableValves) {
+                orderer.add(orderableProcessingValve);
             }
         }
 
-        Valve [] orderedProcessingValves = orderer.getOrderedObjects().toArray(new Valve[0]);
-
+        Valve [] orderedProcessingValves = orderer.getOrderedObjects().toArray(new Valve[orderer.getOrderedObjects().size()]);
         return (Valve[]) ArrayUtils.addAll(orderedInitializationValves, orderedProcessingValves);
     }
 
@@ -215,18 +205,13 @@ public class HstSitePipeline implements Pipeline
         ObjectOrderer<Valve> orderer = new ObjectOrderer<Valve>("cleanupValves");
 
         if (cleanupValves != null) {
-            imposeImplicitValvesOrdering(cleanupValves);
-            for (Valve valve : cleanupValves) {
-                if (valve instanceof OrderableValve) {
-                    OrderableValve ov = (OrderableValve) valve;
-                    orderer.add(ov, StringUtils.defaultIfEmpty(ov.getValveName(), valve.toString()), ov.getAfterValves(), ov.getBeforeValves());
-                } else {
-                    orderer.add(valve, valve.toString(), null, null);
-                }
+            OrderableObjectHolder<Valve>[] orderableValves =  imposeImplicitValvesOrdering(cleanupValves);
+            for (OrderableObjectHolder<Valve> orderableProcessingValve : orderableValves) {
+                orderer.add(orderableProcessingValve);
             }
         }
 
-        return orderer.getOrderedObjects().toArray(new Valve[0]);
+        return orderer.getOrderedObjects().toArray(new Valve[orderer.getOrderedObjects().size()]);
     }
 
 
@@ -235,24 +220,37 @@ public class HstSitePipeline implements Pipeline
      * reshuffle existing valves. Thus for example, if you already have the valves a,b,c,d,e in that order, then, adding a
      * valve 'f' before c and after a can never change the relative order of the already present valves
      */
-    private void imposeImplicitValvesOrdering(final Valve [] valves) {
+    private OrderableObjectHolder<Valve>[] imposeImplicitValvesOrdering(final Valve[] valves) {
+        ArrayList<OrderableObjectHolder> orderableObjectValves = new ArrayList<OrderableObjectHolder>(valves.length);
+
         String prevOrderableValveName = null;
-
         for (Valve valve : valves) {
-            if (valve instanceof OrderableValve) {
+            final String valveName;
+            String afterValves = null;
+            String beforeValves = null;
+            if (valve instanceof  OrderableValve) {
                 OrderableValve orderableValve = (OrderableValve) valve;
-
-                if (prevOrderableValveName != null && orderableValve instanceof AbstractOrderableValve) {
-                    if (StringUtils.isEmpty(orderableValve.getAfterValves()) && StringUtils.isEmpty(orderableValve.getBeforeValves())) {
-                        ((AbstractOrderableValve) orderableValve).setAfterValves(prevOrderableValveName);
-                    }
+                valveName =  StringUtils.defaultIfEmpty(orderableValve.getValveName(), valve.toString());
+                if (StringUtils.isNotEmpty(orderableValve.getAfterValves())) {
+                    afterValves = orderableValve.getAfterValves();
                 }
-
-                if (StringUtils.isNotEmpty(orderableValve.getValveName())) {
-                    prevOrderableValveName = orderableValve.getValveName();
+                if (StringUtils.isNotEmpty(orderableValve.getBeforeValves())) {
+                    beforeValves = orderableValve.getBeforeValves();
                 }
+            } else {
+                valveName = valve.toString();
             }
+
+            if (prevOrderableValveName != null && afterValves == null && beforeValves == null) {
+                // imply implicit ordering
+                afterValves = prevOrderableValveName;
+            }
+            OrderableObjectHolder<Valve> orderableObjectValve = new OrderableObjectHolder<Valve>(valve, valveName, afterValves, beforeValves);
+            orderableObjectValves.add(orderableObjectValve);
+
+            prevOrderableValveName = valveName;
         }
+        return orderableObjectValves.toArray(new OrderableObjectHolder[orderableObjectValves.size()]);
     }
 
 
