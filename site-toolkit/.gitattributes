@@ -590,7 +590,6 @@ components/core/src/main/java/org/hippoecm/hst/core/logging/Slf4jLoggerFactory.j
 components/core/src/main/java/org/hippoecm/hst/core/logging/TraceToolSlf4jLogger.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/order/ObjectOrderer.java -text
 components/core/src/main/java/org/hippoecm/hst/core/order/ObjectOrdererRuntimeException.java -text
-components/core/src/main/java/org/hippoecm/hst/core/order/OrderableObjectHolder.java -text
 components/core/src/main/java/org/hippoecm/hst/core/search/HstQueryManagerFactoryImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/HstSiteMapItemHandlerFactoryImpl.java -text svneol=unset#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/sitemapitemhandler/HstSiteMapItemHandlerRegistryImpl.java -text svneol=unset#text/plain

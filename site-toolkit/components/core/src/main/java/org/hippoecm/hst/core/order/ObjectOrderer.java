@@ -67,23 +67,6 @@ public class ObjectOrderer<T> {
     }
 
     /**
-     * Adds a new orderable object to the map of to-be-ordered objects
-     * @param o
-     */
-    public void add(OrderableObjectHolder<T> o) {
-        if (orderableObjectHolderMap == null) {
-            orderableObjectHolderMap = new HashMap<String, OrderableObjectHolder<T>>();
-            orderableObjectHolderList = new ArrayList<OrderableObjectHolder<T>>();
-        }
-
-        if (getOrderableObjectHolder(o.getName()) != null) {
-            log.error("Duplicate object by name, '{}'. Original object: {}", o.getName(), o.getObject());
-            return;
-        }
-        orderableObjectHolderMap.put(o.getName(), o);
-        orderableObjectHolderList.add(o);
-    }
-    /**
      * Adds a new object. All invocations of {@link #add(Object, String, String, String)} should
      * occur before invoking {@link #getOrderedObjects()}.
      * 
@@ -299,6 +282,48 @@ public class ObjectOrderer<T> {
                     }
                 }
             }
+        }
+    }
+
+    private class OrderableObjectHolder<T> {
+
+        private String name;
+        private T object;
+        private String prerequisites;
+        private String postrequisites;
+
+        OrderableObjectHolder(T object, String name, String prerequisites, String postrequisites) {
+            this.object = object;
+            this.name = name;
+            this.prerequisites = prerequisites;
+            this.postrequisites = postrequisites;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public T getObject() {
+            return object;
+        }
+
+        public String getPrerequisites() {
+            return prerequisites;
+        }
+
+        public String getPostrequisites() {
+            return postrequisites;
+        }
+
+        @Override
+        public String toString() {
+            return new StringBuilder(80)
+            .append(super.toString())
+            .append(" { name:'" + name + "',")
+            .append("prerequisites: '" + prerequisites + "',")
+            .append("postrequisites: '" + postrequisites + "',")
+            .append("object: " + object + " }")
+            .toString();
         }
     }
 
