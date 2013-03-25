@@ -21,12 +21,14 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.apache.jackrabbit.core.query.lucene.MultiIndexReader;
+import org.apache.jackrabbit.core.query.lucene.hits.AbstractHitCollector;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.search.DocIdSet;
 import org.apache.lucene.search.DocIdSetIterator;
 import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.QueryWrapperFilter;
+import org.apache.lucene.util.OpenBitSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,25 +95,8 @@ public class AuthorizationFilter extends Filter {
         }
     }
 
-    private class IndexReaderFilter {
-
-        private final DocIdSet docIdSet;
-
-        private IndexReaderFilter(IndexReader reader) throws IOException {
-            long start = System.currentTimeMillis();
-
-            Filter filter = new QueryWrapperFilter(query);
-            docIdSet = filter.getDocIdSet(reader);
-            long docIdSetCreationTime = System.currentTimeMillis() - start;
-
-            log.info("Creating authorization doc id set took {} ms.", String.valueOf(docIdSetCreationTime));
-        }
-    }
-
-
-
-    private final Map<IndexReader, IndexReaderFilter> cache = Collections.synchronizedMap(
-            new WeakHashMap<IndexReader, IndexReaderFilter>());
+    private final Map<IndexReader, DocIdSet> cache = Collections.synchronizedMap(
+            new WeakHashMap<IndexReader, DocIdSet>());
     private final Query query;
 
 
@@ -143,21 +128,41 @@ public class AuthorizationFilter extends Filter {
     }
 
     private DocIdSet getIndexReaderDocIdSet(final IndexReader reader) throws IOException {
-        IndexReaderFilter filter = cache.get(reader);
-        if (filter == null) {
-            filter = createFilter(reader);
+        DocIdSet docIdSet = cache.get(reader);
+        if (docIdSet == null) {
+            docIdSet = createAndCacheDocIdSet(reader);
         }
-        return filter.docIdSet;
+        return docIdSet;
     }
 
-    private synchronized IndexReaderFilter createFilter(IndexReader reader) throws IOException {
-        IndexReaderFilter filter;
-        filter = cache.get(reader);
-        if (filter != null) {
-           return filter;
+    private synchronized DocIdSet createAndCacheDocIdSet(IndexReader reader) throws IOException {
+        DocIdSet docIdSet;
+        docIdSet = cache.get(reader);
+        if (docIdSet != null) {
+           return docIdSet;
         }
-        filter = new IndexReaderFilter(reader);
-        cache.put(reader, filter);
-        return filter;
+        docIdSet = createDocIdSet(reader);
+        cache.put(reader, docIdSet);
+        return docIdSet;
     }
+
+    private DocIdSet createDocIdSet(IndexReader reader) throws IOException {
+        final OpenBitSet bits = new OpenBitSet(reader.maxDoc());
+
+        long start = System.currentTimeMillis();
+
+        new IndexSearcher(reader).search(query, new AbstractHitCollector() {
+
+            @Override
+            public final void collect(int doc, float score) {
+                bits.set(doc);  // set bit for hit
+            }
+        });
+
+        long docIdSetCreationTime = System.currentTimeMillis() - start;
+        log.info("Creating authorization doc id set took {} ms.", String.valueOf(docIdSetCreationTime));
+
+        return bits;
+    }
+
 }
