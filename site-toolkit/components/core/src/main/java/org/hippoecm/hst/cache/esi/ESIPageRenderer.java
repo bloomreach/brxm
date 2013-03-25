@@ -122,6 +122,10 @@ public class ESIPageRenderer implements ComponentManagerAware {
                             ESIElementFragment embeddedElementFragment = (ESIElementFragment) embeddedFragment;
                             String onerror = embeddedElementFragment.getElement().getAttribute("onerror");
 
+                            if (StringUtils.isNotEmpty(onerror) && !StringUtils.equals("continue", onerror)) {
+                                log.warn("The onerror attribute of <esi:include/> currently support only 'continue'. Other values ('{}') are NOT YET SUPPORTED.", onerror);
+                            }
+
                             try {
                                 writeIncludeElementFragment(writer, embeddedElementFragment, propertyParser);
                             } catch (IOException e) {
@@ -137,6 +141,10 @@ public class ESIPageRenderer implements ComponentManagerAware {
             } else if (type == ESIFragmentType.INCLUDE_TAG) {
                 ESIElementFragment elementFragment = (ESIElementFragment) fragment;
                 String onerror = elementFragment.getElement().getAttribute("onerror");
+
+                if (StringUtils.isNotEmpty(onerror) && !StringUtils.equals("continue", onerror)) {
+                    log.warn("The onerror attribute of <esi:include/> currently support only 'continue'. Other values ('{}') are NOT YET SUPPORTED.", onerror);
+                }
 
                 try {
                     writeIncludeElementFragment(writer, elementFragment, propertyParser);
@@ -212,10 +220,23 @@ public class ESIPageRenderer implements ComponentManagerAware {
             }
         }
 
-        if (localContainerURL != null) {
-            includeLocalURL(writer, uri, localContainerURL);
-        } else {
-            includeRemoteURL(writer, uri);
+        try {
+            if (localContainerURL != null) {
+                includeLocalURL(writer, uri, localContainerURL);
+            } else {
+                includeRemoteURL(writer, uri);
+            }
+        } catch (IOException e) {
+            if (StringUtils.isNotEmpty(alt)) {
+                if (log.isDebugEnabled()) {
+                    log.warn("IOException when processing ESI include element for the source, '" + uri + "'. ALT text, '" + alt + "', is being rendered.", e);
+                } else {
+                    log.warn("IOException when processing ESI include element for the source, '{}'. ALT text, '{}', is being rendered. " + e, uri, alt);
+                }
+                writeQuietly(writer, alt);
+            } else {
+                throw e;
+            }
         }
     }
 
