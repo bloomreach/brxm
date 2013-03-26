@@ -35,6 +35,8 @@ import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import org.apache.jackrabbit.util.ISO9075;
+import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
@@ -91,10 +93,10 @@ public class User implements Comparable<User>, IClusterable {
     public static final String PROP_PREVIOUSPASSWORDS = HippoNodeType.HIPPO_PREVIOUSPASSWORDS;
     public static final String PROP_PASSWORDLASTMODIFIED = HippoNodeType.HIPPO_PASSWORDLASTMODIFIED;
 
-    private static final String QUERY_USER_EXISTS = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
+    private static final String QUERY_USER = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
 
-    private static final String QUERY_LOCAL_MEMBERSHIPS = "SELECT * FROM hipposys:group WHERE jcr:primaryType=" + "'hipposys:group' AND hipposys:members='{}'";
-    private static final String QUERY_EXTERNAL_MEMBERSHIPS = "SELECT * FROM hipposys:externalgroup WHERE " + "hipposys:members='{}'";
+    private static final String QUERY_LOCAL_MEMBERSHIPS = "//element(*, hipposys:group)[@hipposys:members='{}']";
+    private static final String QUERY_EXTERNAL_MEMBERSHIPS = "//element(*, hipposys:externalgroup)[@hipposys:members='{}']";
 
     private static final long ONEDAYMS = 1000 * 3600 * 24;
 
@@ -123,7 +125,7 @@ public class User implements Comparable<User>, IClusterable {
      * @throws RepositoryException
      */
     public static QueryManager getQueryManager() throws RepositoryException {
-        return UserSession.get().getQueryManager();
+        return ((UserSession) Session.get()).getQueryManager();
     }
 
     /**
@@ -133,9 +135,9 @@ public class User implements Comparable<User>, IClusterable {
      * @return true if the user exists, false otherwise
      */
     public static boolean userExists(final String username) {
-        String queryString = QUERY_USER_EXISTS.replace("{}", username);
+        final String queryString = QUERY_USER.replace("{}", Text.escapeIllegalJcr10Chars(ISO9075.encode(NodeNameCodec.encode(username))));
         try {
-            Query query = getQueryManager().createQuery(queryString, Query.SQL);
+            final Query query = getQueryManager().createQuery(queryString, Query.SQL);
             if (query.execute().getNodes().hasNext()) {
                 return true;
             }
@@ -272,10 +274,10 @@ public class User implements Comparable<User>, IClusterable {
      * @param username the name of the user to fetch
      */
     public User(final String username) {
-        String queryString = QUERY_USER_EXISTS.replace("{}", username);
+        final String queryString = QUERY_USER.replace("{}", Text.escapeIllegalJcr10Chars(ISO9075.encode(NodeNameCodec.encode(username))));
         try {
-            Query query = getQueryManager().createQuery(queryString, Query.SQL);
-            NodeIterator iter = query.execute().getNodes();
+            final Query query = getQueryManager().createQuery(queryString, Query.SQL);
+            final NodeIterator iter = query.execute().getNodes();
             if (iter.hasNext()) {
                 init(iter.nextNode());
             } else {
@@ -335,8 +337,8 @@ public class User implements Comparable<User>, IClusterable {
             }
         }
 
-        Node securityNode = UserSession.get().getRootNode().getNode(
-                HippoNodeType.CONFIGURATION_PATH).getNode(HippoNodeType.SECURITY_PATH);
+        Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH)
+                .getNode(HippoNodeType.SECURITY_PATH);
         if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
             passwordMaxAge = (long) (securityNode.getProperty(
                     HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONEDAYMS);
@@ -351,20 +353,21 @@ public class User implements Comparable<User>, IClusterable {
      * @return the User's local memberships
      */
     public List<DetachableGroup> getLocalMemberships() {
-        String queryString = QUERY_LOCAL_MEMBERSHIPS.replace("{}", username);
-        List<DetachableGroup> localMemberships = new ArrayList<DetachableGroup>();
-        NodeIterator iter;
+        final String escapedUsername = Text.escapeIllegalXpathSearchChars(username).replaceAll("'", "''");
+        final String queryString = QUERY_LOCAL_MEMBERSHIPS.replace("{}", escapedUsername);
+        final List<DetachableGroup> localMemberships = new ArrayList<DetachableGroup>();
         try {
-            Query query = getQueryManager().createQuery(queryString, Query.SQL);
-            iter = query.execute().getNodes();
+            final Query query = getQueryManager().createQuery(queryString, Query.XPATH);
+            final NodeIterator iter = query.execute().getNodes();
             while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (node != null) {
-                    try {
-                        localMemberships.add(new DetachableGroup(node.getPath()));
-                    } catch (RepositoryException e) {
-                        log.warn("Unable to add group to local memberships for user '{}'", username, e);
-                    }
+                final Node node = iter.nextNode();
+                if (node == null) {
+                    continue;
+                }
+                try {
+                    localMemberships.add(new DetachableGroup(node.getPath()));
+                } catch (RepositoryException e) {
+                    log.warn("Unable to add group to local memberships for user '{}'", username, e);
                 }
             }
         } catch (RepositoryException e) {
@@ -390,20 +393,22 @@ public class User implements Comparable<User>, IClusterable {
         if (externalMemberships != null) {
             return externalMemberships;
         }
+
         externalMemberships = new ArrayList<DetachableGroup>();
-        String queryString = QUERY_EXTERNAL_MEMBERSHIPS.replace("{}", username);
-        NodeIterator iter;
+        final String escapedUserName = Text.escapeIllegalXpathSearchChars(username).replaceAll("'", "''");
+        final String queryString = QUERY_EXTERNAL_MEMBERSHIPS.replace("{}", escapedUserName);
         try {
-            Query query = getQueryManager().createQuery(queryString, Query.SQL);
-            iter = query.execute().getNodes();
+            final Query query = getQueryManager().createQuery(queryString, Query.XPATH);
+            final NodeIterator iter = query.execute().getNodes();
             while (iter.hasNext()) {
-                Node node = iter.nextNode();
-                if (node != null) {
-                    try {
-                        externalMemberships.add(new DetachableGroup(node.getPath()));
-                    } catch (RepositoryException e) {
-                        log.warn("Unable to add group to external memberships for user '{}'", username, e);
-                    }
+                final Node node = iter.nextNode();
+                if (node == null) {
+                    continue;
+                }
+                try {
+                    externalMemberships.add(new DetachableGroup(node.getPath()));
+                } catch (RepositoryException e) {
+                    log.warn("Unable to add group to external memberships for user '{}'", username, e);
                 }
             }
         } catch (RepositoryException e) {
@@ -432,7 +437,7 @@ public class User implements Comparable<User>, IClusterable {
         relPath.append("/");
         relPath.append(NodeNameCodec.encode(getUsername(), true));
 
-        node = UserSession.get().getRootNode().addNode(relPath.toString(), NT_USER);
+        node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), NT_USER);
         setOrRemoveStringProperty(node, PROP_EMAIL, getEmail());
         setOrRemoveStringProperty(node, PROP_FIRSTNAME, getFirstName());
         setOrRemoveStringProperty(node, PROP_LASTNAME, getLastName());
@@ -504,7 +509,7 @@ public class User implements Comparable<User>, IClusterable {
         // remember old password
         if (node.hasProperty(HippoNodeType.HIPPO_PASSWORD)) {
             String oldPassword = node.getProperty(HippoNodeType.HIPPO_PASSWORD).getString();
-            Value[] newValues;
+            Value[] newValues = null;
             if (node.hasProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS)) {
                 Value[] oldValues = node.getProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS).getValues();
                 newValues = new Value[oldValues.length + 1];
@@ -512,7 +517,7 @@ public class User implements Comparable<User>, IClusterable {
             } else {
                 newValues = new Value[1];
             }
-            newValues[0] = UserSession.get().getJcrSession().getValueFactory().createValue(oldPassword);
+            newValues[0] = ((UserSession) Session.get()).getJcrSession().getValueFactory().createValue(oldPassword);
             node.setProperty(HippoNodeType.HIPPO_PREVIOUSPASSWORDS, newValues);
         }
 

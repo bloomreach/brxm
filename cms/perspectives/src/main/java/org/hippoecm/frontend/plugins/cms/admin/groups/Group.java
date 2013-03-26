@@ -29,7 +29,9 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.apache.jackrabbit.util.ISO9075;
+import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
@@ -54,7 +56,7 @@ public class Group implements Comparable<Group>, IClusterable {
     private final static String QUERY_ALL_LOCAL = "select * from hipposys:group where hipposys:securityprovider='internal' and (hipposys:system <> 'true' or hipposys:system IS NULL)";
     private final static String QUERY_ALL = "select * from hipposys:group";
     private final static String QUERY_ALL_ROLES = "select * from hipposys:role";
-    private final static String QUERY_GROUP_EXISTS = "SELECT * FROM hipposys:group WHERE fn:name()='{}'";
+    private final static String QUERY_GROUP = "SELECT * FROM hipposys:group WHERE fn:name()='{}'";
 
 
     private String path;
@@ -130,19 +132,21 @@ public class Group implements Comparable<Group>, IClusterable {
      * @param groupName the name of the Group to return
      * @return the Group with name groupName
      */
-    private static Group getGroup(String groupName) {
-        String queryString = QUERY_GROUP_EXISTS.replace("{}", ISO9075.encode(groupName));
+    public static Group getGroup(final String groupName) {
+        final String escapedGroupName = Text.escapeIllegalJcr10Chars(ISO9075.encode(NodeNameCodec.encode(groupName, true)));
+        final String queryString = QUERY_GROUP.replace("{}", escapedGroupName);
         try {
-            @SuppressWarnings("deprecation") Query query = getQueryManager().createQuery(queryString, Query.SQL);
-            QueryResult queryResult = query.execute();
-            if (queryResult.getNodes().hasNext()) {
-                return new Group((Node) queryResult.getNodes().next());
+            @SuppressWarnings("deprecation") final Query query = getQueryManager().createQuery(queryString, Query.SQL);
+            final QueryResult queryResult = query.execute();
+            final NodeIterator iterator = queryResult.getNodes();
+            if (!iterator.hasNext()) {
+                return null;
             }
+            return new Group(iterator.nextNode());
         } catch (RepositoryException e) {
             log.error("Unable to check if group '{}' exists, returning true", groupName, e);
             return null;
         }
-        return null;
     }
 
     /*
@@ -220,40 +224,6 @@ public class Group implements Comparable<Group>, IClusterable {
         }
     }
 
-    public static boolean groupExists(String groupName) {
-        NodeIterator iterator = createIteratorForGroupName(groupName);
-        return iterator.hasNext();
-    }
-
-    private static NodeIterator createIteratorForGroupName(String groupName) {
-        String queryString = QUERY_GROUP_EXISTS.replace("{}", ISO9075.encode(groupName));
-        Query query;
-        try {
-            //noinspection deprecation
-            query = getQueryManager().createQuery(queryString, Query.SQL);
-        } catch (RepositoryException e) {
-            throw new IllegalStateException("Cannot create the Query", e);
-        }
-        try {
-            QueryResult queryResult = query.execute();
-            return queryResult.getNodes();
-        } catch (RepositoryException e) {
-            throw new IllegalStateException("Cannot execute query due to a repository error", e);
-        }
-    }
-
-    public static Group forName(final String groupName) {
-        NodeIterator iterator = createIteratorForGroupName(groupName);
-        if (!iterator.hasNext()) {
-            throw new IllegalArgumentException("Group with name {} doesn't exist".replace("{}", groupName));
-        }
-        try {
-            return new Group(iterator.nextNode());
-        } catch (RepositoryException e) {
-            throw new IllegalStateException("Cannot create group for group name = " + groupName, e);
-        }
-    }
-
     public List<String> getMembers() throws RepositoryException {
         List<String> members = new ArrayList<String>();
         if (node.hasProperty(HippoNodeType.HIPPO_MEMBERS)) {
@@ -322,7 +292,7 @@ public class Group implements Comparable<Group>, IClusterable {
         relPath.append("/");
         relPath.append(NodeNameCodec.encode(getGroupname(), true));
 
-        node = UserSession.get().getRootNode().addNode(relPath.toString(), HippoNodeType.NT_GROUP);
+        node = ((UserSession) Session.get()).getRootNode().addNode(relPath.toString(), HippoNodeType.NT_GROUP);
         setOrRemoveStringProperty(node, PROP_DESCRIPTION, getDescription());
         // save parent when adding a node
         node.getParent().getSession().save();

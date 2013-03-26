@@ -28,6 +28,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
+import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DetachableDomain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
@@ -74,11 +75,13 @@ public class PermissionBean implements Serializable {
     /**
      * Returns all permissions for a group. If you already have a {@link Group} object, this is faster than calling
      * forGroup(String).
+     *
      * @param group the {@link Group} to return all permissions for
      * @return a {@link List} of {@link PermissionBean}s containing all permissions for this group
      */
     public static List<PermissionBean> forGroup(Group group) {
-        String queryString = ALL_AUTHROLES_FOR_GROUP_QUERY.replace("{}", group.getGroupname());
+        final String escapedGroupName = Text.escapeIllegalJcr10Chars(group.getGroupname());
+        final String queryString = ALL_AUTHROLES_FOR_GROUP_QUERY.replace("{}", escapedGroupName);
         NodeIterator nodeIterator = obtainNodeIteratorForQueryString(queryString);
 
         DetachableGroup detachableGroup = new DetachableGroup(group);
@@ -98,18 +101,9 @@ public class PermissionBean implements Serializable {
         return permissionBeans;
     }
 
-    /**
-     * Returns all permissions for a group. If you already have a {@link Group} object, call forGroup(Group) instead,
-     * it will be faster.
-     * @param groupName the name of the {@link Group} to return all permissions for
-     * @return a {@link List} of {@link PermissionBean}s containing all permissions for this group
-     */
-    public static List<PermissionBean> forGroup(String groupName) {
-        return forGroup(Group.forName(groupName));
-    }
 
     private static NodeIterator obtainNodeIteratorForQueryString(final String queryString) {
-        QueryManager queryManager = UserSession.get().getQueryManager();
+        QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
         try {
             @SuppressWarnings("deprecation") Query query = queryManager.createQuery(queryString, Query.XPATH);
             QueryResult queryResult = query.execute();
