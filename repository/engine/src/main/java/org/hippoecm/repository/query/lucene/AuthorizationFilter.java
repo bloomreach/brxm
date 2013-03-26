@@ -79,7 +79,7 @@ public class AuthorizationFilter extends Filter {
                  */
                 private void pointCurrentToNextIterator() throws IOException {
                     currentDocIdSetIterator = null;
-                    while (currentDocIdSetIterator == null && docIdSetIndex+1 < docIdSets.length) {
+                    while (currentDocIdSetIterator == null && docIdSetIndex + 1 < docIdSets.length) {
                         docOffset += maxDocs[docIdSetIndex];
                         docIdSetIndex++;
                         currentDocIdSetIterator = docIdSets[docIdSetIndex].iterator();
@@ -88,15 +88,30 @@ public class AuthorizationFilter extends Filter {
 
                 @Override
                 public int advance(final int target) throws IOException {
-                    while (docID < target && nextDoc() != NO_MORE_DOCS) {}
+                    while (docID < target && nextDoc() != NO_MORE_DOCS) {
+                    }
                     return docID;
                 }
             };
         }
     }
 
-    private final Map<IndexReader, DocIdSet> cache = Collections.synchronizedMap(
-            new WeakHashMap<IndexReader, DocIdSet>());
+    private static final class CachedBitSet extends OpenBitSet {
+
+        private final int maxDoc;
+
+        CachedBitSet(int maxDoc) {
+            super(maxDoc);
+            this.maxDoc = maxDoc;
+        }
+
+        boolean isValid(IndexReader reader) {
+            return maxDoc == reader.maxDoc();
+        }
+    }
+
+    private final Map<IndexReader, CachedBitSet> cache = Collections.synchronizedMap(
+            new WeakHashMap<IndexReader, CachedBitSet>());
     private final Query query;
 
 
@@ -128,26 +143,26 @@ public class AuthorizationFilter extends Filter {
     }
 
     private DocIdSet getIndexReaderDocIdSet(final IndexReader reader) throws IOException {
-        DocIdSet docIdSet = cache.get(reader);
-        if (docIdSet == null) {
+        CachedBitSet docIdSet = cache.get(reader);
+        if (docIdSet == null || !docIdSet.isValid(reader)) {
             docIdSet = createAndCacheDocIdSet(reader);
         }
         return docIdSet;
     }
 
-    private synchronized DocIdSet createAndCacheDocIdSet(IndexReader reader) throws IOException {
-        DocIdSet docIdSet;
+    private synchronized CachedBitSet createAndCacheDocIdSet(IndexReader reader) throws IOException {
+        CachedBitSet docIdSet;
         docIdSet = cache.get(reader);
-        if (docIdSet != null) {
-           return docIdSet;
+        if (docIdSet != null && docIdSet.isValid(reader)) {
+            return docIdSet;
         }
         docIdSet = createDocIdSet(reader);
         cache.put(reader, docIdSet);
         return docIdSet;
     }
 
-    private DocIdSet createDocIdSet(IndexReader reader) throws IOException {
-        final OpenBitSet bits = new OpenBitSet(reader.maxDoc());
+    private CachedBitSet createDocIdSet(IndexReader reader) throws IOException {
+        final CachedBitSet bits = new CachedBitSet(reader.maxDoc());
 
         long start = System.currentTimeMillis();
 
