@@ -994,6 +994,7 @@ dependencies/spring-dependencies/pom.xml svneol=native#text/plain
 dependencies/spring-dependencies/src/site/site.xml -text
 dependencies/src/site/site.xml -text
 mock/pom.xml -text
+mock/src/main/java/org/hippoecm/hst/container/ModifiableRequestContextProvider.java -text
 mock/src/main/java/org/hippoecm/hst/mock/configuration/components/MockHstComponentConfiguration.java -text
 mock/src/main/java/org/hippoecm/hst/mock/content/beans/manager/MockObjectBeanPersistenceManager.java -text
 mock/src/main/java/org/hippoecm/hst/mock/content/beans/standard/MockHippoBean.java -text
