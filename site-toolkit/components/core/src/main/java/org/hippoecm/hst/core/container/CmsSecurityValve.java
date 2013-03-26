@@ -195,23 +195,21 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
     }
 
     private void updateHstSessionCookie(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HttpSession session) {
-        Cookie sessionIdCookie = null;
+
         final Cookie[] cookies = servletRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if (HSTSESSIONID_COOKIE_NAME.equals(cookie.getName()) && session.getId().equals(cookie.getValue())) {
-                    sessionIdCookie = cookie;
-                    break;
+                    // HSTSESSIONID_COOKIE_NAME cookie already present and correct
+                    return;
                 }
             }
         }
-        if (sessionIdCookie == null) {
-            // (java) session cookie may not be available to the client-side javascript code,
-            // as the cookie may be secured by the container (useHttpOnly=true).
-            sessionIdCookie = new Cookie(HSTSESSIONID_COOKIE_NAME, session.getId());
-            sessionIdCookie.setMaxAge(-1);
-            servletResponse.addCookie(sessionIdCookie);
-        }
+        // (java) session cookie may not be available to the client-side javascript code,
+        // as the cookie may be secured by the container (useHttpOnly=true).
+        Cookie sessionIdCookie = new Cookie(HSTSESSIONID_COOKIE_NAME, session.getId());
+        sessionIdCookie.setMaxAge(-1);
+        servletResponse.addCookie(sessionIdCookie);
     }
 
     private boolean isCmsRestRequestContext(final HttpServletRequest servletRequest) {
