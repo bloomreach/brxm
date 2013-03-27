@@ -97,7 +97,7 @@
             <property name="testWhileIdle" value="false"/>
             <property name="timeBetweenEvictionRunsMillis" value="60000"/>
             <property name="numTestsPerEvictionRun" value="1"/>
-            <!-- after 10 min unused, we evict preview sessions -->
+            <!-- after 5 min unused, we evict preview sessions -->
             <property name="minEvictableIdleTimeMillis" value="300000"/>
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
