@@ -92,17 +92,8 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
                 urlString = doEscapeXml(urlString);
             }
             HstRequestContext requestContext =  HstRequestUtils.getHstRequestContext((HttpServletRequest) pageContext.getRequest());
-            if (makeURLFullyQualified(requestContext)) {
-                Mount mount = requestContext.getResolvedMount().getMount();
-                String scheme = mount.getScheme();
-                // When 0, the Mount is port agnostic. Then take port from current container url
-                int port = (mount.getPort() == 0 ? requestContext.getBaseURL().getPortNumber() : mount.getPort());
-
-                if (!mount.isPortInUrl() || ("http".equals(scheme) && port == 80) || ("https".equals(scheme) && port == 443)) {
-                    urlString = scheme + "://" + mount.getVirtualHost().getHostName() + urlString;
-                } else {
-                    urlString = scheme + "://" + mount.getVirtualHost().getHostName() + ":" + port + urlString;
-                }
+            if (mustURLBeFullyQualified(requestContext)) {
+                urlString = HstRequestUtils.getFullyQualifiedHstURL(requestContext, url, true);
             }
 
             if (var == null) {
@@ -124,7 +115,7 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
         }
     }
 
-    private boolean makeURLFullyQualified(final HstRequestContext requestContext) {
+    private boolean mustURLBeFullyQualified(final HstRequestContext requestContext) {
         if (requestContext == null) {
             if (fullyQualified) {
               log.warn("Cannot make url fully qualified when requestContext is null");
@@ -254,20 +245,14 @@ public abstract class BaseHstURLTag extends ParamContainerTag {
     
     
     /**
-     * Replaces in String str the characters &,>,<,",' 
+     * Replaces in String str the characters &,>,<,",'
      * with their corresponding character entity codes.
-     * @param str - the String where to replace 
-     * @return String 
+     * @param str - the String where to replace
+     * @return String
+     *
      */
     protected String doEscapeXml(String str) {
-        if(!isEmpty(str)){
-            str = str.replaceAll("&", "&amp;");
-            str = str.replaceAll("<", "&lt;");
-            str = str.replaceAll(">", "&gt;");
-            str = str.replaceAll("\"", "&#034;");
-            str = str.replaceAll("'", "&#039;");
-        }
-        return str;
+        return HstRequestUtils.escapeXml(str);
     }
        
     

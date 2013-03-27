@@ -38,7 +38,7 @@ public class ESIAsynchronousComponentWindowRenderer implements AsynchronousCompo
     public void processWindowBeforeRender(HstComponentWindow window, HstRequest request, HstResponse response) {
         HstRequestContext requestContext = request.getRequestContext();
         HstURL compUrl = response.createComponentRenderingURL();
-        String url = HstRequestUtils.getFullyQualifiedHstURL(requestContext, compUrl);
+        String url = HstRequestUtils.getFullyQualifiedHstURL(requestContext, compUrl, false);
         Element esiElem = response.createElement("esi:include");
         esiElem.setAttribute("src", url);
         esiElem.setAttribute("onerror", "continue");

@@ -28,14 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
-import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
  * HST Request Utils 
@@ -474,7 +472,7 @@ public class HstRequestUtils {
      * always the scheme of the current (farthest) request is taken, as a hstUrl can never have a different scheme than the
      * request that was used to create the hstUrl
      */
-    public static String getFullyQualifiedHstURL(HstRequestContext requestContext, HstURL hstUrl) {
+    public static String getFullyQualifiedHstURL(HstRequestContext requestContext, HstURL hstUrl, boolean escapeXml) {
         StringBuilder urlBuilder = new StringBuilder(80);
         final String scheme = HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest());
         final Mount mount = requestContext.getResolvedMount().getMount();
@@ -485,7 +483,31 @@ public class HstRequestUtils {
         } else {
             urlBuilder.append(scheme).append("://").append(mount.getVirtualHost().getHostName()).append(':').append(port);
         }
-        urlBuilder.append(hstUrl.toString());
+        if (escapeXml) {
+            urlBuilder.append(escapeXml(hstUrl.toString()));
+        } else {
+            urlBuilder.append(hstUrl.toString());
+        }
+
         return urlBuilder.toString();
+    }
+
+    /**
+     * Replaces in String str the characters &,>,<,",'
+     * with their corresponding character entity codes.
+     * @param str - the String where to replace
+     * @return String
+     *
+     */
+    public static String escapeXml(String str) {
+        if((str == null) || (str.length() == 0)) {
+           return str;
+        }
+        str = str.replaceAll("&", "&amp;");
+        str = str.replaceAll("<", "&lt;");
+        str = str.replaceAll(">", "&gt;");
+        str = str.replaceAll("\"", "&#034;");
+        str = str.replaceAll("'", "&#039;");
+        return str;
     }
 }
