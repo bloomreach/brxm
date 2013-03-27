@@ -86,12 +86,17 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                             "with this id found", basename);
                 } else if (nodes.getSize() > 1) {
                     List<String> paths = new ArrayList<String>((int) nodes.getSize());
+                    boolean isFirst = true;
                     for (Node node : new NodeIterable(nodes)) {
+                        if (isFirst) {
+                            isFirst = false;
+                            boolean isPreview = (credentials == previewCredentials);
+                            populateResourceBundleFamily(bundleFamily, nodes.nextNode(), isPreview);
+                        }
                         paths.add(node.getPath());
                     }
-                    log.warn("Cannot load resource bundle with resourcebundle:id '{}' because multiple " +
-                            "documents found with same id. Documents containint duplicate ids are: '{}'",
-                            basename, paths.toString());
+                    log.warn("Multiple resource bundles found for resourcebundle:id '{}'. We only resource bundle '{}'. Resource bundles containing duplicate ids are: '{}'",
+                            new String[]{basename, paths.get(0),  paths.toString()});
                 } else {
                     boolean isPreview = (credentials == previewCredentials);
                     populateResourceBundleFamily(bundleFamily, nodes.nextNode(), isPreview);
