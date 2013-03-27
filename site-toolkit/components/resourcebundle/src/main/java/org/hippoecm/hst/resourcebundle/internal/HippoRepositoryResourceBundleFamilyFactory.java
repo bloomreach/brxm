@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.resourcebundle.internal;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -32,7 +34,6 @@ import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
-import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.LocaleUtils;
@@ -71,6 +72,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
 
         Session session = null;
         Credentials[] creds = {liveCredentials, previewCredentials};
+
         for (Credentials credentials : creds) {
             try {
                 String statement = "//element(*, resourcebundle:resourcebundle)[@resourcebundle:id='" + basename +  "']";
@@ -79,24 +81,43 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                 QueryResult result = query.execute();
 
                 NodeIterator nodeIt = result.getNodes();
-                if (nodeIt.getSize() > 1) {
-                    // two bundles (both preview|live) with same resourcebundle:id are not allowed.
-                    final StringBuilder paths = new StringBuilder();
-                    while (nodeIt.hasNext()){
-                        paths.append(nodeIt.nextNode().getPath()).append(",");
-                    }
-                    // remove last comma
-                    final String logPaths = paths.substring(0, (paths.length() -1));
-                    log.warn("Cannot load resource bundle with resourcebundle:id '{}' because multiple " +
-                            "documents found with same id. Documents containint duplicate ids are: '{}'",
-                            basename, logPaths);
-                } else if (nodeIt.getSize() == 0){
+
+                if (!nodeIt.hasNext()) {
                     log.warn("Cannot load resource bundle with resourcebundle:id '{}' because no resource bundle " +
                             "with this id found", basename);
                 } else {
-                    Node bundleNode = nodeIt.nextNode();
-                    boolean isPreview = (credentials == previewCredentials);
-                    populateResourceBundleFamily(bundleFamily, bundleNode, isPreview);
+                    List<Node> nodes = new ArrayList<Node>();
+
+                    do {
+                        Node node = nodeIt.nextNode();
+
+                        if (node != null) {
+                            nodes.add(node);
+                        }
+                    } while (nodeIt.hasNext());
+
+                    if (nodes.isEmpty()) {
+                        log.warn("Cannot load resource bundle with resourcebundle:id '{}' because no resource bundle " +
+                                "with this id found", basename);
+                    } else if (nodes.size() == 1) {
+                        Node bundleNode = nodes.get(0);
+                        boolean isPreview = (credentials == previewCredentials);
+                        populateResourceBundleFamily(bundleFamily, bundleNode, isPreview);
+                    } else {
+                        // two bundles (both preview|live) with same resourcebundle:id are not allowed.
+                        final StringBuilder paths = new StringBuilder();
+
+                        for (Node node : nodes) {
+                            paths.append(node.getPath()).append(",");
+                        }
+
+                        // remove last comma
+                        final String logPaths = paths.substring(0, (paths.length() - 1));
+
+                        log.warn("Cannot load resource bundle with resourcebundle:id '{}' because multiple " +
+                                "documents found with same id. Documents containint duplicate ids are: '{}'",
+                                basename, logPaths);
+                    }
                 }
             } catch (RepositoryException e) {
                 log.warn("Fail to query resource bundle node", e);
