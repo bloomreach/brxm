@@ -48,7 +48,7 @@
     <hippo.packages.version>2.25.00-SNAPSHOT</hippo.packages.version>
     <hippo.release.version>7.9.0-SNAPSHOT</hippo.release.version>
     <hippo.repository.version>2.25.00-SNAPSHOT</hippo.repository.version>
-    <hippo.services.version>1.02.03-SNAPSHOT</hippo.services.version>
+    <hippo.services.version>1.03.00-SNAPSHOT</hippo.services.version>
     <hippo.utilities.version>1.01.04-SNAPSHOT</hippo.utilities.version>
 
     <forge.content-blocks.version>1.09.00</forge.content-blocks.version>
