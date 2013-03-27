@@ -28,11 +28,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.component.HstURL;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 
 /**
  * HST Request Utils 
@@ -464,5 +467,25 @@ public class HstRequestUtils {
             url.append("?").append(request.getQueryString());
         }
         return url.toString();
+    }
+
+    /**
+     * Returns a fully qualified String url for the {@link HstURL} <code>hstUrl</code>. As scheme for the created url,
+     * always the scheme of the current (farthest) request is taken, as a hstUrl can never have a different scheme than the
+     * request that was used to create the hstUrl
+     */
+    public static String getFullyQualifiedHstURL(HstRequestContext requestContext, HstURL hstUrl) {
+        StringBuilder urlBuilder = new StringBuilder(80);
+        final String scheme = HstRequestUtils.getFarthestRequestScheme(requestContext.getServletRequest());
+        final Mount mount = requestContext.getResolvedMount().getMount();
+        // When 0, the Mount is port agnostic. Then take port from current container url
+        int port = (mount.getPort() == 0 ? requestContext.getBaseURL().getPortNumber() : mount.getPort());
+        if (!mount.isPortInUrl() || ("http".equals(scheme) && port == 80) || ("https".equals(scheme) && port == 443)) {
+            urlBuilder.append(scheme).append("://").append(mount.getVirtualHost().getHostName());
+        } else {
+            urlBuilder.append(scheme).append("://").append(mount.getVirtualHost().getHostName()).append(':').append(port);
+        }
+        urlBuilder.append(hstUrl.toString());
+        return urlBuilder.toString();
     }
 }

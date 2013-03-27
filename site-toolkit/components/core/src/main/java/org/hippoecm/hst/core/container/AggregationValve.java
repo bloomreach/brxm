@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -370,7 +371,13 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                         String asyncMode = window.getComponentInfo().getAsyncMode();
 
                         if (StringUtils.isNotEmpty(asyncMode)) {
+                            ;
                             asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(asyncMode);
+                            if (asynchronousComponentWindowRenderer == null) {
+                                log.warn("Unsupported asyncMode '{}' found for '{}'. Using default asyncMode '{}' instead. " +
+                                        "Supported asyncModes are '{}'.",
+                                        new String[]{asyncMode, window.getComponentInfo().getId(), asynchronousComponentWindowRendererMap.keySet().toString()});
+                            }
                         }
 
                         if (asynchronousComponentWindowRenderer == null) {
