@@ -371,12 +371,12 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                         String asyncMode = window.getComponentInfo().getAsyncMode();
 
                         if (StringUtils.isNotEmpty(asyncMode)) {
-                            ;
                             asynchronousComponentWindowRenderer = asynchronousComponentWindowRendererMap.get(asyncMode);
+
                             if (asynchronousComponentWindowRenderer == null) {
                                 log.warn("Unsupported asyncMode '{}' found for '{}'. Using default asyncMode '{}' instead. " +
                                         "Supported asyncModes are '{}'.",
-                                        new String[]{asyncMode, window.getComponentInfo().getId(), asynchronousComponentWindowRendererMap.keySet().toString()});
+                                        new String[] { asyncMode, window.getComponentInfo().getId(), defaultAsynchronousComponentWindowRenderingMode, asynchronousComponentWindowRendererMap.keySet().toString() });
                             }
                         }
 
