@@ -128,7 +128,13 @@ private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration
     @SuppressWarnings("unchecked")
     public <T> T getRawProperty(String name, Class<T> mappingClass) {
         Object val =  handlerConfig.getProperty(name);
-        if(mappingClass.isAssignableFrom(val.getClass())){
+
+        if (val == null) { 
+            log.debug("value is null for '{}'. Return null");
+            return null;
+        } 
+
+        if (mappingClass.isAssignableFrom(val.getClass())) {
             return (T)val;
         } else {
             log.debug("Found a property for key '{}' but the value is not assignable from '{}' because it is of type '"+val.getClass().getName()+"'. Skip key-val pair.", name , mappingClass.getName());
@@ -136,5 +142,4 @@ private final static Logger log = LoggerFactory.getLogger(ComponentConfiguration
         }
     }
 
-  
 }
