@@ -32,7 +32,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
 
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.commons.lang.ArrayUtils;
@@ -40,6 +39,7 @@ import org.apache.commons.lang.LocaleUtils;
 import org.hippoecm.hst.resourcebundle.PlaceHolderEmptyResourceBundleFamily;
 import org.hippoecm.hst.resourcebundle.ResourceBundleFamily;
 import org.hippoecm.hst.resourcebundle.SimpleListResourceBundle;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,50 +75,28 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
 
         for (Credentials credentials : creds) {
             try {
-                String statement = "//element(*, resourcebundle:resourcebundle)[@resourcebundle:id='" + basename +  "']";
+                // the order by @resourcebundle:id is only added to avoid that QueryResult#getSize() or QueryResult#getNodes#getSize can return -1
+                String statement = "//element(*, resourcebundle:resourcebundle)[@resourcebundle:id='" + basename + "'] order by @resourcebundle:id";
                 session = repository.login(credentials);
                 Query query = session.getWorkspace().getQueryManager().createQuery(statement, Query.XPATH);
-                QueryResult result = query.execute();
 
-                NodeIterator nodeIt = result.getNodes();
-
-                if (!nodeIt.hasNext()) {
+                NodeIterator nodes = query.execute().getNodes();
+                if (nodes.getSize() == 0) {
                     log.warn("Cannot load resource bundle with resourcebundle:id '{}' because no resource bundle " +
                             "with this id found", basename);
-                } else {
-                    List<Node> nodes = new ArrayList<Node>();
-
-                    do {
-                        Node node = nodeIt.nextNode();
-
-                        if (node != null) {
-                            nodes.add(node);
-                        }
-                    } while (nodeIt.hasNext());
-
-                    if (nodes.isEmpty()) {
-                        log.warn("Cannot load resource bundle with resourcebundle:id '{}' because no resource bundle " +
-                                "with this id found", basename);
-                    } else if (nodes.size() == 1) {
-                        Node bundleNode = nodes.get(0);
-                        boolean isPreview = (credentials == previewCredentials);
-                        populateResourceBundleFamily(bundleFamily, bundleNode, isPreview);
-                    } else {
-                        // two bundles (both preview|live) with same resourcebundle:id are not allowed.
-                        final StringBuilder paths = new StringBuilder();
-
-                        for (Node node : nodes) {
-                            paths.append(node.getPath()).append(",");
-                        }
-
-                        // remove last comma
-                        final String logPaths = paths.substring(0, (paths.length() - 1));
-
-                        log.warn("Cannot load resource bundle with resourcebundle:id '{}' because multiple " +
-                                "documents found with same id. Documents containint duplicate ids are: '{}'",
-                                basename, logPaths);
+                } else if (nodes.getSize() > 1) {
+                    List<String> paths = new ArrayList<String>((int) nodes.getSize());
+                    for (Node node : new NodeIterable(nodes)) {
+                        paths.add(node.getPath());
                     }
+                    log.warn("Cannot load resource bundle with resourcebundle:id '{}' because multiple " +
+                            "documents found with same id. Documents containint duplicate ids are: '{}'",
+                            basename, paths.toString());
+                } else {
+                    boolean isPreview = (credentials == previewCredentials);
+                    populateResourceBundleFamily(bundleFamily, nodes.nextNode(), isPreview);
                 }
+
             } catch (RepositoryException e) {
                 log.warn("Fail to query resource bundle node", e);
             } finally {
