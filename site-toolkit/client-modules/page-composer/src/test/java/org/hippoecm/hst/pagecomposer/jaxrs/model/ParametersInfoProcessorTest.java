@@ -552,6 +552,90 @@ public class ParametersInfoProcessorTest {
         assertContains(properties, 9, "a2", "c1", "d4");
     }
 
+
+    @FieldGroupList({
+            @FieldGroup(
+                    // same titleKey as FieldGroupInheritedInterfaceB
+                    titleKey = "group-b1-d2",
+                    value = {"a1"}
+            ),
+            @FieldGroup(
+                    titleKey = "group-b2-d3",
+                    value = {"a2", "a3"}
+            )
+    })
+    static interface FieldGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
+        @Parameter(name = "a1")
+        String getA1();
+
+        @Parameter(name = "a2")
+        String getA2();
+
+        @Parameter(name = "a3")
+        String getA3();
+    }
+
+    @ParametersInfo(type=FieldGroupInheritedMergingGroupInterface.class)
+    static class InheritedFieldGroupsAreMergedComponent {
+    }
+
+    @Test
+    public void inheritedFieldGroupsAreMerged() {
+        ParametersInfo parameterInfo = InheritedFieldGroupsAreMergedComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertEquals("number of properties", 12, properties.size());
+        assertNameAndGroupLabel(properties.get(0), "a1", "group-b1-d2");
+        assertNameAndGroupLabel(properties.get(1), "b1", "group-b1-d2");
+        assertNameAndGroupLabel(properties.get(2), "d2", "group-b1-d2");
+        assertNameAndGroupLabel(properties.get(3), "a2", "group-b2-d3");
+        assertNameAndGroupLabel(properties.get(4), "a3", "group-b2-d3");
+        assertNameAndGroupLabel(properties.get(5), "b2", "group-b2-d3");
+        assertNameAndGroupLabel(properties.get(6), "d3", "group-b2-d3");
+        assertNameAndGroupLabel(properties.get(7), "d1", "group-d1");
+        assertContains(properties, 8, "b3", "d4", "c1", "c2");
+    }
+
+    @FieldGroupList({
+            @FieldGroup(
+                    // same titleKey as FieldGroupInheritedInterfaceB
+                    titleKey = "group-b1-d2",
+                    value = {}
+            ),
+            @FieldGroup(
+                    titleKey = "group-b2-d3",
+                    value = {"a2", "a3"}
+            )
+    })
+    static interface FieldEmptyGroupInheritedMergingGroupInterface extends FieldGroupInheritedInterfaceB, FieldGroupInheritedInterfaceC {
+        @Parameter(name = "a1")
+        String getA1();
+
+        @Parameter(name = "a2")
+        String getA2();
+
+        @Parameter(name = "a3")
+        String getA3();
+    }
+
+    @ParametersInfo(type=FieldEmptyGroupInheritedMergingGroupInterface.class)
+    static class InheritedEmptyFieldGroupsAreMergedComponent {
+    }
+
+    @Test
+    public void inheritedEmptyFieldGroupsAreMerged() {
+        ParametersInfo parameterInfo = InheritedEmptyFieldGroupsAreMergedComponent.class.getAnnotation(ParametersInfo.class);
+        List<ContainerItemComponentPropertyRepresentation> properties = processor.getProperties(parameterInfo, null, "");
+        assertEquals("number of properties", 12, properties.size());
+        assertNameAndGroupLabel(properties.get(0), "b1", "group-b1-d2");
+        assertNameAndGroupLabel(properties.get(1), "d2", "group-b1-d2");
+        assertNameAndGroupLabel(properties.get(2), "a2", "group-b2-d3");
+        assertNameAndGroupLabel(properties.get(3), "a3", "group-b2-d3");
+        assertNameAndGroupLabel(properties.get(4), "b2", "group-b2-d3");
+        assertNameAndGroupLabel(properties.get(5), "d3", "group-b2-d3");
+        assertNameAndGroupLabel(properties.get(6), "d1", "group-d1");
+        assertContains(properties, 7,"a1", "b3", "d4", "c1", "c2");
+    }
+
     private void assertContains(List<ContainerItemComponentPropertyRepresentation> properties, int fromIndex, String... propertyNames) {
         List<String> expectedUngroupedPropertyNames = new ArrayList<String>(Arrays.asList(propertyNames));
         ListIterator<ContainerItemComponentPropertyRepresentation> iterator = properties.listIterator(fromIndex);

@@ -19,6 +19,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -29,6 +30,10 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Multimap;
 
 import org.hippoecm.hst.core.parameters.DocumentLink;
 import org.hippoecm.hst.core.parameters.DropDownList;
@@ -118,10 +123,14 @@ public class ParametersInfoProcessor {
         return propertyMap;
     }
 
-    private List<ContainerItemComponentPropertyRepresentation> orderPropertiesByFieldGroup(final Class<?> classType, final ResourceBundle[] resourceBundles, final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap) {
-        final LinkedHashSet<ContainerItemComponentPropertyRepresentation> properties = new LinkedHashSet<ContainerItemComponentPropertyRepresentation>(propertyMap.size());
+    private List<ContainerItemComponentPropertyRepresentation> orderPropertiesByFieldGroup(final Class<?> classType,
+                                                                                           final ResourceBundle[] resourceBundles,
+                                                                                           final Map<String, ContainerItemComponentPropertyRepresentation> propertyMap) {
 
-        // First add all properties specified in field groups
+
+        // LinkedHashMultimap is a insertion ordered map that does not allow duplicate key-value entries
+        Multimap<String, ContainerItemComponentPropertyRepresentation> fieldGroupProperties = LinkedHashMultimap.create();
+
         for (Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
             final FieldGroupList fieldGroupList = interfaceClass.getAnnotation(FieldGroupList.class);
             if (fieldGroupList != null) {
@@ -130,27 +139,81 @@ public class ParametersInfoProcessor {
                     for (FieldGroup fieldGroup : fieldGroups) {
                         final String titleKey = fieldGroup.titleKey();
                         final String groupLabel = getResourceValue(resourceBundles, titleKey, titleKey);
+                        if (fieldGroup.value().length == 0) {
+                            // store place holder for group
+                            fieldGroupProperties.put(titleKey, null);
+                        }
                         for (final String propertyName : fieldGroup.value()) {
                             final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
                             if (property == null) {
                                 log.warn("Ignoring unknown parameter '{}' in parameters info interface '{}'",
                                         propertyName, classType.getCanonicalName());
-                            } else if (properties.contains(property)) {
+                            } else if (fieldGroupProperties.containsValue(property)) {
                                 log.warn("Ignoring duplicate parameter '{}' in field group '{}' of parameters info interface '{}'",
                                         new Object[]{ propertyName, fieldGroup.titleKey(), classType.getCanonicalName() });
                             } else {
                                 property.setGroupLabel(groupLabel);
-                                properties.add(property);
+                                fieldGroupProperties.put(titleKey, property);
                             }
                         }
                     }
                 }
             }
         }
-        // Second, include all properties not specified in field groups (the set prevents duplicate properties)
-        properties.addAll(propertyMap.values());
 
-        return new ArrayList<ContainerItemComponentPropertyRepresentation>(properties);
+        List<ContainerItemComponentPropertyRepresentation> orderedByFieldGroupProperties = new ArrayList<ContainerItemComponentPropertyRepresentation>();
+
+        for (String titleKey : fieldGroupProperties.keySet()) {
+            for (ContainerItemComponentPropertyRepresentation property : fieldGroupProperties.get(titleKey)) {
+                if (property == null) {
+                    // can happen due to place holder for group
+                    continue;
+                }
+                orderedByFieldGroupProperties.add(property);
+            }
+        }
+
+        for (ContainerItemComponentPropertyRepresentation property : propertyMap.values()) {
+            if (orderedByFieldGroupProperties.contains(property)) {
+                continue;
+            }
+            orderedByFieldGroupProperties.add(property);
+        }
+
+        return orderedByFieldGroupProperties;
+
+
+//        final LinkedHashSet<ContainerItemComponentPropertyRepresentation> properties = new LinkedHashSet<ContainerItemComponentPropertyRepresentation>(propertyMap.size());
+//        // First add all properties specified in field groups
+//        for (Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
+//            final FieldGroupList fieldGroupList = interfaceClass.getAnnotation(FieldGroupList.class);
+//            if (fieldGroupList != null) {
+//                FieldGroup[] fieldGroups = fieldGroupList.value();
+//                if (fieldGroups != null && fieldGroups.length > 0) {
+//                    for (FieldGroup fieldGroup : fieldGroups) {
+//                        final String titleKey = fieldGroup.titleKey();
+//                        final String groupLabel = getResourceValue(resourceBundles, titleKey, titleKey);
+//                        for (final String propertyName : fieldGroup.value()) {
+//                            final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
+//                            if (property == null) {
+//                                log.warn("Ignoring unknown parameter '{}' in parameters info interface '{}'",
+//                                        propertyName, classType.getCanonicalName());
+//                            } else if (properties.contains(property)) {
+//                                log.warn("Ignoring duplicate parameter '{}' in field group '{}' of parameters info interface '{}'",
+//                                        new Object[]{ propertyName, fieldGroup.titleKey(), classType.getCanonicalName() });
+//                            } else {
+//                                property.setGroupLabel(groupLabel);
+//                                properties.add(property);
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        // Second, include all properties not specified in field groups (the set prevents duplicate properties)
+//        properties.addAll(propertyMap.values());
+//
+//        return new ArrayList<ContainerItemComponentPropertyRepresentation>(properties);
     }
 
     private String getResourceValue(ResourceBundle[] bundles, String key, String defaultValue) {
