@@ -91,7 +91,7 @@ public class HippoRepositoryResourceBundleFamilyFactory implements ResourceBundl
                         if (isFirst) {
                             isFirst = false;
                             boolean isPreview = (credentials == previewCredentials);
-                            populateResourceBundleFamily(bundleFamily, nodes.nextNode(), isPreview);
+                            populateResourceBundleFamily(bundleFamily, node, isPreview);
                         }
                         paths.add(node.getPath());
                     }
