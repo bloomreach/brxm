@@ -276,14 +276,13 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
     private boolean isNoCacheHeaderPresent(final PageInfo pageInfo, final ValveContext context) {
         final List<Header<? extends Serializable>> headers = pageInfo.getHeaders();
         for (Header<? extends Serializable> header : headers) {
-            if ("Pragma".equalsIgnoreCase(header.getName()) && "no-cache".equalsIgnoreCase(String.valueOf(header.getValue()))) {
+            if ("Pragma".equalsIgnoreCase(header.getName()) && "no-cache".equals(header.getValue())) {
                 log.debug("We do not cache '{}' because header Pragma no-cache was set: ", context.getServletRequest().getRequestURI());
                 return true;
-            } else if ("Cache-Control".equalsIgnoreCase(header.getName()) && "no-cache".equalsIgnoreCase(String.valueOf(header.getValue()))) {
+            } else if ("Cache-Control".equalsIgnoreCase(header.getName()) && StringUtils.contains(String.valueOf(header.getValue()), "no-cache")) {
                 log.debug("We do not cache '{}' because header Cache-Control no-cache was set: ", context.getServletRequest().getRequestURI());
                 return true;
-            } else if ("Expires".equals(header.getName())) {
-                Serializable o = header.getValue();
+            } else if ("Expires".equalsIgnoreCase(header.getName())) {
                 try {
                     long expires = Long.parseLong(String.valueOf(header.getValue()));
                     if (expires <= 0) {
