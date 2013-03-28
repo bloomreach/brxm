@@ -14,17 +14,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="autoexport">
+<sv:node sv:name="cms-header-bar" xmlns:sv="http://www.jcp.org/jcr/sv/1.0">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
-    <sv:value>frontend:plugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="plugin.class" sv:type="String">
-    <sv:value>org.onehippo.cms7.autoexport.plugin.CmsAutoExportPlugin</sv:value>
-  </sv:property>
-  <sv:property sv:name="wicket.id" sv:type="String">
-    <sv:value>header.bar.right</sv:value>
-  </sv:property>
-  <sv:property sv:name="wicket.model" sv:type="String">
-    <sv:value>service.model</sv:value>
+    <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
 </sv:node>

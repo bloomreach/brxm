@@ -415,6 +415,9 @@
     <sv:property sv:name="top" sv:type="String">
       <sv:value>service.browse.tabscontainer</sv:value>
     </sv:property>
+    <sv:property sv:name="item" sv:type="String">
+      <sv:value>header.bar.right</sv:value>
+    </sv:property>
     <sv:node sv:name="browser.ie">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -521,6 +524,18 @@
     </sv:property>
     <sv:property sv:name="editor.id" sv:type="String">
       <sv:value>service.edit</sv:value>
+    </sv:property>
+  </sv:node>
+
+  <sv:node sv:name="headerbarLoader">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>frontend:plugin</sv:value>
+    </sv:property>
+    <sv:property sv:name="cluster.name" sv:type="String">
+      <sv:value>cms-header-bar</sv:value>
+    </sv:property>
+    <sv:property sv:name="plugin.class" sv:type="String">
+      <sv:value>org.hippoecm.frontend.plugin.loader.PluginClusterLoader</sv:value>
     </sv:property>
   </sv:node>
 

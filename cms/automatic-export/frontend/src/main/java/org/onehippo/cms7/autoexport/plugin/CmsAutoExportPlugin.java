@@ -30,4 +30,9 @@ public class CmsAutoExportPlugin extends AutoExportPlugin {
     protected boolean isLinkVisible() {
         return isExportAvailable();
     }
+    
+    @Override
+    public boolean isVisible() {
+   		return isLinkVisible();
+   	}
 }

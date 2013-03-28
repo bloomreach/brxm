@@ -21,9 +21,6 @@ import javax.jcr.Session;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.PropertyModel;
-import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;
@@ -37,17 +34,8 @@ public class LogoutLink extends MarkupContainer {
 
     static final Logger log = LoggerFactory.getLogger(LogoutLink.class);
 
-    @SuppressWarnings("unused")
-    private String username;
-
     public LogoutLink(String id) {
         super(id);
-
-        UserSession session = UserSession.get();
-        String userID = session.getJcrSession().getUserID();
-        username = new User(userID).getDisplayName();
-        
-        add(new Label("username", new PropertyModel(this, "username")));
 
         add(new AjaxLink("logout-link") {
             private static final long serialVersionUID = 1L;
