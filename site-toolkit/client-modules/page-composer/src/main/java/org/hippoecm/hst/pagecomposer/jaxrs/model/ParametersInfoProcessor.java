@@ -181,39 +181,6 @@ public class ParametersInfoProcessor {
         }
 
         return orderedByFieldGroupProperties;
-
-
-//        final LinkedHashSet<ContainerItemComponentPropertyRepresentation> properties = new LinkedHashSet<ContainerItemComponentPropertyRepresentation>(propertyMap.size());
-//        // First add all properties specified in field groups
-//        for (Class<?> interfaceClass : getBreadthFirstInterfaceHierarchy(classType)) {
-//            final FieldGroupList fieldGroupList = interfaceClass.getAnnotation(FieldGroupList.class);
-//            if (fieldGroupList != null) {
-//                FieldGroup[] fieldGroups = fieldGroupList.value();
-//                if (fieldGroups != null && fieldGroups.length > 0) {
-//                    for (FieldGroup fieldGroup : fieldGroups) {
-//                        final String titleKey = fieldGroup.titleKey();
-//                        final String groupLabel = getResourceValue(resourceBundles, titleKey, titleKey);
-//                        for (final String propertyName : fieldGroup.value()) {
-//                            final ContainerItemComponentPropertyRepresentation property = propertyMap.get(propertyName);
-//                            if (property == null) {
-//                                log.warn("Ignoring unknown parameter '{}' in parameters info interface '{}'",
-//                                        propertyName, classType.getCanonicalName());
-//                            } else if (properties.contains(property)) {
-//                                log.warn("Ignoring duplicate parameter '{}' in field group '{}' of parameters info interface '{}'",
-//                                        new Object[]{ propertyName, fieldGroup.titleKey(), classType.getCanonicalName() });
-//                            } else {
-//                                property.setGroupLabel(groupLabel);
-//                                properties.add(property);
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        // Second, include all properties not specified in field groups (the set prevents duplicate properties)
-//        properties.addAll(propertyMap.values());
-//
-//        return new ArrayList<ContainerItemComponentPropertyRepresentation>(properties);
     }
 
     private String getResourceValue(ResourceBundle[] bundles, String key, String defaultValue) {
