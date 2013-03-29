@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
 
@@ -36,7 +37,7 @@ public class DefaultCacheableRequestInfoCreator implements CacheableRequestInfoC
         requestInfo.append(request.getMethod()).append(delim);
         requestInfo.append(HstRequestUtils.getFarthestRequestHost(request)).append(delim);
         requestInfo.append(request.getRequestURI()).append(delim);
-        requestInfo.append(request.getQueryString()).append(delim);
+        requestInfo.append(StringUtils.defaultString(request.getQueryString())).append(delim);
 
         // AFter an internal HST FORWARD, all the above parts are the same because same http request,
         // but the base URL pathInfo has been changed. Hence, we need to account for pathInfo
