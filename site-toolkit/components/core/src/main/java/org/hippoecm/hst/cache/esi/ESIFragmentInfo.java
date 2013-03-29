@@ -15,13 +15,15 @@
  */
 package org.hippoecm.hst.cache.esi;
 
+import java.io.Serializable;
+
 /**
  * ESIFragmentInfo abstraction
  * <P>
  * The ESI Fragment Information showing all the relevant information such as location in the page.
  * </P>
  */
-public abstract class ESIFragmentInfo {
+public abstract class ESIFragmentInfo implements Serializable {
 
     /** Real ESI Fragment in the page source */
     private ESIFragment fragment;
