@@ -356,7 +356,7 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
                         timeToLiveSeconds, responseWrapper.getAllHeaders());
                 List<ESIFragmentInfo> fragmentInfos = esiPageScanner.scanFragmentInfos(bodyContent);
                 if (!fragmentInfos.isEmpty()) {
-                    esiPageInfo.addAllFragmentInfos(esiPageScanner.scanFragmentInfos(bodyContent));
+                    esiPageInfo.addAllFragmentInfos(fragmentInfos);
                 }
                 return esiPageInfo;
             } else {
