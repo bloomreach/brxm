@@ -224,8 +224,9 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
     @Test
     public void testRepeatedly() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Random random = new Random(0);
+        int max = 10;
         int iter = 0;
-        while (iter++ >= 0) {
+        while ((iter++ >= 0) && (log.isDebugEnabled() || max-- > 0)) {
             switch (random.nextInt(3)) {
                 case 0: {
                     StringBuilder sb = new StringBuilder();
