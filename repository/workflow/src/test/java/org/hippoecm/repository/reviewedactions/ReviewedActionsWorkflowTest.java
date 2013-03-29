@@ -85,15 +85,14 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
 
     @Test
     public void testBasic() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node node, root = session.getRootNode();
-        node = getNode("test/myarticle/myarticle");
+        Node node = getNode("test/myarticle/myarticle");
         FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
         workflow.publish();
     }
 
     @Test
     public void testReviewedAction() throws WorkflowException, MappingException, RepositoryException, RemoteException {
-        Node node, root = session.getRootNode();
+        Node node;
         {
             assertTrue(session.getRootNode().hasNode("test"));
             assertTrue(session.getRootNode().getNode("test").hasNode("myarticle"));
@@ -109,7 +108,7 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
             assertNotNull(node);
             assertNotNull(document);
             assertEquals(node.getIdentifier(), document.getIdentity());
-         }
+        }
 
         // steps taken by an author
         {
@@ -222,6 +221,11 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
         }
     }
 
+    /**
+     * https://issues.onehippo.com/browse/CMS7-688
+     * When the request for publication is removed, it should be possible the request a deletion for a published
+     * document. Currently, this sometimes works, and sometimes not
+     */
     @Test
     public void testHREPTWO688() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         testReviewedAction();
@@ -259,6 +263,10 @@ public class ReviewedActionsWorkflowTest extends RepositoryTestCase {
         }
     }
 
+    /**
+     * https://issues.onehippo.com/browse/CMS7-2318
+     * Reviewed actions workflow object is invalid after disposing the editable instance
+     */
     @Test
     public void testHREPTWO2318() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         testReviewedAction();

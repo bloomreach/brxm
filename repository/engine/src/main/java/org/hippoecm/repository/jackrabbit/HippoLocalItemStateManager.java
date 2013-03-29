@@ -205,10 +205,15 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
         return new Modules(dataProviderModules);
     }
 
+    boolean debugThisSession = false;
+
     void initialize(org.apache.jackrabbit.core.SessionImpl session,
                     FacetedNavigationEngine<Query, Context> facetedEngine,
                     FacetedNavigationEngine.Context facetedContext) throws IllegalNameException, NamespaceException {
         this.session = session;
+        if ("testuser".equals(session.getUserID())) {
+            debugThisSession = true;
+        }
         this.accessManager = session.getAccessManager();
         this.hierMgr = session.getHierarchyManager();
         this.facetedEngine = facetedEngine;
@@ -926,10 +931,13 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
     }
 
     @Override
-    public void handleModified(final NodeId handleId) {
+    public void handleModified(final NodeState handleState) {
+        NodeId handleId = handleState.getNodeId();
         ItemState state = cache.retrieve(handleId);
         if (state != null && isHandle(state)) {
             reorderHandleChildNodeEntries((NodeState) state);
+        } else {
+            nodesReplaced(handleState);
         }
     }
 

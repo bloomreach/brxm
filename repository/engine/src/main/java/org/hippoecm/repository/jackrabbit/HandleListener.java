@@ -15,7 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import org.apache.jackrabbit.core.id.NodeId;
+import org.apache.jackrabbit.core.state.NodeState;
 
 /**
  * Listener interface to receive handle change notifications.
@@ -23,5 +23,5 @@ import org.apache.jackrabbit.core.id.NodeId;
  */
 public interface HandleListener {
 
-    void handleModified(NodeId handleId);
+    void handleModified(NodeState handle);
 }

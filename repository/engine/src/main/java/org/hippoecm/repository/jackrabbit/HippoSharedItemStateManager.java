@@ -116,11 +116,11 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         }
 
         try {
-            Set<NodeId> handles = new HashSet<NodeId>();
+            Set<NodeState> handles = new HashSet<NodeState>();
             addHandleIds(changeLog.modifiedStates(), changeLog, handles);
-            for (NodeId handleId : handles) {
+            for (NodeState handleState : handles) {
                 for (HandleListener listener : new ArrayList<HandleListener>(handleListeners)) {
-                    listener.handleModified(handleId);
+                    listener.handleModified(handleState);
                 }
             }
         } catch (ItemStateException e) {
@@ -128,7 +128,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         }
     }
 
-    private void addHandleIds(final Iterable<ItemState> states, ChangeLog changes, final Set<NodeId> handles) throws ItemStateException {
+    private void addHandleIds(final Iterable<ItemState> states, ChangeLog changes, final Set<NodeState> handles) throws ItemStateException {
         for (ItemState state : states) {
             try {
                 final NodeState nodeState;
@@ -148,14 +148,14 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
                     continue;
                 }
                 if (handleNodeName.equals(nodeTypeName)) {
-                    handles.add(nodeState.getNodeId());
+                    handles.add(nodeState);
                 } else {
                     final EffectiveNodeType ent = nodeTypeRegistry.getEffectiveNodeType(nodeTypeName);
                     if (ent.includesNodeType(documentNodeName)) {
                         final NodeState parentState = (NodeState) getItemState(nodeState.getParentId());
                         final Name parentNodeTypeName = parentState.getNodeTypeName();
                         if (parentNodeTypeName != null && handleNodeName.equals(parentNodeTypeName)) {
-                            handles.add(nodeState.getParentId());
+                            handles.add(parentState);
                         } else {
                             log.debug("Skipping {}, Id: '{}'", parentNodeTypeName.toString(), parentState.getNodeId());
                         }
