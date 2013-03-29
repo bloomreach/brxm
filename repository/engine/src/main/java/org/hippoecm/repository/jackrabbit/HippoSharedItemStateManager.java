@@ -310,11 +310,11 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         public void updateCommitted(final Update update, final String path) {
             if (upstream != null) {
                 upstream.updateCommitted(update, path);
-            }
-            try {
-                notifyDocumentListeners(update.getChanges());
-            } catch (Throwable t) {
-                log.error("Exception thrown when notifying handle listeners", t);
+                try {
+                    notifyDocumentListeners(update.getChanges());
+                } catch (Throwable t) {
+                    log.error("Exception thrown when notifying handle listeners", t);
+                }
             }
         }
 

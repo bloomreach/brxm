@@ -29,6 +29,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class SearchDateRangeTest extends RepositoryTestCase {
@@ -145,7 +146,7 @@ public class SearchDateRangeTest extends RepositoryTestCase {
             final Query queryWithResolution = session.getWorkspace().getQueryManager().createQuery(xpathWithResolution, "xpath");
 
             // ALL docs with equals!!
-            assertTrue(queryWithResolution.execute().getNodes().getSize() == 25L);
+            assertEquals(25L, queryWithResolution.execute().getNodes().getSize());
         }
     }
 
