@@ -163,7 +163,7 @@ public class ESIPageScanner {
      * <P>
      * <EM>NOTE: the source must be uncommented. In other words, the source argument must not contain '<!--' and '-->'.</EM>
      * </P>
-     * @param uncommentedFragmentSource uncommented comment fragment source
+     * @param fragmentSource uncommented comment fragment source
      * @param begin the begin index of the original comment fragment source (including '<!--' and '-->') in the page
      * @param end the end index of the original comment fragment source (including '<!--' and '-->') in the page
      * @return

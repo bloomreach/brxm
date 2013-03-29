@@ -246,7 +246,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
         if (compRenderingWindowRef != null) {
             includeLocalComponentWindowRenderingURL(writer, uri, localContainerURL);
         } else {
-            log.warn("Ignoring ESI Include Tag. ESI Include Tag for non-comopnent-window-rendeing-URL is not supported yet: '{}'.", uri);
+            log.warn("Ignoring ESI Include Tag. ESI Include Tag for non-component-window-rendeing-URL is not supported yet: '{}'.", uri);
         }
     }
 
