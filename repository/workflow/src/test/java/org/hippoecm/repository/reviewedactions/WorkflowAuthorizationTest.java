@@ -1,3 +1,18 @@
+/*
+ *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package org.hippoecm.repository.reviewedactions;
 
 import java.rmi.RemoteException;
@@ -209,8 +224,8 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
     @Test
     public void testRepeatedly() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Random random = new Random(0);
-        int num = 100;
-        while (num-- > 0) {
+        int iter = 0;
+        while (iter++ >= 0) {
             switch (random.nextInt(3)) {
                 case 0: {
                     StringBuilder sb = new StringBuilder();
@@ -219,7 +234,7 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
                     }
                     String name = sb.toString();
 
-                    log.debug("creating " + name);
+                    log.debug(iter + ": creating " + name);
 
                     Map<String, String> parameters = new HashMap<String, String>();
                     parameters.put("name", name);
@@ -247,7 +262,7 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
                     Node node = nodes.nextNode();
                     String name = node.getName();
 
-                    log.debug("cycling " + name);
+                    log.debug(iter + ": cycling " + name);
 
                     final String path = "/test/" + name + "/" + name;
                     assertNotNull(getUserNode(path));
@@ -280,7 +295,7 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
                     Node node = nodes.nextNode();
                     String name = node.getName();
 
-                    log.debug("removing " + name);
+                    log.debug(iter + ": removing " + name);
 
                     node.remove();
                     session.save();
