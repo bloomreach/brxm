@@ -129,6 +129,7 @@ api/src/main/java/org/hippoecm/hst/core/component/HstURLFactory.java svneol=nati
 api/src/main/java/org/hippoecm/hst/core/component/WrapperElement.java -text
 api/src/main/java/org/hippoecm/hst/core/component/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/AsynchronousComponentWindowRenderer.java -text
+api/src/main/java/org/hippoecm/hst/core/container/CacheableRequestInfoCreator.java -text
 api/src/main/java/org/hippoecm/hst/core/container/ComponentManager.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ComponentManagerAware.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ComponentsException.java -text
@@ -534,6 +535,7 @@ components/core/src/main/java/org/hippoecm/hst/core/container/CmsSecurityValve.j
 components/core/src/main/java/org/hippoecm/hst/core/container/ComponentRenderingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ContainerConfigurationImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/ContextResolvingValve.java -text
+components/core/src/main/java/org/hippoecm/hst/core/container/DefaultCacheableRequestInfoCreator.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/DefaultPageErrorHandler.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/DefaultPageErrors.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/DiagnosticReportingValve.java -text

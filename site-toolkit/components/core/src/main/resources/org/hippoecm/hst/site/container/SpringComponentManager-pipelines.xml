@@ -131,7 +131,10 @@
     <property name="valveName" value="actionValve" />
   </bean>
 
+  <bean id="cacheableRequestInfoCreator" class="org.hippoecm.hst.core.container.DefaultCacheableRequestInfoCreator" />
+
   <bean id="pageCachingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageCachingValve">
+    <constructor-arg ref="cacheableRequestInfoCreator" />
     <property name="valveName" value="pageCachingValve" />
     <property name="pageCache" ref="pageCache"/>
     <property name="esiFragmentsProcessing" value="${esi.default.fragments.processing}" />

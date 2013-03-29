@@ -52,7 +52,6 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,11 +71,21 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
      */
     protected HstCache pageCache;
 
+    private CacheableRequestInfoCreator cacheableRequestInfoCreator;
+
     private boolean esiFragmentsProcessing;
 
     private ESIPageScanner esiPageScanner;
 
     private ESIPageRenderer esiPageRenderer;
+
+    public PageCachingValve() {
+        this(new DefaultCacheableRequestInfoCreator());
+    }
+
+    public PageCachingValve(CacheableRequestInfoCreator cacheableRequestInfoCreator) {
+        this.cacheableRequestInfoCreator = cacheableRequestInfoCreator;
+    }
 
     public void setPageCache(HstCache pageCache) {
         this.pageCache = pageCache;
@@ -224,25 +233,10 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
     }
 
     private void appendRequestInfoToCacheKey(final ValveContext context) {
-        StringBuilder requestInfo = new StringBuilder(256);
-        final char delim = '\uFFFF';
-        final HttpServletRequest request = context.getServletRequest();
-        // Implementers should differentiate between GET and HEAD requests otherwise blank pages
-        //  can result.
-        requestInfo.append(request.getMethod()).append(delim);
-        requestInfo.append(HstRequestUtils.getFarthestRequestHost(request)).append(delim);
-        requestInfo.append(request.getRequestURI()).append(delim);
-        requestInfo.append(request.getQueryString()).append(delim);
-
-        // AFter an internal HST FORWARD, all the above parts are the same because same http request,
-        // but the base URL pathInfo has been changed. Hence, we need to account for pathInfo
-        // to make sure that in a FORWARDED request we do not get the same cached entry
-        requestInfo.append(context.getRequestContext().getBaseURL().getPathInfo()).append(delim);
+        Serializable requestInfo = cacheableRequestInfoCreator.createRequestInfo(context.getRequestContext());
         final PageCacheKey pageCacheKey = context.getPageCacheContext().getPageCacheKey();
-
-        pageCacheKey.setAttribute(PageCachingValve.class.getName() + ".reqInfo", requestInfo.toString());
+        pageCacheKey.setAttribute(PageCachingValve.class.getName() + ".reqInfo", requestInfo);
     }
-
 
     /**
      * Build page info either using the cache or building the page directly.
