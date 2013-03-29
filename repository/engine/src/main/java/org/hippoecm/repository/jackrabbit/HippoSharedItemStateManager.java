@@ -17,8 +17,10 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.NamespaceException;
@@ -40,6 +42,7 @@ import org.apache.jackrabbit.core.observation.EventStateCollection;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.state.ChangeLog;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
@@ -310,11 +313,11 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         public void updateCommitted(final Update update, final String path) {
             if (upstream != null) {
                 upstream.updateCommitted(update, path);
-                try {
-                    notifyDocumentListeners(update.getChanges());
-                } catch (Throwable t) {
-                    log.error("Exception thrown when notifying handle listeners", t);
-                }
+            }
+            try {
+                notifyDocumentListeners(update.getChanges());
+            } catch (Throwable t) {
+                log.error("Exception thrown when notifying handle listeners", t);
             }
         }
 

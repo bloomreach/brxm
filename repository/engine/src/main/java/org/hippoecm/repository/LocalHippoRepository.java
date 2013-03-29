@@ -26,9 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.UUID;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
@@ -49,23 +47,9 @@ import javax.jcr.version.VersionException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.commons.cnd.ParseException;
-import org.apache.jackrabbit.core.config.ClusterConfig;
-import org.apache.jackrabbit.core.config.ConfigurationException;
 import org.apache.jackrabbit.core.config.RepositoryConfig;
-import org.apache.jackrabbit.core.config.RepositoryConfigurationParser;
 import org.apache.jackrabbit.core.fs.FileSystem;
 import org.apache.jackrabbit.core.fs.FileSystemException;
-import org.apache.jackrabbit.core.journal.AbstractJournal;
-import org.apache.jackrabbit.core.journal.AppendRecord;
-import org.apache.jackrabbit.core.journal.InstanceRevision;
-import org.apache.jackrabbit.core.journal.Journal;
-import org.apache.jackrabbit.core.journal.JournalException;
-import org.apache.jackrabbit.core.journal.JournalFactory;
-import org.apache.jackrabbit.core.journal.MemoryRevision;
-import org.apache.jackrabbit.core.journal.Record;
-import org.apache.jackrabbit.core.journal.RecordIterator;
-import org.apache.jackrabbit.core.util.db.ConnectionFactory;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
@@ -78,10 +62,6 @@ import org.hippoecm.repository.util.RepoUtils;
 import org.onehippo.repository.modules.ModuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-
-import static org.apache.jackrabbit.core.config.RepositoryConfigurationParser.REPOSITORY_HOME_VARIABLE;
 
 public class LocalHippoRepository extends HippoRepositoryImpl {
 
@@ -282,9 +262,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         Modules.setModules(new Modules(Thread.currentThread().getContextClassLoader()));
 
-        RepositoryConfig config = readRepositoryConfig();
-
-        jackrabbitRepository = new LocalRepositoryImpl(config);
+        final RepositoryConfig repConfig = RepositoryConfig.create(getRepositoryConfigAsStream(), getRepositoryPath());
+        jackrabbitRepository = new LocalRepositoryImpl(repConfig);
         repository = jackrabbitRepository;
 
         String result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);
@@ -410,17 +389,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         } catch (LoginException ex) {
             log.error("no access to repository by repository itself", ex);
         }
-    }
-
-    private RepositoryConfig readRepositoryConfig() throws RepositoryException {
-        Properties variables = new Properties(System.getProperties());
-        variables.setProperty(REPOSITORY_HOME_VARIABLE, getRepositoryPath());
-        RepositoryConfigurationParser parser =
-                new ClusterConfigAddingConfigurationParser(variables);
-
-        RepositoryConfig config = parser.parseRepositoryConfig(new InputSource(getRepositoryConfigAsStream()));
-        config.init();
-        return config;
     }
 
     /**
@@ -598,81 +566,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     @Override
     public ReferenceWorkspace getOrCreateReferenceWorkspace() throws RepositoryException {
         return new ReferenceWorkspaceImpl(jackrabbitRepository);
-    }
-
-    /**
-     * We need a cluster configuration to trigger the reshuffling of documents under a handle.
-     */
-    private static class ClusterConfigAddingConfigurationParser extends RepositoryConfigurationParser {
-        public ClusterConfigAddingConfigurationParser(final Properties variables) {
-            super(variables, new ConnectionFactory());
-        }
-
-        @Override
-        protected ClusterConfig parseClusterConfig(final Element parent, final File home) throws ConfigurationException {
-            ClusterConfig config = super.parseClusterConfig(parent, home);
-            if (config == null) {
-                config = new ClusterConfig(UUID.randomUUID().toString(), 0, new JournalFactory() {
-                    @Override
-                    public Journal getJournal(final NamespaceResolver resolver) throws RepositoryException {
-                        return new DementedJournal();
-                    }
-                });
-            }
-            return config;
-        }
-    }
-
-    private static class DementedJournal extends AbstractJournal {
-
-        private final InstanceRevision revision = new MemoryRevision();
-
-        @Override
-        protected void doLock() throws JournalException {
-        }
-
-        @Override
-        protected void append(final AppendRecord record, final InputStream in, final int length) throws JournalException {
-        }
-
-        @Override
-        protected void doUnlock(final boolean successful) {
-        }
-
-        @Override
-        public void close() {
-        }
-
-        @Override
-        public InstanceRevision getInstanceRevision() throws JournalException {
-            return revision;
-        }
-
-        @Override
-        public RecordIterator getRecords(final long startRevision) throws JournalException {
-            return new EmptyRecordIterator();
-        }
-
-        @Override
-        public RecordIterator getRecords() throws JournalException {
-            return null;
-        }
-    }
-
-    private static class EmptyRecordIterator implements RecordIterator {
-        @Override
-        public boolean hasNext() {
-            return false;
-        }
-
-        @Override
-        public Record nextRecord() throws NoSuchElementException, JournalException {
-            throw new NoSuchElementException();
-        }
-
-        @Override
-        public void close() {
-        }
     }
 
 }
