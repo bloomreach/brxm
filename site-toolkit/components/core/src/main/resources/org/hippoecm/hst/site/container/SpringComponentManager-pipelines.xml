@@ -131,15 +131,24 @@
     <property name="valveName" value="actionValve" />
   </bean>
 
+  <bean id="pageInfoRenderingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageInfoRenderingValve">
+    <constructor-arg ref="esiPageRenderer" />
+    <property name="valveName" value="pageInfoRenderingValve" />
+  </bean>
+
+  <bean id="esiPageInfoScanningValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ESIPageInfoScanningValve">
+    <constructor-arg ref="esiPageScanner" />
+    <property name="esiFragmentsProcessing" value="${esi.default.fragments.processing}" />
+    <property name="valveName" value="esiPageInfoScanningValve" />
+    <property name="pageCache" ref="pageCache"/>
+  </bean>
+
   <bean id="cacheableRequestInfoCreator" class="org.hippoecm.hst.core.container.DefaultCacheableRequestInfoCreator" />
 
   <bean id="pageCachingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageCachingValve">
     <constructor-arg ref="cacheableRequestInfoCreator" />
     <property name="valveName" value="pageCachingValve" />
     <property name="pageCache" ref="pageCache"/>
-    <property name="esiFragmentsProcessing" value="${esi.default.fragments.processing}" />
-    <property name="esiPageScanner" ref="esiPageScanner" />
-    <property name="esiPageRenderer" ref="esiPageRenderer" />
   </bean>
 
   <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
@@ -195,6 +204,8 @@
                 <ref bean="siteMenusResolvingValve" />
                 <ref bean="actionValve" />
                 <ref bean="resourceServingValve" />
+                <ref bean="pageInfoRenderingValve" />
+                <ref bean="esiPageInfoScanningValve" />
                 <ref bean="pageCachingValve"/>
                 <ref bean="componentRenderingValve" />
                 <ref bean="aggregationValve" />

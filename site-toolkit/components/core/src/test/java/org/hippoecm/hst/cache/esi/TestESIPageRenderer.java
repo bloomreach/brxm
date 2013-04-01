@@ -70,14 +70,13 @@ public class TestESIPageRenderer {
 
         int statusCode = HttpServletResponse.SC_OK;
         String contentType = "text/html; charset=UTF-8";
-        boolean storeGzipped = false;
         long timeToLiveSeconds = 60;
         Collection<Header<? extends Serializable>> headers = new ArrayList<Header<? extends Serializable>>();
 
         byte [] body = readURLContentAsByteArray(getClass().getResource("esi-source-page-1.html"));
-        ESIPageInfo pageInfo = new ESIPageInfo(statusCode, contentType, cookies, body, storeGzipped, timeToLiveSeconds, headers);
+        ESIHstPageInfo pageInfo = new ESIHstPageInfo(statusCode, contentType, cookies, body, "UTF-8", timeToLiveSeconds, headers);
         ESIPageScanner scanner = new ESIPageScanner();
-        List<ESIFragmentInfo> fragmentInfos = scanner.scanFragmentInfos(pageInfo.getBodyContent());
+        List<ESIFragmentInfo> fragmentInfos = scanner.scanFragmentInfos(pageInfo.getUngzippedBodyAsString());
         pageInfo.addAllFragmentInfos(fragmentInfos);
 
         StringWriter writer = new StringWriter();

@@ -15,23 +15,32 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import net.sf.ehcache.constructs.web.GenericResponseWrapper;
+
+import org.hippoecm.hst.cache.HstPageInfo;
 import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
+import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.container.valves.AbstractOrderableValve;
 import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURLFactory;
+import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.internal.HstRequestContextComponent;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
+import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.search.HstQueryManagerFactory;
 import org.hippoecm.hst.core.sitemenu.HstSiteMenusManager;
 import org.hippoecm.hst.resourcebundle.ResourceBundleRegistry;
@@ -318,5 +327,149 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
             return PageErrorHandler.Status.HANDLED_BUT_CONTINUE;
         }
     }
-    
+
+    /**
+     * Creates HstPageInfo object by invoking the next valves with response wrapper
+     *
+     * @param context
+     * @param timeToLiveSeconds
+     * @return a Serializable value object for the page or page fragment
+     * @throws Exception
+     */
+    protected HstPageInfo createHstPageInfoByInvokingNextValve(final ValveContext context, long timeToLiveSeconds) throws Exception {
+        HstRequestContext requestContext = context.getRequestContext();
+        final HttpServletResponse nonWrappedReponse = requestContext.getServletResponse();
+
+        try {
+            final ByteArrayOutputStream outstr = new ByteArrayOutputStream(4096);
+            final GenericResponseWrapper responseWrapper = new GenericResponseWrapper(nonWrappedReponse, outstr);
+
+            ((HstMutableRequestContext) requestContext).setServletResponse(responseWrapper);
+
+            context.invokeNext();
+            responseWrapper.flush();
+
+            if (context.getServletRequest().getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO) != null) {
+                // page is forwarded. We cache empty placeholder ForwardPageInfo
+                String forwardPathInfo = (String) context.getServletRequest().getAttribute(ContainerConstants.HST_FORWARD_PATH_INFO);
+                return new ForwardPlaceHolderHstPageInfo(forwardPathInfo);
+            }
+
+            if (responseWrapper.getCookies() != null && !responseWrapper.getCookies().isEmpty()) {
+                // we do not cache pages that contain cookies that are set during hst request rendering after the
+                // page caching valve
+                log.info("Response for '{}' contain cookies that are set after the page caching valve: Response won't be cached. " +
+                        "Better to mark the hst component that sets cookies as uncacheable or load it asynchronous.",
+                        context.getServletRequest().getRequestURI());
+                return new UncacheableHstPageInfo(responseWrapper.getStatus(), responseWrapper.getContentType(),
+                        responseWrapper.getCookies(), outstr.toByteArray(), responseWrapper.getCharacterEncoding(),
+                        timeToLiveSeconds, responseWrapper.getAllHeaders());
+            }
+
+            String contentType = responseWrapper.getContentType();
+
+            return new HstPageInfo(responseWrapper.getStatus(), contentType,
+                    responseWrapper.getCookies(), outstr.toByteArray(), responseWrapper.getCharacterEncoding(),
+                    timeToLiveSeconds, responseWrapper.getAllHeaders());
+        } finally {
+            ((HstMutableRequestContext) requestContext).setServletResponse(nonWrappedReponse);
+        }
+    }
+
+    protected boolean isRequestCacheable(final ValveContext context) throws ContainerException {
+        HstRequestContext requestContext = context.getRequestContext();
+        HttpServletRequest servletRequest = requestContext.getServletRequest();
+
+        String method = servletRequest.getMethod();
+        String requestURI = context.getServletRequest().getRequestURI();
+
+        if (!"GET".equals(method)) {
+            log.debug("Only GET requests are cacheable. Skipping it because the request method is '{}'.", method);
+        }
+
+        HstContainerURL baseURL = requestContext.getBaseURL();
+        String actionWindowReferenceNamespace = baseURL.getActionWindowReferenceNamespace();
+
+        if (actionWindowReferenceNamespace != null) {
+            log.debug("Request '{}' is not cacheable because the url is action url.", requestURI);
+            return false;
+        }
+
+        String resourceWindowRef = baseURL.getResourceWindowReferenceNamespace();
+
+        if (resourceWindowRef != null) {
+            log.debug("Request '{}' is not cacheable because the url is resource url.", requestURI);
+            return false;
+        }
+
+        if (!context.getPageCacheContext().isCacheable()) {
+            log.debug("Request '{}' is not cacheable because PageCacheContext is marked to not cache this request: {} ", requestURI, context.getPageCacheContext().getReasonsUncacheable());
+            return false;
+        }
+
+        if (requestContext.isCmsRequest()) {
+            log.debug("Request '{}' is not cacheable because request is cms request", requestURI);
+            return false;
+        }
+
+        Mount mount = requestContext.getResolvedMount().getMount();
+
+        if (mount.isPreview()) {
+            log.debug("Request '{}' is not cacheable because request is preview request", requestURI);
+            return false;
+        }
+
+        ResolvedSiteMapItem resolvedSitemapItem = requestContext.getResolvedSiteMapItem();
+
+        if (resolvedSitemapItem != null) {
+            if (!isSiteMapItemAndComponentConfigCacheable(resolvedSitemapItem, context)) {
+                return false;
+            }
+        } else if (!mount.isCacheable()) {
+            log.debug("Request '{}' is not cacheable because mount '{}' is not cacheable.", requestURI, mount.getName());
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean isSiteMapItemAndComponentConfigCacheable(final ResolvedSiteMapItem resolvedSitemapItem,
+            final ValveContext context) throws ContainerException {
+        if (!resolvedSitemapItem.getHstSiteMapItem().isCacheable()) {
+            log.debug("Request '{}' is not cacheable because hst sitemapitem '{}' is not cacheable.", context
+                    .getServletRequest().getRequestURI(), resolvedSitemapItem.getHstSiteMapItem().getId());
+            return false;
+        }
+
+        // check whether component rendering is true: For component rendering, we need to check whether the specific sub
+        // component (tree) is cacheable
+        String componentRenderingWindowReferenceNamespace = context.getRequestContext().getBaseURL()
+                .getComponentRenderingWindowReferenceNamespace();
+        if (componentRenderingWindowReferenceNamespace != null) {
+            HstComponentWindow window = findComponentWindow(context.getRootComponentWindow(),
+                    componentRenderingWindowReferenceNamespace);
+            if (window == null) {
+                // incorrect request.
+                return false;
+            }
+            if (window.getComponentInfo().isStandalone()) {
+                return window.getComponentInfo().isCompositeCacheable();
+            }
+            // normally component rendering is standalone, however, if not standalone, than also the
+            // ancestors need to be cacheable because all components will be rendered
+            if (!resolvedSitemapItem.getHstComponentConfiguration().isCompositeCacheable()) {
+                log.debug("Request '{}' is not cacheable because hst component '{}' is not cacheable.", context
+                        .getServletRequest().getRequestURI(), resolvedSitemapItem.getHstComponentConfiguration()
+                        .getId());
+                return false;
+            }
+        } else if (!resolvedSitemapItem.getHstComponentConfiguration().isCompositeCacheable()) {
+            log.debug("Request '{}' is not cacheable because hst component '{}' is not cacheable.", context
+                    .getServletRequest().getRequestURI(), resolvedSitemapItem.getHstComponentConfiguration().getId());
+            return false;
+        }
+
+        return true;
+    }
+
 }

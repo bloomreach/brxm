@@ -75,7 +75,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
         this.componentWindowRenderingPipelineName = componentWindowRenderingPipelineName;
     }
 
-    public void render(Writer writer, HttpServletRequest request, ESIPageInfo pageInfo) {
+    public void render(Writer writer, HttpServletRequest request, ESIHstPageInfo pageInfo) {
         HstRequestContext requestContext = RequestContextProvider.get();
 
         PropertyParser propertyParser = createESIPropertyParser(request);
@@ -84,7 +84,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
             requestContainerConfig = new HstContainerConfigImpl(requestContext.getServletContext(), Thread.currentThread().getContextClassLoader());
         }
 
-        String bodyContent = pageInfo.getBodyContent();
+        String bodyContent = pageInfo.getUngzippedBodyAsString();
         List<ESIFragmentInfo> fragmentInfos = pageInfo.getFragmentInfos();
 
         if (fragmentInfos.isEmpty()) {

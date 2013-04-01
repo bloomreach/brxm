@@ -15,6 +15,11 @@
  */
 package org.hippoecm.hst.core.container;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +28,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.jcr.LoginException;
@@ -34,7 +38,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -51,11 +54,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 public class TestPageCachingValve extends AbstractPipelineTestCase {
 
