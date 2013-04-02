@@ -226,6 +226,7 @@
              <property name="processingValves">
               <list>
                 <ref bean="contextResolvingValve" />
+                <ref bean="resourceServingValve" />
                 <ref bean="componentRenderingValve" />
                 <ref bean="aggregationValve" />
               </list>

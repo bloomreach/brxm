@@ -56,7 +56,7 @@ public class ESIPageRenderer implements ComponentManagerAware {
 
     private HstManager hstManager;
     private ComponentManager componentManager;
-    private String componentWindowRenderingPipelineName;
+    private String esiIncludePipelineName;
     private HstContainerConfig requestContainerConfig;
 
     public ESIPageRenderer() {
@@ -71,8 +71,8 @@ public class ESIPageRenderer implements ComponentManagerAware {
         this.hstManager = hstManager;
     }
 
-    public void setComponentWindowRenderingPipelineName(String componentWindowRenderingPipelineName) {
-        this.componentWindowRenderingPipelineName = componentWindowRenderingPipelineName;
+    public void setEsiIncludePipelineName(String esiIncludePipelineName) {
+        this.esiIncludePipelineName = esiIncludePipelineName;
     }
 
     public void render(Writer writer, HttpServletRequest request, ESIHstPageInfo pageInfo) {
@@ -236,20 +236,10 @@ public class ESIPageRenderer implements ComponentManagerAware {
     }
 
     protected void includeLocalURL(Writer writer, URI uri, HstContainerURL localContainerURL) throws IOException {
-        String compRenderingWindowRef = localContainerURL.getComponentRenderingWindowReferenceNamespace();
-
-        if (compRenderingWindowRef != null) {
-            includeLocalComponentWindowRenderingURL(writer, uri, localContainerURL);
-        } else {
-            log.warn("Ignoring ESI Include Tag. ESI Include Tag for non-component-window-rendeing-URL is not supported yet: '{}'.", uri);
-        }
-    }
-
-    protected void includeLocalComponentWindowRenderingURL(Writer writer, URI uri, HstContainerURL localContainerURL) throws IOException {
-        Pipeline pipeline = getComponentWindowRenderingPipeline();
+        Pipeline pipeline = getESIIncludePipeline();
 
         if (pipeline == null) {
-            log.warn("No pipeline found for component window rendering: '{}'.", componentWindowRenderingPipelineName);
+            log.warn("No pipeline found for ESI includes: '{}'.", esiIncludePipelineName);
             return;
         }
 
@@ -322,14 +312,14 @@ public class ESIPageRenderer implements ComponentManagerAware {
         }
     }
 
-    protected Pipeline getComponentWindowRenderingPipeline() {
+    protected Pipeline getESIIncludePipeline() {
         Pipeline pipeline = null;
 
-        if (componentManager != null && componentWindowRenderingPipelineName != null) {
+        if (componentManager != null && esiIncludePipelineName != null) {
             Pipelines pipelines = componentManager.getComponent(Pipelines.class.getName());
 
             if (pipelines != null) {
-                pipeline = pipelines.getPipeline(componentWindowRenderingPipelineName);
+                pipeline = pipelines.getPipeline(esiIncludePipelineName);
             }
         }
 

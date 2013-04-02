@@ -23,7 +23,7 @@
 
   <bean id="esiPageRenderer" class="org.hippoecm.hst.cache.esi.ESIPageRenderer">
     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager" />
-    <property name="componentWindowRenderingPipelineName" value="ESIIncludePipeline" />
+    <property name="esiIncludePipelineName" value="ESIIncludePipeline" />
   </bean>
 
 </beans>
