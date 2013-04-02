@@ -131,51 +131,57 @@ public class ChannelActionsPlugin extends CompatibilityWorkflowPlugin<Workflow> 
     }
 
     private MarkupContainer createMenu(String documentUuid) {
-        if (restProxyService != null) {
-            final DocumentService documentService = restProxyService.createRestProxy(DocumentService.class);
-            if (documentService != null) {
-                try {
-                    final List<ChannelDocument> channelDocuments = documentService.getChannels(documentUuid);
-                    Collections.sort(channelDocuments, getChannelDocumentComparator());
-
-                    final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
-                    for (ChannelDocument channelDocument : channelDocuments) {
-                        idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
-                    }
-
-                    return new ListView<String>("channels", new LoadableDetachableModel<List<String>>() {
-
-                        @Override
-                        protected List<String> load() {
-                            List<String> names = new ArrayList<String>();
-                            names.addAll(idToChannelMap.keySet());
-                            return names;
-                        }
-
-                    }) {
-
-                        {
-                            onPopulate();
-                        }
-
-                        @Override
-                        protected void populateItem(final ListItem<String> item) {
-                            final String channelId = item.getModelObject();
-                            ChannelDocument channel = idToChannelMap.get(channelId);
-                            item.add(new ViewChannelAction("view-channel", channel));
-                        }
-                    };
-                } catch (WebApplicationException e) {
-                    log.error("Could not initialize channel actions menu, REST proxy returned status code '{}'",
-                            e.getResponse().getStatus());
-
-                    log.debug("REST proxy returned message: {}", e.getMessage());
-               }
-            } else {
-                log.warn("The REST proxy service does not provide a proxy for class '{}'. As a result, the 'View' menu cannot be populated with the channels for the document with UUID '{}'",
-                         DocumentService.class.getCanonicalName(), documentUuid);
-            }
+        if (restProxyService == null) {
+            return new EmptyPanel("channels");
         }
+
+        final DocumentService documentService = restProxyService.createRestProxy(DocumentService.class);
+        if (documentService == null) {
+            log.warn("The REST proxy service does not provide a proxy for class '{}'. As a result, the 'View' menu cannot be populated with the channels for the document with UUID '{}'",
+                    DocumentService.class.getCanonicalName(), documentUuid);
+            return new EmptyPanel("channels");
+        }
+
+        try {
+            final Map<String, ChannelDocument> idToChannelMap = new LinkedHashMap<String, ChannelDocument>();
+
+            final List<ChannelDocument> channelDocuments = documentService.getChannels(documentUuid);
+            if (channelDocuments != null) {
+                Collections.sort(channelDocuments, getChannelDocumentComparator());
+                for (final ChannelDocument channelDocument : channelDocuments) {
+                    idToChannelMap.put(channelDocument.getChannelId(), channelDocument);
+                }
+            }
+
+            return new ListView<String>("channels", new LoadableDetachableModel<List<String>>() {
+
+                @Override
+                protected List<String> load() {
+                    List<String> names = new ArrayList<String>();
+                    names.addAll(idToChannelMap.keySet());
+                    return names;
+                }
+
+            }) {
+
+                {
+                    onPopulate();
+                }
+
+                @Override
+                protected void populateItem(final ListItem<String> item) {
+                    final String channelId = item.getModelObject();
+                    ChannelDocument channel = idToChannelMap.get(channelId);
+                    item.add(new ViewChannelAction("view-channel", channel));
+                }
+            };
+        } catch (WebApplicationException e) {
+            log.error("Could not initialize channel actions menu, REST proxy returned status code '{}'",
+                    e.getResponse().getStatus());
+
+            log.debug("REST proxy returned message: {}", e.getMessage());
+        }
+
         return new EmptyPanel("channels");
     }
 
