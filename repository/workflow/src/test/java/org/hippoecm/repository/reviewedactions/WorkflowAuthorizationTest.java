@@ -272,6 +272,8 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
                     FullReviewedActionsWorkflow editWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
                     editWorkflow.obtainEditableInstance();
 
+                    log.debug(iter + ": cycling " + name + ", committing draft");
+
                     Node draft = getNode(path + "[@hippostd:state='draft']");
                     FullReviewedActionsWorkflow saveWorkflow = (FullReviewedActionsWorkflow) getWorkflow(draft, "default");
                     saveWorkflow.commitEditableInstance();

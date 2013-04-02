@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -937,7 +938,9 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
         if (state != null && isHandle(state)) {
             reorderHandleChildNodeEntries((NodeState) state);
         } else {
-            nodesReplaced(handleState);
+            NodeState wrappedState = new NodeState(handleState.getNodeId(), handleState.getNodeTypeName(), handleState.getParentId(), ItemState.STATUS_EXISTING, false);
+            wrappedState.setChildNodeEntries(Collections.<ChildNodeEntry>emptyList());
+            nodesReplaced(wrappedState);
         }
     }
 
