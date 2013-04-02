@@ -58,14 +58,9 @@ public class AggregationValve extends AbstractBaseOrderableValve {
     private static final String ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME = AggregationValve.class.getName() + ".asyncByAncestor";
 
     private Map<String, AsynchronousComponentWindowRenderer> asynchronousComponentWindowRendererMap;
-    private String defaultAsynchronousComponentWindowRenderingMode = "ajax";
 
     public void setAsynchronousComponentWindowRendererMap(Map<String, AsynchronousComponentWindowRenderer> asynchronousComponentWindowRendererMap) {
         this.asynchronousComponentWindowRendererMap = asynchronousComponentWindowRendererMap;
-    }
-
-    public void setDefaultAsynchronousComponentWindowRenderingMode(String defaultAsynchronousComponentWindowRenderingMode) {
-        this.defaultAsynchronousComponentWindowRenderingMode = StringUtils.defaultIfEmpty(defaultAsynchronousComponentWindowRenderingMode, "ajax");
     }
 
     @Override

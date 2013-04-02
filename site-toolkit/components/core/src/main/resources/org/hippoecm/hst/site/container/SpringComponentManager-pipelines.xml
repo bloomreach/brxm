@@ -47,6 +47,7 @@
     <property name="hstQueryManagerFactory" ref="org.hippoecm.hst.core.search.HstQueryManagerFactory" />
     <property name="defaultPageErrorHandler" ref="org.hippoecm.hst.core.container.PageErrorHandler" />
     <property name="resourceBundleRegistry" ref="org.hippoecm.hst.resourcebundle.ResourceBundleRegistry" />
+    <property name="defaultAsynchronousComponentWindowRenderingMode" value="${default.asynchronous.component.window.rendering.mode}" />
   </bean>
 
   <!-- Pre-processing valves -->
@@ -138,8 +139,9 @@
 
   <bean id="esiPageInfoScanningValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ESIPageInfoScanningValve">
     <constructor-arg ref="esiPageScanner" />
-    <property name="esiFragmentsProcessing" value="${esi.default.fragments.processing}" />
     <property name="valveName" value="esiPageInfoScanningValve" />
+    <property name="esiFragmentsProcessing" value="${esi.default.fragments.processing}" />
+    <property name="esiFragmentsProcessingOnlyForAsyncComponents" value="${esi.default.fragments.processing.async.only}" />
     <property name="pageCache" ref="pageCache"/>
   </bean>
 
@@ -154,7 +156,6 @@
   <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
     <property name="valveName" value="aggregationValve" />
     <property name="asynchronousComponentWindowRendererMap" ref="asynchronousComponentWindowRendererMap" />
-    <property name="defaultAsynchronousComponentWindowRenderingMode" value="${default.asynchronous.component.window.rendering.mode}" />
   </bean>
   
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">

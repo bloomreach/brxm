@@ -15,7 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +27,7 @@ import org.hippoecm.hst.cache.HstPageInfo;
 import org.hippoecm.hst.cache.esi.ESIFragmentInfo;
 import org.hippoecm.hst.cache.esi.ESIHstPageInfo;
 import org.hippoecm.hst.cache.esi.ESIPageScanner;
+import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +39,8 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
     protected HstCache pageCache;
 
     private boolean esiFragmentsProcessing;
+
+    private boolean esiFragmentsProcessingOnlyForAsyncComponents;
 
     private ESIPageScanner esiPageScanner;
 
@@ -55,11 +60,32 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
         this.esiFragmentsProcessing = esiFragmentsProcessing;
     }
 
+    public boolean isEsiFragmentsProcessingOnlyForAsyncComponents() {
+        return esiFragmentsProcessingOnlyForAsyncComponents;
+    }
+
+    public void setEsiFragmentsProcessingOnlyForAsyncComponents(boolean esiFragmentsProcessingOnlyForAsyncComponents) {
+        this.esiFragmentsProcessingOnlyForAsyncComponents = esiFragmentsProcessingOnlyForAsyncComponents;
+    }
+
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         if (!isEsiFragmentsProcessing()) {
             context.invokeNext();
             return;
+        }
+
+        if (isEsiFragmentsProcessingOnlyForAsyncComponents()) {
+            HstComponentWindow rootRenderingWindow = context.getRootComponentRenderingWindow();
+
+            if (rootRenderingWindow == null) {
+                rootRenderingWindow = context.getRootComponentWindow();
+            }
+
+            if (!hasAnyEsiModeAsyncComponentWindow(rootRenderingWindow)) {
+                context.invokeNext();
+                return;
+            }
         }
 
         HstRequestContext requestContext = context.getRequestContext();
@@ -126,6 +152,47 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
         }
 
         return esiPageInfo;
+    }
+
+
+    protected boolean hasAnyEsiModeAsyncComponentWindow(final HstComponentWindow window) {
+        if (window == null) {
+            return false;
+        }
+
+        List<HstComponentWindow> asyncWindowList = new ArrayList<HstComponentWindow>();
+        fillFirstEsiModeAsyncComponentWindow(window, asyncWindowList);
+
+        return !asyncWindowList.isEmpty();
+    }
+
+    protected boolean isEsiModeAsyncComponentWindow(HstComponentWindow window) {
+        HstComponentInfo compInfo = window.getComponentInfo();
+
+        if (!compInfo.isAsync()) {
+            return false;
+        }
+
+        String asyncMode = StringUtils.defaultIfEmpty(compInfo.getAsyncMode(), defaultAsynchronousComponentWindowRenderingMode);
+        return StringUtils.equals("esi", asyncMode);
+    }
+
+    private void fillFirstEsiModeAsyncComponentWindow(final HstComponentWindow window, List<HstComponentWindow> asyncWindowsList) {
+        if (isEsiModeAsyncComponentWindow(window)) {
+            asyncWindowsList.add(window);
+        } else {
+            Map<String, HstComponentWindow> childWindowsMap = window.getChildWindowMap();
+
+            if (childWindowsMap != null) {
+                for (HstComponentWindow childWindow : childWindowsMap.values()) {
+                    fillFirstEsiModeAsyncComponentWindow(childWindow, asyncWindowsList);
+
+                    if (!asyncWindowsList.isEmpty()) {
+                        break;
+                    }
+                }
+            }
+        }
     }
 
 }

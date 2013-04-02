@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.cache.HstPageInfo;
 import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
@@ -71,6 +72,8 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
     protected ResourceBundleRegistry resourceBundleRegistry;
     
     protected boolean alwaysRedirectLocationToAbsoluteUrl = true;
+
+    protected String defaultAsynchronousComponentWindowRenderingMode = "ajax";
 
     public ContainerConfiguration getContainerConfiguration() {
         return this.containerConfiguration;
@@ -191,7 +194,11 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
     public void setAlwaysRedirectLocationToAbsoluteUrl(boolean alwaysRedirectLocationToAbsoluteUrl) {
         this.alwaysRedirectLocationToAbsoluteUrl = alwaysRedirectLocationToAbsoluteUrl;
     }
-    
+
+    public void setDefaultAsynchronousComponentWindowRenderingMode(String defaultAsynchronousComponentWindowRenderingMode) {
+        this.defaultAsynchronousComponentWindowRenderingMode = StringUtils.defaultIfEmpty(defaultAsynchronousComponentWindowRenderingMode, "ajax");
+    }
+
     protected HstComponentWindow findComponentWindow(HstComponentWindow rootWindow, String windowReferenceNamespace) {
         HstComponentWindow componentWindow = null;
         
