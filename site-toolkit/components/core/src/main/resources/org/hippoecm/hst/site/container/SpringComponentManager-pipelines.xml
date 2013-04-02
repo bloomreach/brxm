@@ -141,7 +141,7 @@
     <constructor-arg ref="esiPageScanner" />
     <property name="valveName" value="esiPageInfoScanningValve" />
     <property name="esiFragmentsProcessing" value="${esi.default.fragments.processing}" />
-    <property name="esiFragmentsProcessingOnlyForAsyncComponents" value="${esi.default.fragments.processing.async.only}" />
+    <property name="esiFragmentsProcessingOnlyForAsyncComponents" value="${esi.processing.condition.async.components}" />
     <property name="pageCache" ref="pageCache"/>
   </bean>
 
