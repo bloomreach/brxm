@@ -49,7 +49,6 @@ public class SecurityValve extends AbstractBaseOrderableValve {
     public static final String DESTINATION_ATTR_NAME = "org.hippoecm.hst.security.servlet.destination";
     
     public static final String SECURITY_EXCEPTION_ATTR_NAME = "org.hippoecm.hst.security.servlet.exception";
-    public static final String CMS_SITE_PREVIEW_SKIP_AUTHENTICATION = "cms.site.preview.skip.authentication";
 
     protected AuthenticationProvider authProvider;
     
@@ -209,7 +208,7 @@ public class SecurityValve extends AbstractBaseOrderableValve {
         }
 
         if (requestContext.isCmsRequest()) {
-            if (requestContext.getContainerConfiguration().getBoolean(CMS_SITE_PREVIEW_SKIP_AUTHENTICATION, false)) {
+            if (requestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped()) {
                 log.debug("Overriding authentication requirement because cms request");
                 return;
             }

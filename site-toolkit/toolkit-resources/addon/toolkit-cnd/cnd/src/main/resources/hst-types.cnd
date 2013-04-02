@@ -322,6 +322,7 @@
 - hst:diagnosticsforips (string) multiple
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
+- hst:channelmanagersiteauthenticationskipped (boolean)
 + * (hst:virtualhostgroup)
 
 [hst:blueprint] > nt:base, mix:referenceable, mix:versionable

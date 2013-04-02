@@ -124,6 +124,7 @@ public interface HstNodeTypes {
     static final String VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS = "hst:diagnosticsforips";
     static final String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP = "hst:channelmanagerhostgroup";
     static final String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES = "hst:channelmanagersites";
+    static final String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITE_AUTHENTICATION_SKIPPED = "hst:channelmanagersiteauthenticationskipped";
     
     static final String VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION =  "hst:cmslocation" ;
     static final String VIRTUALHOSTGROUP_PROPERTY_DEFAULT_PORT = "hst:defaultport";

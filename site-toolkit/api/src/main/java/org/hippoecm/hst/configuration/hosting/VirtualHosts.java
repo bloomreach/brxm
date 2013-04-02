@@ -182,4 +182,9 @@ public interface VirtualHosts {
      * when not configured
      */
     String getDefaultResourceBundleId();
+
+    /**
+     * @return <code>true</code> when the channel manager can skip authentication required for mounts or sitemapitems.
+     */
+    boolean isChannelMngrSiteAuthenticationSkipped();
 }
