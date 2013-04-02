@@ -34,6 +34,12 @@
     &nbsp;
     <a href="<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/aresourcepage.jsp'/>/">A Resource URL</a>
   </p>
+  <p>
+    <esi:include src="<hst:resourceURL resourceId='/WEB-INF/jsp/components/footer/open-position-within-hippo.jsp' />"/>
+    <esi:remove>
+      <a href="http://www.onehippo.com/en/about/work-at-hippo">Open positions within Hippo</a>
+    </esi:remove>
+  </p>
 </div>
 
 <script language="javascript">

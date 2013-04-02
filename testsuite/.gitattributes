@@ -190,6 +190,7 @@ resources/src/main/webapp/WEB-INF/jsp/components/footer/aresourcepage.jsp -text
 resources/src/main/webapp/WEB-INF/jsp/components/footer/datetime.jsp -text
 resources/src/main/webapp/WEB-INF/jsp/components/footer/footer.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/footer/fr_footer.jsp -text svneol=unset#text/plain
+resources/src/main/webapp/WEB-INF/jsp/components/footer/open-position-within-hippo.jsp -text
 resources/src/main/webapp/WEB-INF/jsp/components/header/header.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/layout/mashup.jsp -text svneol=unset#text/plain
 resources/src/main/webapp/WEB-INF/jsp/components/layout/threecolumnlayout.jsp -text svneol=unset#text/plain
