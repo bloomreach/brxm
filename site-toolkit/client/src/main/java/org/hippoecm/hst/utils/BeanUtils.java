@@ -58,9 +58,9 @@ public class BeanUtils {
 
     private final static Logger log = LoggerFactory.getLogger(BeanUtils.class);
 
-    private final static String DISPOSABLE_SESSION_KEY_PREFIX = BeanUtils.class.getName() + ";disposableSession";
+    private static final String DISPOSABLE_SESSION_KEY_PREFIX = BeanUtils.class.getName() + ";disposableSession";
 
-    private final static String DEFAULT_SEPARATOR = String.valueOf('\uFFFF');
+
     /**
      * <p>
      * Returns the {@link HippoFacetNavigationBean} for this {@link HstRequest} and <code>relPath</code> where it is accounted for the free text <code>query</code>. When <code>query</code> is <code>null</code> or
@@ -530,10 +530,6 @@ public class BeanUtils {
     }
 
     private static String getCredentialsDomainSeparator() {
-        String separator =  HstServices.getComponentManager().getContainerConfiguration().getString("repository.pool.user.name.separator");
-        if (separator != null) {
-            return separator;
-        }
-        return DEFAULT_SEPARATOR;
+        return HstServices.getComponentManager().getContainerConfiguration().getString("repository.pool.user.name.separator");
     }
 }

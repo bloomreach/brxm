@@ -16,6 +16,7 @@
 package org.hippoecm.hst.site.container;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -245,6 +246,16 @@ public class TestHstSiteConfigServlet {
         assertEquals("test-hst-2", configuration.getString("default.site2.alias"));
         assertEquals("test-hst-env", configuration.getString("default.site.env.alias"));
         assertEquals("test-hst-1", configuration.getString("default.site1.alias"));
+    }
+
+    @Test
+    public void testDefaultHstConfForMissingProperties() throws Exception {
+        File confFile = new File("target/test-hst-config-1.properties");
+        servletConfig.addInitParameter(HstSiteConfigServlet.HST_CONFIG_PROPERTIES_PARAM, confFile.toURI().toString());
+        HstSiteConfigServlet siteConfigServlet = new HstSiteConfigServletForTest(servletConfig);
+        Configuration configuration = siteConfigServlet.getConfiguration(servletConfig);
+        assertNotNull(configuration.getString("default.site.name"));
+        assertEquals("\uFFFF", configuration.getString("repository.pool.user.name.separator"));
     }
 
     @Ignore

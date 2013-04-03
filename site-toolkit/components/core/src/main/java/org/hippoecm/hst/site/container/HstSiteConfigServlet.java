@@ -504,10 +504,29 @@ public class HstSiteConfigServlet extends HttpServlet {
                 configuration.addConfiguration(config);
             }
 
+            Configuration defaultHstConf = loadDefaultHstConfiguration();
+
+            if (defaultHstConf != null) {
+                configuration.addConfiguration(defaultHstConf);
+            }
+
             return configuration;
         } catch (Exception e) {
             throw new ServletException(e);
         }
+    }
+
+    protected Configuration loadDefaultHstConfiguration() {
+        Configuration defaultHstConfiguration = null;
+
+        try {
+            URL defaultContainerPropsUrl = Thread.currentThread().getContextClassLoader().getResource(StringUtils.replace(SpringComponentManager.class.getName(), ".", "/") + ".properties");
+            defaultHstConfiguration = new PropertiesConfiguration(defaultContainerPropsUrl);
+        } catch (Exception e) {
+            log.warn("Failed to load the default container properties.", e);
+        }
+
+        return defaultHstConfiguration;
     }
 
     private void setUpFileConfigurationReloadingStrategies() {
