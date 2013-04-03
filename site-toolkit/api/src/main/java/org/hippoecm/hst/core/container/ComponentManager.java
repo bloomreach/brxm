@@ -38,7 +38,6 @@ public interface ComponentManager
 
     /**
      * Returns configuration resources for components assembly
-     * @param configurationResource
      */
     String [] getConfigurationResources();
 
