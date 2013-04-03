@@ -56,9 +56,9 @@ import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.core.security.authorization.WorkspaceAccessManager;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
-import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
+import org.apache.jackrabbit.core.state.NodeStateListener;
 import org.apache.jackrabbit.core.state.PropertyState;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
@@ -94,7 +94,7 @@ import org.slf4j.LoggerFactory;
  * are granted.
  *
  */
-public class HippoAccessManager implements AccessManager, AccessControlManager, ItemStateListener {
+public class HippoAccessManager implements AccessManager, AccessControlManager, NodeStateListener {
 
     /**
      * Subject whose access rights this AccessManager should reflect
@@ -1192,6 +1192,24 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (discarded.isNode()) {
             readAccessCache.remove(discarded.getId());
         }
+    }
+
+    @Override
+    public void nodeAdded(final NodeState state, final Name name, final int index, final NodeId id) {
+    }
+
+    @Override
+    public void nodeModified(final NodeState state) {
+        readAccessCache.remove(state.getId());
+    }
+
+    @Override
+    public void nodesReplaced(final NodeState state) {
+    }
+
+    @Override
+    public void nodeRemoved(final NodeState state, final Name name, final int index, final NodeId id) {
+        readAccessCache.remove(id);
     }
 
     /**
