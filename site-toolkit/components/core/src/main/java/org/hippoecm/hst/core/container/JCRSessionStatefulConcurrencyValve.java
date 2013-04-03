@@ -52,49 +52,50 @@ public class JCRSessionStatefulConcurrencyValve extends AbstractBaseOrderableVal
         boolean subjectBasedSession = resolvedMount.isSubjectBasedSession();
         boolean sessionStateful = resolvedMount.isSessionStateful();
         
-        if(subjectBasedSession && sessionStateful) {
-            // only when subject based session and session stateful, we need synchronized processing
-            Session session = null;
-            try {
-                session = requestContext.getSession();
-            } catch (LoginException e) {
-                throw new ContainerException(e);
-            } catch (RepositoryException e) {
-                throw new ContainerException(e);
-            }
-            
-            if (session != null) {
-                synchronized (session) {
-                    // by default the jcr session which is sessionStateful is a LazySession instance. We need to refresh it here *in* the
-                    // synchronized block: After synchronization, it is not allowed that another request refreshes this session!
-                    if(session instanceof LazySession) {
-                        LazySession lazySession = (LazySession) session;
-                        if (maxRefreshIntervalOnLazySession > 0L) {
-                            // First check whether the maxRefreshInterval has passed 
-                            if (System.currentTimeMillis() - lazySession.lastRefreshed() > maxRefreshIntervalOnLazySession) {
-                                refreshSession(lazySession);
-                            } else {
-                                // if not refreshed, check whether there was a repository event that marked the lazySession as 'dirty'
-                                long refreshPendingTimeMillis = lazySession.getRefreshPendingAfter();
-                                if (refreshPendingTimeMillis > 0L && lazySession.lastRefreshed() < refreshPendingTimeMillis) {
-                                    refreshSession(lazySession);
-                                }
-                            }
-                        } else {
-                            // if maxRefreshIntervalOnLazySession <= 0, we always instantly refresh. This is bad for performance
+        if (!(subjectBasedSession && sessionStateful)) {
+            context.invokeNext();
+            return;
+        }
+
+        // only when subject based session and session stateful, we need synchronized processing
+        Session session;
+        try {
+            session = requestContext.getSession();
+        } catch (LoginException e) {
+            throw new ContainerException(e);
+        } catch (RepositoryException e) {
+            throw new ContainerException(e);
+        }
+
+        if (session instanceof LazySession) {
+            synchronized (session) {
+                // by default the jcr session which is sessionStateful is a LazySession instance. We need to refresh it here *in* the
+                // synchronized block: After synchronization, it is not allowed that another request refreshes this session!
+
+                LazySession lazySession = (LazySession) session;
+                if (maxRefreshIntervalOnLazySession > 0L) {
+                    // First check whether the maxRefreshInterval has passed
+                    if (System.currentTimeMillis() - lazySession.lastRefreshed() > maxRefreshIntervalOnLazySession) {
+                        refreshSession(lazySession);
+                    } else {
+                        // if not refreshed, check whether there was a repository event that marked the lazySession as 'dirty'
+                        long refreshPendingTimeMillis = lazySession.getRefreshPendingAfter();
+                        if (refreshPendingTimeMillis > 0L && lazySession.lastRefreshed() < refreshPendingTimeMillis) {
                             refreshSession(lazySession);
                         }
-                    } else {
-                        log.warn("For a sessionstatefull jcr session we always expect a jcr session of type '{}'. However, there the session is of type '{}'. We refresh this session now.", LazySession.class.getName(), session.getClass().getName());
-                        // we shouldn't get here. Now, we cannot do better than just course grained refreshing without possible checks:
-                        refreshSession(session);
                     }
-                    context.invokeNext();
-                    return;
+                } else {
+                    // if maxRefreshIntervalOnLazySession <= 0, we always instantly refresh. This is bad for performance
+                    refreshSession(lazySession);
                 }
             }
+            context.invokeNext();
+            return;
+        } else {
+            context.invokeNext();
+            return;
         }
-        context.invokeNext();
+
     }
     
     /**
