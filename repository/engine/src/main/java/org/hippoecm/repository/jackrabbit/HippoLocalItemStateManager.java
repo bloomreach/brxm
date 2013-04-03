@@ -15,7 +15,6 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -493,7 +492,6 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
         List<ChildNodeEntry> cnes = state.getChildNodeEntries();
         LinkedList<ChildNodeEntry> updatedList = new LinkedList<ChildNodeEntry>();
         int readableIndex = 0;
-        boolean hasUpdate = false;
         for (ChildNodeEntry current : cnes) {
             boolean added = false;
 
@@ -507,7 +505,6 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
                     if (!accessManager.isGranted(current.getId(), AccessManager.READ)) {
                         updatedList.addLast(current);
                         added = true;
-                        hasUpdate = true;
                     }
                 } catch (ItemNotFoundException t) {
                     log.error("Unable to order documents below handle " + state.getId(), t);
@@ -521,9 +518,10 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
                 readableIndex++;
             }
         }
-        if (hasUpdate) {
-            state.setChildNodeEntries(updatedList);
-        }
+
+        // always invoke {@link NodeState#setChildNodeEntries} (even when there are no changes)
+        // so that the hierarchy manager cache is verified and updated.
+        state.setChildNodeEntries(updatedList);
     }
 
     @Override
@@ -932,16 +930,22 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
     }
 
     @Override
-    public void handleModified(final NodeState handleState) {
-        NodeId handleId = handleState.getNodeId();
-        ItemState state = cache.retrieve(handleId);
-        if (state != null && isHandle(state)) {
-            reorderHandleChildNodeEntries((NodeState) state);
+    public void handleModified(final NodeState sharedState) {
+        NodeId handleId = sharedState.getNodeId();
+        ItemState localState = cache.retrieve(handleId);
+        if (localState != null) {
+            reorderHandleChildNodeEntries((NodeState) localState);
         } else {
-            NodeState wrappedState = new NodeState(handleState.getNodeId(), handleState.getNodeTypeName(), handleState.getParentId(), ItemState.STATUS_EXISTING, false);
-            wrappedState.setChildNodeEntries(Collections.<ChildNodeEntry>emptyList());
-            nodesReplaced(wrappedState);
+            clearHierarchyManagerCacheForHandle(sharedState);
         }
+    }
+
+    private void clearHierarchyManagerCacheForHandle(final NodeState sharedState) {
+        final NodeId handleId = sharedState.getNodeId();
+        final Name nodeTypeName = sharedState.getNodeTypeName();
+        final NodeId parentId = sharedState.getParentId();
+        NodeState wrappedState = new NodeState(handleId, nodeTypeName, parentId, ItemState.STATUS_EXISTING, false);
+        nodesReplaced(wrappedState);
     }
 
     @Override
