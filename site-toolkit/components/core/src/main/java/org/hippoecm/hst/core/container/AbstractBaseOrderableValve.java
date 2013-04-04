@@ -392,6 +392,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
         if (!"GET".equals(method)) {
             log.debug("Only GET requests are cacheable. Skipping it because the request method is '{}'.", method);
+            return false;
         }
 
         HstContainerURL baseURL = requestContext.getBaseURL();
