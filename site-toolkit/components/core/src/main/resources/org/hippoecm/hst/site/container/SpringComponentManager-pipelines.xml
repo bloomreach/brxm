@@ -145,10 +145,10 @@
     <property name="pageCache" ref="pageCache"/>
   </bean>
 
-  <bean id="cacheableRequestInfoCreator" class="org.hippoecm.hst.core.container.DefaultCacheableRequestInfoCreator" />
+  <bean id="requestInfoCacheKeyFragmentCreator" class="org.hippoecm.hst.core.container.DefaultRequestInfoCacheKeyFragmentCreator" />
 
   <bean id="pageCachingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageCachingValve">
-    <constructor-arg ref="cacheableRequestInfoCreator" />
+    <constructor-arg ref="requestInfoCacheKeyFragmentCreator" />
     <property name="valveName" value="pageCachingValve" />
     <property name="pageCache" ref="pageCache"/>
   </bean>

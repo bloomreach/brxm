@@ -69,7 +69,7 @@ public class TestHstSitePipeline {
         resourceServingValve = new ResourceServingValve();
         resourceServingValve.setValveName(toCamelCaseString(ResourceServingValve.class.getSimpleName()));
 
-        pageCachingValve = new PageCachingValve(new DefaultCacheableRequestInfoCreator());
+        pageCachingValve = new PageCachingValve(new DefaultRequestInfoCacheKeyFragmentCreator());
         pageCachingValve.setValveName(toCamelCaseString(PageCachingValve.class.getSimpleName()));
 
         aggregationValve = new AggregationValve();

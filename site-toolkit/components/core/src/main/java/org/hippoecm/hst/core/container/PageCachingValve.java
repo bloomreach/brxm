@@ -48,14 +48,14 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
      */
     protected HstCache pageCache;
 
-    private CacheableRequestInfoCreator cacheableRequestInfoCreator;
+    private RequestInfoCacheKeyFragmentCreator requestInfoCacheKeyFragmentCreator;
 
     public PageCachingValve() {
-        this(new DefaultCacheableRequestInfoCreator());
+        this(new DefaultRequestInfoCacheKeyFragmentCreator());
     }
 
-    public PageCachingValve(CacheableRequestInfoCreator cacheableRequestInfoCreator) {
-        this.cacheableRequestInfoCreator = cacheableRequestInfoCreator;
+    public PageCachingValve(RequestInfoCacheKeyFragmentCreator requestInfoCacheKeyFragmentCreator) {
+        this.requestInfoCacheKeyFragmentCreator = requestInfoCacheKeyFragmentCreator;
     }
 
     public void setPageCache(HstCache pageCache) {
@@ -101,7 +101,7 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
     }
 
     private void appendRequestInfoToCacheKey(final ValveContext context) {
-        Serializable requestInfo = cacheableRequestInfoCreator.createRequestInfo(context.getRequestContext());
+        Serializable requestInfo = requestInfoCacheKeyFragmentCreator.create(context.getRequestContext());
         final PageCacheKey pageCacheKey = context.getPageCacheContext().getPageCacheKey();
         pageCacheKey.setAttribute(REQUEST_INFO_CACHE_KEY_ATTR_NAME, requestInfo);
     }

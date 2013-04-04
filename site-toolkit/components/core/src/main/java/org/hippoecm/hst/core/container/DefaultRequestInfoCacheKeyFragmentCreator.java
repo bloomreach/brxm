@@ -24,17 +24,18 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.util.HstRequestUtils;
 
 /**
- * DefaultCacheableRequestInfoCreator
+ * Default {@link RequestInfoCacheKeyFragmentCreator} which takes all parts of the request to create a cachekey with.
  */
-public class DefaultCacheableRequestInfoCreator implements CacheableRequestInfoCreator {
+public class DefaultRequestInfoCacheKeyFragmentCreator implements RequestInfoCacheKeyFragmentCreator {
 
-    public Serializable createRequestInfo(HstRequestContext requestContext) {
+    public Serializable create(HstRequestContext requestContext) {
         HttpServletRequest request = requestContext.getServletRequest();
         StringBuilder requestInfo = new StringBuilder(256);
         final char delim = '\uFFFF';
         // Implementers should differentiate between GET and HEAD requests otherwise blank pages
         //  can result.
         requestInfo.append(request.getMethod()).append(delim);
+        requestInfo.append(HstRequestUtils.getFarthestRequestScheme(request)).append(delim);
         requestInfo.append(HstRequestUtils.getFarthestRequestHost(request)).append(delim);
         requestInfo.append(request.getRequestURI()).append(delim);
         requestInfo.append(StringUtils.defaultString(request.getQueryString())).append(delim);
