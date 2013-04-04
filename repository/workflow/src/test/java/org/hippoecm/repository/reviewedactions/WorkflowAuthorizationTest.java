@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -33,6 +34,7 @@ import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class WorkflowAuthorizationTest extends RepositoryTestCase {
 
@@ -119,10 +122,18 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
         ar.setProperty(HippoNodeType.HIPPO_USERS, new String[] {TEST_USER_ID});
 
         dr  = readDomain.addNode("hippo:domainrule", HippoNodeType.NT_DOMAINRULE);
-        fr  = dr.addNode("hippo:facetrule", HippoNodeType.NT_FACETRULE);
+
+        fr = dr.addNode("nodetype-hippo-document", HippoNodeType.NT_FACETRULE);
+        fr.setProperty(HippoNodeType.HIPPO_FACET, "nodetype");
+        fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "hippo:document");
+        fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
+        fr.setProperty(HippoNodeType.HIPPOSYS_FILTER, false);
+
+        fr  = dr.addNode("availability-preview", HippoNodeType.NT_FACETRULE);
         fr.setProperty(HippoNodeType.HIPPO_FACET, HippoNodeType.HIPPO_AVAILABILITY);
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "preview");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
+        fr.setProperty(HippoNodeType.HIPPOSYS_FILTER, true);
     }
 
     private void createTestData() throws RepositoryException {
@@ -227,7 +238,7 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
         int max = 10;
         int iter = 0;
         while ((iter++ >= 0) && (log.isDebugEnabled() || max-- > 0)) {
-            switch (random.nextInt(3)) {
+            switch (random.nextInt(5)) {
                 case 0: {
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < 10; i++) {
@@ -242,60 +253,90 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
                     build(session, mount("/test", instantiate(DOCUMENT_TEMPLATE, parameters)));
                     session.save();
 
-                    assertNotNull(getUserNode("/test/" + name + "/" + name));
-
                     Node node = getNode("test/" + name + "/" + name);
                     FullReviewedActionsWorkflow workflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
                     workflow.publish();
-
-                    assertNotNull(getUserNode("/test/" + name + "/" + name));
                 }
                 break;
                 case 1: {
-                    NodeIterator nodes = getNode("/test").getNodes();
-                    final int size = (int) nodes.getSize();
-                    if (size == 0) {
+                    Node node = getRandomNode(random);
+                    if (node == null) {
                         continue;
                     }
 
-                    nodes.skip(random.nextInt(size));
-
-                    Node node = nodes.nextNode();
                     String name = node.getName();
 
                     log.debug(iter + ": cycling " + name);
 
-                    final String path = "/test/" + name + "/" + name;
-                    assertNotNull(getUserNode(path));
+                    final String docPath = "/test/" + name + "/" + name;
 
+                    Node draft = getNode(docPath + "[@hippostd:state='draft']");
+                    if (draft != null) {
+                        log.debug(iter + ": saving " + name);
+
+                        FullReviewedActionsWorkflow saveWorkflow = (FullReviewedActionsWorkflow) getWorkflow(draft, "default");
+                        saveWorkflow.commitEditableInstance();
+                        continue;
+                    }
+
+                    Node preview = getNode(docPath + "[@hippostd:state='unpublished']");
+                    if (preview != null) {
+                        log.debug(iter + ": publishing " + name);
+                        FullReviewedActionsWorkflow publishWorkflow = (FullReviewedActionsWorkflow) getWorkflow(preview, "default");
+                        publishWorkflow.publish();
+                        continue;
+                    }
+
+                    log.debug(iter + ": editing " + name);
                     node = node.getNode(name);
                     FullReviewedActionsWorkflow editWorkflow = (FullReviewedActionsWorkflow) getWorkflow(node, "default");
                     editWorkflow.obtainEditableInstance();
-
-                    log.debug(iter + ": cycling " + name + ", committing draft");
-
-                    Node draft = getNode(path + "[@hippostd:state='draft']");
-                    FullReviewedActionsWorkflow saveWorkflow = (FullReviewedActionsWorkflow) getWorkflow(draft, "default");
-                    saveWorkflow.commitEditableInstance();
-
-                    assertNotNull(getUserNode(path));
-
-                    Node preview = getNode(path + "[@hippostd:state='unpublished']");
-                    FullReviewedActionsWorkflow publishWorkflow = (FullReviewedActionsWorkflow) getWorkflow(preview, "default");
-                    publishWorkflow.publish();
-
-                    assertNotNull(getUserNode(path));
                 }
                 break;
-                case 2: {
-                    NodeIterator nodes = getNode("/test").getNodes();
-                    final int size = (int) nodes.getSize();
-                    if (size == 0) {
+                case 2:
+                case 3: {
+                    Node node = getRandomNode(random);
+                    if (node == null) {
                         continue;
                     }
-                    nodes.skip(random.nextInt(size));
 
-                    Node node = nodes.nextNode();
+                    String name = node.getName();
+
+                    log.debug(iter + ": testing " + name);
+
+                    final String handlePath = "/test/" + name;
+                    Node userRoot = userSession.getRootNode();
+                    Node handle = userRoot.getNode(handlePath.substring(1));
+                    if (!handle.hasNode(name)) {
+                        assertTrue("Child node " + name + " was not found", false);
+                    }
+                    if (handle.getNodes().getSize() != 1) {
+                        for (Node child : new NodeIterable(handle.getNodes())) {
+                            log.debug(iter + ":   child " + child.getProperty("hippostd:state").getString());
+
+                            Value[] availability = child.getProperty("hippo:availability").getValues();
+                            boolean hasPreview = false;
+                            for (Value value : availability) {
+                                if ("preview".equals(value.getString())) {
+                                    hasPreview = true;
+                                }
+                            }
+                            if (!hasPreview) {
+                                final String message = "Node " + child.getIdentifier() + " (" + child.getPath() + ") is not available for preview";
+                                log.warn(message);
+                                assertTrue(message, false);
+                            }
+                        }
+//                        assertEquals(1, handle.getNodes().getSize());
+                    }
+                }
+                break;
+                case 4: {
+                    Node node = getRandomNode(random);
+                    if (node == null) {
+                        continue;
+                    }
+
                     String name = node.getName();
 
                     log.debug(iter + ": removing " + name);
@@ -303,8 +344,20 @@ public class WorkflowAuthorizationTest extends RepositoryTestCase {
                     node.remove();
                     session.save();
                 }
+                break;
             }
         }
+    }
+
+    private Node getRandomNode(final Random random) throws RepositoryException {
+        Node node = null;
+        NodeIterator nodes = getNode("/test").getNodes();
+        final int size = (int) nodes.getSize();
+        if (size > 0) {
+            nodes.skip(random.nextInt(size));
+            node = nodes.nextNode();
+        }
+        return node;
     }
 
     protected Workflow getWorkflow(Node node, String category) throws RepositoryException {

@@ -68,6 +68,7 @@ import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.dataprovider.HippoVirtualProvider;
 import org.hippoecm.repository.dataprovider.ParameterizedNodeId;
 import org.hippoecm.repository.dataprovider.StateProviderContext;
+import org.hippoecm.repository.security.HippoAccessManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,15 +206,10 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
         return new Modules(dataProviderModules);
     }
 
-    boolean debugThisSession = false;
-
     void initialize(org.apache.jackrabbit.core.SessionImpl session,
                     FacetedNavigationEngine<Query, Context> facetedEngine,
                     FacetedNavigationEngine.Context facetedContext) throws IllegalNameException, NamespaceException {
         this.session = session;
-        if ("testuser".equals(session.getUserID())) {
-            debugThisSession = true;
-        }
         this.accessManager = session.getAccessManager();
         this.hierMgr = session.getHierarchyManager();
         this.facetedEngine = facetedEngine;
@@ -946,6 +942,16 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
         final NodeId parentId = sharedState.getParentId();
         NodeState wrappedState = new NodeState(handleId, nodeTypeName, parentId, ItemState.STATUS_EXISTING, false);
         nodesReplaced(wrappedState);
+    }
+
+    @Override
+    public void stateModified(final ItemState modified) {
+        super.stateModified(modified);
+        if (accessManager != null
+                && modified.getContainer() != this
+                && !cache.isCached(modified.getId())) {
+            ((HippoAccessManager) accessManager).stateModified(modified);
+        }
     }
 
     @Override
