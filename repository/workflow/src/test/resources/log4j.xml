@@ -60,23 +60,6 @@
     <appender-ref ref="root"/>
   </category>
 
-  <category additivity="false" name="org.hippoecm.repository.reviewedactions.WorkflowAuthorizationTest">
-    <level value="debug"/>
-    <appender-ref ref="root"/>
-  </category>
-
-<!--
-  <category additivity="false" name="org.hippoecm.repository.security.HippoAccessManager">
-    <level value="debug"/>
-    <appender-ref ref="root"/>
-  </category>
-
-  <category additivity="false" name="org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager">
-    <level value="debug"/>
-    <appender-ref ref="root"/>
-  </category>
--->
-
   <root>
     <level value="warn"/>
     <appender-ref ref="console"/>
