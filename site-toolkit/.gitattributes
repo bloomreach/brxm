@@ -471,7 +471,9 @@ commons/src/test/java/org/hippoecm/hst/util/TestPropertyDefinitionUtils.java -te
 commons/src/test/java/org/hippoecm/hst/util/TestServletConfigUtils.java svneol=native#text/plain
 components/core/pom.xml svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/cache/CacheContentEventListener.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/ForwardPlaceHolderHstPageInfo.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/HstPageInfo.java -text
+components/core/src/main/java/org/hippoecm/hst/cache/UncacheableHstPageInfo.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/CacheElementEhCacheImpl.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/EhCacheManagerShuttingDownListener.java -text
 components/core/src/main/java/org/hippoecm/hst/cache/ehcache/HstCacheEhCacheImpl.java -text
@@ -542,7 +544,6 @@ components/core/src/main/java/org/hippoecm/hst/core/container/DefaultRequestInfo
 components/core/src/main/java/org/hippoecm/hst/core/container/DiagnosticReportingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ESIAsynchronousComponentWindowRenderer.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/ESIPageInfoScanningValve.java -text
-components/core/src/main/java/org/hippoecm/hst/core/container/ForwardPlaceHolderHstPageInfo.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/GenericResponseHeadersValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/HstComponentFactoryImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/HstComponentInvokerImpl.java svneol=native#text/plain
@@ -570,7 +571,6 @@ components/core/src/main/java/org/hippoecm/hst/core/container/ResourceServingVal
 components/core/src/main/java/org/hippoecm/hst/core/container/SecurityValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SiteMenusResolvingValve.java -text
 components/core/src/main/java/org/hippoecm/hst/core/container/SubjectBasedSessionValve.java -text
-components/core/src/main/java/org/hippoecm/hst/core/container/UncacheableHstPageInfo.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/DelegatingRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepository.java -text
 components/core/src/main/java/org/hippoecm/hst/core/jcr/LazySessionDelegatingRepositorySessionsRefreshEventListener.java -text

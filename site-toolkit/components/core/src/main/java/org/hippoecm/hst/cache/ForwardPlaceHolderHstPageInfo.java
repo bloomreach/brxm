@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.cache;
 
 import org.hippoecm.hst.cache.HstPageInfo;
 
@@ -21,13 +21,13 @@ import org.hippoecm.hst.cache.HstPageInfo;
 /**
  * ForwardPlaceHolderHstPageInfo
  */
-class ForwardPlaceHolderHstPageInfo extends HstPageInfo {
+public class ForwardPlaceHolderHstPageInfo extends HstPageInfo {
 
     private static final long serialVersionUID = 1L;
 
     private final String forwardPathInfo;
 
-    ForwardPlaceHolderHstPageInfo(String forwardPathInfo) {
+    public ForwardPlaceHolderHstPageInfo(String forwardPathInfo) {
         super();
         this.forwardPathInfo = forwardPathInfo;
     }

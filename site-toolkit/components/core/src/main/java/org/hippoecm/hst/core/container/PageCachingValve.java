@@ -18,12 +18,11 @@ package org.hippoecm.hst.core.container;
 import java.io.Serializable;
 import java.util.concurrent.Callable;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.HstCacheException;
 import org.hippoecm.hst.cache.HstPageInfo;
+import org.hippoecm.hst.cache.UncacheableHstPageInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;

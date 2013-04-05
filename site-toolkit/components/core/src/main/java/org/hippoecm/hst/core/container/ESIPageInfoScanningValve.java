@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.HstPageInfo;
+import org.hippoecm.hst.cache.UncacheableHstPageInfo;
 import org.hippoecm.hst.cache.esi.ESIFragmentInfo;
 import org.hippoecm.hst.cache.esi.ESIHstPageInfo;
 import org.hippoecm.hst.cache.esi.ESIPageRenderer;

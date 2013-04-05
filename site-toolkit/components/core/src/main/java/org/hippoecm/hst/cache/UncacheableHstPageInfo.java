@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.core.container;
+package org.hippoecm.hst.cache;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -26,11 +26,11 @@ import org.hippoecm.hst.cache.HstPageInfo;
 /**
  * UncacheableHstPageInfo
  */
-class UncacheableHstPageInfo extends HstPageInfo {
+public class UncacheableHstPageInfo extends HstPageInfo {
 
     private static final long serialVersionUID = 1L;
 
-    UncacheableHstPageInfo(final int statusCode, final String contentType, final Collection cookies, final byte[] body,
+    public UncacheableHstPageInfo(final int statusCode, final String contentType, final Collection cookies, final byte[] body,
             String characterEncoding, long timeToLiveSeconds, final Collection<Header<? extends Serializable>> headers) {
         super(statusCode, contentType, cookies, body, characterEncoding, timeToLiveSeconds, headers);
     }

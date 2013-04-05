@@ -24,7 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.cache.ForwardPlaceHolderHstPageInfo;
 import org.hippoecm.hst.cache.HstPageInfo;
+import org.hippoecm.hst.cache.UncacheableHstPageInfo;
 import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
