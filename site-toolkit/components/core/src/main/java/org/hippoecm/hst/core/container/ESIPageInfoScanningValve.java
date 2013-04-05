@@ -135,6 +135,12 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
                         log.debug("The cached pageInfo is not of text content ('{}'). So skipping to convert to ESIHstPageInfo.", contentType);
                     }
                 }
+
+                // since esiPageRenderer is transient on ESIHstPageInfo. always set again
+                if (pageInfo instanceof ESIHstPageInfo) {
+                    ((ESIHstPageInfo)pageInfo).setESIPageRenderer(esiPageRenderer);
+                }
+
             }
         } catch (Exception e) {
             throw new ContainerException(e);
@@ -146,7 +152,7 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
         String bodyContent = new String(pageInfo.getUngzippedBody(), characterEncoding);
         ESIHstPageInfo esiPageInfo = new ESIHstPageInfo(pageInfo.getStatusCode(), pageInfo.getContentType(),
                 pageInfo.getSerializableCookies(), bodyContent, pageInfo.getCharacterEncoding(),
-                pageInfo.getTimeToLiveSeconds(), pageInfo.getHeaders(), esiPageRenderer);
+                pageInfo.getTimeToLiveSeconds(), pageInfo.getHeaders());
 
         List<ESIFragmentInfo> fragmentInfos = esiPageScanner.scanFragmentInfos(bodyContent);
 

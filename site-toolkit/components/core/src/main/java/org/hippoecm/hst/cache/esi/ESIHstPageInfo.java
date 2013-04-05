@@ -50,18 +50,17 @@ public class ESIHstPageInfo extends HstPageInfo {
 
     private String ungzippedBodyAsString;
     private List<ESIFragmentInfo> fragmentInfos;
-    private ESIPageRenderer esiPageRenderer;
+    private transient ESIPageRenderer esiPageRenderer;
 
     public ESIHstPageInfo(int statusCode, String contentType, Collection cookies, byte [] body, String characterEncoding,
             long timeToLiveSeconds, Collection<Header<? extends Serializable>> headers) throws UnsupportedEncodingException {
-        this(statusCode, contentType, cookies, bytesToString(body, characterEncoding, contentType), characterEncoding, timeToLiveSeconds, headers, null);
+        this(statusCode, contentType, cookies, bytesToString(body, characterEncoding, contentType), characterEncoding, timeToLiveSeconds, headers);
     }
 
     public ESIHstPageInfo(int statusCode, String contentType, Collection cookies, String ungzippedBodyAsString, String characterEncoding,
-            long timeToLiveSeconds, Collection<Header<? extends Serializable>> headers, ESIPageRenderer esiPageRenderer) {
+            long timeToLiveSeconds, Collection<Header<? extends Serializable>> headers) {
         super(statusCode, contentType, cookies, ArrayUtils.EMPTY_BYTE_ARRAY, characterEncoding, timeToLiveSeconds, headers);
         this.ungzippedBodyAsString = ungzippedBodyAsString;
-        this.esiPageRenderer = esiPageRenderer;
     }
 
     public String getUngzippedBodyAsString() {
@@ -117,6 +116,10 @@ public class ESIHstPageInfo extends HstPageInfo {
         }
 
         return new String(body, characterEncoding);
+    }
+
+    public void setESIPageRenderer(final ESIPageRenderer esiPageRenderer) {
+        this.esiPageRenderer = esiPageRenderer;
     }
 
     @Override
