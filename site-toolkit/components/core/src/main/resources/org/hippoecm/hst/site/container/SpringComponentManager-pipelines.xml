@@ -133,12 +133,12 @@
   </bean>
 
   <bean id="pageInfoRenderingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.PageInfoRenderingValve">
-    <constructor-arg ref="esiPageRenderer" />
     <property name="valveName" value="pageInfoRenderingValve" />
   </bean>
 
   <bean id="esiPageInfoScanningValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ESIPageInfoScanningValve">
     <constructor-arg ref="esiPageScanner" />
+    <constructor-arg ref="esiPageRenderer" />
     <property name="valveName" value="esiPageInfoScanningValve" />
     <property name="esiFragmentsProcessing" value="${esi.default.fragments.processing}" />
     <property name="esiFragmentsProcessingOnlyForAsyncComponents" value="${esi.processing.condition.async.components}" />

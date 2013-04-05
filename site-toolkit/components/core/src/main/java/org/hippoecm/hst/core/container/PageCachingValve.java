@@ -66,9 +66,8 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
     public void invoke(ValveContext context) throws ContainerException {
 
         HstRequestContext requestContext = context.getRequestContext();
-        HttpServletRequest request = requestContext.getServletRequest();
 
-        if (Boolean.FALSE.equals(request.getAttribute(PageInfoRenderingValve.PAGE_INFO_CACHEABLE)) || !isRequestCacheable(context)) {
+        if (!isRequestCacheable(context)) {
             context.invokeNext();
             return;
         }

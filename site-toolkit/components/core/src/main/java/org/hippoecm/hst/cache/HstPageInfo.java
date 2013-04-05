@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.cache;
 
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -22,11 +25,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.ehcache.constructs.web.Header;
-import net.sf.ehcache.constructs.web.PageInfo;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.james.mime4j.util.MimeUtil;
+
+import net.sf.ehcache.constructs.web.Header;
+import net.sf.ehcache.constructs.web.PageInfo;
 
 /**
  * Default HST implementation of PageInfo extending {@link net.sf.ehcache.constructs.web.PageInfo},
@@ -98,5 +101,14 @@ public class HstPageInfo extends PageInfo {
         }
 
         return isNoCachePresentOrExpiresImmediately.booleanValue();
+    }
+
+    public void writeContent(final HttpServletResponse response) throws IOException
+    {
+        byte [] body = this.getUngzippedBody();
+        response.setContentLength(body != null ? body.length : 0);
+        OutputStream out = new BufferedOutputStream(response.getOutputStream());
+        out.write(body);
+        out.flush();
     }
 }

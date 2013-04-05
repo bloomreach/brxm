@@ -23,8 +23,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.ehcache.constructs.web.GenericResponseWrapper;
-
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.cache.HstPageInfo;
 import org.hippoecm.hst.configuration.components.DelegatingHstComponentInfo;
@@ -50,13 +48,17 @@ import org.hippoecm.hst.util.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.ehcache.constructs.web.GenericResponseWrapper;
+
 /**
  * AbstractBaseOrderableValve
  */
 public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve implements Valve {
     
     protected final static Logger log = LoggerFactory.getLogger(AbstractBaseOrderableValve.class);
-    
+
+    private final static String PAGE_INFO_CACHEABLE = PageInfoRenderingValve.class.getName() + ".pageInfoCacheable";
+
     protected ContainerConfiguration containerConfiguration;
     protected HstManager hstManager;
     protected HstSiteMapMatcher siteMapMatcher;
@@ -384,11 +386,20 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
     }
 
     protected boolean isRequestCacheable(final ValveContext context) throws ContainerException {
-        HstRequestContext requestContext = context.getRequestContext();
-        HttpServletRequest servletRequest = requestContext.getServletRequest();
+        HttpServletRequest servletRequest = context.getServletRequest();
+        if (servletRequest.getAttribute(PAGE_INFO_CACHEABLE) != null) {
+            return ((Boolean)servletRequest.getAttribute(PAGE_INFO_CACHEABLE)).booleanValue();
+        }
 
+        boolean requestCacheable = isRequestCacheable(context.getRequestContext(), context);
+        servletRequest.setAttribute(PAGE_INFO_CACHEABLE, requestCacheable);
+        return  requestCacheable;
+    }
+
+    private boolean isRequestCacheable(final HstRequestContext requestContext, final ValveContext context) throws ContainerException {
+        HttpServletRequest servletRequest = requestContext.getServletRequest();
         String method = servletRequest.getMethod();
-        String requestURI = context.getServletRequest().getRequestURI();
+        String requestURI = servletRequest.getRequestURI();
 
         if (!"GET".equals(method)) {
             log.debug("Only GET requests are cacheable. Skipping it because the request method is '{}'.", method);
@@ -437,7 +448,6 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
             log.debug("Request '{}' is not cacheable because mount '{}' is not cacheable.", requestURI, mount.getName());
             return false;
         }
-
         return true;
     }
 

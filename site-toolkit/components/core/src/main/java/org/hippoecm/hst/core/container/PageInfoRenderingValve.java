@@ -15,27 +15,19 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Serializable;
-import java.io.Writer;
 import java.util.Collection;
 import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.ehcache.constructs.web.Header;
-
 import org.hippoecm.hst.cache.HstPageInfo;
-import org.hippoecm.hst.cache.esi.ESIHstPageInfo;
-import org.hippoecm.hst.cache.esi.ESIPageRenderer;
-import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.core.request.HstRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.sf.ehcache.constructs.web.Header;
 
 /**
  * PageInfoRenderingValve
@@ -47,23 +39,11 @@ import org.slf4j.LoggerFactory;
 public class PageInfoRenderingValve extends AbstractBaseOrderableValve {
 
     static final String PAGE_INFO = PageInfoRenderingValve.class.getName() + ".pageInfo";
-    static final String PAGE_INFO_CACHEABLE = PageInfoRenderingValve.class.getName() + ".pageInfoCacheable";
-
     private static final Logger log = LoggerFactory.getLogger(PageInfoRenderingValve.class);
-
-    private ESIPageRenderer esiPageRenderer;
-
-    public PageInfoRenderingValve(ESIPageRenderer esiPageRenderer) {
-        this.esiPageRenderer = esiPageRenderer;
-    }
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
         HttpServletRequest request = context.getServletRequest();
-
-        // in order not to invoke #isRequestCacheable(context) twice or more, store it in request attribute.
-        // ESIPageInfoScanningValve and PageCachingValve should check the following request attribute first.
-        request.setAttribute(PAGE_INFO_CACHEABLE, Boolean.valueOf(isRequestCacheable(context)));
 
         context.invokeNext();
 
@@ -110,7 +90,7 @@ public class PageInfoRenderingValve extends AbstractBaseOrderableValve {
         setStatus(response, pageInfo);
         setContentType(response, pageInfo);
         setHeaders(pageInfo, response);
-        writeContent(response, pageInfo);
+        pageInfo.writeContent(response);
     }
 
     /**
@@ -185,22 +165,6 @@ public class PageInfoRenderingValve extends AbstractBaseOrderableValve {
                     throw new IllegalArgumentException("No mapping for Header: "
                             + header);
             }
-        }
-    }
-
-    protected void writeContent(final HttpServletResponse response, final HstPageInfo pageInfo) throws IOException {
-        HstRequestContext requestContext = RequestContextProvider.get();
-
-        if (pageInfo instanceof ESIHstPageInfo) {
-            Writer writer = new BufferedWriter(response.getWriter());
-            esiPageRenderer.render(writer, requestContext.getServletRequest(), (ESIHstPageInfo) pageInfo);
-            writer.flush();
-        } else {
-            byte [] body = pageInfo.getUngzippedBody();
-            response.setContentLength(body != null ? body.length : 0);
-            OutputStream out = new BufferedOutputStream(response.getOutputStream());
-            out.write(body);
-            out.flush();
         }
     }
 

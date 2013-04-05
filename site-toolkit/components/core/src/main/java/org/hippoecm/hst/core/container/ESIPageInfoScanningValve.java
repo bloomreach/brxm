@@ -26,6 +26,7 @@ import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.HstPageInfo;
 import org.hippoecm.hst.cache.esi.ESIFragmentInfo;
 import org.hippoecm.hst.cache.esi.ESIHstPageInfo;
+import org.hippoecm.hst.cache.esi.ESIPageRenderer;
 import org.hippoecm.hst.cache.esi.ESIPageScanner;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -42,10 +43,13 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
 
     private boolean esiFragmentsProcessingOnlyForAsyncComponents;
 
-    private ESIPageScanner esiPageScanner;
+    private final ESIPageScanner esiPageScanner;
 
-    public ESIPageInfoScanningValve(ESIPageScanner esiPageScanner) {
+    private final ESIPageRenderer esiPageRenderer;
+
+    public ESIPageInfoScanningValve(ESIPageScanner esiPageScanner, ESIPageRenderer esiPageRenderer) {
         this.esiPageScanner = esiPageScanner;
+        this.esiPageRenderer = esiPageRenderer;
     }
 
     public void setPageCache(HstCache pageCache) {
@@ -91,12 +95,10 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
         HstRequestContext requestContext = context.getRequestContext();
         HttpServletRequest request = requestContext.getServletRequest();
 
-        HstPageInfo pageInfo = null;
+        HstPageInfo pageInfo;
 
         try {
-            boolean requestCacheable = Boolean.TRUE.equals(request.getAttribute(PageInfoRenderingValve.PAGE_INFO_CACHEABLE)) || isRequestCacheable(context);
-
-            if (requestCacheable) {
+            if (isRequestCacheable(context)) {
                 // pageInfo request attribute will be set in the PageCachingValve..
                 context.invokeNext();
                 pageInfo = (HstPageInfo) request.getAttribute(PageInfoRenderingValve.PAGE_INFO);
@@ -119,7 +121,7 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
                         request.setAttribute(PageInfoRenderingValve.PAGE_INFO, esiPageInfo);
 
                         // replace the current cache in the pageCache by converted ESIHstPageInfo.
-                        if (requestCacheable) {
+                        if (isRequestCacheable(context)) {
                             PageCacheKey pageCacheKey = context.getPageCacheContext().getPageCacheKey();
 
                             if (pageInfo.isNoCachePresentOrExpiresImmediately() || pageInfo instanceof UncacheableHstPageInfo) {
@@ -143,7 +145,7 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
         String bodyContent = new String(pageInfo.getUngzippedBody(), characterEncoding);
         ESIHstPageInfo esiPageInfo = new ESIHstPageInfo(pageInfo.getStatusCode(), pageInfo.getContentType(),
                 pageInfo.getSerializableCookies(), bodyContent, pageInfo.getCharacterEncoding(),
-                pageInfo.getTimeToLiveSeconds(), pageInfo.getHeaders());
+                pageInfo.getTimeToLiveSeconds(), pageInfo.getHeaders(), esiPageRenderer);
 
         List<ESIFragmentInfo> fragmentInfos = esiPageScanner.scanFragmentInfos(bodyContent);
 
