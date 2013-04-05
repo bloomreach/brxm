@@ -131,6 +131,9 @@ public class ESIPageInfoScanningValve extends AbstractBaseOrderableValve {
                                 pageCache.put(pageCache.createElement(pageCacheKey, esiPageInfo));
                             }
                         }
+
+                        // replace the local pageInfo variable for setting ESIPageRenderer below.
+                        pageInfo = esiPageInfo;
                     } else {
                         log.debug("The cached pageInfo is not of text content ('{}'). So skipping to convert to ESIHstPageInfo.", contentType);
                     }
