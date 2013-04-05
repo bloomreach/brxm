@@ -51,7 +51,7 @@
     <hippo.services.version>1.03.00-SNAPSHOT</hippo.services.version>
     <hippo.utilities.version>1.01.04-SNAPSHOT</hippo.utilities.version>
 
-    <forge.content-blocks.version>1.09.00</forge.content-blocks.version>
+    <forge.content-blocks.version>1.09.01</forge.content-blocks.version>
     <forge.dashboard-document-wizard.version>1.03.10</forge.dashboard-document-wizard.version>
     <forge.easy-forms.version>2.12.03</forge.easy-forms.version>
     <forge.ecm-tagging.version>4.05.00</forge.ecm-tagging.version>
