@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
+import freemarker.core.Configurable;
 import freemarker.ext.jsp.TaglibFactory;
 import freemarker.ext.servlet.AllHttpScopesHashModel;
 import freemarker.ext.servlet.FreemarkerServlet;
@@ -72,22 +73,13 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        /*
-         * we here need to inject our own template loader. We cannot do this in createConfiguration() as we would like,
-         * because the FreemarkerServlet sets the template loader in the init() *after* createConfiguration() again, to the default
-         * WebappTemplateLoader
-         */
-
-        continueRenderingAfterException = Boolean.parseBoolean(getConfigOrContextInitParameter(CONTINUE_RENDERING_AFTER_EXCEPTION, "true"));
 
         Configuration conf = super.getConfiguration();
 
-        if (continueRenderingAfterException) {
-            log.info("FreeMarker servlet will log and *continue* rendering in case of template exceptions");
+        if (!hasInitParameter(Configurable.TEMPLATE_EXCEPTION_HANDLER_KEY)) {
+            log.info("No '"+Configurable.TEMPLATE_EXCEPTION_HANDLER_KEY+"' init param set. HST will set FreeMarker servlet to log and *continue* " +
+                    "(TemplateExceptionHandler.IGNORE_HANDLER) rendering in case of template exceptions. ");
             conf.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);
-        } else {
-            log.info("FreeMarker servlet will log and *stop* rendering in case of template exceptions");
-            conf.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         }
 
         TemplateLoader classTemplateLoader =  new HstClassTemplateLoader(getClass());
@@ -205,8 +197,13 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
         return params;
     }
 
-    protected String getConfigOrContextInitParameter(String paramName, String defaultValue) {
-        String value = ServletConfigUtils.getInitParameter(getServletConfig(), getServletConfig().getServletContext(), paramName, defaultValue);
-        return (value != null ? value.trim() : null);
+    protected boolean hasInitParameter(String paramName) {
+        if (getServletConfig().getInitParameter(paramName) != null) {
+            return true;
+        }
+        if (getServletConfig().getServletContext().getInitParameter(paramName) != null) {
+            return true;
+        }
+        return false;
     }
 }
