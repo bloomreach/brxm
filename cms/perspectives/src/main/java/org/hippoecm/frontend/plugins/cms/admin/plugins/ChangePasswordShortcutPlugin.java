@@ -1,12 +1,12 @@
 /*
  *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.plugins.cms.admin.plugins;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -70,6 +72,8 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     
     private Label label;
             
+    private static final Pattern EXPIRATION_PATTERN = Pattern.compile(".*((day|hour|minute|second|millisecond)s?)$");
+
     public ChangePasswordShortcutPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
         
@@ -114,15 +118,21 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             public String getObject() {
                 if (user.isPasswordExpired()) {
                     return new StringResourceModel("password-is-expired", ChangePasswordShortcutPlugin.this, null).getObject();
-                }
-                else if (isPasswordAboutToExpire(user)) {
-                    long expirationTime = user.getPasswordExpirationTime();
-                    Duration expirationDuration = Duration.valueOf(expirationTime - System.currentTimeMillis());
-                    StringResourceModel model = new StringResourceModel(
-                            "password-about-to-expire", 
-                            ChangePasswordShortcutPlugin.this, 
-                            null, 
-                            new Object[] { expirationDuration.toString(getLocale()) });
+                } else if (isPasswordAboutToExpire(user)) {
+                    final long expirationTime = user.getPasswordExpirationTime();
+                    final Duration expirationDuration = Duration.valueOf(expirationTime - System.currentTimeMillis());
+                    String expiration = expirationDuration.toString(getLocale());
+
+                    final Matcher matcher = EXPIRATION_PATTERN.matcher(expiration);
+                    if (matcher.matches()) {
+                        expiration = expiration.replace(matcher.group(1), new StringResourceModel(matcher.group(1), ChangePasswordShortcutPlugin.this, null).getObject());
+                    }
+
+                    final StringResourceModel model = new StringResourceModel(
+                            "password-about-to-expire",
+                            ChangePasswordShortcutPlugin.this,
+                            null,
+                            new Object[]{ expiration });
                     return model.getObject();
                 }
                 return "";
