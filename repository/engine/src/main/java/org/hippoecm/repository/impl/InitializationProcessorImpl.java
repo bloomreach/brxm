@@ -429,8 +429,12 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             final String contextNodeName = StringUtils.trim(JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_CONTEXTNODENAME, null));
             if (contextNodeName != null) {
                 final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
+                final int index = getNodeIndex(session, contextNodePath);
                 if (removeNodecontent(session, contextNodePath, false)) {
                     initializeNodecontent(session, root, contentStream, contentResource);
+                    if (index != -1) {
+                        reorderNode(session, contextNodePath, index);
+                    }
                 } else {
                     getLogger().error("Cannot reload item " + node.getPath() + ": removing node failed");
                 }
@@ -441,6 +445,36 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             initializeNodecontent(session, root, contentStream, contentResource);
         }
 
+    }
+
+    private void reorderNode(final Session session, final String nodePath, final int index) throws RepositoryException {
+        final Node node = session.getNode(nodePath);
+        final String srcChildRelPath = node.getName() + "[" + node.getIndex() + "]";
+        final Node parent = node.getParent();
+        final NodeIterator nodes = parent.getNodes();
+        nodes.skip(index);
+        if (nodes.hasNext()) {
+            final Node destChild = nodes.nextNode();
+            String destChildRelPath = destChild.getName() + "[" + destChild.getIndex() + "]";
+            if (!srcChildRelPath.equals(destChildRelPath)) {
+                parent.orderBefore(srcChildRelPath, destChildRelPath);
+            }
+        }
+    }
+
+    private int getNodeIndex(final Session session, final String nodePath) throws RepositoryException {
+        final Node node = JcrUtils.getNodeIfExists(nodePath, session);
+        if (node != null && node.getParent().getPrimaryNodeType().hasOrderableChildNodes()) {
+            final NodeIterator nodes = node.getParent().getNodes();
+            int index = 0;
+            while (nodes.hasNext()) {
+                if (nodes.nextNode().isSame(node)) {
+                    return index;
+                }
+                index++;
+            }
+        }
+        return -1;
     }
 
     private void processContentDelete(final Node node, final Session session, final boolean dryRun) throws RepositoryException {
