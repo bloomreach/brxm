@@ -39,12 +39,6 @@ public class PageCachingValve extends AbstractBaseOrderableValve {
      * The cache holding the web pages. Ensure that all threads for a given
      * cache name are using the same instance of this.
      */
-    //protected BlockingCache blockingCache;
-
-    /**
-     * The cache holding the web pages. Ensure that all threads for a given
-     * cache name are using the same instance of this.
-     */
     protected HstCache pageCache;
 
     private RequestInfoCacheKeyFragmentCreator requestInfoCacheKeyFragmentCreator;
