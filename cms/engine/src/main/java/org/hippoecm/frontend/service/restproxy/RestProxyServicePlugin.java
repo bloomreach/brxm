@@ -255,6 +255,10 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
             final HttpContext httpContext = new BasicHttpContext();
             final HttpResponse httpResponse = httpClient.execute(httpGet, httpContext);
             siteIsAlive = (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK);
+
+            if (!siteIsAlive) {
+                log.warn("The response status ('{}') is not okay from the pinging site service URI, '{}'.", httpResponse.getStatusLine(), normalizedPingServiceUri);
+            }
         } catch (UnsupportedEncodingException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Error while pinging site using URI " + normalizedPingServiceUri, e);
