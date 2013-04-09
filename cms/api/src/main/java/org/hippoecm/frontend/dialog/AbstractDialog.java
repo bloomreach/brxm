@@ -26,12 +26,14 @@ import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.WicketRuntimeException;
+import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.IAjaxIndicatorAware;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.ajax.markup.html.AjaxIndicatorAppender;
 import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.feedback.FeedbackMessagesModel;
+import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.DefaultMarkupCacheKeyProvider;
 import org.apache.wicket.markup.DefaultMarkupResourceStreamProvider;
 import org.apache.wicket.markup.IMarkupCacheKeyProvider;
@@ -281,9 +283,22 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
 
             @Override
-            protected Button decorate(Button b) {
-                b.setDefaultFormProcessing(false);
-                return super.decorate(b);
+            protected Button decorate(final Button button) {
+                button.add(new AjaxEventBehavior("onclick") {
+
+                    @Override
+                    protected void onComponentTag(final ComponentTag tag) {
+                        super.onComponentTag(tag);
+                        tag.put("type", "button");
+                    }
+
+                    @Override
+                    protected void onEvent(final AjaxRequestTarget target) {
+                        onSubmit();
+                    }
+                });
+                button.setDefaultFormProcessing(false);
+                return super.decorate(button);
             }
 
         };
