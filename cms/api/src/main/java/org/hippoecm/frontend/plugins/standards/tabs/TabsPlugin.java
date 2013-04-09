@@ -560,37 +560,6 @@ public class TabsPlugin extends RenderPlugin {
 
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
-                    for (TabsPlugin.Tab currentTab : changedTabs) {
-                        IServiceReference<IRenderService> reference = getPluginContext().getReference(currentTab.renderer);
-                        if (reference == null) {
-                            log.error("Could not find render service for a tab");
-                            return;
-                        }
-                        IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
-                        try {
-
-                            if (editor.isModified()) {
-                                editor.done(); //save the document and switch to VIEW mode
-                            }
-                            editor.close();
-                        } catch (EditorException e) {
-                            log.error("Unable to save the document {}", e.getMessage());
-                        }
-                    }
-                    closeDialog();
-                    TabsPlugin.this.closeAll(ignoredTab, target);
-                }
-            };
-
-            button.setModel(new ResourceModel("save-all"));
-
-            addButton(button);
-
-            button = new AjaxButton(DialogConstants.BUTTON) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
                     List<TabsPlugin.Tab> tabsCopy = new ArrayList<TabsPlugin.Tab>(tabs);
                     for (TabsPlugin.Tab currentTab : tabsCopy) {
                         IServiceReference<IRenderService> reference = getPluginContext().getReference(currentTab.renderer);
@@ -617,6 +586,39 @@ public class TabsPlugin extends RenderPlugin {
             button.setModel(new ResourceModel("discard-all"));
 
             addButton(button);
+
+            button = new AjaxButton(DialogConstants.BUTTON) {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    for (TabsPlugin.Tab currentTab : changedTabs) {
+                        IServiceReference<IRenderService> reference = getPluginContext().getReference(currentTab.renderer);
+                        if (reference == null) {
+                            log.error("Could not find render service for a tab");
+                            return;
+                        }
+                        IEditor editor = getPluginContext().getService(reference.getServiceId(), IEditor.class);
+                        try {
+
+                            if (editor.isModified()) {
+                                editor.done(); //save the document and switch to VIEW mode
+                            }
+                            editor.close();
+                        } catch (EditorException e) {
+                            log.error("Unable to save the document {}", e.getMessage());
+                        }
+                    }
+                    closeDialog();
+                    TabsPlugin.this.closeAll(ignoredTab, target);
+                }
+            };
+
+            button.setModel(new ResourceModel("save-all"));
+
+            addButton(button);
+
+
 
             ModifiedDocumentsProvider provider = new ModifiedDocumentsProvider(getTabModelList(changedTabs));
             add(new ModifiedDocumentsView("modified-docs-view", provider));
