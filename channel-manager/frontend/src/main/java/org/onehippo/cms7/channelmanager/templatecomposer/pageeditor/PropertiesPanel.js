@@ -568,7 +568,7 @@
         },
 
         addDocumentComboBox: function(record, defaultValue, value) {
-            var comboStore, propertyField, comboLinkId;
+            var comboStore, propertyField, createDocumentLinkId;
 
             comboStore = new Ext.data.JsonStore({
                 root: 'data',
@@ -591,18 +591,21 @@
             });
 
             if (record.get('allowCreation')) {
-                comboLinkId = Ext.id();
+                createDocumentLinkId = Ext.id();
+
                 this.add({
                     bodyCfg: {
                         tag: 'div',
                         cls: 'create-document-link',
-                        html: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-document-link-text'].format('<a href="#" id="' + comboLinkId + '">&nbsp;', '&nbsp;</a>&nbsp;')
+                        html: Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['create-document-link-text'].format('<a href="#" id="' + createDocumentLinkId + '">&nbsp;', '&nbsp;</a>&nbsp;')
                     },
                     border: false
-
                 });
 
-                Ext.get(comboLinkId).on("click", this._createDocument, this, {
+                // layout this panel so the 'a' tag is rendered and can be looked up by ID to attach the on-click listener
+                this.doLayout(false, true);
+
+                Ext.get(createDocumentLinkId).on("click", this._createDocument, this, {
                     docType: record.get('docType'),
                     docLocation: record.get('docLocation'),
                     comboId: propertyField.id
