@@ -653,6 +653,7 @@
                 <exclude>reporting/frontend/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoThemeReporting.css</exclude>
                 <exclude>richtext/resources/src/external/xinha/**/*</exclude>
                 <exclude>richtext/resources/src/main/resources/xinha/modules/GetHtml/TransformInnerHTML.js</exclude>
+                <exclude>richtext/resources/src/main/resources/xinha/modules/Gecko/paraHandlerBest.js</exclude>
                 <exclude>richtext/resources/src/main/resources/xinha/modules/InsertTable/insert_table.js</exclude>
                 <exclude>richtext/resources/src/main/resources/xinha/modules/InternetExplorer/InternetExplorer.js</exclude>
                 <exclude>richtext/resources/src/main/resources/xinha/plugins/InsertAnchor/InsertAnchor.js</exclude>
