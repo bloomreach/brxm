@@ -147,8 +147,9 @@ public class LinkChecker {
                     String url = link.getUrl();
                     if (url != null) {
                         final HttpContext httpContext = new BasicHttpContext();
-                        HttpRequestBase httpRequest = new HttpHead(url);
+                        HttpRequestBase httpRequest = null;
                         try {
+                            httpRequest = new HttpHead(url);
                             HttpResponse httpResponse = httpClient.execute(httpRequest, httpContext);
                             int headResultCode = httpResponse.getStatusLine().getStatusCode();
                             httpRequest.reset();
@@ -169,6 +170,11 @@ public class LinkChecker {
                             link.setBrokenSince(Calendar.getInstance());
                             link.setResultCode(Link.EXCEPTION_CODE);
                             link.setResultMessage(ioException.getClass().getCanonicalName());
+                        } catch (IllegalArgumentException ex) {
+                            link.setBroken(true);
+                            link.setBrokenSince(Calendar.getInstance());
+                            link.setResultCode(Link.EXCEPTION_CODE);
+                            link.setResultMessage(ex.getClass().getCanonicalName());
                         } finally {
                             if ((httpRequest != null) && (!httpRequest.isAborted())) {
                                 httpRequest.reset();

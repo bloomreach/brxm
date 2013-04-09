@@ -167,6 +167,30 @@ public class BrokenLinksTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testMalformedLink() throws RepositoryException, WorkflowException, RemoteException, ClassNotFoundException {
+        String malformedUrl = "http://<";
+        String[] content = new String[] {
+                "/test/doc", "hippo:handle",
+                "jcr:mixinTypes", "hippo:hardhandle",
+                "/test/doc/doc", "hippo:testdocument",
+                "jcr:mixinTypes", "hippo:harddocument",
+                "/test/doc/doc/text", "hippostd:html",
+                "hippostd:content", "<html><body><a href=\""+malformedUrl+"\">link</a></body></html>"
+        };
+        build(session, content);
+        session.save();
+        WorkflowDescriptor wfDesc = workflowManager.getWorkflowDescriptor("brokenlinks", session.getRootNode().getNode("test/cfg/cfg"));
+        CheckBrokenLinksWorkflow wf = (CheckBrokenLinksWorkflow)workflowManager.getWorkflow(wfDesc);
+        wf.checkLinks();
+        session.refresh(false);
+        Node node = session.getRootNode().getNode("test/doc");
+        assertTrue(node.isNodeType("brokenlinks:brokenlinks"));
+        assertTrue(node.hasNode("brokenlinks:link"));
+        assertFalse(node.hasNode("brokenlinks:link[2]"));
+        assertEquals(malformedUrl, node.getNode("brokenlinks:link").getProperty("brokenlinks:url").getString());
+    }
+
+    @Test
     public void testSomeFaultyLinks() throws Exception {
         DocumentText documents = new DocumentText() {
             public String getTextForDocument(int index) {
