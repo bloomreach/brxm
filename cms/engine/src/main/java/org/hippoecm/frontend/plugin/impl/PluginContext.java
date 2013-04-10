@@ -223,7 +223,10 @@ public class PluginContext implements IPluginContext, IDetachable {
         if (!stopping) {
             List<IClusterable> list = services.get(name);
             if (list != null) {
-                list.remove(service);
+                if (!list.remove(service)) {
+                    log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
+                            + " is unregistering service at " + name + " that wasn't registered.");
+                }
                 if (initializing) {
                     if (registrations.containsKey(service)) {
                         ServiceRegistration registration = registrations.get(service);
@@ -231,6 +234,7 @@ public class PluginContext implements IPluginContext, IDetachable {
                         if (registration.names.size() == 0) {
                             registration.cleanup();
                             registrations.remove(service);
+                            registrationOrder.remove(registration);
                         }
                     } else {
                         log.warn("plugin " + (plugin != null ? plugin.getClass().getName() : "<unknown>")
