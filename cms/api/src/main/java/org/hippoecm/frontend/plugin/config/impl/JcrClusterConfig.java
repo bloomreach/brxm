@@ -30,11 +30,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
-import javax.jcr.version.VersionException;
 
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -230,7 +227,7 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
                     String path = event.getPath();
                     path = path.substring(0, path.lastIndexOf('/'));
 
-                    JcrItemModel model = new JcrItemModel(path, isPropertyEvent(event));
+                    JcrItemModel model = new JcrItemModel(path, false);
                     Node root = getNode();
                     while (model != null && !root.isSame((Node) model.getObject())) {
                         if (model.exists()) {
