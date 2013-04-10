@@ -97,7 +97,7 @@ public class DownloadExportLink extends DownloadLink<Node> {
             error(message);
             log.error(message, e);
         } catch (RepositoryException e) {
-            final String message = "Repository during export";
+            final String message = "Repository exception during export: " + e.getMessage();
             error(message);
             log.error(message, e);
         }
