@@ -159,6 +159,9 @@ public class UpdaterExecutor implements EventListener {
                 log.error("Failed to remove self as event listener during destroy", e);
             }
         }
+        if (background != null) {
+            background.logout();
+        }
     }
 
     private void logEvent(String action, String user, String message) {
