@@ -250,12 +250,6 @@ public class JcrClusterConfig extends JcrPluginConfig implements IClusterConfig 
             }
         }
 
-        private boolean isPropertyEvent(final Event event) {
-            return event.getType() == Event.PROPERTY_ADDED
-                    || event.getType() == Event.PROPERTY_CHANGED
-                    || event.getType() == Event.PROPERTY_REMOVED;
-        }
-
         private Node getNode() {
             return getNodeModel().getNode();
         }
