@@ -45,6 +45,12 @@
       <sv:property sv:name="attic" sv:type="Path">
         <sv:value>/content/attic</sv:value>
       </sv:property>
+      <sv:property sv:name="modify-on-copy" sv:type="String">
+        <sv:value>./hippostdpubwf:lastModificationDate</sv:value>
+        <sv:value>$now</sv:value>
+        <sv:value>./hippostdpubwf:lastModifiedBy</sv:value>
+        <sv:value>$holder</sv:value>
+      </sv:property>
     </sv:node>
   </sv:node>
   <sv:node sv:name="directory">
