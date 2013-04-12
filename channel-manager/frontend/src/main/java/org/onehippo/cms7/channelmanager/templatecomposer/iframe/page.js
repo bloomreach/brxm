@@ -32,6 +32,9 @@
     Factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
 
     function startsWith(str, prefix) {
+        if (str === undefined || prefix === undefined) {
+            return false;
+        }
         var start = str.slice(0, prefix.length);
         return start === prefix;
     }
