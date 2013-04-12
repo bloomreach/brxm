@@ -97,7 +97,7 @@ public class PageEditor extends ExtPanel {
     private String contextPath = "/site";
 
     @ExtProperty
-    private String cmsPreviewPrefix;
+    private String cmsPreviewPrefix = "_cmsinternal";
 
     @ExtProperty
     private String templateComposerContextPath = "/site";

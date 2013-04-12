@@ -488,6 +488,7 @@
 
             var config = {
                 templateComposerContextPath: this.templateComposerContextPath,
+                cmsPreviewPrefix: this.cmsPreviewPrefix,
                 composerRestMountPath: this.composerRestMountPath,
                 renderPath: this.renderPath,
                 previewMode: this.previewMode,

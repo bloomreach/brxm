@@ -31,6 +31,11 @@
 
     Factory = Hippo.ChannelManager.TemplateComposer.IFrame.UI.Factory;
 
+    function startsWith(str, prefix) {
+        var start = str.slice(0, prefix.length);
+        return start === prefix;
+    }
+
     page = {
         overlay : null,
         current : null,
@@ -119,6 +124,20 @@
                 return false;
             }, this);
 
+            // intercept all clicks on external links: open them in a new tab if confirmed by the user
+            $('a').each(function() {
+                var link = $(this),
+                    url = link.prop('href');
+                if (!startsWith(url, data.internalLinkUrlPrefix)) {
+                    link.attr('target', '_blank');
+                    link.click(function(event) {
+                        var ok = confirm(data.resources['confirm-open-external-url']);
+                        if (!ok) {
+                            event.preventDefault();
+                        }
+                    });
+                }
+            });
         },
 
         createContainer : function(element, page) {

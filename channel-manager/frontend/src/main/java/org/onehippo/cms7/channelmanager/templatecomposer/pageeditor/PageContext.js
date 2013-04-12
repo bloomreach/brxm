@@ -18,6 +18,15 @@
 
     Ext.namespace('Hippo.ChannelManager.TemplateComposer');
 
+    function appendPathFragment(basePath, fragment) {
+        if (Ext.isEmpty(fragment)) {
+            return basePath;
+        }
+        var basePathAndSlash = basePath.charAt(basePath.length - 1) === '/' ? basePath : basePath + '/',
+            noSlashAndFragment = fragment.charAt(0) === '/' ? fragment.substring(1) : fragment;
+        return basePathAndSlash + noSlashAndFragment;
+    }
+
     Hippo.ChannelManager.TemplateComposer.PageContext = Ext.extend(Ext.util.Observable, {
 
         constructor: function(config, cache, oldContext, pageContainer) {
@@ -58,6 +67,10 @@
             this.locked = false;
             this.lockedBy = "";
             this.lockedOn = 0;
+
+            this.internalLinkUrlPrefix = document.location.protocol + '//' + document.location.host;
+            this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.templateComposerContextPath);
+            this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.cmsPreviewPrefix);
 
             this.iframeResourceCache = cache;
 
@@ -263,6 +276,7 @@
                     iframe.iframeToHost.subscribeOnce('iframeloaded', function() {
                         iframe.hostToIFrame.publish('init', {
                             debug: self.debug,
+                            internalLinkUrlPrefix: self.internalLinkUrlPrefix,
                             previewMode: previewMode,
                             resources: self.resources
                         });
