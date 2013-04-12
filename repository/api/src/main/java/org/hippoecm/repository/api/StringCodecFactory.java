@@ -561,9 +561,9 @@ public class StringCodecFactory {
                 }
             }
 
-            // delete an ending space-replacement
-            final int length = sb.length();
-            if (length > 0 && sb.charAt(length - 1) == '-') {
+            // delete an ending space-replacement or '.'
+            int length;
+            while ((length = sb.length()) > 0 && (sb.charAt(length - 1) == '-' || sb.charAt(length - 1) == '.')) {
                 sb.deleteCharAt(length - 1);
             }
 
