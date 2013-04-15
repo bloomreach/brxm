@@ -469,6 +469,11 @@ public class UpdaterExecutor implements EventListener {
         }
     }
 
+    /**
+     * Checking out of <code>node</code> must be done by a background jcr session as the session doing the upgrade of nodes
+     * might already have local changes on the <code>node</code> in which case checking out the node with that session
+     * would fail
+     */
     private void ensureIsCheckedOut(Node node) throws RepositoryException {
         if (!node.isCheckedOut()) {
             log.debug("Checking out node {}" + node.getPath());
