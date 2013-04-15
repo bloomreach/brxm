@@ -99,8 +99,8 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
 
             IPluginConfig config = getPluginConfig();
 
-            if (useCompareWhenPossible && oldModel != null && newModel != null) {
-                cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.COMPARE, null);
+            if (oldModel != null && newModel != null && factory.canCompare(oldModel, newModel)) {
+                cmpTpl = factory.newTemplate(config.getString("cmp"), IEditor.Mode.COMPARE, oldModel);
                 if (!cmpTpl.getClusterConfig().getReferences().contains("model.compareTo")) {
                     cmpTpl = null;
                 }
@@ -244,7 +244,6 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
     private Set<ItemEntry> childTemplates;
     private JavaPluginConfig itemConfig;
     private IComparer comparer;
-    private boolean useCompareWhenPossible = true;
     private Orientation orientation = Orientation.VERTICAL;
 
     public ComparingController(IPluginContext context, IPluginConfig config, ITemplateFactory<C> factory,
@@ -269,14 +268,6 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
 
     public Orientation getOrientation() {
         return orientation;
-    }
-
-    public void setUseCompareWhenPossible(boolean useCompareWhenPossible) {
-        this.useCompareWhenPossible = useCompareWhenPossible;
-    }
-
-    public boolean isUseCompareWhenPossible() {
-        return useCompareWhenPossible;
     }
 
     public void start(AbstractProvider<P,C> oldProvider, AbstractProvider<P,C> newProvider, ITypeDescriptor type) {
@@ -310,7 +301,7 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
                 if (oldValue.equals(nextValue)) {
                     break;
                 } else {
-                    if (useCompareWhenPossible && nextNewValue != null && !nextNewValue.equals(nextValue)) {
+                    if (nextNewValue != null && !nextNewValue.equals(nextValue)) {
                         addModelComparison(oldValue.value, nextNewValue.value, cnt++);
                         if (newValueIter.hasNext()) {
                             nextNewValue = newValueIter.next();
@@ -338,7 +329,7 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
         }
         while (oldValueIter.hasNext()) {
             ItemValue<C> oldValue = oldValueIter.next();
-            if (useCompareWhenPossible && nextNewValue != null) {
+            if (nextNewValue != null) {
                 addModelComparison(oldValue.value, nextNewValue.value, cnt++);
                 if (newValueIter.hasNext()) {
                     nextNewValue = newValueIter.next();

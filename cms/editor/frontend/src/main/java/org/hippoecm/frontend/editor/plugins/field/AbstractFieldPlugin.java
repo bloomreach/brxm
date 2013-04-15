@@ -168,12 +168,6 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
         if (IEditor.Mode.COMPARE == mode) {
             comparingController = new ComparingController<P, C>(context, config, this, getComparer(), getItemId());
-
-            if (helper.getField().isMultiple()) {
-                // always use managed compare for multi-valued properties
-                comparingController.setUseCompareWhenPossible(false);
-            }
-
         } else {
             IModel<IValidationResult> validationModel = null;
             if (IEditor.Mode.EDIT == mode) {
@@ -511,6 +505,19 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
         } catch (TemplateEngineException e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean canCompare(final IModel<?> old, final IModel<?> model) {
+        ITemplateEngine engine = getTemplateEngine();
+        try {
+            final ITypeDescriptor oldType = engine.getType(old);
+            final ITypeDescriptor newType = engine.getType(model);
+            return oldType.equals(newType);
+        } catch (TemplateEngineException e) {
+            return false;
+        }
+
     }
 
     public IClusterControl newTemplate(String id, IEditor.Mode mode, IModel<?> model) throws TemplateEngineException {

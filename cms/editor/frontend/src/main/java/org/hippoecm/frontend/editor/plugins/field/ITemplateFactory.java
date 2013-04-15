@@ -23,5 +23,7 @@ import org.hippoecm.frontend.service.IEditor;
 
 public interface ITemplateFactory<C extends IModel> extends IClusterable {
 
+    boolean canCompare(IModel<?> old, IModel<?> model);
+
     IClusterControl newTemplate(String id, IEditor.Mode mode, IModel<?> model) throws TemplateEngineException;
 }
