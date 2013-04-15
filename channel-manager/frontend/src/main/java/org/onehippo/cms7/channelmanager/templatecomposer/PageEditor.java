@@ -159,9 +159,9 @@ public class PageEditor extends ExtPanel {
 
             // Check whether user can unlock channels or not
             try {
-                final String unlocckChannelPrivilege = config.getString("channel.unlock.privileges", "hippo:admin");
-                final String unlocckChannelPathToCheck = config.getString("channel.unlock.privileges.path", "/hst:hst/hst:channels");
-                UserSession.get().getJcrSession().checkPermission(unlocckChannelPathToCheck, unlocckChannelPrivilege);
+                final String unlockChannelPrivilege = config.getString("channel.unlock.privileges", "hippo:admin");
+                final String unlockChannelPathToCheck = config.getString("channel.unlock.privileges.path", "/hst:hst/hst:channels");
+                UserSession.get().getJcrSession().checkPermission(unlockChannelPathToCheck, unlockChannelPrivilege);
                 this.canUnlockChannels = true;
             } catch(AccessControlException ex) {
                 log.info("User '{}' is not allowed to unlock channels.", this.cmsUser);
