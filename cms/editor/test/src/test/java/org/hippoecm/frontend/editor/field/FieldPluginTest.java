@@ -20,6 +20,7 @@ import java.util.List;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.IClusterable;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginTest;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -201,7 +202,7 @@ public class FieldPluginTest extends PluginTest {
         expectLastCall().times(2);
         modelRef.setObservationContext((IObservationContext<? extends IObservable>) anyObject());
         modelRef.startObservation();
-        expect(engine.getType(model)).andReturn(typeDesc);
+        expect(engine.getType((IModel<?>) anyObject())).andReturn(typeDesc).anyTimes();
         expect(engine.getTemplate(stringType, IEditor.Mode.COMPARE)).andReturn(template);
         expect(engine.getTemplate(stringType, IEditor.Mode.VIEW)).andReturn(template);
         expectLastCall().times(2);
@@ -241,7 +242,7 @@ public class FieldPluginTest extends PluginTest {
         expectLastCall().times(2);
         modelRef.setObservationContext((IObservationContext<? extends IObservable>) anyObject());
         modelRef.startObservation();
-        expect(engine.getType(model)).andReturn(typeDesc);
+        expect(engine.getType((IModel<?>) anyObject())).andReturn(typeDesc).anyTimes();
         expect(engine.getTemplate(stringType, IEditor.Mode.COMPARE)).andReturn(template);
 
         JcrNodeModel baseModel = new JcrNodeModel("/test/base");
