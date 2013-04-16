@@ -46,7 +46,7 @@ public class UpdaterEngineAdministrationTest {
         module1.registerName("module1");
         module1.registerEndTag("v2");
         modules.add(module1);
-        UpdaterEngine.prepare(modules, currentVersion);
+        UpdaterEngine.prepare(modules, currentVersion, false);
         assertEquals(1, modules.size());
         assertTrue(modules.get(0).equals(module1));
     }
@@ -60,7 +60,7 @@ public class UpdaterEngineAdministrationTest {
         module1.registerEndTag("v2");
         modules.add(module1);
         currentVersion.add("v1");
-        UpdaterEngine.prepare(modules, currentVersion);
+        UpdaterEngine.prepare(modules, currentVersion, false);
         assertEquals(1, modules.size());
         assertTrue(modules.get(0).equals(module1));
     }
@@ -73,7 +73,7 @@ public class UpdaterEngineAdministrationTest {
         module1.registerEndTag("v2");
         modules.add(module1);
         currentVersion.add("v2");
-        UpdaterEngine.prepare(modules, currentVersion);
+        UpdaterEngine.prepare(modules, currentVersion, false);
         assertEquals(0, modules.size());
     }
 
@@ -85,7 +85,7 @@ public class UpdaterEngineAdministrationTest {
         module1.registerEndTag("any");
         modules.add(module1);
         currentVersion.add("any");
-        UpdaterEngine.prepare(modules, currentVersion);
+        UpdaterEngine.prepare(modules, currentVersion, false);
         assertEquals(0, modules.size());
     }
 
@@ -107,7 +107,7 @@ public class UpdaterEngineAdministrationTest {
         module2.registerAfter("module1");
         modules.add(module2);
 
-        UpdaterEngine.prepare(modules, currentVersion);
+        UpdaterEngine.prepare(modules, currentVersion, false);
         assertEquals(2, modules.size());
         assertTrue(modules.get(0).equals(module1));
         assertTrue(modules.get(1).equals(module2));
@@ -125,7 +125,7 @@ public class UpdaterEngineAdministrationTest {
         module2.registerBefore("module1");
         modules.add(module2);
 
-        UpdaterEngine.prepare(modules, currentVersion);
+        UpdaterEngine.prepare(modules, currentVersion, false);
         assertEquals(2, modules.size());
         assertTrue(modules.get(0).equals(module2));
         assertTrue(modules.get(1).equals(module1));
@@ -143,7 +143,7 @@ public class UpdaterEngineAdministrationTest {
         module2.registerEndTag("v2");
         modules.add(module2);
 
-        UpdaterEngine.prepare(modules, currentVersion);
+        UpdaterEngine.prepare(modules, currentVersion, false);
         assertEquals(2, modules.size());
         assertTrue(modules.get(0).equals(module1));
         assertTrue(modules.get(1).equals(module2));
@@ -161,7 +161,7 @@ public class UpdaterEngineAdministrationTest {
         module2.registerEndTag("v2");
         modules.add(module2);
 
-        UpdaterEngine.prepare(modules, currentVersion);
+        UpdaterEngine.prepare(modules, currentVersion, false);
         assertEquals(2, modules.size());
         assertTrue(modules.get(0).equals(module2));
         assertTrue(modules.get(1).equals(module1));
