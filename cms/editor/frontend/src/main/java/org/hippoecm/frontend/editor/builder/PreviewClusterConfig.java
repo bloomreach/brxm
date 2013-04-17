@@ -25,6 +25,7 @@ import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginEditorPlugin;
 import org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPlugin;
 import org.hippoecm.frontend.editor.plugins.mixin.MixinLoaderPluginEditorPlugin;
+import org.hippoecm.frontend.plugin.IPlugin;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.AbstractClusterDecorator;
@@ -125,9 +126,9 @@ public class PreviewClusterConfig extends AbstractClusterDecorator {
     protected Object decorate(Object object) {
         if (object instanceof IPluginConfig) {
             IPluginConfig config = (IPluginConfig) object;
-            String editorClass = getPluginConfigEditorClass(config.getString("plugin.class"));
+            String editorClass = getPluginConfigEditorClass(config.getString(IPlugin.CLASSNAME));
             if (editorClass != null) {
-                return getEditorConfig(editorClass, config);
+                return getEditorConfig(editorClass.trim(), config);
             } else {
                 return config;
             }
