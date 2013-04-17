@@ -32,7 +32,6 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemExistsException;
 import javax.jcr.LoginException;
-import javax.jcr.NamespaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -63,6 +62,8 @@ import org.onehippo.repository.modules.ModuleManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_INITIALIZEFOLDER;
+
 public class LocalHippoRepository extends HippoRepositoryImpl {
 
 
@@ -72,8 +73,11 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     /** System property for overriding the repository config file */
     public static final String SYSTEM_CONFIG_PROPERTY = "repo.config";
 
-    /** System property for overriding the repository config file */
+    /** System property for specifying the upgrade flag */
     public static final String SYSTEM_UPGRADE_PROPERTY = "repo.upgrade";
+
+    /** System property for enabling bootstrap */
+    public static final String SYSTEM_BOOTSTRAP_PROPERTY = "repo.bootstrap";
 
     /** System property for overriding the servlet config file */
     public static final String SYSTEM_SERVLETCONFIG_PROPERTY = "repo.servletconfig";
@@ -94,9 +98,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     /** Whether to generate a dump.xml file of the /hippo:configuration node at shutdown */
     private final boolean dump = false;
-
-    /** Whether to perform an automatic upgrade from previous releases */
-    private UpgradeFlag upgradeFlag = UpgradeFlag.TRUE;
 
     /** Whether to reindex after upgrading */
     private boolean upgradeReindexFlag = false;
@@ -264,9 +265,56 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
         final RepositoryConfig repConfig = RepositoryConfig.create(getRepositoryConfigAsStream(), getRepositoryPath());
         jackrabbitRepository = new LocalRepositoryImpl(repConfig);
-        repository = jackrabbitRepository;
 
+        repository = new DecoratorFactoryImpl().getRepositoryDecorator(jackrabbitRepository);
+
+        try {
+            // get the current root/system session for the default workspace for namespace and nodetypes init
+            Session jcrRootSession =  jackrabbitRepository.getRootSession(null);
+
+            if(!jcrRootSession.getRootNode().isNodeType("mix:referenceable")) {
+                jcrRootSession.getRootNode().addMixin("mix:referenceable");
+                jcrRootSession.save();
+            }
+
+            final boolean initializedBefore = initializedBefore(jcrRootSession);
+            if (initializedBefore) {
+                switch(readUpgradeFlag()) {
+                case TRUE:
+                    jackrabbitRepository.enableVirtualLayer(false);
+                    migrate(jcrRootSession);
+                    if (needsRestart) {
+                        return;
+                    }
+                    break;
+                case FALSE:
+                    break;
+                case ABORT:
+                    throw new RepositoryException("ABORT");
+                }
+            }
+
+            if (!initializedBefore || isContentBootstrapEnabled()) {
+                initializeSystemNodeTypes(jcrRootSession, jackrabbitRepository.getFileSystem());
+                contentBootstrap(jcrRootSession);
+            }
+
+            moduleManager = new ModuleManager(jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+            moduleManager.start();
+
+        } catch (LoginException ex) {
+            log.error("no access to repository by repository itself", ex);
+        }
+    }
+
+    private boolean initializedBefore(final Session systemSession) throws RepositoryException {
+        return systemSession.getWorkspace().getNodeTypeManager().hasNodeType(NT_INITIALIZEFOLDER);
+    }
+
+    private UpgradeFlag readUpgradeFlag() {
+        UpgradeFlag upgradeFlag = UpgradeFlag.TRUE;
         String result = System.getProperty(SYSTEM_UPGRADE_PROPERTY);
+
         if (result != null) {
             for(String option : result.split(",")) {
                 String key = "", value = "";
@@ -307,87 +355,42 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             log.info("Automatic upgrade enabled: abort on upgrade required");
         }
 
-        repository = new DecoratorFactoryImpl().getRepositoryDecorator(repository);
+        return upgradeFlag;
+    }
 
-        try {
-            // get the current root/system session for the default workspace for namespace and nodetypes init
-            Session jcrRootSession =  jackrabbitRepository.getRootSession(null);
+    private boolean isContentBootstrapEnabled() {
+        return Boolean.getBoolean(SYSTEM_BOOTSTRAP_PROPERTY);
+    }
 
-            if(!jcrRootSession.getRootNode().isNodeType("mix:referenceable")) {
-                jcrRootSession.getRootNode().addMixin("mix:referenceable");
-                jcrRootSession.save();
-            }
+    private void contentBootstrap(final Session systemSession) throws RepositoryException {
+        final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
+        jackrabbitRepository.enableVirtualLayer(true);
 
-            boolean hasHippoNamespace;
-            try {
-                jcrRootSession.getNamespaceURI("hippo");
-                hasHippoNamespace = true;
-            } catch (NamespaceException ex) {
-                hasHippoNamespace = false;
-            }
+        // After initializing namespaces and nodetypes switch to the decorated session.
+        rootSession = DecoratorFactoryImpl.getSessionDecorator(systemSession.impersonate(new SimpleCredentials("system", new char[]{})));
 
-            if (hasHippoNamespace) {
-                switch(upgradeFlag) {
-                case TRUE:
-                    jackrabbitRepository.enableVirtualLayer(false);
-                    migrate(jcrRootSession);
-                    if (needsRestart) {
-                        return;
-                    }
-                    break;
-                case FALSE:
-                    break;
-                case ABORT:
-                    throw new RepositoryException("ABORT");
-                }
-            }
-
-            Session syncSession = jcrRootSession.impersonate(new SimpleCredentials("system", new char[] {}));
-
-            final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
-
-            initializeSystemNodeTypes(syncSession, jackrabbitRepository.getFileSystem(), initializationProcessor);
-
-            jackrabbitRepository.enableVirtualLayer(true);
-
-            // After initializing namespaces and nodetypes switch to the decorated session.
-            rootSession = DecoratorFactoryImpl.getSessionDecorator(syncSession.impersonate(new SimpleCredentials("system", new char[]{})));
-
-            if (!rootSession.getRootNode().hasNode("hippo:configuration")) {
-                log.info("Initializing configuration content");
-                InputStream configuration = getClass().getResourceAsStream("configuration.xml");
-                if (configuration != null) {
-                    initializationProcessor.initializeNodecontent(rootSession, "/", configuration, getClass().getPackage().getName() + ".configuration.xml");
-                } else {
-                    log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
-                }
-                rootSession.save();
+        if (!rootSession.getRootNode().hasNode("hippo:configuration")) {
+            log.info("Initializing configuration content");
+            InputStream configuration = getClass().getResourceAsStream("configuration.xml");
+            if (configuration != null) {
+                initializationProcessor.initializeNodecontent(rootSession, "/", configuration, getClass().getPackage().getName() + ".configuration.xml");
             } else {
-                log.info("Initial configuration content already present");
+                log.error("Could not initialize configuration content: ResourceAsStream not found: configuration.xml");
             }
+            rootSession.save();
+        } else {
+            log.info("Initial configuration content already present");
+        }
 
-            // load all extension resources
-            try {
-                initializationProcessor.loadExtensions(rootSession);
-            } catch (IOException ex) {
-                throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
-            }
-            initializationProcessor.processInitializeItems(rootSession);
-            if (log.isDebugEnabled()) {
-                initializationProcessor.dryRun(rootSession);
-            }
-
-            if (!hasHippoNamespace) {
-                migrate(jcrRootSession);
-            }
-
-            moduleManager = new ModuleManager(jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
-            moduleManager.start();
-
-            syncSession.logout();
-
-        } catch (LoginException ex) {
-            log.error("no access to repository by repository itself", ex);
+        // load all extension resources
+        try {
+            initializationProcessor.loadExtensions(rootSession);
+        } catch (IOException ex) {
+            throw new RepositoryException("Could not obtain initial configuration from classpath", ex);
+        }
+        initializationProcessor.processInitializeItems(rootSession);
+        if (log.isDebugEnabled()) {
+            initializationProcessor.dryRun(rootSession);
         }
     }
 
@@ -415,7 +418,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         }
     }
 
-    private void initializeSystemNodeTypes(final Session syncSession, final FileSystem fileSystem, final InitializationProcessorImpl initializationProcessor) throws RepositoryException {
+    private void initializeSystemNodeTypes(final Session systemSession, final FileSystem fileSystem) throws RepositoryException {
+        final Session syncSession = systemSession.impersonate(new SimpleCredentials("system", new char[] {}));
+        final InitializationProcessorImpl initializationProcessor = new InitializationProcessorImpl();
+
         final Properties checksumProperties = new Properties();
         try {
             if (fileSystem.exists("/cnd-checksums")) {
@@ -470,6 +476,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             } finally {
                 if (cndStream != null) { try { cndStream.close(); } catch (IOException ignore) {} }
             }
+
         }
 
         OutputStream out = null;
@@ -483,6 +490,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         } finally {
             IOUtils.closeQuietly(out);
         }
+
+        syncSession.logout();
     }
 
     private String getChecksum(final InputStream cndStream) throws IOException, NoSuchAlgorithmException {
