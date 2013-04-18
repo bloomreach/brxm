@@ -175,7 +175,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
 
     @Override
     public List<Node> loadExtension(final Session session, final URL extension) throws RepositoryException, IOException {
-        return loadExtension(extension, session, session.getNode(INITIALIZATION_FOLDER));
+        return loadExtension(extension, session, session.getNode(INITIALIZATION_FOLDER), new HashSet<String>());
     }
 
     @Override
@@ -512,7 +512,6 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         if (cndStream == null) {
             getLogger().error("Cannot locate nodetype configuration '" + cndResource + "', initialization skipped");
         } else {
-            getLogger().info("Initializing nodetypes from: " + cndResource);
             if (!dryRun) {
                 initializeNodetypes(session.getWorkspace(), cndStream, cndResource);
             }
@@ -531,15 +530,36 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     public List<Node> loadExtensions(Session session, Node initializationFolder, boolean cleanup) throws IOException, RepositoryException {
+        final Set<String> reloadItems = new HashSet<String>();
         final long now = System.currentTimeMillis();
         final List<URL> extensions = scanForExtensions();
         final List<Node> initializeItems = new ArrayList<Node>();
         for(final URL configurationURL : extensions) {
-            initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder));
+            initializeItems.addAll(loadExtension(configurationURL, session, initializationFolder, reloadItems));
         }
         if (cleanup) {
             cleanupInitializeItems(session, now);
         }
+        initializeItems.addAll(markReloadDownstreamItems(session, reloadItems));
+        return initializeItems;
+    }
+
+    private List<Node> markReloadDownstreamItems(final Session session, final Set<String> reloadItems) throws RepositoryException {
+        List<Node> initializeItems = new ArrayList<Node>();
+        for (String reloadItem : reloadItems) {
+            final Node initItemNode = session.getNodeByIdentifier(reloadItem);
+            final String contextNodeName = initItemNode.getProperty(HippoNodeType.HIPPO_CONTEXTNODENAME).getString();
+            final String root = StringUtils.trim(JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_CONTENTROOT, "/"));
+            final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
+            final NodeIterator downstreamItems = getDownstreamItems(session, contextNodePath);
+            while (downstreamItems.hasNext()) {
+                final Node downStreamItem = downstreamItems.nextNode();
+                getLogger().info("Marking item {} pending because downstream from {}", new Object[] { downStreamItem.getName(), initItemNode.getName() });
+                downStreamItem.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
+                initializeItems.add(downStreamItem);
+            }
+        }
+        session.save();
         return initializeItems;
     }
 
@@ -560,7 +580,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         }
     }
 
-    public List<Node> loadExtension(final URL configurationURL, final Session session, final Node initializationFolder) throws RepositoryException, IOException {
+    public List<Node> loadExtension(final URL configurationURL, final Session session, final Node initializationFolder, final Set<String> reloadItems) throws RepositoryException, IOException {
         List<Node> initializeItems = new ArrayList<Node>();
         getLogger().info("Initializing extension "+configurationURL);
         try {
@@ -568,7 +588,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
             final Node tempInitFolderNode = session.getNode("/hippo:configuration/hippo:temporary/hippo:initialize");
             final String moduleVersion = getModuleVersion(configurationURL);
             for (final Node tempInitItemNode : new NodeIterable(tempInitFolderNode.getNodes())) {
-                initializeItems.addAll(initializeInitializeItem(session, tempInitItemNode, initializationFolder, moduleVersion, configurationURL));
+                initializeItems.addAll(initializeInitializeItem(tempInitItemNode, initializationFolder, moduleVersion, configurationURL, reloadItems));
 
             }
             if(tempInitFolderNode.hasProperty(HippoNodeType.HIPPO_VERSION)) {
@@ -598,7 +618,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         return initializeItems;
     }
 
-    private List<Node> initializeInitializeItem(final Session session, final Node tempInitItemNode, final Node initializationFolder, final String moduleVersion, final URL configurationURL) throws RepositoryException {
+    private List<Node> initializeInitializeItem(final Node tempInitItemNode, final Node initializationFolder, final String moduleVersion, final URL configurationURL, final Set<String> reloadItems) throws RepositoryException {
 
         getLogger().info("Initializing item: " + tempInitItemNode.getName());
 
@@ -609,50 +629,39 @@ public class InitializationProcessorImpl implements InitializationProcessor {
         final String existingItemVersion = initItemNode != null ? JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_VERSION, null) : null;
         final String itemVersion = JcrUtils.getStringProperty(tempInitItemNode, HippoNodeType.HIPPO_VERSION, null);
 
-        if (initItemNode == null || shouldReload(tempInitItemNode, initItemNode, moduleVersion, existingModuleVersion, itemVersion, existingItemVersion)) {
+        final boolean isReload = initItemNode != null && shouldReload(tempInitItemNode, initItemNode, moduleVersion, existingModuleVersion, itemVersion, existingItemVersion);
 
-            boolean isReload = false;
-            if(initItemNode != null) {
-                isReload = true;
-                getLogger().info("Item " + tempInitItemNode.getName() + " needs to be reloaded");
-                initItemNode.remove();
-            }
+        if (isReload) {
+            getLogger().info("Item " + tempInitItemNode.getName() + " needs to be reloaded");
+            initItemNode.remove();
+            initItemNode = null;
+        }
 
+        if (initItemNode == null) {
             initItemNode = initializationFolder.addNode(tempInitItemNode.getName(), HippoNodeType.NT_INITIALIZEITEM);
-            if(isExtension(configurationURL)) {
-                initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
-                if (moduleVersion != null) {
-                    initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONVERSION, moduleVersion);
-                }
-            }
-            for (String propertyName : INIT_ITEM_PROPERTIES) {
-                copyProperty(tempInitItemNode, initItemNode, propertyName);
-            }
-
-            final String contextNodeName = initItemNode.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) ? readContextNodeName(initItemNode) : null;
-            if (contextNodeName != null) {
-                initItemNode.setProperty(HippoNodeType.HIPPO_CONTEXTNODENAME, contextNodeName);
-                if (isReload) {
-                    final String root = StringUtils.trim(JcrUtils.getStringProperty(initItemNode, HippoNodeType.HIPPO_CONTENTROOT, "/"));
-                    final String contextNodePath = root.equals("/") ? root + contextNodeName : root + "/" + contextNodeName;
-                    final NodeIterator downstreamItems = getDownstreamItems(session, contextNodePath);
-                    while (downstreamItems.hasNext()) {
-                        final Node downStreamItem = downstreamItems.nextNode();
-                        getLogger().info("Marking downstream item " + downStreamItem.getName() + " for reload");
-                        downStreamItem.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
-                        initializeItems.add(downStreamItem);
-                    }
-                }
-            }
-
             initItemNode.setProperty(HippoNodeType.HIPPO_STATUS, "pending");
             initializeItems.add(initItemNode);
-        } else if (isExtension(configurationURL)) {
-            if (initItemNode.isNodeType(HippoNodeType.NT_INITIALIZEITEM)) {
-                // we need an up to date location in order to reload items
-                initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
+        }
+
+        if (isExtension(configurationURL)) {
+            initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONSOURCE, configurationURL.toString());
+            if (moduleVersion != null) {
+                initItemNode.setProperty(HippoNodeType.HIPPO_EXTENSIONVERSION, moduleVersion);
             }
         }
+
+        for (String propertyName : INIT_ITEM_PROPERTIES) {
+            copyProperty(tempInitItemNode, initItemNode, propertyName);
+        }
+
+        final String contextNodeName = initItemNode.hasProperty(HippoNodeType.HIPPO_CONTENTRESOURCE) ? readContextNodeName(initItemNode) : null;
+        if (contextNodeName != null) {
+            initItemNode.setProperty(HippoNodeType.HIPPO_CONTEXTNODENAME, contextNodeName);
+            if (isReload) {
+                reloadItems.add(initItemNode.getIdentifier());
+            }
+        }
+
         initItemNode.setProperty(HippoNodeType.HIPPO_TIMESTAMP, System.currentTimeMillis());
 
         return initializeItems;
@@ -832,6 +841,7 @@ public class InitializationProcessorImpl implements InitializationProcessor {
     }
 
     public void initializeNodetypes(Workspace workspace, InputStream cndStream, String cndName) throws ParseException, RepositoryException {
+        getLogger().info("Initializing nodetypes from: " + cndName);
         CompactNodeTypeDefReader<QNodeTypeDefinition,NamespaceMapping> cndReader = new HippoCompactNodeTypeDefReader<QNodeTypeDefinition, NamespaceMapping>(new InputStreamReader(cndStream), cndName, workspace.getNamespaceRegistry(), new QDefinitionBuilderFactory());
         List<QNodeTypeDefinition> ntdList = cndReader.getNodeTypeDefinitions();
         NodeTypeManagerImpl ntmgr = (NodeTypeManagerImpl) workspace.getNodeTypeManager();
