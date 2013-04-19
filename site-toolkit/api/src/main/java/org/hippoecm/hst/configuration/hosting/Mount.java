@@ -175,10 +175,9 @@ public interface Mount {
     /**
      * <p>
      * Returns the content path for this {@link Mount} object. The content path is the absolute jcr path to the root site node content, for example 
-     * something like '/hst:hst/hst:sites/mysite-live/hst:content'. The {@link #getContentPath()} can be the same as {@link #getMountPoint()}, but
+     * something like '/content/documents/myproject'. The {@link #getContentPath()} can be the same as {@link #getMountPoint()}, but
      * this is in general only for {@link Mount}'s that have {@link #isMapped()} returning false. When the {@link Mount} does have
-     * {@link #isMapped()} equal to true, the {@link #getContentPath()} can return a different path than {@link #getMountPoint()}. In general, it will be
-     * then {@link #getMountPoint()} + "/hst:content". 
+     * {@link #isMapped()} equal to true, the {@link #getContentPath()} can return a different path than {@link #getMountPoint()}.
      * </p>
      * 
      * @return the content path for this {@link Mount}. It cannot be <code>null</code>
@@ -186,14 +185,10 @@ public interface Mount {
     String getContentPath();
     
     /**
-     * Returns the absolute canonical content path for the content of this {@link Mount}. Note that it can return the same
-     * value as {@link #getContentPath()}, but this is in general not the case: When the {@link #getContentPath()} points
-     * to a virtual node, this method returns the location of the canonical version. When the {@link #getContentPath()} points to 
-     * a node which behaves like a <b>mirror</b>, then this method returns the location where the mirror points to. If 
-     * {@link #getContentPath()} does not point to a virtual node, nor to a mirror, this method returns the same value. 
+     * Returns the absolute canonical content path for the content of this {@link Mount}. Note that it returns in general the same
+     * value as {@link #getContentPath()}
      * 
-     * @return The absolute absolute content path for this {@link Mount}. It can be <code>null</code> in case {@link #getContentPath()} points to a virtual node
-     * that does not have a canonical version.
+     * @return The absolute absolute content path for this {@link Mount}.
      */
     String getCanonicalContentPath();
     
