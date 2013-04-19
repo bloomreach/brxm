@@ -1509,6 +1509,7 @@ editor/test/src/test/java/org/hippoecm/frontend/editor/impl/JcrTemplateStoreTest
 editor/test/src/test/java/org/hippoecm/frontend/editor/layout/Test.png -text svneol=unset#image/png
 editor/test/src/test/java/org/hippoecm/frontend/editor/layout/Test.properties svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/layout/Test_de.properties -text
+editor/test/src/test/java/org/hippoecm/frontend/editor/layout/Test_it.properties svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/layout/TwoColumnTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/tools/JcrTypeDescriptorTest.java svneol=native#text/plain
 editor/test/src/test/java/org/hippoecm/frontend/editor/validator/HtmlValidatorTest.java svneol=native#text/plain
@@ -2004,6 +2005,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPanelPlugin.
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_de.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/DevPerspective_nl.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/CodeMirrorEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/codemirror/lib/codemirror.css -text
@@ -2038,6 +2040,7 @@ perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/Updater
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanelPlugin.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel_de.properties -text
+perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel_it.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterPanel_nl.properties -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterQueueEditor.java -text
 perspectives/src/main/java/org/hippoecm/frontend/plugins/cms/dev/updater/UpdaterRegistryEditor.java -text
@@ -2067,6 +2070,7 @@ perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/browse/service/Brow
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/BrowseLinkTargetTest.java svneol=native#text/plain
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest$TestLabel.properties svneol=native#text/plain
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest$TestLabel_de.properties -text
+perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest$TestLabel_it.properties svneol=native#text/plain
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/dashboard/EventLabelTest.java svneol=native#text/plain
 perspectives/src/test/java/org/hippoecm/frontend/plugins/cms/edit/EditorManagerTest.java svneol=native#text/plain
 perspectives/src/test/resources/cmstest.cnd -text
