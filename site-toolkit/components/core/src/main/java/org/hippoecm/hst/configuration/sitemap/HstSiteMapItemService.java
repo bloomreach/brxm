@@ -301,7 +301,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         } else if (this.parentItem != null){
             this.roles = new HashSet<String>(parentItem.getRoles());
         } else {
-            this.roles = new HashSet<String>();
+            this.roles = new HashSet<String>(0);
         }
         
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS)) {
