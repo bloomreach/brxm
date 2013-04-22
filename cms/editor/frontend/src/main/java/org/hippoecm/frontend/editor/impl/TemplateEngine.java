@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
@@ -30,6 +31,7 @@ import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
+import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.types.ITypeDescriptor;
@@ -95,6 +97,10 @@ public class TemplateEngine implements ITemplateEngine, IDetachable {
             } catch (RepositoryException ex) {
                 throw new TemplateEngineException("Invalid model", ex);
             }
+        } else if (model instanceof JcrPropertyValueModel) {
+            int type = ((JcrPropertyValueModel) model).getType();
+            final String typeName = PropertyType.nameFromValue(type);
+            return getType(typeName);
         }
         throw new TemplateEngineException("Unable to resolve type of " + model);
     }
