@@ -107,6 +107,24 @@
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:plugincluster</sv:value>
       </sv:property>
+      <sv:property sv:name="linkpicker.cluster.name" sv:type="String">
+        <sv:value>cms-pickers/documents</sv:value>
+      </sv:property>
+      <sv:property sv:name="linkpicker.last.visited.key" sv:type="String">
+        <sv:value>xinha-linkpicker</sv:value>
+      </sv:property>
+      <sv:property sv:name="linkpicker.last.visited.nodetypes" sv:type="String" sv:multiple="true">
+        <sv:value>hippostd:folder</sv:value>
+      </sv:property>
+      <sv:property sv:name="imagepicker.cluster.name" sv:type="String">
+        <sv:value>cms-pickers/images</sv:value>
+      </sv:property>
+      <sv:property sv:name="imagepicker.last.visited.key" sv:type="String">
+        <sv:value>xinha-imagepicker</sv:value>
+      </sv:property>
+      <sv:property sv:name="imagepicker.last.visited.nodetypes" sv:type="String" sv:multiple="true">
+        <sv:value>hippostd:gallery</sv:value>
+      </sv:property>
       <sv:property sv:name="frontend:properties" sv:type="String">
         <sv:value>mode</sv:value>
         <sv:value>width</sv:value>
