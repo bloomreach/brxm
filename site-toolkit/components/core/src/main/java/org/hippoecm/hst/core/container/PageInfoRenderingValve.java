@@ -66,12 +66,9 @@ public class PageInfoRenderingValve extends AbstractBaseOrderableValve {
                 return;
             }
 
-            if (pageInfo.isOk()) {
-                if (response.isCommitted()) {
-                    throw new ContainerException("Response already committed after doing buildPageInfo"
-                            + " but before writing response from PageInfo.");
-                }
-
+            if (!response.isCommitted()) {
+                // in case response.sendRedirect or something similar has been invoked, the response is already
+                // committed and we do not need to write the response then
                 writeResponse(response, pageInfo);
             }
         } catch (IOException e) {
