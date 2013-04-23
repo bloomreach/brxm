@@ -52,6 +52,7 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(LOGGER_NAME);
+    private JcrPropertyModel enabledModel;
 
     public AutoExportPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -115,20 +116,23 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         link.setVisible(isLinkVisible());
         add(link);
 
-        // redraw plugin when config has changed
-        try {
-            Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
-            Property enabled = node.getProperty(CONFIG_ENABLED_PROPERTY_NAME);
-            context.registerService(new Observer<IObservable>(new JcrPropertyModel(enabled)) {
-                @Override
-                public void onEvent(final Iterator events) {
-                    redraw();
-                }
-            }, IObserver.class.getName());
-        } catch (PathNotFoundException e) {
-            log.warn("No such item: " + CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
-        } catch (RepositoryException e) {
-            log.error("An error occurred starting observation", e);
+        if (isExportAvailable()) {
+            // redraw plugin when config has changed
+            try {
+                Node node = getJcrSession().getNode(CONFIG_NODE_PATH);
+                Property enabled = node.getProperty(CONFIG_ENABLED_PROPERTY_NAME);
+                enabledModel = new JcrPropertyModel(enabled);
+                context.registerService(new Observer<IObservable>(enabledModel) {
+                    @Override
+                    public void onEvent(final Iterator events) {
+                        redraw();
+                    }
+                }, IObserver.class.getName());
+            } catch (PathNotFoundException e) {
+                log.warn("No such item: " + CONFIG_NODE_PATH + "/" + CONFIG_ENABLED_PROPERTY_NAME);
+            } catch (RepositoryException e) {
+                log.error("An error occurred starting observation", e);
+            }
         }
     }
 
@@ -176,5 +180,13 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
 
     protected boolean isLinkVisible() {
         return true;
+    }
+
+    @Override
+    public void detachModels() {
+        super.detachModels();
+        if (enabledModel != null) {
+            enabledModel.detach();
+        }
     }
 }
