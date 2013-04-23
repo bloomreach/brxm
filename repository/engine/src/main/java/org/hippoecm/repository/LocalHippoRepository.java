@@ -290,8 +290,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             }
 
             if (!initializedBefore || isContentBootstrapEnabled()) {
-                initializeSystemNodeTypes(jcrRootSession, jackrabbitRepository.getFileSystem());
-                contentBootstrap(jcrRootSession);
+                final SessionDecorator bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+                initializeSystemNodeTypes(bootstrapSession, jackrabbitRepository.getFileSystem());
+                contentBootstrap(bootstrapSession);
+                bootstrapSession.logout();
             }
 
             jackrabbitRepository.enableVirtualLayer(true);
