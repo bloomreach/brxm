@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,9 +38,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.nodetype.NodeType;
-import javax.jcr.nodetype.NodeTypeManager;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -53,7 +49,6 @@ import org.apache.commons.lang.builder.ToStringStyle;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.SynchronousEventListener;
 import org.slf4j.Logger;
@@ -168,9 +163,40 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 parents.add(node.getPath());
             }
         }
+
+        addAncestorsToCache(stateCache);
     }
-    
-    List<String> getParents() {
+
+    private void addAncestorsToCache(final Map<String, NodeState> stateCache) {
+        addAncestorsWithFilter(stateCache, false);
+    }
+
+    private void addUnmodifiedAncestorsToCache(final Map<String, NodeState> stateCache) {
+        addAncestorsWithFilter(stateCache, true);
+    }
+
+    private void addAncestorsWithFilter(final Map<String, NodeState> stateCache, boolean onlyModified) {
+        // prefetch fixed nodes into cache
+        if (getParents().size() > 0) {
+            for (String path : getParents()) {
+                if (!stateCache.containsKey(path)) {
+                    try {
+                        if (session.itemExists(path)) {
+                            final Node node = (Node) session.getItem(path);
+                            if (!onlyModified || (!node.isNew() && !node.isModified())) {
+                                NodeState state = new NodeState(node, true);
+                                stateCache.put(path, state);
+                            }
+                        }
+                    } catch (RepositoryException ex) {
+                        log.warn("Failed to initialize node state", ex);
+                    }
+                }
+            }
+        }
+    }
+
+    private List<String> getParents() {
         return this.parents;
     }
     
@@ -507,6 +533,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
                 log.error("Error occured when processing event", ex);
             }
         }
+
+        addUnmodifiedAncestorsToCache(dirty);
     }
 
     private List<Event> getEvents(Map<String, NodeState> dirty) {
