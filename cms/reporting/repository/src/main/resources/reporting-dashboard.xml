@@ -18,36 +18,4 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
-  <sv:node sv:name="reports-perspective">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>perspective-title</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.onehippo.cms7.reports.ReportsPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
-    </sv:property>
-    <sv:property sv:multiple="true" sv:name="wicket.extension" sv:type="String"/>
-    <sv:node sv:name="layout.wireframe">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=reports-perspective-center,body=reports-perspective-center-body,scroll=true</sv:value>
-      </sv:property>
-      <sv:property sv:name="linked.with.parent" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>reports-perspective-wrapper</sv:value>
-      </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=reports-perspective-top,body=reports-perspective-top-body,height=31</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
 </sv:node>

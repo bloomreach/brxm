@@ -19,41 +19,6 @@
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
-  <sv:node sv:name="dashboardPerspective">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.currentActivity" sv:type="String">
-      <sv:value>service.dashboard.current</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.shortcuts" sv:type="String">
-      <sv:value>service.dashboard.shortcuts</sv:value>
-    </sv:property>
-    <sv:property sv:name="extension.todo" sv:type="String">
-      <sv:value>service.dashboard.todo</sv:value>
-    </sv:property>
-    <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>perspective-title</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.dashboard.DashboardPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="edition" sv:type="String">
-      <sv:value>community</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.behavior" sv:type="String">
-      <sv:value>service.behavior.tabs</sv:value>
-      <sv:value>service.behavior.dashboard</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.extensions" sv:type="String">
-      <sv:value>extension.shortcuts</sv:value>
-      <sv:value>extension.currentActivity</sv:value>
-      <sv:value>extension.todo</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
-    </sv:property>
-  </sv:node>
   <sv:node sv:name="dashboardLayout">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

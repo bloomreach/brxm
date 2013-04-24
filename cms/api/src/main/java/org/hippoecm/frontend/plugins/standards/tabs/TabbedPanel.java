@@ -349,6 +349,7 @@ public class TabbedPanel extends WebMarkupContainer {
     }
 
     public void render(PluginRequestTarget target) {
+        cardView.onPopulate();
         if (redraw) {
             if (target != null) {
                 target.addComponent(tabsContainer);
@@ -418,6 +419,7 @@ public class TabbedPanel extends WebMarkupContainer {
         private Set<TabsPlugin.Tab> removed = new HashSet<TabsPlugin.Tab>();
         private TabsPlugin.Tab selected;
         private int counter = 0;
+        private boolean populated = false;
 
         public CardView(final List<TabsPlugin.Tab> tabs) {
             super("cards");
@@ -488,7 +490,8 @@ public class TabbedPanel extends WebMarkupContainer {
 
         @Override
         protected void onPopulate() {
-            if (!hasBeenRendered()) {
+            if (!populated) {
+                populated = true;
                 for (TabsPlugin.Tab tabbie : tabs) {
                     add(newItem(tabbie));
                 }
@@ -546,19 +549,23 @@ public class TabbedPanel extends WebMarkupContainer {
                 ListItem<TabsPlugin.Tab> item = newItem(tabbie);
                 add(item);
 
-                target.prependJavascript(
-                        "var element = document.createElement('div');" +
-                        "element.setAttribute('id', '" + item.getMarkupId() + "');" +
-                        "Wicket.$('" + getParent().getMarkupId() + "').appendChild(element);");
-                target.addComponent(item);
+                if (hasBeenRendered()) {
+                    target.prependJavascript(
+                            "var element = document.createElement('div');" +
+                            "element.setAttribute('id', '" + item.getMarkupId() + "');" +
+                            "Wicket.$('" + getParent().getMarkupId() + "').appendChild(element);");
+                    target.addComponent(item);
+                }
             }
             Iterator<ListItem<TabsPlugin.Tab>> children = (Iterator<ListItem<TabsPlugin.Tab>>) iterator();
             while (children.hasNext()) {
                 ListItem<TabsPlugin.Tab> item = children.next();
                 if (removed.contains(item.getModelObject())) {
-                    target.appendJavascript(
-                        "var element = Wicket.$('" + item.getMarkupId() + "');" +
-                        "element.parentNode.removeChild(element);");
+                    if (hasBeenRendered()) {
+                        target.appendJavascript(
+                                "var element = Wicket.$('" + item.getMarkupId() + "');" +
+                                        "element.parentNode.removeChild(element);");
+                    }
                     children.remove();
                 }
             }
@@ -571,9 +578,11 @@ public class TabbedPanel extends WebMarkupContainer {
                     display = "block";
                 }
 
-                target.appendJavascript(
-                    "var element = Wicket.$('" + item.getMarkupId() + "');" +
-                    "element.setAttribute('style', 'display: " + display + ";');");
+                if (hasBeenRendered()) {
+                    target.appendJavascript(
+                        "var element = Wicket.$('" + item.getMarkupId() + "');" +
+                        "element.setAttribute('style', 'display: " + display + ";');");
+                }
 
                 if (item.getModelObject() == selected) {
                     renderWireframes(item, target);

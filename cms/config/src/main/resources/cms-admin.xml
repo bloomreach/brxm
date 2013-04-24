@@ -20,42 +20,6 @@
     <sv:value>frontend:plugincluster</sv:value>
   </sv:property>
 
-  <sv:node sv:name="root">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>frontend:plugin</sv:value>
-    </sv:property>
-    <sv:property sv:name="perspective.title" sv:type="String">
-      <sv:value>admin-perspective-title</sv:value>
-    </sv:property>
-    <sv:property sv:name="plugin.class" sv:type="String">
-      <sv:value>org.hippoecm.frontend.plugins.cms.admin.AdminPerspective</sv:value>
-    </sv:property>
-    <sv:property sv:name="translator.id" sv:type="String">
-      <sv:value>service.translator.config</sv:value>
-    </sv:property>
-    <sv:property sv:name="wicket.id" sv:type="String">
-      <sv:value>service.tab</sv:value>
-    </sv:property>
-    <sv:node sv:name="layout.wireframe">
-      <sv:property sv:name="jcr:primaryType" sv:type="Name">
-        <sv:value>frontend:pluginconfig</sv:value>
-      </sv:property>
-      <sv:property sv:name="center" sv:type="String">
-        <sv:value>id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true</sv:value>
-      </sv:property>
-      <sv:property sv:name="linked.with.parent" sv:type="Boolean">
-        <sv:value>true</sv:value>
-      </sv:property>
-      <sv:property sv:name="root.id" sv:type="String">
-        <sv:value>hippo-panel-plugin-wrapper</sv:value>
-      </sv:property>
-      <sv:property sv:name="top" sv:type="String">
-        <sv:value>id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=60</sv:value>
-      </sv:property>
-    </sv:node>
-  </sv:node>
-
-
   <sv:node sv:name="users">
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>

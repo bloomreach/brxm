@@ -20,8 +20,12 @@ import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -32,7 +36,12 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     public static final String TITLE = "perspective.title";
 
+    public static final String CLUSTER_NAME = "cluster.name";
+    public static final String CLUSTER_PARAMETERS = "cluster.config";
+
     private IModel<String> title = new Model<String>("title");
+
+    private boolean rendered;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -62,4 +71,28 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         this.title.setObject(title);
     }
 
+    @Override
+    public void render(PluginRequestTarget target) {
+        if (!rendered && isActive()) {
+            rendered = true;
+
+            IPluginConfig config = getPluginConfig();
+            String clusterName = config.getString(CLUSTER_NAME);
+            if (clusterName != null) {
+                IPluginContext context = getPluginContext();
+                IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
+                        IPluginConfigService.class);
+
+                IClusterConfig cluster = pluginConfigService.getCluster(clusterName);
+                if (cluster == null) {
+                    log.warn("Unable to find cluster '" + clusterName + "'. Does it exist in repository?");
+                } else {
+                    IPluginConfig parameters = config.getPluginConfig(CLUSTER_PARAMETERS);
+                    IClusterControl control = context.newCluster(cluster, parameters);
+                    control.start();
+                }
+            }
+        }
+        super.render(target);
+    }
 }

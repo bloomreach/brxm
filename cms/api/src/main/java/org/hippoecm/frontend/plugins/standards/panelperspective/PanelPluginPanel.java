@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
@@ -31,6 +32,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
+import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.widgets.AbstractView;
 
 public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
@@ -79,6 +81,21 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
     public PanelPluginPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final String panelServiceId) {
         super(id, breadCrumbModel);
 
+        context.registerTracker(new ServiceTracker<PanelPlugin>(PanelPlugin.class) {
+
+            @Override
+            protected void onRemoveService(final PanelPlugin service, final String name) {
+                redraw();
+            }
+
+            @Override
+            protected void onServiceAdded(final PanelPlugin service, final String name) {
+                redraw();
+            }
+        }, panelServiceId);
+
+        setOutputMarkupId(true);
+
         add(new AbstractView<PanelPlugin>("panels", new PanelPluginProvider(context, panelServiceId)) {
 
             @Override
@@ -96,6 +113,13 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
                 item.add(link);
             }
         });
+    }
+
+    protected void redraw() {
+        AjaxRequestTarget target = AjaxRequestTarget.get();
+        if (target != null) {
+            target.addComponent(this);
+        }
     }
 
     public IModel<String> getTitle(Component component) {
