@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.codehaus.jackson.JsonParseException;
@@ -131,7 +132,7 @@ public class AnnotationJsonDeserializerTest {
         List<? extends Annotation> actual = collect(clazz, AnnotationJsonDeserializerTest.annotations);
         assertNotNull(expected);
         assertNotNull(actual);
-        assertEquals(actual, expected);
+        assertEquals(new HashSet(expected), new HashSet(actual));
     }
 
     private static void assertEquivalentAllInOneAnnotations(AllInOneAnnotation expected, AllInOneAnnotation actual) {

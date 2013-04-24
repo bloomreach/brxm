@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -338,6 +339,10 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
         return stringArray.toArray(new String[] {});
     }
 
+    /**
+     * Annotation proxy support.  The implementation of the hashCode and equals methods has
+     * been copied from the commons-lang project.
+     */
     public static class AnnotationProxyInvocationHandler implements InvocationHandler {
 
         private final Class<? extends Annotation> annotationClass;
@@ -358,14 +363,91 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
                 return handleToString();
             } else if (method.getName().equals("annotationType")) {
                 return this.annotationClass;
+            } else if (method.getName().equals("equals") && args.length == 1) {
+                Annotation that = (Annotation) args[0];
+                if (that.annotationType() == annotationClass) {
+                    for (Method annotationMethod : annotationClass.getDeclaredMethods()) {
+                        if (annotationMethod.getParameterTypes().length > 0) {
+                            continue;
+                        }
+                        final Object thisValue = this.annotationAttributes.get(annotationMethod.getName());
+                        final Object thatValue = annotationMethod.invoke(that);
+                        if (thisValue == null && thatValue != null) {
+                            return false;
+                        } else if (thisValue == null || thatValue == null) {
+                            return false;
+                        }
+                        if (!thisValue.equals(thatValue)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+                return false;
+            } else if (method.getName().equals("hashCode") && method.getParameterTypes().length == 0) {
+                return this.hashCode((Annotation) proxy);
             } else {
                 throw new NotImplementedException("This method can not be handled for : " + this.handleToString());
             }
         }
 
-        protected AnnotationProxyInvocationHandler() {
-            annotationClass = null;
-            annotationAttributes = null;
+        private static int hashCode(final Annotation a) {
+            int result = 0;
+            final Class<? extends Annotation> type = a.annotationType();
+            for (final Method m : type.getDeclaredMethods()) {
+                try {
+                    final Object value = m.invoke(a);
+                    if (value == null) {
+                        throw new IllegalStateException(
+                                String.format("Annotation method %s returned null", m));
+                    }
+                    result += hashMember(m.getName(), value);
+                } catch (final RuntimeException ex) {
+                    throw ex;
+                } catch (final Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            return result;
+        }
+
+        private static int hashMember(final String name, final Object value) {
+            final int part1 = name.hashCode() * 127;
+            if (value.getClass().isArray()) {
+                return part1 ^ arrayMemberHash(value.getClass().getComponentType(), value);
+            }
+            if (value instanceof Annotation) {
+                return part1 ^ hashCode((Annotation) value);
+            }
+            return part1 ^ value.hashCode();
+        }
+
+        private static int arrayMemberHash(final Class<?> componentType, final Object o) {
+            if (componentType.equals(Byte.TYPE)) {
+                return Arrays.hashCode((byte[]) o);
+            }
+            if (componentType.equals(Short.TYPE)) {
+                return Arrays.hashCode((short[]) o);
+            }
+            if (componentType.equals(Integer.TYPE)) {
+                return Arrays.hashCode((int[]) o);
+            }
+            if (componentType.equals(Character.TYPE)) {
+                return Arrays.hashCode((char[]) o);
+            }
+            if (componentType.equals(Long.TYPE)) {
+                return Arrays.hashCode((long[]) o);
+            }
+            if (componentType.equals(Float.TYPE)) {
+                return Arrays.hashCode((float[]) o);
+            }
+            if (componentType.equals(Double.TYPE)) {
+                return Arrays.hashCode((double[]) o);
+            }
+            if (componentType.equals(Boolean.TYPE)) {
+                return Arrays.hashCode((boolean[]) o);
+            }
+            return Arrays.hashCode((Object[]) o);
         }
 
         protected String handleToString() {
