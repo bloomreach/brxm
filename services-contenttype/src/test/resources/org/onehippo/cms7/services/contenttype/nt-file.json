@@ -1,0 +1,79 @@
+{
+  "name" : "nt:file",
+  "prefix" : "nt",
+  "superTypes" : [ "mix:created", "nt:base", "nt:hierarchyNode" ],
+  "aggregatedTypes" : [ "nt:file" ],
+  "aggregate" : false,
+  "mixin" : false,
+  "ordered" : false,
+  "primaryItemName" : "jcr:content",
+  "children" : {
+    "jcr:content" : [ {
+      "name" : "jcr:content",
+      "definingType" : "nt:file",
+      "residual" : false,
+      "multiple" : false,
+      "mandatory" : true,
+      "autoCreated" : false,
+      "defaultPrimaryType" : null,
+      "type" : "nt:base",
+      "requiredPrimaryTypes" : [ "nt:base" ],
+      "protected" : false
+    } ]
+  },
+  "properties" : {
+    "jcr:created" : [ {
+      "name" : "jcr:created",
+      "definingType" : "mix:created",
+      "residual" : false,
+      "multiple" : false,
+      "mandatory" : false,
+      "autoCreated" : true,
+      "requiredType" : 5,
+      "valueConstraints" : [ ],
+      "defaultValues" : [ ],
+      "type" : "Date",
+      "protected" : true
+    } ],
+    "jcr:createdBy" : [ {
+      "name" : "jcr:createdBy",
+      "definingType" : "mix:created",
+      "residual" : false,
+      "multiple" : false,
+      "mandatory" : false,
+      "autoCreated" : true,
+      "requiredType" : 1,
+      "valueConstraints" : [ ],
+      "defaultValues" : [ ],
+      "type" : "String",
+      "protected" : true
+    } ],
+    "jcr:mixinTypes" : [ {
+      "name" : "jcr:mixinTypes",
+      "definingType" : "nt:base",
+      "residual" : false,
+      "multiple" : true,
+      "mandatory" : false,
+      "autoCreated" : false,
+      "requiredType" : 7,
+      "valueConstraints" : [ ],
+      "defaultValues" : [ ],
+      "type" : "Name",
+      "protected" : true
+    } ],
+    "jcr:primaryType" : [ {
+      "name" : "jcr:primaryType",
+      "definingType" : "nt:base",
+      "residual" : false,
+      "multiple" : false,
+      "mandatory" : true,
+      "autoCreated" : true,
+      "requiredType" : 7,
+      "valueConstraints" : [ ],
+      "defaultValues" : [ ],
+      "type" : "Name",
+      "protected" : true
+    } ]
+  },
+  "abstract" : false
+}
