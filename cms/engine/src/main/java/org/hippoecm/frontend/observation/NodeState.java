@@ -34,7 +34,6 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.ValueFactory;
 import javax.jcr.observation.Event;
 
 import org.hippoecm.frontend.util.NodeStateUtil;
@@ -50,10 +49,9 @@ class NodeState {
 
     private final static Logger log = LoggerFactory.getLogger(NodeState.class);
     
-    private final static MessageDigest BINARY_DIGEST;
-    static {
+    private static MessageDigest newDigest() {
         try {
-            BINARY_DIGEST = MessageDigest.getInstance("MD5");
+            return MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
@@ -111,40 +109,25 @@ class NodeState {
 
     private String path;
     private String userId;
-    private Map<String, Value[]> properties;
+    private Map<String, BigInteger> properties;
     private Map<String, String> nodes;
 
     NodeState(Node node, boolean skipBinaries) throws RepositoryException {
         this.path = node.getPath();
         this.userId = node.getSession().getUserID();
 
-        properties = new HashMap<String, Value[]>();
+        properties = new HashMap<String, BigInteger>();
         nodes = new LinkedHashMap<String, String>();
-
-        ValueFactory factory = node.getSession().getValueFactory();
 
         PropertyIterator propIter = node.getProperties();
         while (propIter.hasNext()) {
             Property property = propIter.nextProperty();
             // skip binaries, to prevent them being pulled from the database
-            if (property.getType() != PropertyType.BINARY) {
+            if (!skipBinaries || property.getType() != PropertyType.BINARY) {
                 if (property.getDefinition().isMultiple()) {
-                    properties.put(property.getName(), property.getValues());
+                    properties.put(property.getName(), getHashCode(property.getValues()));
                 } else {
-                    properties.put(property.getName(), new Value[] { property.getValue() });
-                }
-            } else if (!skipBinaries && BINARY_DIGEST != null) {
-                if (property.getDefinition().isMultiple()) {
-                    Value[] values = property.getValues();
-                    Value[] hashes = new Value[values.length];
-                    for (int i = 0; i < values.length; i++) {
-                        byte[] md5 = BINARY_DIGEST.digest(values[i].getString().getBytes());
-                        hashes[i] = factory.createValue(new BigInteger(1, md5).toString(16));
-                    }
-                    properties.put(property.getName(), hashes);
-                } else {
-                    byte[] md5 = BINARY_DIGEST.digest(property.getValue().getString().getBytes());
-                    properties.put(property.getName(), new Value[] { factory.createValue(new BigInteger(1, md5).toString(16)) });
+                    properties.put(property.getName(), getHashCode(property.getValue()));
                 }
             }
         }
@@ -163,31 +146,37 @@ class NodeState {
         }
     }
 
+    private BigInteger getHashCode(Value value) throws RepositoryException {
+        byte[] md5 = newDigest().digest(value.getString().getBytes());
+        return new BigInteger(md5);
+    }
+
+    private BigInteger getHashCode(Value[] values) throws RepositoryException {
+        final MessageDigest digest = newDigest();
+        for (Value value : values) {
+            digest.update(value.getString().getBytes());
+        }
+        return new BigInteger(digest.digest());
+    }
+
     Iterator<Event> getEvents(NodeState newState) throws RepositoryException {
         List<Event> events = new LinkedList<Event>();
 
-        Map<String, Value[]> newProperties = newState.properties;
+        Map<String, BigInteger> newProperties = newState.properties;
         Map<String, String> newNodes = newState.nodes;
 
-        for (Map.Entry<String, Value[]> entry : this.properties.entrySet()) {
+        for (Map.Entry<String, BigInteger> entry : this.properties.entrySet()) {
             if (newProperties.containsKey(entry.getKey())) {
-                Value[] oldValues = entry.getValue();
-                Value[] newValues = newProperties.get(entry.getKey());
-                if (newValues.length != oldValues.length) {
+                BigInteger oldHash = entry.getValue();
+                BigInteger newHash = newProperties.get(entry.getKey());
+                if (!oldHash.equals(newHash)) {
                     events.add(new NodeEvent(entry.getKey(), Event.PROPERTY_CHANGED));
-                } else {
-                    for (int i = 0; i < newValues.length; i++) {
-                        if (!newValues[i].equals(oldValues[i])) {
-                            events.add(new NodeEvent(entry.getKey(), Event.PROPERTY_CHANGED));
-                            break;
-                        }
-                    }
                 }
             } else {
                 events.add(new NodeEvent(entry.getKey(), Event.PROPERTY_REMOVED));
             }
         }
-        for (Map.Entry<String, Value[]> entry : newProperties.entrySet()) {
+        for (Map.Entry<String, BigInteger> entry : newProperties.entrySet()) {
             if (!this.properties.containsKey(entry.getKey())) {
                 events.add(new NodeEvent(entry.getKey(), Event.PROPERTY_ADDED));
             }

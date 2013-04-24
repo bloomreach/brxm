@@ -145,23 +145,6 @@ public class JcrObservationManager implements ObservationManager {
         }
     }
 
-    private void prune(Set<String> paths) {
-        // filter out descendants
-        Iterator<String> pathIter = paths.iterator();
-        while (pathIter.hasNext()) {
-            String[] ancestors = pathIter.next().split("/");
-            StringBuilder compound = new StringBuilder("/");
-            for (int i = 1; i < ancestors.length - 1; i++) {
-                compound.append(ancestors[i]);
-                if (paths.contains(compound.toString())) {
-                    pathIter.remove();
-                    break;
-                }
-                compound.append('/');
-            }
-        }
-    }
-
     public void refreshSession() {
         cleanup();
 
@@ -259,13 +242,13 @@ public class JcrObservationManager implements ObservationManager {
                 if (states == null) {
                     states = new HashMap<String, NodeState>();
                     cache.put(jcrSession, states);
+                } else {
+                    states.clear();
                 }
             }
 
             // update cache
-            for (Map.Entry<String, NodeState> nodes : dirty.entrySet()) {
-                states.put(nodes.getKey(), nodes.getValue());
-            }
+            states.putAll(dirty);
 
             // remove stale entries
             Iterator<Map.Entry<String, NodeState>> cacheIter = states.entrySet().iterator();
