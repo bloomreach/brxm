@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sv:node sv:name="channelManagerLoader" xmlns:sv="http://www.jcp.org/jcr/sv/1.0"
-         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="insert" h:location="browserLoader">
+         xmlns:h="http://www.onehippo.org/jcr/xmlimport" h:merge="insert" h:location="browserPerspective">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>frontend:plugin</sv:value>
   </sv:property>
