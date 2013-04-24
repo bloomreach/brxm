@@ -64,7 +64,7 @@
     <forge.robotstxt.version>1.06.00</forge.robotstxt.version>
     <forge.selection.version>2.06.01</forge.selection.version>
     <forge.sitemap.version>1.03.01</forge.sitemap.version>
-    <forge.taxonomy.version>1.09.00</forge.taxonomy.version>
+    <forge.taxonomy.version>1.10.00-SNAPSHOT</forge.taxonomy.version>
     <forge.tcmp.version>1.07.00</forge.tcmp.version>
 
   </properties>
