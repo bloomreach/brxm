@@ -90,7 +90,7 @@ public class RestProxyServicePlugin extends Plugin implements IRestProxyService 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.enableDefaultTyping();
         objectMapper.enableDefaultTypingAsProperty(ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE, "@class");
-        // Version here used for Jakson JSON purposes and has nothing to do with Hippo CMS Engine version
+        // Version here used for Jackson JSON purposes and has nothing to do with Hippo CMS Engine version
         // Just using unknown version as it is of no use to us
         SimpleModule cmsRestJacksonJsonModule = new SimpleModule("CmsRestJacksonJsonModule", Version.unknownVersion());
         cmsRestJacksonJsonModule.addDeserializer(Annotation.class, new AnnotationJsonDeserializer());

@@ -102,23 +102,23 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
 
         jsonParser.nextToken();
         if (annotationAttribute.getReturnType() == byte.class || annotationAttribute.getReturnType() == Byte.class) {
-            return Byte.valueOf(jsonParser.getNumberValue().byteValue());
+            return jsonParser.getNumberValue().byteValue();
         } else if (annotationAttribute.getReturnType() == short.class || annotationAttribute.getReturnType() == Short.class) {
-            return Short.valueOf(jsonParser.getNumberValue().shortValue());            
+            return jsonParser.getNumberValue().shortValue();
         } else if (annotationAttribute.getReturnType() == int.class || annotationAttribute.getReturnType() == Integer.class) {
-            return Integer.valueOf(jsonParser.getNumberValue().intValue());            
+            return jsonParser.getNumberValue().intValue();
         } else if (annotationAttribute.getReturnType() == long.class || annotationAttribute.getReturnType() == Long.class) {
-            return Long.valueOf(jsonParser.getNumberValue().longValue());            
+            return jsonParser.getNumberValue().longValue();
         } else if (annotationAttribute.getReturnType() == float.class || annotationAttribute.getReturnType() == Float.class) {
-            return Float.valueOf(jsonParser.getNumberValue().floatValue());            
+            return jsonParser.getNumberValue().floatValue();
         } else if (annotationAttribute.getReturnType() == double.class || annotationAttribute.getReturnType() == Double.class) {
-            return Double.valueOf(jsonParser.getNumberValue().doubleValue());            
+            return jsonParser.getNumberValue().doubleValue();
         } else if (annotationAttribute.getReturnType() == double.class || annotationAttribute.getReturnType() == Double.class) {
-            return Double.valueOf(jsonParser.getNumberValue().doubleValue());            
+            return jsonParser.getNumberValue().doubleValue();
         } else if (annotationAttribute.getReturnType() == boolean.class || annotationAttribute.getReturnType() == Boolean.class ) {
-            return Boolean.valueOf(jsonParser.getBooleanValue());
+            return jsonParser.getBooleanValue();
         } else if (annotationAttribute.getReturnType() == char.class || annotationAttribute.getReturnType() == Character.class ) {
-            return Character.valueOf(jsonParser.getText().charAt(0));
+            return jsonParser.getText().charAt(0);
         } else if (annotationAttribute.getReturnType() == String.class) {
             return jsonParser.getText();
         } else if (annotationAttribute.getReturnType() == byte[].class) {
@@ -180,7 +180,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
             byteArray.add(jsonParser.getByteValue());
         }
 
-        return byteArray.toArray(new Byte[] {});
+        return byteArray.toArray(new Byte[byteArray.size()]);
     }
 
     protected short[] deserializeShortPrimitiveArrayAnnotationAttribute(JsonParser jsonParser) throws JsonParseException, IOException {
@@ -201,7 +201,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
             integerArray.add(jsonParser.getShortValue());
         }
 
-        return integerArray.toArray(new Short[] {});
+        return integerArray.toArray(new Short[integerArray.size()]);
     }
 
     protected int[] deserializeIntegerPrimitiveArrayAnnotationAttribute(JsonParser jsonParser) throws JsonParseException, IOException {
@@ -222,7 +222,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
             integerArray.add(jsonParser.getIntValue());
         }
 
-        return integerArray.toArray(new Integer[] {});
+        return integerArray.toArray(new Integer[integerArray.size()]);
     }
 
     protected long[] deserializeLongPrimitiveArrayAnnotationAttribute(JsonParser jsonParser) throws JsonParseException, IOException {
@@ -243,7 +243,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
             longArray.add(jsonParser.getLongValue());
         }
 
-        return longArray.toArray(new Long[] {});
+        return longArray.toArray(new Long[longArray.size()]);
     }
 
     protected float[] deserializeFloatPrimitiveArrayAnnotationAttribute(JsonParser jsonParser) throws JsonParseException, IOException {
@@ -264,7 +264,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
             floatArray.add(jsonParser.getFloatValue());
         }
 
-        return floatArray.toArray(new Float[] {});
+        return floatArray.toArray(new Float[floatArray.size()]);
     }
 
     protected double[] deserializeDoublePrimitiveArrayAnnotationAttribute(JsonParser jsonParser) throws JsonParseException, IOException {
@@ -285,7 +285,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
             doubleArray.add(jsonParser.getDoubleValue());
         }
 
-        return doubleArray.toArray(new Double[] {});
+        return doubleArray.toArray(new Double[doubleArray.size()]);
     }
 
     protected boolean[] deserializeBooleanPrimitiveArrayAnnotationAttribute(JsonParser jsonParser) throws JsonParseException, IOException {
@@ -306,7 +306,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
             booleanArray.add(jsonParser.getBooleanValue());
         }
 
-        return booleanArray.toArray(new Boolean[] {});
+        return booleanArray.toArray(new Boolean[booleanArray.size()]);
     }
 
     protected char[] deserializeCharacterPrimitiveArrayAnnotationAttribute(JsonParser jsonParser) throws JsonParseException, IOException {
@@ -326,7 +326,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
             characterArray.add(jsonParser.getText().charAt(0));
         }
 
-        return characterArray.toArray(new Character[] {});
+        return characterArray.toArray(new Character[characterArray.size()]);
     }
 
     protected String[] deserializeStringArrayAnnotationAttribute(JsonParser jsonParser) throws JsonParseException, IOException {
@@ -336,7 +336,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
             stringArray.add(jsonParser.getText());
         }
 
-        return stringArray.toArray(new String[] {});
+        return stringArray.toArray(new String[stringArray.size()]);
     }
 
     /**
@@ -385,7 +385,7 @@ public class AnnotationJsonDeserializer extends JsonDeserializer<Annotation> {
                 }
                 return false;
             } else if (method.getName().equals("hashCode") && method.getParameterTypes().length == 0) {
-                return this.hashCode((Annotation) proxy);
+                return hashCode((Annotation) proxy);
             } else {
                 throw new NotImplementedException("This method can not be handled for : " + this.handleToString());
             }
