@@ -176,20 +176,22 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
     }
 
     private void addAncestorsWithFilter(final Map<String, NodeState> stateCache, boolean onlyModified) {
-        // prefetch fixed nodes into cache
-        if (getParents().size() > 0) {
-            for (String path : getParents()) {
-                if (!stateCache.containsKey(path)) {
-                    try {
-                        if (session.itemExists(path)) {
-                            final Node node = (Node) session.getItem(path);
-                            if (!onlyModified || (!node.isNew() && !node.isModified())) {
-                                NodeState state = new NodeState(node, true);
-                                stateCache.put(path, state);
+        if (session != null) {
+            // prefetch fixed nodes into cache
+            if (getParents().size() > 0) {
+                for (String path : getParents()) {
+                    if (!stateCache.containsKey(path)) {
+                        try {
+                            if (session.itemExists(path)) {
+                                final Node node = (Node) session.getItem(path);
+                                if (!onlyModified || (!node.isNew() && !node.isModified())) {
+                                    NodeState state = new NodeState(node, true);
+                                    stateCache.put(path, state);
+                                }
                             }
+                        } catch (RepositoryException ex) {
+                            log.warn("Failed to initialize node state", ex);
                         }
-                    } catch (RepositoryException ex) {
-                        log.warn("Failed to initialize node state", ex);
                     }
                 }
             }
