@@ -42,7 +42,7 @@
       </map>
     </property>
     <property name="additionalQueryString">
-      <value>_type=xml</value>
+      <value></value>
       <!-- The following will append additional query string before JAX-RS processing
       <value>_type=json</value>
       -->
@@ -82,6 +82,11 @@
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.demo.jaxrs.services.TopProductsResource" />
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.demo.jaxrs.services.ContentTypesResource" />
           </constructor-arg>
         </bean>
       </list>

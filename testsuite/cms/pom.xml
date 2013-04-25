@@ -38,6 +38,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-contenttype</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-resourcebundle-cnd</artifactId>
       <version>${hippo.hst.version}</version>

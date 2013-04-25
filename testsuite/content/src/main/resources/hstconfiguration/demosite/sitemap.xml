@@ -603,5 +603,18 @@
       <sv:value>JaxrsRestPlainPipeline</sv:value>
     </sv:property>
   </sv:node>
+  <sv:node sv:name="contenttypes">
+    <sv:property sv:name="jcr:primaryType" sv:type="Name">
+      <sv:value>hst:sitemapitem</sv:value>
+    </sv:property>
+    <sv:property sv:name="hst:namedpipeline" sv:type="String">
+      <sv:value>JaxrsRestPlainPipeline</sv:value>
+    </sv:property>
+    <sv:node sv:name="_any_">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>hst:sitemapitem</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
 
 </sv:node>
