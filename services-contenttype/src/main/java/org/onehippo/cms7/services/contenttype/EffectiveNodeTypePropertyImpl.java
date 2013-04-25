@@ -35,7 +35,7 @@ public class EffectiveNodeTypePropertyImpl extends EffectiveNodeTypeItemImpl imp
     }
 
     public EffectiveNodeTypePropertyImpl(String name, String definingType, int requiredType) {
-        super(name, definingType);
+        super(name, definingType, false);
         this.requiredType = requiredType;
     }
 

@@ -11,6 +11,7 @@
     "jcr:content" : [ {
       "name" : "jcr:content",
       "definingType" : "nt:file",
+      "nodeType" : true,
       "residual" : false,
       "multiple" : false,
       "mandatory" : true,
@@ -25,6 +26,7 @@
     "jcr:created" : [ {
       "name" : "jcr:created",
       "definingType" : "mix:created",
+      "nodeType" : false,
       "residual" : false,
       "multiple" : false,
       "mandatory" : false,
@@ -38,6 +40,7 @@
     "jcr:createdBy" : [ {
       "name" : "jcr:createdBy",
       "definingType" : "mix:created",
+      "nodeType" : false,
       "residual" : false,
       "multiple" : false,
       "mandatory" : false,
@@ -51,6 +54,7 @@
     "jcr:mixinTypes" : [ {
       "name" : "jcr:mixinTypes",
       "definingType" : "nt:base",
+      "nodeType" : false,
       "residual" : false,
       "multiple" : true,
       "mandatory" : false,
@@ -64,6 +68,7 @@
     "jcr:primaryType" : [ {
       "name" : "jcr:primaryType",
       "definingType" : "nt:base",
+      "nodeType" : false,
       "residual" : false,
       "multiple" : false,
       "mandatory" : true,

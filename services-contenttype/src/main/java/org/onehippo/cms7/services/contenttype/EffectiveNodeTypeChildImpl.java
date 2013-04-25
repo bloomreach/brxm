@@ -34,7 +34,7 @@ public class EffectiveNodeTypeChildImpl extends EffectiveNodeTypeItemImpl implem
     }
 
     public EffectiveNodeTypeChildImpl(String name, String definingType) {
-        super(name, definingType);
+        super(name, definingType, true);
     }
 
     @Override

@@ -16,9 +16,12 @@
 
 package org.onehippo.cms7.services.contenttype;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public abstract class EffectiveNodeTypeItemImpl extends Sealable implements EffectiveNodeTypeItem {
     private final String name;
     private final String definingType;
+    private final boolean nodeType;
     private final boolean residual;
     private boolean multiple;
     private boolean mandatory;
@@ -28,10 +31,16 @@ public abstract class EffectiveNodeTypeItemImpl extends Sealable implements Effe
     protected void doSeal() {
     }
 
-    protected EffectiveNodeTypeItemImpl(String name, String definingType) {
+    protected EffectiveNodeTypeItemImpl(String name, String definingType, boolean nodeType) {
         this.name = name;
         this.definingType = definingType;
         this.residual = "*".equals(name);
+        this.nodeType = nodeType;
+    }
+
+    @JsonProperty
+    public boolean isNodeType() {
+        return nodeType;
     }
 
     @Override
