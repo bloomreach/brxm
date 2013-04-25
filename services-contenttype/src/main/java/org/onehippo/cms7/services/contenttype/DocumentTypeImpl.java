@@ -296,7 +296,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                         EffectiveNodeTypeChild matchingChild = null;
                         boolean unmatched = false;
                         for (EffectiveNodeTypeChild c : entry.getValue()) {
-                            if (matchingChild == null && c.isMultiple() == dft.isMultiple()) {
+                            if (matchingChild == null && (!dft.isMultiple() || c.isMultiple())) {
                                 boolean match = true;
                                 for (String requiredType : c.getRequiredPrimaryTypes()) {
                                     if (!ct.isDocumentType(requiredType)) {
@@ -367,7 +367,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                     List<EffectiveNodeTypeProperty> properties = ent.getProperties().get("*");
                     if (properties != null) {
                         for (EffectiveNodeTypeProperty p : properties) {
-                            if (p.getType() == dft.getFieldType() && p.isMultiple() == dft.isMultiple()) {
+                            if (p.getType().equals(dft.getFieldType()) && p.isMultiple() == dft.isMultiple()) {
                                 dft.setEffectiveNodeTypeItem(p);
                                 if (p.isAutoCreated() && !dft.isAutoCreated()) {
                                     log.warn("Matching residual Effective NodeType {} property is autoCreated while its corresponding field named {} in Document Type {} is not. "
@@ -413,7 +413,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                         List<EffectiveNodeTypeChild> children = ent.getChildren().get("*");
                         if (children != null) {
                             for (EffectiveNodeTypeChild c : children) {
-                                if (c.isMultiple() == dft.isMultiple()) {
+                                if (!dft.isMultiple() || c.isMultiple()) {
                                     boolean match = true;
                                     for (String requiredType : c.getRequiredPrimaryTypes()) {
                                         if (!ct.isDocumentType(requiredType)) {
