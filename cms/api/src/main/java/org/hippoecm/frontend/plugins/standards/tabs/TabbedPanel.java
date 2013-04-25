@@ -328,24 +328,18 @@ public class TabbedPanel extends WebMarkupContainer {
     }
 
     void removed(final TabsPlugin.Tab tabbie) {
-        if (hasBeenRendered()) {
-            cardView.removed(tabbie);
-            redraw();
-        }
+        cardView.removed(tabbie);
+        redraw();
     }
 
     void addLast() {
-        if (hasBeenRendered()) {
-            cardView.addLast();
-            redraw();
-        }
+        cardView.addLast();
+        redraw();
     }
 
     void addFirst() {
-        if (hasBeenRendered()) {
-            cardView.addFirst();
-            redraw();
-        }
+        cardView.addFirst();
+        redraw();
     }
 
     public void render(PluginRequestTarget target) {
@@ -447,24 +441,27 @@ public class TabbedPanel extends WebMarkupContainer {
         void removed(final TabsPlugin.Tab tabbie) {
             if (added.contains(tabbie)) {
                 added.remove(tabbie);
+            } else {
+                removed.add(tabbie);
             }
-            removed.add(tabbie);
         }
 
         void addLast() {
             TabsPlugin.Tab tabbie = tabs.get(tabs.size() - 1);
             if (removed.contains(tabbie)) {
                 removed.remove(tabbie);
+            } else {
+                added.add(tabbie);
             }
-            added.add(tabbie);
         }
 
         void addFirst() {
             TabsPlugin.Tab tabbie = tabs.get(0);
             if (removed.contains(tabbie)) {
                 removed.remove(tabbie);
+            } else {
+                added.add(tabbie);
             }
-            added.add(tabbie);
         }
 
         protected ListItem<TabsPlugin.Tab> newItem(TabsPlugin.Tab tabbie) {
@@ -495,20 +492,8 @@ public class TabbedPanel extends WebMarkupContainer {
                 for (TabsPlugin.Tab tabbie : tabs) {
                     add(newItem(tabbie));
                 }
-            } else {
-                Iterator<? extends Component> iterator = iterator();
-                while (iterator.hasNext()) {
-                    Component component = iterator.next();
-                    if (removed.contains(component.getDefaultModelObject())) {
-                        iterator.remove();
-                    }
-                }
-                removed.clear();
-
-                for (TabsPlugin.Tab tabbie : added) {
-                    add(newItem(tabbie));
-                }
                 added.clear();
+                removed.clear();
             }
         }
 
