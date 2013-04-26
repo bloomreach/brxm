@@ -528,9 +528,6 @@
     <sv:property sv:name="wicket.id" sv:type="String">
       <sv:value>service.tab</sv:value>
     </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>cms-browser</sv:value>
-    </sv:property>
     <sv:node sv:name="layout.wireframe">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
         <sv:value>frontend:pluginconfig</sv:value>
@@ -567,6 +564,9 @@
     </sv:property>
     <sv:property sv:name="wicket.variant" sv:type="String">
       <sv:value>yui</sv:value>
+    </sv:property>
+    <sv:property sv:name="cluster.name" sv:type="String">
+      <sv:value>cms-browser</sv:value>
     </sv:property>
     <sv:property sv:name="sections" sv:type="String">
       <sv:value>section.content</sv:value>
