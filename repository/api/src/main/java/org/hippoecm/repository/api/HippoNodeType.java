@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -139,7 +139,7 @@ public interface HippoNodeType {
     public static final String NT_ROLE = "hipposys:role";
 
     public static final String NT_ROLEPROVIDER = "hipposys:roleprovider";
- 
+
     public static final String NT_ROLEFOLDER = "hipposys:rolefolder";
 
     public static final String NT_SECURITYFOLDER = "hipposys:securityfolder";
@@ -223,6 +223,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_FACETS = "hippo:facets";
 
+    public static final String HIPPO_FILENAME = "hippo:filename";
+
     public static final String HIPPO_GROUPS = "hipposys:groups";
 
     public static final String HIPPO_GROUPSPATH = "hipposys:groupspath";
@@ -298,9 +300,9 @@ public interface HippoNodeType {
     public static final String HIPPO_PROPERTY = "hippo:property";
 
     public static final String HIPPO_QUERYNAME = "hippo:queryname";
- 
+
     public static final String HIPPO_RELATED = "hippo:related";
- 
+
     public static final String HIPPO_COMPUTE = "hippo:compute";
 
     public static final String HIPPO_RESULTSET = "hippo:resultset";

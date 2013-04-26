@@ -87,6 +87,7 @@
 - jcr:mimeType (string) mandatory
 - jcr:data (binary) primary mandatory
 - jcr:lastModified (date) mandatory ignore
+- hippo:filename (string)
 - hippo:text (binary)
 
 [hippo:query] > nt:query
