@@ -381,7 +381,7 @@ public class HippoContentTypeService implements ContentTypeService {
                 resolveDocumentType(name, allDocumentTypes, adtCache);
             }
 
-            // update cache map of initial document types
+            // update cache map of defined document types
             for (Map.Entry<String, DocumentTypeImpl> entry : allDocumentTypes.entrySet()) {
                 if (!entry.getValue().isDerivedType()) {
                     adtCache.getDocumentTypesCache().getTypes().put(entry.getKey(), entry.getValue());

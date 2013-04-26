@@ -69,26 +69,6 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
         }
     };
 
-    @Override
-    protected void doSeal() {
-        superTypes = Collections.unmodifiableSet(superTypes);
-        aggregatedTypes = Collections.unmodifiableSet(aggregatedTypes);
-        for (Map.Entry<String, List<EffectiveNodeTypeChild>> entry : children.entrySet()) {
-            Collections.sort(entry.getValue(),childComparator);
-            entry.setValue(Collections.unmodifiableList(entry.getValue()));
-            for (EffectiveNodeTypeChild i : entry.getValue())
-                ((Sealable)i).seal();
-        }
-        for (Map.Entry<String, List<EffectiveNodeTypeProperty>> entry : properties.entrySet()) {
-            Collections.sort(entry.getValue(),propertyComparator);
-            entry.setValue(Collections.unmodifiableList(entry.getValue()));
-            for (EffectiveNodeTypeProperty i : entry.getValue())
-                ((Sealable)i).seal();
-        }
-        children = Collections.unmodifiableMap(children);
-        properties = Collections.unmodifiableMap(properties);
-    }
-
     public EffectiveNodeTypeImpl(String name, long effectiveNodeTypesVersion) {
         this.version = effectiveNodeTypesVersion;
         this.aggregate = false;
@@ -116,74 +96,24 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
         primaryItemName = other.primaryItemName;
     }
 
-    public boolean contains(EffectiveNodeTypeImpl other) {
-        for (String s : other.superTypes) {
-            if (!isNodeType(s)) {
-                return false;
-            }
+    @Override
+    protected void doSeal() {
+        superTypes = Collections.unmodifiableSet(superTypes);
+        aggregatedTypes = Collections.unmodifiableSet(aggregatedTypes);
+        for (Map.Entry<String, List<EffectiveNodeTypeChild>> entry : children.entrySet()) {
+            Collections.sort(entry.getValue(),childComparator);
+            entry.setValue(Collections.unmodifiableList(entry.getValue()));
+            for (EffectiveNodeTypeChild i : entry.getValue())
+                ((Sealable)i).seal();
         }
-        for (String s : other.aggregatedTypes) {
-            if (!isNodeType(s)) {
-                return false;
-            }
+        for (Map.Entry<String, List<EffectiveNodeTypeProperty>> entry : properties.entrySet()) {
+            Collections.sort(entry.getValue(),propertyComparator);
+            entry.setValue(Collections.unmodifiableList(entry.getValue()));
+            for (EffectiveNodeTypeProperty i : entry.getValue())
+                ((Sealable)i).seal();
         }
-        return true;
-    }
-
-    public boolean merge(EffectiveNodeTypeImpl other, boolean superType) {
-        if (contains(other)) {
-            return false;
-        }
-
-        aggregate = true;
-        name = null;
-        prefix = null;
-
-        // merge properties: assuming merging these are all allowed and has been validated by the JCR Repository itself before
-        for (Map.Entry<String, List<EffectiveNodeTypeProperty>> entry : other.properties.entrySet()) {
-            for (EffectiveNodeTypeProperty p : entry.getValue()) {
-                if (!isNodeType(p.getDefiningType())) {
-                    List<EffectiveNodeTypeProperty> props = properties.get(entry.getKey());
-                    if (props == null) {
-                        props = new ArrayList<EffectiveNodeTypeProperty>();
-                        properties.put(entry.getKey(), props);
-                    }
-                    props.add(p);
-                }
-            }
-        }
-
-        // merge children: assuming merging these are all allowed and has been validated by the JCR Repository itself before
-        for (Map.Entry<String, List<EffectiveNodeTypeChild>> entry : other.children.entrySet()) {
-            for (EffectiveNodeTypeChild c : entry.getValue()) {
-                if (!isNodeType(c.getDefiningType())) {
-                    List<EffectiveNodeTypeChild> childs = children.get(entry.getKey());
-                    if (childs == null) {
-                        childs = new ArrayList<EffectiveNodeTypeChild>();
-                        children.put(entry.getKey(), childs);
-                    }
-                    childs.add(c);
-                }
-            }
-        }
-
-        if (superType) {
-            superTypes.addAll(other.aggregatedTypes);
-        }
-        else {
-            aggregatedTypes.addAll(other.aggregatedTypes);
-        }
-        superTypes.addAll(other.superTypes);
-
-        if (other.ordered) {
-            this.ordered = true;
-        }
-
-        if (primaryItemName == null && other.primaryItemName != null) {
-            this.primaryItemName = other.primaryItemName;
-        }
-
-        return true;
+        children = Collections.unmodifiableMap(children);
+        properties = Collections.unmodifiableMap(properties);
     }
 
     @Override
@@ -295,5 +225,75 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
             return this.getName().equals(((EffectiveNodeTypeImpl)obj).getName());
         }
         return false;
+    }
+
+    public boolean contains(EffectiveNodeTypeImpl other) {
+        for (String s : other.superTypes) {
+            if (!isNodeType(s)) {
+                return false;
+            }
+        }
+        for (String s : other.aggregatedTypes) {
+            if (!isNodeType(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean merge(EffectiveNodeTypeImpl other, boolean superType) {
+        if (contains(other)) {
+            return false;
+        }
+
+        aggregate = true;
+        name = null;
+        prefix = null;
+
+        // merge properties: assuming merging these are all allowed and has been validated by the JCR Repository itself before
+        for (Map.Entry<String, List<EffectiveNodeTypeProperty>> entry : other.properties.entrySet()) {
+            for (EffectiveNodeTypeProperty p : entry.getValue()) {
+                if (!isNodeType(p.getDefiningType())) {
+                    List<EffectiveNodeTypeProperty> props = properties.get(entry.getKey());
+                    if (props == null) {
+                        props = new ArrayList<EffectiveNodeTypeProperty>();
+                        properties.put(entry.getKey(), props);
+                    }
+                    props.add(p);
+                }
+            }
+        }
+
+        // merge children: assuming merging these are all allowed and has been validated by the JCR Repository itself before
+        for (Map.Entry<String, List<EffectiveNodeTypeChild>> entry : other.children.entrySet()) {
+            for (EffectiveNodeTypeChild c : entry.getValue()) {
+                if (!isNodeType(c.getDefiningType())) {
+                    List<EffectiveNodeTypeChild> childs = children.get(entry.getKey());
+                    if (childs == null) {
+                        childs = new ArrayList<EffectiveNodeTypeChild>();
+                        children.put(entry.getKey(), childs);
+                    }
+                    childs.add(c);
+                }
+            }
+        }
+
+        if (superType) {
+            superTypes.addAll(other.aggregatedTypes);
+        }
+        else {
+            aggregatedTypes.addAll(other.aggregatedTypes);
+        }
+        superTypes.addAll(other.superTypes);
+
+        if (other.ordered) {
+            this.ordered = true;
+        }
+
+        if (primaryItemName == null && other.primaryItemName != null) {
+            this.primaryItemName = other.primaryItemName;
+        }
+
+        return true;
     }
 }
