@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" xmlns:h="http://www.onehippo.org/jcr/xmlimport" sv:name="cms" h:merge="combine">
+  <sv:node sv:name="hippo-channel-manager" h:merge="combine">
+    <sv:node sv:name="templatecomposer-device-combo" >
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="device.service.id" sv:type="String">
+        <sv:value>auto.calc.service</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.onehippo.cms7.channelmanager.templatecomposer.deviceskins.DeviceManager</sv:value>
+      </sv:property>
+      <sv:property sv:name="position.edit" sv:type="String">
+        <sv:value>first</sv:value>
+      </sv:property>
+      <sv:property sv:name="position.view" sv:type="String">
+        <sv:value>after template-composer-toolbar-publish-button</sv:value>
+      </sv:property>
+      <sv:property sv:name="translator.id" sv:type="String">
+        <sv:value>service.device.translator</sv:value>
+      </sv:property>
+      <sv:property sv:name="rest.proxy.service.id" sv:type="String">
+        <sv:value>hst.rest.proxy.service</sv:value>
+      </sv:property>
+    </sv:node>
+  </sv:node>
+  <sv:node sv:name="cms-services" h:merge="combine">
+    <sv:node sv:name="deviceManagerTranslator">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+        <sv:value>hippostd:translated</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.hippoecm.frontend.i18n.ConfigTraversingPlugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="translator.id" sv:type="String">
+        <sv:value>service.device.translator</sv:value>
+      </sv:property>
+      <sv:node sv:name="hippostd:translations">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>hippostd:translations</sv:value>
+        </sv:property>
+        <sv:node sv:name="emptyText">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:translated</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>nl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>Kies een apparaat...</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>en</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>Choose a device...</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+        <sv:node sv:name="iphone_portrait">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:translated</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>nl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>IPhone staand</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>en</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>IPhone portrait</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+        <sv:node sv:name="iphone_landscape">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:translated</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>nl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>IPhone liggend</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>en</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>IPhone landscape</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+        <sv:node sv:name="default">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:translated</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>nl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>Normaal</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>en</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>Default Skin</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+        <sv:node sv:name="ipad_landscape">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:translated</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>nl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>IPad liggend</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>en</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>IPad landscape</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+        <sv:node sv:name="ipad_portrait">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>frontend:pluginconfig</sv:value>
+          </sv:property>
+          <sv:property sv:multiple="true" sv:name="jcr:mixinTypes" sv:type="Name">
+            <sv:value>hippo:translated</sv:value>
+          </sv:property>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>nl</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>IPad staand</sv:value>
+            </sv:property>
+          </sv:node>
+          <sv:node sv:name="hippo:translation">
+            <sv:property sv:name="jcr:primaryType" sv:type="Name">
+              <sv:value>hippo:translation</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:language" sv:type="String">
+              <sv:value>en</sv:value>
+            </sv:property>
+            <sv:property sv:name="hippo:message" sv:type="String">
+              <sv:value>IPad portrait</sv:value>
+            </sv:property>
+          </sv:node>
+        </sv:node>
+      </sv:node>
+    </sv:node>
+    <sv:node sv:name="autoCalcService">
+      <sv:property sv:name="jcr:primaryType" sv:type="Name">
+        <sv:value>frontend:plugin</sv:value>
+      </sv:property>
+      <sv:property sv:name="device.service.id" sv:type="String">
+        <sv:value>auto.calc.service</sv:value>
+      </sv:property>
+      <sv:property sv:name="plugin.class" sv:type="String">
+        <sv:value>org.onehippo.cms7.channelmanager.templatecomposer.deviceskins.AutoCalcDeviceService</sv:value>
+      </sv:property>
+      <sv:property sv:name="translator.id" sv:type="String">
+        <sv:value>service.device.translator</sv:value>
+      </sv:property>
+      <sv:node sv:name="default">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="style" sv:type="String">
+          <sv:value/>
+        </sv:property>
+        <sv:property sv:name="type" sv:type="String">
+          <sv:value>1</sv:value>
+        </sv:property>
+        <sv:property sv:name="wrapstyle" sv:type="String">
+          <sv:value/>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="iphone_landscape">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="background.height" sv:type="String">
+          <sv:value>380</sv:value>
+        </sv:property>
+        <sv:property sv:name="background.width" sv:type="String">
+          <sv:value>739</sv:value>
+        </sv:property>
+        <sv:property sv:name="binary.background" sv:type="String">
+          <sv:value>/devices/${image.location}.png/${image.location}.png/hippogallery:original</sv:value>
+        </sv:property>
+        <sv:property sv:name="cms.location" sv:type="String">
+          <sv:value>http://localhost:8080/cms/</sv:value>
+        </sv:property>
+        <sv:property sv:name="image.location" sv:type="String">
+          <sv:value>iphone-landscape</sv:value>
+        </sv:property>
+        <sv:property sv:name="scale.factor" sv:type="String">
+          <sv:value>0.9</sv:value>
+        </sv:property>
+        <sv:property sv:name="style" sv:type="String">
+          <sv:value>width: ${calc.width}px!important;
+            height: ${calc.height}px!important;
+            transform: scale(${scale.factor},${scale.factor});
+            -ms-transform: scale(${scale.factor},${scale.factor});
+            -webkit-transform: scale(${scale.factor},${scale.factor});
+            -o-transform: scale(${scale.factor},${scale.factor});
+            -moz-transform: scale(${scale.factor},${scale.factor});
+            transform: scale(${scale.factor},${scale.factor});
+            position: absolute;
+            top: ${viewport.y}px;
+            left: ${viewport.x}px;
+            -moz-transform-origin: top left;
+            -webkit-transform-origin: top left;
+            -o-transform-origin: top left;
+            -ms-transform-origin: top left;
+            transform-origin: top left;
+          </sv:value>
+        </sv:property>
+        <sv:property sv:name="type" sv:type="String">
+          <sv:value>3</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.height" sv:type="String">
+          <sv:value>270</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.width" sv:type="String">
+          <sv:value>482</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.x" sv:type="String">
+          <sv:value>129</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.y" sv:type="String">
+          <sv:value>48</sv:value>
+        </sv:property>
+        <sv:property sv:name="wrapstyle" sv:type="String">
+          <sv:value>background: url('${cms.location}${binary.background}') 0 0 no-repeat;
+            width: ${background.width}px;
+            height: ${background.height}px;
+            background-position: 0px 0px;
+            background-repeat: no-repeat no-repeat;
+            position: relative;
+            border: none;
+          </sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="iphone_portrait">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="background.height" sv:type="String">
+          <sv:value>743</sv:value>
+        </sv:property>
+        <sv:property sv:name="background.width" sv:type="String">
+          <sv:value>380</sv:value>
+        </sv:property>
+        <sv:property sv:name="binary.background" sv:type="String">
+          <sv:value>/devices/${image.location}.png/${image.location}.png/hippogallery:original</sv:value>
+        </sv:property>
+        <sv:property sv:name="cms.location" sv:type="String">
+          <sv:value>http://localhost:8080/cms/</sv:value>
+        </sv:property>
+        <sv:property sv:name="image.location" sv:type="String">
+          <sv:value>iphone-portrait</sv:value>
+        </sv:property>
+        <sv:property sv:name="scale.factor" sv:type="String">
+          <sv:value>0.75</sv:value>
+        </sv:property>
+        <sv:property sv:name="style" sv:type="String">
+          <sv:value>width: ${calc.width}px!important;
+            height: ${calc.height}px!important;
+            transform: scale(${scale.factor},${scale.factor});
+            -ms-transform: scale(${scale.factor},${scale.factor});
+            -webkit-transform: scale(${scale.factor},${scale.factor});
+            -o-transform: scale(${scale.factor},${scale.factor});
+            -moz-transform: scale(${scale.factor},${scale.factor});
+            transform: scale(${scale.factor},${scale.factor});
+            position: absolute;
+            top: ${viewport.y}px;
+            left: ${viewport.x}px;
+            -moz-transform-origin: top left;
+            -webkit-transform-origin: top left;
+            -o-transform-origin: top left;
+            -ms-transform-origin: top left;
+            transform-origin: top left;
+          </sv:value>
+        </sv:property>
+        <sv:property sv:name="type" sv:type="String">
+          <sv:value>3</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.height" sv:type="String">
+          <sv:value>418</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.width" sv:type="String">
+          <sv:value>322</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.x" sv:type="String">
+          <sv:value>32</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.y" sv:type="String">
+          <sv:value>153</sv:value>
+        </sv:property>
+        <sv:property sv:name="wrapstyle" sv:type="String">
+          <sv:value>background: url('${cms.location}${binary.background}') 0 0 no-repeat;
+            width: ${background.width}px;
+            height: ${background.height}px;
+            background-position: 0px 0px;
+            background-repeat: no-repeat no-repeat;
+            position: relative;
+            border: none;
+          </sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="ipad_landscape">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="background.height" sv:type="String">
+          <sv:value>996</sv:value>
+        </sv:property>
+        <sv:property sv:name="background.width" sv:type="String">
+          <sv:value>1276</sv:value>
+        </sv:property>
+        <sv:property sv:name="binary.background" sv:type="String">
+          <sv:value>/devices/${image.location}.png/${image.location}.png/hippogallery:original</sv:value>
+        </sv:property>
+        <sv:property sv:name="cms.location" sv:type="String">
+          <sv:value>http://localhost:8080/cms/</sv:value>
+        </sv:property>
+        <sv:property sv:name="image.location" sv:type="String">
+          <sv:value>ipad-landscape</sv:value>
+        </sv:property>
+        <sv:property sv:name="scale.factor" sv:type="String">
+          <sv:value>1.5</sv:value>
+        </sv:property>
+        <sv:property sv:name="style" sv:type="String">
+          <sv:value>width: ${calc.width}px!important;
+            height: ${calc.height}px!important;
+            transform: scale(${scale.factor},${scale.factor});
+            -ms-transform: scale(${scale.factor},${scale.factor});
+            -webkit-transform: scale(${scale.factor},${scale.factor});
+            -o-transform: scale(${scale.factor},${scale.factor});
+            -moz-transform: scale(${scale.factor},${scale.factor});
+            transform: scale(${scale.factor},${scale.factor});
+            position: absolute;
+            top: ${viewport.y}px;
+            left: ${viewport.x}px;
+            -moz-transform-origin: top left;
+            -webkit-transform-origin: top left;
+            -o-transform-origin: top left;
+            -ms-transform-origin: top left;
+            transform-origin: top left;
+          </sv:value>
+        </sv:property>
+        <sv:property sv:name="type" sv:type="String">
+          <sv:value>3</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.height" sv:type="String">
+          <sv:value>770</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.width" sv:type="String">
+          <sv:value>1026</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.x" sv:type="String">
+          <sv:value>127</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.y" sv:type="String">
+          <sv:value>115</sv:value>
+        </sv:property>
+        <sv:property sv:name="wrapstyle" sv:type="String">
+          <sv:value>background: url('${cms.location}${binary.background}') 0 0 no-repeat;
+            width: ${background.width}px;
+            height: ${background.height}px;
+            background-position: 0px 0px;
+            background-repeat: no-repeat no-repeat;
+            position: relative;
+            border: none;
+          </sv:value>
+        </sv:property>
+      </sv:node>
+      <sv:node sv:name="ipad_portrait">
+        <sv:property sv:name="jcr:primaryType" sv:type="Name">
+          <sv:value>frontend:pluginconfig</sv:value>
+        </sv:property>
+        <sv:property sv:name="background.height" sv:type="String">
+          <sv:value>1276</sv:value>
+        </sv:property>
+        <sv:property sv:name="background.width" sv:type="String">
+          <sv:value>996</sv:value>
+        </sv:property>
+        <sv:property sv:name="binary.background" sv:type="String">
+          <sv:value>/devices/${image.location}.png/${image.location}.png/hippogallery:original</sv:value>
+        </sv:property>
+        <sv:property sv:name="cms.location" sv:type="String">
+          <sv:value>http://localhost:8080/cms/</sv:value>
+        </sv:property>
+        <sv:property sv:name="image.location" sv:type="String">
+          <sv:value>ipad-portrait</sv:value>
+        </sv:property>
+        <sv:property sv:name="scale.factor" sv:type="String">
+          <sv:value>1.5</sv:value>
+        </sv:property>
+        <sv:property sv:name="style" sv:type="String">
+          <sv:value>width: ${calc.width}px!important;
+            height: ${calc.height}px!important;
+            transform: scale(${scale.factor},${scale.factor});
+            -ms-transform: scale(${scale.factor},${scale.factor});
+            -webkit-transform: scale(${scale.factor},${scale.factor});
+            -o-transform: scale(${scale.factor},${scale.factor});
+            -moz-transform: scale(${scale.factor},${scale.factor});
+            transform: scale(${scale.factor},${scale.factor});
+            position: absolute;
+            top: ${viewport.y}px;
+            left: ${viewport.x}px;
+            -moz-transform-origin: top left;
+            -webkit-transform-origin: top left;
+            -o-transform-origin: top left;
+            -ms-transform-origin: top left;
+            transform-origin: top left;
+          </sv:value>
+        </sv:property>
+        <sv:property sv:name="type" sv:type="String">
+          <sv:value>3</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.height" sv:type="String">
+          <sv:value>1026</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.width" sv:type="String">
+          <sv:value>770</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.x" sv:type="String">
+          <sv:value>115</sv:value>
+        </sv:property>
+        <sv:property sv:name="viewport.y" sv:type="String">
+          <sv:value>127</sv:value>
+        </sv:property>
+        <sv:property sv:name="wrapstyle" sv:type="String">
+          <sv:value>background: url('${cms.location}${binary.background}') 0 0 no-repeat;
+            width: ${background.width}px;
+            height: ${background.height}px;
+            background-position: 0px 0px;
+            background-repeat: no-repeat no-repeat;
+            position: relative;
+            border: none;
+          </sv:value>
+        </sv:property>
+      </sv:node>
+    </sv:node>
+  </sv:node>
+</sv:node>
