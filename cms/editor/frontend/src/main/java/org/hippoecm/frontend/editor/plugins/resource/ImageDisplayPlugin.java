@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,10 +16,14 @@
 package org.hippoecm.frontend.editor.plugins.resource;
 
 import java.io.InputStream;
+import java.util.ResourceBundle;
 
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.Resource;
 import org.apache.wicket.Response;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
@@ -28,6 +32,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebResponse;
+import org.apache.wicket.resource.loader.ComponentStringResourceLoader;
 import org.hippoecm.frontend.editor.compare.StreamComparer;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -37,6 +42,7 @@ import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,47 +98,64 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     }
 
     private Fragment createResourceFragment(String id, IModel<Node> model) {
-        final JcrResourceStream resource = new JcrResourceStream(model);
+        final JcrResourceStream stream = new JcrResourceStream(model);
         Fragment fragment = new Fragment(id, "unknown", this);
         try {
-            if (resource.length() <= 0) {
+            if (stream.length() <= 0) {
                 return fragment;
             }
 
             Node node = getModelObject();
-            final String filename;
+
+            FileLink filelink = createFileLink(stream, node);
+
+            fragment = new Fragment(id, "embed", this);
+            fragment.add(new Label("filesize", new Model<String>(formatter.format(stream.length()))));
+            fragment.add(new Label("mimetype", new Model<String>(stream.getContentType())));
+
+            fragment.add(filelink);
+
+            ;
+        } catch (RepositoryException ex) {
+            log.error(ex.getMessage());
+        }
+        return fragment;
+    }
+
+    private FileLink createFileLink(final JcrResourceStream stream, final Node node) throws RepositoryException {
+        String filename = lookupFilename(node);
+        String linkLabel = lookupLinkLabel(filename);
+        FileResource fileResource = new FileResource(stream, filename);
+        FileLink filelink = new FileLink("link", fileResource, stream);
+        filelink.add(new Label("filename", new Model<String>(linkLabel)));
+        return filelink;
+    }
+
+    private String lookupLinkLabel(final String filename) {
+        String linkLabel;
+
+        if(HippoNodeType.NT_RESOURCE.equals(filename)) {
+            ComponentStringResourceLoader componentStringResourceLoader = new ComponentStringResourceLoader();
+            linkLabel = componentStringResourceLoader.loadStringResource(this, "download.link");
+        } else {
+            linkLabel = filename;
+        }
+        return linkLabel;
+    }
+
+    private String lookupFilename(final Node node) throws RepositoryException {
+        String filename = null;
+
+        filename =  node.getProperty(HippoNodeType.HIPPO_FILENAME).getString();
+
+        if (StringUtils.isEmpty(filename)) {
             if (node.getDefinition().getName().equals("*")) {
                 filename = node.getName();
             } else {
                 filename = node.getParent().getName();
             }
-            fragment = new Fragment(id, "embed", this);
-            fragment.add(new Label("filesize", new Model<String>(formatter.format(resource.length()))));
-            fragment.add(new Label("mimetype", new Model<String>(resource.getContentType())));
-            fragment.add(new ResourceLink<Void>("link", new JcrResource(resource) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void configureResponse(Response response) {
-                    if (response instanceof WebResponse) {
-                        ((WebResponse) response).setHeader("Content-Disposition", "attachment; filename="
-                                + filename);
-                    }
-                }
-            }) {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                protected void onDetach() {
-                    resource.detach();
-                    super.onDetach();
-                }
-
-            });
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage());
         }
-        return fragment;
+        return filename;
     }
 
     @Override
@@ -140,6 +163,44 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         replace(createResourceFragment("fragment", getModel()));
         super.onModelChanged();
         redraw();
+    }
+
+
+    private static class FileResource extends JcrResource {
+
+        private static final long serialVersionUID = 1L;
+        private String filename;
+
+        public FileResource(final JcrResourceStream stream, String filename) {
+            super(stream);
+            this.filename = filename;
+        }
+
+        @Override
+        protected void configureResponse(Response response) {
+            if (response instanceof WebResponse) {
+                ((WebResponse) response).setHeader("Content-Disposition", "attachment; filename="
+                        + filename);
+            }
+        }
+    }
+
+
+    private static class FileLink extends ResourceLink {
+        JcrResourceStream stream;
+
+        public FileLink(final String id, final Resource resource, final JcrResourceStream stream) {
+            super(id, resource);
+            this.stream = stream;
+        }
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        protected void onDetach() {
+            stream.detach();
+            super.onDetach();
+        }
     }
 
 }

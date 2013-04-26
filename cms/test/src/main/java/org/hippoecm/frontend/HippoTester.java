@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -62,6 +62,7 @@ import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.repository.security.User;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -98,14 +99,14 @@ public class HippoTester extends WicketTester {
         public void remove() {
             throw new UnsupportedOperationException();
         }
-        
+
     }
-    
+
     private static class DummySession implements HippoSession {
 
         public void addLockToken(String lt) {
             // TODO Auto-generated method stub
-            
+
         }
 
         public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
@@ -221,7 +222,7 @@ public class HippoTester extends WicketTester {
 
         public void logout() {
             // TODO Auto-generated method stub
-            
+
         }
 
         public void move(String srcAbsPath, String destAbsPath) throws ItemExistsException, PathNotFoundException,
@@ -260,6 +261,11 @@ public class HippoTester extends WicketTester {
 
         public ClassLoader getSessionClassLoader() throws RepositoryException {
             throw new RepositoryException();
+        }
+
+        @Override
+        public User getUser() throws ItemNotFoundException, RepositoryException {
+            return null;
         }
 
         public XAResource getXAResource() {
@@ -360,7 +366,7 @@ public class HippoTester extends WicketTester {
                     protected Session load() {
                         return new DummySession();
                     }
-                    
+
                 });
             }
         });
@@ -378,7 +384,7 @@ public class HippoTester extends WicketTester {
     public Home startPluginPage() {
         Home home;
         // create a request cycle, but don't use it.
-        // this is a workaround for mockwebapplication's retaining of these cycles. 
+        // this is a workaround for mockwebapplication's retaining of these cycles.
         RequestCycle rc = createRequestCycle();
         home = (Home) super.startPage(PluginPage.class);
         rc.detach();

@@ -127,9 +127,9 @@ public class ResourceUploadPlugin extends RenderPlugin {
             JcrNodeModel nodeModel = (JcrNodeModel) ResourceUploadPlugin.this.getDefaultModel();
             Node node = nodeModel.getNode();
             try {
-                ResourceHelper.setDefaultResourceProperties(node, mimeType, upload.getInputStream());
+                ResourceHelper.setDefaultResourceProperties(node, mimeType, upload.getInputStream(), fileName);
 
-                if(extension.toLowerCase().equals("pdf")){
+                if (extension.toLowerCase().equals("pdf")) {
                     InputStream inputStream = node.getProperty(JcrConstants.JCR_DATA).getBinary().getStream();
                     ResourceHelper.handlePdfAndSetHippoTextProperty(node, inputStream);
                 }

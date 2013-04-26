@@ -14,36 +14,36 @@
   * limitations under the License.
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
-  <wicket:panel>
+<wicket:panel>
     <div class="resource-values resource-properties">
-      <wicket:container wicket:id="fragment"/>
-    </div>  
-  </wicket:panel>
+        <wicket:container wicket:id="fragment"/>
+    </div>
+</wicket:panel>
 
-  <wicket:fragment wicket:id="embed">
+<wicket:fragment wicket:id="embed">
     <ul>
-      <li>
-        <label class="simple-editor-label"><wicket:message key="mimetype.label">Mime type: </wicket:message></label><span wicket:id="mimetype" class="simple-editor-value"></span>
-      </li>
-      <li>
-        <label class="simple-editor-label"><wicket:message key="filesize.label">File size: </wicket:message></label><span wicket:id="filesize" class="simple-editor-value"></span>
-      </li>
-      <li>
-        <a wicket:id="link" class="simple-editor-value"><wicket:message key="download.link">link</wicket:message></a>
-      </li>
+        <li>
+            <label class="simple-editor-label"><wicket:message key="mimetype.label">Mime type: </wicket:message></label><span wicket:id="mimetype" class="simple-editor-value"></span>
+        </li>
+        <li>
+            <label class="simple-editor-label"><wicket:message key="filesize.label">File size: </wicket:message></label><span wicket:id="filesize" class="simple-editor-value"></span>
+        </li>
+        <li>
+            <a wicket:id="link" class="simple-editor-value"><span wicket:id="filename"></span></a>
+        </li>
     </ul>
-  </wicket:fragment>
+</wicket:fragment>
 
-  <wicket:fragment wicket:id="compare">
+<wicket:fragment wicket:id="compare">
     <table class="compare">
-      <tr>
-        <td class="compare-base"><div wicket:id="base" /></td>
-        <td class="compare-current"><div wicket:id="current" /></td>
-      </tr>
+        <tr>
+            <td class="compare-base"><div wicket:id="base" /></td>
+            <td class="compare-current"><div wicket:id="current" /></td>
+        </tr>
     </table>
-  </wicket:fragment>
+</wicket:fragment>
 
-  <wicket:fragment wicket:id="unknown">
-  </wicket:fragment>
-  
+<wicket:fragment wicket:id="unknown">
+</wicket:fragment>
+
 </html>

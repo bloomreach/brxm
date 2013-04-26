@@ -183,6 +183,20 @@
             <sv:value>true</sv:value>
           </sv:property>
         </sv:node>
+        <sv:node sv:name="filename">
+          <sv:property sv:name="jcr:primaryType" sv:type="Name">
+            <sv:value>hipposysedit:field</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:path" sv:type="String">
+            <sv:value>hippo:filename</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:type" sv:type="String">
+            <sv:value>String</sv:value>
+          </sv:property>
+          <sv:property sv:name="hipposysedit:mandatory" sv:type="Boolean">
+            <sv:value>false</sv:value>
+          </sv:property>
+        </sv:node>
         <sv:node sv:name="encoding">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hipposysedit:field</sv:value>
@@ -295,6 +309,9 @@
         </sv:property>
         <sv:property sv:name="jcr:mimeType" sv:type="String">
           <sv:value>image/jpeg</sv:value>
+        </sv:property>
+        <sv:property sv:name="hippo:filename" sv:type="String">
+          <sv:value>hippo:resource</sv:value>
         </sv:property>
       </sv:node>
     </sv:node>

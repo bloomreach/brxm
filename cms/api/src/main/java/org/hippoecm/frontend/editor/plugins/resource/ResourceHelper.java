@@ -29,6 +29,7 @@ import javax.jcr.Session;
 import javax.jcr.ValueFactory;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -150,7 +151,30 @@ public class ResourceHelper {
      */
     public static void setDefaultResourceProperties(Node node, String mimeType, InputStream inputStream) throws RepositoryException {
         try{
-            setDefaultResourceProperties(node, mimeType, getValueFactory(node).createBinary(inputStream));
+            setDefaultResourceProperties(node, mimeType, getValueFactory(node).createBinary(inputStream), null);
+        } finally {
+            IOUtils.closeQuietly(inputStream);
+        }
+    }
+
+    /**
+     * Set the default 'hippo:resource' properties:
+     * <ul>
+     *   <li>jcr:mimeType</li>
+     *   <li>jcr:data</li>
+     *   <li>jcr:lastModified</li>
+     *   <li>hippo:filename</li>
+     * </ul>
+     *
+     * @param node the {@link Node} on which to set the properties
+     * @param mimeType the mime-type of the binary data (e.g. <i>application/pdf</i>, <i>image/jpeg</i>)
+     * @param inputStream the data stream. Once the properties have been set the input stream will be closed.
+     *
+     * @throws RepositoryException exception thrown when one of the properties or values could not be set
+     */
+    public static void setDefaultResourceProperties(Node node, String mimeType, InputStream inputStream, String filename) throws RepositoryException {
+        try{
+            setDefaultResourceProperties(node, mimeType, getValueFactory(node).createBinary(inputStream), filename);
         } finally {
             IOUtils.closeQuietly(inputStream);
         }
@@ -171,9 +195,31 @@ public class ResourceHelper {
      * @throws RepositoryException exception thrown when one of the properties or values could not be set
      */
     public static void setDefaultResourceProperties(final Node node, final String mimeType, final Binary binary) throws RepositoryException {
+        setDefaultResourceProperties(node, mimeType, binary, null);
+    }
+
+    /**
+     * Set the default 'hippo:resource' properties:
+     * <ul>
+     *   <li>jcr:mimeType</li>
+     *   <li>jcr:data</li>
+     *   <li>jcr:lastModified</li>
+     *   <li>hippo:filename</li>
+     * </ul>
+     *
+     * @param node the {@link Node} on which to set the properties
+     * @param mimeType the mime-type of the binary data (e.g. <i>application/pdf</i>, <i>image/jpeg</i>)
+     * @param binary the binary data.
+     *
+     * @throws RepositoryException exception thrown when one of the properties or values could not be set
+     */
+    public static void setDefaultResourceProperties(final Node node, final String mimeType, final Binary binary, final String filename) throws RepositoryException {
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
         node.setProperty(JcrConstants.JCR_DATA, binary);
         node.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
+        if(StringUtils.isNotEmpty(filename)) {
+            node.setProperty(HippoNodeType.HIPPO_FILENAME, filename);
+        }
     }
 
     /**
