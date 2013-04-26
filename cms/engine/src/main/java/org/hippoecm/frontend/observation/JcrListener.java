@@ -164,34 +164,22 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             }
         }
 
-        addAncestorsToCache(stateCache);
+        addParentsToCache(stateCache);
     }
 
-    private void addAncestorsToCache(final Map<String, NodeState> stateCache) {
-        addAncestorsWithFilter(stateCache, false);
-    }
-
-    private void addUnmodifiedAncestorsToCache(final Map<String, NodeState> stateCache) {
-        addAncestorsWithFilter(stateCache, true);
-    }
-
-    private void addAncestorsWithFilter(final Map<String, NodeState> stateCache, boolean onlyModified) {
+    private void addParentsToCache(final Map<String, NodeState> stateCache) {
         if (session != null) {
             // prefetch fixed nodes into cache
-            if (getParents().size() > 0) {
-                for (String path : getParents()) {
-                    if (!stateCache.containsKey(path)) {
-                        try {
-                            if (session.itemExists(path)) {
-                                final Node node = (Node) session.getItem(path);
-                                if (!onlyModified || (!node.isNew() && !node.isModified())) {
-                                    NodeState state = new NodeState(node, true);
-                                    stateCache.put(path, state);
-                                }
-                            }
-                        } catch (RepositoryException ex) {
-                            log.warn("Failed to initialize node state", ex);
+            for (String path : getParents()) {
+                if (!stateCache.containsKey(path)) {
+                    try {
+                        if (session.itemExists(path)) {
+                            final Node node = (Node) session.getItem(path);
+                            NodeState state = new NodeState(node, true);
+                            stateCache.put(path, state);
                         }
+                    } catch (RepositoryException ex) {
+                        log.warn("Failed to initialize node state", ex);
                     }
                 }
             }
@@ -536,7 +524,7 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             }
         }
 
-        addUnmodifiedAncestorsToCache(dirty);
+        addParentsToCache(dirty);
     }
 
     private List<Event> getEvents(Map<String, NodeState> dirty) {
