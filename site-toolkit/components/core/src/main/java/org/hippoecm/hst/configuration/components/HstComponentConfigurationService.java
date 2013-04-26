@@ -160,6 +160,11 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * Default empty List.
      */
     private List<String> variants = Collections.emptyList();
+
+    /**
+     * containing all the variants for all the {@link HstComponentConfiguration} for the {@link HstComponentsConfiguration}
+     */
+    private List<String> mountVariants = Collections.emptyList();
     
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -388,8 +393,20 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return variants;
     }
 
- 
-	public String getLocalParameter(String name) {
+    public void setMountVariants(List<String> immutableMountVariants) {
+        this.mountVariants = immutableMountVariants;
+        // also for all descendants set the mountVariants
+        for (HstComponentConfigurationService child : orderedListConfigs) {
+            child.setMountVariants(immutableMountVariants);
+        }
+    }
+
+    @Override
+    public List<String> getMountVariants() {
+        return mountVariants;
+    }
+
+    public String getLocalParameter(String name) {
 		return localParameters.get(name);
 	}
 

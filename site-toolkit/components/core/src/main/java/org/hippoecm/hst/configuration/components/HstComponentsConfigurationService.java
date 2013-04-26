@@ -135,6 +135,17 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             ((HstComponentConfigurationService) child).populateVariants();
         }
 
+        Set<String> allMountVariants = new HashSet<String>();
+        for (HstComponentConfiguration child : childComponents) {
+            allMountVariants.addAll(child.getVariants());
+        }
+
+        for (HstComponentConfiguration child : childComponents) {
+            List<String> allVariants = new ArrayList<String>(allMountVariants);
+            ((HstComponentConfigurationService) child).setMountVariants(Collections.unmodifiableList(allVariants));
+        }
+
+
         for (HstComponentConfiguration child : childComponents) {
             ((HstComponentConfigurationService) child).populateIsCompositeCacheable();
         }

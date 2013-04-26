@@ -193,6 +193,13 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * descendant {@Link HstComponentConfiguration}s. If no variants are present, and EMPTY List is returned.
      */
     List<String> getVariants();
+
+    /**
+     * This method returns all {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameterPrefixes()} for
+     * the entire {@link org.hippoecm.hst.configuration.hosting.Mount} combined
+     * @return the List of all unique variants for this  {@link org.hippoecm.hst.configuration.hosting.Mount}. If no variants are present, and EMPTY List is returned.
+     */
+    List<String> getMountVariants();
     
     /**
      * see {@link #getParameter(String)}, but now only parameters directly present on the HstConfigurationItem are returned. Thus, 

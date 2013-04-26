@@ -58,6 +58,7 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private String asyncMode;
     private boolean compositeCacheable;
     private List<String> variants;
+    private List<String> mountVariants;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
@@ -292,6 +293,15 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     @Override
     public List<String> getVariants() {
         return variants;
+    }
+
+    public void setMountVariants(List<String> mountVariants) {
+        this.mountVariants = mountVariants;
+    }
+
+    @Override
+    public List<String> getMountVariants() {
+        return mountVariants;
     }
 
 }
