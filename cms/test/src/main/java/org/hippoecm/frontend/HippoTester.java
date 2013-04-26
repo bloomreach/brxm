@@ -265,7 +265,7 @@ public class HippoTester extends WicketTester {
 
         @Override
         public User getUser() throws ItemNotFoundException, RepositoryException {
-            return null;
+            throw new ItemNotFoundException();
         }
 
         public XAResource getXAResource() {
