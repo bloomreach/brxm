@@ -180,7 +180,7 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
 
                     try {
                         // do the evaluation
-                        eval(text + "\n//@ sourceURL=wicket-eval.js");
+                        eval.call(window, text + "\n//@ sourceURL=wicket-eval.js");
                         f(notify);
                     } catch (e1) {
                         Wicket.Log.error("Wicket.Ajax.Call.processEvaluation: Exception evaluating javascript: " + e1);
@@ -191,9 +191,9 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
                     // just evaluate the javascript
                     try {
                         // do the evaluation
-                        eval(text + "\n//@ sourceURL=wicket-eval.js");
+                        eval.call(window, text + "\n//@ sourceURL=wicket-eval.js");
                     } catch (e2) {
-                        Wicket.Log.error("Wicket.Ajax.Call.processEvaluation: Exception evaluating javascript: " + e2);
+                        Wicket.Log.error("Wicket.Ajax.Call.processEvaluation: Exception evaluating javascript: " + e2.stack);
                         Wicket.Log.error("Wicket.Ajax.Call.processEvaluation: Eval value: " + text);
                     }
                     // continue to next step
