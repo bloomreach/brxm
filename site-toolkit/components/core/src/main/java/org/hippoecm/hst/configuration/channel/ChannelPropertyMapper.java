@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.channel;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,6 +30,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.ValueFactory;
 import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.parameters.HstValueType;
@@ -55,6 +59,19 @@ public class ChannelPropertyMapper {
 
         if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE)) {
             channel.setType(channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE).getString());
+        }
+
+        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DEFAULT_DEVICE)) {
+            channel.setDefaultDevice(channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DEFAULT_DEVICE).getString());
+        }
+
+        if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES)) {
+            Value[] values = channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES).getValues();
+            List<String> devices = new ArrayList<String>(values.length);
+            for (Value value : values) {
+                devices.add(value.getString());
+            }
+            channel.setDevices(devices);
         }
 
         if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS)) {
@@ -85,17 +102,25 @@ public class ChannelPropertyMapper {
         return channel;
     }
 
+    private static void savePropertyOrRemoveIfNull(Node node, String propertyName, String value) throws RepositoryException {
+        if (value != null) {
+            node.setProperty(propertyName, value);
+        } else if (node.hasProperty(propertyName)) {
+            node.getProperty(propertyName).remove();
+        }
+    }
+
     public static void saveChannel(Node channelNode, Channel channel) throws RepositoryException {
-        if (channel.getName() != null) {
-            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME, channel.getName());
-        } else if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME)) {
-            channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_NAME).remove();
+        savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_NAME, channel.getName());
+        savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_TYPE, channel.getType());
+        savePropertyOrRemoveIfNull(channelNode, HstNodeTypes.CHANNEL_PROPERTY_DEFAULT_DEVICE, channel.getDefaultDevice());
+
+        if (channel.getDevices() != null) {
+            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES, channel.getDevices().toArray(new String[0]));
+        } else if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES)) {
+            channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_DEVICES).remove();
         }
-        if (channel.getType() != null) {
-            channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE, channel.getType());
-        } else if (channelNode.hasProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE)) {
-            channelNode.getProperty(HstNodeTypes.CHANNEL_PROPERTY_TYPE).remove();
-        }
+
         String channelInfoClassName = channel.getChannelInfoClassName();
         if (channelInfoClassName != null) {
             channelNode.setProperty(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_CLASS, channelInfoClassName);
