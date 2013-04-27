@@ -51,10 +51,10 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private HstComponentConfiguration hstComponentConfiguration;
     private HstComponentConfiguration portletHstComponentConfiguration;
     private String pathInfo;
-    boolean isComponentResolved;
-    
+    private PropertyParser pp;
+    private boolean isComponentResolved;
+
     public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedMount resolvedMount) {
-      
        this.pathInfo = PathUtils.normalizePath(pathInfo);
        this.hstSiteMapItem = hstSiteMapItem;
        this.resolvedMount = resolvedMount;
@@ -69,7 +69,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
        resolvedParameters.putAll(params);
        localResolvedParameters.putAll(params);
        
-       PropertyParser pp = new PropertyParser(params);
+       pp = new PropertyParser(params);
        
        for(Entry<String, String> entry : hstSiteMapItem.getParameters().entrySet()) {
            Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
@@ -175,20 +175,23 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
             }
 
             if (componentConfigurationId != null) {
-                this.hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(componentConfigurationId);
+                final String resolvedComponentConfigurationId = (String)pp.resolveProperty("componentConfigurationId", componentConfigurationId);
+                hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(resolvedComponentConfigurationId);
             }
 
             String portletComponentConfigurationId = hstSiteMapItem.getPortletComponentConfigurationId();
 
             if (portletComponentConfigurationId != null) {
-                this.portletHstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(portletComponentConfigurationId);
+                final String resolvedPortletComponentConfigurationId = (String)pp.resolveProperty("portletComponentConfigurationId", portletComponentConfigurationId);
+                this.portletHstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(resolvedPortletComponentConfigurationId);
             }
 
-            if (this.hstComponentConfiguration == null && this.portletHstComponentConfiguration == null) {
+            if (hstComponentConfiguration == null && this.portletHstComponentConfiguration == null) {
                 log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id cannot be found. {} or {}",
                         componentConfigurationId, portletComponentConfigurationId);
             }
         }
+
         isComponentResolved = true;
     }
 
