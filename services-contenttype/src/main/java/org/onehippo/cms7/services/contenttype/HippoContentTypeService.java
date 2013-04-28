@@ -17,14 +17,17 @@ package org.onehippo.cms7.services.contenttype;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
@@ -121,53 +124,37 @@ public class HippoContentTypeService implements ContentTypeService {
         return getAggregatedDocumentTypes().getDocumentTypesCache();
     }
 
-    //@Override
-    public DocumentType getDocumentType(String nodeTypeName) throws RepositoryException {
-        AggregatedDocumentTypesCache adtCache = getAggregatedDocumentTypes();
-        // TODO
-        return null;
-    }
-
-    //@Override
-    public DocumentType getDocumentType(String[] nodeTypeNames) throws RepositoryException {
-        // TODO
-        return null;
-    }
-
-    //@Override
+    @Override
     public DocumentType getDocumentType(Node node) throws RepositoryException {
-        // TODO
-        return  null;
+        AggregatedDocumentTypesCache adtCache = getAggregatedDocumentTypes();
+        DocumentType dt = null;
+        Set<String> names = new HashSet<String>();
+        names.add(node.getPrimaryNodeType().getName());
+        for (NodeType mixin : node.getMixinNodeTypes()) {
+            names.add(mixin.getName());
+        }
+        dt = getAggregatedDocumentType(names, adtCache);
+        return dt;
     }
 
-    //@Override
-    public DocumentType getDocumentType(Session session, String path) throws RepositoryException {
-        // TODO
-        return null;
-    }
-
-    //@Override
+    @Override
     public DocumentType getDocumentType(String uuid, Session session) throws RepositoryException {
-        // TODO
-        return null;
+        try {
+            return getDocumentType(session.getNodeByIdentifier(uuid));
+        }
+        catch (ItemNotFoundException inf) {
+            return null;
+        }
     }
 
-    //@Override
-    public Iterator<DocumentType> getDocumentTypes(Iterator<Node> nodes) throws RepositoryException {
-        // TODO
-        return null;
-    }
-
-    //@Override
-    public Iterator<DocumentType> getDocumentTypes(Session session, Iterator<String> paths) throws RepositoryException {
-        // TODO
-        return null;
-    }
-
-    //@Override
-    public Iterator<DocumentType> getDocumentTypes(Iterator<String> uuids, Session session) throws RepositoryException {
-        // TODO
-        return null;
+    @Override
+    public DocumentType getDocumentType(Session session, String path) throws RepositoryException {
+        try {
+            return getDocumentType(session.getNode(path));
+        }
+        catch (PathNotFoundException inf) {
+            return null;
+        }
     }
 
     private EffectiveNodeTypesCache loadEffectiveNodeTypes(Session session, boolean allowRetry) throws RepositoryException {
@@ -296,7 +283,7 @@ public class HippoContentTypeService implements ContentTypeService {
             // 1st pass: load shallow versions of all document types
             Map<String, Node> typeNodes = new HashMap<String, Node>();
 
-            Node namespacePrefixes = session.getNode("/" + HippoNodeType.NAMESPACES_PATH);
+            Node namespacePrefixes = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH);
             for (NodeIterator prefixIterator = namespacePrefixes.getNodes(); prefixIterator.hasNext(); ) {
                 Node namespacePrefix = prefixIterator.nextNode();
 
@@ -543,7 +530,7 @@ public class HippoContentTypeService implements ContentTypeService {
         }
 
         if (!dt.getSuperTypes().isEmpty()) {
-            DocumentTypeImpl sdt = getAggregatedDocumentType(dt.getSuperTypes(), types, adtCache);
+            DocumentTypeImpl sdt = getAggregatedDocumentType(dt.getSuperTypes(), adtCache);
             dt.merge(sdt, true);
         }
 
@@ -551,16 +538,24 @@ public class HippoContentTypeService implements ContentTypeService {
 
         if (!mixins.isEmpty()) {
             // we've got a document type with optional/extra mixin(s) specified as super type
-            // create an aggregated (default) variant
-            dt = new DocumentTypeImpl(dt);
-            dt.merge(getAggregatedDocumentType(mixins, types, adtCache), false);
-            dt = adtCache.put(dt);
+            // drop mixins which are already contained
+            for (Iterator<String> mixinIterator = mixins.iterator(); mixinIterator.hasNext(); ) {
+                if (dt.isDocumentType(mixinIterator.next())) {
+                    mixinIterator.remove();
+                }
+            }
+            if (!mixins.isEmpty()) {
+                // create an aggregated (default) variant
+                dt = new DocumentTypeImpl(dt);
+                dt.merge(getAggregatedDocumentType(mixins, adtCache), false);
+                dt = adtCache.put(dt);
+            }
         }
         // update dt in types map to be picked up during the recursive resolving
         types.put(name, dt);
     }
 
-    private DocumentTypeImpl getAggregatedDocumentType(Set<String> names, Map<String, DocumentTypeImpl> types, AggregatedDocumentTypesCache adtCache) {
+    private DocumentTypeImpl getAggregatedDocumentType(Set<String> names, AggregatedDocumentTypesCache adtCache) {
         if (names.size() == 1) {
             // must already be in adtCache
             return adtCache.get(names.iterator().next());

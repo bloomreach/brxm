@@ -169,11 +169,20 @@ public class HippoContentTypeServiceTest extends PluginTest {
             ntm.registerNodeType(ntt, true);
             EffectiveNodeTypes entCache2 = service.getEffectiveNodeTypes();
             if (entCache1.version() == entCache2.version()) {
-                fail("NodeTypeChangeListener doesn't work");
+                fail("EffectiveNodeTypes cache should have been reloaded.");
             }
             DocumentTypes dtCache2 = service.getDocumentTypes();
             if (dtCache1.version()==dtCache2.version()) {
-                fail("NodeTypeChangeListener doesn't work");
+                fail("DocumentTypes cache should have been reloaded.");
+            }
+            session.getRootNode().addNode("hippo:namespaces/test","hipposysedit:namespace");
+            session.save();
+            dtCache1 = service.getDocumentTypes();
+            if (dtCache1.version()==dtCache2.version()) {
+                fail("DocumentTypes cache should have been reloaded.");
+            }
+            if (dtCache1.getEffectiveNodeTypes().version() != dtCache2.getEffectiveNodeTypes().version()) {
+                fail("EffectiveNodeTypes cache should not have been reloaded.");
             }
         }
     }

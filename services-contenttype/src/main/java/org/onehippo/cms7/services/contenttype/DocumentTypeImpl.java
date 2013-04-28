@@ -99,20 +99,6 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         fields = Collections.unmodifiableMap(fields);
     }
 
-    public boolean contains(DocumentTypeImpl other) {
-        for (String s : other.superTypes) {
-            if (!isDocumentType(s)) {
-                return false;
-            }
-        }
-        for (String s : other.aggregatedTypes) {
-            if (!isDocumentType(s)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     @Override
     public long version() {
         return version;
@@ -217,8 +203,22 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         return fields;
     }
 
+    public boolean contains(DocumentTypeImpl other) {
+        for (String s : other.superTypes) {
+            if (!isDocumentType(s)) {
+                return false;
+            }
+        }
+        for (String s : other.aggregatedTypes) {
+            if (!isDocumentType(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public boolean merge(DocumentTypeImpl other, boolean superType) {
-        if (!ent.merge(other.getEffectiveNodeType(), superType) && !contains(other)) {
+        if (!ent.merge(other.getEffectiveNodeType(), superType) && contains(other)) {
             return false;
         }
 
