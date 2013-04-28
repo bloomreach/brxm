@@ -16,7 +16,9 @@
 
 package org.onehippo.cms7.services.contenttype;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.onehippo.cms7.services.SingletonService;
 
@@ -25,6 +27,7 @@ import org.onehippo.cms7.services.SingletonService;
  * <ul>
  *     <li>A lightweight and immutable representation of the current and aggregated or effective JCR Repository NodeType definitions</li>
  *     <li>A lightweight and immutable representation of the current DocumentType definitions</li>
+ *     <li>A effective DocumentType representation for an specific Node or a Node identified by its uuid or absolute path</li>
  * </ul>
  *
  */
@@ -40,4 +43,36 @@ public interface ContentTypeService {
      * @return A lightweight and immutable representation of the current DocumentType definitions.
      */
     DocumentTypes getDocumentTypes() throws RepositoryException;
+
+    /**
+     * Returns the effective DocumentType representation for a specific Node
+     * @param node The Node for which to retrieve the DocumentType representation
+     * @return the effective DocumentType representation for a specific Node
+     * @throws RepositoryException
+     */
+    DocumentType getDocumentType(Node node) throws RepositoryException;
+
+    /**
+     * Returns the effective DocumentType representation for an existing Node identified by its uuid
+     * <p>
+     * The existence and allowed read access to the Node is first checked through the provided Session.
+     * </p>
+     * @param uuid An existing Node uuid
+     * @param session An active repository Session
+     * @return the effective DocumentType representation for an existing Node identified by its uuid; returns null if node doesn't exist or is not accessible
+     * @throws RepositoryException
+     */
+    DocumentType getDocumentType(String uuid, Session session) throws RepositoryException;
+
+    /**
+     * Returns the effective DocumentType representation for an existing Node identified by its absolute path
+     * <p>
+     * The existence and allowed read access to the Node is first checked through the provided Session.
+     * </p>
+     * @param session An active repository Session
+     * @param path The absolute path of an existing Node
+     * @return the effective DocumentType representation for an existing Node identified by its absolute path; returns null if node doesn't exist or is not accessible
+     * @throws RepositoryException
+     */
+    DocumentType getDocumentType(Session session, String path) throws RepositoryException;
 }

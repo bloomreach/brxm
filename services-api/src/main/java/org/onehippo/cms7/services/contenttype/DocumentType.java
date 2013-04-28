@@ -22,6 +22,18 @@ import java.util.Set;
 /**
  * An immutable Hippo Document Type representation providing a more relaxed and enhanced form of an {@link EffectiveNodeType}
  * exposing only non-residual and non-duplicate named {@link DocumentTypeField} elements (of both Child Node and Property type) and with additional meta-data describing these Fields.
+ * <p>
+ * A DocumentType is always backed by an underlying EffectiveNodeType, and for all EffectiveNodeTypes an DocumentType is provided.
+ * EffectiveNodeTypes which do not have a corresponding DocumentType pre-defined, a DocumentType definition is automatically derived, see {@link #isDerivedType()}.
+ * </p>
+ * <p>
+ * Some pre-defined DocumentTypes may represent an aggregate ({@link #isAggregate()}) which means that the DocumentType also combines one or more mixin types, besides possibly having superTypes as well.
+ * This can happen when a pre-defined DocumentType is enhanced with one or more mixins after its initial definition, as well as its underlying JCR NodeType definition was created,
+ * Currently the Jackrabbit JCR repository doesn't support adding extra mixins to an existing NodeType definition, thus for DocumentTypes these must be aggregated separately.
+ * </p>
+ * <p>
+ * DocumentType definitions representing existing the EffectiveNodeType of an JCR Node instance can also be an aggregate if the Node instance has additional mixins besides its primary NodeType.
+ * </p>
  */
 public interface DocumentType {
 
