@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Set;
 
 import javax.jcr.RepositoryException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -218,6 +220,38 @@ public class ContentTypesResource extends AbstractResource {
             }
             if (result != null) {
                 return result;
+            }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        } catch (RepositoryException e) {
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
+        }
+    }
+
+    @GET
+    @Path("/uuid/{uuid}")
+    public DocumentType listDocumentTypeForUuid(@Context HttpServletRequest servletRequest, @PathParam("uuid") String uuid) {
+
+        ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
+        try {
+            DocumentType dt = service.getDocumentType(uuid, getRequestContext(servletRequest).getSession());
+            if (dt != null) {
+                return dt;
+            }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        } catch (RepositoryException e) {
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
+        }
+    }
+
+    @GET
+    @Path("/path/{path:.+}")
+    public DocumentType listDocumentTypeForPath(@Context HttpServletRequest servletRequest, @PathParam("path") String path) {
+
+        ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
+        try {
+            DocumentType dt = service.getDocumentType(getRequestContext(servletRequest).getSession(), "/"+path);
+            if (dt != null) {
+                return dt;
             }
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RepositoryException e) {
