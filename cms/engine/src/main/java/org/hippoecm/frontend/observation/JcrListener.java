@@ -173,8 +173,8 @@ class JcrListener extends WeakReference<EventListener> implements SynchronousEve
             for (String path : getParents()) {
                 if (!stateCache.containsKey(path)) {
                     try {
-                        if (session.itemExists(path)) {
-                            final Node node = (Node) session.getItem(path);
+                        if (session.nodeExists(path)) {
+                            final Node node = session.getNode(path);
                             NodeState state = new NodeState(node, true);
                             stateCache.put(path, state);
                         }
