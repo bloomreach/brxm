@@ -57,7 +57,14 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
                 if (!model.getNode().isSame(first)) {
                     if (first.hasNode(key)) {
                         clusterNode = first.getNode(key);
+                    } else {
+                        log.warn("Expected node of type " + FrontendNodeType.NT_PLUGINCLUSTER + " and name '" + key
+                                + "' at " + model.getNode().getPath() + "/" + key
+                                + ", or at fallback location " + first.getPath() + "/" + key);
                     }
+                } else {
+                    log.warn("Expected node of type " + FrontendNodeType.NT_PLUGINCLUSTER + " and name '" + key
+                            + "' at " + model.getNode().getPath() + "/" + key);
                 }
             }
             if (clusterNode != null) {
