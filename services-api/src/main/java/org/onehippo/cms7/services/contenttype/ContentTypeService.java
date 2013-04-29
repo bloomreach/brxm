@@ -16,7 +16,9 @@
 
 package org.onehippo.cms7.services.contenttype;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -36,11 +38,13 @@ public interface ContentTypeService {
 
     /**
      * @return A lightweight and immutable representation of the current and aggregated or effective JCR Repository NodeType definitions
+     * @throws RepositoryException if a repository error occurs
      */
     EffectiveNodeTypes getEffectiveNodeTypes() throws RepositoryException;
 
     /**
      * @return A lightweight and immutable representation of the current DocumentType definitions.
+     * @throws RepositoryException if a repository error occurs
      */
     DocumentTypes getDocumentTypes() throws RepositoryException;
 
@@ -48,7 +52,7 @@ public interface ContentTypeService {
      * Returns the effective DocumentType representation for a specific Node
      * @param node The Node for which to retrieve the DocumentType representation
      * @return the effective DocumentType representation for a specific Node
-     * @throws RepositoryException
+     * @throws RepositoryException if a repository error occurs
      */
     DocumentType getDocumentType(Node node) throws RepositoryException;
 
@@ -59,10 +63,11 @@ public interface ContentTypeService {
      * </p>
      * @param uuid An existing Node uuid
      * @param session An active repository Session
-     * @return the effective DocumentType representation for an existing Node identified by its uuid; returns null if node doesn't exist or is not accessible
-     * @throws RepositoryException
+     * @return the effective DocumentType representation for an existing Node identified by its uuid
+     * @throws ItemNotFoundException if node doesn't exist or is not accessible
+     * @throws RepositoryException if another error occurs
      */
-    DocumentType getDocumentType(String uuid, Session session) throws RepositoryException;
+    DocumentType getDocumentType(String uuid, Session session) throws ItemNotFoundException, RepositoryException;
 
     /**
      * Returns the effective DocumentType representation for an existing Node identified by its absolute path
@@ -71,8 +76,9 @@ public interface ContentTypeService {
      * </p>
      * @param session An active repository Session
      * @param path The absolute path of an existing Node
-     * @return the effective DocumentType representation for an existing Node identified by its absolute path; returns null if node doesn't exist or is not accessible
-     * @throws RepositoryException
+     * @return the effective DocumentType representation for an existing Node identified by its absolute path
+     * @throws PathNotFoundException if node doesn't exist or is not accessible
+     * @throws RepositoryException if a repository error occurs
      */
-    DocumentType getDocumentType(Session session, String path) throws RepositoryException;
+    DocumentType getDocumentType(Session session, String path) throws PathNotFoundException, RepositoryException;
 }

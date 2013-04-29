@@ -16,6 +16,7 @@
 package org.onehippo.cms7.services;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -51,6 +52,9 @@ public final class HippoServiceRegistry {
                     Thread.currentThread().setContextClassLoader(classLoader);
                     try {
                         return method.invoke(service, args);
+                    }
+                    catch (InvocationTargetException ite) {
+                        throw ite.getTargetException();
                     } finally {
                         Thread.currentThread().setContextClassLoader(currentContextClassLoader);
                     }
