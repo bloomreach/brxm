@@ -123,7 +123,7 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
                 } catch (JSONException e) {
                     throw new WicketRuntimeException("Invalid JSON parameters", e);
                 } catch (ChannelNotFoundException e) {
-                    throw new RuntimeException(e.getMessage(), e);
+                    throw new WicketRuntimeException(e.getMessage(), e);
                 }
             }
 

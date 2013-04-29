@@ -43,15 +43,11 @@ public class StyleableTemplateDeviceModel extends SimpleStylableDeviceModel {
     public StyleableTemplateDeviceModel(final IPluginConfig config) {
         super(config);
         for (Map.Entry<String, Object> entry : config.entrySet()) {
-            templatedProperties.put(entry.getKey(), revolveBinaryOrOrdinayTemplateString(entry.getKey(), entry.getValue()));
+            templatedProperties.put(entry.getKey(), process(entry.getValue()));
         }
-        templatedProperties.put("request.url", getRequestURL());
+        //templatedProperties.put("request.url", getRequestURL());
     }
 
-
-    public String revolveBinaryOrOrdinayTemplateString(String key, Object value) {
-        return key.startsWith("binary.") ? getBinaryUrl(process(value)) : process(value);
-    }
 
     @Override
     public String getStyle() {
@@ -72,9 +68,6 @@ public class StyleableTemplateDeviceModel extends SimpleStylableDeviceModel {
     }
 
     protected String process(final Object style) {
-        if (style instanceof String) {
-            return process((String) style, convertEntrySetToMap(config.entrySet()));
-        }
         return process(String.valueOf(style), convertEntrySetToMap(config.entrySet()));
     }
 
@@ -97,26 +90,8 @@ public class StyleableTemplateDeviceModel extends SimpleStylableDeviceModel {
         return map;
     }
 
-    protected String getBinaryUrl(final String absRepoPath) {
-        if (StringUtils.isEmpty(absRepoPath)) {
-            return null;
-        }
-        RequestCycle requestCycle = RequestCycle.get();
-        if (requestCycle != null) {
-            javax.jcr.Session session = ((UserSession) requestCycle.getSession()).getJcrSession();
-            try {
-                if (session.nodeExists(absRepoPath)) {
-                    String url = encodeUrl("binaries" + absRepoPath);
-                    return requestCycle.getResponse().encodeURL(url).toString();
-                }
-            } catch (RepositoryException repositoryException) {
-                log.error("Error getting the channel icon resource url.", repositoryException);
-            }
-        }
-        return null;
-    }
-
-    protected String getRequestURL() {
+    /*
+    private String getRequestURL() {
         try {
             return ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getRequestURL().toString();
         } catch (Exception e) {
@@ -124,18 +99,5 @@ public class StyleableTemplateDeviceModel extends SimpleStylableDeviceModel {
         }
         return null;
     }
-
-    private String encodeUrl(String path) {
-        String[] elements = StringUtils.split(path, '/');
-        for (int i = 0; i < elements.length; i++) {
-            elements[i] = WicketURLEncoder.PATH_INSTANCE.encode(elements[i], "UTF-8");
-        }
-        return StringUtils.join(elements, '/');
-    }
-
-    public void add(String key, Object value) {
-        templatedProperties.put(key, value);
-    }
-
-
+    */
 }

@@ -277,14 +277,8 @@ limitations under the License.
         <sv:property sv:name="background.width" sv:type="String">
           <sv:value>739</sv:value>
         </sv:property>
-        <sv:property sv:name="binary.background" sv:type="String">
-          <sv:value>/devices/${image.location}.png/${image.location}.png/hippogallery:original</sv:value>
-        </sv:property>
-        <sv:property sv:name="cms.location" sv:type="String">
-          <sv:value>http://localhost:8080/cms/</sv:value>
-        </sv:property>
         <sv:property sv:name="image.location" sv:type="String">
-          <sv:value>iphone-landscape</sv:value>
+          <sv:value>images/iphone_landscape.png</sv:value>
         </sv:property>
         <sv:property sv:name="scale.factor" sv:type="String">
           <sv:value>0.9</sv:value>
@@ -324,7 +318,7 @@ limitations under the License.
           <sv:value>48</sv:value>
         </sv:property>
         <sv:property sv:name="wrapstyle" sv:type="String">
-          <sv:value>background: url('${cms.location}${binary.background}') 0 0 no-repeat;
+          <sv:value>background: url('${image.location}') 0 0 no-repeat;
             width: ${background.width}px;
             height: ${background.height}px;
             background-position: 0px 0px;
@@ -344,14 +338,8 @@ limitations under the License.
         <sv:property sv:name="background.width" sv:type="String">
           <sv:value>380</sv:value>
         </sv:property>
-        <sv:property sv:name="binary.background" sv:type="String">
-          <sv:value>/devices/${image.location}.png/${image.location}.png/hippogallery:original</sv:value>
-        </sv:property>
-        <sv:property sv:name="cms.location" sv:type="String">
-          <sv:value>http://localhost:8080/cms/</sv:value>
-        </sv:property>
         <sv:property sv:name="image.location" sv:type="String">
-          <sv:value>iphone-portrait</sv:value>
+          <sv:value>images/iphone_portrait.png</sv:value>
         </sv:property>
         <sv:property sv:name="scale.factor" sv:type="String">
           <sv:value>0.75</sv:value>
@@ -391,7 +379,7 @@ limitations under the License.
           <sv:value>153</sv:value>
         </sv:property>
         <sv:property sv:name="wrapstyle" sv:type="String">
-          <sv:value>background: url('${cms.location}${binary.background}') 0 0 no-repeat;
+          <sv:value>background: url('${image.location}') 0 0 no-repeat;
             width: ${background.width}px;
             height: ${background.height}px;
             background-position: 0px 0px;
@@ -411,14 +399,8 @@ limitations under the License.
         <sv:property sv:name="background.width" sv:type="String">
           <sv:value>1276</sv:value>
         </sv:property>
-        <sv:property sv:name="binary.background" sv:type="String">
-          <sv:value>/devices/${image.location}.png/${image.location}.png/hippogallery:original</sv:value>
-        </sv:property>
-        <sv:property sv:name="cms.location" sv:type="String">
-          <sv:value>http://localhost:8080/cms/</sv:value>
-        </sv:property>
         <sv:property sv:name="image.location" sv:type="String">
-          <sv:value>ipad-landscape</sv:value>
+          <sv:value>images/ipad_landscape.png</sv:value>
         </sv:property>
         <sv:property sv:name="scale.factor" sv:type="String">
           <sv:value>1.5</sv:value>
@@ -458,7 +440,7 @@ limitations under the License.
           <sv:value>115</sv:value>
         </sv:property>
         <sv:property sv:name="wrapstyle" sv:type="String">
-          <sv:value>background: url('${cms.location}${binary.background}') 0 0 no-repeat;
+          <sv:value>background: url('${image.location}') 0 0 no-repeat;
             width: ${background.width}px;
             height: ${background.height}px;
             background-position: 0px 0px;
@@ -478,14 +460,8 @@ limitations under the License.
         <sv:property sv:name="background.width" sv:type="String">
           <sv:value>996</sv:value>
         </sv:property>
-        <sv:property sv:name="binary.background" sv:type="String">
-          <sv:value>/devices/${image.location}.png/${image.location}.png/hippogallery:original</sv:value>
-        </sv:property>
-        <sv:property sv:name="cms.location" sv:type="String">
-          <sv:value>http://localhost:8080/cms/</sv:value>
-        </sv:property>
         <sv:property sv:name="image.location" sv:type="String">
-          <sv:value>ipad-portrait</sv:value>
+          <sv:value>images/ipad_portrait.png</sv:value>
         </sv:property>
         <sv:property sv:name="scale.factor" sv:type="String">
           <sv:value>1.5</sv:value>
@@ -525,7 +501,7 @@ limitations under the License.
           <sv:value>127</sv:value>
         </sv:property>
         <sv:property sv:name="wrapstyle" sv:type="String">
-          <sv:value>background: url('${cms.location}${binary.background}') 0 0 no-repeat;
+          <sv:value>background: url('${image.location}') 0 0 no-repeat;
             width: ${background.width}px;
             height: ${background.height}px;
             background-position: 0px 0px;

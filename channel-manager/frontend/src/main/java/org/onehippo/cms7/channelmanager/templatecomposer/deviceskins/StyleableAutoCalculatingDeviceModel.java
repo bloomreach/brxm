@@ -59,7 +59,7 @@ public class StyleableAutoCalculatingDeviceModel extends StyleableTemplateDevice
             "transform-origin: top left;";
 
     public final static String wrapTemplate = "" +
-            "background: url('${binary.background}') 0 0 no-repeat; \n" +
+            "background: url('${image.location}') 0 0 no-repeat; \n" +
             "width: ${background.width}px ;\n" +
             "height:${background.height}px ;\n" +
             "background-position: 0px 0px;\n" +
@@ -78,17 +78,17 @@ public class StyleableAutoCalculatingDeviceModel extends StyleableTemplateDevice
         viewPortWidth = config.getInt(VIEWPORT_WIDTH);
         viewPortHeight = config.getInt(VIEWPORT_HEIGHT);
         scaleFactor = config.getDouble(SCALE_FACTOR);
+
+        int cw = (int) Math.floor(viewPortWidth / scaleFactor);
+        int ch = (int) Math.floor(viewPortHeight / scaleFactor);
+        templatedProperties.put(CALC_WIDTH, cw);
+        templatedProperties.put(CALC_HEIGHT, ch);
+
     }
 
     @Override
     public String getStyle() {
         final String superStyle = super.getStyle();
-
-        int cw = (int) Math.floor(viewPortWidth / scaleFactor);
-        int ch = (int) Math.floor(viewPortHeight / scaleFactor);
-
-        add(CALC_WIDTH, cw);
-        add(CALC_HEIGHT, ch);
 
         if (StringUtils.isEmpty(superStyle)) {
             return process(styleTemplate);

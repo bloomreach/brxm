@@ -139,6 +139,10 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/compone
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component-toolbar-arrow-right.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/component.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/components.png -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/images/ipad_landscape.png -text svneol=unset#image/png
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/images/ipad_portrait.png -text svneol=unset#image/png
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/images/iphone_landscape.png -text svneol=unset#image/png
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/deviceskins/images/iphone_portrait.png -text svneol=unset#image/png
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/expand.png -text svneol=unset#image/png
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/gear.png -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/iframe/IFrameBundle.java -text
