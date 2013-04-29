@@ -28,6 +28,7 @@
 
   <name>Hippo CMS7 Services - eventbus</name>
   <artifactId>hippo-services-eventbus</artifactId>
+  <version>1.03.00-SNAPSHOT</version>
 
   <inceptionYear>2012</inceptionYear>
 
