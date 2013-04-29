@@ -54,7 +54,7 @@ public final class HippoServiceRegistry {
                         return method.invoke(service, args);
                     }
                     catch (InvocationTargetException ite) {
-                        throw ite.getTargetException();
+                        throw (ite.getCause() != null) ? ite.getCause() : ite;
                     } finally {
                         Thread.currentThread().setContextClassLoader(currentContextClassLoader);
                     }
