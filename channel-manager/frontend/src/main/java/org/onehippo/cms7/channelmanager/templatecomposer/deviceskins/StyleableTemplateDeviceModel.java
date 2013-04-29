@@ -19,22 +19,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jcr.RepositoryException;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.protocol.http.WebRequest;
-import org.apache.wicket.protocol.http.WicketURLEncoder;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @version "$Id$"
  */
-public class StyleableTemplateDeviceModel extends SimpleStylableDeviceModel {
+public class StyleableTemplateDeviceModel extends SimpleStyleableDeviceModel {
 
     private static Logger log = LoggerFactory.getLogger(StyleableTemplateDeviceModel.class);
 
@@ -43,61 +36,23 @@ public class StyleableTemplateDeviceModel extends SimpleStylableDeviceModel {
     public StyleableTemplateDeviceModel(final IPluginConfig config) {
         super(config);
         for (Map.Entry<String, Object> entry : config.entrySet()) {
-            templatedProperties.put(entry.getKey(), process(entry.getValue()));
+            templatedProperties.put(entry.getKey(), entry.getValue());
         }
-        //templatedProperties.put("request.url", getRequestURL());
     }
-
 
     @Override
     public String getStyle() {
-        final String style = super.getStyle();
-        if (style != null) {
-            return process(style);
-        }
-        return style;
+        return process(super.getStyle());
     }
 
     @Override
     public String getWrapStyle() {
-        final String wrapStyle = super.getWrapStyle();
-        if (wrapStyle != null) {
-            return process(wrapStyle);
-        }
-        return wrapStyle;
+        return process(super.getWrapStyle());
     }
 
-    protected String process(final Object style) {
-        return process(String.valueOf(style), convertEntrySetToMap(config.entrySet()));
+    protected final String process(final String style) {
+        if (style == null) return null;
+        return MapVariableInterpolator.interpolate(style, templatedProperties);
     }
 
-    protected String process(final String style, final Map<String, Object> values) {
-        MapVariableInterpolator mapVariableInterpolator = new MapVariableInterpolator(style,
-                values);
-        return mapVariableInterpolator.toString();
-    }
-
-
-    protected String process(final String style) {
-        return process(style, templatedProperties);
-    }
-
-    protected Map<String, Object> convertEntrySetToMap(Set<Map.Entry<String, Object>> set) {
-        Map<String, Object> map = new HashMap<String, Object>();
-        for (Map.Entry<String, Object> entry : set) {
-            map.put(entry.getKey(), entry.getValue());
-        }
-        return map;
-    }
-
-    /*
-    private String getRequestURL() {
-        try {
-            return ((WebRequest) RequestCycle.get().getRequest()).getHttpServletRequest().getRequestURL().toString();
-        } catch (Exception e) {
-            log.error("error while trying to retrieve the request URL needed for the images", e);
-        }
-        return null;
-    }
-    */
 }

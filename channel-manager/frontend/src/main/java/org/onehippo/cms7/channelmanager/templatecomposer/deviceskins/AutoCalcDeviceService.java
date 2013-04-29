@@ -45,7 +45,7 @@ public class AutoCalcDeviceService extends DefaultDeviceService {
             case 3:
                 return new StyleableAutoCalculatingDeviceModel(config);
         }
-        return new SimpleStylableDeviceModel(config);
+        return new SimpleStyleableDeviceModel(config);
     }
 
 

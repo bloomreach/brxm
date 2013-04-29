@@ -24,14 +24,14 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public class SimpleStylableDeviceModel implements StyleableDevice, Serializable {
+public class SimpleStyleableDeviceModel implements StyleableDevice, Serializable {
 
-    private static Logger log = LoggerFactory.getLogger(SimpleStylableDeviceModel.class);
+    private static Logger log = LoggerFactory.getLogger(SimpleStyleableDeviceModel.class);
 
     protected final IPluginConfig config;
     private String name;
 
-    public SimpleStylableDeviceModel(final IPluginConfig config) {
+    public SimpleStyleableDeviceModel(final IPluginConfig config) {
         this.config = config;
     }
 
@@ -45,8 +45,8 @@ public class SimpleStylableDeviceModel implements StyleableDevice, Serializable 
     }
 
     public String getName() {
-        final String configName = config.getName();
         if (name == null) {
+            final String configName = config.getName();
             name = configName.substring(configName.lastIndexOf('.') + 1);
         }
         return name;

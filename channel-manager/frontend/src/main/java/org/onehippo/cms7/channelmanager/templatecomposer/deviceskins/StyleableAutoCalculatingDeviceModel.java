@@ -89,11 +89,10 @@ public class StyleableAutoCalculatingDeviceModel extends StyleableTemplateDevice
     @Override
     public String getStyle() {
         final String superStyle = super.getStyle();
-
         if (StringUtils.isEmpty(superStyle)) {
             return process(styleTemplate);
         }
-        return process(superStyle);
+        return superStyle;
     }
 
     @Override
@@ -102,7 +101,7 @@ public class StyleableAutoCalculatingDeviceModel extends StyleableTemplateDevice
         if(StringUtils.isEmpty(superWrapStyle)){
             return process(wrapTemplate);
         }
-        return process(superWrapStyle);
+        return superWrapStyle;
     }
 
     private boolean containsKeys(final IPluginConfig config, String... keys) {
