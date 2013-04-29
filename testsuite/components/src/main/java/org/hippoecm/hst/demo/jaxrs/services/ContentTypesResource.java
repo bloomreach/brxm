@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.jcr.ItemNotFoundException;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -233,10 +235,8 @@ public class ContentTypesResource extends AbstractResource {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            DocumentType dt = service.getDocumentType(uuid, getRequestContext(servletRequest).getSession());
-            if (dt != null) {
-                return dt;
-            }
+            return service.getDocumentType(uuid, getRequestContext(servletRequest).getSession());
+        } catch (ItemNotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RepositoryException e) {
             throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
@@ -249,10 +249,8 @@ public class ContentTypesResource extends AbstractResource {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            DocumentType dt = service.getDocumentType(getRequestContext(servletRequest).getSession(), "/"+path);
-            if (dt != null) {
-                return dt;
-            }
+            return service.getDocumentType(getRequestContext(servletRequest).getSession(), "/"+path);
+        } catch (PathNotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RepositoryException e) {
             throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
