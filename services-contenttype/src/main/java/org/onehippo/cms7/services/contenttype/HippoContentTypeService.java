@@ -24,10 +24,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
 import javax.jcr.PropertyType;
@@ -139,22 +137,12 @@ public class HippoContentTypeService implements ContentTypeService {
 
     @Override
     public DocumentType getDocumentType(String uuid, Session session) throws RepositoryException {
-        try {
-            return getDocumentType(session.getNodeByIdentifier(uuid));
-        }
-        catch (ItemNotFoundException inf) {
-            return null;
-        }
+        return getDocumentType(session.getNodeByIdentifier(uuid));
     }
 
     @Override
     public DocumentType getDocumentType(Session session, String path) throws RepositoryException {
-        try {
-            return getDocumentType(session.getNode(path));
-        }
-        catch (PathNotFoundException inf) {
-            return null;
-        }
+        return getDocumentType(session.getNode(path));
     }
 
     private EffectiveNodeTypesCache loadEffectiveNodeTypes(Session session, boolean allowRetry) throws RepositoryException {
