@@ -16,6 +16,7 @@
 package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,8 @@ import org.onehippo.cms7.channelmanager.templatecomposer.ToolbarPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
+import org.wicketstuff.js.ext.data.ExtArrayStore;
+import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtStore;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtEventListener;
@@ -59,7 +62,7 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
     private static Logger log = LoggerFactory.getLogger(DeviceManager.class);
 
     protected static final String DEVICE_MANAGER_JS = "DeviceManager.js";
-    protected static final String SERVICE_ID = "device.service.id";
+    protected static final String SERVICE_ID = "deviceskins.service.id";
 
     private final ExtStore store;
     private final ChannelStore channelStore;
@@ -123,7 +126,7 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
 
         });
         addHeadContribution();
-        this.store = service.getStore();
+        this.store = new ExtArrayStore<StyleableDevice>(Arrays.asList(new ExtDataField("name"), new ExtDataField("id")),service.getStylables());
     }
 
     /**
@@ -148,7 +151,7 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
     /**
      * @return Retrieving the appropriate styles for each device.
      */
-    public String getCssStyle() {
+    private String getCssStyle() {
         final CSSUtil util = new CSSUtil();
         for (StyleableDevice styleable : service.getStylables()) {
             CSSRule wraprule = new CSSRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", styleable.getId()));
@@ -183,7 +186,7 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
         properties.put("deviceStore", new JSONIdentifier(this.store.getJsObjectId()));
     }
 
-    private class CSSUtil {
+    private static class CSSUtil {
         List<CSSRule> cssRules = new ArrayList<CSSRule>();
         private static final String loopTemplate = "%s\n";
 
@@ -200,7 +203,7 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
         }
     }
 
-    private class CSSRule {
+    private static class CSSRule {
 
         private String selector;
         private String declarationsString;

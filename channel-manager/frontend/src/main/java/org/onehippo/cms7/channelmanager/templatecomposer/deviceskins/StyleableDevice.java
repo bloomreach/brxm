@@ -15,12 +15,14 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
+import java.io.Serializable;
+
 /**
  * The basic model interface for the device manager
  *
  * @version "$Id$"
  */
-public interface StyleableDevice {
+public interface StyleableDevice extends Serializable {
 
     /**
      * @return The CSS style for the iframe

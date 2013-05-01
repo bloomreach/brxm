@@ -15,12 +15,17 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
+import java.util.List;
+
 import org.apache.wicket.IClusterable;
 
 /**
  * @version "$Id$"
  */
-public interface DeviceService extends IClusterable, DeviceStorage {
-
+public interface DeviceService extends IClusterable {
+    /**
+     * @return List of Stylable objects used for the CSS util.
+     */
+    public List<StyleableDevice> getStylables();
 
 }
