@@ -35,11 +35,6 @@ public interface DocumentTypeField {
     String getName();
 
     /**
-     * @return A descriptive name for this Item, e.g. usable as label within an editor
-     */
-    String getCaption();
-
-    /**
      * @return The DocumentType name which defines this field, which not necessarily is the same as the containing DocumentType.
      * @see javax.jcr.nodetype.ItemDefinition#getDeclaringNodeType()
      */
