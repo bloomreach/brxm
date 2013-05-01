@@ -588,9 +588,6 @@ public class HippoContentTypeService implements ContentTypeService {
                 // TODO: this doesn't work anyway as df.getName() is based on the path property of the hipposysedit:field node, not its name (the latter is 'lost' when arriving here)
                 if (editorTemplate.hasNode(df.getName())) {
                     Node fieldEditor = editorTemplate.getNode(df.getName());
-                    if (fieldEditor.hasProperty("caption")) {
-                        df.setCaption(fieldEditor.getProperty("caption").getString());
-                    }
                     if (fieldEditor.hasNode("cluster.options")) {
                         Node clusterOptions = fieldEditor.getNode("cluster.options");
                         for (PropertyIterator pi = clusterOptions.getProperties(); pi.hasNext(); ) {

@@ -13,7 +13,6 @@
     "test:title" : {
       "definingType" : "test:test",
       "name" : "test:title",
-      "caption" : null,
       "propertyField" : true,
       "derivedField" : false,
       "fieldType" : "String",
@@ -45,7 +44,6 @@
     "test:child" : {
       "definingType" : "test:test",
       "name" : "test:child",
-      "caption" : null,
       "propertyField" : false,
       "derivedField" : false,
       "fieldType" : "nt:unstructured",
@@ -76,7 +74,6 @@
     "test:extraField" : {
       "definingType" : "test:test",
       "name" : "test:extraField",
-      "caption" : null,
       "propertyField" : true,
       "derivedField" : false,
       "fieldType" : "String",
@@ -106,9 +103,8 @@
       }
     },
     "jcr:mixinTypes" : {
-      "definingType" : "hippostd:relaxed,test:test",
+      "definingType" : "nt:base",
       "name" : "jcr:mixinTypes",
-      "caption" : null,
       "propertyField" : true,
       "derivedField" : true,
       "fieldType" : "Name",
@@ -138,9 +134,8 @@
       }
     },
     "jcr:primaryType" : {
-      "definingType" : "hippostd:relaxed,test:test",
+      "definingType" : "nt:base",
       "name" : "jcr:primaryType",
-      "caption" : null,
       "propertyField" : true,
       "derivedField" : true,
       "fieldType" : "Name",

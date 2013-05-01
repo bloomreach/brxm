@@ -300,7 +300,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                 DocumentTypeFieldImpl dft = (DocumentTypeFieldImpl)fields.get(entry.getKey());
                 if (dft == null) {
                     // create new derived field
-                    dft = new DocumentTypeFieldImpl(getName(), ent.getProperties().get(entry.getKey()).get(0));
+                    dft = new DocumentTypeFieldImpl(entry.getValue().get(0));
                     fields.put(entry.getKey(), dft);
                     if (ent.getProperties().get(entry.getKey()).size() > 1) {
                         log.warn("Effective NodeType {} defines multiple properties named {} without corresponding field in Document Type {}. "
@@ -384,7 +384,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                 if (dft == null) {
                     if (!ignoredFields.contains(entry.getKey())) {
                         // create derived field
-                        dft = new DocumentTypeFieldImpl(getName(), entry.getValue().get(0));
+                        dft = new DocumentTypeFieldImpl(entry.getValue().get(0));
                         fields.put(entry.getKey(), dft);
                         if (ent.getChildren().get(entry.getKey()).size() > 1) {
                             log.warn("Effective NodeType {} defines multiple child nodes named {} without corresponding field in Document Type {}. "

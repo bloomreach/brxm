@@ -27,7 +27,6 @@ public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField
     private final String definingType;
     private final String name;
     private EffectiveNodeTypeItem nti;
-    private String caption;
     private final boolean propertyField;
     private boolean derivedField;
     private final String fieldType;
@@ -66,8 +65,8 @@ public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField
         this.propertyField = false;
     }
 
-    public DocumentTypeFieldImpl(String definingType, EffectiveNodeTypeProperty property) {
-        this.definingType = definingType;
+    public DocumentTypeFieldImpl(EffectiveNodeTypeProperty property) {
+        this.definingType = property.getDefiningType();
         this.nti = property;
         this.primaryField = false;
         this.propertyField = true;
@@ -82,8 +81,8 @@ public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField
         this.ordered = false;
     }
 
-    public DocumentTypeFieldImpl(String definingType, EffectiveNodeTypeChild child) {
-        this.definingType = definingType;
+    public DocumentTypeFieldImpl(EffectiveNodeTypeChild child) {
+        this.definingType = child.getDefiningType();
         this.nti = child;
         this.primaryField = false;
         this.propertyField = false;
@@ -129,16 +128,6 @@ public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public String getCaption() {
-        return caption;
-    }
-
-    public void setCaption(String caption) {
-        checkSealed();
-        this.caption = caption;
     }
 
     @Override
