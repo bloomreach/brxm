@@ -7,9 +7,6 @@
     <sv:property sv:name="jcr:primaryType" sv:type="Name">
       <sv:value>frontend:plugin</sv:value>
     </sv:property>
-    <sv:property sv:name="cluster.name" sv:type="String">
-      <sv:value>channel-manager</sv:value>
-    </sv:property>
     <sv:property sv:name="perspective.title" sv:type="String">
       <sv:value>channel-manager-title</sv:value>
     </sv:property>
