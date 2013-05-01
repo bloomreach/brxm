@@ -74,28 +74,43 @@ public class HippoContentTypeServiceTest extends PluginTest {
             try {
                 entCache.getTypesByPrefix().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getTypesByPrefix().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
                 entCache.getTypesByPrefix().get("nt").clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getTypesByPrefix().get(nt).clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
                 entCache.getType("nt:file").getSuperTypes().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getSuperTypes().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
                 entCache.getType("nt:file").getChildren().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getChildren().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
                 entCache.getType("nt:file").getChildren().get("jcr:content").clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getChildren().get(jcr:content).clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
                 entCache.getType("nt:file").getChildren().get("jcr:content").get(0).getRequiredPrimaryTypes().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getChildren().get(jcr:content).get(0).getRequiredPrimaryTypes().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
                 entCache.getType("nt:file").getProperties().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getProperties().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
                 entCache.getType("nt:file").getProperties().get("jcr:primaryType").clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getProperties().get(jcr:primaryType).clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
                 entCache.getType("nt:file").getProperties().get("jcr:primaryType").get(0).getDefaultValues().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getProperties().get(jcr:primaryType).get(0).getDefaultValues().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
                 entCache.getType("nt:file").getProperties().get("jcr:primaryType").get(0).getValueConstraints().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getProperties().get(jcr:primaryType).get(0).getValueConstraints().clear()");
-            }
-            catch (UnsupportedOperationException uoe) {
-                // OK
-            }
+            } catch (UnsupportedOperationException uoe) {}
         }
     }
 
@@ -148,38 +163,61 @@ public class HippoContentTypeServiceTest extends PluginTest {
             try {
                 dtCache.getTypesByPrefix().clear();
                 fail("UnsupportedOperationException expected for DocumentTypes.getTypesByPrefix().clear()");
-                dtCache.getTypesByPrefix().get("nt").clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getTypesByPrefix().get(nt).clear()");
-                dtCache.getType("nt:file").getSuperTypes().clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getType(nt:file).getSuperTypes().clear()");
-                dtCache.getType("nt:file").getFields().clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getType(nt:file).getFields().clear()");
-                dtCache.getType("nt:file").getFields().get("jcr:content").getFieldProperties().clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getType(nt:file).getFields().get(jcr:content).getFieldProperties().clear()");
-                dtCache.getType("nt:file").getFields().get("jcr:content").getValidators().clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getType(nt:file).getFields().get(jcr:content).getValidators().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getTypesByPrefix().get("test").clear();
+                fail("UnsupportedOperationException expected for DocumentTypes.getTypesByPrefix().get(test).clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getSuperTypes().clear();
+                fail("UnsupportedOperationException expected for DocumentTypes.getType(test:test).getSuperTypes().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getFields().clear();
+                fail("UnsupportedOperationException expected for DocumentTypes.getType(test:test).getFields().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getFields().get("test:title").getFieldProperties().clear();
+                fail("UnsupportedOperationException expected for DocumentTypes.getType(test:test).getFields().get(test:title).getFieldProperties().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getFields().get("test:title").getValidators().clear();
+                fail("UnsupportedOperationException expected for DocumentTypes.getType(test:test).getFields().get(test:title).getValidators().clear()");
+            } catch (UnsupportedOperationException uoe) {}
 
                 // repeat sealed check for EffectiveNodeType underlying the DocumentType
-                dtCache.getType("nt:file").getEffectiveNodeType().getSuperTypes().clear();
-                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getSuperTypes().clear()");
-                dtCache.getType("nt:file").getEffectiveNodeType().getChildren().clear();
-                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getChildren().clear()");
-                dtCache.getType("nt:file").getEffectiveNodeType().getChildren().get("jcr:content").clear();
-                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getChildren().get(jcr:content).clear()");
-                dtCache.getType("nt:file").getEffectiveNodeType().getChildren().get("jcr:content").get(0).getRequiredPrimaryTypes().clear();
-                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getChildren().get(jcr:content).get(0).getRequiredPrimaryTypes().clear()");
-                dtCache.getType("nt:file").getEffectiveNodeType().getProperties().clear();
-                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getProperties().clear()");
-                dtCache.getType("nt:file").getEffectiveNodeType().getProperties().get("jcr:primaryType").clear();
-                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getProperties().get(jcr:primaryType).clear()");
-                dtCache.getType("nt:file").getEffectiveNodeType().getProperties().get("jcr:primaryType").get(0).getDefaultValues().clear();
-                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getProperties().get(jcr:primaryType).get(0).getDefaultValues().clear()");
-                dtCache.getType("nt:file").getEffectiveNodeType().getProperties().get("jcr:primaryType").get(0).getValueConstraints().clear();
-                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(nt:file).getProperties().get(jcr:primaryType).get(0).getValueConstraints().clear()");
-            }
-            catch (UnsupportedOperationException uoe) {
-                // OK
-            }
+            try {
+                dtCache.getType("test:test").getEffectiveNodeType().getSuperTypes().clear();
+                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getSuperTypes().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getEffectiveNodeType().getChildren().clear();
+                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getChildren().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getEffectiveNodeType().getChildren().get("test:child").clear();
+                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getChildren().get(test:child).clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getEffectiveNodeType().getChildren().get("test:child").get(0).getRequiredPrimaryTypes().clear();
+                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getChildren().get(test:child).get(0).getRequiredPrimaryTypes().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getEffectiveNodeType().getProperties().clear();
+                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getProperties().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getEffectiveNodeType().getProperties().get("test:title").clear();
+                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getProperties().get(test:title).clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getEffectiveNodeType().getProperties().get("test:title").get(0).getDefaultValues().clear();
+                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getProperties().get(test:title).get(0).getDefaultValues().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                dtCache.getType("test:test").getEffectiveNodeType().getProperties().get("test:title").get(0).getValueConstraints().clear();
+                fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getProperties().get(test:title).get(0).getValueConstraints().clear()");
+            } catch (UnsupportedOperationException uoe) {}
         }
     }
 
