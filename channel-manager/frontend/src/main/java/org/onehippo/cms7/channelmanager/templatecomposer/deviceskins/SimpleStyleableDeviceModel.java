@@ -16,7 +16,9 @@
 package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
 import java.io.Serializable;
+import java.util.ResourceBundle;
 
+import org.apache.wicket.Session;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +31,15 @@ public class SimpleStyleableDeviceModel implements StyleableDevice, Serializable
     private static Logger log = LoggerFactory.getLogger(SimpleStyleableDeviceModel.class);
 
     protected final IPluginConfig config;
-    private String name;
+    private final String id;
+    private final String name;
 
     public SimpleStyleableDeviceModel(final IPluginConfig config) {
         this.config = config;
+        String configName = config.getName();
+        ResourceBundle resourceBundle = ResourceBundle.getBundle(DeviceManager.class.getName(), Session.get().getLocale());
+        this.id = configName.substring(configName.lastIndexOf('.') + 1);
+        this.name = resourceBundle.getString(id);
     }
 
     public String getStyle() {
@@ -45,22 +52,12 @@ public class SimpleStyleableDeviceModel implements StyleableDevice, Serializable
     }
 
     public String getName() {
-        if (name == null) {
-            final String configName = config.getName();
-            name = configName.substring(configName.lastIndexOf('.') + 1);
-        }
         return name;
     }
 
     @Override
     public String getId() {
-        final String configName = config.getName();
-        return configName.substring(configName.lastIndexOf('.') + 1);
+        return id;
     }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
 
 }

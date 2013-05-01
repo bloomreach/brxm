@@ -23,9 +23,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
     forceSelection: true,
     triggerAction: 'all',
     lastQuery: '',
-    emptyText: 'Choose a device...',
     selectOnFocus: true,
-    def : 'default',
     ie8 : 'IE8 is not supported!',
     editable: false,
     disableKeyFilter: true,
@@ -44,8 +42,6 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
             cmp.getEl().set({
                 cls: 'x-panel default'
             });
-        } else {
-            this.emptyText = this.ie8;
         }
         Hippo.ChannelManager.DeviceManager.superclass.constructor.call(this, config);
     },

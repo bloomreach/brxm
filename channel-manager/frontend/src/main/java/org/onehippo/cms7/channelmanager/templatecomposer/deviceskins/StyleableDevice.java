@@ -42,10 +42,4 @@ public interface StyleableDevice {
      */
     public String getId();
 
-    /**
-     * @param name Able to set a translatable name.
-     */
-    public void setName(String name);
-
-
 }

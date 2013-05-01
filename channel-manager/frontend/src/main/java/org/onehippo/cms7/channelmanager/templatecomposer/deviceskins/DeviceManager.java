@@ -46,7 +46,6 @@ import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.data.ExtStore;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.ExtEventListener;
-import org.wicketstuff.js.ext.util.ExtProperty;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
@@ -68,10 +67,6 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
 
     private static final Map<String, Object> CSS = new ConcurrentHashMap<String, Object>();
 
-    @ExtProperty
-    protected String emptyText;
-
-
     public DeviceManager(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
@@ -81,7 +76,6 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
             //loading default service
             final DefaultDeviceService defaultDeviceService = new DefaultDeviceService(context, config);
             service = defaultDeviceService;
-            this.emptyText = defaultDeviceService.translateKey("emptyText");
         }
 
         IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
@@ -187,14 +181,6 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
     protected void onRenderProperties(JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
         properties.put("deviceStore", new JSONIdentifier(this.store.getJsObjectId()));
-    }
-
-    public String getEmptyText() {
-        return emptyText;
-    }
-
-    public void setEmptyText(final String emptyText) {
-        this.emptyText = emptyText;
     }
 
     private class CSSUtil {
