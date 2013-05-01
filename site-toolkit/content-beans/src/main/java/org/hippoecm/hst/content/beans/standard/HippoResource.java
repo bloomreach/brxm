@@ -21,6 +21,7 @@ import java.util.Calendar;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,12 +43,16 @@ public class HippoResource extends HippoItem implements HippoResourceBean {
     public String getMimeType() {
         return getProperty("jcr:mimeType");
     }
-    
+
+    public String getFilename() {
+        return getProperty(HippoNodeType.HIPPO_FILENAME);
+    }
+
     public BigDecimal getLengthKB() {
         // multiple getLength() by 8 to get size in bits
         return calculate(getLength() * 8 , DIVISOR_K_BYTE);
     }
-    
+
     public BigDecimal getLengthMB() {
         // multiple getLength() by 8 to get size in bits
         return calculate(getLength() * 8, DIVISOR_M_BYTE);
