@@ -211,10 +211,7 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
     }
 
     public int hashCode() {
-        if (isSealed()) {
-            return this.getPrefix().hashCode() + this.getName().hashCode();
-        }
-        return super.hashCode();
+        return isSealed() ? getName().hashCode() : super.hashCode();
     }
 
     public boolean equals(Object obj) {

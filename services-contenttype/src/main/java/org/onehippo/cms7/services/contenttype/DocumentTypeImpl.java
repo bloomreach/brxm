@@ -203,6 +203,20 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         return fields;
     }
 
+    public int hashCode() {
+        return isSealed() ? getName().hashCode() : super.hashCode();
+    }
+
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof DocumentTypeImpl && this.isSealed() && ((Sealable)obj).isSealed()) {
+            return this.getName().equals(((DocumentTypeImpl)obj).getName());
+        }
+        return false;
+    }
+
     public boolean contains(DocumentTypeImpl other) {
         for (String s : other.superTypes) {
             if (!isDocumentType(s)) {
