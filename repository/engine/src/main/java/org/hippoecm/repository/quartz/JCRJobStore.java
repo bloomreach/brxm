@@ -208,7 +208,11 @@ public class JCRJobStore extends AbstractJobStore {
                             log.info("Cannot execute job " + jobNode.getPath() + " on this cluster node. Skipping");
                             continue;
                         } catch (IOException e) {
-                            log.error("Failed to load job " + jobNode.getPath());
+                            if (log.isDebugEnabled()) {
+                                log.error("Failed to load job " + jobNode.getPath(), e);
+                            } else {
+                                log.error("Failed to load job " + jobNode.getPath() + ": " + e.toString());
+                            }
                             continue;
                         }
                         if (lock(session, triggerNode.getPath())) {
@@ -221,8 +225,12 @@ public class JCRJobStore extends AbstractJobStore {
                                 return trigger;
                             } catch (IOException e) {
                                 log.error("Failed to read trigger for job " + jobNode.getPath(), e);
+                                stopLockKeepAlive(triggerNode.getIdentifier());
+                                unlock(session, triggerNode.getPath());
                             } catch (ClassNotFoundException e) {
                                 log.error("Failed to recreate trigger for job " + jobNode.getPath(), e);
+                                stopLockKeepAlive(triggerNode.getIdentifier());
+                                unlock(session, triggerNode.getPath());
                             }
                         }
                     }
