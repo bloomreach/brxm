@@ -32,12 +32,10 @@ public class StyleableDeviceImpl implements StyleableDevice {
     private static Logger log = LoggerFactory.getLogger(StyleableDeviceImpl.class);
 
     private static final String defaultWrapStyleTemplate = "" +
-            "background: url('${image.location}') 0 0 no-repeat;\n" +
             "width: ${background.width}px;\n" +
             "height:${background.height}px;\n" +
-            "background-position: 0px 0px;\n" +
-            "background-repeat: no-repeat no-repeat;\n" +
             "position: relative;\n" +
+            "overflow: auto;\n" +
             "border: none;";
 
     private static final String defaultStyleTemplate = "" +
@@ -48,7 +46,7 @@ public class StyleableDeviceImpl implements StyleableDevice {
             "-webkit-transform: scale(${scale.factor},${scale.factor});\n" +
             "-o-transform: scale(${scale.factor},${scale.factor});\n" +
             "-moz-transform: scale(${scale.factor},${scale.factor});\n" +
-            "transform: scale(${scale.factor},${scale.factor});\n" +
+//            "-ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=${scale.factor}, M12=0, M21=0, M22=${scale.factor}, SizingMethod='auto expand')\";\n" +
             "position: absolute;\n" +
             "top: ${viewport.y}px;\n" +
             "left: ${viewport.x}px;\n" +
@@ -99,6 +97,11 @@ public class StyleableDeviceImpl implements StyleableDevice {
     @Override
     public String getWrapStyle() {
         return processTemplate(templateProperties.get("wrapStyle"));
+    }
+
+    @Override
+    public String getRelativeUrl() {
+        return templateProperties.get("image.location");
     }
 
     private void autoCalcSize() {

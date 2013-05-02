@@ -38,6 +38,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
     constructor: function (config) {
         if (!Ext.isIE8) {
             this.store = config.deviceStore;
+            this.baseImageUrl = config.baseImageUrl;
             var cmp = Ext.getCmp('Iframe');
             cmp.getEl().set({
                 cls: 'x-panel default'
@@ -56,14 +57,17 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
         this.setDevice(selectedDeviceId);
     },
     setDevice: function(selectedDeviceId) {
-        var r, cmp, iFrame, parent, size;
+        var r, cmp, iFrame, parent, size, image;
         r = this.findRecord('id', selectedDeviceId);
         if (!Ext.isEmpty(r)) {
             this.setValue(r.get('name'));
             cmp = Ext.getCmp('Iframe');
             iFrame = cmp.items.items[0].getEl();
             parent = iFrame.parent();
-
+            image = Ext.get('deviceImage');
+            image.set({
+                src:    this.baseImageUrl + r.get('relativeUrl')
+            });
             cmp.getEl().set({
                 cls: 'x-panel ' + selectedDeviceId
             });
@@ -77,6 +81,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
                 iFrame.setSize(size);
                 parent.setSize(size);
             }
+            cmp.doLayout();
         }
     },
     initComponent: function () {
@@ -88,7 +93,16 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
                 Ext.state.Manager.set(channelId + '_skin', selectedDeviceId);
                 combo.setDevice(selectedDeviceId);
             });
-            var channelId = this.getChannelId();
+            var channelId = this.getChannelId(),
+                    cmp, iFrame, parent;
+            cmp = Ext.getCmp('Iframe');
+            iFrame = cmp.items.items[0].getEl();
+            parent = iFrame.parent();
+            parent.createChild({
+                id: 'deviceImage',
+                tag: 'img',
+                src: Ext.BLANK_IMAGE_URL
+            });
             this.addEvents('setchanneldefaults');
             this.fireEvent('setchanneldefaults', channelId);
         }

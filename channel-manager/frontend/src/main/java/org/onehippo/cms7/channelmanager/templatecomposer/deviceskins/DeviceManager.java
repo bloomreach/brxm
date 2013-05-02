@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -126,7 +127,8 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
 
         });
         addHeadContribution();
-        this.store = new ExtArrayStore<StyleableDevice>(Arrays.asList(new ExtDataField("name"), new ExtDataField("id")),service.getStylables());
+        this.store = new ExtArrayStore<StyleableDevice>(Arrays.asList(new ExtDataField("name"), new ExtDataField("id"),
+                new ExtDataField("relativeUrl")),service.getStylables());
     }
 
     /**
@@ -183,6 +185,8 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
     @Override
     protected void onRenderProperties(JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
+        RequestCycle rc = RequestCycle.get();
+        properties.put("baseImageUrl", rc.urlFor(new ResourceReference(this.getClass(), "")));
         properties.put("deviceStore", new JSONIdentifier(this.store.getJsObjectId()));
     }
 

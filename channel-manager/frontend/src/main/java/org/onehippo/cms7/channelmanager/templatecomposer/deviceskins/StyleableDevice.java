@@ -44,4 +44,6 @@ public interface StyleableDevice extends Serializable {
      */
     public String getId();
 
+    public String getRelativeUrl();
+
 }
