@@ -89,19 +89,7 @@
       <version>1.4.16</version>
     </dependency>
 
-    <!-- Common and demosuite dependencies -->
-    <dependency>
-      <groupId>javax.portlet</groupId>
-      <artifactId>portlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.portals.bridges</groupId>
-      <artifactId>portals-bridges-common</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
+    <!-- testsuite dependencies -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-testsuite-api</artifactId>

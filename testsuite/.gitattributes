@@ -85,8 +85,6 @@ components/src/main/java/org/hippoecm/hst/demo/wicketexamples/ItemBeanFactory.ja
 components/src/main/java/org/hippoecm/hst/demo/wicketexamples/NodeBean.java -text
 components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserApplication.java -text
 components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.java -text
-components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerApplication.java -text
-components/src/main/java/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.java -text
 components/src/main/resources/META-INF/client-assembly/base.xml svneol=native#text/plain
 components/src/main/resources/META-INF/hst-assembly/overrides/channelManagerListenerExample.xml -text
 components/src/main/resources/META-INF/hst-assembly/overrides/componentWindowFiltering-valve.xml -text svneol=unset#text/plain
@@ -103,9 +101,6 @@ components/src/main/resources/org/hippoecm/hst/demo/spring/webmvc/exceptions_en.
 components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.html -text
 components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage.properties -text
 components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketContentBrowserPage_en.properties -text
-components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.html -text
-components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage.properties -text
-components/src/main/resources/org/hippoecm/hst/demo/wicketexamples/WicketNodePropertiesViewerPage_en.properties -text
 conf/context.xml -text
 conf/hst.properties -text
 conf/log4j.dtd -text

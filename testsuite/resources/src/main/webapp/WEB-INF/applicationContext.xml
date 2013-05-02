@@ -28,9 +28,6 @@
   
   Also, you can set the render path property (hst:renderpath) to '/WEB-INF/jsp/spring/contactspring.jsp' directly.
   In that case, the dispatching to render path is directly done without passing through the spring framework's DispatcherServlet.
-  
-  Note: The DispatcherServlet in web.xml should be configured to have 'cleanupAfterInclude = false' as init parameter when
-        the application is running under portlet/portal environment.
   -->
 
   <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">

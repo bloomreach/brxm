@@ -28,7 +28,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.apache.portals.messaging.PortletMessaging;
 import org.apache.wicket.RequestContext;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.Response;
@@ -46,7 +45,6 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.protocol.http.WebApplication;
-import org.apache.wicket.protocol.http.portlet.PortletRequestContext;
 import org.apache.wicket.request.target.basic.RedirectRequestTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -194,9 +192,6 @@ public class WicketContentBrowserPage extends WebPage {
             Node rootNode = session.getRootNode();
             Node currentNode = ("/".equals(currentPath) ? rootNode : rootNode.getNode(currentPath.startsWith("/") ? currentPath.substring(1) : currentPath));
             
-            NodeBean currentNodeBean = (NodeBean) ItemBeanFactory.createItemBean(currentNode);
-            publishEvent("contentbrowser.current.node", currentNodeBean);
-
             NodeIterator nodeIt = currentNode.getNodes();
             
             currentItemBeans.clear();
@@ -333,14 +328,5 @@ public class WicketContentBrowserPage extends WebPage {
         protected void navigateToPath(String path) {
         }
         
-    };
-    
-    private void publishEvent(String name, Object message) throws NotSerializableException {
-        RequestContext requestContext = RequestContext.get();
-        
-        if (requestContext.isPortletRequest()) {
-            PortletMessaging.publish(((PortletRequestContext) requestContext).getPortletRequest(), getClass().getPackage().getName(), name, message);
-        }
     }
-    
 }

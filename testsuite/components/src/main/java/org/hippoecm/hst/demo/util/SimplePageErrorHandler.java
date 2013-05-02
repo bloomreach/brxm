@@ -53,7 +53,7 @@ public class SimplePageErrorHandler implements PageErrorHandler {
         if (errorPage != null) {
             try {
                 if (redirectToErrorPage) {
-                    HstResponseUtils.sendRedirectOrForward(hstRequest, hstResponse, errorPage);
+                    HstResponseUtils.sendRedirect(hstRequest, hstResponse, errorPage);
                 } else {
                     requestContext.setAttribute(PAGE_ERRORS, pageErrors);
                     hstResponse.forward(errorPage);
