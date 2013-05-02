@@ -29,16 +29,6 @@ import org.slf4j.LoggerFactory;
  */
 public class StyleableDeviceImpl implements StyleableDevice {
 
-    public static final String BACKGROUND_WIDTH = "background.width";
-    public static final String BACKGROUND_HEIGHT = "background.height";
-    public static final String VIEWPORT_X = "viewport.x";
-    public static final String VIEWPORT_Y = "viewport.y";
-    public static final String VIEWPORT_WIDTH = "viewport.width";
-    public static final String VIEWPORT_HEIGHT = "viewport.height";
-    public static final String SCALE_FACTOR = "scale.factor";
-    public static final String CALC_WIDTH = "calc.width";
-    public static final String CALC_HEIGHT = "calc.height";
-
     private static Logger log = LoggerFactory.getLogger(StyleableDeviceImpl.class);
 
     private static final String defaultWrapStyleTemplate = "" +
@@ -70,77 +60,57 @@ public class StyleableDeviceImpl implements StyleableDevice {
 
     private final String id;
     private final String name;
-    private String styleTemplate;
-    private String wrapStyleTemplate;
 
     private final Map<String,String> templateProperties = new HashMap<String,String>();
 
     public StyleableDeviceImpl(String id) {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle(DeviceManager.class.getName(), Session.get().getLocale());
         this.id = id;
-        this.name = resourceBundle.getString(id);
-        ResourceBundle properties = ResourceBundle.getBundle(DeviceManager.class.getPackage().getName()+".devices."+id);
+        ResourceBundle properties = ResourceBundle.getBundle(
+                this.getClass().getPackage().getName() + ".devices." + id,
+                Session.get().getLocale()
+        );
+        this.name = properties.getString("name");
+        templateProperties.put("style", defaultStyleTemplate);
+        templateProperties.put("wrapStyle", defaultWrapStyleTemplate);
+        templateProperties.put("image.location", "images/" + id + ".png");
         for (String property : properties.keySet()) {
             templateProperties.put(property, properties.getString(property));
         }
         if (properties.containsKey("autoCalc") && "true".equals(properties.getString("autoCalc"))) {
             autoCalcSize();
         }
-        if (properties.containsKey("style")) {
-            this.styleTemplate = properties.getString("style");
-        } else {
-            this.styleTemplate = defaultStyleTemplate;
-        }
-        if (properties.containsKey("wrapStyle")) {
-            this.wrapStyleTemplate = properties.getString("wrapStyle");
-        } else {
-            this.wrapStyleTemplate = defaultWrapStyleTemplate;
-        }
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getStyle() {
-        return processTemplate(styleTemplate);
+        return processTemplate(templateProperties.get("style"));
     }
 
+    @Override
     public String getWrapStyle() {
-        return processTemplate(wrapStyleTemplate);
+        return processTemplate(templateProperties.get("wrapStyle"));
     }
-
-    /*
-    public StyleableDeviceImpl set(String property, String value) {
-        templateProperties.put(property, value);
-        return this;
-    }
-
-    public StyleableDeviceImpl setStyleTemplate(String styleTemplate) {
-        this.styleTemplate = styleTemplate;
-        return this;
-    }
-
-    public StyleableDeviceImpl setWrapStyleTemplate(String wrapStyleTemplate) {
-        this.wrapStyleTemplate = wrapStyleTemplate;
-        return this;
-    }
-    */
 
     private void autoCalcSize() {
         try {
-            int viewPortWidth = Integer.parseInt(templateProperties.get(VIEWPORT_WIDTH));
-            int viewPortHeight = Integer.parseInt(templateProperties.get(VIEWPORT_HEIGHT));
-            double scaleFactor = Double.parseDouble(templateProperties.get(SCALE_FACTOR));
+            int viewPortWidth = Integer.parseInt(templateProperties.get("viewport.width"));
+            int viewPortHeight = Integer.parseInt(templateProperties.get("viewport.height"));
+            double scaleFactor = Double.parseDouble(templateProperties.get("scale.factor"));
             if (scaleFactor != 0.0) {
                 int cw = (int) Math.floor(viewPortWidth / scaleFactor);
                 int ch = (int) Math.floor(viewPortHeight / scaleFactor);
-                templateProperties.put(CALC_WIDTH, String.valueOf(cw));
-                templateProperties.put(CALC_HEIGHT, String.valueOf(ch));
+                templateProperties.put("calc.width", String.valueOf(cw));
+                templateProperties.put("calc.height", String.valueOf(ch));
             }
         } catch (NumberFormatException e) {
             log.error(e.getMessage(), e);
