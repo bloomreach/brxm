@@ -321,7 +321,7 @@ public class TestHstLinkRewritingCrossScheme extends AbstractBeanTestCase {
 
     public HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(String scheme, String hostAndPort, String requestURI) throws Exception {
         HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
-        HstMutableRequestContext requestContext = rcc.create(false);
+        HstMutableRequestContext requestContext = rcc.create();
         HstContainerURL containerUrl = createContainerUrl(scheme, hostAndPort, requestURI, requestContext);
         requestContext.setBaseURL(containerUrl);
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);

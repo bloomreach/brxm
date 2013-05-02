@@ -32,7 +32,6 @@ public class HstURLFactoryImpl implements HstURLFactory {
     protected String urlNamespacePrefix;
     protected String parameterNameComponentSeparator;
     protected HstNavigationalStateCodec navigationalStateCodec;
-    protected boolean portletResourceURLEnabled;
 
     protected HstContainerURLProvider containerURLProvider;
 
@@ -46,10 +45,6 @@ public class HstURLFactoryImpl implements HstURLFactory {
     
     public void setNavigationalStateCodec(HstNavigationalStateCodec navigationalStateCodec) {
         this.navigationalStateCodec = navigationalStateCodec;
-    }
-    
-    public void setPortletResourceURLEnabled(boolean portletResourceURLEnabled) {
-        this.portletResourceURLEnabled = portletResourceURLEnabled;
     }
     
     public void setReferenceNamespaceIgnored(boolean referenceNamespaceIgnored) {
@@ -67,7 +62,6 @@ public class HstURLFactoryImpl implements HstURLFactory {
             provider.setUrlNamespacePrefix(urlNamespacePrefix);
             provider.setParameterNameComponentSeparator(parameterNameComponentSeparator);
             provider.setNavigationalStateCodec(navigationalStateCodec);
-            provider.setPortletResourceURLEnabled(portletResourceURLEnabled);
             containerURLProvider = provider;
         }
         return containerURLProvider;

@@ -63,8 +63,6 @@ import org.slf4j.LoggerFactory;
  * 
  * This servlet should initialize all the components that can be accessed via HstServices
  * from the each HST-based applications.
- * Under portal environment, this servlet may not be used because the portal itself can 
- * initialize all the necessary component for each HST-based portlet application.
  * <P>
  * The configuration could be set by a properties file or an xml file.
  * If you would set the configuration by a properties file, you can set an init parameter 

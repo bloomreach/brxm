@@ -18,7 +18,7 @@ package org.hippoecm.hst.core.sitemenu;
 public interface CommonMenu {
     
     /**
-     * Returns the name of this SiteMenu. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site/portal,
+     * Returns the name of this SiteMenu. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site,
      * where these names might be appropriate 
      * @return the name of this SiteMenu
      */

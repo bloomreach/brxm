@@ -143,7 +143,7 @@ public class DocumentsResourceTest extends AbstractCmsRestTest {
     public HstRequestContext getRequestFromCms(final String hostAndPort,
                                                final String requestURI) throws Exception {
         HstRequestContextComponent rcc = getComponentManager().getComponent(HstRequestContextComponent.class.getName());
-        HstMutableRequestContext requestContext = rcc.create(false);
+        HstMutableRequestContext requestContext = rcc.create();
         HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, requestURI);
         requestContext.setBaseURL(containerUrl);
         requestContext.setResolvedMount(getResolvedMount(containerUrl));

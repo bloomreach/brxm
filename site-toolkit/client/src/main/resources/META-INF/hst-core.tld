@@ -676,7 +676,7 @@
     </attribute>
     <attribute>
       <description>Category name of the contributed head element. The head elements can be filtered in or filtered out
-        by this attribute. By the way, this attribute does not affect anything in portal/portlet environment.
+        by this attribute.
       </description>
       <name>category</name>
       <required>false</required>
@@ -710,8 +710,7 @@
     <attribute>
       <description>Comma separated category list string for category includes. Contributed head elements can be filtered
         in by this attribute. If a contributed head element has a category and this attribute contains the category,
-        then the head element would be written into the page. By the way, this attribute does not affect anything in
-        portal/portlet environment.
+        then the head element would be written into the page.
       </description>
       <name>categoryIncludes</name>
       <required>false</required>
@@ -721,8 +720,7 @@
     <attribute>
       <description>Comma separated category list string for category excludes. Contributed head elements can be filtered
         out by this attribute. If a contributed head element has a category and this attribute does not contain the
-        category, then the head element would be written into the page. By the way, this attribute does not affect
-        anything in portal/portlet environment.
+        category, then the head element would be written into the page.
       </description>
       <name>categoryExcludes</name>
       <required>false</required>

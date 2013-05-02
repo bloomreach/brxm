@@ -44,8 +44,6 @@ api/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenuItemConfigu
 api/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenusConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/configuration/sitemenu/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/container/HstContainerRequest.java -text
-api/src/main/java/org/hippoecm/hst/container/HstPortalContextProvider.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/container/HstPortletRequestDispatcherPathProvider.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/container/event/ComponentManagerBeforeReplacedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/event/HttpSessionCreatedEvent.java -text
 api/src/main/java/org/hippoecm/hst/container/event/HttpSessionDestroyedEvent.java -text
@@ -163,7 +161,6 @@ api/src/main/java/org/hippoecm/hst/core/container/ServletContextAware.java svneo
 api/src/main/java/org/hippoecm/hst/core/container/Valve.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/ValveContext.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/container/package-info.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/core/internal/HstMutablePortletRequestContext.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/internal/HstMutableRequestContext.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/internal/MountDecorator.java -text svneol=unset#text/plain
 api/src/main/java/org/hippoecm/hst/core/internal/MutableResolvedMount.java -text svneol=unset#text/plain
@@ -212,8 +209,6 @@ api/src/main/java/org/hippoecm/hst/core/parameters/ParametersInfo.java -text
 api/src/main/java/org/hippoecm/hst/core/parameters/package-info.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/ComponentConfiguration.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/ContextCredentialsProvider.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/core/request/HstPortalRequestContext.java svneol=native#text/plain
-api/src/main/java/org/hippoecm/hst/core/request/HstPortletRequestContext.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/HstRequestContext.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/HstSiteMapMatcher.java svneol=native#text/plain
 api/src/main/java/org/hippoecm/hst/core/request/ResolvedMount.java -text svneol=unset#text/plain
@@ -343,7 +338,6 @@ client/src/main/java/org/hippoecm/hst/component/support/forms/FormField.java -te
 client/src/main/java/org/hippoecm/hst/component/support/forms/FormMap.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/forms/FormUtils.java -text svneol=unset#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/forms/StoreFormResult.java svneol=native#text/plain
-client/src/main/java/org/hippoecm/hst/component/support/portlet/GenericPortletPrefsEditor.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/spring/SpringBridgeHstComponent.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/spring/mvc/HstDispatcherServlet.java svneol=native#text/plain
 client/src/main/java/org/hippoecm/hst/component/support/spring/util/MetadataReaderClasspathResourceScanner.java -text
@@ -397,19 +391,14 @@ client/src/test/java/org/hippoecm/hst/utils/TestIsoLatin1AccentReplacer.java -te
 client/src/test/resources/org/hippoecm/hst/component/support/bean/TestBaseHstComponent-beans-annotated-classes.xml -text
 commons/pom.xml svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/cache/NOOPHstCache.java -text
-commons/src/main/java/org/hippoecm/hst/container/DefaultPortletRequestDispatcherImpl.java svneol=native#text/plain
-commons/src/main/java/org/hippoecm/hst/container/HstComponentPortlet.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/container/HstContainerConfigImpl.java -text
-commons/src/main/java/org/hippoecm/hst/container/HstContainerPortlet.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/container/HstContainerRequestImpl.java -text
 commons/src/main/java/org/hippoecm/hst/container/HstFilter.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/container/RequestContextProvider.java -text
 commons/src/main/java/org/hippoecm/hst/container/XSSUrlFilter.java -text
 commons/src/main/java/org/hippoecm/hst/content/rewriter/impl/DefaultImageVariant.java -text
-commons/src/main/java/org/hippoecm/hst/core/component/AbstractHstResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HeadElementImpl.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstParameterInfoProxyFactoryImpl.java -text svneol=unset#text/plain
-commons/src/main/java/org/hippoecm/hst/core/component/HstPortletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/HstServletResponseState.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/core/component/SerializableElement.java -text
 commons/src/main/java/org/hippoecm/hst/core/component/WrapperElementImpl.java -text
@@ -448,7 +437,6 @@ commons/src/main/java/org/hippoecm/hst/util/NOOPLogger.java svneol=native#text/p
 commons/src/main/java/org/hippoecm/hst/util/NodeUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/PageErrorUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/PathUtils.java svneol=native#text/plain
-commons/src/main/java/org/hippoecm/hst/util/PortletConfigUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/PropertyDefinitionUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/ServletConfigUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/TaskLogFormatter.java -text
@@ -552,9 +540,7 @@ components/core/src/main/java/org/hippoecm/hst/core/container/HstComponentWindow
 components/core/src/main/java/org/hippoecm/hst/core/container/HstComponentWindowImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/HstContainerURLImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/HstContainerURLProviderImpl.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/container/HstEmbeddedPortletContainerURLWriter.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/HstNavigationalStateCodecImpl.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/core/container/HstPortletContainerURLWriter.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/HstRequestProcessorImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/HstSitePipeline.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/container/HstSitePipelines.java svneol=native#text/plain
@@ -630,8 +616,6 @@ components/core/src/main/java/org/hippoecm/hst/site/container/session/HttpSessio
 components/core/src/main/java/org/hippoecm/hst/site/request/BasicHstSiteMapMatcher.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/ComponentConfigurationImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/DefaultContextCredentialsProvider.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/site/request/HstPortalRequestContextImpl.java svneol=native#text/plain
-components/core/src/main/java/org/hippoecm/hst/site/request/HstPortletRequestContextImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/HstRequestContextComponentImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/HstRequestContextImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/site/request/MountDecoratorImpl.java -text svneol=unset#text/plain

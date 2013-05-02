@@ -97,7 +97,6 @@ public interface HstNodeTypes {
 
     static final String SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES = "hst:componentconfigurationmappingnames";
     static final String SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_VALUES = "hst:componentconfigurationmappingvalues";
-    static final String SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID =  "hst:portletcomponentconfigurationid";
     static final String SITEMAPITEM_PROPERTY_NAMEDPIPELINE = "hst:namedpipeline";
     static final String SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS =  "hst:sitemapitemhandlerids";
     static final String SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING = "hst:excludedforlinkrewriting";
@@ -149,7 +148,6 @@ public interface HstNodeTypes {
     static final String MOUNT_PROPERTY_ALIAS = "hst:alias";
     static final String MOUNT_PROPERTY_TYPE = "hst:type";
     static final String MOUNT_PROPERTY_TYPES = "hst:types";
-    static final String MOUNT_PROPERTY_EMBEDDEDMOUNTPATH = "hst:embeddedmountpath";
     static final String MOUNT_PROPERTY_AUTHENTICATED =  "hst:authenticated";
     static final String MOUNT_PROPERTY_ROLES =  "hst:roles";
     static final String MOUNT_PROPERTY_USERS =  "hst:users";

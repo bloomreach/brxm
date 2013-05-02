@@ -27,13 +27,9 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 public interface HstRequestContextComponent
 {
     /**
-     * Creates a mutable request context for either a servlet or portlet context.
-     * <b>Note: this does not yet initializes a newly created HstPortletRequestContext.</b>
-     * 
-     * @param portletContext
-     * @return
+     * @return a newly created mutable request context
      */
-    HstMutableRequestContext create(boolean portletContext);
+    HstMutableRequestContext create();
 
     /**
      * Release a request context back to the context pool.

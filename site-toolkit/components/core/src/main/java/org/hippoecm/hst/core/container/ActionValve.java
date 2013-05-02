@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.component.HstPortletResponseState;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
@@ -71,12 +70,7 @@ public class ActionValve extends AbstractBaseOrderableValve {
             }
             return;
         }
-        // Check if it is invoked from portlet.
-        responseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
-
-        if (responseState == null) {
-            responseState = new HstServletResponseState(servletRequest, servletResponse);
-        }
+        responseState = new HstServletResponseState(servletRequest, servletResponse);
 
         HstRequest request = new HstRequestImpl(servletRequest, requestContext, window, HstRequest.ACTION_PHASE);
         HstResponseImpl response = new HstResponseImpl(servletRequest, servletResponse, requestContext, window, responseState, null);
@@ -139,11 +133,7 @@ public class ActionValve extends AbstractBaseOrderableValve {
                     }
                     baseURL.setActionWindowReferenceNamespace(null);
 
-                    if (requestContext.isPortletContext()) {
-                        responseState.sendRedirect(urlProvider.toContextRelativeURLString(baseURL, requestContext));
-                    } else {
-                        responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, null));
-                    }
+                    responseState.sendRedirect(urlProvider.toURLString(baseURL, requestContext, null));
                 } catch (UnsupportedEncodingException e) {
                     throw new ContainerException(e);
                 } catch (IOException e) {
@@ -152,52 +142,33 @@ public class ActionValve extends AbstractBaseOrderableValve {
             }
 
             try {
-                if (!requestContext.isPortletContext()) {
-                    responseState.flush();
+                responseState.flush();
 
-                    String location = responseState.getRedirectLocation();
+                String location = responseState.getRedirectLocation();
 
-                    if(StringUtils.isEmpty(location)) {
-                        // location is the homepage (/) and there is no context path in the URL/ replace location with "/"
-                        location = "/";
+                if(StringUtils.isEmpty(location)) {
+                    // location is the homepage (/) and there is no context path in the URL/ replace location with "/"
+                    location = "/";
+                }
+                if (location.startsWith("?")) {
+                    location = "/" + location;
+                }
+                if (location.startsWith("http:") || location.startsWith("https:")) {
+                    servletResponse.sendRedirect(location);
+                } else {
+                    if (!location.startsWith("/")) {
+                        throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
                     }
-                    if (location.startsWith("?")) {
-                        location = "/" + location;
-                    }
-                    if (location.startsWith("http:") || location.startsWith("https:")) {
-                        servletResponse.sendRedirect(location);
-                    } else {
-                        if (!location.startsWith("/")) {
-                            throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
-                        }
 
                         /*
                          * We will redirect to a URL containing the scheme + hostname + portnumber to avoid problems
                          * when redirecting behind a proxy by default.
                          */
-                        if (isAlwaysRedirectLocationToAbsoluteUrl()) {
-                            String absoluteRedirectUrl = requestContext.getVirtualHost().getBaseURL(servletRequest) + location;
-                            servletResponse.sendRedirect(absoluteRedirectUrl);
-                        } else {
-                            servletResponse.sendRedirect(location);
-                        }
-                    }
-                }
-                else {
-                    String location = responseState.getRedirectLocation();
-                    if (!(location.startsWith("http:") || location.startsWith("https:"))) {
-                        if (!location.startsWith("/")) {
-                            throw new ContainerException("Can only redirect to a context relative path starting with a '/'.");
-                        }
-                        if (!getHstManager().getVirtualHosts().isExcluded(location)) {
-                            ResolvedVirtualHost rvh = requestContext.getResolvedSiteMapItem().getResolvedMount().getResolvedVirtualHost();
-                            String targetContextPath = requestContext.isEmbeddedRequest() ? requestContext.getEmbeddingContextPath() : baseURL.getContextPath();
-                            ResolvedMount mount = rvh.matchMount(targetContextPath, location);
-                            if (mount != null && mount.getMount().isMapped()) {
-                                // redirectLocation is (at least) matched on a Mount: the portlet should try to render it
-                                ((HstPortletResponseState)responseState).setRenderRedirect(true);
-                            }
-                        }
+                    if (isAlwaysRedirectLocationToAbsoluteUrl()) {
+                        String absoluteRedirectUrl = requestContext.getVirtualHost().getBaseURL(servletRequest) + location;
+                        servletResponse.sendRedirect(absoluteRedirectUrl);
+                    } else {
+                        servletResponse.sendRedirect(location);
                     }
                 }
             } catch (IOException e) {

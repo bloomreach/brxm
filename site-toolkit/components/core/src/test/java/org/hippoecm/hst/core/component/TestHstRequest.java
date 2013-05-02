@@ -76,8 +76,6 @@ public class TestHstRequest extends AbstractSpringTestCase {
 
         // Sets java servlet attributes
         this.servletRequest.setAttribute("javax.servlet.include.request_uri", "/jsp/included.jsp");
-        // Sets attributes for portlet environment
-        this.servletRequest.setAttribute("javax.portlet.request", "something");
         // Sets request context
         this.servletRequest.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, this.requestContext);
         
@@ -116,10 +114,6 @@ public class TestHstRequest extends AbstractSpringTestCase {
         assertEquals("/jsp/included.jsp", hstRequestForRootWindow.getAttribute("javax.servlet.include.request_uri"));
         assertEquals("/jsp/included.jsp", hstRequestForHeadWindow.getAttribute("javax.servlet.include.request_uri"));
         assertEquals("/jsp/included.jsp", hstRequestForBodyWindow.getAttribute("javax.servlet.include.request_uri"));
-        
-        assertEquals("something", hstRequestForRootWindow.getAttribute("javax.portlet.request"));
-        assertEquals("something", hstRequestForHeadWindow.getAttribute("javax.portlet.request"));
-        assertEquals("something", hstRequestForBodyWindow.getAttribute("javax.portlet.request"));
         
         // Remove an attribute from bodyWindow
         hstRequestForBodyWindow.removeAttribute("name");

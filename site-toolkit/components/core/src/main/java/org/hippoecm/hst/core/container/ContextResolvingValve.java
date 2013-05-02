@@ -39,10 +39,6 @@ public class ContextResolvingValve extends AbstractBaseOrderableValve {
 
         rootComponentConfig = resolvedSiteMapItem.getHstComponentConfiguration();
 
-        if (!requestContext.isEmbeddedRequest() && requestContext.isPortletContext() && resolvedSiteMapItem.getPortletHstComponentConfiguration() != null) {
-        	rootComponentConfig = resolvedSiteMapItem.getPortletHstComponentConfiguration();
-        }
-        
         if (rootComponentConfig == null) {
             throw new ContainerNotFoundException("Resolved siteMapItem '"+resolvedSiteMapItem.getHstSiteMapItem().getQualifiedId()+"' does not contain a ComponentConfiguration that can be resolved.");
         }
@@ -63,23 +59,6 @@ public class ContextResolvingValve extends AbstractBaseOrderableValve {
             	throw new ContainerNotFoundException("Cannot find target child component configuration '"+targetComponentPath+"'");
             }
             rootComponentConfig = hcc;
-            
-            if (requestContext.isEmbeddedRequest()) {
-                // build and set the embedded component reference contextName needed proper parameter encoding and resolving
-                StringBuilder contextNamespaceBuilder = new StringBuilder();
-                String referenceNameSeparator = getComponentWindowFactory().getReferenceNameSeparator();
-                if (hcc != resolvedSiteMapItem.getHstComponentConfiguration()) {
-                    do {
-                        contextNamespaceBuilder.insert(0, hcc.getReferenceName());
-                        hcc = hcc.getParent();
-                        if (hcc == resolvedSiteMapItem.getHstComponentConfiguration()) {
-                            break;
-                        }
-                        contextNamespaceBuilder.insert(0, referenceNameSeparator);
-                    } while (true);
-                }
-                requestContext.setContextNamespace(contextNamespaceBuilder.toString());
-            }            
         }
         
         try {

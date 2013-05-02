@@ -77,10 +77,6 @@ public class MockHstRequestContext implements HstRequestContext {
     private List<Locale> locales;
     private String pathSuffix;
     private VirtualHost virtualHost;
-    private boolean embeddedRequest;
-    private boolean portletRequest;
-    private String embeddingContextPath;
-    private ResolvedMount resolvedEmbeddingMount;
     private String targetComponentPath;
     private Map<String, Mount> aliasMountMap = new HashMap<String, Mount>();
     private Map<String, Mount> typeAndAliasMountMap = new HashMap<String, Mount>();
@@ -259,44 +255,12 @@ public class MockHstRequestContext implements HstRequestContext {
         this.virtualHost = virtualHost;
     }
 
-    public boolean isEmbeddedRequest() {
-        return embeddedRequest;
-    }
-    
-    public void setEmbeddedRequest(boolean embeddedRequest) {
-        this.embeddedRequest = embeddedRequest;
-    }
-
-    public boolean isPortletContext() {
-        return portletRequest;
-    }
-    
-    public void setPortletContext(boolean portletRequest) {
-        this.portletRequest = portletRequest;
-    }
-    
     public ContextCredentialsProvider getContextCredentialsProvider() {
         return contextCredentialsProvider;
     }
     
     public void setContextCredentialsProvider(ContextCredentialsProvider contextCredentialsProvider) {
         this.contextCredentialsProvider = contextCredentialsProvider;
-    }
-
-    public String getEmbeddingContextPath() {
-    	return embeddingContextPath;
-    }
-    
-    public void setEmbeddingContextPath(String embeddingContextPath) {
-        this.embeddingContextPath = embeddingContextPath;
-    }
-    
-	public ResolvedMount getResolvedEmbeddingMount() {
-		return resolvedEmbeddingMount;
-	}
-	
-    public void setResolvedEmbeddingMount(ResolvedMount resolvedEmbeddingMount) {
-        this.resolvedEmbeddingMount = resolvedEmbeddingMount;
     }
 
 	public String getTargetComponentPath() {

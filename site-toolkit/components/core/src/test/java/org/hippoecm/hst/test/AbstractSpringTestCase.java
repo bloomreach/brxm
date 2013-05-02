@@ -135,7 +135,7 @@ public abstract class AbstractSpringTestCase
     protected HstRequestContext resolveRequest(HttpServletRequest request, HttpServletResponse response) throws ContainerException {
         HstManager hstSitesManager = HstServices.getComponentManager().getComponent(HstManager.class.getName());
         VirtualHosts vHosts = hstSitesManager.getVirtualHosts();
-        HstMutableRequestContext requestContext = ((HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName())).create(false);
+        HstMutableRequestContext requestContext = ((HstRequestContextComponent)HstServices.getComponentManager().getComponent(HstRequestContextComponent.class.getName())).create();
         request.setAttribute(ContainerConstants.HST_REQUEST_CONTEXT, requestContext);
         ResolvedMount mount = vHosts.matchMount(HstRequestUtils.getFarthestRequestHost(request), request.getContextPath() , HstRequestUtils.getRequestPath(request));     
         requestContext.setResolvedMount(mount);

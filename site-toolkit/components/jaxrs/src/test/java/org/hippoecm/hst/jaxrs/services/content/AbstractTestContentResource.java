@@ -147,7 +147,7 @@ public abstract class AbstractTestContentResource extends AbstractJaxrsSpringTes
         EasyMock.expect(resolvedSiteMapItem.getRelativeContentPath()).andReturn(siteMapItemRelativeContentPath).anyTimes();
         
         EasyMock.replay(resolvedSiteMapItem);
-        HstMutableRequestContext requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create(false);
+        HstMutableRequestContext requestContext = ((HstRequestContextComponent)getComponent(HstRequestContextComponent.class.getName())).create();
         
         requestContext.setServletContext(servletContext);
         requestContext.setResolvedMount(resolvedMount);

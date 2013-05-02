@@ -130,10 +130,4 @@ public interface ResolvedSiteMapItem {
      * @return the root <code>HstComponentConfiguration</code> that is configured on the backing {@link #getHstSiteMapItem()} of this ResolvedSiteMapItem
      */
     HstComponentConfiguration getHstComponentConfiguration();
-    
-    /**
-     * @return the <code>HstComponentConfiguration</code> for portlet that is found through {@link #getHstSiteMapItem()}
-     */
-    HstComponentConfiguration getPortletHstComponentConfiguration();
-    
 }

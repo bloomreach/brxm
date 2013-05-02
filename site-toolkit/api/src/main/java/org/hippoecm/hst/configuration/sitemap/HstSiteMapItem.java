@@ -101,14 +101,6 @@ public interface HstSiteMapItem {
     Map<String, String> getComponentConfigurationIdMappings();
     
     /**
-     * If a HstSiteMapItem can be used to resolve a url, it must have a portletComponentConfigurationId referencing 
-     * the portlet component configuration the will handle the request processing. This component configuration can be
-     * the root of a component configuration tree, see {@link HstComponentConfiguration}.
-     * @return the portletComponentConfigurationId for this <code>SiteMapItem</code> or <code>null</code>
-     */
-    String getPortletComponentConfigurationId();
-    
-    /**
      * If this method returns true, then only if the user is explicitly allowed or <code>servletRequest.isUserInRole(role)</code> returns <code>true</code> this
      * sitemap item is accessible for the request. 
      * 

@@ -609,11 +609,6 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
-        public String getEmbeddedMountPath() {
-            return fakeNonExistingPath;
-        }
-
-        @Override
         public String getFormLoginPage() {
             return null;
         }

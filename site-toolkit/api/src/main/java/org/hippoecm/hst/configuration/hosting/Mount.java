@@ -368,12 +368,6 @@ public interface Mount {
     HstSiteMapMatcher getHstSiteMapMatcher();
     
     /**
-     * for embedded delegation of sites a mountpath needs to point to the delegated {@link Mount}. This is only relevant for portal environment
-     * @return the embedded {@link Mount} path and <code>null</code> if not present
-     */
-    String getEmbeddedMountPath();
-    
-    /**
      * If this method returns true, then only if the user is explicitly allowed or <code>servletRequest.isUserInRole(role)</code> returns <code>true</code> this
      * Mount is accessible for the request. 
      * 

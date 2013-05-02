@@ -102,23 +102,10 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         Map<HstComponentWindow, HstRequest> requestMap = new HashMap<HstComponentWindow, HstRequest>();
         Map<HstComponentWindow, HstResponse> responseMap = new HashMap<HstComponentWindow, HstResponse>();
 
-        ServletRequest parentRequest = servletRequest;
-        ServletResponse parentResponse = servletResponse;
-
-        HstResponse topParentResponse = null;
-
-        // Check if it is invoked from portlet.
-        HstResponseState portletHstResponseState = (HstResponseState) servletRequest.getAttribute(HstResponseState.class.getName());
-
-        if (portletHstResponseState != null) {
-            parentResponse = new HstResponseImpl((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, requestContext, null, portletHstResponseState, null);
-            topParentResponse = (HstResponse) parentResponse;
-        }
-
         // make hstRequest and hstResponse for each component window.
         // note that hstResponse is hierarchically created.
-        createHstRequestResponseForWindows(rootWindow, rootRenderingWindow, requestContext, parentRequest, parentResponse,
-                requestMap, responseMap, topParentResponse, rootWindow == rootRenderingWindow );
+        createHstRequestResponseForWindows(rootWindow, rootRenderingWindow, requestContext, servletRequest, servletResponse,
+                requestMap, responseMap, null, rootWindow == rootRenderingWindow );
 
         // to avoid recursive invocation from now, just make a list by hierarchical order.
         List<HstComponentWindow> sortedComponentWindowList = new LinkedList<HstComponentWindow>();
@@ -143,12 +130,10 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
         String redirectLocation = null;
 
-        if (!requestContext.isPortletContext()) {
-            for (HstComponentWindow window : sortedComponentWindows) {
-                if (window.getResponseState().getRedirectLocation() != null) {
-                    redirectLocation = window.getResponseState().getRedirectLocation();
-                    break;
-                }
+        for (HstComponentWindow window : sortedComponentWindows) {
+            if (window.getResponseState().getRedirectLocation() != null) {
+                redirectLocation = window.getResponseState().getRedirectLocation();
+                break;
             }
         }
 

@@ -44,7 +44,6 @@ public class HstRequestProcessorImpl implements HstRequestProcessor {
     public void processRequest(HstContainerConfig requestContainerConfig, HstRequestContext requestContext, HttpServletRequest servletRequest, HttpServletResponse servletResponse, String namedPipeline) throws ContainerException {
         // this request processor's classloader could be different from the above classloader
         // because this request processor and other components could be loaded from another web application context
-        // such as a portal web application.
         //
         // If the container's classloader is different from the request processor's classloader,
         // then the container's classloader should be switched into the request processor's classloader

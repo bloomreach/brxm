@@ -58,8 +58,6 @@
     <jsp-api.version>2.0</jsp-api.version>
     <jstl.version>1.1.2</jstl.version>
     <taglibs.version>1.1.2</taglibs.version>
-    <portlet-api.version>2.0</portlet-api.version>
-    <portals-bridges-common.version>2.0</portals-bridges-common.version>
 
     <geronimo-annotation_1.1_spec.version>1.0.1</geronimo-annotation_1.1_spec.version>
 
@@ -192,20 +190,6 @@
         <groupId>javax.servlet.jsp</groupId>
         <artifactId>jsp-api</artifactId>
         <version>${jsp-api.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.portlet</groupId>
-        <artifactId>portlet-api</artifactId>
-        <version>${portlet-api.version}</version>
-        <scope>provided</scope>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.portals.bridges</groupId>
-        <artifactId>portals-bridges-common</artifactId>
-        <version>${portals-bridges-common.version}</version>
         <scope>provided</scope>
       </dependency>
 

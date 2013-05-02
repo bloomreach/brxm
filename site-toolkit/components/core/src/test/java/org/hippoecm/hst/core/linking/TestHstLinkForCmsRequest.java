@@ -238,7 +238,7 @@ public class TestHstLinkForCmsRequest extends AbstractBeanTestCase {
                                                final String renderingHost,
                                                final boolean forceClientHost) throws Exception {
         HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
-        HstMutableRequestContext requestContext = rcc.create(false);
+        HstMutableRequestContext requestContext = rcc.create();
         HstContainerURL containerUrl = createContainerUrlForCmsRequest(requestContext, hostAndPort, requestURI, queryString, renderingHost, forceClientHost);
         requestContext.setBaseURL(containerUrl);
         ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);

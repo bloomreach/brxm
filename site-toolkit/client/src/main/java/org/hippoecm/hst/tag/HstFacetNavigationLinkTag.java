@@ -130,7 +130,7 @@ public class HstFacetNavigationLinkTag extends TagSupport {
                     writer.print(urlString);
                 } catch (IOException ioe) {
                     throw new JspException(
-                        "Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
+                        "ResourceURL-Tag Exception: cannot write to the output writer.");
                 }
             }
             else {

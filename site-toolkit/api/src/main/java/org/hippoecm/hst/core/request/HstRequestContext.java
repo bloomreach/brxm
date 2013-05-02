@@ -234,35 +234,10 @@ public interface HstRequestContext {
     ContainerConfiguration getContainerConfiguration();
     
     /**
-     * Returns true if this request is embedded and link rewriting needs to use the {@link #getResolvedEmbeddingMount()}
-     * for the target Mount path and context path (if to be included).
-     */
-    boolean isEmbeddedRequest();
-    
-    /**
      * @return <code>true</code> when the request is from a cms context: This can be some REST call from the cms, or 
      * a channel preview request inside the cms or over the HOST of the cms
      */
     boolean isCmsRequest();
-    
-    
-    /**
-     * Returns the contextPath of the embedding application for an embedded request, otherwise null
-     * @see HstRequestContext#isEmbeddedRequest()
-     */
-    String getEmbeddingContextPath();
-    
-    /**
-     * Returns the {@link ResolvedMount} to be used for link rewriting when this request is embedded, otherwise null
-     * @see HstRequestContext#isEmbeddedRequest()
-     */
-    ResolvedMount getResolvedEmbeddingMount();
-    
-    /**
-     * Returns true if invoked from a Portlet.
-     * If true, this instance will also implement HstPortletRequestContext.
-     */
-    boolean isPortletContext();
     
     /**
      * Returns the context credentials provider

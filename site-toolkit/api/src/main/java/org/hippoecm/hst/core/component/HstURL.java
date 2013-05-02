@@ -42,7 +42,7 @@ import java.util.Map;
  * <p>
  * The string representation of a HstURL does not need to be a valid 
  * URL at the time the <code>{@link HstComponent}</code> is generating its content. It may contain  
- * special tokens that will be converted to a valid URL, by the container or portal, 
+ * special tokens that will be converted to a valid URL by the container
  * before the content is returned to the client.
  * </p>
  * 

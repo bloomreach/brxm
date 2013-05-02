@@ -362,7 +362,7 @@ public class HstRequestImpl extends HttpServletRequestWrapper implements HstRequ
         if (CONTAINER_ATTR_NAME_PREFIXES == null) {
             synchronized (HstRequestImpl.class) {
                 if (CONTAINER_ATTR_NAME_PREFIXES == null) {
-                    ArrayList<String> containerAttrNamePrefixes = new ArrayList<String>(Arrays.asList("javax.servlet.", "javax.portlet.", "org.hippoecm.hst.container."));
+                    ArrayList<String> containerAttrNamePrefixes = new ArrayList<String>(Arrays.asList("javax.servlet.", "org.hippoecm.hst.container."));
                     ContainerConfiguration containerConfiguration = this.requestContext.getContainerConfiguration();
 
                     if (containerConfiguration != null) {

@@ -86,8 +86,6 @@ public class HstSiteMapItemService implements HstSiteMapItem {
      */
     private Map<String, String> componentConfigurationIdMappings;
 
-    private String portletComponentConfigurationId;
-  
     private boolean authenticated;
     
     private Set<String> roles;
@@ -277,8 +275,6 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             }
         }
         
-        this.portletComponentConfigurationId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_PORTLETCOMPONENTCONFIGURATIONID);
-        
         if (node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
             this.locale = node.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
         } else if(this.parentItem != null){
@@ -405,10 +401,6 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         return componentConfigurationIdMappings;
     }
 
-    public String getPortletComponentConfigurationId() {
-        return this.portletComponentConfigurationId;
-    }
-    
     public String getId() {
         return this.id;
     }

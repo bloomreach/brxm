@@ -49,7 +49,6 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private ResolvedMount resolvedMount;
     private String relativeContentPath;
     private HstComponentConfiguration hstComponentConfiguration;
-    private HstComponentConfiguration portletHstComponentConfiguration;
     private String pathInfo;
     private PropertyParser pp;
     private boolean isComponentResolved;
@@ -107,14 +106,6 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         return this.hstComponentConfiguration;
     }
 
-    public HstComponentConfiguration getPortletHstComponentConfiguration() {
-        if (isComponentResolved) {
-            return portletHstComponentConfiguration;
-        }
-        resolveComponentConfiguration();
-        return this.portletHstComponentConfiguration;
-    }
-    
     public String getParameter(String name) {
         return (String)resolvedParameters.get(name);
     }
@@ -166,7 +157,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         String componentConfigurationId = resolveMappedConponentConfigurationId();
 
         HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
-        if (componentConfigurationId == null && hstSiteMapItem.getComponentConfigurationId() == null && hstSiteMapItem.getPortletComponentConfigurationId() == null) {
+        if (componentConfigurationId == null && hstSiteMapItem.getComponentConfigurationId() == null) {
             log.debug("The ResolvedSiteMapItemImpl does not have a component configuration id because the sitemap item '{}' does not have one", hstSiteMapItem.getId());
         } else {
             if (componentConfigurationId == null) {
@@ -177,18 +168,11 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
             if (componentConfigurationId != null) {
                 final String resolvedComponentConfigurationId = (String)pp.resolveProperty("componentConfigurationId", componentConfigurationId);
                 hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(resolvedComponentConfigurationId);
-            }
 
-            String portletComponentConfigurationId = hstSiteMapItem.getPortletComponentConfigurationId();
-
-            if (portletComponentConfigurationId != null) {
-                final String resolvedPortletComponentConfigurationId = (String)pp.resolveProperty("portletComponentConfigurationId", portletComponentConfigurationId);
-                this.portletHstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(resolvedPortletComponentConfigurationId);
-            }
-
-            if (hstComponentConfiguration == null && this.portletHstComponentConfiguration == null) {
-                log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id cannot be found. {} or {}",
-                        componentConfigurationId, portletComponentConfigurationId);
+                if (hstComponentConfiguration == null) {
+                    log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id {} cannot be found.",
+                            componentConfigurationId);
+                }
             }
         }
 

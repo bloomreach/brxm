@@ -65,19 +65,6 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     
     protected HstNavigationalStateCodec navigationalStateCodec;
     
-    protected boolean portletResourceURLEnabled;
-    
-    protected HstPortletContainerURLWriter portletContainerURLWriter;
-    protected HstEmbeddedPortletContainerURLWriter embeddedPortletContainerURLWriter;
-    
-    public void setPortletResourceURLEnabled(boolean portletResourceURLEnabled) {
-        this.portletResourceURLEnabled = portletResourceURLEnabled;
-    }
-    
-    public boolean isPortletResourceURLEnabled() {
-    	return portletResourceURLEnabled;
-    }
-    
     public void setUrlNamespacePrefix(String urlNamespacePrefix) {
         this.urlNamespacePrefix = urlNamespacePrefix;
         this.urlNamespacePrefixedPath = '/' + urlNamespacePrefix;
@@ -301,27 +288,13 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     
     public String toContextRelativeURLString(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException, ContainerException {
         StringBuilder url = new StringBuilder(100);
-        String mountPrefix = requestContext.isEmbeddedRequest() ? requestContext.getResolvedEmbeddingMount().getResolvedMountPath() : containerURL.getResolvedMountPath();
+        String mountPrefix = containerURL.getResolvedMountPath();
         if(mountPrefix != null) {
             url.append(mountPrefix);
         }
         String pathInfo = buildHstURLPath(containerURL, requestContext);
         url.append(pathInfo);
         return url.toString();
-    }
-    
-    protected HstPortletContainerURLWriter getPortletContainerURLWriter() {
-    	if (this.portletContainerURLWriter == null) {
-    		this.portletContainerURLWriter = new HstPortletContainerURLWriter();
-    	}
-    	return this.portletContainerURLWriter;
-    }
-    
-    protected HstEmbeddedPortletContainerURLWriter getEmbeddedPortletContainerURLWriter() {
-    	if (this.embeddedPortletContainerURLWriter == null) {
-    		this.embeddedPortletContainerURLWriter = new HstEmbeddedPortletContainerURLWriter();
-    	}
-    	return this.embeddedPortletContainerURLWriter;
     }
     
     protected String buildHstURLPath(HstContainerURL containerURL, HstRequestContext requestContext) throws UnsupportedEncodingException {
@@ -562,15 +535,6 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     }
     
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
-    	if (requestContext.isPortletContext()) {
-    		if (requestContext.isEmbeddedRequest()) {
-    			return getEmbeddedPortletContainerURLWriter().toURLString(this, containerURL, requestContext, contextPath);
-    		}
-    		else {
-    			return getPortletContainerURLWriter().toURLString(this, containerURL, requestContext, contextPath);
-    		}
-    	}
-    	
         StringBuilder urlBuilder = new StringBuilder(100);
         if(contextPath != null) {
             urlBuilder.append(contextPath);

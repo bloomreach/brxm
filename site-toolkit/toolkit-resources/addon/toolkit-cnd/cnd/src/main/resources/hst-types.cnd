@@ -106,6 +106,7 @@
 - hst:value
 - hst:relativecontentpath (string)
 - hst:componentconfigurationid (string)
+// deprecated and unused: do not use
 - hst:portletcomponentconfigurationid (string)
 - hst:sitemapitemhandlerids (string) multiple
 - hst:parameternames (string) multiple
@@ -177,6 +178,7 @@
 - hst:version (long)
 // uuid or absolute path
 - hst:content (string)
+// deprecated and unused: do not use
 - hst:portalconfigurationenabled (boolean)
 
 [hst:sites] > nt:base, mix:referenceable, mix:versionable
@@ -224,7 +226,7 @@
 // when this mount is only applicable for certain contextpath, add this property containing the contextpath that 
 // is allowed (it can be an empty string, or if non empty it must start with '/' and no further '/' is allowed)
 - hst:onlyforcontextpath (string)
-// for embedded delegation of sites a mountpath needs to point to the delegated mount. This is only relevant for portal environment
+// deprecated and unused: do not use
 - hst:embeddedmountpath
 - hst:scheme (string)
 - hst:schemenotmatchresponsecode (long)

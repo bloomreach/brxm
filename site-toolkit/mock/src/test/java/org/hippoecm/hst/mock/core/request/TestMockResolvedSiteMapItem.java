@@ -52,9 +52,6 @@ public class TestMockResolvedSiteMapItem {
         HstComponentConfiguration hstComponentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
         MockBeanTestHelper.verifyReadWriteProperty(bean, "hstComponentConfiguration", hstComponentConfiguration);
         
-        HstComponentConfiguration portletHstComponentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
-        MockBeanTestHelper.verifyReadWriteProperty(bean, "portletHstComponentConfiguration", portletHstComponentConfiguration);
-        
         MockBeanTestHelper.verifyReadWriteProperty(bean, "namedPipeline", "test-namedPipeline");
         
         ResolvedMount resolvedMount = EasyMock.createNiceMock(ResolvedMount.class);

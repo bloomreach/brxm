@@ -79,10 +79,6 @@ public interface HstMutableRequestContext extends HstRequestContext {
 
 	public void setContainerConfiguration(ContainerConfiguration containerConfiguration);
 	
-	public void setEmbeddingContextPath(String embeddingContextPath);
-
-	public void setResolvedEmbeddingMount(ResolvedMount resolvedEmbeddingMount);
-	
     public void setSubject(Subject subject);
     
     /**

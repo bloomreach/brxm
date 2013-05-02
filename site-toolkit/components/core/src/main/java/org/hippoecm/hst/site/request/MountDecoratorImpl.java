@@ -225,11 +225,6 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
-        public String getEmbeddedMountPath() {
-            return delegatee.getEmbeddedMountPath();
-        }
-
-        @Override
         public String getFormLoginPage() {
             return delegatee.getFormLoginPage();
         }

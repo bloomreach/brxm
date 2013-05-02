@@ -75,7 +75,6 @@ public class ConfigurationViewUtilities {
         buf.append(newLine).append("value = ").append(hstSiteMapItem.getValue());
         buf.append(newLine).append("relativecontentpath = ").append(hstSiteMapItem.getRelativeContentPath());
         buf.append(newLine).append("componentconfigurationid = ").append(hstSiteMapItem.getComponentConfigurationId());
-        buf.append(newLine).append("portletcomponentconfigurationid = ").append(hstSiteMapItem.getPortletComponentConfigurationId());
         buf.append(newLine).append("iswildcard = ").append(hstSiteMapItem.isWildCard());
         for(HstSiteMapItem siteMapItem : hstSiteMapItem.getChildren()) {
             view(buf, indent+SMALL_INDENT, siteMapItem);

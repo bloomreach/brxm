@@ -40,14 +40,8 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         this.config = config;
     }
 
-    public HstMutableRequestContext create(boolean portletContext) {
-    	HstMutableRequestContext rc = null;
-    	if (portletContext) {
-        	rc = new HstPortletRequestContextImpl(repository, contextCredentialsProvider);
-    	}
-    	else {
-        	rc = new HstRequestContextImpl(repository, contextCredentialsProvider);
-    	}
+    public HstMutableRequestContext create() {
+    	HstMutableRequestContext rc = new HstRequestContextImpl(repository, contextCredentialsProvider);
     	rc.setContainerConfiguration(config);
     	return rc;
     }

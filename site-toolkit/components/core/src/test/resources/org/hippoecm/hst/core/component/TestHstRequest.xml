@@ -26,7 +26,6 @@
     <property name="urlNamespacePrefix" value="_hn:" />
     <property name="parameterNameComponentSeparator" value=":" />
     <property name="navigationalStateCodec" ref="org.hippoecm.hst.core.container.HstNavigationalStateCodec" />
-    <property name="portletResourceURLEnabled" value="false" />
     <property name="referenceNamespaceIgnored" value="false" />
   </bean>
   

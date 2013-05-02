@@ -643,7 +643,7 @@ public class TestHstLinkRewriting extends AbstractBeanTestCase {
         
         public HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(String hostAndPort, String requestURI, String queryString) throws Exception {
             HstRequestContextComponent rcc = getComponent(HstRequestContextComponent.class.getName());
-            HstMutableRequestContext requestContext = rcc.create(false);
+            HstMutableRequestContext requestContext = rcc.create();
             HstContainerURL containerUrl = createContainerUrl(hostAndPort, requestURI, queryString);
             requestContext.setBaseURL(containerUrl);
             ResolvedSiteMapItem resolvedSiteMapItem = getResolvedSiteMapItem(containerUrl);

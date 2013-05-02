@@ -177,7 +177,7 @@ public class HstCmsEditLinkTag extends TagSupport  {
                 try {
                     write(cmsEditLink, nodeId);
                  } catch (IOException ioe) {
-                    throw new JspException("Portlet/ResourceURL-Tag Exception: cannot write to the output writer.");
+                    throw new JspException("ResourceURL-Tag Exception: cannot write to the output writer.");
                 }
             }
             else {

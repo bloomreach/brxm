@@ -159,13 +159,7 @@ public interface HstResponse extends HttpServletResponse {
     /**
      * Retrieves header element list.
      * This method is supposed to be invoked by the parent HstComponent
-     * to render some header tag elements in a non-portal environment.
-     * Under portal environment, this method is not supposed to be invoked
-     * because the header tag elements should be written by the portal.
-     * Under portal environment, the HstComponents can write some body
-     * tag fragments only. If a HstComponent contributes some header
-     * tag elements by invoking {@link #addHeadElement(Element, String)},
-     * then the portal will write all the merged head tag elements finally.
+     * to render some header tag elements.
      * 
      * @return List with head element items
      */
@@ -219,22 +213,12 @@ public interface HstResponse extends HttpServletResponse {
     /**
      * Sends a temporary redirect response to the client using the specified redirect location URL.
      * <P>
-     * When a component runs on a normal servlet environment,
-     * in either {@link HstComponent#doAction(HstRequest, HstResponse)} or {@link HstComponent#doBeforeRender(HstRequest, HstResponse)},
+     * In either {@link HstComponent#doAction(HstRequest, HstResponse)} or {@link HstComponent#doBeforeRender(HstRequest, HstResponse)},
      * the invocation on this method could be effective.
      * If the invocation on this method is done in other methods,
      * the invocation will be just ignored with no operation.
      * </P>
-     * <P>
-     * Meanwhile, when a component runs on a portal/portlet environment,
-     * in {@link HstComponent#doAction(HstRequest, HstResponse)},
-     * the invocation on this method is effective.
-     * However, in other methods including {@link HstComponent#doBeforeRender(HstRequest, HstResponse)},
-     * the invocation on this method will be just ignored. 
-     * If the invocation on this method is done in other methods,
-     * the invocation will be just ignored with no operation.
-     * </P>
-     * 
+     *
      * @see {@link javax.servlet.http,HttpServletResponse#sendRedirect(String)}
      * @param location the redirect location URL
      */

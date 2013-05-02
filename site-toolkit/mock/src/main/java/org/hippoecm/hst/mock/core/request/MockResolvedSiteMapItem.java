@@ -41,7 +41,6 @@ public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
     private Set<String> users;
     private boolean authenticated;
     private HstComponentConfiguration hstComponentConfiguration;
-    private HstComponentConfiguration portletHstComponentConfiguration;
     private String namedPipeline;
     private ResolvedMount resolvedMount;
 
@@ -159,14 +158,6 @@ public class MockResolvedSiteMapItem implements ResolvedSiteMapItem {
 
     public void setHstComponentConfiguration(HstComponentConfiguration hstComponentConfiguration) {
         this.hstComponentConfiguration = hstComponentConfiguration;
-    }
-
-    public HstComponentConfiguration getPortletHstComponentConfiguration() {
-        return portletHstComponentConfiguration;
-    }
-
-    public void setPortletHstComponentConfiguration(HstComponentConfiguration portletHstComponentConfiguration) {
-        this.portletHstComponentConfiguration = portletHstComponentConfiguration;
     }
 
     public String getNamedPipeline() {

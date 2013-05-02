@@ -106,16 +106,6 @@ public class TestMockHstRequestContext {
         
         VirtualHost virtualHost = EasyMock.createNiceMock(VirtualHost.class);
         MockBeanTestHelper.verifyReadWriteProperty(bean, "virtualHost", virtualHost);
-        
-        MockBeanTestHelper.verifyReadWriteProperty(bean, "embeddedRequest", true);
-        MockBeanTestHelper.verifyReadWriteProperty(bean, "portletContext", true);
-        
-        MockBeanTestHelper.verifyReadWriteProperty(bean, "embeddingContextPath", "test-embeddingContextPath");
-        
-        ResolvedMount resolvedEmbeddingMount = EasyMock.createNiceMock(ResolvedMount.class);
-        MockBeanTestHelper.verifyReadWriteProperty(bean, "resolvedEmbeddingMount", resolvedEmbeddingMount);
-        
-        MockBeanTestHelper.verifyReadWriteProperty(bean, "embeddingContextPath", "test-targetComponentPath");
     }
     
 }

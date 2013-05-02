@@ -226,11 +226,6 @@ public class MountService implements ContextualizableMount, MutableMount {
     
     private Set<String> users;
 
-    /**
-     * for embedded delegation of sites a mountpath needs to point to the delegated {@link Mount}. This is only relevant for portal environment
-     */
-    private String embeddedMountPath;
-    
     private boolean subjectBasedSession;
     
     private boolean sessionStateful;
@@ -422,13 +417,6 @@ public class MountService implements ContextualizableMount, MutableMount {
             namedPipeline  = StringPool.get(namedPipeline);
         } else if(parent != null) {
             this.namedPipeline = parent.getNamedPipeline();
-        }
-        
-
-        if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_EMBEDDEDMOUNTPATH)) {
-            this.embeddedMountPath = mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_EMBEDDEDMOUNTPATH);
-        } else if(parent != null) {
-            this.embeddedMountPath = parent.getEmbeddedMountPath();
         }
         
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_MOUNTPOINT)) {
@@ -833,10 +821,6 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public HstSiteMapMatcher getHstSiteMapMatcher() {
         return getVirtualHost().getVirtualHosts().getHstManager().getSiteMapMatcher();
-    }
-
-    public String getEmbeddedMountPath() {
-        return embeddedMountPath;
     }
 
     public boolean isAuthenticated() {

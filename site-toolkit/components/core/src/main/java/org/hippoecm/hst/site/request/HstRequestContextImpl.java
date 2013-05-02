@@ -86,8 +86,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HstQueryManagerFactory hstQueryManagerFactory;
     protected Map<String, Object> attributes;
     protected ContainerConfiguration containerConfiguration;
-    protected String embeddingContextPath;
-    protected ResolvedMount resolvedEmbeddingMount;  
     protected Subject subject;
     protected Locale preferredLocale;
     protected List<Locale> locales;
@@ -335,30 +333,6 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     public VirtualHost getVirtualHost() {
        return resolvedMount.getMount().getVirtualHost();
-    }
-    
-    public boolean isEmbeddedRequest() {
-        return resolvedEmbeddingMount != null;
-    }
-    
-    public void setEmbeddingContextPath(String embeddingContextPath) {
-    	this.embeddingContextPath = embeddingContextPath;
-    }
-    
-    public String getEmbeddingContextPath() {
-    	return this.embeddingContextPath;
-    }
-    
-    public void setResolvedEmbeddingMount(ResolvedMount resolvedEmbeddingMount) {
-    	this.resolvedEmbeddingMount = resolvedEmbeddingMount;
-    }
-    
-    public ResolvedMount getResolvedEmbeddingMount() {
-    	return this.resolvedEmbeddingMount;
-    }
-
-    public boolean isPortletContext() {
-        return false;
     }
     
     public ContextCredentialsProvider getContextCredentialsProvider() {

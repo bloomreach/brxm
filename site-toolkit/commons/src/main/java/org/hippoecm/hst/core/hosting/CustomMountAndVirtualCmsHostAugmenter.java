@@ -720,11 +720,6 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
         }
 
         @Override
-        public String getEmbeddedMountPath() {
-            return fakeNonExistingPath;
-        }
-
-        @Override
         public String getFormLoginPage() {
             return null;
         }

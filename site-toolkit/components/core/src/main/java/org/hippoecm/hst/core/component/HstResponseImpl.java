@@ -289,15 +289,8 @@ public class HstResponseImpl extends HttpServletResponseWrapper implements HstRe
     {
         if (url.indexOf("://") == -1 && !url.startsWith("/"))
         {
-            // The Portlet Spec only allows URL encoding for absolute or full path URIs
-            // Letting this pass through thus would lead to an IllegalArgumentException been thrown.
-
-            // TODO: figure out how this can be fixed properly which is *not* trivial as it is
-            // difficult (impossible?) to detect upfront if such an url would later on need to be
-            // encoded as PortletURL (in which case it should *not* be encoded upfront...
-
-            // Also note: Tomcat does *not* encode the url when called from within a context other
-            // than the originating request context (e.g. during cross-context calls) anyway...
+            // Note: Tomcat does *not* encode the url when called from within a context other
+            // than the originating request context (e.g. during cross-context calls) ...
             return url;
         }
         return super.encodeURL(url);
