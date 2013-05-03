@@ -235,7 +235,7 @@ public class ContentTypesResource extends AbstractResource {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            return service.getDocumentType(uuid, getRequestContext(servletRequest).getSession());
+            return service.getDocumentTypeForNodeByUuid(getRequestContext(servletRequest).getSession(), uuid);
         } catch (ItemNotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RepositoryException e) {
@@ -249,7 +249,7 @@ public class ContentTypesResource extends AbstractResource {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            return service.getDocumentType(getRequestContext(servletRequest).getSession(), "/"+path);
+            return service.getDocumentTypeForNodeByPath(getRequestContext(servletRequest).getSession(), "/" + path);
         } catch (PathNotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RepositoryException e) {
