@@ -14,9 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -28,7 +26,7 @@
 
   <name>Hippo CMS7 Services</name>
   <artifactId>hippo-services</artifactId>
-  <version>1.03.00-SNAPSHOT</version>
+  <version>1.03.00-alpha</version>
 
   <inceptionYear>2012</inceptionYear>
 
@@ -40,9 +38,9 @@
   </properties>
 
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/tags/hippo-services-1.03.00-alpha</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/tags/hippo-services-1.03.00-alpha</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/services/services-api/tags/hippo-services-1.03.00-alpha</url>
   </scm>
 
   <repositories>
