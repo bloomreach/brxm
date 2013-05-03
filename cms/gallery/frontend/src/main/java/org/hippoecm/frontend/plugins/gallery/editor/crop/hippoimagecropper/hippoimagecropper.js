@@ -51,7 +51,7 @@ if (!YAHOO.hippo.ImageCropper) {
             this.upscalingEnabled = config.upscalingEnabled;
             this.previewVisible = config.previewVisible;
             this.status = config.status;
-            
+
             this.fixedDimension = config.fixedDimension;
             this.thumbnailSizeLabelId = config.thumbnailSizeLabelId;
 
@@ -72,12 +72,12 @@ if (!YAHOO.hippo.ImageCropper) {
                 if(this.previewVisible) {
                     this.previewImage = Dom.getFirstChild(this.imagePreviewContainerId);
                     this.previewContainer = Dom.get(this.imagePreviewContainerId);
-                    this.previewLabelTemplate = Dom.get(this.thumbnailSizeLabelId).innerHTML;
 
                     //initial values
                     Dom.setStyle(this.previewImage, 'top',  '-' + this.initialX + 'px');
                     Dom.setStyle(this.previewImage, 'left', '-' + this.initialY + 'px');
                 }
+                this.previewLabelTemplate = Dom.get(this.thumbnailSizeLabelId).innerHTML;
 
                 this.cropper = new YAHOO.widget.ImageCropper(this.id,
                         {
@@ -100,16 +100,13 @@ if (!YAHOO.hippo.ImageCropper) {
             onMove : function(e) {
                 var coords = this.cropper.getCropCoords();
                 this.updateRegionInputValue(coords);
-
-                if (this.previewVisible && this.previewImage != null) { // Resize preview image
-                    this.updatePreviewImage(coords);                    
-                }
+                this.updatePreviewImage(coords);
             },
-            
+
             updatePreviewImage : function(coords) {
                 var scalingFactor = 1, previewContainerWidth, previewContainerHeight;
                 if(this.fixedDimension == 'both') {
-                    // Since the ratio is fixed, both height and width change by the same percentage                	
+                    // Since the ratio is fixed, both height and width change by the same percentage
                     scalingFactor = this.thumbnailWidth / coords.width;
                     previewContainerWidth = this.thumbnailWidth;
                     previewContainerHeight = this.thumbnailHeight;
@@ -122,20 +119,23 @@ if (!YAHOO.hippo.ImageCropper) {
                     previewContainerWidth = Math.floor(scalingFactor * coords.width);
                     previewContainerHeight = this.thumbnailHeight;
                 }
-                // set the preview box dimensions
-                Dom.setStyle(this.previewContainer, 'width',  previewContainerWidth + 'px');
-                Dom.setStyle(this.previewContainer, 'height', previewContainerHeight + 'px');
                 this.updatePreviewLabel(previewContainerWidth, previewContainerHeight);
 
-                var w = Math.floor(this.originalImageWidth  * scalingFactor),
-                        h = Math.floor(this.originalImageHeight * scalingFactor),
-                        x = Math.floor(coords.top  * scalingFactor),
-                        y = Math.floor(coords.left * scalingFactor);
+                if (this.previewVisible && this.previewImage != null) {
+                    // set the preview box dimensions
+                    Dom.setStyle(this.previewContainer, 'width',  previewContainerWidth + 'px');
+                    Dom.setStyle(this.previewContainer, 'height', previewContainerHeight + 'px');
 
-                Dom.setStyle(this.previewImage, 'top',   '-' + x + 'px');
-                Dom.setStyle(this.previewImage, 'left',  '-' + y + 'px');
-                Dom.setStyle(this.previewImage, 'width',  w + 'px');
-                Dom.setStyle(this.previewImage, 'height', h + 'px');
+                    var w = Math.floor(this.originalImageWidth  * scalingFactor),
+                            h = Math.floor(this.originalImageHeight * scalingFactor),
+                            x = Math.floor(coords.top  * scalingFactor),
+                            y = Math.floor(coords.left * scalingFactor);
+
+                    Dom.setStyle(this.previewImage, 'top',   '-' + x + 'px');
+                    Dom.setStyle(this.previewImage, 'left',  '-' + y + 'px');
+                    Dom.setStyle(this.previewImage, 'width',  w + 'px');
+                    Dom.setStyle(this.previewImage, 'height', h + 'px');
+                }
             },
 
             updateRegionInputValue : function(coords) {
