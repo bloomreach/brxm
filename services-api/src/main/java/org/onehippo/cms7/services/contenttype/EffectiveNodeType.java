@@ -17,8 +17,8 @@
 package org.onehippo.cms7.services.contenttype;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 
 /**
  * An immutable and aggregated or effective JCR Repository {@link javax.jcr.nodetype.NodeType} representation
@@ -54,12 +54,12 @@ public interface EffectiveNodeType {
      * Never null but may be empty.
      * @see javax.jcr.nodetype.NodeType#getSupertypes()
      */
-    Set<String> getSuperTypes();
+    SortedSet<String> getSuperTypes();
 
     /**
      * @return The natural ordered set of aggregated EffectiveNodeTypes, at least containing {@link #getName()} even if not {@link #isAggregate()}
      */
-    Set<String> getAggregatedTypes();
+    SortedSet<String> getAggregatedTypes();
 
     /**
      * @param nodeTypeName The name of a node type
@@ -102,7 +102,7 @@ public interface EffectiveNodeType {
      * @return The aggregated map of all allowable Child Node definitions.
      * @see javax.jcr.nodetype.NodeType#getChildNodeDefinitions()
      */
-    Map<String, List<EffectiveNodeTypeChild>> getChildren();
+    SortedMap<String, List<EffectiveNodeTypeChild>> getChildren();
 
     /**
      * Returns the aggregated map of all allowable Property definitions.
@@ -112,5 +112,5 @@ public interface EffectiveNodeType {
      * @return The aggregated map of all allowable Property definitions.
      * @see javax.jcr.nodetype.NodeType#getPropertyDefinitions()
      */
-    Map<String, List<EffectiveNodeTypeProperty>> getProperties();
+    SortedMap<String, List<EffectiveNodeTypeProperty>> getProperties();
 }

@@ -17,7 +17,7 @@
 package org.onehippo.cms7.services.contenttype;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * An immutable Hippo Document Type representation providing a more relaxed and enhanced form of an {@link EffectiveNodeType}
@@ -74,12 +74,12 @@ public interface DocumentType {
      * Never null but may be empty.
      * @see javax.jcr.nodetype.NodeType#getSupertypes()
      */
-    Set<String> getSuperTypes();
+    SortedSet<String> getSuperTypes();
 
     /**
      * @return The natural ordered set of aggregated DocumentTypes or JCR NodeTypes mixins, at least containing {@link #getName()} even if not {@link #isAggregate()}
      */
-    Set<String> getAggregatedTypes();
+    SortedSet<String> getAggregatedTypes();
 
     /**
      * @param documentTypeName The name of a document type

@@ -16,8 +16,8 @@
 
 package org.onehippo.cms7.services.contenttype;
 
-import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 
 /**
  * A lightweight and immutable representation of the DocumentType definitions.
@@ -42,7 +42,7 @@ public interface DocumentTypes {
     DocumentType getType(String name);
 
     /**
-     * @return The immutable map of DocumentTypes grouped by their namespace prefix as key
+     * @return The immutable map of DocumentTypes grouped and sorted by their namespace prefix as key and their elements ordered (but not sorted) by their name
      */
-    Map<String, Set<DocumentType>> getTypesByPrefix();
+    SortedMap<String, Set<DocumentType>> getTypesByPrefix();
 }

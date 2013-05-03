@@ -16,7 +16,7 @@
 
 package org.onehippo.cms7.services.contenttype;
 
-import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Represents a Child NodeDefinition for its containing EffectiveNodeType
@@ -34,5 +34,5 @@ public interface EffectiveNodeTypeChild extends EffectiveNodeTypeItem {
      * @return The natural ordered set of qualified names of the required primary node types. Never returns null or even an empty set (nt:base returned as a minimum)
      * @see javax.jcr.nodetype.NodeDefinition#getRequiredPrimaryTypeNames()
      */
-    Set<String> getRequiredPrimaryTypes();
+    SortedSet<String> getRequiredPrimaryTypes();
 }

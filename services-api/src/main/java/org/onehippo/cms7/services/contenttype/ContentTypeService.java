@@ -54,20 +54,21 @@ public interface ContentTypeService {
      * @return the effective DocumentType representation for a specific Node
      * @throws RepositoryException if a repository error occurs
      */
-    DocumentType getDocumentType(Node node) throws RepositoryException;
+    DocumentType getDocumentTypeForNode(Node node) throws RepositoryException;
 
     /**
      * Returns the effective DocumentType representation for an existing Node identified by its uuid
      * <p>
      * The existence and allowed read access to the Node is first checked through the provided Session.
      * </p>
-     * @param uuid An existing Node uuid
+     *
      * @param session An active repository Session
+     * @param uuid An existing Node uuid
      * @return the effective DocumentType representation for an existing Node identified by its uuid
      * @throws ItemNotFoundException if node doesn't exist or is not accessible
      * @throws RepositoryException if another error occurs
      */
-    DocumentType getDocumentType(String uuid, Session session) throws ItemNotFoundException, RepositoryException;
+    DocumentType getDocumentTypeForNodeByUuid(Session session, String uuid) throws ItemNotFoundException, RepositoryException;
 
     /**
      * Returns the effective DocumentType representation for an existing Node identified by its absolute path
@@ -80,5 +81,5 @@ public interface ContentTypeService {
      * @throws PathNotFoundException if node doesn't exist or is not accessible
      * @throws RepositoryException if a repository error occurs
      */
-    DocumentType getDocumentType(Session session, String path) throws PathNotFoundException, RepositoryException;
+    DocumentType getDocumentTypeForNodeByPath(Session session, String path) throws PathNotFoundException, RepositoryException;
 }

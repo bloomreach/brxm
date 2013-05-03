@@ -16,8 +16,8 @@
 
 package org.onehippo.cms7.services.contenttype;
 
-import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 
 /**
  * An lightweight and immutable representation of the aggregated or effective JCR Repository NodeType definitions.
@@ -37,7 +37,7 @@ public interface EffectiveNodeTypes {
     EffectiveNodeType getType(String name);
 
     /**
-     * @return The immutable map of EffectiveNodeTypes grouped by their namespace prefix as key
+     * @return The immutable map of EffectiveNodeTypes grouped and sorted by their namespace prefix as key and their elements ordered (but not sorted) by their name
      */
-    Map<String, Set<EffectiveNodeType>> getTypesByPrefix();
+    SortedMap<String, Set<EffectiveNodeType>> getTypesByPrefix();
 }
