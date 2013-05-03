@@ -41,7 +41,7 @@
     <notice.project.name>Hippo CMS7 Product Packages</notice.project.name>
 
     <hippo.utilities.version>1.01.03</hippo.utilities.version>
-    <hippo.repository.version>2.25.00-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>2.25.01-SNAPSHOT</hippo.repository.version>
     <hippo.cms.version>2.25.00-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>2.27.00-SNAPSHOT</hippo.hst.version>
 
