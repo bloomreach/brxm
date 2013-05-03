@@ -17,6 +17,7 @@ package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +68,7 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
 
     private final ExtStore store;
     private final ChannelStore channelStore;
-    final DeviceService service;
-
-    private static final Map<String, Object> CSS = new ConcurrentHashMap<String, Object>();
+    private final DeviceService service;
 
     public DeviceManager(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -141,14 +140,12 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
         for (StyleableDevice styleable : service.getStylables()) {
             styleable.appendCss(buf);
         }
-
-        CSS.put("css", buf.toString());
+        final Map<String,Object> cssMap = new HashMap<String,Object>();
+        cssMap.put("css", buf.toString());
         ResourceReference resourceReference = new TextTemplateResourceReference(DeviceManager.class, "dynamic.css", "text/css", new LoadableDetachableModel<Map<String, Object>>() {
             @Override
             protected Map<String, Object> load() {
-                Map<String, Object> cssMap = new HashMap<String, Object>();
-                cssMap.putAll(CSS);
-                return cssMap;
+                return Collections.unmodifiableMap(cssMap);
             }
         });
         add(CSSPackageResource.getHeaderContribution(resourceReference));
