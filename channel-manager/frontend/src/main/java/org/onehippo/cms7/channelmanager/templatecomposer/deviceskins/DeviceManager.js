@@ -24,7 +24,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
     triggerAction: 'all',
     lastQuery: '',
     selectOnFocus: true,
-    ie8 : 'IE8 is not supported!',
+//    ie8 : 'IE8 is not supported!',
     editable: false,
     disableKeyFilter: true,
     listeners: {
@@ -36,14 +36,14 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
     defaultDevice: 'default',
 
     constructor: function (config) {
-        if (!Ext.isIE8) {
+//        if (!Ext.isIE8) {
             this.store = config.deviceStore;
             this.baseImageUrl = config.baseImageUrl;
             var cmp = Ext.getCmp('Iframe');
             cmp.getEl().set({
                 cls: 'x-panel default'
             });
-        }
+//        }
         Hippo.ChannelManager.DeviceManager.superclass.constructor.call(this, config);
     },
     getChannelId: function() {
@@ -57,7 +57,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
         this.setDevice(selectedDeviceId);
     },
     setDevice: function(selectedDeviceId) {
-        var r, cmp, iFrame, parent, size, image;
+        var r, cmp, iFrame, parent, size, image, css;
         r = this.findRecord('id', selectedDeviceId);
         if (!Ext.isEmpty(r)) {
             this.setValue(r.get('name'));
@@ -65,11 +65,14 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
             iFrame = cmp.items.items[0].getEl();
             parent = iFrame.parent();
             image = Ext.get('deviceImage');
-            image.set({
-                src:    this.baseImageUrl + r.get('relativeUrl')
-            });
+            css = selectedDeviceId + (Ext.isIE8 ? 'IE8' : '');
+            if (selectedDeviceId !== 'default') {
+                image.set({
+                    src:    this.baseImageUrl + r.get('relativeImageUrl')
+                });
+            }
             cmp.getEl().set({
-                cls: 'x-panel ' + selectedDeviceId
+                cls: 'x-panel ' + css
             });
 
             iFrame.dom.removeAttribute('style');  //clear style
@@ -86,7 +89,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
     },
     initComponent: function () {
         Hippo.ChannelManager.DeviceManager.superclass.initComponent.call(this);
-        if (!Ext.isIE8) {
+//        if (!Ext.isIE8) {
             this.on('select', function (combo, record, index) {
                 var selectedDeviceId = record.get('id'),
                         channelId = combo.getChannelId();
@@ -105,6 +108,6 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
             });
             this.addEvents('setchanneldefaults');
             this.fireEvent('setchanneldefaults', channelId);
-        }
+//        }
     }
 });

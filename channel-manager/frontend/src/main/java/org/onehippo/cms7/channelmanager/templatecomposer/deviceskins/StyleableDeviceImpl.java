@@ -36,7 +36,7 @@ public class StyleableDeviceImpl implements StyleableDevice {
             "height:${background.height}px;\n" +
             "position: relative;\n" +
             "overflow: auto;\n" +
-            "border: none;";
+            "border: none;\n";
 
     private static final String defaultStyleTemplate = "" +
             "width: ${calc.width}px!important;\n" +
@@ -46,7 +46,6 @@ public class StyleableDeviceImpl implements StyleableDevice {
             "-webkit-transform: scale(${scale.factor},${scale.factor});\n" +
             "-o-transform: scale(${scale.factor},${scale.factor});\n" +
             "-moz-transform: scale(${scale.factor},${scale.factor});\n" +
-//            "-ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=${scale.factor}, M12=0, M21=0, M22=${scale.factor}, SizingMethod='auto expand')\";\n" +
             "position: absolute;\n" +
             "top: ${viewport.y}px;\n" +
             "left: ${viewport.x}px;\n" +
@@ -54,7 +53,10 @@ public class StyleableDeviceImpl implements StyleableDevice {
             "-webkit-transform-origin: top left;\n" +
             "-o-transform-origin: top left;\n" +
             "-ms-transform-origin: top left;\n" +
-            "transform-origin: top left;";
+            "transform-origin: top left;\n";
+
+    private static final String defaultIE8StyleTemplate = defaultStyleTemplate +
+            "-ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=${scale.factor}, M12=0, M21=0, M22=${scale.factor}, SizingMethod='auto expand')\";\n";
 
     private final String id;
     private final String name;
@@ -70,11 +72,12 @@ public class StyleableDeviceImpl implements StyleableDevice {
         this.name = properties.getString("name");
         templateProperties.put("style", defaultStyleTemplate);
         templateProperties.put("wrapStyle", defaultWrapStyleTemplate);
+        templateProperties.put("ie8Style", defaultIE8StyleTemplate);
         templateProperties.put("image.location", "images/" + id + ".png");
         for (String property : properties.keySet()) {
             templateProperties.put(property, properties.getString(property));
         }
-        if (properties.containsKey("autoCalc") && "true".equals(properties.getString("autoCalc"))) {
+        if ("true".equals(templateProperties.get("autoCalc"))) {
             autoCalcSize();
         }
     }
@@ -90,18 +93,16 @@ public class StyleableDeviceImpl implements StyleableDevice {
     }
 
     @Override
-    public String getStyle() {
-        return processTemplate(templateProperties.get("style"));
-    }
-
-    @Override
-    public String getWrapStyle() {
-        return processTemplate(templateProperties.get("wrapStyle"));
-    }
-
-    @Override
-    public String getRelativeUrl() {
+    public String getRelativeImageUrl() {
         return templateProperties.get("image.location");
+    }
+
+    @Override
+    public StringBuilder appendCss(StringBuilder buf) {
+        buf.append(new CSSRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", id), getStyle("wrapStyle")));
+        buf.append(new CSSRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id), getStyle("style")));
+        buf.append(new CSSRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id + "IE8"), getStyle("ie8Style")));
+        return buf;
     }
 
     private void autoCalcSize() {
@@ -120,7 +121,27 @@ public class StyleableDeviceImpl implements StyleableDevice {
         }
     }
 
-    private String processTemplate(String style) {
-        return MapVariableInterpolator.interpolate(style, templateProperties);
+    private String getStyle(String styleName) {
+        return MapVariableInterpolator.interpolate(templateProperties.get(styleName), templateProperties);
     }
+
+    private static class CSSRule {
+
+        private String selector;
+        private String declarationsString;
+        private static final String template = "" +
+                "%s{\n" +
+                "%s" +
+                "}\n";
+
+        public CSSRule(final String selector, final String declarations) {
+            this.selector = selector;
+            this.declarationsString = declarations;
+        }
+
+        public String toString() {
+            return String.format(template, selector, declarationsString);
+        }
+    }
+
 }

@@ -24,26 +24,12 @@ import java.io.Serializable;
  */
 public interface StyleableDevice extends Serializable {
 
-    /**
-     * @return The CSS style for the iframe
-     */
-    public String getStyle();
-
-    /**
-     * @return The CSS style for the wrapper of the iframe
-     */
-    public String getWrapStyle();
-
-    /**
-     * @return Name which pops up in the combobox.
-     */
-    public String getName();
-
-    /**
-     * @return Identifier which is saved on the channel.
-     */
     public String getId();
 
-    public String getRelativeUrl();
+    public String getName();
+
+    public StringBuilder appendCss(StringBuilder buf);
+
+    public String getRelativeImageUrl();
 
 }

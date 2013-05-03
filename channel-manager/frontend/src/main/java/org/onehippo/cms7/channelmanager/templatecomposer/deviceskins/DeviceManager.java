@@ -128,7 +128,7 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
         });
         addHeadContribution();
         this.store = new ExtArrayStore<StyleableDevice>(Arrays.asList(new ExtDataField("name"), new ExtDataField("id"),
-                new ExtDataField("relativeUrl")),service.getStylables());
+                new ExtDataField("relativeImageUrl")),service.getStylables());
     }
 
     /**
@@ -137,8 +137,12 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
     public void addHeadContribution() {
         add(JavascriptPackageResource.getHeaderContribution(DeviceManager.class, DEVICE_MANAGER_JS));
 
-        String style = getCssStyle();
-        CSS.put("css", style);
+        StringBuilder buf = new StringBuilder();
+        for (StyleableDevice styleable : service.getStylables()) {
+            styleable.appendCss(buf);
+        }
+
+        CSS.put("css", buf.toString());
         ResourceReference resourceReference = new TextTemplateResourceReference(DeviceManager.class, "dynamic.css", "text/css", new LoadableDetachableModel<Map<String, Object>>() {
             @Override
             protected Map<String, Object> load() {
@@ -149,23 +153,6 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
         });
         add(CSSPackageResource.getHeaderContribution(resourceReference));
     }
-
-    /**
-     * @return Retrieving the appropriate styles for each device.
-     */
-    private String getCssStyle() {
-        final CSSUtil util = new CSSUtil();
-        for (StyleableDevice styleable : service.getStylables()) {
-            CSSRule wraprule = new CSSRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", styleable.getId()));
-            wraprule.setDeclarationsString(styleable.getWrapStyle());
-            CSSRule rule = new CSSRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", styleable.getId()));
-            rule.setDeclarationsString(styleable.getStyle());
-            util.add(wraprule);
-            util.add(rule);
-        }
-        return util.toString();
-    }
-
 
 
     @Override
@@ -190,42 +177,4 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
         properties.put("deviceStore", new JSONIdentifier(this.store.getJsObjectId()));
     }
 
-    private static class CSSUtil {
-        List<CSSRule> cssRules = new ArrayList<CSSRule>();
-        private static final String loopTemplate = "%s\n";
-
-        public boolean add(final CSSRule cssRule) {
-            return cssRules.add(cssRule);
-        }
-
-        public String toString() {
-            StringBuilder buffer = new StringBuilder();
-            for (CSSRule rule : cssRules) {
-                buffer.append(String.format(loopTemplate, rule.toString()));
-            }
-            return buffer.toString();
-        }
-    }
-
-    private static class CSSRule {
-
-        private String selector;
-        private String declarationsString;
-        private static final String template = "" +
-                "%s{\n" +
-                "%s" +
-                "\n}";
-
-        public CSSRule(final String selector) {
-            this.selector = selector;
-        }
-
-        public void setDeclarationsString(final String declarationString) {
-            this.declarationsString = declarationString;
-        }
-
-        public String toString() {
-            return String.format(template, selector, declarationsString);
-        }
-    }
 }
