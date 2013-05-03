@@ -19,7 +19,7 @@ package org.onehippo.cms7.services.contenttype;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.ext.DaemonModule;
+import org.onehippo.repository.modules.DaemonModule;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 
 public class ContentTypeServiceModule implements DaemonModule {

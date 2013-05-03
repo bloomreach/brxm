@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.jcr.PropertyType;
@@ -51,7 +52,7 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
     private final EffectiveNodeTypesCache entCache;
     private Map<String, String> propertyTypeMappings = new HashMap<String, String>(jcrPropertyTypesMap);
     private Map<String, DocumentTypeImpl> types = new TreeMap<String, DocumentTypeImpl>();
-    private Map<String, Set<DocumentType>> prefixesMap;
+    private SortedMap<String, Set<DocumentType>> prefixesMap;
 
     protected DocumentTypesCache(EffectiveNodeTypesCache entCache) {
         this.entCache = entCache;
@@ -90,7 +91,7 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
         for (Map.Entry<String, Set<DocumentType>> entry : prefixesMap.entrySet()) {
             entry.setValue(Collections.unmodifiableSet(entry.getValue()));
         }
-        prefixesMap = Collections.unmodifiableMap(prefixesMap);
+        prefixesMap = Collections.unmodifiableSortedMap(prefixesMap);
     }
 
     @Override
@@ -104,7 +105,7 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
     }
 
     @Override
-    public Map<String, Set<DocumentType>> getTypesByPrefix() {
+    public SortedMap<String, Set<DocumentType>> getTypesByPrefix() {
         return prefixesMap;
     }
 

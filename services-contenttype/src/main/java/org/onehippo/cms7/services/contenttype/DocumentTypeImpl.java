@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.slf4j.Logger;
@@ -38,8 +39,8 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
     private EffectiveNodeTypeImpl ent;
     private String name;
     private String prefix;
-    private Set<String> superTypes = new TreeSet<String>();
-    private Set<String> aggregatedTypes = new TreeSet<String>();
+    private SortedSet<String> superTypes = new TreeSet<String>();
+    private SortedSet<String> aggregatedTypes = new TreeSet<String>();
     private boolean compound;
     private boolean mixin;
     private boolean template;
@@ -91,8 +92,8 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
     @Override
     protected void doSeal() {
         ent.seal();
-        superTypes = Collections.unmodifiableSet(superTypes);
-        aggregatedTypes = Collections.unmodifiableSet(aggregatedTypes);
+        superTypes = Collections.unmodifiableSortedSet(superTypes);
+        aggregatedTypes = Collections.unmodifiableSortedSet(aggregatedTypes);
         for (DocumentTypeField df : fields.values() ) {
             ((Sealable)df).seal();
         }
@@ -146,11 +147,11 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
     }
 
     @Override
-    public Set<String> getSuperTypes() {
+    public SortedSet<String> getSuperTypes() {
         return superTypes;
     }
 
-    public Set<String> getAggregatedTypes() {
+    public SortedSet<String> getAggregatedTypes() {
         return aggregatedTypes;
     }
 
@@ -248,7 +249,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                     // duplicate field name
                     if (dtf.isMultiple() != entry.getValue().isMultiple() ||
                             dtf.isPropertyField() != entry.getValue().isPropertyField() ||
-                            dtf.getFieldType() != dtf.getFieldType()) {
+                            dtf.getFieldType().equals(entry.getValue().getFieldType())) {
                         log.error("Conflicting DocumentType field named {} encountered while merging DocumentType {} with {}. Incoming field ignored."
                                 , new String[]{dtf.getName(), getName(), entry.getValue().getName()});
                     }

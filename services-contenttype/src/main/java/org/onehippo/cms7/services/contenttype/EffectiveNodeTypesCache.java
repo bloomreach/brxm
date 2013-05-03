@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 class EffectiveNodeTypesCache extends Sealable implements EffectiveNodeTypes {
@@ -29,7 +30,7 @@ class EffectiveNodeTypesCache extends Sealable implements EffectiveNodeTypes {
     private final long version = ++versionSequence;
 
     private Map<String, EffectiveNodeTypeImpl> types = new TreeMap<String, EffectiveNodeTypeImpl>();
-    private Map<String, Set<EffectiveNodeType>> prefixesMap;
+    private SortedMap<String, Set<EffectiveNodeType>> prefixesMap;
 
     protected Map<String, EffectiveNodeTypeImpl> getTypes() {
         return types;
@@ -55,7 +56,7 @@ class EffectiveNodeTypesCache extends Sealable implements EffectiveNodeTypes {
             entry.setValue(Collections.unmodifiableSet(entry.getValue()));
         }
 
-        prefixesMap = Collections.unmodifiableMap(prefixesMap);
+        prefixesMap = Collections.unmodifiableSortedMap(prefixesMap);
     }
 
     @Override
@@ -69,7 +70,7 @@ class EffectiveNodeTypesCache extends Sealable implements EffectiveNodeTypes {
     }
 
     @Override
-    public Map<String, Set<EffectiveNodeType>> getTypesByPrefix() {
+    public SortedMap<String, Set<EffectiveNodeType>> getTypesByPrefix() {
         return prefixesMap;
     }
 }

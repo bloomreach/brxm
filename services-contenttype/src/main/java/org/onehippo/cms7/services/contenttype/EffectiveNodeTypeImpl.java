@@ -22,7 +22,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -32,8 +33,8 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
     private String name;
     private String prefix;
 
-    private Set<String> superTypes = new TreeSet<String>();
-    private Set<String> aggregatedTypes = new TreeSet<String>();
+    private SortedSet<String> superTypes = new TreeSet<String>();
+    private SortedSet<String> aggregatedTypes = new TreeSet<String>();
     private boolean aggregate;
     private boolean abstractType;
     private boolean mixin;
@@ -41,8 +42,8 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
 
     private String primaryItemName;
 
-    private Map<String, List<EffectiveNodeTypeChild>> children = new TreeMap<String, List<EffectiveNodeTypeChild>>();
-    private Map<String, List<EffectiveNodeTypeProperty>> properties = new TreeMap<String, List<EffectiveNodeTypeProperty>>();
+    private SortedMap<String, List<EffectiveNodeTypeChild>> children = new TreeMap<String, List<EffectiveNodeTypeChild>>();
+    private SortedMap<String, List<EffectiveNodeTypeProperty>> properties = new TreeMap<String, List<EffectiveNodeTypeProperty>>();
 
     private static final Comparator<EffectiveNodeTypeProperty> propertyComparator = new Comparator<EffectiveNodeTypeProperty>() {
         @Override
@@ -98,8 +99,8 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
 
     @Override
     protected void doSeal() {
-        superTypes = Collections.unmodifiableSet(superTypes);
-        aggregatedTypes = Collections.unmodifiableSet(aggregatedTypes);
+        superTypes = Collections.unmodifiableSortedSet(superTypes);
+        aggregatedTypes = Collections.unmodifiableSortedSet(aggregatedTypes);
         for (Map.Entry<String, List<EffectiveNodeTypeChild>> entry : children.entrySet()) {
             Collections.sort(entry.getValue(),childComparator);
             entry.setValue(Collections.unmodifiableList(entry.getValue()));
@@ -112,8 +113,8 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
             for (EffectiveNodeTypeProperty i : entry.getValue())
                 ((Sealable)i).seal();
         }
-        children = Collections.unmodifiableMap(children);
-        properties = Collections.unmodifiableMap(properties);
+        children = Collections.unmodifiableSortedMap(children);
+        properties = Collections.unmodifiableSortedMap(properties);
     }
 
     @Override
@@ -127,7 +128,7 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
     }
 
     @Override
-    public Set<String> getAggregatedTypes() {
+    public SortedSet<String> getAggregatedTypes() {
         return aggregatedTypes;
     }
 
@@ -151,7 +152,7 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
     }
 
     @Override
-    public Set<String> getSuperTypes() {
+    public SortedSet<String> getSuperTypes() {
         return superTypes;
     }
 
@@ -201,12 +202,12 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
     }
 
     @Override
-    public Map<String, List<EffectiveNodeTypeChild>> getChildren() {
+    public SortedMap<String, List<EffectiveNodeTypeChild>> getChildren() {
         return children;
     }
 
     @Override
-    public Map<String, List<EffectiveNodeTypeProperty>> getProperties() {
+    public SortedMap<String, List<EffectiveNodeTypeProperty>> getProperties() {
         return properties;
     }
 

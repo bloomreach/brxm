@@ -18,19 +18,19 @@ package org.onehippo.cms7.services.contenttype;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class EffectiveNodeTypeChildImpl extends EffectiveNodeTypeItemImpl implements EffectiveNodeTypeChild {
 
     private String defaultPrimaryType;
     private String type;
-    private Set<String> requiredPrimaryTypes = new TreeSet<String>();
+    private SortedSet<String> requiredPrimaryTypes = new TreeSet<String>();
 
     @Override
     protected void doSeal() {
         super.doSeal();
-        requiredPrimaryTypes = Collections.unmodifiableSet(requiredPrimaryTypes);
+        requiredPrimaryTypes = Collections.unmodifiableSortedSet(requiredPrimaryTypes);
     }
 
     public EffectiveNodeTypeChildImpl(String name, String definingType) {
@@ -47,7 +47,7 @@ public class EffectiveNodeTypeChildImpl extends EffectiveNodeTypeItemImpl implem
     }
 
     @Override
-    public Set<String> getRequiredPrimaryTypes() {
+    public SortedSet<String> getRequiredPrimaryTypes() {
         return requiredPrimaryTypes;
     }
 

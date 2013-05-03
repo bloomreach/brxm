@@ -269,7 +269,7 @@ public class HippoContentTypeServiceTest extends PluginTest {
             session.getRootNode().addNode("testNode", "test:test");
             session.save();
 
-            t = service.getDocumentType(session, "/testNode");
+            t = service.getDocumentTypeForNodeByPath(session, "/testNode");
 
             assertEquals(4, t.getFields().size());
             assertEquals(1, t.getAggregatedTypes().size());
@@ -277,7 +277,7 @@ public class HippoContentTypeServiceTest extends PluginTest {
             session.getNode("/testNode").addMixin("hippostd:relaxed");
             session.save();
 
-            t = service.getDocumentType(session, "/testNode");
+            t = service.getDocumentTypeForNodeByPath(session, "/testNode");
             assertEquals(5, t.getFields().size());
             assertTrue(t.getFields().containsKey("test:extraField"));
             assertTrue(t.getAggregatedTypes().contains("hippostd:relaxed"));

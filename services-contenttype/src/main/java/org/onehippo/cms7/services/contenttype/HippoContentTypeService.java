@@ -41,6 +41,7 @@ import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +124,7 @@ public class HippoContentTypeService implements ContentTypeService {
     }
 
     @Override
-    public DocumentType getDocumentType(Node node) throws RepositoryException {
+    public DocumentType getDocumentTypeForNode(Node node) throws RepositoryException {
         AggregatedDocumentTypesCache adtCache = getAggregatedDocumentTypes();
         DocumentType dt = null;
         Set<String> names = new HashSet<String>();
@@ -136,13 +137,13 @@ public class HippoContentTypeService implements ContentTypeService {
     }
 
     @Override
-    public DocumentType getDocumentType(String uuid, Session session) throws RepositoryException {
-        return getDocumentType(session.getNodeByIdentifier(uuid));
+    public DocumentType getDocumentTypeForNodeByUuid(Session session, String uuid) throws RepositoryException {
+        return getDocumentTypeForNode(session.getNodeByIdentifier(uuid));
     }
 
     @Override
-    public DocumentType getDocumentType(Session session, String path) throws RepositoryException {
-        return getDocumentType(session.getNode(path));
+    public DocumentType getDocumentTypeForNodeByPath(Session session, String path) throws RepositoryException {
+        return getDocumentTypeForNode(session.getNode(path));
     }
 
     private EffectiveNodeTypesCache loadEffectiveNodeTypes(Session session, boolean allowRetry) throws RepositoryException {
@@ -288,11 +289,10 @@ public class HippoContentTypeService implements ContentTypeService {
                             for (NodeIterator typeIterator = handle.getNodes(HippoNodeType.NT_NODETYPE); typeIterator.hasNext(); ) {
                                 typeNode = typeIterator.nextNode();
                                 if (typeNode.isNodeType(HippoNodeType.NT_REMODEL)) {
-                                    if (typeNode.hasProperty(HippoNodeType.HIPPO_NODE) // use-case: hippo:namespaces/hippo:document doesn't have NIPPO_NODE property
-                                            && !typeNode.getProperty(HippoNodeType.HIPPO_NODE).getBoolean()) {
+                                    // use-case: hippo:namespaces/hippo:document doesn't have NIPPO_NODE property
+                                    if (!JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_NODE, true)) {
                                         String typeAlias = ("system".equals(namespacePrefix.getName()) ? "" : namespacePrefix.getName()+":") + typeTemplate.getName();
-                                        String jcrType = typeNode.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)
-                                                ? typeNode.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString() : typeTemplate.getName();
+                                        String jcrType = JcrUtils.getStringProperty(typeNode, HippoNodeType.HIPPOSYSEDIT_TYPE, typeTemplate.getName());
                                         try {
                                             PropertyType.valueFromName(jcrType);
                                             dtCache.getPropertyTypeMappings().put(typeAlias, jcrType);
@@ -386,9 +386,8 @@ public class HippoContentTypeService implements ContentTypeService {
 
     private void loadDocumentType(String typeName, Node typeNode, DocumentTypesCache dtCache) throws RepositoryException {
         DocumentTypeImpl dt = dtCache.getTypes().get(typeName);
-        if (typeNode.hasProperty(HippoNodeType.HIPPO_MIXIN)) {
-            dt.setMixin(typeNode.getProperty(HippoNodeType.HIPPO_MIXIN).getBoolean());
-        }
+        dt.setMixin(JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_MIXIN, false));
+
         if (typeNode.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
             Value[] values = typeNode.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
             for (Value value : values) {
@@ -402,9 +401,7 @@ public class HippoContentTypeService implements ContentTypeService {
                 }
             }
         }
-        if (typeNode.hasProperty(HippoNodeType.HIPPO_CASCADEVALIDATION)) {
-            dt.setCascadeValidate(typeNode.getProperty(HippoNodeType.HIPPO_CASCADEVALIDATION).getBoolean());
-        }
+        dt.setCascadeValidate(JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_CASCADEVALIDATION, false));
 
         if (typeNode.hasNodes()) {
             for (NodeIterator fieldsIterator = typeNode.getNodes(); fieldsIterator.hasNext(); ) {
@@ -421,13 +418,9 @@ public class HippoContentTypeService implements ContentTypeService {
                         // DocumentType model doesn't support residual fields
                         continue;
                     }
-                    if (!field.hasProperty(HippoNodeType.HIPPOSYSEDIT_TYPE)) {
-                        // TODO: log warn invalid/undefined field type
-                        fieldType = PropertyType.TYPENAME_STRING;
-                    }
-                    else {
-                        fieldType = field.getProperty(HippoNodeType.HIPPOSYSEDIT_TYPE).getString();
-                    }
+
+                    fieldType = JcrUtils.getStringProperty(field, HippoNodeType.HIPPOSYSEDIT_TYPE, PropertyType.TYPENAME_STRING);
+
                     if (dtCache.getPropertyTypeMappings().containsKey(fieldType)) {
                         df = new DocumentTypeFieldImpl(dt.getName(), fieldName, fieldType, dtCache.getPropertyTypeMappings().get(fieldType));
                     }
@@ -441,24 +434,13 @@ public class HippoContentTypeService implements ContentTypeService {
                         // TODO: log warn unknown fieldType value
                         continue;
                     }
-                    if (field.hasProperty(HippoNodeType.HIPPO_MANDATORY)) {
-                        df.setMandatory(field.getProperty(HippoNodeType.HIPPO_MANDATORY).getBoolean());
-                    }
-                    if (field.hasProperty(HippoNodeType.HIPPO_AUTOCREATED)) {
-                        df.setAutoCreated(field.getProperty(HippoNodeType.HIPPO_AUTOCREATED).getBoolean());
-                    }
-                    if (field.hasProperty(HippoNodeType.HIPPO_MULTIPLE)) {
-                        df.setMultiple(field.getProperty(HippoNodeType.HIPPO_MULTIPLE).getBoolean());
-                    }
-                    if (field.hasProperty(HippoNodeType.HIPPO_ORDERED)) {
-                        df.setOrdered(field.getProperty(HippoNodeType.HIPPO_ORDERED).getBoolean());
-                    }
-                    if (field.hasProperty(HippoNodeType.HIPPO_PROTECTED)) {
-                        df.setProtected(field.getProperty(HippoNodeType.HIPPO_PROTECTED).getBoolean());
-                    }
-                    if (field.hasProperty(HippoNodeType.HIPPO_PRIMARY)) {
-                        df.setPrimaryField(field.getProperty(HippoNodeType.HIPPO_PRIMARY).getBoolean());
-                    }
+                    df.setMandatory(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MANDATORY, false));
+                    df.setAutoCreated(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_AUTOCREATED, false));
+                    df.setMultiple(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MULTIPLE, false));
+                    df.setOrdered(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_ORDERED, false));
+                    df.setProtected(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PROTECTED, false));
+                    df.setPrimaryField(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PRIMARY, false));
+
                     if (field.hasProperty(HippoNodeType.HIPPO_VALIDATORS)) {
                         Value[] values = field.getProperty(HippoNodeType.HIPPO_VALIDATORS).getValues();
                         for (Value value : values) {
