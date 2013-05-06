@@ -163,7 +163,7 @@
                 },
                 scope: this
             });
-            this.layout.setActiveItem(1);
+            //    this.layout.setActiveItem(1);
         },
 
         showConfigEditor: function() {
