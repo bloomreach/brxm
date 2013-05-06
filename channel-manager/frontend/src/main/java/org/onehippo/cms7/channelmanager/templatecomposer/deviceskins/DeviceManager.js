@@ -84,7 +84,6 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
                 iFrame.setSize(size);
                 parent.setSize(size);
             }
-            cmp.doLayout();
         }
     },
     initComponent: function () {

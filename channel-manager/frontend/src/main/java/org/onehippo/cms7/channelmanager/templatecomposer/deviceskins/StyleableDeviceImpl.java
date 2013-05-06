@@ -32,8 +32,11 @@ public class StyleableDeviceImpl implements StyleableDevice {
     private static Logger log = LoggerFactory.getLogger(StyleableDeviceImpl.class);
 
     private static final String defaultWrapStyleTemplate = "" +
+            "top: ${background.top}px;\n" +
+            "left: 50%;\n" +
+            "margin-left: -${margin.left}px;\n" +
             "width: ${background.width}px;\n" +
-            "height:${background.height}px;\n" +
+            "height: ${background.height}px;\n" +
             "position: relative;\n" +
             "overflow: auto;\n" +
             "border: none;\n";
@@ -99,9 +102,9 @@ public class StyleableDeviceImpl implements StyleableDevice {
 
     @Override
     public StringBuilder appendCss(StringBuilder buf) {
-        buf.append(new CSSRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", id), getStyle("wrapStyle")));
-        buf.append(new CSSRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id), getStyle("style")));
-        buf.append(new CSSRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id + "IE8"), getStyle("ie8Style")));
+        buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", id), getStyle("wrapStyle")));
+        buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id), getStyle("style")));
+        buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id + "IE8"), getStyle("ie8Style")));
         return buf;
     }
 
@@ -111,11 +114,13 @@ public class StyleableDeviceImpl implements StyleableDevice {
             int viewPortHeight = Integer.parseInt(templateProperties.get("viewport.height"));
             double scaleFactor = Double.parseDouble(templateProperties.get("scale.factor"));
             if (scaleFactor != 0.0) {
-                int cw = (int) Math.floor(viewPortWidth / scaleFactor);
-                int ch = (int) Math.floor(viewPortHeight / scaleFactor);
+                int cw = (int) (viewPortWidth / scaleFactor);
+                int ch = (int) (viewPortHeight / scaleFactor);
                 templateProperties.put("calc.width", String.valueOf(cw));
                 templateProperties.put("calc.height", String.valueOf(ch));
             }
+            int backgroundWidth = Integer.parseInt(templateProperties.get("background.width"));
+            templateProperties.put("margin.left", String.valueOf(backgroundWidth/2));
         } catch (NumberFormatException e) {
             log.error(e.getMessage(), e);
         }
@@ -125,23 +130,13 @@ public class StyleableDeviceImpl implements StyleableDevice {
         return MapVariableInterpolator.interpolate(templateProperties.get(styleName), templateProperties);
     }
 
-    private static class CSSRule {
+    private static final String cssRuleTemplate = "" +
+            "%s{\n" +
+            "%s" +
+            "}\n";
 
-        private String selector;
-        private String declarationsString;
-        private static final String template = "" +
-                "%s{\n" +
-                "%s" +
-                "}\n";
-
-        public CSSRule(final String selector, final String declarations) {
-            this.selector = selector;
-            this.declarationsString = declarations;
-        }
-
-        public String toString() {
-            return String.format(template, selector, declarationsString);
-        }
+    private static String formatCssRule(String selector, String declarations) {
+        return String.format(cssRuleTemplate, selector, declarations);
     }
 
 }

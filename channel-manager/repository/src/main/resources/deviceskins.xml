@@ -27,10 +27,10 @@ limitations under the License.
         <sv:value>org.onehippo.cms7.channelmanager.templatecomposer.deviceskins.DeviceManager</sv:value>
       </sv:property>
       <sv:property sv:name="position.edit" sv:type="String">
-        <sv:value>first</sv:value>
+        <sv:value>last</sv:value>
       </sv:property>
       <sv:property sv:name="position.view" sv:type="String">
-        <sv:value>after template-composer-toolbar-publish-button</sv:value>
+        <sv:value>before template-composer-toolbar-fullscreen-button</sv:value>
       </sv:property>
       <sv:property sv:name="rest.proxy.service.id" sv:type="String">
         <sv:value>hst.rest.proxy.service</sv:value>
