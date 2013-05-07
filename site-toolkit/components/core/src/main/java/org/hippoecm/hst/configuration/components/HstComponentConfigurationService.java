@@ -155,14 +155,14 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
     private String label;
 
     /**
-     * containing all the variants of this {@link HstComponentConfiguration} : This is including the variants of all 
+     * Contains all the variants of this {@link HstComponentConfiguration}. This includes the variants of all
      * descendant {@link HstComponentConfiguration}s. This member can be null if no variants configured
      * Default empty List.
      */
     private List<String> variants = Collections.emptyList();
 
     /**
-     * containing all the variants for all the {@link HstComponentConfiguration} for the {@link HstComponentsConfiguration}
+     * Contains all the variants for all the {@link HstComponentConfiguration} for the {@link HstComponentsConfiguration}
      */
     private List<String> mountVariants = Collections.emptyList();
     

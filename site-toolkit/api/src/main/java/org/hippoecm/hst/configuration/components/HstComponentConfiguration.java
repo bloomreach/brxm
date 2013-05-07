@@ -197,7 +197,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
     /**
      * This method returns all {@link org.hippoecm.hst.configuration.components.HstComponentConfiguration#getParameterPrefixes()} for
      * the entire {@link org.hippoecm.hst.configuration.hosting.Mount} combined
-     * @return the List of all unique variants for this  {@link org.hippoecm.hst.configuration.hosting.Mount}. If no variants are present, and EMPTY List is returned.
+     * @return the List of all unique variants for this  {@link org.hippoecm.hst.configuration.hosting.Mount}. If no variants are present, an empty list is returned.
      */
     List<String> getMountVariants();
     
