@@ -32,16 +32,36 @@ public class StyleableDeviceImpl implements StyleableDevice {
     private static Logger log = LoggerFactory.getLogger(StyleableDeviceImpl.class);
 
     private static final String defaultWrapStyleTemplate = "" +
-            "top: ${background.top}px;\n" +
-            "left: 50%;\n" +
-            "margin-left: -${margin.left}px;\n" +
-            "width: ${background.width}px;\n" +
-            "height: ${background.height}px;\n" +
+            //"top: ${background.top}px;\n" +
+            //"left: 50%;\n" +
+            //"margin-left: -${img.left}px;\n" +
+            //"width: ${background.width}px;\n" +
+            //"height: ${background.height}px;\n" +
             "position: relative;\n" +
             "overflow: auto;\n" +
             "border: none;\n";
 
     private static final String defaultStyleTemplate = "" +
+            "width: ${calc.width}px!important;\n" +
+            "height: ${calc.height}px!important;\n" +
+            "transform: scale(${scale.factor},${scale.factor});\n" +
+            "-ms-transform: scale(${scale.factor},${scale.factor});\n" +
+            "-webkit-transform: scale(${scale.factor},${scale.factor});\n" +
+            "-o-transform: scale(${scale.factor},${scale.factor});\n" +
+            "-moz-transform: scale(${scale.factor},${scale.factor});\n" +
+            "position: absolute;\n" +
+            ////"top: ${viewport.y}px;\n" +
+            "top: ${iframe.top}px;\n" +
+            ////"left: ${viewport.x}px;\n" +
+            "left: 50%;\n" +
+            "margin-left: -${iframe.left}px;\n" +
+            "-moz-transform-origin: top left;\n" +
+            "-webkit-transform-origin: top left;\n" +
+            "-o-transform-origin: top left;\n" +
+            "-ms-transform-origin: top left;\n" +
+            "transform-origin: top left;\n";
+
+    private static final String defaultIE8StyleTemplate = "" +
             "width: ${calc.width}px!important;\n" +
             "height: ${calc.height}px!important;\n" +
             "transform: scale(${scale.factor},${scale.factor});\n" +
@@ -56,10 +76,13 @@ public class StyleableDeviceImpl implements StyleableDevice {
             "-webkit-transform-origin: top left;\n" +
             "-o-transform-origin: top left;\n" +
             "-ms-transform-origin: top left;\n" +
-            "transform-origin: top left;\n";
-
-    private static final String defaultIE8StyleTemplate = defaultStyleTemplate +
+            "transform-origin: top left;\n" +
             "-ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=${scale.factor}, M12=0, M21=0, M22=${scale.factor}, SizingMethod='auto expand')\";\n";
+
+    private static final String defaultImgStyleTemplate = "" +
+            "margin-top: ${img.top}px;\n" +
+            "margin-left: -${img.left}px;\n" +
+            "padding-left: 50%;\n";
 
     private final String id;
     private final String name;
@@ -73,16 +96,46 @@ public class StyleableDeviceImpl implements StyleableDevice {
                 Session.get().getLocale()
         );
         this.name = properties.getString("name");
+
+        // set defaults
         templateProperties.put("style", defaultStyleTemplate);
         templateProperties.put("wrapStyle", defaultWrapStyleTemplate);
         templateProperties.put("ie8Style", defaultIE8StyleTemplate);
+        templateProperties.put("imgStyle", defaultImgStyleTemplate);
         templateProperties.put("image.location", "images/" + id + ".png");
+
+        // calculate sizes
+        try {
+            int viewPortWidth = Integer.parseInt(properties.getString("viewport.width"));
+            int viewPortHeight = Integer.parseInt(properties.getString("viewport.height"));
+            double scaleFactor = Double.parseDouble(properties.getString("scale.factor"));
+            if (scaleFactor != 0.0) {
+                int cw = (int) (viewPortWidth / scaleFactor);
+                int ch = (int) (viewPortHeight / scaleFactor);
+                templateProperties.put("calc.width", String.valueOf(cw));
+                templateProperties.put("calc.height", String.valueOf(ch));
+            }
+
+            int top = Integer.parseInt(properties.getString("top"));
+            templateProperties.put("img.top", String.valueOf(top));
+            int viewPortY = Integer.parseInt(properties.getString("viewport.y"));
+            templateProperties.put("iframe.top", String.valueOf(top + viewPortY));
+
+            int backgroundWidth = Integer.parseInt(properties.getString("background.width"));
+            int marginLeft = backgroundWidth/2;
+            templateProperties.put("img.left", String.valueOf(marginLeft));
+            int viewPortX = Integer.parseInt(properties.getString("viewport.x"));
+            templateProperties.put("iframe.left", String.valueOf(marginLeft - viewPortX));
+            
+        } catch (NumberFormatException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        // overwrite defaults with custom values, if any
         for (String property : properties.keySet()) {
             templateProperties.put(property, properties.getString(property));
         }
-        if ("true".equals(templateProperties.get("autoCalc"))) {
-            autoCalcSize();
-        }
+
     }
 
     @Override
@@ -105,25 +158,8 @@ public class StyleableDeviceImpl implements StyleableDevice {
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", id), getStyle("wrapStyle")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id), getStyle("style")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id + "IE8"), getStyle("ie8Style")));
+        buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body img", id), getStyle("imgStyle")));
         return buf;
-    }
-
-    private void autoCalcSize() {
-        try {
-            int viewPortWidth = Integer.parseInt(templateProperties.get("viewport.width"));
-            int viewPortHeight = Integer.parseInt(templateProperties.get("viewport.height"));
-            double scaleFactor = Double.parseDouble(templateProperties.get("scale.factor"));
-            if (scaleFactor != 0.0) {
-                int cw = (int) (viewPortWidth / scaleFactor);
-                int ch = (int) (viewPortHeight / scaleFactor);
-                templateProperties.put("calc.width", String.valueOf(cw));
-                templateProperties.put("calc.height", String.valueOf(ch));
-            }
-            int backgroundWidth = Integer.parseInt(templateProperties.get("background.width"));
-            templateProperties.put("margin.left", String.valueOf(backgroundWidth/2));
-        } catch (NumberFormatException e) {
-            log.error(e.getMessage(), e);
-        }
     }
 
     private String getStyle(String styleName) {
