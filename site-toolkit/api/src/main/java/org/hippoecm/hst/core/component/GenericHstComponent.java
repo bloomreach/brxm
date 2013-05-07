@@ -39,7 +39,7 @@ import org.hippoecm.hst.core.request.ComponentConfiguration;
  * <li>doBeforeServeResource, to retrieve model objects from the repository to be passed to the resource serving page or servlet</li>
  * <li>init and destroy, to manage resources that are held for the life of the HstComponent</li>
  * </ul>
- * <strong>NOTE:</strong> <code>HstComponent</code>'s typically run on multithreaded servers, so take care that a
+ * <strong>NOTE:</strong> <code>HstComponent</code>'s typically run multi threaded, so take care that a
  * HstComponent must handle concurrent requests and be careful to synchronize access
  * to shared resources (in other words, be thread safe, see {@link HstComponent}). Shared resources include in-memory data such as 
  * instance or class variables and external objects such as files, database connections, and network connections. 
