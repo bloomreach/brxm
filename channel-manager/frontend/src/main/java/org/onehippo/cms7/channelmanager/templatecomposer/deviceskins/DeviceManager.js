@@ -67,16 +67,6 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
             cmp.getEl().set({
                 cls: 'x-panel ' + css
             });
-
-            //iFrame.dom.removeAttribute('style');  //clear style
-            //parent.dom.removeAttribute('style');
-
-            //while selecting default, set the iframe and iframe partent size same as the rootpanel size.
-            if (selectedDeviceId === 'default') {
-                size = Ext.getCmp('rootPanel').getSize();
-                iFrame.setSize(size);
-                parent.setSize(size);
-            }
         }
     },
     initComponent: function () {
