@@ -100,7 +100,6 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
                     String channelId = (String) getValue(parameters, "channelId");
                     Channel channel = channelStore.getChannel(channelId);
                     List<String> devices = channel.getDevices();
-                    String defaultDevice = channel.getDefaultDevice();
                     StringBuilder buf = new StringBuilder();
                     buf.append("Ext.getCmp('deviceManager').setChannelDefaults('");
                     buf.append(channelId);
@@ -113,9 +112,7 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
                         }
                         buf.setLength(buf.length()-1);
                     }
-                    buf.append("],'");
-                    buf.append(defaultDevice);
-                    buf.append("')");
+                    buf.append("])");
                     target.prependJavascript(buf.toString());
                 } catch (JSONException e) {
                     throw new WicketRuntimeException("Invalid JSON parameters", e);
@@ -172,6 +169,12 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
         RequestCycle rc = RequestCycle.get();
         properties.put("baseImageUrl", rc.urlFor(new ResourceReference(this.getClass(), "")));
         properties.put("deviceStore", new JSONIdentifier(this.store.getJsObjectId()));
+
+        JSONObject defaultDeviceIds = new JSONObject();
+        for (Channel channel: this.channelStore.getChannels()) {
+            defaultDeviceIds.put(channel.getId(), channel.getDefaultDevice());
+        }
+        properties.put("defaultDeviceIds", defaultDeviceIds);
     }
 
 }

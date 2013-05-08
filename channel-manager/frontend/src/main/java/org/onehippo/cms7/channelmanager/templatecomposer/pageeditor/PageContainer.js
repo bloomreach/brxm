@@ -441,7 +441,7 @@
 
         _lock: function(cb) {
             if (this.iframeCompletion.length === 0) {
-                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.mask();
+                Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').mask();
                 this.fireEvent('lock');
             }
             if (typeof cb === 'function') {
@@ -456,14 +456,14 @@
                 cb.call(this);
             }
             this.fireEvent('unlock', this.pageContext);
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.unmask();
+            Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').unmask();
         },
 
         _fail: function() {
             console.log('_fail');
             this.iframeCompletion = [];
             this.fireEvent('unlock', null);
-            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.unmask();
+            Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').unmask();
         },
 
         _initIFrameListeners: function() {

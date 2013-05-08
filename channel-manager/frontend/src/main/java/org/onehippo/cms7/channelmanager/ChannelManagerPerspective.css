@@ -257,7 +257,7 @@
     margin: 0 0 5px;
 }
 
-#Iframe .ext-el-mask {
+.channel-manager-mask {
     background: url(loading.gif) no-repeat center;
     -moz-opacity: 0.9;
     opacity: 0.9;

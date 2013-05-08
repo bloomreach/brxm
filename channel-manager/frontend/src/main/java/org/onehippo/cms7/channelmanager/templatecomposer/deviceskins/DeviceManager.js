@@ -36,17 +36,17 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
     constructor: function (config) {
         this.store = config.deviceStore;
         this.baseImageUrl = config.baseImageUrl;
+        this.defaultDeviceIds = config.defaultDeviceIds;
+        this.templateComposer = config.templateComposer;
         Hippo.ChannelManager.DeviceManager.superclass.constructor.call(this, config);
     },
     getChannelId: function() {
         return Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').channelId;
     },
-    setChannelDefaults: function(channelId, devices, defaultDevice) {
+    setChannelDefaults: function(channelId, devices) {
         this.store.filterBy(function(record) {
             return devices.length === 0 || devices.indexOf(record.get('id')) >= 0;
         }, this);
-        var selectedDeviceId = Ext.state.Manager.get(channelId + '_skin', defaultDevice);
-        this.setDevice(selectedDeviceId);
     },
     setDevice: function(selectedDeviceId) {
         var r, cmp, iFrame, parent, size, image, css, rootPanel;
@@ -77,8 +77,6 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
                 iFrame.setSize(size);
                 parent.setSize(size);
             }
-            rootPanel.getLayout().setActiveItem(1);
-            rootPanel.doLayout();
         }
     },
     initComponent: function () {
@@ -90,7 +88,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
             combo.setDevice(selectedDeviceId);
         });
         var channelId = this.getChannelId(),
-                cmp, iFrame, parent;
+                cmp, iFrame, parent, shownDeviceId;
         cmp = Ext.getCmp('Iframe');
         iFrame = cmp.items.items[0].getEl();
         parent = iFrame.parent();
@@ -101,5 +99,12 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
         });
         this.addEvents('setchanneldefaults');
         this.fireEvent('setchanneldefaults', channelId);
+        if (this.templateComposer.isPreviewMode()) {
+            shownDeviceId = Ext.state.Manager.get(channelId + '_skin', this.defaultDeviceIds[channelId]);
+        } else {
+            shownDeviceId = 'default';
+            this.hide();
+        }
+        this.setDevice(shownDeviceId);
     }
 });

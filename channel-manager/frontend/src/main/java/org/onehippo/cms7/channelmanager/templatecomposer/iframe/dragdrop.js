@@ -17,8 +17,8 @@
     "use strict";
 
     var iframe = parent.Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance,
-        iframePosition = iframe.getPosition(),
-        iframeToolbarHeight = iframe.getTopToolbar().getHeight(),
+        iframePosition = [0, 0],
+        iframeToolbarHeight = 0,
         ExtDragDropMgr = parent.Ext.dd.DragDropMgr,
         ExtEventObject = parent.Ext.EventObjectImpl;
 
@@ -45,6 +45,10 @@
 
     iframe.hostToIFrame.subscribe('enablemouseevents', function() {
         var body = $('body');
+
+        iframePosition = iframe.getPosition();
+        iframeToolbarHeight = iframe.getTopToolbar().getHeight();
+
         body.bind('mousemove', onMouseMove);
         body.bind('mouseup', onMouseUp);
     });

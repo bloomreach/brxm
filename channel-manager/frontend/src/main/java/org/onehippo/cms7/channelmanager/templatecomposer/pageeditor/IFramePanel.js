@@ -102,6 +102,7 @@
 
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.superclass.constructor.call(this, Ext.apply(config, {
                     border: false,
+                    hidden: true,
                     layout: 'fit',
                     items: {
                         xtype: 'box',
