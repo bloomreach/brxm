@@ -570,7 +570,7 @@
             }
 
             toolbar = Ext.getCmp('pageEditorToolbar');
-            toolbar.on('afterlayout', function() {
+            toolbar.on('afterrender', function() {
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.show();
             });
             toolbar.doLayout();

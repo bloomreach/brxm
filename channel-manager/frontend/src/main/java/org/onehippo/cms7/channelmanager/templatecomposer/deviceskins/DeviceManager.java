@@ -15,18 +15,13 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
@@ -36,7 +31,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IRestProxyService;
 import org.hippoecm.hst.configuration.channel.Channel;
-import org.hippoecm.hst.configuration.channel.ChannelNotFoundException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,12 +39,10 @@ import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.templatecomposer.ToolbarPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wicketstuff.js.ext.ExtEventAjaxBehavior;
 import org.wicketstuff.js.ext.data.ExtArrayStore;
 import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtStore;
 import org.wicketstuff.js.ext.util.ExtClass;
-import org.wicketstuff.js.ext.util.ExtEventListener;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
 
 import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
@@ -85,43 +77,6 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
 
         this.channelStore = ChannelStoreFactory.createStore(context, config, restProxyService);
 
-        addEventListener("setchanneldefaults", new ExtEventListener() {
-            private Object getValue(final Map<String, JSONArray> parameters, final String key) throws JSONException {
-                JSONArray values = parameters.get(key);
-                if (values == null || values.length() == 0) {
-                    return null;
-                }
-                return values.get(0);
-            }
-
-            @Override
-            public void onEvent(final AjaxRequestTarget target, final Map<String, JSONArray> parameters) {
-                try {
-                    String channelId = (String) getValue(parameters, "channelId");
-                    Channel channel = channelStore.getChannel(channelId);
-                    List<String> devices = channel.getDevices();
-                    StringBuilder buf = new StringBuilder();
-                    buf.append("Ext.getCmp('deviceManager').setChannelDefaults('");
-                    buf.append(channelId);
-                    buf.append("',[");
-                    if (devices != null) {
-                        for (String device : devices) {
-                            buf.append("'");
-                            buf.append(device);
-                            buf.append("',");
-                        }
-                        buf.setLength(buf.length()-1);
-                    }
-                    buf.append("])");
-                    target.prependJavascript(buf.toString());
-                } catch (JSONException e) {
-                    throw new WicketRuntimeException("Invalid JSON parameters", e);
-                } catch (ChannelNotFoundException e) {
-                    throw new WicketRuntimeException(e.getMessage(), e);
-                }
-            }
-
-        });
         addHeadContribution();
         this.store = new ExtArrayStore<StyleableDevice>(Arrays.asList(new ExtDataField("name"), new ExtDataField("id"),
                 new ExtDataField("relativeImageUrl")),service.getStylables());
@@ -150,14 +105,6 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
 
 
     @Override
-    protected ExtEventAjaxBehavior newExtEventBehavior(final String event) {
-        if ("setchanneldefaults".equals(event)) {
-            return new ExtEventAjaxBehavior("channelId");
-        }
-        return super.newExtEventBehavior(event);
-    }
-
-    @Override
     protected void preRenderExtHead(StringBuilder js) {
         store.onRenderExtHead(js);
         super.preRenderExtHead(js);
@@ -171,10 +118,17 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
         properties.put("deviceStore", new JSONIdentifier(this.store.getJsObjectId()));
 
         JSONObject defaultDeviceIds = new JSONObject();
+        JSONObject devices = new JSONObject();
         for (Channel channel: this.channelStore.getChannels()) {
             defaultDeviceIds.put(channel.getId(), channel.getDefaultDevice());
+            JSONArray channelDevices = new JSONArray();
+            for (String device : channel.getDevices()) {
+                channelDevices.put(device);
+            }
+            devices.put(channel.getId(), channelDevices);
         }
         properties.put("defaultDeviceIds", defaultDeviceIds);
+        properties.put("devices", devices);
     }
 
 }

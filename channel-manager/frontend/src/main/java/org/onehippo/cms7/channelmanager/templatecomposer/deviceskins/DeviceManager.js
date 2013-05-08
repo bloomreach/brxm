@@ -31,64 +31,63 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
             delete queryEvent.combo.lastQuery;
         }
     },
-    defaultDevice: 'default',
 
     constructor: function (config) {
         this.store = config.deviceStore;
         this.baseImageUrl = config.baseImageUrl;
         this.defaultDeviceIds = config.defaultDeviceIds;
+        this.devices = config.devices;
         this.templateComposer = config.templateComposer;
+        this.iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
         Hippo.ChannelManager.DeviceManager.superclass.constructor.call(this, config);
     },
+
     getChannelId: function() {
         return Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').channelId;
     },
-    setChannelDefaults: function(channelId, devices) {
+
+    setChannelDefaults: function(channelId) {
+        var channelDevices = this.devices[channelId];
         this.store.filterBy(function(record) {
-            return devices.length === 0 || devices.indexOf(record.get('id')) >= 0;
+            return channelDevices.length === 0 || channelDevices.indexOf(record.get('id')) >= 0;
         }, this);
     },
+
     setDevice: function(selectedDeviceId) {
-        var r, cmp, iFrame, parent, size, image, css, rootPanel;
-        rootPanel = Ext.getCmp('rootPanel');
+        var r, imageUrl = Ext.BLANK_IMAGE_URL;
         r = this.findRecord('id', selectedDeviceId);
-        if (!Ext.isEmpty(r)) {
-            this.setValue(r.get('name'));
-            cmp = Ext.getCmp('Iframe');
-            iFrame = cmp.items.items[0].getEl();
-            parent = iFrame.parent();
-            image = Ext.get('deviceImage');
-            css = selectedDeviceId + (Ext.isIE8 ? 'IE8' : '');
-            if (selectedDeviceId !== 'default') {
-                image.set({
-                    src: this.baseImageUrl + r.get('relativeImageUrl')
-                });
-            }
-            cmp.getEl().set({
-                cls: 'x-panel ' + css
-            });
+        this.setValue(r.get('name'));
+        if (selectedDeviceId !== 'default') {
+            imageUrl = this.baseImageUrl + r.get('relativeImageUrl');
         }
+        this.deviceImage.set({
+            src: imageUrl
+        });
+        this.iframe.getEl().set({
+            cls: 'x-panel ' + selectedDeviceId + (Ext.isIE8 ? 'IE8' : '')
+        });
+        this.iframe.doLayout(false,true);
     },
+
     initComponent: function () {
         Hippo.ChannelManager.DeviceManager.superclass.initComponent.call(this);
+
         this.on('select', function (combo, record, index) {
-            var selectedDeviceId = record.get('id'),
-                    channelId = combo.getChannelId();
-            Ext.state.Manager.set(channelId + '_skin', selectedDeviceId);
+            var selectedDeviceId = record.get('id');
+            Ext.state.Manager.set(combo.getChannelId() + '_skin', selectedDeviceId);
             combo.setDevice(selectedDeviceId);
         });
+
         var channelId = this.getChannelId(),
-                cmp, iFrame, parent, shownDeviceId;
-        cmp = Ext.getCmp('Iframe');
-        iFrame = cmp.items.items[0].getEl();
-        parent = iFrame.parent();
-        parent.createChild({
-            id: 'deviceImage',
+                iFrame, shownDeviceId;
+
+        iFrame = this.iframe.getFrameElement();
+        this.deviceImage = iFrame.parent().createChild({
             tag: 'img',
             src: Ext.BLANK_IMAGE_URL
         });
-        this.addEvents('setchanneldefaults');
-        this.fireEvent('setchanneldefaults', channelId);
+
+        this.setChannelDefaults(channelId);
         if (this.templateComposer.isPreviewMode()) {
             shownDeviceId = Ext.state.Manager.get(channelId + '_skin', this.defaultDeviceIds[channelId]);
         } else {

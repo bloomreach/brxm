@@ -147,6 +147,10 @@
                 return getFrameDocument().getElementById(id);
             },
 
+            getFrameElement: function() {
+                return Ext.getCmp(frameId).el;
+            },
+
             reload: function() {
                 detachFrame();
                 getFrameDocument().location.reload(true);
