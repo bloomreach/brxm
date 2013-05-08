@@ -32,11 +32,6 @@ public class StyleableDeviceImpl implements StyleableDevice {
     private static Logger log = LoggerFactory.getLogger(StyleableDeviceImpl.class);
 
     private static final String defaultWrapStyleTemplate = "" +
-            //"top: ${background.top}px;\n" +
-            //"left: 50%;\n" +
-            //"margin-left: -${img.left}px;\n" +
-            //"width: ${background.width}px;\n" +
-            //"height: ${background.height}px;\n" +
             "position: relative;\n" +
             "overflow: auto;\n" +
             "border: none;\n";
@@ -50,9 +45,8 @@ public class StyleableDeviceImpl implements StyleableDevice {
             "-o-transform: scale(${scale.factor},${scale.factor});\n" +
             "-moz-transform: scale(${scale.factor},${scale.factor});\n" +
             "position: absolute;\n" +
-            ////"top: ${viewport.y}px;\n" +
+            "z-index: 10;\n" +
             "top: ${iframe.top}px;\n" +
-            ////"left: ${viewport.x}px;\n" +
             "left: 50%;\n" +
             "margin-left: -${iframe.left}px;\n" +
             "-moz-transform-origin: top left;\n" +
@@ -64,25 +58,18 @@ public class StyleableDeviceImpl implements StyleableDevice {
     private static final String defaultIE8StyleTemplate = "" +
             "width: ${calc.width}px!important;\n" +
             "height: ${calc.height}px!important;\n" +
-            "transform: scale(${scale.factor},${scale.factor});\n" +
-            "-ms-transform: scale(${scale.factor},${scale.factor});\n" +
-            "-webkit-transform: scale(${scale.factor},${scale.factor});\n" +
-            "-o-transform: scale(${scale.factor},${scale.factor});\n" +
-            "-moz-transform: scale(${scale.factor},${scale.factor});\n" +
             "position: absolute;\n" +
-            "top: ${viewport.y}px;\n" +
-            "left: ${viewport.x}px;\n" +
-            "-moz-transform-origin: top left;\n" +
-            "-webkit-transform-origin: top left;\n" +
-            "-o-transform-origin: top left;\n" +
-            "-ms-transform-origin: top left;\n" +
-            "transform-origin: top left;\n" +
+            "z-index: 10;\n" +
+            "top: ${iframe.top}px;\n" +
+            "left: 50%;\n" +
+            "margin-left: -${iframe.left}px;\n" +
             "-ms-filter: \"progid:DXImageTransform.Microsoft.Matrix(M11=${scale.factor}, M12=0, M21=0, M22=${scale.factor}, SizingMethod='auto expand')\";\n";
 
     private static final String defaultImgStyleTemplate = "" +
-            "margin-top: ${img.top}px;\n" +
+            "top: ${img.top}px;\n" +
             "margin-left: -${img.left}px;\n" +
-            "padding-left: 50%;\n";
+            "left: 50%;\n" +
+            "position: absolute;\n";
 
     private final String id;
     private final String name;
@@ -156,9 +143,11 @@ public class StyleableDeviceImpl implements StyleableDevice {
     @Override
     public StringBuilder appendCss(StringBuilder buf) {
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", id), getStyle("wrapStyle")));
+        buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", id + "IE8"), getStyle("wrapStyle")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id), getStyle("style")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id + "IE8"), getStyle("ie8Style")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body img", id), getStyle("imgStyle")));
+        buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body img", id + "IE8"), getStyle("imgStyle")));
         return buf;
     }
 
