@@ -39,6 +39,12 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
         this.devices = config.devices;
         this.templateComposer = config.templateComposer;
         this.iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+        if (!Hippo.ChannelManager.DeviceManager.deviceImage) {
+            Hippo.ChannelManager.DeviceManager.deviceImage = this.iframe.getFrameElement().parent().createChild({
+                tag: 'img',
+                src: Ext.BLANK_IMAGE_URL
+            });
+        }
         Hippo.ChannelManager.DeviceManager.superclass.constructor.call(this, config);
     },
 
@@ -60,7 +66,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
         if (selectedDeviceId !== 'default') {
             imageUrl = this.baseImageUrl + r.get('relativeImageUrl');
         }
-        this.deviceImage.set({
+        Hippo.ChannelManager.DeviceManager.deviceImage.set({
             src: imageUrl
         });
         this.iframe.getEl().set({
@@ -78,14 +84,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
             combo.setDevice(selectedDeviceId);
         });
 
-        var channelId = this.getChannelId(),
-                iFrame, shownDeviceId;
-
-        iFrame = this.iframe.getFrameElement();
-        this.deviceImage = iFrame.parent().createChild({
-            tag: 'img',
-            src: Ext.BLANK_IMAGE_URL
-        });
+        var channelId = this.getChannelId(), shownDeviceId;
 
         this.setChannelDefaults(channelId);
         if (this.templateComposer.isPreviewMode()) {
