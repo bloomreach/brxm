@@ -65,11 +65,18 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
 
     @Override
     public void deleteJob(final String jobName, final String groupName) throws RepositoryException {
-        final Node jobNode = getJobNode(jobName, groupName);
-        if (jobNode != null) {
-            jobNode.remove();
-            session.save();
+        synchronized (session) {
+            final Node jobNode = getJobNode(jobName, groupName);
+            if (jobNode != null) {
+                jobNode.remove();
+                session.save();
+            }
         }
+    }
+
+    @Override
+    public boolean checkExists(final String jobName, final String groupName) throws RepositoryException {
+        return getJobNode(jobName, groupName) != null;
     }
 
     private Trigger createQuartzTrigger(final RepositoryJobTrigger trigger) throws RepositoryException {
@@ -86,7 +93,7 @@ public class RepositorySchedulerImpl implements RepositoryScheduler {
             final int repeatCount = ((RepositoryJobSimpleTrigger) trigger).getRepeatCount();
             final long repeatInterval = ((RepositoryJobSimpleTrigger) trigger).getRepeatInterval();
             if (repeatCount != 0) {
-                return new SimpleTrigger(trigger.getName(), null, startTime, repeatCount, repeatInterval);
+                return new SimpleTrigger(trigger.getName(), startTime, new Date(Long.MAX_VALUE), repeatCount, repeatInterval);
             } else {
                 return new SimpleTrigger(trigger.getName(), startTime);
             }

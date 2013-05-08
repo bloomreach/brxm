@@ -34,13 +34,6 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
     /**
      * {@inheritDoc}
      */
-    public void sync() {
-        // can be overridden for synchronization with backend
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public void remove() {
         // shutdown hook for things like listeners
     }

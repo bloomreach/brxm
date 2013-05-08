@@ -15,11 +15,14 @@
  */
 package org.hippoecm.repository.security.ldap;
 
+import java.util.Date;
+
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.lock.LockException;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -27,11 +30,19 @@ import javax.jcr.observation.ObservationManager;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 
+import org.apache.jackrabbit.api.observation.JackrabbitEvent;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.AbstractSecurityProvider;
 import org.hippoecm.repository.security.SecurityProviderContext;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.scheduling.RepositoryJob;
+import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
+import org.onehippo.repository.scheduling.RepositoryJobInfo;
+import org.onehippo.repository.scheduling.RepositoryJobSimpleTrigger;
+import org.onehippo.repository.scheduling.RepositoryJobTrigger;
+import org.onehippo.repository.scheduling.RepositoryScheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,25 +70,22 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
     public static final String PROPERTY_CACHE_MAX_AGE = "hippoldap:cachemaxage";
     public static final String PROPERTY_LDAP_DN = "hippoldap:dn";
 
-    // updates and sync caches
-    private long lastUpdate = 0;
-    private final Object mutex = new Object();
-    private final long DEFAULT_CACHE_MAX_AGE = 600 * 1000;
-    private long cacheMaxAge = DEFAULT_CACHE_MAX_AGE;
+    private static final long DEFAULT_CACHE_MAX_AGE = 600 * 1000;
 
-    //private Session session;
+    private static final String SCHEDULER_GROUP_NAME = "security";
+    private static final String SCHEDULER_JOB_NAME = "ldap-sync";
+    private static final String SCHEDULER_TRIGGER_NAME = "repeater";
+
+    private static final String PROVIDER_ID_ATTRIBUTE = "provider-id";
+    private static final String PROVIDER_PATH_ATTRIBUTE = "provider-path";
+    private static final String USERS_PATH_ATTRIBUTE = "users-path";
+    private static final String GROUPS_PATH_ATTRIBUTE = "groups-path";
+
     private SecurityProviderContext context;
     private EventListener listener;
-    private BackgroundSync backgroundSync = null;
 
-    /**
-     * Logger
-     */
     private static final Logger log = LoggerFactory.getLogger(LdapSecurityProvider.class);
 
-    /**
-     * {@inheritDoc}
-     */
     public void init(SecurityProviderContext context) throws RepositoryException {
         log.info("Initializing security provider: '{}'.", context.getProviderId());
         this.context = context;
@@ -90,8 +98,9 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
         ObservationManager obMgr = context.getSession().getWorkspace().getObservationManager();
         listener = new EventListener() {
             public void onEvent(EventIterator events) {
+                final JackrabbitEvent event = (JackrabbitEvent) events.nextEvent();
                 try {
-                    reloadConfig();
+                    reloadConfig(!event.isExternal());
                 } catch (InvalidItemStateException e) {
                     log.debug("Invalid state while reloading config, provider {} probably removed: {}", pId, e.getMessage());
                 } catch (RepositoryException e) {
@@ -103,35 +112,8 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                 | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED, "/" + context.getProviderPath(), true, null, null, true);
 
         // initial config load
-        reloadConfig();
-    }
+        reloadConfig(false);
 
-    @Override
-    public void sync() {
-        long cacheAge = System.currentTimeMillis()- lastUpdate;
-        if (cacheAge < cacheMaxAge) {
-            // keep using cache
-            log.debug("Time until cache refresh is {} ms for provider {}, cache max age {} ms.",
-                    new Object[] { (cacheMaxAge - cacheAge), context.getProviderId(), cacheMaxAge });
-            return;
-        }
-
-        synchronized (mutex) {
-            if (backgroundSync == null) {
-                backgroundSync = new BackgroundSync();
-                backgroundSync.start();
-                lastUpdate = System.currentTimeMillis();
-            } else {
-                if (!backgroundSync.isRunning()) {
-                    // previous sync is done, start new one.
-                    backgroundSync = new BackgroundSync();
-                    backgroundSync.start();
-                    lastUpdate = System.currentTimeMillis();
-                } else {
-                    log.debug("Ldap sync still running for provider: {}", context.getProviderId());
-                }
-            }
-        }
     }
 
     @Override
@@ -148,9 +130,9 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
         }
     }
 
-    public synchronized void reloadConfig() throws RepositoryException {
+    public synchronized void reloadConfig(boolean reschedule) throws RepositoryException {
         try {
-            log.info("Reading config for security pro vider: '{}'.", context.getProviderId());
+            log.info("Reading config for security provider: '{}'.", context.getProviderId());
 
             context.getSession().refresh(false);
             Node providerNode = context.getSession().getRootNode().getNode(context.getProviderPath());
@@ -184,7 +166,7 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                 log.warn("No group manager found, using dummy manager");
             }
 
-            cacheMaxAge = DEFAULT_CACHE_MAX_AGE;
+            long cacheMaxAge = DEFAULT_CACHE_MAX_AGE;
             try {
                 context.getSession().refresh(false);
                 if (providerNode.hasProperty(PROPERTY_CACHE_MAX_AGE)) {
@@ -193,38 +175,59 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
             } catch (RepositoryException e) {
                 log.info("No refresh time found using default of: {} ms.", cacheMaxAge);
             }
+
+            final RepositoryScheduler schedulerService = HippoServiceRegistry.getService(RepositoryScheduler.class);
+            if (reschedule || !schedulerService.checkExists(SCHEDULER_JOB_NAME, SCHEDULER_GROUP_NAME)) {
+                try {
+                    schedulerService.deleteJob(SCHEDULER_JOB_NAME, SCHEDULER_GROUP_NAME);
+                    RepositoryJobTrigger trigger = new RepositoryJobSimpleTrigger(SCHEDULER_TRIGGER_NAME, new Date(),
+                            RepositoryJobSimpleTrigger.REPEAT_INDEFINITELY, cacheMaxAge);
+                    RepositoryJobInfo jobInfo = new RepositoryJobInfo(SCHEDULER_JOB_NAME, SCHEDULER_GROUP_NAME, SyncJob.class);
+                    jobInfo.setAttribute(PROVIDER_ID_ATTRIBUTE, context.getProviderId());
+                    jobInfo.setAttribute(PROVIDER_PATH_ATTRIBUTE, context.getProviderPath());
+                    jobInfo.setAttribute(USERS_PATH_ATTRIBUTE, context.getUsersPath());
+                    jobInfo.setAttribute(GROUPS_PATH_ATTRIBUTE, context.getGroupsPath());
+                    schedulerService.scheduleJob(jobInfo, trigger);
+                } catch (LockException e) {
+                    log.warn("Failed to reschedule ldap sync job: job is being executed");
+                } catch (RepositoryException e) {
+                    log.error("Failed to reschedule ldap sync job", e);
+                }
+            }
+
         } catch (NamingException e) {
             // wrap error
             throw new RepositoryException("Error while setting up ldap system context.", e);
         }
     }
 
-    private class BackgroundSync extends Thread {
-
-        private boolean running = true;
+    public static class SyncJob implements RepositoryJob {
 
         @Override
-        public void run() {
+        public void execute(final RepositoryJobExecutionContext context) throws RepositoryException {
+
+            final String providerId = context.getAttribute(PROVIDER_ID_ATTRIBUTE);
+            final String providerPath = context.getAttribute(PROVIDER_PATH_ATTRIBUTE);
+            final String usersPath = context.getAttribute(USERS_PATH_ATTRIBUTE);
+            final String groupsPath = context.getAttribute(GROUPS_PATH_ATTRIBUTE);
+
             try {
-                log.info("Start ldap sync for: {}", context.getProviderId());
 
-                // create new separate session so saves don't interferer with other sessions
-                Session syncSession = context.getSession().impersonate(new SimpleCredentials("system", new char[] {}));
-                Node providerNode = syncSession.getRootNode().getNode(context.getProviderPath());
+                log.info("Start ldap sync for: {}", providerId);
 
-                LdapContextFactory lcf = LdapUtils.createContextFactory(providerNode);
+                final Session syncSession = context.getSession(new SimpleCredentials("system", new char[] {}));
+                final Node providerNode = syncSession.getRootNode().getNode(providerPath);
+                final LdapContextFactory lcf = LdapUtils.createContextFactory(providerNode);
 
                 if (providerNode.hasNode(HippoNodeType.NT_USERPROVIDER)) {
-                    LdapManagerContext userContext = new LdapManagerContext(lcf, syncSession,
-                            context.getProviderPath(), context.getUsersPath());
+                    LdapManagerContext userContext = new LdapManagerContext(lcf, syncSession, providerPath, usersPath);
                     LdapUserManager userMgr = new LdapUserManager();
                     userMgr.init(userContext);
                     userMgr.updateUsers();
                 }
 
                 if (providerNode.hasNode(HippoNodeType.NT_GROUPPROVIDER)) {
-                    LdapManagerContext groupContext = new LdapManagerContext(lcf, syncSession, context
-                            .getProviderPath(), context.getGroupsPath());
+                    LdapManagerContext groupContext = new LdapManagerContext(lcf, syncSession, providerPath, groupsPath);
                     LdapGroupManager groupMgr = new LdapGroupManager();
                     groupMgr.init(groupContext);
                     groupMgr.updateGroups();
@@ -233,16 +236,10 @@ public class LdapSecurityProvider extends AbstractSecurityProvider {
                 syncSession.save();
                 syncSession.logout();
 
-                log.info("Ldap users and groups synced for: {}", context.getProviderId());
+                log.info("Ldap users and groups synced for: {}", providerId);
             } catch (RepositoryException e) {
-                log.error("Unable to sync users and groups for provider: " + context.getProviderId(), e);
-            } finally {
-                running = false;
+                log.error("Unable to sync users and groups for provider: " + providerId, e);
             }
-        }
-
-        public boolean isRunning() {
-            return running;
         }
     }
 

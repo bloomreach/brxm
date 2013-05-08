@@ -36,11 +36,6 @@ public interface SecurityProvider {
     void init(SecurityProviderContext context) throws RepositoryException;
 
     /**
-     * Synchronize the backend users with the users in the repository
-     */
-    void sync();
-
-    /**
      * This method is called when the provider is remove and can be used
      * for things like stopping listeners
      */

@@ -246,6 +246,7 @@ public class SecurityManager implements HippoSecurityManager {
         }
 
         providers.put(INTERNAL_PROVIDER, new SimpleSecurityProvider());
+
     }
 
     /**
@@ -327,7 +328,6 @@ public class SecurityManager implements HippoSecurityManager {
                 return AuthenticationStatus.SUCCEEDED;
             }
 
-
             // The sync blocks are synchronized because the underlying
             // methods can share the same jcr session and the jcr session is
             // not thread safe. This is a "best effort" solution as the usrMgr
@@ -344,9 +344,6 @@ public class SecurityManager implements HippoSecurityManager {
                 groupMgr.syncMemberships(userMgr.getUser(userId));
                 groupMgr.saveGroups();
             }
-
-            // TODO: move to cron based solution
-            providers.get(providerId).sync();
 
             return AuthenticationStatus.SUCCEEDED;
         } catch (RepositoryException e) {
@@ -805,4 +802,5 @@ public class SecurityManager implements HippoSecurityManager {
             return groupManager;
         }
     }
+
 }
