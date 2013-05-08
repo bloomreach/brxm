@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.channel;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class Channel implements Serializable {
     private String lockedBy;
     private Long lockedOn;
     private String defaultDevice = DEFAULT_DEVICE;
-    private List<String> devices;
+    private List<String> devices = Collections.EMPTY_LIST;
 
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
