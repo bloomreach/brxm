@@ -15,18 +15,15 @@
  */
 package org.hippoecm.repository;
 
-import java.util.EnumSet;
-
-import javax.transaction.NotSupportedException;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
-
+import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
+import javax.transaction.NotSupportedException;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 import org.hippoecm.repository.api.InitializationProcessor;
 import org.hippoecm.repository.api.ReferenceWorkspace;
@@ -48,7 +45,7 @@ public interface HippoRepository {
      * Creates a new Session for the current user, which might involve opening an anonymous session.
      * If a user identity and credentials are available through the application container,
      * then use JAAS to obtain the credentials and use login(SimpleCredentials).
-     * @see Repository.login()
+     * @see javax.jcr.Repository#login()
      */
     public Session login() throws LoginException, RepositoryException;
 
@@ -56,15 +53,15 @@ public interface HippoRepository {
      * Creates a new Session for the user identifier with the indicated username and password.
      * @param username the username to use as part of the credentials
      * @param password the password to use as part of the credentials
-     * @see Repository.login(Credentials)
+     * @see javax.jcr.Repository#login(javax.jcr.Credentials)
      */
     public Session login(String username, char[] password) throws LoginException, RepositoryException;
 
     /**
      * Creates a new Session for the user identifier with the indicated credentials.
-     * @see Repository.login(Credentials)
+     * @see javax.jcr.Repository#login(javax.jcr.Credentials)
      */
-    public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException;
+    public Session login(Credentials credentials) throws LoginException, RepositoryException;
 
     /**
      * Closes the repository connection. When the repository is running locally,
@@ -125,7 +122,6 @@ public interface HippoRepository {
      * @return An {@link InitializationProcessor} for this repository for doing initialization tasks
      */
     public InitializationProcessor getInitializationProcessor();
-
 
     /**
      * Get or create a new reference workspace for comparing what changed since system bootstrap.

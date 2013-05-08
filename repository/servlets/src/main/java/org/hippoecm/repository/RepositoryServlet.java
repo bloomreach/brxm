@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.LoginException;
 import javax.jcr.Node;
@@ -65,6 +66,7 @@ import org.hippoecm.repository.decorating.server.ServerServicingAdapterFactory;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
+import org.onehippo.repository.RepositoryService;
 import org.onehippo.repository.events.Persisted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,11 +108,12 @@ public class RepositoryServlet extends HttpServlet {
 
     private static Remote rmiRepository;
 
-    HippoRepository repository;
-    String bindingAddress;
-    String storageLocation;
-    String repositoryConfig;
-    boolean startRemoteServer;
+    private HippoRepository repository;
+    private RepositoryService repositoryService;
+    private String bindingAddress;
+    private String storageLocation;
+    private String repositoryConfig;
+    private boolean startRemoteServer;
     private AuditLogger listener;
     private GuavaHippoEventBus hippoEventBus;
 
@@ -203,6 +206,13 @@ public class RepositoryServlet extends HttpServlet {
                     registryIsEmbedded = true;
                 }
             }
+
+            HippoServiceRegistry.registerService(repositoryService = new RepositoryService() {
+                @Override
+                public Session login(final Credentials credentials) throws LoginException, RepositoryException {
+                    return repository.login(credentials);
+                }
+            }, RepositoryService.class);
         } catch (MalformedURLException ex) {
             log.error("MalformedURLException exception: " + bindingAddress, ex);
             throw new ServletException("RemoteException: " + ex.getMessage());
@@ -282,6 +292,9 @@ public class RepositoryServlet extends HttpServlet {
 
         }
 
+        if (repositoryService != null) {
+            HippoServiceRegistry.unregisterService(repositoryService, RepositoryService.class);
+        }
         HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
         HippoServiceRegistry.unregisterService(hippoEventBus, HippoEventBus.class);
         hippoEventBus.destroy();
@@ -652,4 +665,5 @@ public class RepositoryServlet extends HttpServlet {
             }
         }
     }
+
 }

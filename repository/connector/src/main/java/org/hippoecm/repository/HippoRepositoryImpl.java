@@ -17,6 +17,7 @@ package org.hippoecm.repository;
 
 import java.io.File;
 
+import javax.jcr.Credentials;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -82,12 +83,6 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
         return workingDirectory;
     }
 
-    /**
-     * Mimic jcr repository login.
-     * @return Session with Anonymous credentials
-     * @throws LoginException
-     * @throws RepositoryException
-     */
     public Session login() throws LoginException, RepositoryException {
         return login(null);
     }
@@ -99,7 +94,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
                 throw new LoginException("Password is null");
             }
             // https://issues.apache.org/jira/browse/JCR-2740
-            SimpleCredentials creds = new SimpleCredentials(username, password);
+            final SimpleCredentials creds = new SimpleCredentials(username, password);
             creds.setAttribute("org.apache.jackrabbit.autoFixCorruptions", "true"); 
             return login(creds, null);
         } else {
@@ -107,25 +102,23 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
         }
     }
 
-    public Session login(SimpleCredentials credentials, String workspaceName) throws LoginException, RepositoryException {
+    public Session login(Credentials credentials, String workspaceName) throws LoginException, RepositoryException {
         if (repository == null) {
             throw new RepositoryException("Repository not initialized yet.");
         }
-
         // try to login with credentials
-        Session session = (Session) repository.login(credentials, workspaceName);
+        Session session = repository.login(credentials, workspaceName);
         if (session != null) {
-            log.info("Logged in as " + session.getUserID() + " to a "
-                    + repository.getDescriptor(Repository.REP_NAME_DESC) + " repository.");
+            log.info("Logged in as {} to a {} repository.", session.getUserID(), repository.getDescriptor(Repository.REP_NAME_DESC));
         } else if (credentials == null) {
             log.error("Failed to login to repository with no credentials");
         } else {
-            log.error("Failed to login to repository with credentials " + credentials.toString());
+            log.error("Failed to login to repository with credentials {} ", credentials.toString());
         }
         return session;
     }
 
-    public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
+    public Session login(Credentials credentials) throws LoginException, RepositoryException {
         return login(credentials, null);
     }
 
@@ -141,7 +134,7 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
      * @throws NotSupportedException
      */
     public UserTransaction getUserTransaction(Session session) throws RepositoryException, NotSupportedException {
-        TransactionManager tm = null;
+        TransactionManager tm;
         InitialContext ic;
         try {
             ic = new InitialContext();
