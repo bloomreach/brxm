@@ -22,7 +22,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
@@ -30,12 +29,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.MutableMount;
+import org.hippoecm.hst.core.channelmanager.ComponentWindowResponseAppender;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -43,7 +39,6 @@ import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.component.HstServletResponseState;
 import org.hippoecm.hst.core.component.HstURL;
-import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.site.HstServices;
 import org.w3c.dom.Comment;
@@ -59,8 +54,14 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
     private Map<String, AsynchronousComponentWindowRenderer> asynchronousComponentWindowRendererMap;
 
+    private List<ComponentWindowResponseAppender> componentWindowResponseAppenders;
+
     public void setAsynchronousComponentWindowRendererMap(Map<String, AsynchronousComponentWindowRenderer> asynchronousComponentWindowRendererMap) {
         this.asynchronousComponentWindowRendererMap = asynchronousComponentWindowRendererMap;
+    }
+
+    public void setComponentWindowResponseAppenders(List<ComponentWindowResponseAppender> componentWindowResponseAppenders) {
+        this.componentWindowResponseAppenders = componentWindowResponseAppenders;
     }
 
     @Override
@@ -380,55 +381,11 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             if (rootWindow.getResponseState().getForwardPathInfo() != null) {
                 break;
             }
-            
-            HttpSession session = request.getSession(false);
-            
-            if(session != null && request.getRequestContext().isCmsRequest()) {
-                Boolean composerMode = (Boolean) session.getAttribute(ContainerConstants.COMPOSER_MODE_ATTR_NAME);
-                if (composerMode != null) {
-                    Mount mount = request.getRequestContext().getResolvedMount().getMount();
-                    // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
-                    HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
-                    if (rootWindow == rootRenderingWindow && window == rootWindow) {
-                        rootWindow.getResponseState().addHeader("HST-Mount-Id", mount.getIdentifier());
-                        rootWindow.getResponseState().addHeader("HST-Site-Id", mount.getHstSite().getCanonicalIdentifier());
-                        rootWindow.getResponseState().addHeader("HST-Page-Id", compConfig.getCanonicalIdentifier());
-                        if (mount instanceof MutableMount) {
-                            MutableMount mutableMount = (MutableMount)mount;
-                            final String lockedBy = mutableMount.getLockedBy();
-                            if (StringUtils.isNotBlank(lockedBy)) {
-                                rootWindow.getResponseState().addHeader("HST-Mount-LockedBy", lockedBy);
-                                rootWindow.getResponseState().addHeader("HST-Mount-LockedOn", String.valueOf(mutableMount.getLockedOn().getTimeInMillis()));
-                            }
-                        }
-                        Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
-                        if (variant == null) {
-                            variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
-                        }
-                        rootWindow.getResponseState().addHeader("HST-Render-Variant", variant.toString());
-                        rootWindow.getResponseState().addHeader("HST-Site-HasPreviewConfig", String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
-                        //"-" + Mount.PREVIEW_NAME;
-                    } else if(Boolean.TRUE.equals(composerMode)) {
-                        HashMap<String, String> attributes = new HashMap<String, String>();
-                        attributes.put("uuid", compConfig.getCanonicalIdentifier());
-                        if(compConfig.getXType() != null) {
-                            attributes.put("xtype", compConfig.getXType());
-                        }
-                        if(compConfig.isInherited()) {
-                            attributes.put("inherited", "true"); 
-                        }
-                        attributes.put("type", compConfig.getComponentType().toString());
-                        HstURLFactory urlFactory = request.getRequestContext().getURLFactory();
-                        HstURL url = urlFactory.createURL(HstURL.COMPONENT_RENDERING_TYPE,
-                                                          window.getReferenceNamespace(), null,
-                                                          request.getRequestContext());
-                        attributes.put("url", url.toString());
-                        attributes.put("refNS", window.getReferenceNamespace());
 
-                        Comment comment = createCommentWithAttr(attributes, response);
-                        response.addPreamble(comment);
-                    }
-                } 
+            if(request.getRequestContext().isCmsRequest()) {
+                for (ComponentWindowResponseAppender componentWindowResponseAppender : componentWindowResponseAppenders) {
+                    componentWindowResponseAppender.process(rootWindow, rootRenderingWindow, window, request, response);
+                }
             }
         }
     }
@@ -484,19 +441,6 @@ public class AggregationValve extends AbstractBaseOrderableValve {
         }
 
         return false;
-    }
-
-    // TODO replace by json marshaller
-    private Comment createCommentWithAttr(HashMap<String, String> attributes, HstResponse response) {
-        StringBuilder builder = new StringBuilder();
-        for(Entry<String, String> attr : attributes.entrySet()) {
-            if (builder.length() != 0) {
-                builder.append(", ");
-            }
-            builder.append("\"").append(attr.getKey()).append("\":").append("\"").append(attr.getValue()).append("\"");
-        }
-        Comment comment = response.createComment("{ " + builder.toString() +"}");
-        return comment;
     }
 
     private class NoopHstServletResponseState implements HstResponseState {

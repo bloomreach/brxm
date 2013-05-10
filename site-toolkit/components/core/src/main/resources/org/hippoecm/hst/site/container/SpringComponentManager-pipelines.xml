@@ -14,6 +14,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
+<!--suppress SpringFacetInspection -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
@@ -156,6 +157,7 @@
   <bean id="aggregationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.AggregationValve">
     <property name="valveName" value="aggregationValve" />
     <property name="asynchronousComponentWindowRendererMap" ref="asynchronousComponentWindowRendererMap" />
+    <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
   </bean>
   
   <bean id="resourceServingValve" parent="abstractValve" class="org.hippoecm.hst.core.container.ResourceServingValve">

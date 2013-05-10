@@ -57,5 +57,13 @@
     </property>
   </bean>
 
+  <bean id="composerComponentWindowResponseAppenders" class="org.springframework.beans.factory.config.ListFactoryBean">
+    <property name="sourceList">
+      <list>
+        <bean id="defaultComponentWindowResponseAppender" class="org.hippoecm.hst.core.channelmanager.CmsComponentWindowResponseAppender"/>
+      </list>
+    </property>
+  </bean>
+
 </beans>
 
