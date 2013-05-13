@@ -76,7 +76,75 @@ public class TestSearchInputParsingUtils {
         // prefix ~ is allowed for synonyms Jackrabbit. In middle of word, it is not allowed
         assertEquals("The ~quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~quick brown fox jumps over the lazy dog", true));
         assertEquals("The ~quick brown fox jumps over the lazy dog", SearchInputParsingUtils.parse("The ~qui~ck~ bro~wn fox jumps over the lazy dog", true));
-        
+
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!*", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!*", false));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!!", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!!!", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!!!", false));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!!!*", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!*!!", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!!!*", false));
+
+        assertEquals("The quick", SearchInputParsingUtils.parse("The qu!ick!*!!", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The qu!ick!!!*", false));
+
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!!!?", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!?!!", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick!!!?", false));
+
+
+        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", false));
+        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", true));
+        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", false));
+        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The qui!ck! !bro!wn!", true));
+        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", false));
+        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown", true));
+        assertEquals("The quick !brown", SearchInputParsingUtils.parse("The quick! !brown*", false));
+        assertEquals("The quick !brown*", SearchInputParsingUtils.parse("The quick! !brown*", true));
+
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick-", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick-*", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick--", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick---", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick---", false));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick---*", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick-*--", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick---*", false));
+
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick---?", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick-?--", true));
+        assertEquals("The qu-ick", SearchInputParsingUtils.parse("The qu-ick---?", false));
+        assertEquals("The qu-ick", SearchInputParsingUtils.parse("The qu-ick-?--", true));
+        assertEquals("The quick", SearchInputParsingUtils.parse("The quick---?", false));
+
+
+        assertEquals("The quick -brown", SearchInputParsingUtils.parse("The quick- -brown", false));
+        assertEquals("The quick -brown", SearchInputParsingUtils.parse("The quick- -brown", true));
+        assertEquals("The quick -brown", SearchInputParsingUtils.parse("The quick- -brown", false));
+        assertEquals("The quick -brown", SearchInputParsingUtils.parse("The quick- -brown", true));
+        assertEquals("The quick -brown", SearchInputParsingUtils.parse("The quick- -brown*", false));
+        assertEquals("The quick -brown*", SearchInputParsingUtils.parse("The quick- -brown*", true));
+        assertEquals("The quick -bro-wn", SearchInputParsingUtils.parse("The quick- -bro-wn*", false));
+        assertEquals("The quick -bro-wn*", SearchInputParsingUtils.parse("The quick- -bro-wn*", true));
+
+        assertEquals("", SearchInputParsingUtils.parse("!", true));
+        assertEquals("", SearchInputParsingUtils.parse("!", false));
+        assertEquals("", SearchInputParsingUtils.parse("!!", true));
+        assertEquals("", SearchInputParsingUtils.parse("!!!", true));
+        assertEquals("", SearchInputParsingUtils.parse("!!!*", true));
+        assertEquals("", SearchInputParsingUtils.parse("!!!*", false));
+        assertEquals("", SearchInputParsingUtils.parse("!!*!", true));
+        assertEquals("", SearchInputParsingUtils.parse("!!*!", false));
+        assertEquals("", SearchInputParsingUtils.parse("-", true));
+        assertEquals("", SearchInputParsingUtils.parse("-", false));
+        assertEquals("", SearchInputParsingUtils.parse("--", true));
+        assertEquals("", SearchInputParsingUtils.parse("---", true));
+        assertEquals("", SearchInputParsingUtils.parse("---*", true));
+        assertEquals("", SearchInputParsingUtils.parse("---*", false));
+        assertEquals("", SearchInputParsingUtils.parse("--*-", true));
+        assertEquals("", SearchInputParsingUtils.parse("--*-", false));
+
     }
 
     @Test

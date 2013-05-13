@@ -118,51 +118,66 @@ public final class SearchInputParsingUtils {
         }
         StringBuffer sb = new StringBuffer();
         boolean allowWildCardInCurrentTerm = allowSingleNonLeadingWildCardPerTerm;
+
+        boolean prevCharIsSpecialOrRemoved = false;
         for (int i = 0; i < input.length(); i++) {
           char c = input.charAt(i);
-          // Some of these characters break the jcr query and others like * and ? have a very negative impact 
-          // on performance. 
-          if ( c == '(' || c == ')' || c == '^' || c == '[' || c == ']' || c == '{' 
-              || c == '}' || c == '~' || c == '*' || c == '?' || c == '|' || c == '&') {
-              // ~ is used for synonyms search: This is jackrabbit specific and different than lucene fuzzy
-              // see http://wiki.apache.org/jackrabbit/SynonymSearch. It is only allowed to be the first char 
-              // of a word
-              if(c == '~') {
-                  if(sb.length() == 0) {
-                      sb.append(c);
-                  } else {
-                      char prevChar = sb.charAt(sb.length() - 1);
-                      if(prevChar == ' ') {
-                          sb.append(c);
-                      }
-                      // else we remove the ~ 
-                  }
-              } else if(sb.length() > 0) {
-                  // if one wildcard is allowed, it will be added but never as leading
-                  if(c == '*' || c == '?') {
-                      if(allowWildCardInCurrentTerm) {
-                          // check if prev char is not a space or " or  '
-                          // i must be > 0 here
-                          char prevChar = sb.charAt(sb.length() -1);
-                          if(!(prevChar == '\"' || prevChar == '\'' || prevChar == ' ')) {
-                              sb.append(c);
-                              allowWildCardInCurrentTerm = false;
-                          }
-                      } 
-                  }
-              }       
-          } else if (c == '\"') {
-              sb.append('\\');
-              sb.append(c);
-          } else if (c == '\'') {
-              // we strip ' because jackrabbit xpath builder breaks on \' (however it should be possible according spec)
-          } else if (c == ' ') {
-              // next term. set allowWildCardInCurrentTerm again to allowSingleNonLeadingWildCardPerTerm
-              allowWildCardInCurrentTerm = allowSingleNonLeadingWildCardPerTerm;
-              sb.append(c);
-          } else {
-              sb.append(c);
-          }
+            // Some of these characters break the jcr query and others like * and ? have a very negative impact
+            // on performance.
+            if (isSpecialChar(c)) {
+                if (c == '\"') {
+                    sb.append('\\');
+                    sb.append(c);
+                } else if (c == '\'') {
+                    // we strip ' because jackrabbit xpath builder breaks on \' (however it should be possible according spec)
+                } else if (c == ' ') {
+                    // next term. set allowWildCardInCurrentTerm again to allowSingleNonLeadingWildCardPerTerm
+                    allowWildCardInCurrentTerm = allowSingleNonLeadingWildCardPerTerm;
+                    sb.append(c);
+                } else {
+                    // '~' is used for synonyms search: This is jackrabbit specific and different than lucene fuzzy
+                    // see http://wiki.apache.org/jackrabbit/SynonymSearch. It is only allowed to be the first char
+                    // of a word
+                    // '!' or '-' are used to NOT a term. However, we only allow them at the beginning of a term as they
+                    // do not make sense any where else
+                    if (c == '~' || c == '!' || c == '-') {
+                        if (sb.length() == 0) {
+                            if (containsNextCharAndIsNotSpecial(input, i)) {
+                                sb.append(c);
+                            }
+                        } else {
+                            char prevChar = sb.charAt(sb.length() - 1);
+                            if (prevChar == ' ') {
+                                sb.append(c);
+                            } else if (c == '-') {
+                                // check next char : only if next char is again a non-special char we include the '-'
+                                if (containsNextCharAndIsNotSpecial(input, i)) {
+                                    sb.append(c);
+                                }
+                            }
+                            // else we remove the ~ , !, -
+                        }
+                    } else if (sb.length() > 0) {
+                        // if one wildcard is allowed, it will be added but never as leading
+                        // also if the wildcard is found after a special char (like '!', '-', '&', ' ' etc, it will be skipped as well)
+                        if (c == '*' || c == '?') {
+                            if (allowWildCardInCurrentTerm && !prevCharIsSpecialOrRemoved) {
+                                // check if prev char is not a space or " or  '
+                                // i must be > 0 here
+                                char prevChar = sb.charAt(sb.length() - 1);
+                                if (!(prevChar == '\"' || prevChar == '\'' || prevChar == ' ')) {
+                                    sb.append(c);
+                                    allowWildCardInCurrentTerm = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                prevCharIsSpecialOrRemoved = true;
+            } else {
+                sb.append(c);
+                prevCharIsSpecialOrRemoved = false;
+            }
         }
         String output = sb.toString();
         if(!input.equals(output)) {
@@ -170,7 +185,20 @@ public final class SearchInputParsingUtils {
         }
         return output;
       }
-    
+
+    private static boolean containsNextCharAndIsNotSpecial(final String input, final int cursor) {
+        if ((input.length() > cursor + 1) && !isSpecialChar(input.charAt(cursor + 1))) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isSpecialChar(final char c) {
+        return c == '(' || c == ')' || c == '^' || c == '[' || c == ']' || c == '{'
+                || c == '}' || c == '~' || c == '*' || c == '?' || c == '|' || c == '&'
+                || c =='!' || c == '-' || c == '\"' || c == '\'' || c == ' ';
+    }
+
     /**
      * Rewrites any "NOT" operators in the keywords to a minus symbol (-). This is necessary because Jackrabbit doesn't
      * fully support the Lucene query language. Jackrabbit <em>does</em> support the minus symbol to exclude keywords
