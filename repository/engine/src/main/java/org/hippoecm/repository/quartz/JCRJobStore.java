@@ -205,7 +205,7 @@ public class JCRJobStore extends AbstractJobStore {
                             // make sure we can load the job
                             loadJob(jobNode);
                         } catch (ClassNotFoundException e) {
-                            log.info("Cannot execute job " + jobNode.getPath() + " on this cluster node. Skipping");
+                            log.warn("Cannot execute job " + jobNode.getPath() + " on this cluster node. Skipping");
                             continue;
                         } catch (IOException e) {
                             if (log.isDebugEnabled()) {
