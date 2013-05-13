@@ -382,11 +382,10 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                 break;
             }
 
-            if(request.getRequestContext().isCmsRequest()) {
-                for (ComponentWindowResponseAppender componentWindowResponseAppender : componentWindowResponseAppenders) {
-                    componentWindowResponseAppender.process(rootWindow, rootRenderingWindow, window, request, response);
-                }
+            for (ComponentWindowResponseAppender componentWindowResponseAppender : componentWindowResponseAppenders) {
+                componentWindowResponseAppender.process(rootWindow, rootRenderingWindow, window, request, response);
             }
+
         }
     }
 

@@ -38,9 +38,13 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     @Override
     public void process(final HstComponentWindow rootWindow, final HstComponentWindow rootRenderingWindow, final HstComponentWindow window, final HstRequest request, final HstResponse response) {
-        HttpSession session = request.getSession(true);
-        if (session == null) {
+        if (!isCmsRequest(request)) {
             return;
+        }
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            throw new IllegalStateException("HttpSession should never be null here.");
         }
 
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components

@@ -15,9 +15,7 @@
  */
 package org.hippoecm.hst.core.channelmanager;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.core.component.HstRequest;
@@ -27,6 +25,11 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.w3c.dom.Comment;
 
 public abstract class AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
+
+
+    protected boolean isCmsRequest(HstRequest request) {
+        return request.getRequestContext().isCmsRequest();
+    }
 
     protected boolean isTopHstResponse(final HstComponentWindow rootWindow,
                                        final HstComponentWindow rootRenderingWindow,

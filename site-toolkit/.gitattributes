@@ -510,7 +510,6 @@ components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMen
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenuItemConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/configuration/sitemenu/HstSiteMenusConfigurationService.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/channelmanager/CmsComponentWindowResponseAppender.java -text
-components/core/src/main/java/org/hippoecm/hst/core/channelmanager/DefaultComponentWindowResponseAppender.java -text
 components/core/src/main/java/org/hippoecm/hst/core/component/HstComponentMetadataReader.java -text
 components/core/src/main/java/org/hippoecm/hst/core/component/HstRequestImpl.java svneol=native#text/plain
 components/core/src/main/java/org/hippoecm/hst/core/component/HstResourceResponseImpl.java svneol=native#text/plain
