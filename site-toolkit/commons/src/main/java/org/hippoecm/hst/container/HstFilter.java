@@ -214,12 +214,6 @@ public class HstFilter implements Filter {
     	HttpServletRequest req = (HttpServletRequest)request;
         HttpServletResponse res = (HttpServletResponse)response;
 
-        // Cross-context includes are not (yet) supported to be handled directly by HstFilter
-    	if (isCrossContextInclude(req)) {
-    		chain.doFilter(request, response);
-    		return;
-    	}
-
 		request.setAttribute(FILTER_DONE_KEY, Boolean.TRUE);
 
     	Logger logger = HstServices.getLogger(LOGGER_CATEGORY_NAME);
@@ -922,16 +916,6 @@ public class HstFilter implements Filter {
                 clientComponentManager = null;
             }
         }
-    }
-
-    /**
-     * Determine if the current request is an cross-context include
-     * @param request
-     * @return
-     */
-    protected boolean isCrossContextInclude(HttpServletRequest request) {
-    	String includeContextPath = (String)request.getAttribute("javax.servlet.include.context_path");
-    	return (includeContextPath != null && !includeContextPath.equals(request.getContextPath()));
     }
 
     /**
