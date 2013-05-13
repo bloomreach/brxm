@@ -2,4 +2,5 @@
 /LICENSE -text
 /NOTICE -text
 jcr/src/main/resources/hipposearch.cnd -text
+jcr/src/test/java/org/onehippo/cms7/services/search/jcr/query/TestFullTextSearchParser.java -text svneol=unset#text/plain
 jcr/src/test/resources/testproject-types.cnd -text
