@@ -40,6 +40,8 @@ public class TextSearchBuilder implements IClusterable {
     
     private static final String DEFAULT_IGNORED_CHARS = "&|!(){}[]^\"~*?:\\";
 
+    private static final char MINUS_SIGN = '-';
+
     private String text;
     private String[] scope;
 
@@ -174,7 +176,19 @@ public class TextSearchBuilder implements IClusterable {
                     if (c == '\'') {
                         tb.append('\\');
                     }
-                    tb.append(c);
+                    if (c == MINUS_SIGN) {
+                        // we do not allowe minus sign followed by a space or ignored char
+                        if (token.length() > i + 1) {
+                            char nextChar = token.charAt(i + 1);
+                            if (nextChar == ' ' || ignoredChars.indexOf(nextChar) > -1) {
+                                // not allowed position for -
+                            } else {
+                                tb.append(c);
+                            }
+                        }
+                    } else {
+                        tb.append(c);
+                    }
                 }
             }
             if (tb.length() == 0) {

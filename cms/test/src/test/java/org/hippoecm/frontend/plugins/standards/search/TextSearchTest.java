@@ -416,4 +416,40 @@ public class TextSearchTest extends PluginTest {
                 (query.toString()).equals(expectedQuery));
     }
 
+    @Test
+    public void queryWordsWithMinusSignAndExclamations() throws Exception {
+
+        validateQueryWithoutWildcardInjection("CMS-345", "CMS-345");
+        validateQueryWithoutWildcardInjection("The !qui!ck!", "The quick");
+        validateQueryWithoutWildcardInjection("The -quick-", "The -quick");
+        validateQueryWithoutWildcardInjection("The -quick -*", "The -quick");
+
+        validateQueryWithWildcardInjection("The !quick!", "The quick", "The* quick*");
+        validateQueryWithWildcardInjection("The -quick-", "The -quick", "The* -quick*");
+        validateQueryWithWildcardInjection("The !qui!ck!", "The quick", "The* quick*");
+        validateQueryWithWildcardInjection("The -qui-ck-", "The -qui-ck", "The* -qui-ck*");
+        validateQueryWithWildcardInjection("The -quick -*", "The -quick", "The* -quick*");
+    }
+
+    private void validateQueryWithoutWildcardInjection(String queryString, String expectation) {
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setText(queryString);
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and jcr:contains(.,'"+expectation+"')]/rep:excerpt(.) order by @jcr:score descending";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+    }
+
+    private void validateQueryWithWildcardInjection(String queryString, String expectationNoWildcard, String expectationWithWildcard) {
+        TextSearchBuilder tsb = new TextSearchBuilder();
+        tsb.setWildcardSearch(true);
+        tsb.setText(queryString);
+        StringBuilder query = tsb.getQueryStringBuilder();
+        String expectedQuery = "//element(*, hippo:harddocument)" +
+                "[(hippo:paths = 'cafebabe-cafe-babe-cafe-babecafebabe') and (jcr:contains(.,'"+expectationNoWildcard+"') or jcr:contains(.,'"+expectationWithWildcard+"'))]/rep:excerpt(.) order by @jcr:score descending";
+        assertTrue("Query: " + query.toString() + " is not equal to expected xpath",
+                (query.toString()).equals(expectedQuery));
+    }
+
 }
