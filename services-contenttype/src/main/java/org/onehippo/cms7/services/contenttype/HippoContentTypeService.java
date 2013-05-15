@@ -365,9 +365,7 @@ public class HippoContentTypeService implements ContentTypeService {
 
             // 5th pass: resolve all document type fields and seal all types
             for (AggregatedDocumentTypesCache.Key key : adtCache.getKeys()) {
-                DocumentTypeImpl dt = adtCache.get(key);
-                dt.resolveFields(adtCache);
-                dt.seal();
+                resolveDocumentTypeFieldsAndSeal(adtCache.get(key), adtCache);
             }
 
             //lock down the cache itself
@@ -523,6 +521,16 @@ public class HippoContentTypeService implements ContentTypeService {
         }
         // update dt in types map to be picked up during the recursive resolving
         types.put(name, dt);
+    }
+
+    private void resolveDocumentTypeFieldsAndSeal(DocumentTypeImpl dt, AggregatedDocumentTypesCache adtCache) {
+        if (!dt.isSealed()) {
+            for (String s : dt.getSuperTypes()) {
+                resolveDocumentTypeFieldsAndSeal(adtCache.get(s), adtCache);
+            }
+            dt.resolveFields(adtCache);
+            dt.seal();
+        }
     }
 
     private DocumentTypeImpl getAggregatedDocumentType(Set<String> names, AggregatedDocumentTypesCache adtCache) {

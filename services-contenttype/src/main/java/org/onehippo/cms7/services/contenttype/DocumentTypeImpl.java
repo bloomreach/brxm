@@ -290,9 +290,21 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
     public void resolveFields(AggregatedDocumentTypesCache adtCache) {
         checkSealed();
         Set<String> ignoredFields = new HashSet<String>();
+        mergeInheritedFields(adtCache);
         resolvePropertiesToFields(adtCache, ignoredFields);
         resolveChildrenToFields(adtCache, ignoredFields);
         resolveFieldsToResidualItems(adtCache);
+    }
+
+    private void mergeInheritedFields(AggregatedDocumentTypesCache adtCache) {
+        for (String s : superTypes) {
+            DocumentTypeImpl sdt = adtCache.get(s);
+            for (Map.Entry<String, DocumentTypeField> entry : sdt.fields.entrySet()) {
+                if (!fields.containsKey(entry.getKey())) {
+                    fields.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
     }
 
     private void resolvePropertiesToFields(AggregatedDocumentTypesCache adtCache, Set<String> ignoredFields) {
@@ -308,6 +320,10 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                                 + "A derived field is created for only the first property definition with type {}."
                                 , new String[]{ent.getName(), entry.getKey(), getName(), dft.getFieldType()});
                     }
+                }
+                else if (dft.isSealed()) {
+                    // skip already processed inherited fields
+                    continue;
                 }
                 else if (!dft.isPropertyField()) {
                     if (ent.getChildren().containsKey(entry.getKey())) {
@@ -393,6 +409,10 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                                     , new String[]{ent.getName(), entry.getKey(), getName(), dft.getFieldType()});
                         }
                     }
+                }
+                else if (dft.isSealed()) {
+                    // skip already processed inherited fields
+                    continue;
                 }
                 else if (dft.isPropertyField()) {
                     if (dft.isDerivedField()) {
@@ -491,6 +511,10 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
     private void resolveFieldsToResidualItems(AggregatedDocumentTypesCache adtCache) {
         for (Iterator<String> fieldNameIterator = fields.keySet().iterator(); fieldNameIterator.hasNext(); ) {
             DocumentTypeFieldImpl dft = (DocumentTypeFieldImpl)fields.get(fieldNameIterator.next());
+            if (dft.isSealed()) {
+                // skip already processed inherited fields
+                continue;
+            }
             if (dft.getEffectiveNodeTypeItem() == null) {
                 if (dft.isPropertyField()) {
                     List<EffectiveNodeTypeProperty> properties = ent.getProperties().get("*");
