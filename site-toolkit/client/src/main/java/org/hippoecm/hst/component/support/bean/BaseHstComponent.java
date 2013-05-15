@@ -165,7 +165,7 @@ public class BaseHstComponent extends GenericHstComponent {
 
     /**
      * See {@link #getComponentParameter(String)}, but now, only resolved parameters directly on the HstComponent are taken into
-     * acoount: in other words, no inheritance of parameters is applied
+     * account: in other words, no inheritance of parameters is applied
      * @param name
      * @return the resolved parameter value for this name, or <code>null</null> if not present
      */
@@ -174,8 +174,8 @@ public class BaseHstComponent extends GenericHstComponent {
     }
 
     /**
-     * @see {@link #getComponentParameters()}
-     * @deprecated  since 2.26.01. Use {@link #getComponentParameters()} instead
+     * See {@link #getComponentLocalParameters()},
+     * @deprecated  since 2.26.01. Use {@link #getComponentLocalParameters()} instead
      */
     @Deprecated
     public  Map<String,String> getLocalParameters(HstRequest request){
