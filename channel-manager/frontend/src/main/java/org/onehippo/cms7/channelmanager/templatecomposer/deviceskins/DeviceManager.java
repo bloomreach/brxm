@@ -15,27 +15,23 @@
  */
 package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.wicket.RequestCycle;
+import org.apache.wicket.Resource;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.markup.html.CSSPackageResource;
 import org.apache.wicket.markup.html.IHeaderContributor;
 import org.apache.wicket.markup.html.JavascriptPackageResource;
-import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.resource.TextTemplateResourceReference;
+import org.apache.wicket.util.resource.IResourceStream;
+import org.apache.wicket.util.resource.StringResourceStream;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.service.IRestProxyService;
-import org.hippoecm.hst.configuration.channel.Channel;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.onehippo.cms7.channelmanager.channels.ChannelStore;
-import org.onehippo.cms7.channelmanager.channels.ChannelStoreFactory;
 import org.onehippo.cms7.channelmanager.templatecomposer.ToolbarPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,8 +40,6 @@ import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtStore;
 import org.wicketstuff.js.ext.util.ExtClass;
 import org.wicketstuff.js.ext.util.JSONIdentifier;
-
-import static org.onehippo.cms7.channelmanager.ChannelManagerConsts.CONFIG_REST_PROXY_SERVICE_ID;
 
 /**
  * @version "$Id$"
@@ -59,7 +53,6 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
     protected static final String SERVICE_ID = "deviceskins.service.id";
 
     private final ExtStore store;
-    private final ChannelStore channelStore;
     private final DeviceService service;
 
     public DeviceManager(IPluginContext context, IPluginConfig config) {
@@ -68,18 +61,20 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
         if (config.containsKey(SERVICE_ID)) {
             service = context.getService(config.getString(SERVICE_ID), DeviceService.class);
         } else {
-            //loading default service
-            final DefaultDeviceService defaultDeviceService = new DefaultDeviceService(context, config);
+            // loading default service
+            final ClassPathDeviceService defaultDeviceService = new ClassPathDeviceService(context, config);
             service = defaultDeviceService;
         }
 
-        IRestProxyService restProxyService = context.getService(config.getString(CONFIG_REST_PROXY_SERVICE_ID, IRestProxyService.class.getName()), IRestProxyService.class);
-
-        this.channelStore = ChannelStoreFactory.createStore(context, config, restProxyService);
-
         addHeadContribution();
-        this.store = new ExtArrayStore<StyleableDevice>(Arrays.asList(new ExtDataField("name"), new ExtDataField("id"),
-                new ExtDataField("relativeImageUrl")),service.getStylables());
+
+        final List<DeviceSkin> deviceSkins = service.getDeviceSkins();
+        List<DeviceSkinDetails> detailsList = new ArrayList<DeviceSkinDetails>();
+        for (DeviceSkin skin : deviceSkins) {
+            detailsList.add(new DeviceSkinDetails(skin));
+        }
+        this.store = new ExtArrayStore<DeviceSkinDetails>(Arrays.asList(new ExtDataField("name"), new ExtDataField("id"),
+                new ExtDataField("imageUrl")), detailsList);
     }
 
     /**
@@ -88,18 +83,24 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
     public void addHeadContribution() {
         add(JavascriptPackageResource.getHeaderContribution(DeviceManager.class, DEVICE_MANAGER_JS));
 
-        StringBuilder buf = new StringBuilder();
-        for (StyleableDevice styleable : service.getStylables()) {
-            styleable.appendCss(buf);
-        }
-        final Map<String,Object> cssMap = new HashMap<String,Object>();
-        cssMap.put("css", buf.toString());
-        ResourceReference resourceReference = new TextTemplateResourceReference(DeviceManager.class, "dynamic.css", "text/css", new LoadableDetachableModel<Map<String, Object>>() {
+        ResourceReference resourceReference = new ResourceReference(DeviceManager.class, "dynamic.css") {
+
             @Override
-            protected Map<String, Object> load() {
-                return Collections.unmodifiableMap(cssMap);
+            protected Resource newResource() {
+                return new Resource() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public IResourceStream getResourceStream() {
+                        StringBuilder buf = new StringBuilder();
+                        for (DeviceSkin skin : service.getDeviceSkins()) {
+                            buf.append(skin.getCss());
+                        }
+                        return new StringResourceStream(buf.toString(), "text/css");
+                    }
+                };
             }
-        });
+        };
         add(CSSPackageResource.getHeaderContribution(resourceReference));
     }
 
@@ -113,22 +114,34 @@ public class DeviceManager extends ToolbarPlugin implements IHeaderContributor {
     @Override
     protected void onRenderProperties(JSONObject properties) throws JSONException {
         super.onRenderProperties(properties);
-        RequestCycle rc = RequestCycle.get();
-        properties.put("baseImageUrl", rc.urlFor(new ResourceReference(this.getClass(), "")));
         properties.put("deviceStore", new JSONIdentifier(this.store.getJsObjectId()));
 
-        JSONObject defaultDeviceIds = new JSONObject();
-        JSONObject devices = new JSONObject();
-        for (Channel channel: this.channelStore.getChannels()) {
-            defaultDeviceIds.put(channel.getId(), channel.getDefaultDevice());
-            JSONArray channelDevices = new JSONArray();
-            for (String device : channel.getDevices()) {
-                channelDevices.put(device);
-            }
-            devices.put(channel.getId(), channelDevices);
+    }
+
+    static class DeviceSkinDetails implements Serializable {
+        private final String id;
+        private final String name;
+        private final String imageUrl;
+
+        public DeviceSkinDetails(final DeviceSkin skin) {
+            this.id = skin.getId();
+            this.name = skin.getName();
+
+            RequestCycle rc = RequestCycle.get();
+            this.imageUrl = rc.urlFor(skin.getImage()).toString();
         }
-        properties.put("defaultDeviceIds", defaultDeviceIds);
-        properties.put("devices", devices);
+
+        public String getId() {
+            return id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getImageUrl() {
+            return imageUrl;
+        }
     }
 
 }

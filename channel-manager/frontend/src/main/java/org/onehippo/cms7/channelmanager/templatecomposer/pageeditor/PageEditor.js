@@ -70,10 +70,6 @@
         constructor: function(config) {
             Hippo.ChannelManager.TemplateComposer.API.superclass.constructor.call(this, config);
             this.pageContainer = config.pageContainer;
-        },
-
-        initComponent: function() {
-            Hippo.ChannelManager.TemplateComposer.API.superclass.initComponent.apply(this, arguments);
             this.addEvents('variantselected');
         },
 
@@ -467,7 +463,8 @@
                         console.log("Adding " + mode + " toolbar plugin '" + plugin.xtype + "' " + plugin.positions[mode]);
                         pluginInstance = Hippo.ExtWidgets.create(plugin.xtype, {
                             templateComposer: this.templateComposerApi,
-                            toolbarMode: mode
+                            toolbarMode: mode,
+                            channel: this.channel
                         });
                         toolbar.insert(insertIndex, pluginInstance);
                     }
@@ -794,6 +791,7 @@
                 this.channelId = data.channelId || this.channelId;
                 var record = config.store.getById(this.channelId);
                 this.title = record.get('name');
+                this.channel = record.data;
                 this.hstMountPoint = record.get('hstMountPoint');
                 this.hstPreviewMountPoint = record.get('hstPreviewMountPoint');
                 this.pageContainer.contextPath = record.get('contextPath') || data.contextPath || this.contextPath;
@@ -806,11 +804,21 @@
         },
 
         mask: function() {
-            this.body.addClass(['channel-manager-mask', 'ext-el-mask']);
+            var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+            if (iframe.isVisible()) {
+                iframe.mask();
+            } else {
+                this.body.addClass(['channel-manager-mask', 'ext-el-mask']);
+            }
         },
 
         unmask: function() {
-            this.body.removeClass(['channel-manager-mask', 'ext-el-mask']);
+            var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
+            if (iframe.isVisible()) {
+                iframe.unmask();
+            } else {
+                this.body.removeClass(['channel-manager-mask', 'ext-el-mask']);
+            }
         },
 
         selectVariant: function(id, variant) {

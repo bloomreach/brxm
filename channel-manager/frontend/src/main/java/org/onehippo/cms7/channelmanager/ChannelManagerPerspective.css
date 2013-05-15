@@ -264,6 +264,13 @@
     filter: none;
 }
 
+#Iframe .ext-el-mask {
+    background: url(loading.gif) no-repeat center;
+    -moz-opacity: 0.9;
+    opacity: 0.9;
+    filter: alpha(opacity=90);
+}
+
 .channel-manager .channel-group.even,
 .channel-manager .channel-group-handle.collapsed.even,
 .channel-manager .channel-group-handle.expanded.even {

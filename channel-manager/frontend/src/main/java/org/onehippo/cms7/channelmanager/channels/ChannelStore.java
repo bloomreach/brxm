@@ -84,7 +84,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         contextPath,
         url,
         lockedBy,
-        lockedOn
+        lockedOn,
+        defaultDevice,
+        devices
     }
 
     public static final List<String> ALL_FIELD_NAMES;
@@ -98,7 +100,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         ALL_FIELD_NAMES = Collections.unmodifiableList(names);
         INTERNAL_FIELDS = Collections.unmodifiableList(
                 Arrays.asList(ChannelField.cmsPreviewPrefix.name(),
-                        ChannelField.hstPreviewMountPoint.name()));
+                        ChannelField.hstPreviewMountPoint.name(),
+                        ChannelField.devices.name()));
     }
 
     public static enum SortOrder {ascending, descending}
@@ -168,13 +171,24 @@ public class ChannelStore extends ExtGroupingStore<Object> {
             JSONObject object = new JSONObject();
 
             for (ExtDataField field : getFields()) {
-                String fieldValue = ReflectionUtil.getStringValue(channel, field.getName());
-                if (fieldValue == null) {
-                    Object value = channelProperties.get(field.getName());
-                    fieldValue = value == null ? StringUtils.EMPTY : value.toString();
+                if (ChannelField.devices.name().equals(field.getName())) {
+                    JSONArray values = new JSONArray();
+                    final List<String> devices = channel.getDevices();
+                    if (devices != null) {
+                        for (String device : devices) {
+                            values.put(device);
+                        }
+                    }
+                    object.put(field.getName(), values);
+                } else {
+                    String fieldValue = ReflectionUtil.getStringValue(channel, field.getName());
+                    if (fieldValue == null) {
+                        Object value = channelProperties.get(field.getName());
+                        fieldValue = value == null ? StringUtils.EMPTY : value.toString();
+                    }
+                    object.put(field.getName(), fieldValue);
                 }
 
-                object.put(field.getName(), fieldValue);
             }
 
             populateChannelTypeAndRegion(channel, object);

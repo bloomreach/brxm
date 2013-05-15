@@ -17,9 +17,9 @@ package org.onehippo.cms7.channelmanager.templatecomposer.deviceskins;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
-import org.apache.wicket.Session;
+import org.apache.wicket.ResourceReference;
+import org.apache.wicket.resource.Properties;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +27,9 @@ import org.slf4j.LoggerFactory;
 /**
  * @version "$Id$"
  */
-public class StyleableDeviceImpl implements StyleableDevice {
+public class DeviceSkinImpl implements DeviceSkin {
 
-    private static Logger log = LoggerFactory.getLogger(StyleableDeviceImpl.class);
+    private static Logger log = LoggerFactory.getLogger(DeviceSkinImpl.class);
 
     private static final String defaultWrapStyleTemplate = "" +
             "position: relative;\n" +
@@ -76,12 +76,9 @@ public class StyleableDeviceImpl implements StyleableDevice {
 
     private final Map<String,String> templateProperties = new HashMap<String,String>();
 
-    public StyleableDeviceImpl(String id) {
+    public DeviceSkinImpl(String id, Properties properties) {
         this.id = id;
-        ResourceBundle properties = ResourceBundle.getBundle(
-                this.getClass().getPackage().getName() + ".devices." + id,
-                Session.get().getLocale()
-        );
+
         this.name = properties.getString("name");
 
         // set defaults
@@ -119,8 +116,8 @@ public class StyleableDeviceImpl implements StyleableDevice {
         }
 
         // overwrite defaults with custom values, if any
-        for (String property : properties.keySet()) {
-            templateProperties.put(property, properties.getString(property));
+        for (Map.Entry<String, Object> entry : properties.getAll().entrySet()) {
+            templateProperties.put(entry.getKey(), String.valueOf(entry.getValue()));
         }
 
     }
@@ -136,19 +133,21 @@ public class StyleableDeviceImpl implements StyleableDevice {
     }
 
     @Override
-    public String getRelativeImageUrl() {
-        return templateProperties.get("image.location");
+    public ResourceReference getImage() {
+        final String imageLocation = templateProperties.get("image.location");
+        return new ResourceReference(getClass(), imageLocation);
     }
 
     @Override
-    public StringBuilder appendCss(StringBuilder buf) {
+    public String getCss() {
+        StringBuilder buf = new StringBuilder();
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", id), getStyle("wrapStyle")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body", id + "IE8"), getStyle("wrapStyle")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id), getStyle("style")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body iframe", id + "IE8"), getStyle("ie8Style")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body img", id), getStyle("imgStyle")));
         buf.append(formatCssRule(String.format(".%s > .x-panel-bwrap > .x-panel-body img", id + "IE8"), getStyle("imgStyle")));
-        return buf;
+        return buf.toString();
     }
 
     private String getStyle(String styleName) {

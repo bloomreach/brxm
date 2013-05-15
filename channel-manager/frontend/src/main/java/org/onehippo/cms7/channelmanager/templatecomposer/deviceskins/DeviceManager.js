@@ -34,9 +34,6 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
 
     constructor: function (config) {
         this.store = config.deviceStore;
-        this.baseImageUrl = config.baseImageUrl;
-        this.defaultDeviceIds = config.defaultDeviceIds;
-        this.devices = config.devices;
         this.templateComposer = config.templateComposer;
         this.iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
         if (!Hippo.ChannelManager.DeviceManager.deviceImage) {
@@ -45,26 +42,49 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
                 src: Ext.BLANK_IMAGE_URL
             });
         }
+        this.channel = config.channel;
+
         Hippo.ChannelManager.DeviceManager.superclass.constructor.call(this, config);
     },
 
-    getChannelId: function() {
-        return Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').channelId;
+    initComponent: function () {
+        Hippo.ChannelManager.DeviceManager.superclass.initComponent.call(this);
+
+        this.on('select', function (combo, record, index) {
+            var selectedDeviceId = record.get('id');
+            Ext.state.Manager.set(combo.channel.id + '_skin', selectedDeviceId);
+            combo.setDevice(record);
+        });
+
+        var deviceRecord;
+        if (this.templateComposer.isPreviewMode()) {
+            this.updateDevices(true);
+            deviceRecord = this.getDeviceRecord(Ext.state.Manager.get(this.channel.id + '_skin'));
+        } else {
+            this.updateDevices(false);
+            deviceRecord = this.getDeviceRecord('default');
+            this.hide();
+        }
+        this.setDevice(deviceRecord);
     },
 
-    setChannelDefaults: function(channelId) {
-        var channelDevices = this.devices[channelId];
+    updateDevices: function(filter) {
+        var channelDevices = this.channel.devices;
         this.store.filterBy(function(record) {
-            return channelDevices.length === 0 || channelDevices.indexOf(record.get('id')) >= 0;
+            if (filter && channelDevices && channelDevices.length > 0) {
+                return channelDevices.indexOf(record.get('id')) >= 0;
+            } else {
+                return true;
+            }
         }, this);
     },
 
-    setDevice: function(selectedDeviceId) {
-        var r, imageUrl = Ext.BLANK_IMAGE_URL;
-        r = this.findRecord('id', selectedDeviceId);
-        this.setValue(r.get('name'));
+    setDevice: function(deviceRecord) {
+        var selectedDeviceId = deviceRecord.get('id'), imageUrl = Ext.BLANK_IMAGE_URL;
+
+        this.setValue(deviceRecord.get('name'));
         if (selectedDeviceId !== 'default') {
-            imageUrl = this.baseImageUrl + r.get('relativeImageUrl');
+            imageUrl = deviceRecord.get('imageUrl');
         }
         Hippo.ChannelManager.DeviceManager.deviceImage.set({
             src: imageUrl
@@ -75,24 +95,27 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
         this.iframe.doLayout(false,true);
     },
 
-    initComponent: function () {
-        Hippo.ChannelManager.DeviceManager.superclass.initComponent.call(this);
+    /**
+     * Look up record for the device, falling back to default devices when it cannot be found.
+     *
+     * @param selectedDeviceId
+     * @returns {*}
+     */
+    getDeviceRecord: function(selectedDeviceId) {
+        var record, order = [ selectedDeviceId, this.channel.defaultDeviceId, 'default' ];
 
-        this.on('select', function (combo, record, index) {
-            var selectedDeviceId = record.get('id');
-            Ext.state.Manager.set(combo.getChannelId() + '_skin', selectedDeviceId);
-            combo.setDevice(selectedDeviceId);
-        });
-
-        var channelId = this.getChannelId(), shownDeviceId;
-
-        this.setChannelDefaults(channelId);
-        if (this.templateComposer.isPreviewMode()) {
-            shownDeviceId = Ext.state.Manager.get(channelId + '_skin', this.defaultDeviceIds[channelId]);
-        } else {
-            shownDeviceId = 'default';
-            this.hide();
+        Ext.each(order, function (device) {
+            if (device) {
+                record = this.findRecord('id', device);
+                if (record) {
+                    return false;
+                }
+            }
+        }, this);
+        if (record) {
+            return record;
         }
-        this.setDevice(shownDeviceId);
+        return this.store.getAt(0);
     }
+
 });

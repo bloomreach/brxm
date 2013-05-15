@@ -46,7 +46,7 @@ limitations under the License.
         <sv:value>default.deviceskins.service</sv:value>
       </sv:property>
       <sv:property sv:name="plugin.class" sv:type="String">
-        <sv:value>org.onehippo.cms7.channelmanager.templatecomposer.deviceskins.DefaultDeviceService</sv:value>
+        <sv:value>org.onehippo.cms7.channelmanager.templatecomposer.deviceskins.ClassPathDeviceService</sv:value>
       </sv:property>
     </sv:node>
   </sv:node>
