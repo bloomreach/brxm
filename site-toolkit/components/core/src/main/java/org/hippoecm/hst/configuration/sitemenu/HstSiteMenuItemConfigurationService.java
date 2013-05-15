@@ -16,11 +16,14 @@
 package org.hippoecm.hst.configuration.sitemenu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
@@ -45,6 +48,7 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     private int depth;
     private boolean repositoryBased;
     private Map<String, Object> properties;
+    private Set<String> roles;
     private Map<String,String> parameters = new HashMap<String,String>();
     private Map<String,String> localParameters = new HashMap<String,String>();
     
@@ -95,7 +99,15 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
         }
         
         this.properties = siteMenuItem.getValueProvider().getProperties();
-        
+
+        if (siteMenuItem.getValueProvider().hasProperty(HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES)) {
+            String [] rolesProp = siteMenuItem.getValueProvider().getStrings(HstNodeTypes.SITEMENUITEM_PROPERTY_ROLES);
+            this.roles = new HashSet<String>(Arrays.asList(rolesProp));
+        } else if (this.parent != null && parent.getRoles() != null){
+            this.roles = new HashSet<String>(parent.getRoles());
+        } else {
+            this.roles = null;
+        }
 
         String[] parameterNames = siteMenuItem.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = siteMenuItem.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
@@ -178,10 +190,15 @@ public class HstSiteMenuItemConfigurationService implements HstSiteMenuItemConfi
     public Map<String, Object> getProperties() {
         return properties;
     }
- 
+
     @Override
     public String getMountAlias() {
         return mountAlias;
+    }
+
+    @Override
+    public Set<String> getRoles() {
+        return roles;
     }
 
 }

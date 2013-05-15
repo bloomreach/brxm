@@ -145,6 +145,7 @@
 - hst:foldersonly (boolean)
 - hst:repobased (boolean)
 - hst:depth (long)
+- hst:roles (string) multiple
 - hst:parameternames (string) multiple
 - hst:parametervalues (string) multiple
 + * (hst:sitemenuitem)

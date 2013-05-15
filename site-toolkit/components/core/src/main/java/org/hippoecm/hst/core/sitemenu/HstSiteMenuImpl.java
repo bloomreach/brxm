@@ -35,7 +35,13 @@ public class HstSiteMenuImpl extends AbstractMenu implements HstSiteMenu {
         this.hstSiteMenus = hstSiteMenus;
         this.name = siteMenuConfiguration.getName();
         for(HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
-            hstSiteMenuItems.add(new HstSiteMenuItemImpl(this, null, hstSiteMenuItemConfiguration , hstRequestContext));
+            if (hstSiteMenuItemConfiguration.getRoles() == null) {
+                hstSiteMenuItems.add(new HstSiteMenuItemImpl(this, null, hstSiteMenuItemConfiguration , hstRequestContext));
+            } else {
+                if (HstSiteMenuUtils.isUserInRole(hstSiteMenuItemConfiguration, hstRequestContext)) {
+                    hstSiteMenuItems.add(new HstSiteMenuItemImpl(this, null, hstSiteMenuItemConfiguration , hstRequestContext));
+                }
+            }
         }
     }
 

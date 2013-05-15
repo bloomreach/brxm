@@ -89,8 +89,15 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
         }
         
         for(HstSiteMenuItemConfiguration childItemConfiguration : hstSiteMenuItemConfiguration.getChildItemConfigurations()) {
-            hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
+            if (childItemConfiguration.getRoles() == null) {
+                hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
+            } else {
+                if (HstSiteMenuUtils.isUserInRole(childItemConfiguration, hstRequestContext)) {
+                    hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
+                }
+            }
         }
+
         resolvedSiteMapItem = hstRequestContext.getResolvedSiteMapItem();
         
         String currentPathInfo = resolvedSiteMapItem.getPathInfo();

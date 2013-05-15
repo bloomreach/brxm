@@ -15,8 +15,10 @@
  */
 package org.hippoecm.hst.configuration.sitemenu;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -126,4 +128,22 @@ public interface HstSiteMenuItemConfiguration {
      * @return the alias of the {@link Mount} to create the link for and <code>null</code> if the mount from the {@link HstRequestContext} can be used
      */
     String getMountAlias();
+
+    /**
+     * <p>
+     * Returns the roles that are allowed to <b>view</b> this {@link HstSiteMenuItemConfiguration}. If a request is not in the
+     * right role ({@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}}), the sitemenu item won't be visible.
+     * If the sitemeniitem does not have any roles defined by itself, it inherits them from the parent.
+     * If it defines roles by itself, the roles from any ancestor are ignored.
+     * </p>
+     * <p>An empty list of roles
+     * (property exists but no values) means <b>nobody</b> can view the sitemenuitem!. A missing property for roles
+     * means everybody can view the sitemenu item.
+     * </p>
+     *
+     * @return The set of roles that are allowed to view this sitemenu item. When no property roles defined, the roles from the parent
+     * item are inherited. If no-one is allowed to view this item, an Empty list of roles should be returned. If everyone
+     * is allowed to view this item, <code>null</code> must be returned
+     */
+    Set<String> getRoles();
 }

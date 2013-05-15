@@ -109,6 +109,7 @@ public interface HstNodeTypes {
     static final String SITEMENUITEM_PROPERTY_REPOBASED =  "hst:repobased";
     static final String SITEMENUITEM_PROPERTY_DEPTH =  "hst:depth";
     static final String SITEMENUITEM_PROPERTY_MOUNTALIAS = "hst:mountalias";
+    static final String SITEMENUITEM_PROPERTY_ROLES =  "hst:roles";
 
     static final String VIRTUALHOSTS_PROPERTY_PREFIXEXCLUSIONS = "hst:prefixexclusions";
     static final String VIRTUALHOSTS_PROPERTY_SUFFIXEXCLUSIONS = "hst:suffixexclusions";
