@@ -59,8 +59,6 @@ public class RootPlugin extends RenderPlugin {
             String modelId = config.getString(RenderService.MODEL_ID);
             ModelReference modelService = new ModelReference(modelId, new JcrNodeModel("/"));
             modelService.init(context);
-            // unregister: don't repaint root plugin when model changes.
-            context.unregisterService(this, modelId);
 
             pathHistoryBehavior = new PathHistoryBehavior(null, modelService);
             context.registerService(pathHistoryBehavior, IObserver.class.getName());
