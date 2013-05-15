@@ -40,7 +40,6 @@ public final class FullTextSearchParser {
     private static final String WHITESPACE_PATTERN = "\\s+";
 
     private FullTextSearchParser() {
-
     }
 
     /**
@@ -174,7 +173,7 @@ public final class FullTextSearchParser {
         if(input == null) {
             throw new IllegalArgumentException("Input is not allowed to be null");
         }
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         boolean allowWildCardInCurrentTerm = allowSingleNonLeadingWildCardPerTerm;
 
         boolean prevCharIsSpecialOrRemoved = false;
