@@ -304,6 +304,8 @@ public class Channel implements Serializable {
         b.append(",mountPath=").append(mountPath);
         b.append(",lockedBy=").append(lockedBy);
         b.append(",lockedOn=").append(lockedOn);
+        b.append(",devices=").append(devices);
+        b.append(",defaultDevice=").append(defaultDevice);
         b.append('}');
 
         return b.toString();
