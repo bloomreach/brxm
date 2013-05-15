@@ -259,9 +259,9 @@
 
 .channel-manager-mask {
     background: url(loading.gif) no-repeat center;
-    -moz-opacity: 0.9;
-    opacity: 0.9;
-    filter: alpha(opacity=90);
+    -moz-opacity: 1;
+    opacity: 1;
+    filter: none;
 }
 
 .channel-manager .channel-group.even,

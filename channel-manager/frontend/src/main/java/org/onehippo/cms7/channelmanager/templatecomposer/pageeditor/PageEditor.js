@@ -806,11 +806,11 @@
         },
 
         mask: function() {
-            this.body.addClass('channel-manager-mask ext-el-mask');
+            this.body.addClass(['channel-manager-mask', 'ext-el-mask']);
         },
 
         unmask: function() {
-            this.body.removeClass('channel-manager-mask ext-el-mask');
+            this.body.removeClass(['channel-manager-mask', 'ext-el-mask']);
         },
 
         selectVariant: function(id, variant) {
