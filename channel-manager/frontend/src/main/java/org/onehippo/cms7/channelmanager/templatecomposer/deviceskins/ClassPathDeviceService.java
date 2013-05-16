@@ -85,8 +85,7 @@ public class ClassPathDeviceService extends Plugin implements DeviceService  {
     }
 
     private void loadDeviceSkin(final String id, final URL indexURL) {
-        final String pathToClass = getClass().getPackage().getName().replace('.', '/');
-        final String bundleName = "/" + pathToClass + "/devices/" + id;
+        final String bundleName = getClass().getPackage().getName() + ".devices." + id;
         final Locale locale = Session.get().getLocale();
 
         log.debug("Loading device skin '" + id + "' defined in " + indexURL + " from bundle '" + bundleName + "'");
