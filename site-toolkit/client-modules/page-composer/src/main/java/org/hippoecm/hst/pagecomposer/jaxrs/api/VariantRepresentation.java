@@ -24,8 +24,9 @@ public abstract class VariantRepresentation {
     private String id;
     private String name;
     private String description;
-    private String avatarName;
-    
+    private String group;
+    private String avatar;
+
     public String getId() {
         return id;
     }
@@ -50,12 +51,20 @@ public abstract class VariantRepresentation {
         this.description = description;
     }
 
-    public String getAvatarName() {
-        return avatarName;
+    public String getGroup() {
+        return group;
     }
 
-    public void setAvatarName(final String avatarName) {
-        this.avatarName = avatarName;
+    public void setGroup(final String group) {
+        this.group = group;
+    }
+
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(final String avatar) {
+        this.avatar = avatar;
     }
 
 }
