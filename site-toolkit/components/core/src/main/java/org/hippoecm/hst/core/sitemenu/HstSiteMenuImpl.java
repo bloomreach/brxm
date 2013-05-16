@@ -34,8 +34,9 @@ public class HstSiteMenuImpl extends AbstractMenu implements HstSiteMenu {
     public HstSiteMenuImpl(HstSiteMenus hstSiteMenus, HstSiteMenuConfiguration siteMenuConfiguration, HstRequestContext hstRequestContext) {
         this.hstSiteMenus = hstSiteMenus;
         this.name = siteMenuConfiguration.getName();
+        final boolean menuVisibleRegardlessRoles = hstRequestContext.isCmsRequest() && hstRequestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped();
         for(HstSiteMenuItemConfiguration hstSiteMenuItemConfiguration : siteMenuConfiguration.getSiteMenuConfigurationItems()) {
-            if (hstSiteMenuItemConfiguration.getRoles() == null) {
+            if (hstSiteMenuItemConfiguration.getRoles() == null || menuVisibleRegardlessRoles) {
                 hstSiteMenuItems.add(new HstSiteMenuItemImpl(this, null, hstSiteMenuItemConfiguration , hstRequestContext));
             } else {
                 if (HstSiteMenuUtils.isUserInRole(hstSiteMenuItemConfiguration, hstRequestContext)) {

@@ -87,9 +87,10 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
                 log.debug("sitemapitem of sitemenu, '{}', will be found by path, '{}'.", name, siteMapItemRefIdOrPath);
             }
         }
-        
+
+        final boolean menuVisibleRegardlessRoles = hstRequestContext.isCmsRequest() && hstRequestContext.getResolvedMount().getMount().getVirtualHost().getVirtualHosts().isChannelMngrSiteAuthenticationSkipped();
         for(HstSiteMenuItemConfiguration childItemConfiguration : hstSiteMenuItemConfiguration.getChildItemConfigurations()) {
-            if (childItemConfiguration.getRoles() == null) {
+            if (childItemConfiguration.getRoles() == null || menuVisibleRegardlessRoles) {
                 hstSiteMenuItems.add(new HstSiteMenuItemImpl(hstSiteMenu, this, childItemConfiguration, hstRequestContext));
             } else {
                 if (HstSiteMenuUtils.isUserInRole(childItemConfiguration, hstRequestContext)) {
