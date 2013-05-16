@@ -21,14 +21,13 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.wicket.Application;
 import org.apache.wicket.Session;
-import org.apache.wicket.resource.IPropertiesFactory;
-import org.apache.wicket.resource.Properties;
-import org.apache.wicket.util.resource.locator.ResourceNameIterator;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -86,20 +85,19 @@ public class ClassPathDeviceService extends Plugin implements DeviceService  {
     }
 
     private void loadDeviceSkin(final String id, final URL indexURL) {
-        final IPropertiesFactory propertiesFactory = Application.get().getResourceSettings().getPropertiesFactory();
-        ResourceNameIterator rni = new ResourceNameIterator("devices/" + id + ".", null, Session.get().getLocale(), null);
-        Properties properties;
-        while (rni.hasNext()) {
-            final String path = rni.next();
-            String pathToClass = getClass().getPackage().getName().replace('.', '/');
-            properties = propertiesFactory.load(getClass(), pathToClass + '/' + path);
-            if (properties != null) {
-                log.debug("Loading device skin '" + id + "' defined in " + indexURL);
-                deviceSkins.put(id, new DeviceSkinImpl(id, properties));
-                return;
-            }
+        final String pathToClass = getClass().getPackage().getName().replace('.', '/');
+        final String bundleName = "/" + pathToClass + "/devices/" + id;
+        final Locale locale = Session.get().getLocale();
+
+        log.debug("Loading device skin '" + id + "' defined in " + indexURL + " from bundle '" + bundleName + "'");
+        try {
+            final ResourceBundle bundle = ResourceBundle.getBundle(bundleName, locale);
+            final TypedResourceBundle properties = new TypedResourceBundle(bundle, "Device skin '" + id + "'");
+            final DeviceSkin skin = new DeviceSkinImpl(id, properties);
+            deviceSkins.put(id, skin);
+        } catch (MissingResourceException e) {
+            log.warn("Cannot find device skin '" + id + "' defined in " + indexURL + ". Bundle " + bundleName + " does not exist, skipping this skin");
         }
-        log.warn("Cannot find device skin '" + id + "' defined in " + indexURL + ", skipping this skin");
     }
 
     @Override

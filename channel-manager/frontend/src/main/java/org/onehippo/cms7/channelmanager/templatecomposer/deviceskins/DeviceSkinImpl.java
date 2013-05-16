@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.wicket.ResourceReference;
-import org.apache.wicket.resource.Properties;
 import org.apache.wicket.util.string.interpolator.MapVariableInterpolator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,10 +75,10 @@ public class DeviceSkinImpl implements DeviceSkin {
 
     private final Map<String,String> templateProperties = new HashMap<String,String>();
 
-    public DeviceSkinImpl(String id, Properties properties) {
+    public DeviceSkinImpl(String id, TypedResourceBundle properties) {
         this.id = id;
 
-        this.name = properties.getString("name");
+        this.name = properties.getString("name", "");
 
         // set defaults
         templateProperties.put("style", defaultStyleTemplate);
@@ -89,37 +88,31 @@ public class DeviceSkinImpl implements DeviceSkin {
         templateProperties.put("image.location", "images/" + id + ".png");
 
         // calculate sizes
-        try {
-            int viewPortWidth = Integer.parseInt(properties.getString("viewport.width"));
-            int viewPortHeight = Integer.parseInt(properties.getString("viewport.height"));
-            double scaleFactor = Double.parseDouble(properties.getString("scale.factor"));
-            if (scaleFactor != 0.0) {
-                int cw = (int) (viewPortWidth / scaleFactor);
-                int ch = (int) (viewPortHeight / scaleFactor);
-                templateProperties.put("calc.width", String.valueOf(cw));
-                templateProperties.put("calc.height", String.valueOf(ch));
-            }
-
-            int top = Integer.parseInt(properties.getString("top"));
-            templateProperties.put("img.top", String.valueOf(top));
-            int viewPortY = Integer.parseInt(properties.getString("viewport.y"));
-            templateProperties.put("iframe.top", String.valueOf(top + viewPortY));
-
-            int backgroundWidth = Integer.parseInt(properties.getString("background.width"));
-            int marginLeft = backgroundWidth/2;
-            templateProperties.put("img.left", String.valueOf(marginLeft));
-            int viewPortX = Integer.parseInt(properties.getString("viewport.x"));
-            templateProperties.put("iframe.left", String.valueOf(marginLeft - viewPortX));
-            
-        } catch (NumberFormatException e) {
-            log.error(e.getMessage(), e);
+        int viewPortWidth = properties.getInteger("viewport.width", 0);
+        int viewPortHeight = properties.getInteger("viewport.height", 0);
+        double scaleFactor = properties.getDouble("scale.factor", 1);
+        if (scaleFactor != 0.0) {
+            int cw = (int) (viewPortWidth / scaleFactor);
+            int ch = (int) (viewPortHeight / scaleFactor);
+            templateProperties.put("calc.width", String.valueOf(cw));
+            templateProperties.put("calc.height", String.valueOf(ch));
         }
+
+        int top = properties.getInteger("top", 0);
+        templateProperties.put("img.top", String.valueOf(top));
+        int viewPortY = properties.getInteger("viewport.y", 0);
+        templateProperties.put("iframe.top", String.valueOf(top + viewPortY));
+
+        int backgroundWidth = properties.getInteger("background.width", 0);
+        int marginLeft = backgroundWidth / 2;
+        templateProperties.put("img.left", String.valueOf(marginLeft));
+        int viewPortX = properties.getInteger("viewport.x", 0);
+        templateProperties.put("iframe.left", String.valueOf(marginLeft - viewPortX));
 
         // overwrite defaults with custom values, if any
-        for (Map.Entry<String, Object> entry : properties.getAll().entrySet()) {
-            templateProperties.put(entry.getKey(), String.valueOf(entry.getValue()));
+        for (String key : properties.keySet()) {
+            templateProperties.put(key, properties.getString(key, ""));
         }
-
     }
 
     @Override
