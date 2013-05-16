@@ -43,6 +43,7 @@
                     pageModel: oldContext.stores.pageModel
                 };
                 this.hasPreviewHstConfig = oldContext.hasPreviewHstConfig;
+                this.renderingVariant = oldContext.renderingVariant;
             } else {
                 this.ids = {
                     pageUrl: null,
@@ -185,7 +186,7 @@
                 var self = this;
 
                 function handleResponse(response) {
-                    var pageId, mountId, lockedBy, futures;
+                    var pageId, mountId, lockedBy, pageRequestVariantsHeader, futures;
                     pageId = response.getResponseHeader('HST-Page-Id');
                     mountId = response.getResponseHeader('HST-Mount-Id');
                     if (pageId === undefined || mountId === undefined) {
@@ -210,6 +211,13 @@
                         self.lockedBy = "";
                         self.lockedOn = 0;
                         self.unlockable = false;
+                    }
+
+                    pageRequestVariantsHeader = response.getResponseHeader('HST-Page-Request-Variants');
+                    if (Ext.isString(pageRequestVariantsHeader)) {
+                        self.pageRequestVariants = pageRequestVariantsHeader.split('/');
+                    } else {
+                        self.pageRequestVariants = [];
                     }
 
                     console.log('hstMetaDataResponse: url:' + encodedUrl + ', pageId:' + pageId + ', mountId:' + mountId);

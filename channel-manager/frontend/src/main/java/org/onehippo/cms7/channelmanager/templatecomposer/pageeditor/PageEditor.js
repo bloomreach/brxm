@@ -41,9 +41,21 @@
                 id: 'GlobalVariantsStore',
                 proxy: proxy,
                 prototypeRecord: [
-                    {name: 'id' },
-                    {name: 'name' },
-                    {name: 'description' }
+                    { name: 'id' },
+                    { name: 'name' },
+                    { name: 'description' },
+                    { name: 'group' },
+                    { name: 'avatar' },
+                    {
+                        name: 'comboName',
+                        convert: function(value, record) {
+                            var comboName = record.name;
+                            if (!Ext.isEmpty(record.group)) {
+                                comboName += config.resources['variant-name-group-separator'] + ' ' + record.group;
+                            }
+                            return Ext.util.Format.htmlEncode(comboName);
+                        }
+                    }
                 ],
                 listeners: {
                     load: this.filterSkippedIds
@@ -121,6 +133,7 @@
                 this.globalVariantsStore = new Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore({
                     composerRestMountUrl: this.composerRestMountUrl,
                     locale: this.locale,
+                    resources: config.resources,
                     variantsUuid: this.variantsUuid
                 });
                 this.globalVariantsStoreFuture = new Hippo.Future(function(success, fail) {
@@ -224,7 +237,7 @@
             variantsComboBox = new Ext.form.ComboBox({
                 id: 'template-composer-toolbar-variants-combo',
                 store: this.globalVariantsStore,
-                displayField: 'name',
+                displayField: 'comboName',
                 valueField: 'id',
                 valueNotFoundText: ' ',
                 typeAhead: true,
@@ -233,11 +246,10 @@
                 emptyText: this.resources['variants-combo-box-empty-text'],
                 editable: false,
                 selectOnFocus: true,
-                width: 135,
                 autoSelect: true,
-                disabled: !this.pageContainer.previewMode,
                 hidden: !this.areVariantsEnabled(), // hide when only default is available
-                tpl: '<tpl for="."><div class="x-combo-list-item template-composer-variant-{id}">{name}</div></tpl>',
+                tpl: '<tpl for="."><div class="x-combo-list-item template-composer-variant-{id}" ext:qtip="{comboName}{[ Ext.isEmpty(values.description) ? "" : ":<br>&quot;" + fm.htmlEncode(values.description) + "&quot;" ]}">{comboName}</div></tpl>',
+                width: 190,
                 listeners: {
                     scope: this,
                     beforequery: function(queryEvent) {
@@ -262,7 +274,7 @@
                                 self.refreshIframe.call(self);
                             },
                             failure: function() {
-                                console.log('failure set variant');
+                                console.log("Failed to set variant '" + variant + "'");
                                 combo.clearValue();
                             }
                         });
@@ -701,9 +713,31 @@
         },
 
         createPropertiesWindow: function(mountId) {
-            var width, window;
+            var width, propertiesPanel, window;
 
             width = Ext.isDefined(this.variantsUuid) ? 530 : 400;
+            propertiesPanel = new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
+                id: 'componentPropertiesPanel',
+                resources: this.resources,
+                locale: this.locale,
+                composerRestMountUrl: this.composerRestMountUrl,
+                variantsUuid: this.variantsUuid,
+                globalVariantsStore: this.globalVariantsStore,
+                globalVariantsStoreFuture: this.globalVariantsStoreFuture,
+                mountId: mountId,
+                listeners: {
+                    cancel: function() {
+                        window.hide();
+                    },
+                    variantChange: function(id, variantId) {
+                        if (id !== null) {
+                            this.selectVariant(id, variantId);
+                        }
+                    },
+                    scope: this
+                }
+            });
+
             window = new Hippo.ux.window.FloatingWindow({
                 id: 'componentPropertiesWindow',
                 title: this.resources['properties-window-default-title'],
@@ -723,32 +757,11 @@
                 listeners: {
                     hide: function() {
                         this.pageContainer.deselectComponents();
+                        propertiesPanel.selectInitialVariant();
                     },
                     scope: this
                 },
-                items: [
-                    new Hippo.ChannelManager.TemplateComposer.PropertiesPanel({
-                        id: 'componentPropertiesPanel',
-                        resources: this.resources,
-                        locale: this.locale,
-                        composerRestMountUrl: this.composerRestMountUrl,
-                        variantsUuid: this.variantsUuid,
-                        globalVariantsStore: this.globalVariantsStore,
-                        globalVariantsStoreFuture: this.globalVariantsStoreFuture,
-                        mountId: mountId,
-                        listeners: {
-                            cancel: function() {
-                                window.hide();
-                            },
-                            variantChange: function(id, variantId) {
-                                if (id !== null) {
-                                    this.selectVariant(id, variantId);
-                                }
-                            },
-                            scope: this
-                        }
-                    })
-                ]
+                items: [ propertiesPanel ]
             });
 
             // Enable mouse events in the iframe while the properties window is dragged. When the mouse pointer is moved
@@ -767,6 +780,7 @@
         showProperties: function(record, variant) {
             var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel');
             componentPropertiesPanel.setComponentId(record.get('id'));
+            componentPropertiesPanel.setPageRequestVariants(this.pageContainer.pageContext.pageRequestVariants);
             componentPropertiesPanel.load(variant);
             if (this.propertiesWindow) {
                 this.propertiesWindow.setTitle(record.get('name'));

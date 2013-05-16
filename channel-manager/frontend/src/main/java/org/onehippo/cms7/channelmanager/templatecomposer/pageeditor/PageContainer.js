@@ -343,32 +343,9 @@
                         },
                         success: function(response) {
                             var lockState = Ext.decode(response.responseText).data;
-                            console.warn('Is it locked: ' + lockState);
                             if (lockState === 'lock-acquired') {
-                                if (self.pageContext.renderedVariant !== 'hippo-default') {
-                                    Ext.Ajax.request({
-                                        url: self.composerRestMountUrl + '/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/?FORCE_CLIENT_HOST=true',
-                                        method: 'POST',
-                                        headers: {
-                                            'FORCE_CLIENT_HOST': 'true'
-                                        },
-                                        params: {
-                                            'variant': 'hippo-default'
-                                        },
-                                        success: function() {
-                                            self.pageContext = null;
-                                            self.refreshIframe.call(self, null);
-                                        },
-                                        failure: function() {
-                                            console.error('Error setting the rendered page variant back to hippo-default');
-                                            doneCallback();
-                                        }
-                                    });
-                                } else {
-                                    doneCallback();
-                                }
+                                doneCallback();
                             } else {
-                                console.error('The mount is already locked.');
                                 Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
                                     self.initComposer.call(self);
                                 });

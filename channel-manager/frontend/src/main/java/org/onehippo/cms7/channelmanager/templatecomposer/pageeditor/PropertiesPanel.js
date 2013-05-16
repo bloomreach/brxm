@@ -25,6 +25,7 @@
         resources: null,
         variants: null,
         variantsUuid: null,
+        pageRequestVariants: [],
         locale: null,
         componentId: null,
         silent: true,
@@ -36,6 +37,7 @@
         constructor: function(config) {
             this.composerRestMountUrl = config.composerRestMountUrl;
             this.variantsUuid = config.variantsUuid;
+            this.pageRequestVariants = config.pageRequestVariants;
             this.mountId = config.mountId;
             this.resources = config.resources;
             this.locale = config.locale;
@@ -69,26 +71,34 @@
                     this.fireEvent('variantChange', tab.componentId, tab.variant ? tab.variant.id : undefined);
                 }
             }, this);
+
+            this.on('cancel', this.selectInitialVariant, this);
         },
 
         setComponentId: function(componentId) {
             this.componentId = componentId;
         },
 
-        load: function(variant) {
+        setPageRequestVariants: function(pageRequestVariants) {
+            this.pageRequestVariants = pageRequestVariants;
+        },
+
+        load: function(hstInternalVariant) {
             this.silent = true;
             this.beginUpdate();
             this.removeAll();
 
             var loadVariantTabs = function() {
-                var futures, tab;
-                futures = [];
+                var futures, activeTab;
+
                 this._initTabs();
                 this.adjustBodyWidth(this.tabWidth);
-                this._selectTabByVariant(variant);
 
-                tab = this.getActiveTab();
-                this.fireEvent('variantChange', tab.componentId, tab.variant.id);
+                this._selectInitialActiveTab(hstInternalVariant);
+                this.initialActiveTab = this.getActiveTab();
+
+                activeTab = this.getActiveTab();
+                this.fireEvent('variantChange', activeTab.componentId, activeTab.variant.id);
                 this.silent = false;
 
                 futures = [];
@@ -123,6 +133,16 @@
                     this.endUpdate();
                     this.silent = false;
                 }.createDelegate(this));
+            }
+        },
+
+        selectInitialVariant: function() {
+            if (!this.silent) {
+                var initialVariant = this.initialActiveTab.variant ? this.initialActiveTab.variant.id : undefined,
+                    currentVariant = this.getActiveTab().variant ? this.getActiveTab().variant.id : undefined;
+                if (initialVariant !== currentVariant) {
+                    this.fireEvent('variantChange', this.initialActiveTab.componentId, initialVariant);
+                }
             }
         },
 
@@ -268,15 +288,34 @@
             this.tabWidth = 130;
         },
 
-        _selectTabByVariant: function(variant) {
-            var i;
-            for (i = 0; i < this.variants.length; i++) {
-                if (this.variants[i].id === variant) {
-                    this.setActiveTab(i);
+        _selectInitialActiveTab: function(hstInternalVariant) {
+            var i, len;
+
+            // first try to select the tab that matches the HST internal variant
+            if (Ext.isDefined(hstInternalVariant) && this._selectTabByVariant(hstInternalVariant)) {
+                return;
+            }
+
+            // second, try to select the tab with the best-matching page request variant
+            for (i = 0, len = this.pageRequestVariants.length; i < len; i++) {
+                if (this._selectTabByVariant(this.pageRequestVariants[i])) {
                     return;
                 }
             }
+
+            // third, select the first tab
             this.setActiveTab(0);
+        },
+
+        _selectTabByVariant: function(variant) {
+            var i, len;
+            for (i = 0, len = this.variants.length; i < len; i++) {
+                if (this.variants[i].id === variant) {
+                    this.setActiveTab(i);
+                    return true;
+                }
+            }
+            return false;
         },
 
         _copyVariant: function(existingVariant, newVariant) {
