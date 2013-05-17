@@ -158,8 +158,6 @@ public class MountResource extends AbstractConfigResource {
     public Response startEdit(@Context HttpServletRequest servletRequest) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
 
-        servletRequest.getSession().removeAttribute(ContainerConstants.RENDER_VARIANT);
-
         try {
             HstSite ctxEditingPreviewSite = getEditingPreviewMount(requestContext).getHstSite();
             
