@@ -195,5 +195,6 @@ public class RepositoryLogger implements DaemonModule {
 
     @Override
     public void shutdown() {
+        HippoServiceRegistry.unregisterService(this, HippoEventBus.class);
     }
 }
