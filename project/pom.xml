@@ -999,6 +999,7 @@
               <container>
                 <systemProperties>
                   <repo.path>${repo.path}</repo.path>
+                  <repo.bootstrap>${repo.bootstrap}</repo.bootstrap>
                   <hippoecm.export.dir>${hippoecm.export.dir}</hippoecm.export.dir>
                 </systemProperties>
                 <zipUrlInstaller>
