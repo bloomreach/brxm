@@ -71,8 +71,6 @@
                     this.fireEvent('variantChange', tab.componentId, tab.variant ? tab.variant.id : undefined);
                 }
             }, this);
-
-            this.on('cancel', this.selectInitialVariant, this);
         },
 
         setComponentId: function(componentId) {
