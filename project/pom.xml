@@ -122,7 +122,7 @@
     <!-- Cargo Tomcat full distribution url -->
     <cargo.tomcat.distribution.url>${cargo.tomcat.distribution.url.prefix}${cargo.tomcat.distribution.url.archive}${cargo.tomcat.distribution.url.postfix}</cargo.tomcat.distribution.url>
     <!-- Extra JVM arguments to pass to Cargo -->
-    <cargo.jvm.args />
+    <cargo.jvm.args>-XX:PermSize=128m -XX:MaxPermSize=256m</cargo.jvm.args>
 
     <!-- default empty javaagent, see also "jrebel" profile below -->
     <javaagent />
@@ -953,6 +953,8 @@
       <id>cargo.run</id>
       <properties>
         <repo.path>${project.build.directory}/storage</repo.path>
+        <repo.config></repo.config>
+        <repo.bootstrap></repo.bootstrap>
       </properties>
       <dependencies>
        <dependency>
@@ -999,6 +1001,7 @@
               <container>
                 <systemProperties>
                   <repo.path>${repo.path}</repo.path>
+                  <repo.config>${repo.config}</repo.config>
                   <repo.bootstrap>${repo.bootstrap}</repo.bootstrap>
                   <hippoecm.export.dir>${hippoecm.export.dir}</hippoecm.export.dir>
                 </systemProperties>
