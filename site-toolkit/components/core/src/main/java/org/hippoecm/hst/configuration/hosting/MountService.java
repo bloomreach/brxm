@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -503,7 +504,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         this.cmsLocation = ((VirtualHostService)virtualHost).getCmsLocation();
 
         defaultSiteMapItemHandlerIds = mount.getValueProvider().getStrings(HstNodeTypes.MOUNT_PROPERTY_DEFAULTSITEMAPITEMHANDLERIDS);
-        if(defaultSiteMapItemHandlerIds == null && parent != null) {
+        if (ArrayUtils.isEmpty(defaultSiteMapItemHandlerIds) && parent != null) {
             defaultSiteMapItemHandlerIds = parent.getDefaultSiteMapItemHandlerIds();
         }
 
