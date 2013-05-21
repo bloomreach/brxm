@@ -146,7 +146,11 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     private String lookupFilename(final Node node) throws RepositoryException {
         String filename = null;
 
-        filename =  node.getProperty(HippoNodeType.HIPPO_FILENAME).getString();
+        if (node.hasProperty(HippoNodeType.HIPPO_FILENAME)){
+            filename =  node.getProperty(HippoNodeType.HIPPO_FILENAME).getString();
+        } else {
+            filename = "";
+        }
 
         if (StringUtils.isEmpty(filename)) {
             if (node.getDefinition().getName().equals("*")) {
