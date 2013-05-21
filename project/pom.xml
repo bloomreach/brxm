@@ -19,7 +19,7 @@
 
   <groupId>org.onehippo.cms7</groupId>
   <artifactId>hippo-cms7-project</artifactId>
-  <version>22-SNAPSHOT</version>
+  <version>22</version>
 
   <name>Hippo CMS7 Project POM</name>
   <description>Hippo CMS7 Project POM</description>
@@ -142,9 +142,9 @@
      This is used by normal plugins, but also to autogenerate documentation in .../target/site/source-repository.html
   -->
   <scm>
-    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/project/trunk</connection>
-    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/project/trunk</developerConnection>
-    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/project/trunk</url>
+    <connection>scm:svn:http://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-cms7-project-22</connection>
+    <developerConnection>scm:svn:https://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-cms7-project-22</developerConnection>
+    <url>http://svn.onehippo.org/repos/hippo/hippo-cms7/project/tags/hippo-cms7-project-22</url>
   </scm>
 
   <issueManagement>
@@ -953,8 +953,8 @@
       <id>cargo.run</id>
       <properties>
         <repo.path>${project.build.directory}/storage</repo.path>
-        <repo.config></repo.config>
-        <repo.bootstrap></repo.bootstrap>
+        <repo.config />
+        <repo.bootstrap />
       </properties>
       <dependencies>
        <dependency>
