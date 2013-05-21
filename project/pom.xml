@@ -1003,7 +1003,6 @@
                   <repo.path>${repo.path}</repo.path>
                   <repo.config>${repo.config}</repo.config>
                   <repo.bootstrap>${repo.bootstrap}</repo.bootstrap>
-                  <hippoecm.export.dir>${hippoecm.export.dir}</hippoecm.export.dir>
                 </systemProperties>
                 <zipUrlInstaller>
                   <downloadDir>${settings.localRepository}/org/codehaus/cargo/cargo-container-archives</downloadDir>
