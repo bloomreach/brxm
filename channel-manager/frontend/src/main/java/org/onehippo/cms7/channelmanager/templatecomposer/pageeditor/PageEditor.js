@@ -340,9 +340,8 @@
                         this.getFullScreenButtonConfig(true)
                 );
             }
-            this.addToolbarPlugins(toolbar, 'view');
-            if (toolbar.rendered) {
-                toolbar.doLayout();
+            if (this.fullscreen || this.pageContainer.canEdit) {
+                this.addToolbarPlugins(toolbar, 'view');
             }
         },
 
@@ -578,11 +577,7 @@
                 Ext.getCmp('icon-toolbar-window').hide();
             }
 
-            toolbar = Ext.getCmp('pageEditorToolbar');
-            toolbar.on('afterrender', function() {
-                Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.show();
-            });
-            toolbar.doLayout();
+            Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.show();
         },
 
         disableUI: function() {
@@ -830,9 +825,8 @@
             var iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
             if (iframe.isVisible()) {
                 iframe.unmask();
-            } else {
-                this.body.removeClass(['channel-manager-mask', 'ext-el-mask']);
             }
+            this.body.removeClass(['channel-manager-mask', 'ext-el-mask']);
         },
 
         selectVariant: function(id, variant) {
