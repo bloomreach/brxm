@@ -43,6 +43,7 @@ import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,13 +145,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     }
 
     private String lookupFilename(final Node node) throws RepositoryException {
-        String filename = null;
-
-        if (node.hasProperty(HippoNodeType.HIPPO_FILENAME)){
-            filename =  node.getProperty(HippoNodeType.HIPPO_FILENAME).getString();
-        } else {
-            filename = "";
-        }
+        String filename = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_FILENAME, null);
 
         if (StringUtils.isEmpty(filename)) {
             if (node.getDefinition().getName().equals("*")) {
