@@ -90,5 +90,6 @@
   "Xinha cowardly refuses to delete the last column in table.": "Xinha kan de laatste kolom in deze tabel niet verwijderen.",
   "Xinha cowardly refuses to delete the last row in table.": "Xinha kan de laatste rij in deze tabel niet verwijderen.",
   "percent": "procent",
-  "pixels": "pixels"
+  "pixels": "pixels",
+   "Toggle Borders": "Kanten aan/uit"
 };
