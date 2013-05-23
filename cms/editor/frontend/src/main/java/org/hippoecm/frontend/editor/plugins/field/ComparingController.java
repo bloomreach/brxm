@@ -41,7 +41,6 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceContext;
 import org.hippoecm.frontend.service.render.RenderService;
-import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -270,7 +269,7 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
         return orientation;
     }
 
-    public void start(AbstractProvider<P,C> oldProvider, AbstractProvider<P,C> newProvider, ITypeDescriptor type) {
+    public void start(AbstractProvider<P,C> oldProvider, AbstractProvider<P,C> newProvider) {
         List<ItemValue<C>> oldItems = new LinkedList<ItemValue<C>>();
         Iterator<C> oldIter = oldProvider.iterator(0, oldProvider.size());
         while (oldIter.hasNext()) {

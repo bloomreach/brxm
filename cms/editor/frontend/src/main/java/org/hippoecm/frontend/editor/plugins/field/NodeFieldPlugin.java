@@ -182,12 +182,14 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             @Override
             public void onClick(AjaxRequestTarget target) {
                 IFieldDescriptor field = getFieldHelper().getField();
-                String name = field.getPath();
-                JcrNodeModel parent = model.getParentModel();
-                if (parent != null) {
-                    JcrNodeModel nextModel = new JcrNodeModel(parent.getItemModel().getPath() + "/" + name + "["
-                            + (index + 2) + "]");
-                    onMoveItemUp(nextModel, target);
+                if (field != null) {
+                    String name = field.getPath();
+                    JcrNodeModel parent = model.getParentModel();
+                    if (parent != null) {
+                        JcrNodeModel nextModel = new JcrNodeModel(parent.getItemModel().getPath() + "/" + name + "["
+                                + (index + 2) + "]");
+                        onMoveItemUp(nextModel, target);
+                    }
                 }
             }
         };

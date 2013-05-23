@@ -69,7 +69,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
 
         Label required = new Label("required", "*");
         if (field != null) {
-            subscribe();
+            subscribe(field);
             if (!field.getValidators().contains("required")) {
                 required.setVisible(false);
             }
@@ -81,12 +81,15 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
 
     private JcrPropertyModel newPropertyModel(JcrNodeModel model) {
         IFieldDescriptor field = getFieldHelper().getField();
-        String fieldAbsPath = model.getItemModel().getPath() + "/" + field.getPath();
-        return new JcrPropertyModel(fieldAbsPath);
+        if (field != null) {
+            String fieldAbsPath = model.getItemModel().getPath() + "/" + field.getPath();
+            return new JcrPropertyModel(fieldAbsPath);
+        } else {
+            return new JcrPropertyModel((Property) null);
+        }
     }
 
-    protected void subscribe() {
-        IFieldDescriptor field = getFieldHelper().getField();
+    protected void subscribe(final IFieldDescriptor field) {
         if (!field.getPath().equals("*")) {
             propertyModel = newPropertyModel((JcrNodeModel) getDefaultModel());
             nrValues = propertyModel.size();
@@ -98,8 +101,8 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
                 }
 
                 public void onEvent(Iterator<? extends IEvent<JcrPropertyModel>> events) {
-                    IFieldDescriptor field = getFieldHelper().getField();
-                    if (propertyModel.size() != nrValues || field.isOrdered()) { //Only redraw if number of properties has changed.
+                    //Only redraw if number of properties has changed.
+                    if (propertyModel.size() != nrValues || field.isOrdered()) {
                         nrValues = propertyModel.size();
                         resetValidation();
                         redraw();
@@ -110,8 +113,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         }
     }
 
-    protected void unsubscribe() {
-        IFieldDescriptor field = getFieldHelper().getField();
+    protected void unsubscribe(IFieldDescriptor field) {
         if (!field.getPath().equals("*")) {
             getPluginContext().unregisterService(propertyObserver, IObserver.class.getName());
             propertyModel = null;
@@ -134,8 +136,8 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         if (!nodeModel.equals(getDefaultModel()) || (propertyModel != null && propertyModel.size() != nrValues)) {
             IFieldDescriptor field = getFieldHelper().getField();
             if (field != null) {
-                unsubscribe();
-                subscribe();
+                unsubscribe(field);
+                subscribe(field);
             }
             redraw();
         }
