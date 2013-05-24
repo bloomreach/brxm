@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.transaction.NotSupportedException;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
@@ -62,6 +63,14 @@ public interface HippoRepository {
      * @see javax.jcr.Repository#login(javax.jcr.Credentials)
      */
     public Session login(Credentials credentials) throws LoginException, RepositoryException;
+
+    /**
+     * Creates a new Session for the user identifier with the indicated credentials.
+     * @see javax.jcr.Repository#login(javax.jcr.Credentials)
+     * @deprecated use #login(javax.jcr.Credentials) instead
+     */
+    @Deprecated
+    public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException;
 
     /**
      * Closes the repository connection. When the repository is running locally,

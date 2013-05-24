@@ -122,6 +122,11 @@ public abstract class HippoRepositoryImpl implements HippoRepository {
         return login(credentials, null);
     }
 
+    @Deprecated
+    public Session login(SimpleCredentials credentials) throws LoginException, RepositoryException {
+        return login(credentials, null);
+    }
+
     public void close() {
         HippoRepositoryFactory.unregister(this);
     }
