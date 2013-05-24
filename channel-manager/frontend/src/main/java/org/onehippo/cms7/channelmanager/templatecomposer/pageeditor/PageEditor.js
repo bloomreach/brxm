@@ -343,6 +343,9 @@
             if (this.fullscreen || this.pageContainer.canEdit) {
                 this.addToolbarPlugins(toolbar, 'view');
             }
+            if (toolbar.rendered) {
+                toolbar.doLayout();
+            }
         },
 
         createEditToolbar: function() {
