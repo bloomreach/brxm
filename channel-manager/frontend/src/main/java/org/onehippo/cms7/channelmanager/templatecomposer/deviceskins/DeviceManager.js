@@ -62,7 +62,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
             deviceRecord = this.getDeviceRecord(Ext.state.Manager.get(this.channel.id + '_skin'));
         } else {
             this.updateDevices(false);
-            deviceRecord = this.getDeviceRecord('default');
+            deviceRecord = this.getDeviceRecord('desktop');
             this.hide();
         }
         this.setDevice(deviceRecord);
@@ -83,7 +83,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
         var selectedDeviceId = deviceRecord.get('id'), imageUrl = Ext.BLANK_IMAGE_URL;
 
         this.setValue(deviceRecord.get('name'));
-        if (selectedDeviceId !== 'default') {
+        if (selectedDeviceId !== 'desktop') {
             imageUrl = deviceRecord.get('imageUrl');
         }
         Hippo.ChannelManager.DeviceManager.deviceImage.set({
@@ -102,7 +102,7 @@ Hippo.ChannelManager.DeviceManager = Ext.extend(Ext.form.ComboBox, {
      * @returns {*}
      */
     getDeviceRecord: function(selectedDeviceId) {
-        var record, order = [ selectedDeviceId, this.channel.defaultDeviceId, 'default' ];
+        var record, order = [ selectedDeviceId, this.channel.defaultDeviceId, 'desktop' ];
 
         Ext.each(order, function (device) {
             if (device) {
