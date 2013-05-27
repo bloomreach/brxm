@@ -121,15 +121,11 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        final AdminDataTable table = new AdminDataTable<User>("table", allUserColumns, new UserDataProvider(), 20);
-        table.setOutputMarkupId(true);
-        add(table);
-
         final Form form = new Form("search-form");
         form.setOutputMarkupId(true);
         add(form);
 
-        UserDataProvider userDataProvider = new UserDataProvider();
+        final UserDataProvider userDataProvider = new UserDataProvider();
 
         final TextField<String> search = new TextField<String>("search-query",
                 new PropertyModel<String>(userDataProvider, "query"));
@@ -137,6 +133,10 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
         search.setRequired(false);
         search.add(new DefaultFocusBehavior());
         form.add(search);
+
+        final AdminDataTable table = new AdminDataTable<User>("table", allUserColumns, userDataProvider, 20);
+        table.setOutputMarkupId(true);
+        add(table);
 
         form.add(new AjaxButton("search-button", form) {
             private static final long serialVersionUID = 1L;
