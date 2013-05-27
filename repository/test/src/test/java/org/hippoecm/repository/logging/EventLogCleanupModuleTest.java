@@ -15,11 +15,14 @@
  */
 package org.hippoecm.repository.logging;
 
+import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.api.HippoNodeIterator;
+import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +33,7 @@ import org.quartz.JobExecutionException;
 import org.quartz.JobListener;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.fail;
 
 public class EventLogCleanupModuleTest extends RepositoryTestCase {
 
@@ -90,6 +94,8 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
         // it seems we need to specify an order by clause to get the total size...
         NodeIterator nodes = queryManager.createQuery("SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC", Query.SQL).execute().getNodes();
         assertEquals(1l, ((HippoNodeIterator)nodes).getTotalSize());
+
+        assertNoEmptyFolders();
     }
 
     @Test
@@ -113,6 +119,24 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
         // it seems we need to specify an order by clause to get the total size...
         NodeIterator nodes = queryManager.createQuery("SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC", Query.SQL).execute().getNodes();
         assertEquals(0l, ((HippoNodeIterator)nodes).getTotalSize());
+
+        assertNoEmptyFolders();
+    }
+
+    private void assertNoEmptyFolders() throws RepositoryException {
+        final Node root = session.getNode("/hippo:log");
+        assertNoEmptyFolders(root);
+    }
+
+    private void assertNoEmptyFolders(final Node node) throws RepositoryException {
+        if (node.getNodes().getSize() == 0) {
+            fail("Empty hippolog:folder: " + node.getPath());
+        }
+        for (Node child : new NodeIterable(node.getNodes())) {
+            if (child.isNodeType("hippolog:folder") && child.getName().length() == 1) {
+                assertNoEmptyFolders(child);
+            }
+        }
     }
 
     private class TestJobListener implements JobListener {

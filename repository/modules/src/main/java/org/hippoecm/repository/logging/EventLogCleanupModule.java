@@ -274,7 +274,7 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
                         if (log.isDebugEnabled()) {
                             log.debug("Removing event log item at " + node.getPath());
                         }
-                        node.remove();
+                        remove(node);
                         if (i % 10 == 0) {
                             session.save();
                             try { Thread.sleep(100); } catch (InterruptedException ignored) {}
@@ -310,7 +310,7 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
                         if (log.isDebugEnabled()) {
                             log.debug("Removing event log item at " + node.getPath());
                         }
-                        node.remove();
+                        remove(node);
                         if (i++ % 10 == 0) {
                             session.save();
                             try { Thread.sleep(100); } catch (InterruptedException ignored) {}
@@ -336,6 +336,14 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
                 clusteNodeId = DEFAULT_CLUSTER_NODE_ID;
             }
             return clusteNodeId;
+        }
+
+        private void remove(final Node node) throws RepositoryException {
+            final Node parent = node.getParent();
+            node.remove();
+            if (parent != null && parent.getName().length() == 1 && parent.isNodeType("hippolog:folder") && parent.getNodes().getSize() == 0) {
+                remove(parent);
+            }
         }
     }
 
