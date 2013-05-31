@@ -1,12 +1,12 @@
 /**
  * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,14 +16,21 @@
 package org.hippoecm.hst.core.container;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.container.HstContainerConfigImpl;
 import org.hippoecm.hst.core.order.ObjectOrdererRuntimeException;
+import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 
 /**
  * TestHstSitePipeline
@@ -254,6 +261,29 @@ public class TestHstSitePipeline {
         } catch (ObjectOrdererRuntimeException e) {
             log.info("Expected ObjectOrdererRuntimeException on the intended circular ordering dependencies.");
         }
+    }
+
+    @Test
+    public void testPageCacheContext() throws Exception {
+        MockServletContext servletContext = new MockServletContext();
+        HstContainerConfig requestContainerConfig = new HstContainerConfigImpl(servletContext, Thread.currentThread().getContextClassLoader());
+        MockHstRequestContext requestContext = new MockHstRequestContext();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        Valve [] valves = new Valve[0];
+
+        ValveContext valveContext1 = new HstSitePipeline.Invocation(requestContainerConfig, requestContext, request, response, valves);
+        PageCacheContext pageCacheContext1 = valveContext1.getPageCacheContext();
+        pageCacheContext1.getPageCacheKey().setAttribute("SUBKEY1", "SUBKEY1_VALUE");
+        pageCacheContext1.getPageCacheKey().setAttribute("SUBKEY2", "SUBKEY2_VALUE");
+
+        ValveContext valveContext2 = new HstSitePipeline.Invocation(requestContainerConfig, requestContext, request, response, valves);
+        PageCacheContext pageCacheContext2 = valveContext2.getPageCacheContext();
+        pageCacheContext2.getPageCacheKey().setAttribute("SUBKEY1", "SUBKEY1_VALUE");
+        pageCacheContext2.getPageCacheKey().setAttribute("SUBKEY2", "SUBKEY2_VALUE");
+
+        assertEquals("PageCacheContext's pageCacheKey failed to comparing the hash codes of equivalent keys.", pageCacheContext1.getPageCacheKey().hashCode(), pageCacheContext2.getPageCacheKey().hashCode());
+        assertTrue("PageCacheContext's pageCacheKey failed to comparing equivalent keys.", pageCacheContext1.getPageCacheKey().equals(pageCacheContext2.getPageCacheKey()));
     }
 
     private static String toCamelCaseString(String s) {
