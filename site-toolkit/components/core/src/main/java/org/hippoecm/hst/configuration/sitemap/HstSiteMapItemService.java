@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -32,7 +33,6 @@ import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.StringPool;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
@@ -43,36 +43,36 @@ import org.slf4j.LoggerFactory;
 public class HstSiteMapItemService implements HstSiteMapItem {
 
     private static final Logger log = LoggerFactory.getLogger(HstSiteMapItemService.class);
-    
+
     private static final String PARENT_PROPERTY_PLACEHOLDER = "${parent}";
 
     private Map<String, HstSiteMapItem> childSiteMapItems = new HashMap<String, HstSiteMapItem>();
-    
-    private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHandlerConfigurations = new HashMap<String, HstSiteMapItemHandlerConfiguration>();
+
+    private Map<String, HstSiteMapItemHandlerConfiguration> siteMapItemHandlerConfigurations = new LinkedHashMap<String, HstSiteMapItemHandlerConfiguration>();
 
     private String id;
 
     // note refId is frequently just null. Only when it is configured, it is not null. The id is however never null!
     private String refId;
-    
+
     private String qualifiedId;
-    
+
     private String value;
-    
+
     /**
      * The locale for this HstSiteMapItem. When the backing configuration does not contain a locale, it is taken from the parent {@link HstSiteMapItem} if there is
      * a parent. If there is no parent, we inherit the locale from the {@link Mount#getLocale()} for this item. The locale can be <code>null</code>
      */
     private String locale;
 
-    private int statusCode; 
-    
-    private int errorCode; 
-        
+    private int statusCode;
+
+    private int errorCode;
+
     private String parameterizedPath;
-    
+
     private int occurences;
-    
+
     private String relativeContentPath;
 
     /**
@@ -87,19 +87,19 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private Map<String, String> componentConfigurationIdMappings;
 
     private boolean authenticated;
-    
+
     private Set<String> roles;
-    
+
     private Set<String> users;
-    
+
     private boolean isExcludedForLinkRewriting;
 
     private boolean isWildCard;
-    
+
     private boolean isAny;
-    
+
     private String namedPipeline;
-    
+
     /*
      * Internal only: used for linkrewriting: when true, it indicates, that this HstSiteMapItem can only be used in linkrewriting
      * when the current context helps to resolve some wildcards
@@ -109,21 +109,21 @@ public class HstSiteMapItemService implements HstSiteMapItem {
      * Internal only: needed for context aware linkrewriting
      */
     private Map<String, String> keyToPropertyPlaceHolderMap = new HashMap<String,String>();
-    
+
     private int depth;
-    
+
     private HstSiteMap hstSiteMap;
-    
+
     private HstSiteMapItemService parentItem;
-    
+
     private Map<String,String> parameters = new HashMap<String,String>();
     private Map<String,String> localParameters = new HashMap<String,String>();
-    
+
     private List<HstSiteMapItemService> containsWildCardChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
     private List<HstSiteMapItemService> containsAnyChildSiteMapItems = new ArrayList<HstSiteMapItemService>();
     private boolean containsAny;
     private boolean containsWildCard;
-    private String postfix; 
+    private String postfix;
     private String extension;
     private String prefix;
     private final boolean cacheable;
@@ -134,12 +134,12 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
     public HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
-        this.hstSiteMap = hstSiteMap; 
+        this.hstSiteMap = hstSiteMap;
         this.depth = depth;
         String nodePath = StringPool.get(node.getValueProvider().getPath());
-      
+
         this.qualifiedId = nodePath;
-        
+
         // the id is the relative path below the root sitemap node. You cannot do a substring on the value provider getPath because due to inheritance
         // there can be completely different paths for the root sitemap node that for the inherited sitemap items.
         HstNode crNode = node;
@@ -148,19 +148,19 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             crNode = crNode.getParent();
             idBuilder.insert(0, crNode.getValueProvider().getName()).insert(0, "/");
         }
-        // we take substring(1) to remove the first slash 
+        // we take substring(1) to remove the first slash
         this.id = idBuilder.toString().substring(1);
-        
+
         // currently, the value is always the nodename
         this.value = StringPool.get(node.getValueProvider().getName());
-         
+
         if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID)) {
             this.refId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_REF_ID));
         }
 
         this.statusCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_STATUSCODE).intValue();
         this.errorCode = node.getValueProvider().getLong(HstNodeTypes.SITEMAPITEM_PROPERTY_ERRORCODE).intValue();
-       
+
         if(this.value == null){
             log.error("The 'value' of a SiteMapItem is not allowed to be null: '{}'", nodePath);
             throw new ServiceException("The 'value' of a SiteMapItem is not allowed to be null. It is so for '"+nodePath+"'");
@@ -172,7 +172,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             parameterizedPath = "";
         }
         if(HstNodeTypes.WILDCARD.equals(value)) {
-            occurences++; 
+            occurences++;
             parameterizedPath = parameterizedPath + "${" + occurences + "}";
             this.isWildCard = true;
         } else if(HstNodeTypes.ANY.equals(value)) {
@@ -207,9 +207,9 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         else {
             parameterizedPath = parameterizedPath + value;
         }
-        
+
         parameterizedPath = StringPool.get(parameterizedPath);
-        
+
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
 
@@ -247,7 +247,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                 }
             }
         }
-        
+
         this.relativeContentPath = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH);
         if(relativeContentPath != null && relativeContentPath.contains(PARENT_PROPERTY_PLACEHOLDER)) {
              if(parentItem == null || parentItem.getRelativeContentPath() == null) {
@@ -257,9 +257,9 @@ public class HstSiteMapItemService implements HstSiteMapItem {
              }
         }
         relativeContentPath = StringPool.get(relativeContentPath);
-        
+
         this.componentConfigurationId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID));
-        
+
         String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
         if (ArrayUtils.isEmpty(siteMapItemHandlerIds)) {
             siteMapItemHandlerIds = mount.getDefaultSiteMapItemHandlerIds();
@@ -274,7 +274,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                 }
             }
         }
-        
+
         if (node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCALE)) {
             this.locale = node.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCALE);
         } else if(this.parentItem != null){
@@ -283,13 +283,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             this.locale = mount.getLocale();
         }
         locale = StringPool.get(locale);
-        
+
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED)) {
             this.authenticated = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_AUTHENTICATED);
         } else if(this.parentItem != null){
             this.authenticated = parentItem.isAuthenticated();
-        } 
-        
+        }
+
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES)) {
             String [] rolesProp = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_ROLES);
             this.roles = new HashSet<String>();
@@ -299,7 +299,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         } else {
             this.roles = new HashSet<String>(0);
         }
-        
+
         if (node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS)) {
             String [] usersProp = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_USERS);
             this.users = new HashSet<String>();
@@ -309,11 +309,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         } else {
             this.users = new HashSet<String>();
         }
-        
+
         if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING)) {
             this.isExcludedForLinkRewriting = node.getValueProvider().getBoolean(HstNodeTypes.SITEMAPITEM_PROPERTY_EXCLUDEDFORLINKREWRITING);
         }
-        
+
         if(node.getValueProvider().hasProperty(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE)) {
             this.namedPipeline = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_NAMEDPIPELINE);
         } else if(this.parentItem != null) {
@@ -322,7 +322,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             // inherit the namedPipeline from the mount (can be null)
             this.namedPipeline = mount.getNamedPipeline();
         }
-        
+
         namedPipeline = StringPool.get(namedPipeline);
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
@@ -381,13 +381,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             }
         }
     }
-    
+
     public HstSiteMapItem getChild(String value) {
         return this.childSiteMapItems.get(value);
     }
 
-    
-    
+
+
     public List<HstSiteMapItem> getChildren() {
         return Collections.unmodifiableList(new ArrayList<HstSiteMapItem>(this.childSiteMapItems.values()));
     }
@@ -412,17 +412,17 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     public String getRelativeContentPath() {
         return this.relativeContentPath;
     }
-    
+
 
     public String getParameter(String name) {
         return this.parameters.get(name);
     }
-    
+
 
     public Map<String, String> getParameters() {
         return Collections.unmodifiableMap(this.parameters);
     }
-    
+
 
 	public String getLocalParameter(String name) {
 		return this.localParameters.get(name);
@@ -444,7 +444,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     public int getStatusCode() {
         return this.statusCode;
     }
-    
+
     public int getErrorCode() {
         return this.errorCode;
     }
@@ -468,15 +468,15 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     public String getLocale() {
         return locale;
     }
-    
+
     public boolean isWildCard() {
         return this.isWildCard;
     }
-    
+
     public boolean isAny() {
         return this.isAny;
     }
-  
+
     public HstSiteMap getHstSiteMap() {
         return this.hstSiteMap;
     }
@@ -509,33 +509,33 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     public HstSiteMapItem getParentItem() {
         return this.parentItem;
     }
-    
+
     public String getParameterizedPath(){
         return this.parameterizedPath;
     }
-    
+
     public int getWildCardAnyOccurences(){
         return this.occurences;
     }
 
-   
-    // ---- BELOW FOR INTERNAL CORE SITEMAP MAP RESOLVING && LINKREWRITING ONLY  
-    
+
+    // ---- BELOW FOR INTERNAL CORE SITEMAP MAP RESOLVING && LINKREWRITING ONLY
+
     public void addWildCardPrefixedChildSiteMapItems(HstSiteMapItemService hstSiteMapItem){
         this.containsWildCardChildSiteMapItems.add(hstSiteMapItem);
     }
-    
+
     public void addAnyPrefixedChildSiteMapItems(HstSiteMapItemService hstSiteMapItem){
         this.containsAnyChildSiteMapItems.add(hstSiteMapItem);
     }
-    
+
     public HstSiteMapItem getWildCardPatternChild(String value, List<HstSiteMapItem> excludeList){
         if(value == null || containsWildCardChildSiteMapItems.isEmpty()) {
             return null;
         }
         return match(value, containsWildCardChildSiteMapItems, excludeList);
     }
-    
+
     public HstSiteMapItem getAnyPatternChild(String[] elements, int position, List<HstSiteMapItem> excludeList){
         if(value == null || containsAnyChildSiteMapItems.isEmpty()) {
             return null;
@@ -546,8 +546,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         }
         return match(remainder.toString(), containsAnyChildSiteMapItems, excludeList);
     }
-    
-    
+
+
     public boolean patternMatch(String value, String prefix, String postfix ) {
      // postFix must match
         if(prefix != null && !"".equals(prefix)){
@@ -573,19 +573,19 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         // if we get here, the pattern matched
         return true;
     }
-    
+
     private HstSiteMapItem match(String value, List<HstSiteMapItemService> patternSiteMapItems, List<HstSiteMapItem> excludeList) {
-        
+
         for(HstSiteMapItemService item : patternSiteMapItems){
             // if in exclude list, go to next
             if(excludeList.contains(item)) {
                 continue;
             }
-            
+
             if(patternMatch(value, item.getPrefix(),  item.getPostfix())) {
                 return item;
             }
-            
+
         }
         return null;
     }
@@ -594,23 +594,23 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     public String getNamedPipeline() {
         return this.namedPipeline;
     }
-    
+
     public String getPostfix(){
         return this.postfix;
     }
-    
+
     public String getExtension(){
         return this.extension;
     }
-    
+
     public String getPrefix(){
         return this.prefix;
     }
-    
+
     public boolean containsWildCard() {
         return this.containsWildCard;
     }
-    
+
     public boolean containsAny() {
         return this.containsAny;
     }
@@ -624,13 +624,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     }
 
     public void setKeyToPropertyPlaceHolderMap(Map<String, String> keyToPropertyPlaceHolderMap) {
-       this.keyToPropertyPlaceHolderMap = keyToPropertyPlaceHolderMap; 
+       this.keyToPropertyPlaceHolderMap = keyToPropertyPlaceHolderMap;
     }
-    
+
     public Map<String, String> getKeyToPropertyPlaceHolderMap() {
         return this.keyToPropertyPlaceHolderMap;
     }
-    
+
     public int getDepth() {
         return this.depth;
     }
@@ -643,5 +643,5 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         return isExcludedForLinkRewriting;
     }
 
-    
+
 }
