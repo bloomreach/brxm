@@ -35,7 +35,6 @@
 }
 
 /* hide the xinha status bar we don't need it */
-x
 .hippo-editor-field-html .htmlarea .statusBar {
   display: none
 }
@@ -98,8 +97,8 @@ x
 .hippo-editor-field-html-preview {
   min-height: 75px;
   margin: 0;
-  padding: 0px 4px;
-  font-family: Arial, sans-serif, Helvetica;
+  padding: 10px 4px 0;
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   color: #333;
   line-height: 18px;
@@ -154,6 +153,16 @@ x
 .hippo-editor-field-html-preview p {
   margin-top: 0.7em;
   margin-bottom: 0.3em;
+}
+
+.hippo-editor-field-html-preview h1:first-child,
+.hippo-editor-field-html-preview h2:first-child,
+.hippo-editor-field-html-preview h3:first-child,
+.hippo-editor-field-html-preview h4:first-child,
+.hippo-editor-field-html-preview h5:first-child,
+.hippo-editor-field-html-preview h6:first-child,
+.hippo-editor-field-html-preview p:first-child {
+    margin-top: 0;
 }
 
 .hippo-editor-field-html-preview h5 {
@@ -402,4 +411,21 @@ div.rte-preview-style {
   padding: 2px 5px 2px 0;
   text-align: left;
   width: 7em;
+}
+
+.hippo-editor-field .hippo-editor-field-subfield.rte-fullscreen-style {
+    left: 0;
+    top: 0;
+    padding:0;
+    border: 0;
+}
+
+.hippo-editor-field .hippo-editor-field-subfield.rte-fullscreen-style:hover {
+    background-color: #fff;
+}
+
+.rte-fullscreen-style .rte-preview-area {
+    margin: 10px;
+    border: 1px solid #999;
+    border-radius: 5px;
 }

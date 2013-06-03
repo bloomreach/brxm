@@ -15,43 +15,48 @@
  */
 
 function FullScreen(editor, args) {
-  this.editor = editor;
-  this.originalSizes = null;
-  editor._superclean_on = false;
-  var cfg = editor.config;
+    var cfg = editor.config,
+        glyph = _editor_url + cfg.imgURL + 'ed_buttons_main.png';
 
-  cfg.registerIcon('fullscreen', [_editor_url + cfg.imgURL + 'ed_buttons_main.png',8,0]);
-  cfg.registerIcon('fullscreenrestore', [_editor_url + cfg.imgURL + 'ed_buttons_main.png',9,0]);
+    this.editor = editor;
+    editor.originalSizes = null;
+    editor._superclean_on = false;
 
-  cfg.registerButton
-      ( 'fullscreen',
-          this._lc("Maximize/Minimize Editor"),
-          cfg.iconList.fullscreen,
-          true,
-          function(e, objname, obj) {
-            e._fullscreen();
-          }
-      );
+    cfg.registerIcon('fullscreen', [glyph, 8, 0]);
+    cfg.registerIcon('fullscreenrestore', [glyph, 9, 0]);
 
-  // See if we can find 'popupeditor' and replace it with fullscreen
-  cfg.addToolbarElement("fullscreen", "popupeditor", 0);
+    cfg.registerButton('fullscreen',
+        this._lc("Maximize/Minimize Editor"),
+        cfg.iconList.fullscreen, true,
+        XinhaTools.proxy(this.doAction, this));
+
+    // See if we can find 'popupeditor' and replace it with fullscreen
+    cfg.addToolbarElement("fullscreen", "popupeditor", 0);
 }
 
-FullScreen._pluginInfo =
-{
-  name     : "FullScreen",
-  version  : "1.0",
-  developer: "AB",
-  developer_url: "http://www.onehippo.com/",
-  c_owner      : "OneHippo",
-  license      : "al2",
-  sponsor      : "",
-  sponsor_url  : ""
+FullScreen._pluginInfo = {
+    name         : "FullScreen",
+    version      : "1.0",
+    developer    : "a.bogaart@1hippo.com",
+    developer_url: "http://www.onehippo.com/",
+    c_owner      : "OneHippo",
+    license      : "al2",
+    sponsor      : "OneHippo",
+    sponsor_url  : "http://www.onehippo.com/"
 };
 
 FullScreen.prototype._lc = function(string) {
-  return Xinha._lc(string, {url : _editor_url + 'modules/FullScreen/lang/',context:"FullScreen"});
+    return Xinha._lc(string, {url : _editor_url + 'modules/FullScreen/lang/', context: 'FullScreen'});
 };
+
+FullScreen.prototype.doAction = function(e, objname, obj) {
+    e._fullscreen(false);
+
+    if (this.editor.plugins.StateChange) {
+        this.editor.plugins.StateChange.instance.setFullScreen(e._isFullScreen);
+    }
+};
+
 
 /** fullScreen makes an editor take up the full window space (and resizes when the browser is resized)
  *  the principle is the same as the "popupwindow" functionality in the original htmlArea, except
@@ -60,230 +65,226 @@ FullScreen.prototype._lc = function(string) {
  */
 
 Xinha.prototype._fullscreen = function(resize) {
-  var e = this;
-  var cfg = e.config;
-  function sizeItUp() {
-    if (!e._isFullScreen || e._sizing) {
-      return false;
+    var e = this,
+        cfg = e.config,
+        selection;
+
+    function sizeItUp() {
+        var w, h, d;
+
+        if (!e._isFullScreen || e._sizing) {
+            return false;
+        }
+        e._sizing = true;
+        // Width & Height of window
+        d = Xinha.viewportSize();
+        if (e.originalSizes === null) {
+            e.originalSizes = {
+                x:   parseInt(e._htmlArea.style.width, 10),
+                y:   parseInt(e._htmlArea.style.height, 10),
+                dim: d
+            };
+        }
+
+        w = d.x - e.config.fullScreenMargins[1] - e.config.fullScreenMargins[3];
+        h = d.y - e.config.fullScreenMargins[0] - e.config.fullScreenMargins[2];
+
+        e.sizeEditor(w + 'px', h + 'px', e.config.sizeIncludesBars, e.config.sizeIncludesPanels);
+        e._sizing = false;
+
+        if (e._toolbarObjects.fullscreen) {
+            e._toolbarObjects.fullscreen.swapImage(cfg.iconList.fullscreenrestore);
+        }
+
+        //Because of HREPTWO-3990 we have to use a custom setHTML implementation that doesn't work in fullscreen.
+        //As a workaround we disable the custom undo behavior that Xinha provides in fullscreen mode, see CMS7-5847
+        if (Xinha.ie_version === 7 || Xinha.ie_version === 8) {
+            e._customUndo = false;
+        }
+
+        return true;
     }
 
-    e._sizing = true;
-    // Width & Height of window
-    var dim = Xinha.viewportSize();
-    if (e.originalSizes == null) {
-      e.originalSizes = {
-        x:   parseInt(e._htmlArea.style.width),
-        y:   parseInt(e._htmlArea.style.height),
-        dim: dim
-      };
+    function sizeItDown() {
+        if (e._isFullScreen || e._sizing) {
+            return false;
+        }
+
+        e._sizing = true;
+
+        if (e.originalSizes !== null) {
+            var os = e.originalSizes,
+                d = Xinha.viewportSize(),
+                w = os.x + (d.x - os.dim.x),
+                h = os.y + (d.y - os.dim.y);
+
+            e.sizeEditor(w + 'px', h + 'px', e.config.sizeIncludesBars, e.config.sizeIncludesPanels);
+            e.originalSizes = null;
+        } else {
+            e.initSize();
+        }
+
+        e._sizing = false;
+        if (e._toolbarObjects.fullscreen) {
+            e._toolbarObjects.fullscreen.swapImage(cfg.iconList.fullscreen);
+        }
+
+        //See CMS7-5847
+        if (Xinha.ie_version === 7 || Xinha.ie_version === 8) {
+            e._customUndo = true;
+        }
+
+        return true;
     }
 
-    var h = dim.y - e.config.fullScreenMargins[0] - e.config.fullScreenMargins[2];
-    var w = dim.x - e.config.fullScreenMargins[1] - e.config.fullScreenMargins[3];
-
-    e.sizeEditor(w + 'px', h + 'px', e.config.sizeIncludesBars, e.config.sizeIncludesPanels);
-    e._sizing = false;
-    if ( e._toolbarObjects.fullscreen ) e._toolbarObjects.fullscreen.swapImage(cfg.iconList.fullscreenrestore);
-
-    //Because of HREPTWO-3990 we have to use a custom setHTML implementation that doesn't work in fullscreen.
-    //As a workaround we disable the custom undo behavior that Xinha provides in fullscreen mode, see CMS7-5847 
-    if(Xinha.ie_version == 7 || Xinha.ie_version == 8) {
-      e._customUndo = false;
+    /** It's not possible to reliably get scroll events, particularly when we are hiding the scrollbars
+     *   so we just reset the scroll ever so often while in fullscreen mode
+     */
+    function resetScroll() {
+        if (e._isFullScreen) {
+            window.scroll(0, 0);
+            window.setTimeout(resetScroll, 150);
+        }
     }
 
-  }
+    function changeAncestorPosition(ancestor, position) {
+        var i, c;
+        while ((ancestor = ancestor.parentNode) && ancestor.style) {
+            if (ancestor.className === 'yui-layout-doc') {
+                for (i = 0; i < ancestor.childNodes.length; i++) {
+                    c = ancestor.childNodes[i];
+                    if (c._xinha_fullScreenOldPosition === undefined || c._xinha_fullScreenOldPosition === null) {
+                        c._xinha_fullScreenOldPosition = ancestor.style.position;
+                    }
+                    c.style.position = position;
+                }
+            }
+            if (ancestor._xinha_fullScreenOldPosition === undefined || ancestor._xinha_fullScreenOldPosition === null) {
+                ancestor._xinha_fullScreenOldPosition = ancestor.style.position;
+            }
+            ancestor.style.position = position;
+        }
+    }
 
-  function sizeItDown() {
-    if (e._isFullScreen || e._sizing) return false;
-    e._sizing = true;
+    function restoreAncestorPosition(ancestor) {
+        var i, c;
+        while ((ancestor = ancestor.parentNode) && ancestor.style) {
+            ancestor.style.position = ancestor._xinha_fullScreenOldPosition;
+            ancestor._xinha_fullScreenOldPosition = null;
 
-    if (e.originalSizes != null) {
-      var os = e.originalSizes;
-      var nDim = Xinha.viewportSize();
-      var nW = os.x + (nDim.x - os.dim.x);
-      var nH = os.y + (nDim.y - os.dim.y);
-      e.sizeEditor( nW + 'px', nH + 'px', e.config.sizeIncludesBars, e.config.sizeIncludesPanels);
-      e.originalSizes = null;
+            if (ancestor.className === 'yui-layout-doc') {
+                for (i = 0; i < ancestor.childNodes.length; i++) {
+                    c = ancestor.childNodes[i];
+                    c.style.position = c._xinha_fullScreenOldPosition;
+                    c._xinha_fullScreenOldPosition = null;
+                }
+            }
+        }
+    }
+
+    function geckoFocus() {
+        e.activateEditor();
+        if (YAHOO !== undefined) {
+            try {
+                var node = YAHOO.util.Selector.query('td.toolbarElement', e._toolbar, true);
+                YAHOO.util.Dom.getFirstChild(node).focus();
+            } catch (ignore) {
+                //error not important for user
+            }
+        }
+    }
+
+    function setOverflow(value) {
+        try {
+            if (Xinha.is_ie && document.compatMode === 'CSS1Compat') {
+                document.getElementsByTagName('html')[0].style.overflow = value;
+            } else {
+                document.getElementsByTagName('body')[0].style.overflow = value;
+            }
+        } catch (ignore) {
+        }
+    }
+
+    if (resize === true) {
+        sizeItUp();
+        return;
+    }
+
+
+    if (this._isFullScreen === undefined) {
+        this._isFullScreen = false;
+    }
+
+    selection = this.saveSelection();
+
+    // Gecko has a bug where if you change position/display on a
+    // designMode iframe that designMode dies.
+    if (Xinha.is_gecko) {
+        this.deactivateEditor();
+    }
+
+    if (this._isFullScreen) {
+
+        // Unmaximize
+        this._htmlArea.style.position = '';
+        if (!Xinha.is_ie) {
+            this._htmlArea.style.border = '';
+        }
+
+        this._isFullScreen = false;
+        setOverflow('');
+        sizeItDown();
+        restoreAncestorPosition(this._htmlArea);
+
+        this._iframe.className = this._iframe.classNameOld;
+        this._iframe.classNameOld = null;
+
+        window.scroll(this._unScroll.x, this._unScroll.y);
+
+        if (Xinha.ie_version < 9) {
+            //move HtmlArea back to original parent
+            document.body.removeChild(this._htmlArea);
+            this._parentNode.appendChild(this._htmlArea);
+        }
     } else {
-      e.initSize();
-    }
+        //Maximize
 
-    e._sizing = false;
-    if ( e._toolbarObjects.fullscreen ) e._toolbarObjects.fullscreen.swapImage(cfg.iconList.fullscreen);
+        // Get the current Scroll Positions
+        this._unScroll = {
+            x: window.pageXOffset || document.documentElement ? document.documentElement.scrollLeft : document.body.scrollLeft,
+            y: window.pageYOffset || document.documentElement ? document.documentElement.scrollTop : document.body.scrollTop
+        };
 
-    //See CMS7-5847
-    if(Xinha.ie_version == 7 || Xinha.ie_version == 8) {
-      e._customUndo = true;
-    }
-  }
-
-  /** It's not possible to reliably get scroll events, particularly when we are hiding the scrollbars
-   *   so we just reset the scroll ever so often while in fullscreen mode
-   */
-  function resetScroll() {
-    if (e._isFullScreen) {
-      window.scroll(0, 0);
-      window.setTimeout(resetScroll, 150);
-    }
-  }
-
-  if (resize === true) {
-    sizeItUp();
-    return;
-  }
-
-
-  if (typeof this._isFullScreen == 'undefined') {
-    this._isFullScreen = false;
-  }
-
-  var selection = this.saveSelection();
-
-  // Gecko has a bug where if you change position/display on a
-  // designMode iframe that designMode dies.
-  if (Xinha.is_gecko) {
-    this.deactivateEditor();
-  }
-
-  if (this._isFullScreen) {
-
-    // Unmaximize
-    this._htmlArea.style.position = '';
-    if (!Xinha.is_ie) this._htmlArea.style.border = '';
-
-    try {
-      if (Xinha.is_ie && document.compatMode == 'CSS1Compat') {
-        var bod = document.getElementsByTagName('html');
-      }
-      else {
-        var bod = document.getElementsByTagName('body');
-      }
-      bod[0].style.overflow = '';
-    }
-    catch(e) {
-      // Nutthin
-    }
-    this._isFullScreen = false;
-    sizeItDown();
-
-    // Restore all ancestor positions
-    var ancestor = this._htmlArea;
-    while ((ancestor = ancestor.parentNode) && ancestor.style) {
-      ancestor.style.position = ancestor._xinha_fullScreenOldPosition;
-      ancestor._xinha_fullScreenOldPosition = null;
-
-      if (ancestor.className == 'yui-layout-doc') {
-        for (var i = 0; i < ancestor.childNodes.length; i++) {
-          var c = ancestor.childNodes[i];
-          c.style.position = c._xinha_fullScreenOldPosition;
-          c._xinha_fullScreenOldPosition = null;
+        if (Xinha.ie_version < 9) {
+            //move HtmlArea to body
+            this._parentNode = this._htmlArea.parentNode;
+            this._htmlArea.parentNode.removeChild(this._htmlArea);
+            document.body.appendChild(this._htmlArea);
         }
-      }
-    }
 
-    this._iframe.className = this._iframe.classNameOld;
-    this._iframe.classNameOld = null;
+        changeAncestorPosition(this._htmlArea, 'static');
 
-    if (Xinha.ie_version < 7) {
-      var selects = document.getElementsByTagName("select");
-      for (var i = 0; i < selects.length; ++i) {
-        selects[i].style.visibility = 'visible';
-      }
-    }
-    window.scroll(this._unScroll.x, this._unScroll.y);
+        this._iframe.classNameOld = this._iframe.className;
+        this._iframe.className = 'xinha_fullscreen';
 
-    if (Xinha.ie_version < 9) {
-      document.body.removeChild(this._htmlArea);
-      this._parentNode.appendChild(this._htmlArea);
-    }
-
-  }
-  else {//Maximize
-
-    // Get the current Scroll Positions
-    this._unScroll =
-    {
-      x:(window.pageXOffset) ? (window.pageXOffset) : (document.documentElement) ? document.documentElement.scrollLeft : document.body.scrollLeft,
-      y:(window.pageYOffset) ? (window.pageYOffset) : (document.documentElement) ? document.documentElement.scrollTop : document.body.scrollTop
-    };
-
-    if (Xinha.ie_version < 9) {
-      this._parentNode = this._htmlArea.parentNode;
-      this._htmlArea.parentNode.removeChild(this._htmlArea);
-      document.body.appendChild(this._htmlArea);
-    }
-    // Make all ancestors position = static
-    var ancestor = this._htmlArea;
-    while ((ancestor = ancestor.parentNode) && ancestor.style) {
-      if (ancestor.className == 'yui-layout-doc') {
-        for (var i = 0; i < ancestor.childNodes.length; i++) {
-          var c = ancestor.childNodes[i];
-          c._xinha_fullScreenOldPosition = ancestor.style.position;
-          c.style.position = 'static';
+        // Maximize
+        window.scroll(0, 0);
+        this._htmlArea.style.position = 'absolute';
+        this._htmlArea.style.zIndex = 999;
+        this._htmlArea.style.left = e.config.fullScreenMargins[3] + 'px';
+        this._htmlArea.style.top = e.config.fullScreenMargins[0] + 'px';
+        if (!Xinha.is_ie && !Xinha.is_webkit) {
+            this._htmlArea.style.border = 'none';
         }
-      }
-      ancestor._xinha_fullScreenOldPosition = ancestor.style.position;
-      ancestor.style.position = 'static';
+        this._isFullScreen = true;
+        resetScroll();
+        setOverflow('hidden');
+        sizeItUp();
     }
 
-    this._iframe.classNameOld = this._iframe.className;
-    this._iframe.className = 'xinha_fullscreen';
-
-    // very ugly bug in IE < 7 shows select boxes through elements that are positioned over them
-    if (Xinha.ie_version < 7) {
-      var selects = document.getElementsByTagName("select");
-      var s, currentEditor;
-      for (var i = 0; i < selects.length; ++i) {
-        s = selects[i];
-        currentEditor = false;
-        while (s = s.parentNode) {
-          if (s == this._htmlArea) {
-            currentEditor = true;
-            break;
-          }
-        }
-        if (!currentEditor && selects[i].style.visibility != 'hidden') {
-          selects[i].style.visibility = 'hidden';
-        }
-      }
+    if (Xinha.is_gecko) {
+        geckoFocus();
     }
-
-
-    // Maximize
-    window.scroll(0, 0);
-    this._htmlArea.style.position = 'absolute';
-    this._htmlArea.style.zIndex = 999;
-    this._htmlArea.style.left = e.config.fullScreenMargins[3] + 'px';
-    this._htmlArea.style.top = e.config.fullScreenMargins[0] + 'px';
-    if (!Xinha.is_ie && !Xinha.is_webkit) this._htmlArea.style.border = 'none';
-    this._isFullScreen = true;
-    resetScroll();
-
-    try {
-      if (Xinha.is_ie && document.compatMode == 'CSS1Compat') {
-        var bod = document.getElementsByTagName('html');
-      }
-      else {
-        var bod = document.getElementsByTagName('body');
-      }
-      bod[0].style.overflow = 'hidden';
-    }
-    catch(e) {
-      // Nutthin
-    }
-
-    sizeItUp();
-  }
-
-  if (Xinha.is_gecko) {
-    this.activateEditor();
-    try {
-      var node = YAHOO.util.Selector.query('td.toolbarElement', this._toolbar, true);
-      YAHOO.util.Dom.getFirstChild(node).focus();
-    } catch(e) {
-      //error not important for user
-    }
-  }
-  this.restoreSelection(selection);
-  this.focusEditor();
+    this.restoreSelection(selection);
+    this.focusEditor();
 };
