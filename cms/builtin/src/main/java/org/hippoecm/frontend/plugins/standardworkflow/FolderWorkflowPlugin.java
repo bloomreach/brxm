@@ -20,6 +20,7 @@ import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -31,6 +32,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeDefinition;
 
 import org.apache.wicket.ResourceReference;
+import org.apache.wicket.Session;
 import org.apache.wicket.markup.html.PackageResource;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
@@ -84,6 +86,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
     private static Logger log = LoggerFactory.getLogger(FolderWorkflowPlugin.class);
 
+    private static final String ROOT_PATH = "/content/documents/";
+
     public FolderWorkflowPlugin(IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -130,8 +134,21 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 if (!((WorkflowDescriptorModel) getDefaultModel()).getNode().getName().equals(nodeName)) {
                     folderWorkflow.rename(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""), nodeName);
                 }
-                if (!node.getLocalizedName().equals(localName)) {
-                    defaultWorkflow.localizeName(localName);
+
+                String translationNodeMessage = null;
+                NodeIterator nodeIterator = node.getNodes("hippo:translation");
+                while (nodeIterator.hasNext()) {
+                    Node translationNode = nodeIterator.nextNode();
+                    if (translationNode.hasProperty("hippo:language") && translationNode.hasProperty("hippo:message")) {
+                        Locale translationNodeLocale = new Locale(translationNode.getProperty("hippo:language").getString());
+                        if (UserSession.get().getLocale().equals(translationNodeLocale)) {
+                            translationNodeMessage = translationNode.getProperty("hippo:message").getString();
+                        }
+                    }
+                }
+
+                if (!localName.equals(translationNodeMessage)) {
+                    defaultWorkflow.localizeName(Session.get().getLocale(), localName);
                 }
             }
         });
@@ -310,9 +327,6 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                                 TreeMap<String, String> arguments = new TreeMap<String, String>();
                                 arguments.put("name", nodeName);
-                                if (addDocumentModel.getLanguage() != null) {
-                                    arguments.put("hippotranslation:locale", addDocumentModel.getLanguage());
-                                }
 
                                 String path = workflow.add(category, addDocumentModel.getPrototype(), arguments);
                                 UserSession.get().getJcrSession().refresh(true);
@@ -321,7 +335,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                                 if (!nodeName.equals(localName)) {
                                     WorkflowManager workflowMgr = UserSession.get().getWorkflowManager();
                                     DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", nodeModel.getNode());
-                                    defaultWorkflow.localizeName(localName);
+                                    defaultWorkflow.localizeName(UserSession.get().getLocale(), localName);
                                 }
                             } else {
                                 log.error("no workflow defined on model for selected node");
