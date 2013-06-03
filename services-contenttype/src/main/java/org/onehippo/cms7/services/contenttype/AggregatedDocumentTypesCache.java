@@ -52,9 +52,6 @@ public class AggregatedDocumentTypesCache {
     private final Lock read  = readWriteLock.readLock();
     private final Lock write = readWriteLock.writeLock();
 
-
-    private final DocumentTypesCache dtCache;
-
     /**
      * An ordered set of the keys. This is used for {@link #findBest(Key)}.
      */
@@ -82,14 +79,9 @@ public class AggregatedDocumentTypesCache {
     /**
      * Creates a new bitset effective node type cache
      */
-    public AggregatedDocumentTypesCache(DocumentTypesCache dtCache) {
-        this.dtCache = dtCache;
+    public AggregatedDocumentTypesCache() {
         sortedKeys = new HashMap<Integer, TreeSet<Key>>();
         aggregates = new HashMap<Key, DocumentTypeImpl>();
-    }
-
-    public DocumentTypesCache getDocumentTypesCache() {
-        return dtCache;
     }
 
     public Key getKey(String name) {

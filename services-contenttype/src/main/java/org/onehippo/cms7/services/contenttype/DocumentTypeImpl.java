@@ -287,18 +287,18 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         return true;
     }
 
-    public void resolveFields(AggregatedDocumentTypesCache adtCache) {
+    public void resolveFields(DocumentTypesCache dtCache) {
         checkSealed();
         Set<String> ignoredFields = new HashSet<String>();
-        mergeInheritedFields(adtCache);
-        resolvePropertiesToFields(adtCache, ignoredFields);
-        resolveChildrenToFields(adtCache, ignoredFields);
-        resolveFieldsToResidualItems(adtCache);
+        mergeInheritedFields(dtCache);
+        resolvePropertiesToFields(dtCache, ignoredFields);
+        resolveChildrenToFields(dtCache, ignoredFields);
+        resolveFieldsToResidualItems(dtCache);
     }
 
-    private void mergeInheritedFields(AggregatedDocumentTypesCache adtCache) {
+    private void mergeInheritedFields(DocumentTypesCache dtCache) {
         for (String s : superTypes) {
-            DocumentTypeImpl sdt = adtCache.get(s);
+            DocumentTypeImpl sdt = dtCache.getAdtCache().get(s);
             for (Map.Entry<String, DocumentTypeField> entry : sdt.fields.entrySet()) {
                 if (!fields.containsKey(entry.getKey())) {
                     fields.put(entry.getKey(), entry.getValue());
@@ -307,7 +307,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         }
     }
 
-    private void resolvePropertiesToFields(AggregatedDocumentTypesCache adtCache, Set<String> ignoredFields) {
+    private void resolvePropertiesToFields(DocumentTypesCache dtCache, Set<String> ignoredFields) {
         for (Map.Entry<String,List<EffectiveNodeTypeProperty>> entry : ent.getProperties().entrySet()) {
             if (!"*".equals(entry.getKey())) {
                 DocumentTypeFieldImpl dft = (DocumentTypeFieldImpl)fields.get(entry.getKey());
@@ -394,7 +394,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         }
     }
 
-    private void resolveChildrenToFields(AggregatedDocumentTypesCache adtCache, Set<String> ignoredFields) {
+    private void resolveChildrenToFields(DocumentTypesCache dtCache, Set<String> ignoredFields) {
         for (Map.Entry<String,List<EffectiveNodeTypeChild>> entry : ent.getChildren().entrySet()) {
             if (!"*".equals(entry.getKey())) {
                 DocumentTypeFieldImpl dft = (DocumentTypeFieldImpl)fields.get(entry.getKey());
@@ -429,10 +429,10 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                 }
                 else {
                     // first check predefined document types cache: it might contain an aggregated (with optional mixins) document type
-                    DocumentTypeImpl ct = adtCache.getDocumentTypesCache().getType(dft.getItemType());
+                    DocumentTypeImpl ct = dtCache.getType(dft.getItemType());
                     if (ct == null) {
                         // not an aggregated document type: get it from the aggregated document type cache (which also contains every non-aggregated type)
-                        ct = adtCache.get(dft.getItemType());
+                        ct = dtCache.getAdtCache().get(dft.getItemType());
                     }
                     if (ct == null) {
                         log.error("Effective NodeType {} defines a child node named {} with corresponding field in Document Type {} which has unresolved type {}. "
@@ -508,7 +508,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         }
     }
 
-    private void resolveFieldsToResidualItems(AggregatedDocumentTypesCache adtCache) {
+    private void resolveFieldsToResidualItems(DocumentTypesCache dtCache) {
         for (Iterator<String> fieldNameIterator = fields.keySet().iterator(); fieldNameIterator.hasNext(); ) {
             DocumentTypeFieldImpl dft = (DocumentTypeFieldImpl)fields.get(fieldNameIterator.next());
             if (dft.isSealed()) {
@@ -553,10 +553,10 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                 }
                 else {
                     // first check predefined document types cache: it might contain an aggregated (with optional mixins) document type
-                    DocumentTypeImpl ct = adtCache.getDocumentTypesCache().getType(dft.getItemType());
+                    DocumentTypeImpl ct = dtCache.getType(dft.getItemType());
                     if (ct == null) {
                         // not an aggregated document type: get it from the aggregated document type cache (which also contains every non-aggregated type)
-                        ct = adtCache.get(dft.getItemType());
+                        ct = dtCache.getAdtCache().get(dft.getItemType());
                     }
                     if (ct == null) {
                         log.error("Document Type {} defines node child field named {} with unresolved type {}. "

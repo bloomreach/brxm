@@ -269,7 +269,7 @@ public class HippoContentTypeServiceTest extends PluginTest {
             session.getRootNode().addNode("testNode", "test:test");
             session.save();
 
-            t = service.getDocumentTypeForNodeByPath(session, "/testNode");
+            t = service.getDocumentTypes().getDocumentTypeForNodeByPath(session, "/testNode");
 
             assertEquals(4, t.getFields().size());
             assertEquals(1, t.getAggregatedTypes().size());
@@ -277,7 +277,7 @@ public class HippoContentTypeServiceTest extends PluginTest {
             session.getNode("/testNode").addMixin("hippostd:relaxed");
             session.save();
 
-            t = service.getDocumentTypeForNodeByPath(session, "/testNode");
+            t = service.getDocumentTypes().getDocumentTypeForNodeByPath(session, "/testNode");
             assertEquals(5, t.getFields().size());
             assertTrue(t.getFields().containsKey("test:extraField"));
             assertTrue(t.getAggregatedTypes().contains("hippostd:relaxed"));
@@ -321,6 +321,8 @@ public class HippoContentTypeServiceTest extends PluginTest {
             }
             session.getRootNode().addNode("hippo:namespaces/test", "hipposysedit:namespace");
             session.save();
+            // need to wait a bit to get Jackrabbit to refresh and notify the changes
+            Thread.sleep(1000);
             dtCache1 = service.getDocumentTypes();
             if (dtCache1.version()==dtCache2.version()) {
                 fail("DocumentTypes cache should have been reloaded.");
