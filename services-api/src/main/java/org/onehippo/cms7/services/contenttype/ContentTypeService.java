@@ -47,39 +47,4 @@ public interface ContentTypeService {
      * @throws RepositoryException if a repository error occurs
      */
     DocumentTypes getDocumentTypes() throws RepositoryException;
-
-    /**
-     * Returns the effective DocumentType representation for a specific Node
-     * @param node The Node for which to retrieve the DocumentType representation
-     * @return the effective DocumentType representation for a specific Node
-     * @throws RepositoryException if a repository error occurs
-     */
-    DocumentType getDocumentTypeForNode(Node node) throws RepositoryException;
-
-    /**
-     * Returns the effective DocumentType representation for an existing Node identified by its uuid
-     * <p>
-     * The existence and allowed read access to the Node is first checked through the provided Session.
-     * </p>
-     *
-     * @param session An active repository Session
-     * @param uuid An existing Node uuid
-     * @return the effective DocumentType representation for an existing Node identified by its uuid
-     * @throws ItemNotFoundException if node doesn't exist or is not accessible
-     * @throws RepositoryException if another error occurs
-     */
-    DocumentType getDocumentTypeForNodeByUuid(Session session, String uuid) throws ItemNotFoundException, RepositoryException;
-
-    /**
-     * Returns the effective DocumentType representation for an existing Node identified by its absolute path
-     * <p>
-     * The existence and allowed read access to the Node is first checked through the provided Session.
-     * </p>
-     * @param session An active repository Session
-     * @param path The absolute path of an existing Node
-     * @return the effective DocumentType representation for an existing Node identified by its absolute path
-     * @throws PathNotFoundException if node doesn't exist or is not accessible
-     * @throws RepositoryException if a repository error occurs
-     */
-    DocumentType getDocumentTypeForNodeByPath(Session session, String path) throws PathNotFoundException, RepositoryException;
 }
