@@ -70,7 +70,8 @@ function AutoSave(editor) {
 
     // optional button for explicit save
     cfg.registerIcon('save', [_editor_url + cfg.imgURL + 'ed_buttons_main.png', 9, 1]);
-    cfg.registerButton('save', this._lc("Save"), cfg.iconList.save, true, XinhaTools.proxy(this.saveAndClose, this));
+    cfg.registerButton('save-and-close', this._lc("Save and close"), cfg.iconList.save, true,
+            XinhaTools.proxy(this.saveAndClose, this));
 }
 
 AutoSave.prototype = {

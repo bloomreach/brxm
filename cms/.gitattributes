@@ -2235,6 +2235,10 @@ richtext/resources/src/main/resources/xinha/modules/Gecko/paraHandlerBest.js -te
 richtext/resources/src/main/resources/xinha/modules/GetHtml/TransformInnerHTML.js -text
 richtext/resources/src/main/resources/xinha/modules/InternetExplorer/InternetExplorer.js -text
 richtext/resources/src/main/resources/xinha/plugins/AutoResize/AutoResize.js svneol=native#text/plain
+richtext/resources/src/main/resources/xinha/plugins/AutoSave/lang/de.js -text
+richtext/resources/src/main/resources/xinha/plugins/AutoSave/lang/fr.js -text
+richtext/resources/src/main/resources/xinha/plugins/AutoSave/lang/it.js -text
+richtext/resources/src/main/resources/xinha/plugins/AutoSave/lang/nl.js -text
 richtext/resources/src/main/resources/xinha/plugins/CreateExternalLink/CreateExternalLink.js svneol=native#text/plain
 richtext/resources/src/main/resources/xinha/plugins/CreateExternalLink/lang/de.js -text
 richtext/resources/src/main/resources/xinha/plugins/CreateExternalLink/lang/fr.js -text
@@ -2251,6 +2255,7 @@ richtext/resources/src/main/resources/xinha/plugins/InsertImage/InsertImage.js s
 richtext/resources/src/main/resources/xinha/plugins/StateChange/StateChange.js -text
 richtext/resources/src/main/resources/xinha/plugins/TableOperations/lang/de.js -text
 richtext/resources/src/main/resources/xinha/plugins/TableOperations/lang/fr.js -text
+richtext/resources/src/main/resources/xinha/popups/blank.html -text
 richtext/resources/src/main/resources/xinha/skins/hippo-gray/back.png -text
 richtext/resources/src/main/resources/xinha/skins/hippo-gray/button-background.png -text
 richtext/resources/src/main/resources/xinha/skins/hippo-gray/ed_buttons_main.gif -text
