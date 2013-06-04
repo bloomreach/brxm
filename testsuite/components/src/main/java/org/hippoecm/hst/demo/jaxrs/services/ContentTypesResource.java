@@ -37,8 +37,8 @@ import org.hippoecm.hst.demo.jaxrs.services.util.ResponseUtils;
 import org.hippoecm.hst.jaxrs.services.AbstractResource;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
-import org.onehippo.cms7.services.contenttype.DocumentType;
-import org.onehippo.cms7.services.contenttype.DocumentTypeField;
+import org.onehippo.cms7.services.contenttype.ContentType;
+import org.onehippo.cms7.services.contenttype.ContentTypeField;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeType;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeTypeChild;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeTypeItem;
@@ -166,24 +166,24 @@ public class ContentTypesResource extends AbstractResource {
     }
 
     @GET
-    @Path("/dt")
+    @Path("/ct")
     public Set<String> listDocumentTypePrefixes() {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            return service.getDocumentTypes().getTypesByPrefix().keySet();
+            return service.getContentTypes().getTypesByPrefix().keySet();
         } catch (RepositoryException e) {
             throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
         }
     }
 
     @GET
-    @Path("/dt/{prefix}")
-    public Set<DocumentType> listDocumentTypes(@PathParam("prefix") String prefix) {
+    @Path("/ct/{prefix}")
+    public Set<ContentType> listDocumentTypes(@PathParam("prefix") String prefix) {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            Set<DocumentType> result = service.getDocumentTypes().getTypesByPrefix().get(prefix);
+            Set<ContentType> result = service.getContentTypes().getTypesByPrefix().get(prefix);
             if (result != null) {
                 return result;
             }
@@ -194,14 +194,14 @@ public class ContentTypesResource extends AbstractResource {
     }
 
     @GET
-    @Path("/dt/{prefix}:{name}")
-    public DocumentType listDocumentType(@PathParam("prefix") String prefix, @PathParam("name") String name) {
+    @Path("/ct/{prefix}:{name}")
+    public ContentType listDocumentType(@PathParam("prefix") String prefix, @PathParam("name") String name) {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            DocumentType dt = service.getDocumentTypes().getType(prefix+":"+name);
-            if (dt != null) {
-                return dt;
+            ContentType ct = service.getContentTypes().getType(prefix+":"+name);
+            if (ct != null) {
+                return ct;
             }
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RepositoryException e) {
@@ -210,15 +210,15 @@ public class ContentTypesResource extends AbstractResource {
     }
 
     @GET
-    @Path("/dt/{type}/{field}")
-    public DocumentTypeField listDocumentTypeField(@PathParam("type") String type, @PathParam("field") String field) {
+    @Path("/ct/{type}/{field}")
+    public ContentTypeField listDocumentTypeField(@PathParam("type") String type, @PathParam("field") String field) {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            DocumentTypeField result = null;
-            DocumentType dt = service.getDocumentTypes().getType(type);
-            if (dt != null) {
-                result = dt.getFields().get(field);
+            ContentTypeField result = null;
+            ContentType ct = service.getContentTypes().getType(type);
+            if (ct != null) {
+                result = ct.getFields().get(field);
             }
             if (result != null) {
                 return result;
@@ -231,11 +231,11 @@ public class ContentTypesResource extends AbstractResource {
 
     @GET
     @Path("/uuid/{uuid}")
-    public DocumentType listDocumentTypeForUuid(@Context HttpServletRequest servletRequest, @PathParam("uuid") String uuid) {
+    public ContentType listDocumentTypeForUuid(@Context HttpServletRequest servletRequest, @PathParam("uuid") String uuid) {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            return service.getDocumentTypes().getDocumentTypeForNodeByUuid(getRequestContext(servletRequest).getSession(), uuid);
+            return service.getContentTypes().getContentTypeForNodeByUuid(getRequestContext(servletRequest).getSession(), uuid);
         } catch (ItemNotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RepositoryException e) {
@@ -245,11 +245,11 @@ public class ContentTypesResource extends AbstractResource {
 
     @GET
     @Path("/path/{path:.+}")
-    public DocumentType listDocumentTypeForPath(@Context HttpServletRequest servletRequest, @PathParam("path") String path) {
+    public ContentType listDocumentTypeForPath(@Context HttpServletRequest servletRequest, @PathParam("path") String path) {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            return service.getDocumentTypes().getDocumentTypeForNodeByPath(getRequestContext(servletRequest).getSession(), "/" + path);
+            return service.getContentTypes().getContentTypeForNodeByPath(getRequestContext(servletRequest).getSession(), "/" + path);
         } catch (PathNotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (RepositoryException e) {
