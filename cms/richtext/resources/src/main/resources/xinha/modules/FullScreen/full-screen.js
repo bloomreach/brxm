@@ -1,29 +1,15 @@
-/*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
- * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *  http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
+//Code forked from original Xinha full-screen plugin to fix some minor browser specific issues
+//and hook up the StateChange plugin
 function FullScreen(editor, args) {
     var cfg = editor.config,
-        glyph = _editor_url + cfg.imgURL + 'ed_buttons_main.png';
+        sprite = _editor_url + cfg.imgURL + 'ed_buttons_main.png';
 
     this.editor = editor;
     editor.originalSizes = null;
     editor._superclean_on = false;
 
-    cfg.registerIcon('fullscreen', [glyph, 8, 0]);
-    cfg.registerIcon('fullscreenrestore', [glyph, 9, 0]);
+    cfg.registerIcon('fullscreen', [sprite, 8, 0]);
+    cfg.registerIcon('fullscreenrestore', [sprite, 9, 0]);
 
     cfg.registerButton('fullscreen',
         this._lc("Maximize/Minimize Editor"),
@@ -37,12 +23,12 @@ function FullScreen(editor, args) {
 FullScreen._pluginInfo = {
     name         : "FullScreen",
     version      : "1.0",
-    developer    : "a.bogaart@1hippo.com",
-    developer_url: "http://www.onehippo.com/",
-    c_owner      : "OneHippo",
-    license      : "al2",
-    sponsor      : "OneHippo",
-    sponsor_url  : "http://www.onehippo.com/"
+    developer    : "James Sleeman",
+    developer_url: "http://www.gogo.co.nz/",
+    c_owner      : "Gogo Internet Services",
+    license      : "htmlArea",
+    sponsor      : "Gogo Internet Services",
+    sponsor_url  : "http://www.gogo.co.nz/"
 };
 
 FullScreen.prototype._lc = function(string) {
