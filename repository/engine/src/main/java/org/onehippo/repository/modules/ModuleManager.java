@@ -111,8 +111,9 @@ public class ModuleManager {
         if (module != null) {
             log.info("Starting module {}", moduleName);
             try {
-                Session moduleSession = session.impersonate(new SimpleCredentials("system", new char[]{}));
-                moduleSession = DecoratorFactoryImpl.getSessionDecorator(moduleSession);
+                final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
+                Session moduleSession = session.impersonate(credentials);
+                moduleSession = DecoratorFactoryImpl.getSessionDecorator(moduleSession, credentials);
                 if (module instanceof ConfigurableDaemonModule) {
                     final String moduleConfigPath = MODULES_PATH + "/" + moduleName + "/" + MODULECONFIG;
                     final Node moduleConfig = JcrUtils.getNodeIfExists(moduleConfigPath, moduleSession);

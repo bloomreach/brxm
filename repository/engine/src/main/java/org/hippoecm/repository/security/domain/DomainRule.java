@@ -38,22 +38,18 @@ import org.hippoecm.repository.api.HippoNodeType;
  */
 public class DomainRule implements Serializable {
 
-    /** SVN id placeholder */
-
-    /**
-     * Serial version id
-     */
     private static final long serialVersionUID = 1L;
 
-    /**
-     * The set of facet rules that define the domain rule
-     */
     private Set<FacetRule> facetRules = new HashSet<FacetRule>();
-
-    /**
-     * The hash code
-     */
+    private String name;
+    private String domainName;
     private transient int hash;
+
+    public DomainRule(String name, String domainName, Set<FacetRule> facetRules) {
+        this.name = name;
+        this.domainName = domainName;
+        this.facetRules = facetRules;
+    }
 
     /**
      * Instantiate the domain rule with the given configuration node. If
@@ -74,11 +70,26 @@ public class DomainRule implements Serializable {
                 facetRules.add(new FacetRule(child));
             }
         }
+        this.name = node.getName();
+        this.domainName = node.getParent().getName();
+    }
+
+    /**
+     * Get the name of this DomainRule.
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Get the name of the domain this DomainRule is part of.
+     */
+    public String getDomainName() {
+        return domainName;
     }
 
     /**
      * Get the facet rules defining the domain rule
-     * @return the facet rules set
      */
     public Set<FacetRule> getFacetRules() {
         return Collections.unmodifiableSet(facetRules);
@@ -88,7 +99,7 @@ public class DomainRule implements Serializable {
      * {@inheritDoc}
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         Set<FacetRule> fr = getFacetRules();
         sb.append("DomainRule: ");
         sb.append("\r\n");

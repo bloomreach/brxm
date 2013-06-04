@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.impl;
 
+import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -51,20 +52,20 @@ public class DecoratorFactoryImpl extends org.hippoecm.repository.decorating.Dec
         return new RepositoryDecorator(this, repository);
     }
 
-    public static SessionDecorator getSessionDecorator(Session session) {
+    public static SessionDecorator getSessionDecorator(Session session, Credentials credentials) {
         DecoratorFactoryImpl newFactory = new DecoratorFactoryImpl();
         SessionDecorator decoratedSession = null;
         RepositoryDecorator decoratedRepository = new RepositoryDecorator(newFactory, session.getRepository());
         if (session instanceof XASession) {
             try {
-                decoratedSession = new SessionDecorator(newFactory, decoratedRepository, (XASession)session);
+                decoratedSession = new SessionDecorator(newFactory, decoratedRepository, (XASession)session, credentials);
             } catch (RepositoryException ex) {
                 log.error("cannot compose transactional session, reverting to regular session");
                 // fall through
             }
         }
         if (decoratedSession == null) {
-            decoratedSession = new SessionDecorator(newFactory, decoratedRepository, session);
+            decoratedSession = new SessionDecorator(newFactory, decoratedRepository, session, credentials);
         }
         newFactory.decoratedSession = decoratedSession;
         return decoratedSession;

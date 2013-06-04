@@ -16,6 +16,9 @@
 package org.hippoecm.repository.security;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +44,7 @@ import javax.jcr.security.AccessControlPolicyIterator;
 import javax.jcr.security.Privilege;
 import javax.security.auth.Subject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.iterator.AccessControlPolicyIteratorAdapter;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
@@ -68,6 +72,7 @@ import org.apache.jackrabbit.spi.commons.conversion.ParsingPathResolver;
 import org.apache.jackrabbit.spi.commons.conversion.PathResolver;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
@@ -75,6 +80,7 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -187,6 +193,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private final List<String> groupIds = new ArrayList<String>();
     private final List<String> currentDomainRoleIds = new ArrayList<String>();
 
+    private Map<String, Collection<FacetRule>> extendedFacetRules;
+
     /**
      * The logger
      */
@@ -262,6 +270,22 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         initialized = true;
 
         log.info("Initialized HippoAccessManager for user " + userId + " with cache size " + cacheSize);
+    }
+
+    public void registerDomainRuleExtensions(NamespaceResolver namespaceResolver, DomainRuleExtension... domainRuleExtensions) throws RepositoryException {
+        if (domainRuleExtensions == null) {
+            extendedFacetRules = Collections.emptyMap();
+        } else {
+            extendedFacetRules = new HashMap<String, Collection<FacetRule>>();
+            for (DomainRuleExtension domainRuleExtension : domainRuleExtensions) {
+                final String domainRulePath = domainRuleExtension.getDomainName() + "/" + domainRuleExtension.getDomainRuleName();
+                final Collection<FacetRule> facetRules = new ArrayList<FacetRule>();
+                for (org.onehippo.repository.security.domain.FacetRule facetRule : domainRuleExtension.getFacetRules()) {
+                    facetRules.add(new FacetRule(facetRule, namespaceResolver));
+                }
+                extendedFacetRules.put(domainRulePath, facetRules);
+            }
+        }
     }
 
     /**
@@ -580,17 +604,18 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         currentDomainRoleIds.addAll(fap.getRoles());
 
         // check is node matches ONE of the domain rules
-        for (DomainRule domainRule : fap.getRules()) {
+        for (DomainRule domainRule : getDomainRules(fap)) {
 
             boolean allRulesMatched = true;
 
             // no facet rules means no match
-            if (domainRule.getFacetRules().size() == 0) {
+            final Set<FacetRule> facetRules = getFacetRules(domainRule);
+            if (facetRules.isEmpty()) {
                 allRulesMatched = false;
                 log.debug("No facet rules found for : {} in domain rule: {}", nodeState.getId(), domainRule);
             }
             // check if node matches ALL of the facet rules
-            for (FacetRule facetRule : domainRule.getFacetRules()) {
+            for (FacetRule facetRule : facetRules) {
                 if (!matchFacetRule(nodeState, facetRule)) {
                     allRulesMatched = false;
                     log.trace("Rule doesn't match for : {} facet rule: {}", nodeState.getId(), facetRule);
@@ -619,6 +644,44 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
         return isInDomain;
+    }
+
+    private Set<DomainRule> getDomainRules(final FacetAuthPrincipal fap) {
+        Set<DomainRule> result = null;
+        if (extendedFacetRules != null) {
+            final String domainName = fap.getName();
+            for (String domainRulePath : extendedFacetRules.keySet()) {
+                final String ruleName = StringUtils.substringAfter(domainRulePath, "/");
+                boolean found = false;
+                if (domainRulePath.startsWith(domainName + "/")) {
+                    for (DomainRule domainRule : fap.getRules()) {
+                        if (ruleName.equals(domainRule.getName())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) {
+                    final DomainRule domainRule = new DomainRule(ruleName, domainName, new HashSet<FacetRule>(extendedFacetRules.get(domainRulePath)));
+                    if (result == null) {
+                        result = new HashSet<DomainRule>(fap.getRules());
+                    }
+                    result.add(domainRule);
+                }
+            }
+        }
+        return result == null ? fap.getRules() : result;
+    }
+
+    private Set<FacetRule> getFacetRules(final DomainRule domainRule) {
+        final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
+        final Collection<FacetRule> extendedFacetRules = this.extendedFacetRules != null ? this.extendedFacetRules.get(domainRulePath) : null;
+        if (extendedFacetRules != null) {
+            final Set<FacetRule> facetRules = new HashSet<FacetRule>(domainRule.getFacetRules());
+            facetRules.addAll(extendedFacetRules);
+            return facetRules;
+        }
+        return domainRule.getFacetRules();
     }
 
     /**
@@ -1208,7 +1271,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         /**
          * Create a new LRU cache
-         * @param size max number of cache objects
          */
         private NodeTypeInstanceOfCache() {
         }
@@ -1233,8 +1295,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         /**
          * Store key-value in cache
-         * @param id ItemId the key
-         * @param isGranted the value
          */
         synchronized public void put(String type, String instanceOfType, boolean isInstanceOf) {
             Map<String, Boolean> typeMap = map.get(instanceOfType);
@@ -1247,7 +1307,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         /**
          * Remove key-value from cache
-         * @param id ItemId the key
          */
         synchronized public void remove(String type, String instanceOfType) {
             Map<String, Boolean> typeMap = map.get(instanceOfType);

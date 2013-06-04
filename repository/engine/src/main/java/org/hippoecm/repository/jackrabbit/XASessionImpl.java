@@ -53,7 +53,10 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DefaultContentHandler;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
+import org.hippoecm.repository.security.DelegatorAccessManager;
 import org.hippoecm.repository.security.HippoAMContext;
+import org.hippoecm.repository.security.HippoAccessManager;
+import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -63,6 +66,21 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     private static Logger log = LoggerFactory.getLogger(XASessionImpl.class);
 
     private final SessionImplHelper helper;
+
+    private DelegatorAccessManager accessManager;
+
+    @Override
+    public AccessManager getAccessManager() {
+        if (accessManager != null) {
+            return accessManager;
+        }
+        return getHippoAccessManager();
+    }
+
+    @Override
+    public HippoAccessManager getHippoAccessManager() {
+        return (HippoAccessManager) super.getAccessManager();
+    }
 
     protected XASessionImpl(RepositoryContext repositoryContext, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
@@ -223,6 +241,12 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     @Override
     public AuthorizationQuery getAuthorizationQuery() {
         return helper.getAuthorizationQuery();
+    }
+
+    @Override
+    public void createDelegatorAccessManager(final InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException {
+        accessManager = new DelegatorAccessManager(getHippoAccessManager(), session.getHippoAccessManager(), this, domainExtensions);
+        context.setAccessManager(accessManager);
     }
 
     public void registerSessionCloseCallback(HippoSession.CloseCallback callback) {

@@ -36,6 +36,8 @@ api/src/main/java/org/onehippo/repository/scheduling/RepositoryScheduler.java -t
 api/src/main/java/org/onehippo/repository/security/Group.java -text
 api/src/main/java/org/onehippo/repository/security/SecurityService.java -text
 api/src/main/java/org/onehippo/repository/security/User.java -text
+api/src/main/java/org/onehippo/repository/security/domain/DomainRuleExtension.java -text
+api/src/main/java/org/onehippo/repository/security/domain/FacetRule.java -text
 api/src/main/java/org/onehippo/repository/update/BaseNodeUpdateVisitor.java -text
 api/src/main/java/org/onehippo/repository/update/NodeUpdateVisitor.java -text
 api/src/main/resources/org/hippoecm/repository/api/package.jdo -text
@@ -155,6 +157,7 @@ engine/src/main/java/org/hippoecm/repository/query/lucene/RangeFields.java svneo
 engine/src/main/java/org/hippoecm/repository/query/lucene/StandardHippoAnalyzer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCache.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCacheManager.java -text svneol=unset#text/plain
+engine/src/main/java/org/hippoecm/repository/security/DelegatorAccessManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/ExampleLoginModule.java -text
 engine/src/main/java/org/hippoecm/repository/security/FacetAuthConstants.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/HippoAMContext.java -text svneol=unset#text/plain
@@ -310,6 +313,7 @@ test/src/test/java/org/hippoecm/repository/FacetedNavigationPerfTestCase.java -t
 test/src/test/java/org/hippoecm/repository/HREPTWO1493Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/HREPTWO650Test.java svneol=native#text/plain
 test/src/test/java/org/hippoecm/repository/PhysicalExportSystemViewTest.java svneol=native#text/plain
+test/src/test/java/org/hippoecm/repository/SecurityDelegationTest.java -text
 test/src/test/java/org/hippoecm/repository/SessionTest.java -text
 test/src/test/java/org/hippoecm/repository/VersioningWorkflowTest.java -text
 test/src/test/java/org/hippoecm/repository/concurrent/AbstractRandomActionTest.java -text

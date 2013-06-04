@@ -62,7 +62,8 @@ public class ReferenceWorkspaceImpl implements ReferenceWorkspace {
 
     @Override
     public Session login() throws RepositoryException {
-        return DecoratorFactoryImpl.getSessionDecorator(repositoryImpl.getRootSession(workspaceName).impersonate(new SimpleCredentials("system", new char[]{})));
+        final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
+        return DecoratorFactoryImpl.getSessionDecorator(repositoryImpl.getRootSession(workspaceName).impersonate(credentials), credentials);
     }
 
     @Override

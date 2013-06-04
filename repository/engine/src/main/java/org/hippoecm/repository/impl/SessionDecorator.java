@@ -36,6 +36,7 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -69,6 +70,7 @@ import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerat
 import org.hippoecm.repository.jackrabbit.xml.HippoDocumentViewExporter;
 import org.hippoecm.repository.jackrabbit.xml.PhysicalSysViewSAXEventGenerator;
 import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -81,14 +83,18 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     protected DerivedDataEngine derivedEngine;
 
-    SessionDecorator(DecoratorFactory factory, Repository repository, Session session) {
+    protected final Credentials credentials;
+
+    SessionDecorator(DecoratorFactory factory, Repository repository, Session session, Credentials credentials) {
         super(factory, repository, session);
         derivedEngine = new DerivedDataEngine(this);
+        this.credentials = credentials;
     }
 
-    SessionDecorator(DecoratorFactory factory, Repository repository, XASession session) throws RepositoryException {
+    SessionDecorator(DecoratorFactory factory, Repository repository, XASession session, Credentials credentials) throws RepositoryException {
         super(factory, repository, session);
         derivedEngine = new DerivedDataEngine(this);
+        this.credentials = credentials;
     }
 
     void postSave(Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {
@@ -156,7 +162,7 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     @Override
     public Session impersonate(Credentials credentials) throws LoginException, RepositoryException {
         Session newSession = session.impersonate(credentials);
-        return DecoratorFactoryImpl.getSessionDecorator(newSession);
+        return DecoratorFactoryImpl.getSessionDecorator(newSession, credentials);
     }
 
     @Override
@@ -458,6 +464,22 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
     @Override
     public void registerSessionCloseCallback(CloseCallback callback) {
         getInternalHippoSession().registerSessionCloseCallback(callback);
+    }
+
+    @Override
+    public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) throws RepositoryException {
+        if (!(session instanceof SessionDecorator)) {
+            throw new IllegalArgumentException("Expected session of type " + getClass().getName());
+        }
+        final SessionDecorator other = (SessionDecorator) session;
+        if (!(super.session instanceof InternalHippoSession)) {
+            throw new IllegalArgumentException("Expected session of type " + InternalHippoSession.class.getName());
+        }
+
+        final Repository repository = RepositoryDecorator.unwrap(getRepository());
+        final InternalHippoSession delegate = (InternalHippoSession) repository.login(credentials);
+        delegate.createDelegatorAccessManager(other.getInternalHippoSession(), domainExtensions);
+        return delegate;
     }
 
     private InternalHippoSession getInternalHippoSession() {

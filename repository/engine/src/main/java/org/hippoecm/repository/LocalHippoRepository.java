@@ -235,9 +235,10 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             ((HippoSecurityManager) jackrabbitRepository.getSecurityManager()).configure();
             if (upgradeValidateFlag) {
                 log.warn("post migration cycle validating content");
+                final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
                 SessionDecorator session = DecoratorFactoryImpl.getSessionDecorator(
                         jackrabbitRepository.getRootSession(null).impersonate(
-                                new SimpleCredentials("system", new char[] {})));
+                                credentials), credentials);
                 session.postValidation();
                 session.logout();
             }
@@ -292,7 +293,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             }
 
             if (!initializedBefore || isContentBootstrapEnabled()) {
-                final SessionDecorator bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+                final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
+                final SessionDecorator bootstrapSession = DecoratorFactoryImpl.getSessionDecorator(jcrRootSession.impersonate(credentials), credentials);
                 initializeSystemNodeTypes(bootstrapSession, jackrabbitRepository.getFileSystem());
                 contentBootstrap(bootstrapSession);
                 bootstrapSession.logout();
@@ -400,8 +402,9 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         try {
             final Class<?> updaterEngineClass = Class.forName("org.hippoecm.repository.updater.UpdaterEngine");
             final Method migrate = updaterEngineClass.getMethod("migrate", Session.class, boolean.class);
+            final SimpleCredentials credentials = new SimpleCredentials("system", new char[]{});
             final Session migrateSession = DecoratorFactoryImpl.getSessionDecorator(
-                    jcrRootSession.impersonate(new SimpleCredentials("system", new char[]{})));
+                    jcrRootSession.impersonate(credentials), credentials);
             needsRestart = (Boolean) migrate.invoke(null, migrateSession, jackrabbitRepository.isClustered());
             migrateSession.logout();
         } catch (ClassNotFoundException ignore) {

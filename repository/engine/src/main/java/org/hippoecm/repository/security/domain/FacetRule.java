@@ -26,6 +26,7 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.FacetAuthConstants;
@@ -41,8 +42,6 @@ import org.hippoecm.repository.security.FacetAuthConstants;
  * has a mixin type of nodetype.
  */
 public class FacetRule implements Serializable {
-
-    /** SVN id placeholder */
 
     /**
      * Serial version id
@@ -89,6 +88,17 @@ public class FacetRule implements Serializable {
      * The hash code
      */
     private transient int hash;
+
+
+    public FacetRule(org.onehippo.repository.security.domain.FacetRule facetRule, NamespaceResolver namespaceResolver) throws RepositoryException {
+        this.type = facetRule.getType();
+        this.facet = facetRule.getFacet();
+        this.facetName = NameParser.parse(facet, namespaceResolver, NameFactoryImpl.getInstance());
+        this.value = facetRule.getValue();
+        this.valueName = NameParser.parse(value, namespaceResolver, NameFactoryImpl.getInstance());
+        this.equals = facetRule.isEqual();
+        this.optional = facetRule.isOptional();
+    }
 
     /**
      * Create the facet rule based on the rule
