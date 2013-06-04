@@ -29,9 +29,9 @@ import java.util.TreeSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DocumentTypeImpl extends Sealable implements DocumentType {
+public class ContentTypeImpl extends Sealable implements ContentType {
 
-    static final Logger log = LoggerFactory.getLogger(DocumentTypeImpl.class);
+    static final Logger log = LoggerFactory.getLogger(ContentTypeImpl.class);
 
     private final long version;
     private boolean aggregate;
@@ -41,14 +41,15 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
     private String prefix;
     private SortedSet<String> superTypes = new TreeSet<String>();
     private SortedSet<String> aggregatedTypes = new TreeSet<String>();
-    private boolean compound;
+    private boolean documentType;
+    private boolean compoundType;
     private boolean mixin;
-    private boolean template;
+    private boolean templateType;
     private boolean cascadeValidate;
-    private Map<String, DocumentTypeField> fields = new LinkedHashMap<String, DocumentTypeField>();
+    private Map<String, ContentTypeField> fields = new LinkedHashMap<String, ContentTypeField>();
 
-    public DocumentTypeImpl(String prefix, String name, long documentTypesVersion) {
-        this.version = documentTypesVersion;
+    public ContentTypeImpl(String prefix, String name, long contentTypesVersion) {
+        this.version = contentTypesVersion;
         this.aggregate = false;
         this.derivedType = false;
         this.prefix = prefix;
@@ -56,36 +57,38 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         aggregatedTypes.add(this.name);
     }
 
-    public DocumentTypeImpl(EffectiveNodeTypeImpl ent, long documentTypesVersion) {
-        this.version = documentTypesVersion;
+    public ContentTypeImpl(EffectiveNodeTypeImpl ent, long contentTypesVersion) {
+        this.version = contentTypesVersion;
         aggregate = false;
         this.derivedType = true;
         this.name = ent.getName();
         this.prefix = ent.getPrefix();
         this.ent = ent;
-        compound = false;
+        documentType = false;
+        compoundType = false;
         mixin = ent.isMixin();
-        template = false;
+        templateType = false;
         superTypes.addAll(ent.getSuperTypes());
         aggregatedTypes.addAll(ent.getAggregatedTypes());
         cascadeValidate = false;
     }
 
-    public DocumentTypeImpl(DocumentTypeImpl other) {
+    public ContentTypeImpl(ContentTypeImpl other) {
         this.version = other.version;
         aggregate = other.aggregate;
         this.derivedType = other.derivedType;
         prefix = other.prefix;
         this.ent = new EffectiveNodeTypeImpl(other.ent); // clone
         name = other.name;
-        compound = other.compound;
+        documentType = other.documentType;
+        compoundType = other.compoundType;
         mixin = other.mixin;
-        template = false;
+        templateType = other.templateType;
         superTypes.addAll(other.superTypes);
         aggregatedTypes.addAll(other.aggregatedTypes);
         cascadeValidate = other.cascadeValidate;
         for (String name : other.fields.keySet()) {
-            fields.put(name, new DocumentTypeFieldImpl((DocumentTypeFieldImpl)other.fields.get(name)));
+            fields.put(name, new ContentTypeFieldImpl((ContentTypeFieldImpl)other.fields.get(name)));
         }
     }
 
@@ -94,7 +97,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         ent.seal();
         superTypes = Collections.unmodifiableSortedSet(superTypes);
         aggregatedTypes = Collections.unmodifiableSortedSet(aggregatedTypes);
-        for (DocumentTypeField df : fields.values() ) {
+        for (ContentTypeField df : fields.values() ) {
             ((Sealable)df).seal();
         }
         fields = Collections.unmodifiableMap(fields);
@@ -156,18 +159,28 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
     }
 
     @Override
-    public boolean isDocumentType(final String documentTypeName) {
-        return aggregatedTypes.contains(documentTypeName) || superTypes.contains(documentTypeName);
+    public boolean isContentType(final String contentTypeName) {
+        return aggregatedTypes.contains(contentTypeName) || superTypes.contains(contentTypeName);
     }
 
     @Override
-    public boolean isCompound() {
-        return compound;
+    public boolean isDocumentType() {
+        return documentType;
     }
 
-    public void setCompound(boolean compound) {
+    public void setDocumentType(boolean documentType) {
         checkSealed();
-        this.compound = compound;
+        this.documentType = documentType;
+    }
+
+    @Override
+    public boolean isCompoundType() {
+        return compoundType;
+    }
+
+    public void setCompoundType(boolean compoundType) {
+        checkSealed();
+        this.compoundType = compoundType;
     }
 
     @Override
@@ -181,13 +194,13 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
     }
 
     @Override
-    public boolean isTemplate() {
-        return template;
+    public boolean isTemplateType() {
+        return templateType;
     }
 
-    public void setTemplate(boolean template) {
+    public void setTemplateType(boolean templateType) {
         checkSealed();
-        this.template = template;
+        this.templateType = templateType;
     }
 
     @Override
@@ -200,7 +213,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
     }
 
     @Override
-    public Map<String, DocumentTypeField> getFields() {
+    public Map<String, ContentTypeField> getFields() {
         return fields;
     }
 
@@ -212,27 +225,27 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         if (obj == this) {
             return true;
         }
-        if (obj instanceof DocumentTypeImpl && this.isSealed() && ((Sealable)obj).isSealed()) {
-            return this.getName().equals(((DocumentTypeImpl)obj).getName());
+        if (obj instanceof ContentTypeImpl && this.isSealed() && ((Sealable)obj).isSealed()) {
+            return this.getName().equals(((ContentTypeImpl)obj).getName());
         }
         return false;
     }
 
-    public boolean contains(DocumentTypeImpl other) {
+    public boolean contains(ContentTypeImpl other) {
         for (String s : other.superTypes) {
-            if (!isDocumentType(s)) {
+            if (!isContentType(s)) {
                 return false;
             }
         }
         for (String s : other.aggregatedTypes) {
-            if (!isDocumentType(s)) {
+            if (!isContentType(s)) {
                 return false;
             }
         }
         return true;
     }
 
-    public boolean merge(DocumentTypeImpl other, boolean superType) {
+    public boolean merge(ContentTypeImpl other, boolean superType) {
         if (!ent.merge(other.getEffectiveNodeType(), superType) && contains(other)) {
             return false;
         }
@@ -241,25 +254,25 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         name = null;
         prefix = null;
 
-        DocumentTypeFieldImpl dtf;
-        for (Map.Entry<String, DocumentTypeField> entry : other.getFields().entrySet()) {
-            if (!isDocumentType(entry.getValue().getDefiningType())) {
-                dtf = (DocumentTypeFieldImpl)fields.get(entry.getKey());
-                if (dtf != null) {
+        ContentTypeFieldImpl ctf;
+        for (Map.Entry<String, ContentTypeField> entry : other.getFields().entrySet()) {
+            if (!isContentType(entry.getValue().getDefiningType())) {
+                ctf = (ContentTypeFieldImpl)fields.get(entry.getKey());
+                if (ctf != null) {
                     // duplicate field name
-                    if (dtf.isMultiple() != entry.getValue().isMultiple() ||
-                            dtf.isPropertyField() != entry.getValue().isPropertyField() ||
-                            dtf.getFieldType().equals(entry.getValue().getFieldType())) {
-                        log.error("Conflicting DocumentType field named {} encountered while merging DocumentType {} with {}. Incoming field ignored."
-                                , new String[]{dtf.getName(), getName(), entry.getValue().getName()});
+                    if (ctf.isMultiple() != entry.getValue().isMultiple() ||
+                            ctf.isPropertyField() != entry.getValue().isPropertyField() ||
+                            ctf.getFieldType().equals(entry.getValue().getFieldType())) {
+                        log.error("Conflicting ContentType field named {} encountered while merging ContentType {} with {}. Incoming field ignored."
+                                , new String[]{ctf.getName(), getName(), entry.getValue().getName()});
                     }
                     else {
-                        log.warn("Duplicate DocumentType field named {} encountered while merging DocumentType {} with {}. Incoming field ignored."
-                               , new String[]{dtf.getName(), getName(), entry.getValue().getName()});
+                        log.warn("Duplicate ContentType field named {} encountered while merging ContentType {} with {}. Incoming field ignored."
+                               , new String[]{ctf.getName(), getName(), entry.getValue().getName()});
                     }
                 }
                 else {
-                    fields.put(entry.getKey(), new DocumentTypeFieldImpl((DocumentTypeFieldImpl)entry.getValue()));
+                    fields.put(entry.getKey(), new ContentTypeFieldImpl((ContentTypeFieldImpl)entry.getValue()));
                 }
             }
         }
@@ -273,8 +286,8 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
             aggregatedTypes.addAll(other.aggregatedTypes);
         }
 
-        if (!other.isCompound()) {
-            this.compound = false;
+        if (!other.isCompoundType()) {
+            this.compoundType = false;
         }
         if (!other.isDerivedType()) {
             this.derivedType = false;
@@ -287,19 +300,19 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         return true;
     }
 
-    public void resolveFields(DocumentTypesCache dtCache) {
+    public void resolveFields(ContentTypesCache ctCache) {
         checkSealed();
         Set<String> ignoredFields = new HashSet<String>();
-        mergeInheritedFields(dtCache);
-        resolvePropertiesToFields(dtCache, ignoredFields);
-        resolveChildrenToFields(dtCache, ignoredFields);
-        resolveFieldsToResidualItems(dtCache);
+        mergeInheritedFields(ctCache);
+        resolvePropertiesToFields(ctCache, ignoredFields);
+        resolveChildrenToFields(ctCache, ignoredFields);
+        resolveFieldsToResidualItems(ctCache);
     }
 
-    private void mergeInheritedFields(DocumentTypesCache dtCache) {
+    private void mergeInheritedFields(ContentTypesCache ctCache) {
         for (String s : superTypes) {
-            DocumentTypeImpl sdt = dtCache.getAdtCache().get(s);
-            for (Map.Entry<String, DocumentTypeField> entry : sdt.fields.entrySet()) {
+            ContentTypeImpl ct = ctCache.getActCache().get(s);
+            for (Map.Entry<String, ContentTypeField> entry : ct.fields.entrySet()) {
                 if (!fields.containsKey(entry.getKey())) {
                     fields.put(entry.getKey(), entry.getValue());
                 }
@@ -307,32 +320,32 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         }
     }
 
-    private void resolvePropertiesToFields(DocumentTypesCache dtCache, Set<String> ignoredFields) {
+    private void resolvePropertiesToFields(ContentTypesCache ctCache, Set<String> ignoredFields) {
         for (Map.Entry<String,List<EffectiveNodeTypeProperty>> entry : ent.getProperties().entrySet()) {
             if (!"*".equals(entry.getKey())) {
-                DocumentTypeFieldImpl dft = (DocumentTypeFieldImpl)fields.get(entry.getKey());
-                if (dft == null) {
+                ContentTypeFieldImpl cft = (ContentTypeFieldImpl)fields.get(entry.getKey());
+                if (cft == null) {
                     // create new derived field
-                    dft = new DocumentTypeFieldImpl(entry.getValue().get(0));
-                    fields.put(entry.getKey(), dft);
+                    cft = new ContentTypeFieldImpl(entry.getValue().get(0));
+                    fields.put(entry.getKey(), cft);
                     if (ent.getProperties().get(entry.getKey()).size() > 1) {
-                        log.warn("Effective NodeType {} defines multiple properties named {} without corresponding field in Document Type {}. "
+                        log.warn("Effective NodeType {} defines multiple properties named {} without corresponding field in ContentType {}. "
                                 + "A derived field is created for only the first property definition with type {}."
-                                , new String[]{ent.getName(), entry.getKey(), getName(), dft.getFieldType()});
+                                , new String[]{ent.getName(), entry.getKey(), getName(), cft.getFieldType()});
                     }
                 }
-                else if (dft.isSealed()) {
+                else if (cft.isSealed()) {
                     // skip already processed inherited fields
                     continue;
                 }
-                else if (!dft.isPropertyField()) {
+                else if (!cft.isPropertyField()) {
                     if (ent.getChildren().containsKey(entry.getKey())) {
-                        log.warn("Effective NodeType {} defines both a property and a child node named {} with a (possibly) matching Child Node field in Document Type {}. "
+                        log.warn("Effective NodeType {} defines both a property and a child node named {} with a (possibly) matching Child Node field in ContentType {}. "
                                 + "Corresponding property will be hidden."
                                 , new String[]{ent.getName(), getName(), entry.getKey()});
                     }
                     else {
-                        log.error("Effective NodeType {} defines a property named {} with a conflicting named Child Node field in Document Type {}. "
+                        log.error("Effective NodeType {} defines a property named {} with a conflicting named Child Node field in ContentType {}. "
                                 + "The Corresponding property will be hidden and the field removed."
                                 , new String[]{ent.getName(), entry.getKey(), getName()});
                         fields.remove(entry.getKey());
@@ -343,7 +356,7 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                     EffectiveNodeTypeProperty matchingProperty = null;
                     boolean mismatch = false;
                     for (EffectiveNodeTypeProperty p : entry.getValue()) {
-                        if (matchingProperty == null && p.isMultiple() == dft.isMultiple() && p.getType().equals(dft.getItemType())) {
+                        if (matchingProperty == null && p.isMultiple() == cft.isMultiple() && p.getType().equals(cft.getItemType())) {
                             matchingProperty = p;
                         }
                         else {
@@ -352,102 +365,102 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                     }
                     if (matchingProperty == null) {
                         if (mismatch) {
-                            log.error("Effective NodeType {} defines multiple properties named {} but not of required type {} or multiplicity for its corresponding field in Document Type {}. "
+                            log.error("Effective NodeType {} defines multiple properties named {} but not of required type {} or multiplicity for its corresponding field in ContentType {}. "
                                     + "The properties will be hidden and the field removed."
-                                    , new String[]{ent.getName(), entry.getKey(), dft.getFieldType(), getName()});
+                                    , new String[]{ent.getName(), entry.getKey(), cft.getFieldType(), getName()});
                         }
                         else {
-                            log.error("Effective NodeType {} defines a property named {} but not of required type {} or multiplicity for its corresponding field in Document Type {}. "
+                            log.error("Effective NodeType {} defines a property named {} but not of required type {} or multiplicity for its corresponding field in ContentType {}. "
                                     + "The property will be hidden and the field removed."
-                                    , new String[]{ent.getName(), entry.getKey(), dft.getFieldType(), getName()});
+                                    , new String[]{ent.getName(), entry.getKey(), cft.getFieldType(), getName()});
                         }
                         fields.remove(entry.getKey());
                     }
                     else {
                         if (mismatch) {
-                            log.warn("Effective NodeType {} defines multiple properties named {} for its corresponding field of type {} in Document Type {}. "
+                            log.warn("Effective NodeType {} defines multiple properties named {} for its corresponding field of type {} in ContentType {}. "
                                     + "Other properties will be hidden."
-                                    , new String[]{ent.getName(), entry.getKey(), dft.getFieldType(), getName()});
+                                    , new String[]{ent.getName(), entry.getKey(), cft.getFieldType(), getName()});
                         }
-                        if (matchingProperty.isAutoCreated() && !dft.isAutoCreated()) {
-                            log.warn("Effective NodeType {} property named {} is autoCreated while its corresponding field in Document Type {} is not. "
+                        if (matchingProperty.isAutoCreated() && !cft.isAutoCreated()) {
+                            log.warn("Effective NodeType {} property named {} is autoCreated while its corresponding field in ContentType {} is not. "
                                     + "Field is corrected to be autoCreated."
                                     , new String[]{ent.getName(), entry.getKey(), getName()});
-                            dft.setAutoCreated(true);
+                            cft.setAutoCreated(true);
                         }
-                        if (matchingProperty.isMandatory() && !dft.isMandatory()) {
-                            log.warn("Effective NodeType {} property named {} is mandatory while its corresponding field in Document Type {} is not. "
+                        if (matchingProperty.isMandatory() && !cft.isMandatory()) {
+                            log.warn("Effective NodeType {} property named {} is mandatory while its corresponding field in ContentType {} is not. "
                                     + "Field is corrected to be mandatory."
                                     , new String[]{ent.getName(), entry.getKey(), getName()});
-                            dft.setMandatory(true);
+                            cft.setMandatory(true);
                         }
-                        if (matchingProperty.isProtected() && !dft.isProtected()) {
-                            log.warn("Effective NodeType {} property named {} is protected while its corresponding field in Document Type {} is not. "
+                        if (matchingProperty.isProtected() && !cft.isProtected()) {
+                            log.warn("Effective NodeType {} property named {} is protected while its corresponding field in ContentType {} is not. "
                                     + "Field is corrected to be protected."
                                     , new String[]{ent.getName(), entry.getKey(), getName()});
-                            dft.setProtected(true);
+                            cft.setProtected(true);
                         }
-                        dft.setEffectiveNodeTypeItem(matchingProperty);
+                        cft.setEffectiveNodeTypeItem(matchingProperty);
                     }
                 }
             }
         }
     }
 
-    private void resolveChildrenToFields(DocumentTypesCache dtCache, Set<String> ignoredFields) {
+    private void resolveChildrenToFields(ContentTypesCache ctCache, Set<String> ignoredFields) {
         for (Map.Entry<String,List<EffectiveNodeTypeChild>> entry : ent.getChildren().entrySet()) {
             if (!"*".equals(entry.getKey())) {
-                DocumentTypeFieldImpl dft = (DocumentTypeFieldImpl)fields.get(entry.getKey());
-                if (dft == null) {
+                ContentTypeFieldImpl cft = (ContentTypeFieldImpl)fields.get(entry.getKey());
+                if (cft == null) {
                     if (!ignoredFields.contains(entry.getKey())) {
                         // create derived field
-                        dft = new DocumentTypeFieldImpl(entry.getValue().get(0));
-                        fields.put(entry.getKey(), dft);
+                        cft = new ContentTypeFieldImpl(entry.getValue().get(0));
+                        fields.put(entry.getKey(), cft);
                         if (ent.getChildren().get(entry.getKey()).size() > 1) {
-                            log.warn("Effective NodeType {} defines multiple child nodes named {} without corresponding field in Document Type {}. "
+                            log.warn("Effective NodeType {} defines multiple child nodes named {} without corresponding field in ContentType {}. "
                                     + "A derived field is created for only the child node definition with type {}."
-                                    , new String[]{ent.getName(), entry.getKey(), getName(), dft.getFieldType()});
+                                    , new String[]{ent.getName(), entry.getKey(), getName(), cft.getFieldType()});
                         }
                     }
                 }
-                else if (dft.isSealed()) {
+                else if (cft.isSealed()) {
                     // skip already processed inherited fields
                     continue;
                 }
-                else if (dft.isPropertyField()) {
-                    if (dft.isDerivedField()) {
-                        log.error("Effective NodeType {} defines both a property and a child node named {} without a corresponding field in Document Type {}. "
+                else if (cft.isPropertyField()) {
+                    if (cft.isDerivedField()) {
+                        log.error("Effective NodeType {} defines both a property and a child node named {} without a corresponding field in ContentType {}. "
                                 + "The Corresponding child node will be hidden."
                                 , new String[]{ent.getName(), entry.getKey(), getName()});
                     }
                     else {
-                        log.error("Effective NodeType {} defines a child node named {} with a conflicting named property field in Document Type {}. "
+                        log.error("Effective NodeType {} defines a child node named {} with a conflicting named property field in ContentType {}. "
                                 + "The Corresponding property will be hidden and the field removed."
                                 , new String[]{ent.getName(), entry.getKey(), getName()});
                         fields.remove(entry.getKey());
                     }
                 }
                 else {
-                    // first check predefined document types cache: it might contain an aggregated (with optional mixins) document type
-                    DocumentTypeImpl ct = dtCache.getType(dft.getItemType());
+                    // first check predefined ContentTypes cache: it might contain an aggregated (with optional mixins) ContentType
+                    ContentTypeImpl ct = ctCache.getType(cft.getItemType());
                     if (ct == null) {
-                        // not an aggregated document type: get it from the aggregated document type cache (which also contains every non-aggregated type)
-                        ct = dtCache.getAdtCache().get(dft.getItemType());
+                        // not an aggregated ContentType: get it from the aggregated ContentType cache (which also contains every non-aggregated type)
+                        ct = ctCache.getActCache().get(cft.getItemType());
                     }
                     if (ct == null) {
-                        log.error("Effective NodeType {} defines a child node named {} with corresponding field in Document Type {} which has unresolved type {}. "
+                        log.error("Effective NodeType {} defines a child node named {} with corresponding field in ContentType {} which has unresolved type {}. "
                                 + "The corresponding child node will be hidden and the field removed.",
-                                new String[]{ent.getName(), entry.getKey(), getName(), dft.getItemType()});
+                                new String[]{ent.getName(), entry.getKey(), getName(), cft.getItemType()});
                         fields.remove(entry.getKey());
                     }
                     else {
                         EffectiveNodeTypeChild matchingChild = null;
                         boolean mismatch = false;
                         for (EffectiveNodeTypeChild c : entry.getValue()) {
-                            if (matchingChild == null && (!dft.isMultiple() || c.isMultiple())) {
+                            if (matchingChild == null && (!cft.isMultiple() || c.isMultiple())) {
                                 boolean match = true;
                                 for (String requiredType : c.getRequiredPrimaryTypes()) {
-                                    if (!ct.isDocumentType(requiredType)) {
+                                    if (!ct.isContentType(requiredType)) {
                                         match = false;
                                         break;
                                     }
@@ -465,42 +478,42 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
                         }
                         if (matchingChild == null) {
                             if (mismatch) {
-                                log.error("Effective NodeType {} defines multiple child nodes named {} but not with matching type {} or multiplicity for its corresponding field in Document Type {}. "
+                                log.error("Effective NodeType {} defines multiple child nodes named {} but not with matching type {} or multiplicity for its corresponding field in ContentType {}. "
                                         + "The child nodes will be hidden and the field removed."
-                                        , new String[]{ent.getName(), entry.getKey(), dft.getItemType(), getName()});
+                                        , new String[]{ent.getName(), entry.getKey(), cft.getItemType(), getName()});
                             }
                             else {
-                                log.error("Effective NodeType {} defines a child node named {} but not with matching type {} or multiplicity for its corresponding field in Document Type {}. "
+                                log.error("Effective NodeType {} defines a child node named {} but not with matching type {} or multiplicity for its corresponding field in ContentType {}. "
                                         + "The child node will be hidden and the field removed."
-                                        , new String[]{ent.getName(), entry.getKey(), dft.getItemType(), getName()});
+                                        , new String[]{ent.getName(), entry.getKey(), cft.getItemType(), getName()});
                             }
                             fields.remove(entry.getKey());
                         }
                         else {
                             if (mismatch) {
-                                log.warn("Effective NodeType {} defines multiple child nodes named {} for its corresponding field of type {} in Document Type {}. "
+                                log.warn("Effective NodeType {} defines multiple child nodes named {} for its corresponding field of type {} in ContentType {}. "
                                         + "Other child nodes will be hidden."
-                                        , new String[]{ent.getName(), entry.getKey(), dft.getItemType(), getName()});
+                                        , new String[]{ent.getName(), entry.getKey(), cft.getItemType(), getName()});
                             }
-                            if (matchingChild.isAutoCreated() && !dft.isAutoCreated()) {
-                                log.warn("Effective NodeType {} child node named {} is autoCreated while its corresponding field in Document Type {} is not. "
+                            if (matchingChild.isAutoCreated() && !cft.isAutoCreated()) {
+                                log.warn("Effective NodeType {} child node named {} is autoCreated while its corresponding field in ContentType {} is not. "
                                         + "Field is corrected to be autoCreated."
                                         , new String[]{ent.getName(), entry.getKey(), getName()});
-                                dft.setAutoCreated(true);
+                                cft.setAutoCreated(true);
                             }
-                            if (matchingChild.isMandatory() && !dft.isMandatory()) {
-                                log.warn("Effective NodeType {} child node named {} is mandatory while its corresponding field in Document Type {} is not. "
+                            if (matchingChild.isMandatory() && !cft.isMandatory()) {
+                                log.warn("Effective NodeType {} child node named {} is mandatory while its corresponding field in ContentType {} is not. "
                                         + "Field is corrected to be mandatory."
                                         , new String[]{ent.getName(), entry.getKey(), getName()});
-                                dft.setMandatory(true);
+                                cft.setMandatory(true);
                             }
-                            if (matchingChild.isProtected() && !dft.isProtected()) {
-                                log.warn("Effective NodeType {} child node named {} is protected while its corresponding field in Document Type {} is not. "
+                            if (matchingChild.isProtected() && !cft.isProtected()) {
+                                log.warn("Effective NodeType {} child node named {} is protected while its corresponding field in ContentType {} is not. "
                                         + "Field is corrected to be protected."
                                         , new String[]{ent.getName(), entry.getKey(), getName()});
-                                dft.setProtected(true);
+                                cft.setProtected(true);
                             }
-                            dft.setEffectiveNodeTypeItem(matchingChild);
+                            cft.setEffectiveNodeTypeItem(matchingChild);
                         }
                     }
                 }
@@ -508,103 +521,103 @@ public class DocumentTypeImpl extends Sealable implements DocumentType {
         }
     }
 
-    private void resolveFieldsToResidualItems(DocumentTypesCache dtCache) {
+    private void resolveFieldsToResidualItems(ContentTypesCache ctCache) {
         for (Iterator<String> fieldNameIterator = fields.keySet().iterator(); fieldNameIterator.hasNext(); ) {
-            DocumentTypeFieldImpl dft = (DocumentTypeFieldImpl)fields.get(fieldNameIterator.next());
-            if (dft.isSealed()) {
+            ContentTypeFieldImpl cft = (ContentTypeFieldImpl)fields.get(fieldNameIterator.next());
+            if (cft.isSealed()) {
                 // skip already processed inherited fields
                 continue;
             }
-            if (dft.getEffectiveNodeTypeItem() == null) {
-                if (dft.isPropertyField()) {
+            if (cft.getEffectiveNodeTypeItem() == null) {
+                if (cft.isPropertyField()) {
                     List<EffectiveNodeTypeProperty> properties = ent.getProperties().get("*");
                     if (properties != null) {
                         for (EffectiveNodeTypeProperty p : properties) {
-                            if (p.getType().equals(dft.getFieldType()) && p.isMultiple() == dft.isMultiple()) {
-                                dft.setEffectiveNodeTypeItem(p);
-                                if (p.isAutoCreated() && !dft.isAutoCreated()) {
-                                    log.warn("Matching residual Effective NodeType {} property is autoCreated while its corresponding field named {} in Document Type {} is not. "
+                            if (p.getType().equals(cft.getFieldType()) && p.isMultiple() == cft.isMultiple()) {
+                                cft.setEffectiveNodeTypeItem(p);
+                                if (p.isAutoCreated() && !cft.isAutoCreated()) {
+                                    log.warn("Matching residual Effective NodeType {} property is autoCreated while its corresponding field named {} in ContentType {} is not. "
                                             + "Field is corrected to be autoCreated."
-                                            , new String[]{ent.getName(), dft.getName(), getName()});
-                                    dft.setAutoCreated(true);
+                                            , new String[]{ent.getName(), cft.getName(), getName()});
+                                    cft.setAutoCreated(true);
                                 }
-                                if (p.isMandatory() && !dft.isMandatory()) {
-                                    log.warn("Matching residual Effective NodeType {} property is mandatory while its corresponding field named {} in Document Type {} is not. "
+                                if (p.isMandatory() && !cft.isMandatory()) {
+                                    log.warn("Matching residual Effective NodeType {} property is mandatory while its corresponding field named {} in ContentType {} is not. "
                                             + "Field is corrected to be mandatory."
-                                            , new String[]{ent.getName(), dft.getName(), getName()});
-                                    dft.setMandatory(true);
+                                            , new String[]{ent.getName(), cft.getName(), getName()});
+                                    cft.setMandatory(true);
                                 }
-                                if (p.isProtected() && !dft.isProtected()) {
-                                    log.warn("Matching residual Effective NodeType {} property is protected while its corresponding field named {} in Document Type {} is not. "
+                                if (p.isProtected() && !cft.isProtected()) {
+                                    log.warn("Matching residual Effective NodeType {} property is protected while its corresponding field named {} in ContentType {} is not. "
                                             + "Field is corrected to be protected."
-                                            , new String[]{ent.getName(), dft.getName(), getName()});
-                                    dft.setProtected(true);
+                                            , new String[]{ent.getName(), cft.getName(), getName()});
+                                    cft.setProtected(true);
                                 }
                                 break;
                             }
                         }
                     }
-                    if (dft.getEffectiveNodeTypeItem() == null) {
-                        log.error("Document Type {} defines property field named {} without matching named or residual property in its Effective NodeType {}. "
+                    if (cft.getEffectiveNodeTypeItem() == null) {
+                        log.error("ContentType {} defines property field named {} without matching named or residual property in its Effective NodeType {}. "
                                 + "Field is removed."
-                                , new String[]{getName(), dft.getName(), ent.getName()});
+                                , new String[]{getName(), cft.getName(), ent.getName()});
                         fieldNameIterator.remove();
                     }
                 }
                 else {
-                    // first check predefined document types cache: it might contain an aggregated (with optional mixins) document type
-                    DocumentTypeImpl ct = dtCache.getType(dft.getItemType());
+                    // first check predefined ContentTypes cache: it might contain an aggregated (with optional mixins) ContentType
+                    ContentTypeImpl ct = ctCache.getType(cft.getItemType());
                     if (ct == null) {
-                        // not an aggregated document type: get it from the aggregated document type cache (which also contains every non-aggregated type)
-                        ct = dtCache.getAdtCache().get(dft.getItemType());
+                        // not an aggregated ContentType: get it from the aggregated ContentType cache (which also contains every non-aggregated type)
+                        ct = ctCache.getActCache().get(cft.getItemType());
                     }
                     if (ct == null) {
-                        log.error("Document Type {} defines node child field named {} with unresolved type {}. "
+                        log.error("ContentType {} defines node child field named {} with unresolved type {}. "
                                 + "Field is removed.",
-                                new String[]{getName(), dft.getName(), dft.getItemType()});
+                                new String[]{getName(), cft.getName(), cft.getItemType()});
                         fieldNameIterator.remove();
                     }
                     else {
                         List<EffectiveNodeTypeChild> children = ent.getChildren().get("*");
                         if (children != null) {
                             for (EffectiveNodeTypeChild c : children) {
-                                if (!dft.isMultiple() || c.isMultiple()) {
+                                if (!cft.isMultiple() || c.isMultiple()) {
                                     boolean match = true;
                                     for (String requiredType : c.getRequiredPrimaryTypes()) {
-                                        if (!ct.isDocumentType(requiredType)) {
+                                        if (!ct.isContentType(requiredType)) {
                                             match = false;
                                             break;
                                         }
                                     }
                                     if (match) {
-                                        if (c.isAutoCreated() && !dft.isAutoCreated()) {
-                                            log.warn("Matching residual Effective NodeType {} child node is autoCreated while its corresponding field named {} in Document Type {} is not. "
+                                        if (c.isAutoCreated() && !cft.isAutoCreated()) {
+                                            log.warn("Matching residual Effective NodeType {} child node is autoCreated while its corresponding field named {} in ContentType {} is not. "
                                                     + "Field is corrected to be autoCreated."
-                                                    , new String[]{ent.getName(), dft.getName(), getName()});
-                                            dft.setAutoCreated(true);
+                                                    , new String[]{ent.getName(), cft.getName(), getName()});
+                                            cft.setAutoCreated(true);
                                         }
-                                        if (c.isMandatory() && !dft.isMandatory()) {
-                                            log.warn("Matching residual Effective NodeType {} child node is mandatory while its corresponding field named {} in Document Type {} is not. "
+                                        if (c.isMandatory() && !cft.isMandatory()) {
+                                            log.warn("Matching residual Effective NodeType {} child node is mandatory while its corresponding field named {} in ContentType {} is not. "
                                                     + "Field is corrected to be autoCreated."
-                                                    , new String[]{ent.getName(), dft.getName(), getName()});
-                                            dft.setMandatory(true);
+                                                    , new String[]{ent.getName(), cft.getName(), getName()});
+                                            cft.setMandatory(true);
                                         }
-                                        if (c.isProtected() && !dft.isProtected()) {
-                                            log.warn("Matching residual Effective NodeType {} child node is protected while its corresponding field named {} in Document Type {} is not. "
+                                        if (c.isProtected() && !cft.isProtected()) {
+                                            log.warn("Matching residual Effective NodeType {} child node is protected while its corresponding field named {} in ContentType {} is not. "
                                                     + "Field is corrected to be autoCreated."
-                                                    , new String[]{ent.getName(), dft.getName(), getName()});
-                                            dft.setProtected(true);
+                                                    , new String[]{ent.getName(), cft.getName(), getName()});
+                                            cft.setProtected(true);
                                         }
-                                        dft.setEffectiveNodeTypeItem(c);
+                                        cft.setEffectiveNodeTypeItem(c);
                                         break;
                                     }
                                 }
                             }
                         }
-                        if (dft.getEffectiveNodeTypeItem() == null) {
-                            log.error("Document Type {} defines node child field named {} without matching named or residual child node in its Effective NodeType {}. "
+                        if (cft.getEffectiveNodeTypeItem() == null) {
+                            log.error("ContentType {} defines node child field named {} without matching named or residual child node in its Effective NodeType {}. "
                                     + "Field is removed.",
-                                    new String[]{getName(), dft.getName(), ent.getName()});
+                                    new String[]{getName(), cft.getName(), ent.getName()});
                             fieldNameIterator.remove();
                         }
                     }

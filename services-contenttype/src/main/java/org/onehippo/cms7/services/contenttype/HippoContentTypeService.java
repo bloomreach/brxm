@@ -30,7 +30,7 @@ public class HippoContentTypeService implements ContentTypeService {
 
     private Session serviceSession;
     private EffectiveNodeTypesCache entCache;
-    private DocumentTypesCache dtCache;
+    private ContentTypesCache ctCache;
 
     private EventListener nodeTypesChangeListener = new EventListener() {
         @Override
@@ -38,18 +38,18 @@ public class HippoContentTypeService implements ContentTypeService {
             synchronized (HippoContentTypeService.this) {
                 // delete caches to be rebuild again on next invocation
                 entCache = null;
-                dtCache = null;
+                ctCache = null;
             }
         }
     };
 
-    private EventListener documentTypesChangeListener = new EventListener() {
+    private EventListener contentTypesChangeListener = new EventListener() {
         @Override
         public void onEvent(final EventIterator events) {
-            // TODO: make it more finegrained by only reacting to changes of 'committed' document types
+            // TODO: make it more finegrained by only reacting to changes of 'committed' document types?
             synchronized (HippoContentTypeService.this) {
                 // delete caches to be rebuild again on next invocation
-                dtCache = null;
+                ctCache = null;
             }
         }
     };
@@ -62,20 +62,20 @@ public class HippoContentTypeService implements ContentTypeService {
                 Event.NODE_ADDED|Event.NODE_REMOVED|Event.NODE_MOVED|Event.PROPERTY_ADDED|Event.PROPERTY_CHANGED|Event.PROPERTY_REMOVED,
                 "/jcr:system/jcr:nodeTypes", true, null, null, false);
 
-        // register our documentTypesChangeListener
-        serviceSession.getWorkspace().getObservationManager().addEventListener(documentTypesChangeListener,
+        // register our contentTypesChangeListener
+        serviceSession.getWorkspace().getObservationManager().addEventListener(contentTypesChangeListener,
                 Event.NODE_ADDED|Event.NODE_REMOVED|Event.NODE_MOVED|Event.PROPERTY_ADDED|Event.PROPERTY_CHANGED|Event.PROPERTY_REMOVED,
                 "/hippo:namespaces", true, null, null, false);
     }
 
     public synchronized void shutdown() {
         try {
-            serviceSession.getWorkspace().getObservationManager().removeEventListener(documentTypesChangeListener);
+            serviceSession.getWorkspace().getObservationManager().removeEventListener(contentTypesChangeListener);
             serviceSession.getWorkspace().getObservationManager().removeEventListener(nodeTypesChangeListener);
         } catch (RepositoryException e) {
             // ignore
         }
-        dtCache = null;
+        ctCache = null;
         entCache = null;
         serviceSession = null;
     }
@@ -90,11 +90,11 @@ public class HippoContentTypeService implements ContentTypeService {
     }
 
     @Override
-    public synchronized DocumentTypesCache getDocumentTypes() throws RepositoryException {
-        if (dtCache == null) {
-            dtCache = new DocumentTypesCache(serviceSession, getEffectiveNodeTypes());
+    public synchronized ContentTypesCache getContentTypes() throws RepositoryException {
+        if (ctCache == null) {
+            ctCache = new ContentTypesCache(serviceSession, getEffectiveNodeTypes());
             // TODO: check if not already changed again
         }
-        return dtCache;
+        return ctCache;
     }
 }

@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField {
+public class ContentTypeFieldImpl extends Sealable implements ContentTypeField {
 
     private final String definingType;
     private final String name;
@@ -49,7 +49,7 @@ public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField
         fieldProperties = Collections.unmodifiableMap(fieldProperties);
     }
 
-    public DocumentTypeFieldImpl(String definingType, String name, String fieldType, String itemType) {
+    public ContentTypeFieldImpl(String definingType, String name, String fieldType, String itemType) {
         this.definingType = definingType;
         this.name = name;
         this.fieldType = fieldType;
@@ -57,7 +57,7 @@ public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField
         this.propertyField = true;
     }
 
-    public DocumentTypeFieldImpl(String definingType, String name, String fieldType) {
+    public ContentTypeFieldImpl(String definingType, String name, String fieldType) {
         this.definingType = definingType;
         this.name = name;
         this.fieldType = fieldType;
@@ -65,7 +65,7 @@ public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField
         this.propertyField = false;
     }
 
-    public DocumentTypeFieldImpl(EffectiveNodeTypeProperty property) {
+    public ContentTypeFieldImpl(EffectiveNodeTypeProperty property) {
         this.definingType = property.getDefiningType();
         this.nti = property;
         this.primaryField = false;
@@ -81,7 +81,7 @@ public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField
         this.ordered = false;
     }
 
-    public DocumentTypeFieldImpl(EffectiveNodeTypeChild child) {
+    public ContentTypeFieldImpl(EffectiveNodeTypeChild child) {
         this.definingType = child.getDefiningType();
         this.nti = child;
         this.primaryField = false;
@@ -97,7 +97,7 @@ public class DocumentTypeFieldImpl extends Sealable implements DocumentTypeField
         this.ordered = false;
     }
 
-    public DocumentTypeFieldImpl(DocumentTypeFieldImpl other) {
+    public ContentTypeFieldImpl(ContentTypeFieldImpl other) {
         this.definingType = other.definingType;
         this.nti = other.nti;
         this.primaryField = other.primaryField;

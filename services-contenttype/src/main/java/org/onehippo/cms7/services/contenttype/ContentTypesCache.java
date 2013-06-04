@@ -40,9 +40,9 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class DocumentTypesCache extends Sealable implements DocumentTypes {
+class ContentTypesCache extends Sealable implements ContentTypes {
 
-    static final Logger log = LoggerFactory.getLogger(DocumentTypesCache.class);
+    static final Logger log = LoggerFactory.getLogger(ContentTypesCache.class);
 
     private volatile static long versionSequence = 0;
 
@@ -66,20 +66,20 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
     }
 
     private final EffectiveNodeTypesCache entCache;
-    private final AggregatedDocumentTypesCache adtCache = new AggregatedDocumentTypesCache();
+    private final AggregatedContentTypesCache actCache = new AggregatedContentTypesCache();
     private Map<String, String> propertyTypeMappings = new HashMap<String, String>(jcrPropertyTypesMap);
-    private Map<String, DocumentTypeImpl> types = new TreeMap<String, DocumentTypeImpl>();
-    private SortedMap<String, Set<DocumentType>> prefixesMap;
+    private Map<String, ContentTypeImpl> types = new TreeMap<String, ContentTypeImpl>();
+    private SortedMap<String, Set<ContentType>> prefixesMap;
 
-    public DocumentTypesCache(Session session, EffectiveNodeTypesCache entCache) throws RepositoryException {
+    public ContentTypesCache(Session session, EffectiveNodeTypesCache entCache) throws RepositoryException {
         this.entCache = entCache;
-        loadDocumentTypes(session, true);
+        loadContentTypes(session, true);
     }
 
-    private void loadDocumentTypes(Session session, boolean allowRetry) throws RepositoryException {
+    private void loadContentTypes(Session session, boolean allowRetry) throws RepositoryException {
         try {
 
-            // 1st pass: load shallow versions of all document types
+            // 1st pass: load shallow versions of all ContentTypes
             Map<String, Node> typeNodes = new HashMap<String, Node>();
 
             Node namespacePrefixes = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH);
@@ -115,13 +115,13 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
                                         // TODO: for now don't support document/compound type aliasing: those are assumed only used/needed for custom editors, not a different type
                                     }
                                     else {
-                                        DocumentTypeImpl dt = new DocumentTypeImpl(namespacePrefix.getName(), typeTemplate.getName(), version);
-                                        if (entCache.getType(dt.getName()) == null) {
-                                            log.error("No corresponding Effective NodeType found for defined Document Type named {}. Type ignored.", dt.getName());
+                                        ContentTypeImpl ct = new ContentTypeImpl(namespacePrefix.getName(), typeTemplate.getName(), version);
+                                        if (entCache.getType(ct.getName()) == null) {
+                                            log.error("No corresponding Effective NodeType found for defined ContentType named {}. Type ignored.", ct.getName());
                                         }
                                         else {
-                                            types.put(dt.getName(), dt);
-                                            typeNodes.put(dt.getName(), typeNode);
+                                            types.put(ct.getName(), ct);
+                                            typeNodes.put(ct.getName(), typeNode);
                                         }
                                     }
                                 }
@@ -133,7 +133,7 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
 
             // 2nd pass: load each type
             for (String typeName : typeNodes.keySet()) {
-                loadDocumentType(typeName, typeNodes.get(typeName));
+                loadContentType(typeName, typeNodes.get(typeName));
             }
 
             /* TODO
@@ -142,40 +142,31 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
                these extended field properties needs to have all fields resolved first which complicates the proper moment for sealing
 
             for (String typeName : typeNodes.keySet()) {
-                loadDocumentTypeFieldProperties((DocumentTypeImpl)dtCache.getType(typeName), typeNodes.get(typeName), dtCache);
+                loadContentTypeFieldProperties(types.get(typeName), typeNodes.get(typeName));
             }
             */
 
-            Map<String, DocumentTypeImpl> allDocumentTypes = new HashMap<String, DocumentTypeImpl>(types);
-
-            // 3rd pass: create derived document types for all effective node types without explicit document type definition
-            //             and initialize the concrete document types with their underlying (base) effective node type
+            // 3rd pass: create derived ContentTypes for all effective node types without explicit ContentType definition
+            //             and initialize the explicitly defined ContentTypes with their underlying (base) effective node type
             for (Map.Entry<String, EffectiveNodeTypeImpl> entry : entCache.getTypes().entrySet()) {
-                DocumentTypeImpl dt = allDocumentTypes.get(entry.getKey());
+                ContentTypeImpl ct = types.get(entry.getKey());
                 EffectiveNodeTypeImpl ent = new EffectiveNodeTypeImpl(entry.getValue());
-                if (dt == null) {
-                    allDocumentTypes.put(entry.getKey(), new DocumentTypeImpl(ent, version));
+                if (ct == null) {
+                    types.put(entry.getKey(), new ContentTypeImpl(ent, version));
                 }
                 else {
-                    dt.setEffectiveNodeType(ent);
+                    ct.setEffectiveNodeType(ent);
                 }
             }
 
-            // 4th pass: resolve and cache all document types
-            for (String name : allDocumentTypes.keySet()) {
-                resolveDocumentType(name, allDocumentTypes);
+            // 4th pass: resolve and cache all ContentTypes
+            for (String name : types.keySet()) {
+                resolveContentType(name);
             }
 
-            // update cache map of defined document types
-            for (Map.Entry<String, DocumentTypeImpl> entry : allDocumentTypes.entrySet()) {
-                if (!entry.getValue().isDerivedType()) {
-                    types.put(entry.getKey(), entry.getValue());
-                }
-            }
-
-            // 5th pass: resolve all document type fields and seal all types
-            for (AggregatedDocumentTypesCache.Key key : adtCache.getKeys()) {
-                resolveDocumentTypeFieldsAndSeal(adtCache.get(key));
+            // 5th pass: resolve all ContentTypeFields and seal all types
+            for (AggregatedContentTypesCache.Key key : actCache.getKeys()) {
+                resolveContentTypeFieldsAndSeal(actCache.get(key));
             }
 
             //lock down the cache itself
@@ -184,15 +175,15 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
 
         catch (RepositoryException re) {
             if (allowRetry) {
-                loadDocumentTypes(session, false);
+                loadContentTypes(session, false);
             }
             throw re;
         }
     }
 
-    private void loadDocumentType(String typeName, Node typeNode) throws RepositoryException {
-        DocumentTypeImpl dt = types.get(typeName);
-        dt.setMixin(JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_MIXIN, false));
+    private void loadContentType(String typeName, Node typeNode) throws RepositoryException {
+        ContentTypeImpl ct = types.get(typeName);
+        ct.setMixin(JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_MIXIN, false));
 
         if (typeNode.hasProperty(HippoNodeType.HIPPO_SUPERTYPE)) {
             Value[] values = typeNode.getProperty(HippoNodeType.HIPPO_SUPERTYPE).getValues();
@@ -203,11 +194,11 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
                     continue;
                 }
                 else {
-                    dt.getSuperTypes().add(superType);
+                    ct.getSuperTypes().add(superType);
                 }
             }
         }
-        dt.setCascadeValidate(JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_CASCADEVALIDATION, false));
+        ct.setCascadeValidate(JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_CASCADEVALIDATION, false));
 
         if (typeNode.hasNodes()) {
             for (NodeIterator fieldsIterator = typeNode.getNodes(); fieldsIterator.hasNext(); ) {
@@ -215,75 +206,75 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
 
                 if (field.isNodeType(HippoNodeType.NT_FIELD)) {
 
-                    DocumentTypeFieldImpl df;
+                    ContentTypeFieldImpl ctf;
                     String fieldType;
 
                     String fieldName = field.getProperty(HippoNodeType.HIPPO_PATH).getString();
 
                     if ("*".equals(fieldName)) {
-                        // DocumentType model doesn't support residual fields
+                        // ContentType model doesn't support residual fields
                         continue;
                     }
 
                     fieldType = JcrUtils.getStringProperty(field, HippoNodeType.HIPPOSYSEDIT_TYPE, PropertyType.TYPENAME_STRING);
 
                     if (propertyTypeMappings.containsKey(fieldType)) {
-                        df = new DocumentTypeFieldImpl(dt.getName(), fieldName, fieldType, propertyTypeMappings.get(fieldType));
+                        ctf = new ContentTypeFieldImpl(ct.getName(), fieldName, fieldType, propertyTypeMappings.get(fieldType));
                     }
                     else if (types.containsKey(fieldType)) {
-                        df = new DocumentTypeFieldImpl(dt.getName(), fieldName, fieldType);
+                        ctf = new ContentTypeFieldImpl(ct.getName(), fieldName, fieldType);
                     }
                     else if (entCache.getTypes().containsKey(fieldType)) {
-                        df = new DocumentTypeFieldImpl(dt.getName(), fieldName, fieldType);
+                        ctf = new ContentTypeFieldImpl(ct.getName(), fieldName, fieldType);
                     }
                     else {
                         // TODO: log warn unknown fieldType value
                         continue;
                     }
-                    df.setMandatory(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MANDATORY, false));
-                    df.setAutoCreated(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_AUTOCREATED, false));
-                    df.setMultiple(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MULTIPLE, false));
-                    df.setOrdered(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_ORDERED, false));
-                    df.setProtected(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PROTECTED, false));
-                    df.setPrimaryField(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PRIMARY, false));
+                    ctf.setMandatory(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MANDATORY, false));
+                    ctf.setAutoCreated(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_AUTOCREATED, false));
+                    ctf.setMultiple(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MULTIPLE, false));
+                    ctf.setOrdered(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_ORDERED, false));
+                    ctf.setProtected(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PROTECTED, false));
+                    ctf.setPrimaryField(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PRIMARY, false));
 
                     if (field.hasProperty(HippoNodeType.HIPPO_VALIDATORS)) {
                         Value[] values = field.getProperty(HippoNodeType.HIPPO_VALIDATORS).getValues();
                         for (Value value : values) {
                             String validator = value.getString();
                             if (validator.length() > 0) {
-                                df.getValidators().add(validator);
+                                ctf.getValidators().add(validator);
                             }
                         }
                     }
-                    dt.getFields().put(df.getName(), df);
+                    ct.getFields().put(ctf.getName(), ctf);
                 }
             }
         }
     }
 
-    private void resolveDocumentType(String name, Map<String, DocumentTypeImpl> types) {
-        DocumentTypeImpl dt = types.get(name);
+    private void resolveContentType(String name) {
+        ContentTypeImpl ct = types.get(name);
 
         // skip already resolved types
-        if (adtCache.get(name) != null) {
+        if (actCache.get(name) != null) {
             return;
         }
 
         Set<String> mixins = new TreeSet<String>();
 
-        for (String superType : dt.getSuperTypes()) {
-            // ensure inherited document types are resolved first
-            resolveDocumentType(superType, types);
+        for (String superType : ct.getSuperTypes()) {
+            // ensure inherited ContentTypes are resolved first
+            resolveContentType(superType);
         }
 
         // for non-derived types check if all super types are really defined in the underlying node type
-        // this might not be the case for mixins added after initial definition/creation of the document type
+        // this might not be the case for mixins added after initial definition/creation of the ContentType
         // See also: CMS7-7070
-        if (!dt.isDerivedType()) {
-            for (Iterator<String> iter = dt.getSuperTypes().iterator(); iter.hasNext();) {
+        if (!ct.isDerivedType()) {
+            for (Iterator<String> iter = ct.getSuperTypes().iterator(); iter.hasNext();) {
                 String superType = iter.next();
-                if (!dt.getEffectiveNodeType().getSuperTypes().contains(superType)) {
+                if (!ct.getEffectiveNodeType().getSuperTypes().contains(superType)) {
                     // found a superType not enforced by the underlying node type, so not really a superType but a mixin
                     iter.remove();
                     // save it temporarily to create an aggregated variant later
@@ -291,12 +282,12 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
                 }
                 else {
                     // check if superType itself contains aggregated mixins, then those also need/should be aggregated
-                    // NOTE: the DocumentTypeEditor itself doesn't do this (yet)
-                    DocumentTypeImpl sdt = types.get(superType);
-                    if (!sdt.isDerivedType() && sdt.getAggregatedTypes().size() > 1) {
-                        for (String mixin : sdt.getAggregatedTypes()) {
+                    // NOTE: the CMS DocumentTypeEditor itself doesn't do this (yet)
+                    ContentTypeImpl sct = types.get(superType);
+                    if (!sct.isDerivedType() && sct.getAggregatedTypes().size() > 1) {
+                        for (String mixin : sct.getAggregatedTypes()) {
                             if (!mixin.equals(superType) // skip superType itself
-                                    && !dt.getEffectiveNodeType().getSuperTypes().contains(mixin)) {
+                                    && !ct.getEffectiveNodeType().getSuperTypes().contains(mixin)) {
                                 mixins.add(mixin);
                             }
                         }
@@ -305,72 +296,82 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
             }
         }
 
-        if (!dt.getSuperTypes().isEmpty()) {
-            DocumentTypeImpl sdt = getAggregatedDocumentType(dt.getSuperTypes());
-            dt.merge(sdt, true);
+        if (!ct.getSuperTypes().isEmpty()) {
+            ContentTypeImpl sct = getAggregatedContentType(ct.getSuperTypes());
+            ct.merge(sct, true);
         }
 
-        dt = adtCache.put(dt);
+        ct = actCache.put(ct);
+
+        if (!ct.isDerivedType() && !ct.isMixin()) {
+            if (ct.isContentType(HippoNodeType.NT_DOCUMENT)) {
+                ct.setDocumentType(true);
+            }
+            // TODO: hippo:compound not defined as HippoNodeType constant
+            else if (ct.isContentType("hippo:compound")) {
+                ct.setCompoundType(true);
+            }
+        }
 
         if (!mixins.isEmpty()) {
-            // we've got a document type with optional/extra mixin(s) specified as super type
+            // we've got a ContentType with optional/extra mixin(s) specified as super type
             // drop mixins which are already contained
             for (Iterator<String> mixinIterator = mixins.iterator(); mixinIterator.hasNext(); ) {
-                if (dt.isDocumentType(mixinIterator.next())) {
+                if (ct.isContentType(mixinIterator.next())) {
                     mixinIterator.remove();
                 }
             }
             if (!mixins.isEmpty()) {
                 // create an aggregated (default) variant
-                dt = new DocumentTypeImpl(dt);
-                dt.merge(getAggregatedDocumentType(mixins), false);
-                dt = adtCache.put(dt);
+                ct = new ContentTypeImpl(ct);
+                ct.merge(getAggregatedContentType(mixins), false);
+                ct = actCache.put(ct);
             }
         }
-        // update dt in types map to be picked up during the recursive resolving
-        types.put(name, dt);
+        // update ct in types map to be picked up during the recursive resolving
+        types.put(name, ct);
     }
 
-    private DocumentTypeImpl getAggregatedDocumentType(Set<String> names) {
+    private ContentTypeImpl getAggregatedContentType(Set<String> names) {
         if (names.size() == 1) {
-            // must already be in adtCache
-            return adtCache.get(names.iterator().next());
+            // must already be in actCache
+            return actCache.get(names.iterator().next());
         }
 
-        AggregatedDocumentTypesCache.Key key = adtCache.getKey(names);
-        DocumentTypeImpl result = adtCache.get(key);
+        AggregatedContentTypesCache.Key key = actCache.getKey(names);
+        ContentTypeImpl result = actCache.get(key);
         if (result != null) {
             return result;
         }
 
         boolean newAggregate = false;
         while (!key.getNames().isEmpty()) {
-            AggregatedDocumentTypesCache.Key subKey = adtCache.findBest(key);
-            DocumentTypeImpl dt = adtCache.get(subKey);
+            AggregatedContentTypesCache.Key subKey = actCache.findBest(key);
+            ContentTypeImpl ct = actCache.get(subKey);
             if (result == null) {
-                result = new DocumentTypeImpl(dt); // clone as aggregate
+                result = new ContentTypeImpl(ct); // clone as aggregate
             }
             else {
-                if (result.merge(dt, false)) {
+                if (result.merge(ct, false)) {
                     newAggregate = true;
                 }
             }
             key = key.subtract(subKey);
         }
         if (newAggregate) {
-            result = adtCache.put(result);
+            result = actCache.put(result);
         }
 
         return result;
     }
 
-    private void resolveDocumentTypeFieldsAndSeal(DocumentTypeImpl dt) {
-        if (!dt.isSealed()) {
-            for (String s : dt.getSuperTypes()) {
-                resolveDocumentTypeFieldsAndSeal(adtCache.get(s));
+    private void resolveContentTypeFieldsAndSeal(ContentTypeImpl ct) {
+        if (!ct.isSealed()) {
+            for (String s : ct.getSuperTypes()) {
+                resolveContentTypeFieldsAndSeal(actCache.get(s));
             }
-            dt.resolveFields(this);
-            dt.seal();
+            ct.resolveFields(this);
+            ct.seal();
         }
     }
 
@@ -385,18 +386,18 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
         types = Collections.unmodifiableMap(types);
 
         // create the prefixesMap for accessing the predefined types by their prefix
-        prefixesMap = new TreeMap<String, Set<DocumentType>>();
-        for (Map.Entry<String, DocumentTypeImpl> entry : types.entrySet()) {
-            // recreate the prefix as the DocumentType itself may have been 'upgraded' to an aggregate without a (single) prefix
+        prefixesMap = new TreeMap<String, Set<ContentType>>();
+        for (Map.Entry<String, ContentTypeImpl> entry : types.entrySet()) {
+            // recreate the prefix as the ContentType itself may have been 'upgraded' to an aggregate without a (single) prefix
             String prefix = entry.getKey().substring(0, entry.getKey().indexOf(":"));
-            Set<DocumentType> entries = prefixesMap.get(prefix);
+            Set<ContentType> entries = prefixesMap.get(prefix);
             if (entries == null) {
-                entries = new LinkedHashSet<DocumentType>();
+                entries = new LinkedHashSet<ContentType>();
                 prefixesMap.put(prefix, entries);
             }
             entries.add(entry.getValue());
         }
-        for (Map.Entry<String, Set<DocumentType>> entry : prefixesMap.entrySet()) {
+        for (Map.Entry<String, Set<ContentType>> entry : prefixesMap.entrySet()) {
             entry.setValue(Collections.unmodifiableSet(entry.getValue()));
         }
         prefixesMap = Collections.unmodifiableSortedMap(prefixesMap);
@@ -408,12 +409,12 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
     }
 
     @Override
-    public DocumentTypeImpl getType(String name) {
+    public ContentTypeImpl getType(String name) {
         return types.get(name);
     }
 
     @Override
-    public SortedMap<String, Set<DocumentType>> getTypesByPrefix() {
+    public SortedMap<String, Set<ContentType>> getTypesByPrefix() {
         return prefixesMap;
     }
 
@@ -422,27 +423,26 @@ class DocumentTypesCache extends Sealable implements DocumentTypes {
         return entCache;
     }
 
-    public AggregatedDocumentTypesCache getAdtCache() {
-        return adtCache;
+    public AggregatedContentTypesCache getActCache() {
+        return actCache;
     }
     @Override
-    public DocumentType getDocumentTypeForNode(Node node) throws RepositoryException {
-        DocumentType dt = null;
+    public ContentType getContentTypeForNode(Node node) throws RepositoryException {
         Set<String> names = new HashSet<String>();
         names.add(node.getPrimaryNodeType().getName());
         for (NodeType mixin : node.getMixinNodeTypes()) {
             names.add(mixin.getName());
         }
-        return getAggregatedDocumentType(names);
+        return getAggregatedContentType(names);
     }
 
     @Override
-    public DocumentType getDocumentTypeForNodeByUuid(Session session, String uuid) throws RepositoryException {
-        return getDocumentTypeForNode(session.getNodeByIdentifier(uuid));
+    public ContentType getContentTypeForNodeByUuid(Session session, String uuid) throws RepositoryException {
+        return getContentTypeForNode(session.getNodeByIdentifier(uuid));
     }
 
     @Override
-    public DocumentType getDocumentTypeForNodeByPath(Session session, String path) throws RepositoryException {
-        return getDocumentTypeForNode(session.getNode(path));
+    public ContentType getContentTypeForNodeByPath(Session session, String path) throws RepositoryException {
+        return getContentTypeForNode(session.getNode(path));
     }
 }

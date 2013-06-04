@@ -28,10 +28,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Implements an effective DocumentTypeImpl cache of all DocumentTypes and aggregated versions thereof, using a bit set for storing the
- * information about participating DocumentTypes in a set.
+ * Implements an effective ContentTypeImpl cache of all ContentTypes and aggregated versions thereof, using a bit set for storing the
+ * information about participating ContentTypes in a set.
  */
-public class AggregatedDocumentTypesCache {
+public class AggregatedContentTypesCache {
 
     /**
      * constant for bits-per-word
@@ -60,7 +60,7 @@ public class AggregatedDocumentTypesCache {
     /**
      * cache of pre-built aggregations of node types
      */
-    private final HashMap<Key, DocumentTypeImpl> aggregates;
+    private final HashMap<Key, ContentTypeImpl> aggregates;
 
     /**
      * A lookup table for bit numbers for a given name.
@@ -79,9 +79,9 @@ public class AggregatedDocumentTypesCache {
     /**
      * Creates a new bitset effective node type cache
      */
-    public AggregatedDocumentTypesCache() {
+    public AggregatedContentTypesCache() {
         sortedKeys = new HashMap<Integer, TreeSet<Key>>();
-        aggregates = new HashMap<Key, DocumentTypeImpl>();
+        aggregates = new HashMap<Key, ContentTypeImpl>();
     }
 
     public Key getKey(String name) {
@@ -92,7 +92,7 @@ public class AggregatedDocumentTypesCache {
         return new Key(names);
     }
 
-    public DocumentTypeImpl put(DocumentTypeImpl dt) {
+    public ContentTypeImpl put(ContentTypeImpl dt) {
         return put(getKey(dt.getAggregatedTypes()), dt);
     }
 
@@ -100,8 +100,8 @@ public class AggregatedDocumentTypesCache {
         return aggregates.keySet();
     }
 
-    public DocumentTypeImpl put(Key key, DocumentTypeImpl dt) {
-        DocumentTypeImpl existing = get(key);
+    public ContentTypeImpl put(Key key, ContentTypeImpl dt) {
+        ContentTypeImpl existing = get(key);
         if (existing != null) {
             // don't overwrite an existing element, return what already was stored
             return existing;
@@ -157,15 +157,15 @@ public class AggregatedDocumentTypesCache {
         return aggregates.containsKey(key);
     }
 
-    public DocumentTypeImpl get(Key key) {
+    public ContentTypeImpl get(Key key) {
         return aggregates.get(key);
     }
 
-    public DocumentTypeImpl get(String name) {
+    public ContentTypeImpl get(String name) {
         return aggregates.get(getKey(name));
     }
 
-    public DocumentTypeImpl get(Set<String> names) {
+    public ContentTypeImpl get(Set<String> names) {
         return aggregates.get(getKey(names));
     }
 

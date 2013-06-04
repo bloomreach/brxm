@@ -5,9 +5,10 @@
   "prefix" : null,
   "superTypes" : [ "hippo:container", "hippostd:container", "nt:base" ],
   "aggregatedTypes" : [ "hippostd:relaxed", "test:test" ],
-  "compound" : false,
+  "documentType" : false,
+  "compoundType" : false,
   "mixin" : false,
-  "template" : false,
+  "templateType" : false,
   "cascadeValidate" : false,
   "fields" : {
     "test:title" : {

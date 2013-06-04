@@ -156,82 +156,82 @@ public class HippoContentTypeServiceTest extends PluginTest {
     }
 
     @Test
-    public void testDocumentTypesSealed() throws Exception {
+    public void testContentTypesSealed() throws Exception {
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         if (service != null) {
-            DocumentTypes dtCache = service.getDocumentTypes();
+            ContentTypes ctCache = service.getContentTypes();
             try {
-                dtCache.getTypesByPrefix().clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getTypesByPrefix().clear()");
+                ctCache.getTypesByPrefix().clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getTypesByPrefix().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getTypesByPrefix().get("test").clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getTypesByPrefix().get(test).clear()");
+                ctCache.getTypesByPrefix().get("test").clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getTypesByPrefix().get(test).clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getSuperTypes().clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getType(test:test).getSuperTypes().clear()");
+                ctCache.getType("test:test").getSuperTypes().clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getSuperTypes().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getFields().clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getType(test:test).getFields().clear()");
+                ctCache.getType("test:test").getFields().clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getFields().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getFields().get("test:title").getFieldProperties().clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getType(test:test).getFields().get(test:title).getFieldProperties().clear()");
+                ctCache.getType("test:test").getFields().get("test:title").getFieldProperties().clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getFields().get(test:title).getFieldProperties().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getFields().get("test:title").getValidators().clear();
-                fail("UnsupportedOperationException expected for DocumentTypes.getType(test:test).getFields().get(test:title).getValidators().clear()");
+                ctCache.getType("test:test").getFields().get("test:title").getValidators().clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getFields().get(test:title).getValidators().clear()");
             } catch (UnsupportedOperationException uoe) {}
 
-                // repeat sealed check for EffectiveNodeType underlying the DocumentType
+                // repeat sealed check for EffectiveNodeType underlying the ContentType
             try {
-                dtCache.getType("test:test").getEffectiveNodeType().getSuperTypes().clear();
+                ctCache.getType("test:test").getEffectiveNodeType().getSuperTypes().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getSuperTypes().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getEffectiveNodeType().getChildren().clear();
+                ctCache.getType("test:test").getEffectiveNodeType().getChildren().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getChildren().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getEffectiveNodeType().getChildren().get("test:child").clear();
+                ctCache.getType("test:test").getEffectiveNodeType().getChildren().get("test:child").clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getChildren().get(test:child).clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getEffectiveNodeType().getChildren().get("test:child").get(0).getRequiredPrimaryTypes().clear();
+                ctCache.getType("test:test").getEffectiveNodeType().getChildren().get("test:child").get(0).getRequiredPrimaryTypes().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getChildren().get(test:child).get(0).getRequiredPrimaryTypes().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getEffectiveNodeType().getProperties().clear();
+                ctCache.getType("test:test").getEffectiveNodeType().getProperties().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getProperties().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getEffectiveNodeType().getProperties().get("test:title").clear();
+                ctCache.getType("test:test").getEffectiveNodeType().getProperties().get("test:title").clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getProperties().get(test:title).clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getEffectiveNodeType().getProperties().get("test:title").get(0).getDefaultValues().clear();
+                ctCache.getType("test:test").getEffectiveNodeType().getProperties().get("test:title").get(0).getDefaultValues().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getProperties().get(test:title).get(0).getDefaultValues().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                dtCache.getType("test:test").getEffectiveNodeType().getProperties().get("test:title").get(0).getValueConstraints().clear();
+                ctCache.getType("test:test").getEffectiveNodeType().getProperties().get("test:title").get(0).getValueConstraints().clear();
                 fail("UnsupportedOperationException expected for EffectiveNodeTypes.getType(test:test).getProperties().get(test:title).get(0).getValueConstraints().clear()");
             } catch (UnsupportedOperationException uoe) {}
         }
     }
 
     @Test
-    public void testDocumentType() throws Exception {
+    public void testContentType() throws Exception {
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         if (service != null) {
-            DocumentTypes dtCache = service.getDocumentTypes();
-            DocumentType t = dtCache.getType("test:test");
+            ContentTypes ctCache = service.getContentTypes();
+            ContentType ct = ctCache.getType("test:test");
 
-            assertNotNull(t);
-            assertEquals(4, t.getFields().size());
-            assertEquals(1, t.getAggregatedTypes().size());
-            assertTrue(!t.getSuperTypes().contains("hippostd:container"));
+            assertNotNull(ct);
+            assertEquals(4, ct.getFields().size());
+            assertEquals(1, ct.getAggregatedTypes().size());
+            assertTrue(!ct.getSuperTypes().contains("hippostd:container"));
 
             Node testNodeType = session.getNode("/hippo:namespaces/test/test/hipposysedit:nodetype/hipposysedit:nodetype[2]");
             Node extraField = testNodeType.addNode("extraField", "hipposysedit:field");
@@ -242,12 +242,12 @@ public class HippoContentTypeServiceTest extends PluginTest {
 
             // need to wait a bit to get Jackrabbit to refresh and notify the changes
             Thread.sleep(1000);
-            dtCache = service.getDocumentTypes();
-            t = dtCache.getType("test:test");
+            ctCache = service.getContentTypes();
+            ct = ctCache.getType("test:test");
 
             // added test:extraField shouldn't be merged as there is no matching property in the EffectiveNodeType
-            assertEquals(4, t.getFields().size());
-            assertTrue(!t.getFields().containsKey("test:extraField"));
+            assertEquals(4, ct.getFields().size());
+            assertTrue(!ct.getFields().containsKey("test:extraField"));
 
             // adding relaxed mixin should expose and 'enable' the extraField
 
@@ -256,34 +256,34 @@ public class HippoContentTypeServiceTest extends PluginTest {
             session.refresh(false);
             // need to wait a bit to get Jackrabbit to refresh and notify the changes
             Thread.sleep(1000);
-            dtCache = service.getDocumentTypes();
-            t = dtCache.getType("test:test");
+            ctCache = service.getContentTypes();
+            ct = ctCache.getType("test:test");
 
-            assertEquals(5, t.getFields().size());
-            assertTrue(t.getFields().containsKey("test:extraField"));
-            assertTrue(t.getFields().get("test:extraField").getEffectiveNodeTypeItem().getName().equals("*"));
-            assertTrue(t.getFields().get("test:extraField").getEffectiveNodeTypeItem().getDefiningType().equals("hippostd:relaxed"));
-            assertTrue(t.getAggregatedTypes().contains("hippostd:relaxed"));
-            assertTrue(t.getSuperTypes().contains("hippostd:container"));
+            assertEquals(5, ct.getFields().size());
+            assertTrue(ct.getFields().containsKey("test:extraField"));
+            assertTrue(ct.getFields().get("test:extraField").getEffectiveNodeTypeItem().getName().equals("*"));
+            assertTrue(ct.getFields().get("test:extraField").getEffectiveNodeTypeItem().getDefiningType().equals("hippostd:relaxed"));
+            assertTrue(ct.getAggregatedTypes().contains("hippostd:relaxed"));
+            assertTrue(ct.getSuperTypes().contains("hippostd:container"));
 
             session.getRootNode().addNode("testNode", "test:test");
             session.save();
 
-            t = service.getDocumentTypes().getDocumentTypeForNodeByPath(session, "/testNode");
+            ct = service.getContentTypes().getContentTypeForNodeByPath(session, "/testNode");
 
-            assertEquals(4, t.getFields().size());
-            assertEquals(1, t.getAggregatedTypes().size());
+            assertEquals(4, ct.getFields().size());
+            assertEquals(1, ct.getAggregatedTypes().size());
 
             session.getNode("/testNode").addMixin("hippostd:relaxed");
             session.save();
 
-            t = service.getDocumentTypes().getDocumentTypeForNodeByPath(session, "/testNode");
-            assertEquals(5, t.getFields().size());
-            assertTrue(t.getFields().containsKey("test:extraField"));
-            assertTrue(t.getAggregatedTypes().contains("hippostd:relaxed"));
-            assertTrue(t.getSuperTypes().contains("hippostd:container"));
+            ct = service.getContentTypes().getContentTypeForNodeByPath(session, "/testNode");
+            assertEquals(5, ct.getFields().size());
+            assertTrue(ct.getFields().containsKey("test:extraField"));
+            assertTrue(ct.getAggregatedTypes().contains("hippostd:relaxed"));
+            assertTrue(ct.getSuperTypes().contains("hippostd:container"));
 
-            String json = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(t);
+            String json = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(ct);
 
             // Note: when updating the testNode.json file, make sure not to (re)format it and that it doesn't have any trailing (empty) lines.
             String jsonFromFile = new java.util.Scanner(getClass().getResourceAsStream("testNode.json")).useDelimiter("\\A").next();
@@ -302,7 +302,7 @@ public class HippoContentTypeServiceTest extends PluginTest {
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         if (service != null) {
             EffectiveNodeTypes entCache1 = service.getEffectiveNodeTypes();
-            DocumentTypes dtCache1 = service.getDocumentTypes();
+            ContentTypes ctCache1 = service.getContentTypes();
             session.getRootNode().getNode("hippo:namespaces/test").remove();
             session.save();
             session.refresh(false);
@@ -315,19 +315,19 @@ public class HippoContentTypeServiceTest extends PluginTest {
             if (entCache1.version() == entCache2.version()) {
                 fail("EffectiveNodeTypes cache should have been reloaded.");
             }
-            DocumentTypes dtCache2 = service.getDocumentTypes();
-            if (dtCache1.version()==dtCache2.version()) {
-                fail("DocumentTypes cache should have been reloaded.");
+            ContentTypes ctCache2 = service.getContentTypes();
+            if (ctCache1.version()==ctCache2.version()) {
+                fail("ContentTypes cache should have been reloaded.");
             }
             session.getRootNode().addNode("hippo:namespaces/test", "hipposysedit:namespace");
             session.save();
             // need to wait a bit to get Jackrabbit to refresh and notify the changes
             Thread.sleep(1000);
-            dtCache1 = service.getDocumentTypes();
-            if (dtCache1.version()==dtCache2.version()) {
-                fail("DocumentTypes cache should have been reloaded.");
+            ctCache1 = service.getContentTypes();
+            if (ctCache1.version()==ctCache2.version()) {
+                fail("ContentTypes cache should have been reloaded.");
             }
-            if (dtCache1.getEffectiveNodeTypes().version() != dtCache2.getEffectiveNodeTypes().version()) {
+            if (ctCache1.getEffectiveNodeTypes().version() != ctCache2.getEffectiveNodeTypes().version()) {
                 fail("EffectiveNodeTypes cache should not have been reloaded.");
             }
         }
