@@ -26,64 +26,64 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 /**
- * A lightweight and immutable representation of the DocumentType definitions.
+ * A lightweight and immutable representation of the ContentType definitions.
  * If the model is still 'current' its version property can be compared against the current version provided by the {@link org.onehippo.cms7.services.contenttype.ContentTypeService}.
  */
-public interface DocumentTypes {
+public interface ContentTypes {
 
     /**
-     * @return The EffectiveNodeTypes used by this DocumentTypes instance.
+     * @return The EffectiveNodeTypes used by this ContentTypes instance.
      */
     EffectiveNodeTypes getEffectiveNodeTypes();
 
     /**
-     * @return The immutable instance version which is automatically incremented for every new (changed) DocumentTypes instance created by the ContentTypeService
+     * @return The immutable instance version which is automatically incremented for every new (changed) ContentTypes instance created by the ContentTypeService
      */
     long version();
 
     /**
-     * @param name Qualified Name for a DocumentType (see JCR-2.0 3.2.5.2)
-     * @return The immutable DocumentType definition
+     * @param name Qualified Name for a ContentType (see JCR-2.0 3.2.5.2)
+     * @return The immutable ContentType definition
      */
-    DocumentType getType(String name);
+    ContentType getType(String name);
 
     /**
-     * @return The immutable map of DocumentTypes grouped and sorted by their namespace prefix as key and their elements ordered (but not sorted) by their name
+     * @return The immutable map of ContentTypes grouped and sorted by their namespace prefix as key and their elements ordered (but not sorted) by their name
      */
-    SortedMap<String, Set<DocumentType>> getTypesByPrefix();
+    SortedMap<String, Set<ContentType>> getTypesByPrefix();
 
     /**
-     * Returns the effective DocumentType representation for a specific Node
-     * @param node The Node for which to retrieve the DocumentType representation
-     * @return the effective DocumentType representation for a specific Node
+     * Returns the effective ContentType representation for a specific Node
+     * @param node The Node for which to retrieve the ContentType representation
+     * @return the ContentType representation for a specific Node
      * @throws javax.jcr.RepositoryException if a repository error occurs
      */
-    DocumentType getDocumentTypeForNode(Node node) throws RepositoryException;
+    ContentType getContentTypeForNode(Node node) throws RepositoryException;
 
     /**
-     * Returns the effective DocumentType representation for an existing Node identified by its uuid
+     * Returns the effective ContentType representation for an existing Node identified by its uuid
      * <p>
      * The existence and allowed read access to the Node is first checked through the provided Session.
      * </p>
      *
      * @param session An active repository Session
      * @param uuid An existing Node uuid
-     * @return the effective DocumentType representation for an existing Node identified by its uuid
+     * @return the ContentType representation for an existing Node identified by its uuid
      * @throws javax.jcr.ItemNotFoundException if node doesn't exist or is not accessible
      * @throws RepositoryException if another error occurs
      */
-    DocumentType getDocumentTypeForNodeByUuid(Session session, String uuid) throws ItemNotFoundException, RepositoryException;
+    ContentType getContentTypeForNodeByUuid(Session session, String uuid) throws ItemNotFoundException, RepositoryException;
 
     /**
-     * Returns the effective DocumentType representation for an existing Node identified by its absolute path
+     * Returns the effective ContentType representation for an existing Node identified by its absolute path
      * <p>
      * The existence and allowed read access to the Node is first checked through the provided Session.
      * </p>
      * @param session An active repository Session
      * @param path The absolute path of an existing Node
-     * @return the effective DocumentType representation for an existing Node identified by its absolute path
+     * @return the ContentType representation for an existing Node identified by its absolute path
      * @throws javax.jcr.PathNotFoundException if node doesn't exist or is not accessible
      * @throws RepositoryException if a repository error occurs
      */
-    DocumentType getDocumentTypeForNodeByPath(Session session, String path) throws PathNotFoundException, RepositoryException;
+    ContentType getContentTypeForNodeByPath(Session session, String path) throws PathNotFoundException, RepositoryException;
 }

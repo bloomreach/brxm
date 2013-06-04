@@ -16,11 +16,7 @@
 
 package org.onehippo.cms7.services.contenttype;
 
-import javax.jcr.ItemNotFoundException;
-import javax.jcr.Node;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.onehippo.cms7.services.SingletonService;
 
@@ -28,8 +24,7 @@ import org.onehippo.cms7.services.SingletonService;
  * ContentType Service which provides access to:
  * <ul>
  *     <li>A lightweight and immutable representation of the current and aggregated or effective JCR Repository NodeType definitions</li>
- *     <li>A lightweight and immutable representation of the current DocumentType definitions</li>
- *     <li>A effective DocumentType representation for an specific Node or a Node identified by its uuid or absolute path</li>
+ *     <li>A lightweight and immutable representation of the current ContentType definitions, including aggregated ones for specific Nodes within the repository</li>
  * </ul>
  *
  */
@@ -43,8 +38,8 @@ public interface ContentTypeService {
     EffectiveNodeTypes getEffectiveNodeTypes() throws RepositoryException;
 
     /**
-     * @return A lightweight and immutable representation of the current DocumentType definitions.
+     * @return A lightweight and immutable representation of the current ContentType definitions.
      * @throws RepositoryException if a repository error occurs
      */
-    DocumentTypes getDocumentTypes() throws RepositoryException;
+    ContentTypes getContentTypes() throws RepositoryException;
 }

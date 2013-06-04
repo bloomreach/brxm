@@ -20,13 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents a {@link DocumentType} field element which can denote a NodeType Child or Property Definition.
- * A DocumentTypeField name is always explicit, so no residual naming allowed.
- * A DocumentTypeField name is unique within a DocumentType, so mixing single/multi-value properties and/or Child nodes with the same name are not allowed.
+ * Represents a {@link ContentType} field element which can denote a NodeType Child or Property Definition.
+ * A ContentTypeField name is always explicit, so no residual naming allowed.
+ * A ContentTypeField name is unique within a ContentType, so mixing single/multi-value properties and/or Child nodes with the same name are not allowed.
  * The underlying EffectiveNodeTypeItem (Child or Property) however may be (and typically is) a residual (relaxed) property or child node.
  * @see javax.jcr.nodetype.ItemDefinition
  */
-public interface DocumentTypeField {
+public interface ContentTypeField {
 
     /**
      * @return The qualified field name, never "*" (residual)
@@ -35,7 +35,7 @@ public interface DocumentTypeField {
     String getName();
 
     /**
-     * @return The DocumentType name which defines this field, which not necessarily is the same as the containing DocumentType.
+     * @return The ContentType name which defines this field, which not necessarily is the same as the containing ContentType.
      * @see javax.jcr.nodetype.ItemDefinition#getDeclaringNodeType()
      */
     String getDefiningType();
@@ -47,16 +47,16 @@ public interface DocumentTypeField {
     boolean isPropertyField();
 
     /**
-     * @return True if there is no DocumentTypeField definition backing this field but it only and fully is derived from the underlying EffectiveNodeType Child or Property
+     * @return True if there is no ContentTypeField definition backing this field but it only and fully is derived from the underlying EffectiveNodeType Child or Property
      */
     boolean isDerivedField();
 
     /**
-     * Returns the type of this field, which may be a qualified name of a DocumentType (Child) or an (enhanced variant) of a NodeType property type name.
+     * Returns the type of this field, which may be a qualified name of a ContentType (Child) or an (enhanced variant) of a NodeType property type name.
      *
      * For a {@link #isDerivedField()} the value from {@link #getItemType} will be returned.
      *
-     * @return The type of this field, which may be a qualified Child DocumentType or an (enhanced variant) of a NodeType property
+     * @return The type of this field, which may be a qualified Child ContentType or an (enhanced variant) of a NodeType property
      */
     String getFieldType();
 
