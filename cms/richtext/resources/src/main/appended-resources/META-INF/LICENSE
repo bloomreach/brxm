@@ -32,9 +32,9 @@ xinha/contrib/compress_yui.php
 xinha/modules/AboutBox/dialog.html
 xinha/modules/ColorPicker/ColorPicker.js
 xinha/modules/CreateLink/link.js
-xinha/modules/Dialogs/DetachedDialog.js
 xinha/modules/Dialogs/dialog.js
 xinha/modules/Dialogs/div-dialog.js
+xinha/modules/Dialogs/DetachedDialog.js
 xinha/modules/Dialogs/XinhaDialog.js
 xinha/modules/FullScreen/full-screen.js
 xinha/modules/Gecko/Gecko.js
@@ -47,6 +47,7 @@ xinha/modules/InternetExplorer/InternetExplorer.js
 xinha/modules/Opera/Opera.js
 xinha/modules/WebKit/WebKit.js
 xinha/plugins/Abbreviation/Abbreviation.js
+xinha/plugins/AutoSave/AutoSave.js
 xinha/plugins/CharacterMap/CharacterMap.js
 xinha/plugins/CharCounter/CharCounter.js
 xinha/plugins/ContextMenu/ContextMenu.js
@@ -67,16 +68,17 @@ xinha/plugins/HorizontalRule/HorizontalRule.js
 xinha/plugins/HtmlEntities/HtmlEntities.js
 xinha/plugins/ImageManager/assets/popup.js
 xinha/plugins/ImageManager/ddt.php
-xinha/plugins/ImageManager/ImageManager.js
 xinha/plugins/ImageManager/image-picker.js
+xinha/plugins/ImageManager/ImageManager.js
+xinha/plugins/InsertAnchor/InsertAnchor.js
 xinha/plugins/InsertPagebreak/InsertPagebreak.js
 xinha/plugins/InsertSmiley/InsertSmiley.js
-xinha/plugins/InsertSnippet2/InsertSnippet2.js
 xinha/plugins/InsertSnippet/InsertSnippet.js
+xinha/plugins/InsertSnippet2/InsertSnippet2.js
 xinha/plugins/InsertWords/InsertWords.js
 xinha/plugins/LangMarks/LangMarks.js
-xinha/plugins/Linker/Linker.js
 xinha/plugins/Linker/link-picker.js
+xinha/plugins/Linker/Linker.js
 xinha/plugins/ListType/ListType.js
 xinha/plugins/PasteText/PasteText.js
 xinha/plugins/PSFixed/PSFixed.js
@@ -105,17 +107,6 @@ xinha/unsupported_plugins/InsertPicture/InsertPicture.js
 xinha/unsupported_plugins/NoteServer/NoteServer.js
 xinha/unsupported_plugins/Template/Template.js
 xinha/XinhaCore.js
-xinha/modules/GetHtml/TransformInnerHTML.js
-xinha/modules/InsertTable/insert_table.js
-xinha/modules/InternetExplorer/InternetExplorer.js
-xinha/plugins/AutoSave/AutoSave.js
-xinha/plugins/InsertAnchor/InsertAnchor.js
-xinha/plugins/InsertAnchor/InsertAnchor.js
-xinha/plugins/UnFormat/UnFormat.js
-xinha/XinhaCore.js
-xinha/plugins/ExtendedFileManager/assets/popup.js
-xinha/plugins/ImageManager/assets/popup.js
-xinha/popups/popup.js
 
     htmlArea License (based on BSD license)
     Copyright (c) 2002-2004, interactivetools.com, inc.
