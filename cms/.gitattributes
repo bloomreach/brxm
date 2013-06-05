@@ -2251,6 +2251,7 @@ richtext/resources/src/main/resources/xinha/plugins/CreateLink/lang/fr.js -text
 richtext/resources/src/main/resources/xinha/plugins/CreateLink/lang/it.js svneol=native#text/plain
 richtext/resources/src/main/resources/xinha/plugins/CreateLink/lang/nl.js svneol=native#text/plain
 richtext/resources/src/main/resources/xinha/plugins/FullscreenCompatible/FullscreenCompatible.js svneol=native#text/plain
+richtext/resources/src/main/resources/xinha/plugins/IndentOutdent/IndentOutdent.js -text
 richtext/resources/src/main/resources/xinha/plugins/InsertAnchor/InsertAnchor.js -text
 richtext/resources/src/main/resources/xinha/plugins/InsertImage/InsertImage.js svneol=native#text/plain
 richtext/resources/src/main/resources/xinha/plugins/StateChange/StateChange.js -text
