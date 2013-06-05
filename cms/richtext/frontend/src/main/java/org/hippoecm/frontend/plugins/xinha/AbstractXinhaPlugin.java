@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.IClusterable;
 import org.apache.wicket.Page;
 import org.apache.wicket.RequestCycle;
@@ -80,6 +81,8 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
             "xinha-modal.js");
     private static final ResourceReference XINHA_TOOLS_JS = new JavascriptResourceReference(AbstractXinhaPlugin.class,
             "xinha-tools.js");
+    private static final ResourceReference XINHA_TOOLS_DEV_JS = new JavascriptResourceReference(AbstractXinhaPlugin.class,
+            "xinha-tools-dev.js");
 
     private final PackagedTextTemplate XINHA_INIT_GLOBALS = new PackagedTextTemplate(AbstractXinhaPlugin.class,
             "xinha_init.js");
@@ -115,6 +118,9 @@ public abstract class  AbstractXinhaPlugin extends RenderPlugin {
         // dialog functionality for plugins
         add(JavascriptPackageResource.getHeaderContribution(XINHA_MODAL_JS));
         add(JavascriptPackageResource.getHeaderContribution(XINHA_TOOLS_JS));
+        if (getApplication().getConfigurationType().equals(Application.DEVELOPMENT)) {
+            add(JavascriptPackageResource.getHeaderContribution(XINHA_TOOLS_DEV_JS));
+        }
         add(CSSPackageResource.getHeaderContribution(AbstractXinhaPlugin.class, "xinha.css"));
     }
 
