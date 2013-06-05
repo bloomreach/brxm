@@ -180,7 +180,7 @@ public final class ContentDispositionUtils {
         // let's try to bring the filename to it's baseform by replacing diacritics: if then still there are non-ascii chars, we log an info 
         // message that you might need user-agent-specific mode, and return a utf-8 encoded version. 
 
-        String asciiFileName = EncodingUtils.isoLatin1AccentReplacer(fileName);
+        String asciiFileName = EncodingUtils.foldToASCIIReplacer(fileName);
 
         // now check whether the asciiFileName really only contains ascii chars:
         String encodedAsciiFileName = URLEncoder.encode(asciiFileName, responseEncoding != null ? responseEncoding
