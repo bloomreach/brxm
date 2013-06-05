@@ -610,6 +610,6 @@ final public class UpdaterSession implements HippoSession {
 
     @Override
     public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        throw new UpdaterException("illegal method");
     }
 }

@@ -15,6 +15,12 @@
  */
 package org.hippoecm.repository.security;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
@@ -27,19 +33,38 @@ import org.apache.jackrabbit.core.security.authorization.WorkspaceAccessManager;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+import org.hippoecm.repository.security.domain.FacetRule;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 
 public class DelegatorAccessManager implements AccessManager {
 
     private final HippoAccessManager primary;
     private final HippoAccessManager secondary;
+    private final AuthorizationExtension primaryExtension;
+    private final AuthorizationExtension secondaryExtension;
 
     public DelegatorAccessManager(final HippoAccessManager primary, final HippoAccessManager secondary, NamespaceResolver namespaceResolver,
                                   final DomainRuleExtension... domainExtensions) throws RepositoryException {
         this.primary = primary;
         this.secondary = secondary;
-        primary.registerDomainRuleExtensions(namespaceResolver, domainExtensions);
-        secondary.registerDomainRuleExtensions(namespaceResolver, domainExtensions);
+
+        Map<String, Collection<FacetRule>> extendedFacetRules;
+        if (domainExtensions.length == 0) {
+            extendedFacetRules = Collections.emptyMap();
+        } else {
+            extendedFacetRules = new HashMap<String, Collection<FacetRule>>();
+            for (DomainRuleExtension domainRuleExtension : domainExtensions) {
+                final String domainRulePath = domainRuleExtension.getDomainName() + "/" + domainRuleExtension.getDomainRuleName();
+                final Collection<FacetRule> facetRules = new ArrayList<FacetRule>();
+                for (org.onehippo.repository.security.domain.FacetRule facetRule : domainRuleExtension.getFacetRules()) {
+                    facetRules.add(new FacetRule(facetRule, namespaceResolver));
+                }
+                extendedFacetRules.put(domainRulePath, facetRules);
+            }
+        }
+
+        this.primaryExtension = new AuthorizationExtension(extendedFacetRules);
+        this.secondaryExtension = new AuthorizationExtension(extendedFacetRules);
     }
 
     @Override
@@ -58,19 +83,16 @@ public class DelegatorAccessManager implements AccessManager {
 
     @Override
     public void checkPermission(final ItemId id, final int permissions) throws AccessDeniedException, ItemNotFoundException, RepositoryException {
-        try {
-            primary.checkPermission(id, permissions);
-        } catch (AccessDeniedException e) {
-            secondary.checkPermission(id, permissions);
+        if (!isGranted(id, permissions)) {
+            throw new AccessDeniedException();
         }
     }
 
     @Override
     public void checkPermission(final Path absPath, final int permissions) throws AccessDeniedException, RepositoryException {
-        try {
-            primary.checkPermission(absPath, permissions);
-        } catch (AccessDeniedException e) {
-            secondary.checkPermission(absPath, permissions);
+        // just use the isGranted method
+        if (!isGranted(absPath, permissions)) {
+            throw new AccessDeniedException();
         }
     }
 
@@ -85,26 +107,26 @@ public class DelegatorAccessManager implements AccessManager {
 
     @Override
     public boolean isGranted(final ItemId id, final int permissions) throws ItemNotFoundException, RepositoryException {
-        return primary.isGranted(id, permissions) || secondary.isGranted(id, permissions);
+        return primary.isGranted(id, permissions, primaryExtension) || secondary.isGranted(id, permissions, secondaryExtension);
     }
 
     @Override
     public boolean isGranted(final Path absPath, final int permissions) throws RepositoryException {
-        return primary.isGranted(absPath, permissions) || secondary.isGranted(absPath, permissions);
+        return primary.isGranted(absPath, permissions, primaryExtension) || secondary.isGranted(absPath, permissions, secondaryExtension);
     }
 
     @Override
     public boolean isGranted(final Path parentPath, final Name childName, final int permissions) throws RepositoryException {
-        return primary.isGranted(parentPath, childName, permissions) | secondary.isGranted(parentPath, childName, permissions);
+        return primary.isGranted(parentPath, childName, permissions, primaryExtension) | secondary.isGranted(parentPath, childName, permissions, secondaryExtension);
     }
 
     @Override
     public boolean canRead(final Path itemPath, final ItemId itemId) throws RepositoryException {
-        return primary.canRead(itemPath, itemId) || secondary.canRead(itemPath, itemId);
+        return primary.canRead(itemPath, itemId, primaryExtension) || secondary.canRead(itemPath, itemId, secondaryExtension);
     }
 
     @Override
     public boolean canAccess(final String workspaceName) throws RepositoryException {
-        return primary.canAccess(workspaceName) || secondary.canAccess(workspaceName);
+        return primary.canAccess(workspaceName, primaryExtension) || secondary.canAccess(workspaceName, secondaryExtension);
     }
 }

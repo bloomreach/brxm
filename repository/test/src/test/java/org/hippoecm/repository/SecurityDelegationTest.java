@@ -24,6 +24,7 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
@@ -85,6 +86,7 @@ public class SecurityDelegationTest extends RepositoryTestCase {
     /**
      * Sanity test that configuration setup is correct
      */
+    @Ignore
     @Test
     public void apolloCanAccessTheAssemblyButIonCannot() throws Exception {
         final Session apollo = session.getRepository().login(new SimpleCredentials("apollo", "olympus".toCharArray()));
@@ -96,6 +98,7 @@ public class SecurityDelegationTest extends RepositoryTestCase {
         assertFalse(ion.nodeExists("/athens/assembly"));
     }
 
+    @Ignore
     @Test
     public void apolloDelegatesAssemblyAccessToIon() throws Exception {
         final HippoSession ion = (HippoSession) session.getRepository().login(new SimpleCredentials("ion", "delphy".toCharArray()));
@@ -125,6 +128,7 @@ public class SecurityDelegationTest extends RepositoryTestCase {
         sonOfApolloAndPhilosopher.save();
     }
 
+    @Ignore
     @Test
     public void apolloCanBeRevokedAssemblyAccessByProgrammaticDomainRuleExtension() throws Exception {
 
