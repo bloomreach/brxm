@@ -21,6 +21,6 @@
     <meta name="sponsor" value="" />
     <meta name="sponsor_url" value="" />
     <meta name="version" value="1.0" />
-     <meta name="license" value="htmlArea" />
-     <recommendedIcons>Hippo</recommendedIcons>
+    <meta name="license" value="AL2" />
+    <recommendedIcons>Hippo</recommendedIcons>
 </skin>

@@ -33,14 +33,14 @@ function CreateExternalLink(editor, args) {
 }
 
 CreateExternalLink._pluginInfo = {
-    name :"CreateExternalLink",
-    version :"1.0",
-    developer :"Arthur Bogaart",
-    developer_url :"http://www.onehippo.com/",
-    c_owner :"OneHippo",
-    license :"al2",
-    sponsor :"OneHippo",
-    sponsor_url :"http://www.onehippo.com/"
+    name         : "CreateExternalLink",
+    version      : "1.0",
+    developer    : "a.bogaart@1hippo.com",
+    developer_url: "http://www.onehippo.com",
+    c_owner      : "OneHippo",
+    license      : "al2",
+    sponsor      : "OneHippo",
+    sponsor_url  : "http://www.onehippo.com"
 };
 
 Xinha.Config.prototype.CreateExternalLink= {

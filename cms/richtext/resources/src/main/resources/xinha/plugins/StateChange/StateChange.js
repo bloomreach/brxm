@@ -22,11 +22,11 @@ StateChange._pluginInfo = {
     name         : "StateChange",
     version      : "1.0",
     developer    : "a.bogaart@1hippo.com",
-    developer_url: "http://www.onehippo.com/",
+    developer_url: "http://www.onehippo.com",
     c_owner      : "Hippo",
     license      : "al2",
     sponsor      : "OneHippo",
-    sponsor_url  : "http://www.onehippo.com/"
+    sponsor_url  : "http://www.onehippo.com"
 };
 
 StateChange.prototype = {

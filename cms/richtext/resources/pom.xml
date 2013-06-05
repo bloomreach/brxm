@@ -33,8 +33,25 @@
       <resource>
         <directory>src/external</directory>
         <filtering>false</filtering>
-        <!-- exclude Xinha plugins with incompatible licenses -->
         <excludes>
+          <!-- exclude Xinha sources that should not be packaged -->
+          <exclude>xinha/contrib/**</exclude>
+          <exclude>xinha/examples/**</exclude>
+          <exclude>xinha/XinhaLoader_readme.txt</exclude>
+          <exclude>xinha/compression_readme.txt</exclude>
+          <exclude>xinha/htmlarea.js</exclude>
+          <exclude>xinha/plugins/**/*.php</exclude>
+          <exclude>xinha/plugins/**/*.cgi</exclude>
+
+          <!-- exclude Xinha plugins we do not support -->
+          <exclude>xinha/plugins/ExtendedFileManager/**</exclude>
+          <exclude>xinha/plugins/ImageManager/**</exclude>
+          <exclude>xinha/plugins/MootoolsFileManager/**</exclude>
+          <exclude>xinha/plugins/PersistentStorage/**</exclude>
+          <exclude>xinha/plugins/PS*/**</exclude>
+          <exclude>xinha/unsupported_plugins/**</exclude>
+
+          <!-- exclude Xinha plugins with incompatible licenses -->
           <exclude>xinha/plugins/Equation/**</exclude>
           <exclude>xinha/plugins/InsertNote/**</exclude>
           <exclude>xinha/plugins/PreserveScripts/**</exclude>

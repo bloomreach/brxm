@@ -15,15 +15,15 @@
  */
   
 InsertImage._pluginInfo = {
-  name          : "InsertImage",
-  origin        : "Xinha Core override",
-  version       : "$LastChangedRevision: 1055 $".replace(/^[^:]*:\s*(.*)\s*\$$/, '$1'),
-  developer     : "Arthur Bogaart (OneHippo)",
-  developer_url :"http://www.onehippo.com/",
-  c_owner :"OneHippo",
-  license :"al2",
-  sponsor :"OneHippo",
-  sponsor_url :"http://www.onehippo.com/"
+    name         : "InsertImage",
+    origin       : "Xinha Core override",
+    version      : "1.0",
+    developer    : "a.bogaart@1hippo.com",
+    developer_url: "http://www.onehippo.com",
+    c_owner      : "OneHippo",
+    license      : "al2",
+    sponsor      : "OneHippo",
+    sponsor_url  : "http://www.onehippo.com"
 };
 
 function InsertImage(editor) {

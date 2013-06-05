@@ -46,18 +46,18 @@ function CreateLink(editor, args) {
 }
 
 CreateLink._pluginInfo = {
-    name :"CreateLink",
-    version :"1.0",
-    developer :"Arthur Bogaart",
-    developer_url :"http://www.onehippo.com/",
-    c_owner :"OneHippo",
-    license :"al2",
-    sponsor :"OneHippo",
-    sponsor_url :"http://www.onehippo.com/"
+    name         : "CreateLink",
+    version      : "1.0",
+    developer    : "a.bogaart@1hippo.com",
+    developer_url: "http://www.onehippo.com",
+    c_owner      : "OneHippo",
+    license      : "al2",
+    sponsor      : "OneHippo",
+    sponsor_url  : "http://www.onehippo.com"
 };
 
-Xinha.Config.prototype.CreateLink= {
-    callbackUrl: null        
+Xinha.Config.prototype.CreateLink = {
+    callbackUrl: null
 };
 
 CreateLink.prototype._lc = function(string) {

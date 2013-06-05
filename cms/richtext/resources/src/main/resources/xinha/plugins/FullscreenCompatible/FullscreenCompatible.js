@@ -21,8 +21,12 @@ function FullscreenCompatible(editor, args) {
 }
 
 FullscreenCompatible._pluginInfo = {
-  name :"FullscreenCompatible",
-  version :"1.0",
-  developer :"Arthur Bogaart",
-  developer_url :"http://www.onehippo.org"
+    name         : "FullscreenCompatible",
+    version      : "1.0",
+    developer    : "a.bogaart@1hippo.com",
+    developer_url: "http://www.onehippo.com",
+    c_owner      : "OneHippo",
+    license      : "al2",
+    sponsor      : "OneHippo",
+    sponsor_url  : "http://www.onehippo.com"
 };

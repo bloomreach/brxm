@@ -2173,6 +2173,7 @@ richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/Xin
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/xinhadropmodel/xinhadropmodel-debug.js svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/dragdrop/js/xinhadropmodel/xinhadropmodel.js svneol=native#text/plain
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/htmlcleaner/HtmlCleanerPlugin.java -text
+richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/box-grey.png -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diff-first.gif -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diff-last.gif -text
 richtext/frontend/src/main/java/org/hippoecm/frontend/plugins/xinha/images/diff-next.gif -text
