@@ -85,6 +85,15 @@ public class FacetNavigationProvider extends AbstractFacetNavigationProvider {
 
     @Override
     public NodeState populate(StateProviderContext context, NodeState state) throws RepositoryException {
+        long start = System.currentTimeMillis();
+        try {
+            return doPopulate(context, state);
+        } finally {
+            log.debug("Populating root faceted navigation node took '{}' ms.", (System.currentTimeMillis() - start));
+        }
+    }
+
+    public NodeState doPopulate(StateProviderContext context, NodeState state) throws RepositoryException {
         NodeId nodeId = state.getNodeId();
 
         String[] property = getProperty(nodeId, docbaseName);
