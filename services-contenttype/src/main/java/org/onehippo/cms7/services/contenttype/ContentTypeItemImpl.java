@@ -22,58 +22,64 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ContentTypeFieldImpl extends Sealable implements ContentTypeField {
+public class ContentTypeItemImpl extends Sealable implements ContentTypeItem {
 
     private final String definingType;
     private final String name;
     private EffectiveNodeTypeItem nti;
-    private final boolean propertyField;
-    private boolean derivedField;
-    private final String fieldType;
+    private final boolean property;
+    private boolean derivedItem;
     private final String itemType;
-    private boolean primaryField;
+    private final String effectiveType;
+    private boolean primaryItem;
     private boolean multiple;
     private boolean mandatory;
     private boolean autoCreated;
     private boolean protect;
     private boolean ordered;
+    private boolean multiTyped;
+    private List<EffectiveNodeTypeItem> multiTypes = Collections.emptyList();
+
     private List<String> validators = new ArrayList<String>();
-    private Map<String, List<String>> fieldProperties = new HashMap<String, List<String>>();
+    private Map<String, List<String>> itemProperties = new HashMap<String, List<String>>();
 
     @Override
     protected void doSeal() {
         validators = Collections.unmodifiableList(validators);
-        for (Map.Entry<String,List<String>> entry : fieldProperties.entrySet()) {
+        for (Map.Entry<String,List<String>> entry : itemProperties.entrySet()) {
             entry.setValue(Collections.unmodifiableList(entry.getValue()));
         }
-        fieldProperties = Collections.unmodifiableMap(fieldProperties);
+        for (EffectiveNodeTypeItem item : multiTypes) {
+            ((Sealable)item).seal();
+        }
+        itemProperties = Collections.unmodifiableMap(itemProperties);
     }
 
-    public ContentTypeFieldImpl(String definingType, String name, String fieldType, String itemType) {
+    protected ContentTypeItemImpl(String definingType, String name, String itemType, String effectiveType) {
         this.definingType = definingType;
         this.name = name;
-        this.fieldType = fieldType;
         this.itemType = itemType;
-        this.propertyField = true;
+        this.effectiveType = effectiveType;
+        this.property = true;
     }
 
-    public ContentTypeFieldImpl(String definingType, String name, String fieldType) {
+    protected ContentTypeItemImpl(String definingType, String name, String itemType) {
         this.definingType = definingType;
         this.name = name;
-        this.fieldType = fieldType;
-        this.itemType = fieldType;
-        this.propertyField = false;
+        this.itemType = itemType;
+        this.effectiveType = itemType;
+        this.property = false;
     }
 
-    public ContentTypeFieldImpl(EffectiveNodeTypeProperty property) {
+    protected ContentTypeItemImpl(EffectiveNodeTypeProperty property) {
         this.definingType = property.getDefiningType();
         this.nti = property;
-        this.primaryField = false;
-        this.propertyField = true;
-        this.derivedField = true;
+        this.primaryItem = false;
+        this.property = true;
+        this.derivedItem = true;
         this.name = property.getName();
-        this.itemType = property.getType();
-        this.fieldType = this.itemType;
+        this.effectiveType = property.getType();
+        this.itemType = this.effectiveType;
         this.multiple = property.isMultiple();
         this.mandatory = property.isMandatory();
         this.autoCreated = property.isAutoCreated();
@@ -81,15 +87,15 @@ public class ContentTypeFieldImpl extends Sealable implements ContentTypeField {
         this.ordered = false;
     }
 
-    public ContentTypeFieldImpl(EffectiveNodeTypeChild child) {
+    protected ContentTypeItemImpl(EffectiveNodeTypeChild child) {
         this.definingType = child.getDefiningType();
         this.nti = child;
-        this.primaryField = false;
-        this.propertyField = false;
-        this.derivedField = true;
+        this.primaryItem = false;
+        this.property = false;
+        this.derivedItem = true;
         this.name = child.getName();
-        this.itemType = child.getType();
-        this.fieldType = this.itemType;
+        this.effectiveType = child.getType();
+        this.itemType = this.effectiveType;
         this.multiple = child.isMultiple();
         this.mandatory = child.isMandatory();
         this.autoCreated = child.isAutoCreated();
@@ -97,22 +103,22 @@ public class ContentTypeFieldImpl extends Sealable implements ContentTypeField {
         this.ordered = false;
     }
 
-    public ContentTypeFieldImpl(ContentTypeFieldImpl other) {
+    protected ContentTypeItemImpl(ContentTypeItemImpl other) {
         this.definingType = other.definingType;
         this.nti = other.nti;
-        this.primaryField = other.primaryField;
-        this.propertyField = other.propertyField;
-        this.derivedField = other.derivedField;
+        this.primaryItem = other.primaryItem;
+        this.property = other.property;
+        this.derivedItem = other.derivedItem;
         this.name = other.name;
+        this.effectiveType = other.effectiveType;
         this.itemType = other.itemType;
-        this.fieldType = other.fieldType;
         this.multiple = other.multiple;
         this.mandatory = other.mandatory;
         this.autoCreated = other.autoCreated;
         this.protect = other.protect;
         this.ordered = other.ordered;
         this.validators.addAll(other.validators);
-        this.fieldProperties.putAll(other.fieldProperties);
+        this.itemProperties.putAll(other.itemProperties);
     }
 
     @Override
@@ -136,18 +142,13 @@ public class ContentTypeFieldImpl extends Sealable implements ContentTypeField {
     }
 
     @Override
-    public boolean isPropertyField() {
-        return propertyField;
+    public boolean isProperty() {
+        return property;
     }
 
     @Override
-    public boolean isDerivedField() {
-        return derivedField;
-    }
-
-    @Override
-    public String getFieldType() {
-        return fieldType;
+    public boolean isDerivedItem() {
+        return derivedItem;
     }
 
     @Override
@@ -156,13 +157,18 @@ public class ContentTypeFieldImpl extends Sealable implements ContentTypeField {
     }
 
     @Override
-    public boolean isPrimaryField() {
-        return primaryField;
+    public String getEffectiveType() {
+        return effectiveType;
     }
 
-    public void setPrimaryField(boolean primaryField) {
+    @Override
+    public boolean isPrimaryItem() {
+        return primaryItem;
+    }
+
+    public void setPrimaryItem(boolean primaryItem) {
         checkSealed();
-        this.primaryField = primaryField;
+        this.primaryItem = primaryItem;
     }
 
     @Override
@@ -221,7 +227,38 @@ public class ContentTypeFieldImpl extends Sealable implements ContentTypeField {
     }
 
     @Override
-    public Map<String, List<String>> getFieldProperties() {
-        return fieldProperties;
+    public Map<String, List<String>> getItemProperties() {
+        return itemProperties;
+    }
+
+    @Override
+    public boolean isMultiTyped() {
+        return !multiTypes.isEmpty();
+    }
+
+    public List<EffectiveNodeTypeItem> getMultiTypes() {
+        return multiTypes;
+    }
+
+    public void setMultiPropertyTypes(List<EffectiveNodeTypeProperty> types) {
+        checkSealed();
+        if (types != null) {
+            multiTypes = Collections.unmodifiableList(new ArrayList<EffectiveNodeTypeItem>(types));
+        }
+        else {
+            multiTypes = Collections.emptyList();
+        }
+        multiTyped = !multiTypes.isEmpty();
+    }
+
+    public void setMultiChildTypes(List<EffectiveNodeTypeChild> types) {
+        checkSealed();
+        if (types != null) {
+            multiTypes = Collections.unmodifiableList(new ArrayList<EffectiveNodeTypeItem>(types));
+        }
+        else {
+            multiTypes = Collections.emptyList();
+        }
+        multiTyped = !multiTypes.isEmpty();
     }
 }

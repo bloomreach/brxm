@@ -142,7 +142,7 @@ class ContentTypesCache extends Sealable implements ContentTypes {
                these extended field properties needs to have all fields resolved first which complicates the proper moment for sealing
 
             for (String typeName : typeNodes.keySet()) {
-                loadContentTypeFieldProperties(types.get(typeName), typeNodes.get(typeName));
+                loadContentTypeItemProperties(types.get(typeName), typeNodes.get(typeName));
             }
             */
 
@@ -164,9 +164,9 @@ class ContentTypesCache extends Sealable implements ContentTypes {
                 resolveContentType(name);
             }
 
-            // 5th pass: resolve all ContentTypeFields and seal all types
+            // 5th pass: resolve all ContentTypeItems and seal all types
             for (AggregatedContentTypesCache.Key key : actCache.getKeys()) {
-                resolveContentTypeFieldsAndSeal(actCache.get(key));
+                resolveContentTypeItemsAndSeal(actCache.get(key));
             }
 
             //lock down the cache itself
@@ -206,8 +206,8 @@ class ContentTypesCache extends Sealable implements ContentTypes {
 
                 if (field.isNodeType(HippoNodeType.NT_FIELD)) {
 
-                    ContentTypeFieldImpl ctf;
-                    String fieldType;
+                    ContentTypeItemImpl cti;
+                    String itemType;
 
                     String fieldName = field.getProperty(HippoNodeType.HIPPO_PATH).getString();
 
@@ -216,38 +216,43 @@ class ContentTypesCache extends Sealable implements ContentTypes {
                         continue;
                     }
 
-                    fieldType = JcrUtils.getStringProperty(field, HippoNodeType.HIPPOSYSEDIT_TYPE, PropertyType.TYPENAME_STRING);
+                    itemType = JcrUtils.getStringProperty(field, HippoNodeType.HIPPOSYSEDIT_TYPE, PropertyType.TYPENAME_STRING);
 
-                    if (propertyTypeMappings.containsKey(fieldType)) {
-                        ctf = new ContentTypeFieldImpl(ct.getName(), fieldName, fieldType, propertyTypeMappings.get(fieldType));
+                    if (propertyTypeMappings.containsKey(itemType)) {
+                        cti = new ContentTypePropertyImpl(ct.getName(), fieldName, itemType, propertyTypeMappings.get(itemType));
                     }
-                    else if (types.containsKey(fieldType)) {
-                        ctf = new ContentTypeFieldImpl(ct.getName(), fieldName, fieldType);
+                    else if (types.containsKey(itemType)) {
+                        cti = new ContentTypeChildImpl(ct.getName(), fieldName, itemType);
                     }
-                    else if (entCache.getTypes().containsKey(fieldType)) {
-                        ctf = new ContentTypeFieldImpl(ct.getName(), fieldName, fieldType);
+                    else if (entCache.getTypes().containsKey(itemType)) {
+                        cti = new ContentTypeChildImpl(ct.getName(), fieldName, itemType);
                     }
                     else {
-                        // TODO: log warn unknown fieldType value
+                        // TODO: log warn unknown itemType value
                         continue;
                     }
-                    ctf.setMandatory(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MANDATORY, false));
-                    ctf.setAutoCreated(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_AUTOCREATED, false));
-                    ctf.setMultiple(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MULTIPLE, false));
-                    ctf.setOrdered(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_ORDERED, false));
-                    ctf.setProtected(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PROTECTED, false));
-                    ctf.setPrimaryField(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PRIMARY, false));
+                    cti.setMandatory(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MANDATORY, false));
+                    cti.setAutoCreated(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_AUTOCREATED, false));
+                    cti.setMultiple(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MULTIPLE, false));
+                    cti.setOrdered(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_ORDERED, false));
+                    cti.setProtected(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PROTECTED, false));
+                    cti.setPrimaryItem(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_PRIMARY, false));
 
                     if (field.hasProperty(HippoNodeType.HIPPO_VALIDATORS)) {
                         Value[] values = field.getProperty(HippoNodeType.HIPPO_VALIDATORS).getValues();
                         for (Value value : values) {
                             String validator = value.getString();
                             if (validator.length() > 0) {
-                                ctf.getValidators().add(validator);
+                                cti.getValidators().add(validator);
                             }
                         }
                     }
-                    ct.getFields().put(ctf.getName(), ctf);
+                    if (cti.isProperty()) {
+                        ct.getProperties().put(cti.getName(), (ContentTypeProperty)cti);
+                    }
+                    else {
+                        ct.getChildren().put(cti.getName(), (ContentTypeChild)cti);
+                    }
                 }
             }
         }
@@ -365,12 +370,12 @@ class ContentTypesCache extends Sealable implements ContentTypes {
         return result;
     }
 
-    private void resolveContentTypeFieldsAndSeal(ContentTypeImpl ct) {
+    private void resolveContentTypeItemsAndSeal(ContentTypeImpl ct) {
         if (!ct.isSealed()) {
             for (String s : ct.getSuperTypes()) {
-                resolveContentTypeFieldsAndSeal(actCache.get(s));
+                resolveContentTypeItemsAndSeal(actCache.get(s));
             }
-            ct.resolveFields(this);
+            ct.resolveItems(this);
             ct.seal();
         }
     }

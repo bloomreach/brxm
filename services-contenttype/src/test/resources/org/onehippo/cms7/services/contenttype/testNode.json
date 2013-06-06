@@ -10,23 +10,24 @@
   "mixin" : false,
   "templateType" : false,
   "cascadeValidate" : false,
-  "fields" : {
+  "properties" : {
     "test:title" : {
       "definingType" : "test:test",
       "name" : "test:title",
-      "propertyField" : true,
-      "derivedField" : false,
-      "fieldType" : "String",
+      "property" : true,
+      "derivedItem" : false,
       "itemType" : "String",
-      "primaryField" : false,
+      "effectiveType" : "String",
+      "primaryItem" : false,
       "multiple" : false,
       "mandatory" : false,
       "autoCreated" : false,
       "ordered" : false,
+      "multiTyped" : false,
+      "multiTypes" : [ ],
       "validators" : [ ],
-      "fieldProperties" : {
+      "itemProperties" : {
       },
-      "protected" : false,
       "effectiveNodeTypeItem" : {
         "name" : "test:title",
         "definingType" : "test:test",
@@ -40,54 +41,26 @@
         "defaultValues" : [ ],
         "type" : "String",
         "protected" : false
-      }
-    },
-    "test:child" : {
-      "definingType" : "test:test",
-      "name" : "test:child",
-      "propertyField" : false,
-      "derivedField" : false,
-      "fieldType" : "nt:unstructured",
-      "itemType" : "nt:unstructured",
-      "primaryField" : false,
-      "multiple" : false,
-      "mandatory" : false,
-      "autoCreated" : false,
-      "ordered" : false,
-      "validators" : [ ],
-      "fieldProperties" : {
       },
-      "protected" : false,
-      "effectiveNodeTypeItem" : {
-        "name" : "test:child",
-        "definingType" : "test:test",
-        "nodeType" : true,
-        "residual" : false,
-        "multiple" : false,
-        "mandatory" : false,
-        "autoCreated" : false,
-        "defaultPrimaryType" : null,
-        "type" : "nt:unstructured",
-        "requiredPrimaryTypes" : [ "nt:unstructured" ],
-        "protected" : false
-      }
+      "protected" : false
     },
     "test:extraField" : {
       "definingType" : "test:test",
       "name" : "test:extraField",
-      "propertyField" : true,
-      "derivedField" : false,
-      "fieldType" : "String",
+      "property" : true,
+      "derivedItem" : false,
       "itemType" : "String",
-      "primaryField" : false,
+      "effectiveType" : "String",
+      "primaryItem" : false,
       "multiple" : false,
       "mandatory" : false,
       "autoCreated" : false,
       "ordered" : false,
+      "multiTyped" : false,
+      "multiTypes" : [ ],
       "validators" : [ ],
-      "fieldProperties" : {
+      "itemProperties" : {
       },
-      "protected" : false,
       "effectiveNodeTypeItem" : {
         "name" : "*",
         "definingType" : "hippostd:relaxed",
@@ -101,24 +74,26 @@
         "defaultValues" : [ ],
         "type" : "String",
         "protected" : false
-      }
+      },
+      "protected" : false
     },
     "jcr:mixinTypes" : {
       "definingType" : "nt:base",
       "name" : "jcr:mixinTypes",
-      "propertyField" : true,
-      "derivedField" : true,
-      "fieldType" : "Name",
+      "property" : true,
+      "derivedItem" : true,
       "itemType" : "Name",
-      "primaryField" : false,
+      "effectiveType" : "Name",
+      "primaryItem" : false,
       "multiple" : true,
       "mandatory" : false,
       "autoCreated" : false,
       "ordered" : false,
+      "multiTyped" : false,
+      "multiTypes" : [ ],
       "validators" : [ ],
-      "fieldProperties" : {
+      "itemProperties" : {
       },
-      "protected" : true,
       "effectiveNodeTypeItem" : {
         "name" : "jcr:mixinTypes",
         "definingType" : "nt:base",
@@ -132,24 +107,26 @@
         "defaultValues" : [ ],
         "type" : "Name",
         "protected" : true
-      }
+      },
+      "protected" : true
     },
     "jcr:primaryType" : {
       "definingType" : "nt:base",
       "name" : "jcr:primaryType",
-      "propertyField" : true,
-      "derivedField" : true,
-      "fieldType" : "Name",
+      "property" : true,
+      "derivedItem" : true,
       "itemType" : "Name",
-      "primaryField" : false,
+      "effectiveType" : "Name",
+      "primaryItem" : false,
       "multiple" : false,
       "mandatory" : true,
       "autoCreated" : true,
       "ordered" : false,
+      "multiTyped" : false,
+      "multiTypes" : [ ],
       "validators" : [ ],
-      "fieldProperties" : {
+      "itemProperties" : {
       },
-      "protected" : true,
       "effectiveNodeTypeItem" : {
         "name" : "jcr:primaryType",
         "definingType" : "nt:base",
@@ -163,7 +140,42 @@
         "defaultValues" : [ ],
         "type" : "Name",
         "protected" : true
-      }
+      },
+      "protected" : true
+    }
+  },
+  "children" : {
+    "test:child" : {
+      "definingType" : "test:test",
+      "name" : "test:child",
+      "property" : false,
+      "derivedItem" : false,
+      "itemType" : "nt:unstructured",
+      "effectiveType" : "nt:unstructured",
+      "primaryItem" : false,
+      "multiple" : false,
+      "mandatory" : false,
+      "autoCreated" : false,
+      "ordered" : false,
+      "multiTyped" : false,
+      "multiTypes" : [ ],
+      "validators" : [ ],
+      "itemProperties" : {
+      },
+      "effectiveNodeTypeItem" : {
+        "name" : "test:child",
+        "definingType" : "test:test",
+        "nodeType" : true,
+        "residual" : false,
+        "multiple" : false,
+        "mandatory" : false,
+        "autoCreated" : false,
+        "defaultPrimaryType" : null,
+        "type" : "nt:unstructured",
+        "requiredPrimaryTypes" : [ "nt:unstructured" ],
+        "protected" : false
+      },
+      "protected" : false
     }
   },
   "effectiveNodeType" : {

@@ -173,16 +173,20 @@ public class HippoContentTypeServiceTest extends PluginTest {
                 fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getSuperTypes().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                ctCache.getType("test:test").getFields().clear();
-                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getFields().clear()");
+                ctCache.getType("test:test").getChildren().clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getChildren().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                ctCache.getType("test:test").getFields().get("test:title").getFieldProperties().clear();
-                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getFields().get(test:title).getFieldProperties().clear()");
+                ctCache.getType("test:test").getProperties().clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getProperties().clear()");
             } catch (UnsupportedOperationException uoe) {}
             try {
-                ctCache.getType("test:test").getFields().get("test:title").getValidators().clear();
-                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getFields().get(test:title).getValidators().clear()");
+                ctCache.getType("test:test").getProperties().get("test:title").getItemProperties().clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getProperties().get(test:title).getItemProperties().clear()");
+            } catch (UnsupportedOperationException uoe) {}
+            try {
+                ctCache.getType("test:test").getItem("test:title").getValidators().clear();
+                fail("UnsupportedOperationException expected for ContentTypes.getType(test:test).getItem(test:title).getValidators().clear()");
             } catch (UnsupportedOperationException uoe) {}
 
                 // repeat sealed check for EffectiveNodeType underlying the ContentType
@@ -229,7 +233,8 @@ public class HippoContentTypeServiceTest extends PluginTest {
             ContentType ct = ctCache.getType("test:test");
 
             assertNotNull(ct);
-            assertEquals(4, ct.getFields().size());
+            assertEquals(3, ct.getProperties().size());
+            assertEquals(1, ct.getChildren().size());
             assertEquals(1, ct.getAggregatedTypes().size());
             assertTrue(!ct.getSuperTypes().contains("hippostd:container"));
 
@@ -246,8 +251,8 @@ public class HippoContentTypeServiceTest extends PluginTest {
             ct = ctCache.getType("test:test");
 
             // added test:extraField shouldn't be merged as there is no matching property in the EffectiveNodeType
-            assertEquals(4, ct.getFields().size());
-            assertTrue(!ct.getFields().containsKey("test:extraField"));
+            assertEquals(3, ct.getProperties().size());
+            assertTrue(!ct.getProperties().containsKey("test:extraField"));
 
             // adding relaxed mixin should expose and 'enable' the extraField
 
@@ -259,10 +264,10 @@ public class HippoContentTypeServiceTest extends PluginTest {
             ctCache = service.getContentTypes();
             ct = ctCache.getType("test:test");
 
-            assertEquals(5, ct.getFields().size());
-            assertTrue(ct.getFields().containsKey("test:extraField"));
-            assertTrue(ct.getFields().get("test:extraField").getEffectiveNodeTypeItem().getName().equals("*"));
-            assertTrue(ct.getFields().get("test:extraField").getEffectiveNodeTypeItem().getDefiningType().equals("hippostd:relaxed"));
+            assertEquals(4, ct.getProperties().size());
+            assertTrue(ct.getProperties().containsKey("test:extraField"));
+            assertTrue(ct.getItem("test:extraField").getEffectiveNodeTypeItem().getName().equals("*"));
+            assertTrue(ct.getItem("test:extraField").getEffectiveNodeTypeItem().getDefiningType().equals("hippostd:relaxed"));
             assertTrue(ct.getAggregatedTypes().contains("hippostd:relaxed"));
             assertTrue(ct.getSuperTypes().contains("hippostd:container"));
 
@@ -271,15 +276,16 @@ public class HippoContentTypeServiceTest extends PluginTest {
 
             ct = service.getContentTypes().getContentTypeForNodeByPath(session, "/testNode");
 
-            assertEquals(4, ct.getFields().size());
+            assertEquals(3, ct.getProperties().size());
+            assertEquals(1, ct.getChildren().size());
             assertEquals(1, ct.getAggregatedTypes().size());
 
             session.getNode("/testNode").addMixin("hippostd:relaxed");
             session.save();
 
             ct = service.getContentTypes().getContentTypeForNodeByPath(session, "/testNode");
-            assertEquals(5, ct.getFields().size());
-            assertTrue(ct.getFields().containsKey("test:extraField"));
+            assertEquals(4, ct.getProperties().size());
+            assertTrue(ct.getProperties().containsKey("test:extraField"));
             assertTrue(ct.getAggregatedTypes().contains("hippostd:relaxed"));
             assertTrue(ct.getSuperTypes().contains("hippostd:container"));
 
