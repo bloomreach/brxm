@@ -38,7 +38,7 @@ import org.hippoecm.hst.jaxrs.services.AbstractResource;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.contenttype.ContentTypeField;
+import org.onehippo.cms7.services.contenttype.ContentTypeItem;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeType;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeTypeChild;
 import org.onehippo.cms7.services.contenttype.EffectiveNodeTypeItem;
@@ -82,7 +82,7 @@ public class ContentTypesResource extends AbstractResource {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            EffectiveNodeType ent = service.getEffectiveNodeTypes().getType(prefix+":"+name);
+            EffectiveNodeType ent = service.getEffectiveNodeTypes().getType(prefix + ":" + name);
             if (ent != null) {
                 return ent;
             }
@@ -199,7 +199,7 @@ public class ContentTypesResource extends AbstractResource {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            ContentType ct = service.getContentTypes().getType(prefix+":"+name);
+            ContentType ct = service.getContentTypes().getType(prefix + ":" + name);
             if (ct != null) {
                 return ct;
             }
@@ -210,15 +210,55 @@ public class ContentTypesResource extends AbstractResource {
     }
 
     @GET
-    @Path("/ct/{type}/{field}")
-    public ContentTypeField listDocumentTypeField(@PathParam("type") String type, @PathParam("field") String field) {
+    @Path("/ct/{type}/{item}")
+    public ContentTypeItem listDocumentTypeItem(@PathParam("type") String type, @PathParam("item") String item) {
 
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         try {
-            ContentTypeField result = null;
+            ContentTypeItem result = null;
             ContentType ct = service.getContentTypes().getType(type);
             if (ct != null) {
-                result = ct.getFields().get(field);
+                result = ct.getItem(item);
+            }
+            if (result != null) {
+                return result;
+            }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        } catch (RepositoryException e) {
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
+        }
+    }
+
+    @GET
+    @Path("/ct/{type}/p/{prop}")
+    public ContentTypeItem listDocumentTypeProperty(@PathParam("type") String type, @PathParam("prop") String prop) {
+
+        ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
+        try {
+            ContentTypeItem result = null;
+            ContentType ct = service.getContentTypes().getType(type);
+            if (ct != null) {
+                result = ct.getProperties().get(prop);
+            }
+            if (result != null) {
+                return result;
+            }
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        } catch (RepositoryException e) {
+            throw new WebApplicationException(e, ResponseUtils.buildServerErrorResponse(e));
+        }
+    }
+
+    @GET
+    @Path("/ct/{type}/c/{child}")
+    public ContentTypeItem listDocumentTypeChild(@PathParam("type") String type, @PathParam("child") String child) {
+
+        ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
+        try {
+            ContentTypeItem result = null;
+            ContentType ct = service.getContentTypes().getType(type);
+            if (ct != null) {
+                result = ct.getChildren().get(child);
             }
             if (result != null) {
                 return result;
