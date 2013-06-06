@@ -21,10 +21,16 @@ import java.util.SortedSet;
 
 /**
  * An immutable Hippo Content Type representation providing a more relaxed and enhanced form of an {@link EffectiveNodeType}
- * exposing only non-residual and non-duplicate named {@link ContentTypeField} elements (of both Child Node and Property type) and with additional meta-data describing these Fields.
+ * exposing only non-residual {@link ContentTypeProperty} and {@link ContentTypeChild} elements with additional meta-data describing these {@link ContentTypeItem ContentTypeItems}.
  * <p>
  * A ContentType is always backed by an underlying EffectiveNodeType, and for all EffectiveNodeTypes a ContentType is provided.
  * For EffectiveNodeTypes which do not have a corresponding ContentType pre-defined, a ContentType definition is automatically derived, see {@link #isDerivedType()}.
+ * </p>
+ * <p>
+ * The {@link #getProperties()} and {@link #getChildren()} methods provides direct access to these elements, but also can be access separately by name through {@link #getItem(String)}
+ * <br/>
+ * <em>Note that in case of a {@link #isDerivedType()} both a ContentTypeProperty and ContentTypeChild element may be defined by the same name, in which case {@link #getItem(String)} will
+ * only provide access to the corresponding child element (see also JCR-2.0 5.1.8).</em>
  * </p>
  * <p>
  * Some pre-defined ContentTypes may represent an aggregate ({@link #isAggregate()}) which means that the ContentType also combines one or more mixin types, besides possibly having superTypes as well.
@@ -114,8 +120,30 @@ public interface ContentType {
     boolean isCascadeValidate();
 
     /**
-     * @return The aggregated map of ContentFields, keyed by their field name.
+     * @return The aggregated map of ContentTypeProperty elements, keyed by their property name.
      * @see javax.jcr.nodetype.NodeType#getChildNodeDefinitions()
      */
-    Map<String, ContentTypeField> getFields();
+    Map<String, ContentTypeProperty> getProperties();
+
+
+    /**
+     * @return The aggregated map of ContentTypeChild elements, keyed by their child name.
+     * @see javax.jcr.nodetype.NodeType#getPropertyDefinitions()
+     */
+    Map<String, ContentTypeChild> getChildren();
+
+    /**
+     * A convenient method to directly access a defined {@link ContentTypeProperty or {@link ContentTypeChild} element by its name.
+     * <p>
+     * Note that a {#isDerivedType} ContentType is allowed to have both a property and child element by the same name.
+     * In that case this method will only provide access to the child element by that name (see also JCR-2.0 5.1.8).
+     * The same named property element in that case can still be accessed through {@link #getProperties()}.
+     * <br/>
+     * For not {@link #isDerivedType()} ContentTypes duplicate named properties and children are not supported, so in that case this method can be relied
+     * upon to access all defined ContentTypeItem elements
+     * </p>
+     * @param name the name of a defined {@link ContentTypeProperty or {@link ContentTypeChild} element
+     * @return a {@link ContentTypeProperty or {@link ContentTypeChild} element by that name
+     */
+    ContentTypeItem getItem(String name);
 }
