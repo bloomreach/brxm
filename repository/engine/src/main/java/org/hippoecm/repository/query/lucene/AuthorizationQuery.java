@@ -17,8 +17,11 @@ package org.hippoecm.repository.query.lucene;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.NamespaceException;
@@ -43,6 +46,7 @@ import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
+import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
 import org.hippoecm.repository.security.FacetAuthConstants;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.QFacetRule;
@@ -88,17 +92,33 @@ public class AuthorizationQuery {
                 memberships.add(groupPrincipal.getName());
             }
             long start = System.currentTimeMillis();
-            this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class), memberships,(InternalHippoSession)session, indexingConfig, nsMappings, ntMgr);
+            this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class),
+                                    subject.getPrincipals(AuthorizationFilterPrincipal.class),
+                                    memberships,
+                                    (InternalHippoSession)session,
+                                    indexingConfig,
+                                    nsMappings,
+                                    ntMgr);
             log.info("Creating authorization query took {} ms. Query: {}", String.valueOf(System.currentTimeMillis() - start), query);
         }
     }
 
-    private BooleanQuery initQuery(final Set<FacetAuthPrincipal> facetAuths, 
+    private BooleanQuery initQuery(final Set<FacetAuthPrincipal> facetAuths,
+                                   final Set<AuthorizationFilterPrincipal> authorizationFilterPrincipals,
                                    final Set<String> memberships,
                                    final InternalHippoSession session,
                                    final ServicingIndexingConfiguration indexingConfig,
                                    final NamespaceMappings nsMappings,
                                    final NodeTypeManager ntMgr) {
+
+        Map<String, Collection<QFacetRule>> extendedFacetRules = null;
+        if (!authorizationFilterPrincipals.isEmpty()) {
+            extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
+            for (AuthorizationFilterPrincipal afp : authorizationFilterPrincipals) {
+                extendedFacetRules.putAll(afp.getFacetRules());
+            }
+        }
+
         BooleanQuery authQuery = new BooleanQuery(true);
         for (final FacetAuthPrincipal facetAuthPrincipal : facetAuths) {
             if (!facetAuthPrincipal.getPrivileges().contains("jcr:read")) {
@@ -106,7 +126,7 @@ public class AuthorizationQuery {
             }
             for (final DomainRule domainRule : facetAuthPrincipal.getRules()) {
                 BooleanQuery facetQuery = new BooleanQuery(true);
-                for (final QFacetRule facetRule : domainRule.getFacetRules()) {
+                for (final QFacetRule facetRule : getFacetRules(domainRule, extendedFacetRules)) {
                     Query q = getFacetRuleQuery(facetRule, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (q == null) {
                         continue;
@@ -130,6 +150,19 @@ public class AuthorizationQuery {
         log.debug("Authorization query is : " + authQuery);
         log.debug("Authorization query has {} clauses", authQuery.getClauses().length);
         return authQuery;
+    }
+
+    private Set<QFacetRule> getFacetRules(final DomainRule domainRule, Map<String, Collection<QFacetRule>> extendedFacetRules) {
+        if (extendedFacetRules != null) {
+            final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
+            final Collection<QFacetRule> extendedRules = extendedFacetRules.get(domainRulePath);
+            if (extendedRules != null) {
+                final Set<QFacetRule> facetRules = new HashSet<QFacetRule>(domainRule.getFacetRules());
+                facetRules.addAll(extendedRules);
+                return facetRules;
+            }
+        }
+        return domainRule.getFacetRules();
     }
 
     private Query getFacetRuleQuery(final QFacetRule facetRule,

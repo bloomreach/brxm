@@ -16,13 +16,16 @@
 package org.hippoecm.repository;
 
 import java.security.AccessControlException;
+import java.util.Arrays;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.RowIterator;
@@ -31,10 +34,13 @@ import javax.jcr.security.Privilege;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -1180,5 +1186,44 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         } catch (AccessControlException e) {
             // expected
         }
+    }
+
+    @Test
+    public void testDelegatedSessionIsCheckedToo() throws RepositoryException {
+        final Session adminSession = userSession.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
+        {
+            Session extendedSession = ((HippoSession) userSession).createSecurityDelegate(adminSession);
+            QueryManager queryManager = extendedSession.getWorkspace().getQueryManager();
+
+            // XPath doesn't like the query from the root
+            Query query = queryManager.createQuery("//element(*,hippo:ntunstructured) order by @jcr:score", Query.XPATH);
+            NodeIterator iter = query.execute().getNodes();
+
+            // all nodes can be read
+            assertEquals(19L, iter.getSize());
+
+            extendedSession.logout();
+        }
+
+        {
+            final FacetRule facetRule = new FacetRule("authtest", "canread", true, false, PropertyType.STRING);
+            final DomainRuleExtension domainRuleExtension = new DomainRuleExtension("everywhere", "all-nodes", Arrays.asList(facetRule));
+
+            Session extendedSession = ((HippoSession) userSession).createSecurityDelegate(adminSession, domainRuleExtension);
+            QueryManager queryManager = extendedSession.getWorkspace().getQueryManager();
+
+            // XPath doesn't like the query from the root
+            Query query = queryManager.createQuery("//element(*,hippo:ntunstructured) order by @jcr:score", Query.XPATH);
+            NodeIterator iter = query.execute().getNodes();
+            assertEquals(12L, iter.getSize());
+
+            // Nodes 'nothing0/subread' and 'nothing0/subwrite' are counted but not instantiated.
+            // The hierarchical constraint (can read parent) is not taken into account.
+            assertEquals(14L, ((HippoNodeIterator) iter).getTotalSize());
+
+            extendedSession.logout();
+        }
+
+        adminSession.logout();
     }
 }

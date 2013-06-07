@@ -17,7 +17,10 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.security.AccessControlException;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -73,7 +76,10 @@ import org.hippoecm.repository.jackrabbit.xml.DereferencedImportHandler;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSessionImporter;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
+import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.AdminPrincipal;
+import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.security.domain.FacetRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -600,6 +606,19 @@ abstract class SessionImplHelper {
         } else {
             return node;
         }
+    }
+
+    public Map<String, Collection<QFacetRule>> getFacetRules(DomainRuleExtension[] domainRuleExtensions) throws RepositoryException {
+        Map<String, Collection<QFacetRule>> extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
+        for (DomainRuleExtension domainRuleExtension : domainRuleExtensions) {
+            final String domainRulePath = domainRuleExtension.getDomainName() + "/" + domainRuleExtension.getDomainRuleName();
+            final Collection<QFacetRule> facetRules = new ArrayList<QFacetRule>();
+            for (FacetRule facetRule : domainRuleExtension.getFacetRules()) {
+                facetRules.add(new QFacetRule(facetRule, context));
+            }
+            extendedFacetRules.put(domainRulePath, facetRules);
+        }
+        return extendedFacetRules;
     }
 
     public AuthorizationQuery getAuthorizationQuery() {

@@ -16,16 +16,17 @@
 package org.hippoecm.repository.security;
 
 import java.security.Principal;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
-import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.hippoecm.repository.security.domain.QFacetRule;
 
 public class AuthorizationFilterPrincipal implements Principal {
 
-    private final List<DomainRuleExtension> domainRuleExtensions;
+    private final Map<String, Collection<QFacetRule>> facetRules;
 
-    public AuthorizationFilterPrincipal(final List<DomainRuleExtension> domainRuleExtensions) {
-        this.domainRuleExtensions = domainRuleExtensions;
+    public AuthorizationFilterPrincipal(final Map<String, Collection<QFacetRule>> facetRules) {
+        this.facetRules = facetRules;
     }
 
     @Override
@@ -33,7 +34,7 @@ public class AuthorizationFilterPrincipal implements Principal {
         return "authorization-filter";
     }
 
-    public List<DomainRuleExtension> getDomainRuleExtensions() {
-        return domainRuleExtensions;
+    public Map<String, Collection<QFacetRule>> getFacetRules() {
+        return facetRules;
     }
 }

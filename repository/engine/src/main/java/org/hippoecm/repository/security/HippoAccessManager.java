@@ -77,8 +77,6 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
-import org.onehippo.repository.security.domain.DomainRuleExtension;
-import org.onehippo.repository.security.domain.FacetRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -281,18 +279,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private void initializeExtendedFacetRules(final Set<AuthorizationFilterPrincipal> filterPrincipals) throws RepositoryException {
         extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
         for (AuthorizationFilterPrincipal afp : filterPrincipals) {
-            final List<DomainRuleExtension> domainRuleExtensions = afp.getDomainRuleExtensions();
-            if (domainRuleExtensions == null) {
-                continue;
-            }
-            for (DomainRuleExtension domainRuleExtension : domainRuleExtensions) {
-                final String domainRulePath = domainRuleExtension.getDomainName() + "/" + domainRuleExtension.getDomainRuleName();
-                final Collection<QFacetRule> facetRules = new ArrayList<QFacetRule>();
-                for (FacetRule facetRule : domainRuleExtension.getFacetRules()) {
-                    facetRules.add(new QFacetRule(facetRule, npRes));
-                }
-                extendedFacetRules.put(domainRulePath, facetRules);
-            }
+            extendedFacetRules.putAll(afp.getFacetRules());
         }
     }
 
@@ -659,8 +646,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
     private Set<QFacetRule> getFacetRules(final DomainRule domainRule) {
-        final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
         if (extendedFacetRules != null) {
+            final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
             final Collection<QFacetRule> extendedRules = extendedFacetRules.get(domainRulePath);
             if (extendedRules != null) {
                 final Set<QFacetRule> facetRules = new HashSet<QFacetRule>(domainRule.getFacetRules());

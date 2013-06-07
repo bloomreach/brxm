@@ -477,7 +477,8 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
         if (!(other.session instanceof InternalHippoSession)) {
             throw new UnsupportedOperationException("Decorated session is not of type " + InternalHippoSession.class.getName());
         }
-        return ((InternalHippoSession) super.session).createDelegatedSession((InternalHippoSession) other.session, domainExtensions);
+        final Session delegatedSession = ((InternalHippoSession) super.session).createDelegatedSession((InternalHippoSession) other.session, domainExtensions);
+        return DecoratorFactoryImpl.getSessionDecorator(delegatedSession, credentials);
     }
 
     private InternalHippoSession getInternalHippoSession() {
