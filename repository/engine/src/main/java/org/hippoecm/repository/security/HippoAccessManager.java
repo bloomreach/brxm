@@ -42,7 +42,6 @@ import javax.jcr.security.AccessControlPolicyIterator;
 import javax.jcr.security.Privilege;
 import javax.security.auth.Subject;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.iterator.AccessControlPolicyIteratorAdapter;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
@@ -534,7 +533,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
     private Boolean getAccessFromCache(NodeId id, AuthorizationExtension extension) {
-        Boolean cached;
         if (extension != null) {
             return extension.getAccessFromCache(id);
         } else {
@@ -615,7 +613,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         currentDomainRoleIds.addAll(fap.getRoles());
 
         // check is node matches ONE of the domain rules
-        for (DomainRule domainRule : getDomainRules(fap, extension)) {
+        for (DomainRule domainRule : fap.getRules()) {
 
             boolean allRulesMatched = true;
 
@@ -655,34 +653,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
         return isInDomain;
-    }
-
-    private Set<DomainRule> getDomainRules(final FacetAuthPrincipal fap, AuthorizationExtension extension) {
-        Set<DomainRule> result = null;
-        if (extension != null) {
-            final String domainName = fap.getName();
-            final Map<String, Collection<FacetRule>> extendedFacetRules = extension.getExtendedFacetRules();
-            for (String domainRulePath : extendedFacetRules.keySet()) {
-                final String ruleName = StringUtils.substringAfter(domainRulePath, "/");
-                boolean found = false;
-                if (domainRulePath.startsWith(domainName + "/")) {
-                    for (DomainRule domainRule : fap.getRules()) {
-                        if (ruleName.equals(domainRule.getName())) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                if (!found) {
-                    final DomainRule domainRule = new DomainRule(ruleName, domainName, new HashSet<FacetRule>(extendedFacetRules.get(domainRulePath)));
-                    if (result == null) {
-                        result = new HashSet<DomainRule>(fap.getRules());
-                    }
-                    result.add(domainRule);
-                }
-            }
-        }
-        return result == null ? fap.getRules() : result;
     }
 
     private Set<FacetRule> getFacetRules(final DomainRule domainRule, AuthorizationExtension extension) {

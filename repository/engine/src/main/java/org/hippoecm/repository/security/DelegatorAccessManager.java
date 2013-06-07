@@ -117,7 +117,7 @@ public class DelegatorAccessManager implements AccessManager {
 
     @Override
     public boolean isGranted(final Path parentPath, final Name childName, final int permissions) throws RepositoryException {
-        return primary.isGranted(parentPath, childName, permissions, primaryExtension) | secondary.isGranted(parentPath, childName, permissions, secondaryExtension);
+        return primary.isGranted(parentPath, childName, permissions, primaryExtension) || secondary.isGranted(parentPath, childName, permissions, secondaryExtension);
     }
 
     @Override

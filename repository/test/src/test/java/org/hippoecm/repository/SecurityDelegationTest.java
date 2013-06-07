@@ -24,7 +24,6 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
@@ -41,43 +40,40 @@ public class SecurityDelegationTest extends RepositoryTestCase {
 
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
-        if (!users.hasNode("ion")) {
-            final Node ion = users.addNode("ion", "hipposys:user");
-            ion.setProperty("hipposys:password", "delphy");
-            final Node apollo = users.addNode("apollo", "hipposys:user");
-            apollo.setProperty("hipposys:password", "olympus");
+        if (!users.hasNode("bob")) {
+            final Node ion = users.addNode("bob", "hipposys:user");
+            ion.setProperty("hipposys:password", "bob");
+            final Node alice = users.addNode("alice", "hipposys:user");
+            alice.setProperty("hipposys:password", "alice");
         }
 
         final Node root = session.getRootNode();
-        if (!root.hasNode("athens")) {
-            final Node athens = root.addNode("athens");
-            final Node assembly = athens.addNode("assembly", "hippo:authtestdocument");
-            assembly.setProperty("from", "athens");
-            assembly.setProperty("species", "human");
-            final Node academy = athens.addNode("academy", "hippo:authtestdocument");
-            academy.setProperty("passion", "wisdom");
+        if (!root.hasNode("test")) {
+            final Node test = root.addNode("test");
+            final Node wonderland = test.addNode("wonderland", "hippo:authtestdocument");
+            wonderland.setProperty("creator", "carroll");
+            wonderland.setProperty("type", "novel");
         }
 
         final Node domains = session.getNode("/hippo:configuration/hippo:domains");
-        if (!domains.hasNode("apollosdomain")) {
-            // apollo has access to greek institutions such as the assembly because
-            // apollo is athenian, ion has not
-            final Node apollosdomain = domains.addNode("apollosdomain", "hipposys:domain");
-            final Node institutions = apollosdomain.addNode("institutions", "hipposys:domainrule");
-            final Node includeAssembly = institutions.addNode("include-assembly", "hipposys:facetrule");
+        if (!domains.hasNode("alicesdomain")) {
+            // alice has access to wonderland because it's created by carroll
+            final Node alicesdomain = domains.addNode("alicesdomain", "hipposys:domain");
+            final Node institutions = alicesdomain.addNode("books", "hipposys:domainrule");
+            final Node includeAssembly = institutions.addNode("include-carrolls-creation", "hipposys:facetrule");
             includeAssembly.setProperty("hipposys:equals", true);
-            includeAssembly.setProperty("hipposys:facet", "from");
+            includeAssembly.setProperty("hipposys:facet", "creator");
             includeAssembly.setProperty("hipposys:type", "String");
-            includeAssembly.setProperty("hipposys:value", "athens");
-            final Node apolloisadmin = apollosdomain.addNode("apolloisadmin", "hipposys:authrole");
-            apolloisadmin.setProperty("hipposys:users", new String[]{"apollo"});
-            apolloisadmin.setProperty("hipposys:role", "admin");
+            includeAssembly.setProperty("hipposys:value", "carroll");
+            final Node aliceisadmin = alicesdomain.addNode("aliceisadmin", "hipposys:authrole");
+            aliceisadmin.setProperty("hipposys:users", new String[]{"alice"});
+            aliceisadmin.setProperty("hipposys:role", "admin");
         }
-        if (!domains.hasNode("ionsdomain")) {
-            final Node ionsdomain = domains.addNode("ionsdomain", "hipposys:domain");
-            final Node ionisadmin = ionsdomain.addNode("ionisadmin", "hipposys:authrole");
-            ionisadmin.setProperty("hipposys:users", new String[]{"ion"});
-            ionisadmin.setProperty("hipposys:role", "admin");
+        if (!domains.hasNode("bobsdomain")) {
+            final Node bobsdomain = domains.addNode("bobsdomain", "hipposys:domain");
+            final Node bobisadmin = bobsdomain.addNode("bobisadmin", "hipposys:authrole");
+            bobisadmin.setProperty("hipposys:users", new String[]{"bob"});
+            bobisadmin.setProperty("hipposys:role", "admin");
         }
 
         session.save();
@@ -86,61 +82,41 @@ public class SecurityDelegationTest extends RepositoryTestCase {
     /**
      * Sanity test that configuration setup is correct
      */
-    @Ignore
     @Test
-    public void apolloCanAccessTheAssemblyButIonCannot() throws Exception {
-        final Session apollo = session.getRepository().login(new SimpleCredentials("apollo", "olympus".toCharArray()));
-        final Node assembly = apollo.getNode("/athens/assembly");
-        assembly.setProperty("members", "apollo, etc.");
-        apollo.save();
+    public void aliceCanAccessWonderlandButBobCannot() throws Exception {
+        final Session alice = session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        final Node wonderland = alice.getNode("/test/wonderland");
+        wonderland.setProperty("members", "alice, etc.");
+        alice.save();
 
-        final Session ion = session.getRepository().login(new SimpleCredentials("ion", "delphy".toCharArray()));
-        assertFalse(ion.nodeExists("/athens/assembly"));
-    }
-
-    @Ignore
-    @Test
-    public void apolloDelegatesAssemblyAccessToIon() throws Exception {
-        final HippoSession ion = (HippoSession) session.getRepository().login(new SimpleCredentials("ion", "delphy".toCharArray()));
-        final Session apollo = session.getRepository().login(new SimpleCredentials("apollo", "olympus".toCharArray()));
-        final Session sonOfApollo = ion.createSecurityDelegate(apollo);
-
-        // because ion turns out to be the son of apollo he is of athenian descent and can join the assembly
-        assertTrue(sonOfApollo.nodeExists("/athens/assembly"));
-        final Node assembly = sonOfApollo.getNode("/athens/assembly");
-        assembly.setProperty("members", "ion, etc.");
-        sonOfApollo.save();
+        final Session ion = session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        assertFalse(ion.nodeExists("/test/wonderland"));
     }
 
     @Test
-    public void ionCanAccessTheAcademyByProgrammaticDomainRuleExtension() throws Exception {
+    public void aliceDelegatesWonderlandAccessToBob() throws Exception {
+        final HippoSession bob = (HippoSession) session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        final Session alice = session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        final Session testSession = bob.createSecurityDelegate(alice);
 
-        // include /athens/academy to ions domain by adding a facet that matches the passion property of the academy node
-        final FacetRule facetRule = new FacetRule("passion", "wisdom", true, false, PropertyType.STRING);
-        final DomainRuleExtension domainRuleExtension = new DomainRuleExtension("ionsdomain", "schools", Arrays.asList(facetRule));
-
-        final HippoSession ion = (HippoSession) session.getRepository().login(new SimpleCredentials("ion", "delphy".toCharArray()));
-        final Session apollo = session.getRepository().login(new SimpleCredentials("apollo", "olympus".toCharArray()));
-
-        final Session sonOfApolloAndPhilosopher = ion.createSecurityDelegate(apollo, domainRuleExtension);
-        final Node academy = sonOfApolloAndPhilosopher.getNode("/athens/academy");
-        academy.setProperty("members", "ion, etc.");
-        sonOfApolloAndPhilosopher.save();
+        // bob can get access to wonderland in the new session
+        assertTrue(testSession.nodeExists("/test/wonderland"));
+        final Node wonderland = testSession.getNode("/test/wonderland");
+        wonderland.setProperty("members", "bob, etc.");
+        testSession.save();
     }
 
-    @Ignore
     @Test
-    public void apolloCanBeRevokedAssemblyAccessByProgrammaticDomainRuleExtension() throws Exception {
+    public void aliceCanBeRevokedWonderlandAccessByProgrammaticDomainRuleExtension() throws Exception {
+        // exclude /test/wonderland from alices domain by adding a facet rule to the existing institutions domain rule
+        // that contradicts the creator property on the wonderland node
+        final FacetRule facetRule = new FacetRule("type", "poem", true, false, PropertyType.STRING);
+        final DomainRuleExtension domainRuleExtension = new DomainRuleExtension("alicesdomain", "books", Arrays.asList(facetRule));
 
-        // exclude /athens/assembly from apollos domain by adding a facet rule to the existing institutions domain rule
-        // that contradicts the species property on the assembly node
-        final FacetRule facetRule = new FacetRule("species", "god", true, false, PropertyType.STRING);
-        final DomainRuleExtension domainRuleExtension = new DomainRuleExtension("apollosdomain", "institutions", Arrays.asList(facetRule));
+        final HippoSession alice = (HippoSession) session.getRepository().login(new SimpleCredentials("alice", "alice".toCharArray()));
+        final Session bob = session.getRepository().login(new SimpleCredentials("bob", "bob".toCharArray()));
+        final Session testSession = alice.createSecurityDelegate(bob, domainRuleExtension);
 
-        final HippoSession apollo = (HippoSession) session.getRepository().login(new SimpleCredentials("apollo", "olympus".toCharArray()));
-        final Session ion = session.getRepository().login(new SimpleCredentials("ion", "delphy".toCharArray()));
-        final Session fatherOfIon = apollo.createSecurityDelegate(ion, domainRuleExtension);
-
-        assertFalse(fatherOfIon.nodeExists("/athens/assembly"));
+        assertFalse(testSession.nodeExists("/test/wonderland"));
     }
 }
