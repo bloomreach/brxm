@@ -74,7 +74,13 @@ public interface PoolingRepository extends Repository, PoolingRepositoryMBean {
      * @param sessionsRefreshPendingTimeMillis
      */
     void setSessionsRefreshPendingAfter(long sessionsRefreshPendingTimeMillis);
-    
+
+    /**
+     * Sets max acceptable PooledSession.timeCreated timestamp, in millis. Sessions created before this time
+     * should be disposed of.
+     */
+    void setSessionsInvalidIfCreatedBeforeTimeMillis(long sessionsInvalidIfCreatedBeforeTimeMillis);
+
     /**
      * Returns pooling counter.
      * @return

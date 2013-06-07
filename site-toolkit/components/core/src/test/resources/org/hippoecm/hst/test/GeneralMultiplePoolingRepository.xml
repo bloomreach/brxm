@@ -78,6 +78,7 @@
     <property name="timeBetweenEvictionRunsMillis" value="60000" />
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
+    <property name="maxTimeToLiveMillis" value="3600000"/>
   </bean>
   
   <bean id="javax.jcr.Repository.preview" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
@@ -99,6 +100,7 @@
     <property name="timeBetweenEvictionRunsMillis" value="60000" />
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
+    <property name="maxTimeToLiveMillis" value="3600000"/>
   </bean>
   
   <bean id="javax.jcr.Repository.writable" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
@@ -120,6 +122,7 @@
     <property name="timeBetweenEvictionRunsMillis" value="60000" />
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
+    <property name="maxTimeToLiveMillis" value="3600000"/>
   </bean>
   
   <bean id="javax.jcr.Repository.hstconfigreader" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
@@ -141,6 +144,7 @@
     <property name="timeBetweenEvictionRunsMillis" value="60000" />
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
+    <property name="maxTimeToLiveMillis" value="3600000"/>
   </bean>
   
   <!-- Delegating repository to the raw hippo repository -->

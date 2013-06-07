@@ -57,6 +57,7 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
         
         private boolean passivated;
         private long lastRefreshed;
+        private long timeCreated;
         private PooledSession pooledSessionProxy;
         private String userID;
         
@@ -67,6 +68,7 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
         public PooledSessionInterceptor(String userID) {
             this.userID = userID;
             lastRefreshed = System.currentTimeMillis();
+            timeCreated = lastRefreshed;
         }
         
         public Object intercept(Invocation invocation) throws Throwable {
@@ -86,6 +88,8 @@ public class PooledSessionDecoratorProxyFactoryImpl implements SessionDecorator,
                 }
             } else if ("lastRefreshed".equals(methodName)) {
                 ret = Long.valueOf(lastRefreshed);
+            } else if ("timeCreated".equals(methodName)) {
+                ret = Long.valueOf(timeCreated);
             } else if ("getUserID".equals(methodName)) {
                 if (userID != null) {
                     ret = userID;

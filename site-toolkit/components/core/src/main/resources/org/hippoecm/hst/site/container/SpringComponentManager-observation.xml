@@ -215,6 +215,87 @@
             </bean>
           </property>
         </bean>
+
+        <!-- session pools marking security domains changed: All sessions should be logged out. -->
+        <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">
+          <property name="nodeAddedEnabled" value="true"/>
+          <property name="nodeRemovedEnabled" value="true"/>
+          <property name="propertyAddedEnabled" value="true"/>
+          <property name="propertyChangedEnabled" value="true"/>
+          <property name="propertyRemovedEnabled" value="true"/>
+          <!-- only nodes below '/hippo:configuration' in the repository triggers sessions to be logged out -->
+          <property name="absolutePath" value="/hippo:configuration"/>
+          <property name="deep" value="true"/>
+          <property name="uuids">
+            <null/>
+          </property>
+          <!-- only changes to those node types should trigger session logout -->
+          <property name="nodeTypeNames">
+            <list>
+              <value>hipposys:authrole</value>
+              <value>hipposys:facetrule</value>
+              <value>hipposys:domainrule</value>
+              <value>hipposys:domain</value>
+              <value>hipposys:domainfolder</value>
+              <value>hipposys:role</value>
+              <value>hipposys:rolefolder</value>
+              <value>hipposys:user</value>
+              <value>hipposys:userfolder</value>
+              <value>hipposys:group</value>
+              <value>hipposys:groupfolder</value>
+              <value>hipposys:externalgroup</value>
+              <value>hipposys:externalrole</value>
+              <value>hipposys:externaluser</value>
+            </list>
+          </property>
+          <property name="noLocal" value="false"/>
+          <property name="eventListener">
+            <bean parent="baseEventListener" class="org.hippoecm.hst.core.jcr.pool.PoolingRepositorySessionMustBeLoggedOutListener">
+              <property name="poolingRepositories">
+                <list>
+                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.default"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.preview"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.writable"/>
+                      </list>
+                    </property>
+                  </bean>
+                  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                    <property name="targetObject" ref="javax.jcr.Repository"/>
+                    <property name="targetMethod" value="getRepositoryByCredentials"/>
+                    <property name="arguments">
+                      <list>
+                        <ref bean="javax.jcr.Credentials.binaries"/>
+                      </list>
+                    </property>
+                  </bean>
+                </list>
+              </property>
+              <property name="refreshDisposableRepositories" value="true" />
+              <property name="multipleRepository" ref="javax.jcr.Repository" />
+            </bean>
+          </property>
+        </bean>
         
         <!-- lazy delegating repository sessions refreshing event listener -->
         <bean class="org.hippoecm.hst.core.jcr.EventListenerItemImpl">

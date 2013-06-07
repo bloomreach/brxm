@@ -62,11 +62,15 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     private String defaultCredentialsUserIDSeparator = String.valueOf('\uFFFF');
     private char [] defaultCredentailsPassword;
     private String defaultWorkspaceName;
-    
+
+    private long maxTimeToLiveMillis;
+
     private boolean refreshOnPassivate = true;
     private long maxRefreshIntervalOnPassivate;
     private boolean keepChangesOnRefresh = false;
     private long sessionsRefreshPendingTimeMillis;
+
+    private volatile long sessionsInvalidIfCreatedBeforeTimeMillis;
     
     private PooledSessionRefresher pooledSessionRefresher;
     
@@ -168,7 +172,19 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
     public String getDefaultWorkspaceName() {
         return defaultWorkspaceName;
     }
-    
+
+    public void setMaxTimeToLiveMillis(long maxTimeToLiveMillis) {
+        this.maxTimeToLiveMillis = maxTimeToLiveMillis;
+    }
+
+    public long getMaxTimeToLiveMillis() {
+        return this.maxTimeToLiveMillis;
+    }
+
+    public void setSessionsInvalidIfCreatedBeforeTimeMillis(long sessionsInvalidIfCreatedBeforeTimeMillis) {
+        this.sessionsInvalidIfCreatedBeforeTimeMillis = sessionsInvalidIfCreatedBeforeTimeMillis;
+    }
+
     public void setRefreshOnPassivate(boolean refreshOnPassivate) {
         this.refreshOnPassivate = refreshOnPassivate;
     }
@@ -1132,11 +1148,21 @@ public class BasicPoolingRepository implements PoolingRepository, PoolingReposit
                 validated = session.isLive();
             } catch (Exception ignore) {
             }
-            
+
             if (!validated) {
                 return validated;
             }
-            
+
+            if (session instanceof PooledSession) {
+                long sessionAge = System.currentTimeMillis() - ((PooledSession)session).timeCreated();
+                if (maxTimeToLiveMillis > 0 && sessionAge > maxTimeToLiveMillis) {
+                    return false;
+                }
+                if (((PooledSession)session).timeCreated() <= sessionsInvalidIfCreatedBeforeTimeMillis) {
+                    return false;
+                }
+            }
+
             String validationQueryValue = getValidationQuery();
 
             if (validationQueryValue != null) {

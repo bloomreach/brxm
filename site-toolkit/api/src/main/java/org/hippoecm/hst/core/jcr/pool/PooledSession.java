@@ -51,7 +51,12 @@ public interface PooledSession extends Session {
      * @return
      */
     long lastRefreshed();
-    
+
+    /**
+     * Returns the Session creation time millis.
+     */
+    long timeCreated();
+
     /**
      * Gets the user ID that was used to acquire this session. This method is free to return an
      * "anonymous user id" or <code>null</code> if the <code>Credentials</code> used to acquire this session happens not

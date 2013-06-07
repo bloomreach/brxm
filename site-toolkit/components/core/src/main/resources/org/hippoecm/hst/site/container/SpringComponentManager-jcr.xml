@@ -75,6 +75,7 @@
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
+            <property name="maxTimeToLiveMillis" value="3600000"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.preview">
@@ -102,6 +103,7 @@
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
+            <property name="maxTimeToLiveMillis" value="3600000"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.writable">
@@ -129,6 +131,7 @@
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
+            <property name="maxTimeToLiveMillis" value="3600000"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.hstconfigreader">
@@ -156,6 +159,7 @@
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
+            <property name="maxTimeToLiveMillis" value="3600000"/>
           </bean>
         </entry>
         <entry key-ref="javax.jcr.Credentials.binaries">
@@ -183,6 +187,7 @@
             <property name="refreshOnPassivate" value="true"/>
             <property name="maxRefreshIntervalOnPassivate" value="${sessionPool.maxRefreshIntervalOnPassivate}"/>
             <property name="poolingCounter" ref="defaultPoolingCounter" />
+            <property name="maxTimeToLiveMillis" value="3600000"/>
           </bean>
         </entry>
       </map>

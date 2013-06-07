@@ -36,6 +36,7 @@
     <property name="timeBetweenEvictionRunsMillis" value="60000" />
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
+    <property name="maxTimeToLiveMillis" value="3600000"/>
   </bean>
   
   <bean id="org.hippoecm.hst.core.jcr.pool.PoolingRepository.readOnly" class="org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository" 
@@ -56,6 +57,7 @@
     <property name="timeBetweenEvictionRunsMillis" value="60000" />
     <property name="numTestsPerEvictionRun" value="1" />
     <property name="minEvictableIdleTimeMillis" value="60000" />
+    <property name="maxTimeToLiveMillis" value="3600000"/>
   </bean>
   
 </beans>

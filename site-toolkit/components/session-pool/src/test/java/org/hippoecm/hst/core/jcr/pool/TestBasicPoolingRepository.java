@@ -362,7 +362,55 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
         assertEquals(0L, counter.getNumSessionsPassivated());
         assertEquals(0L, counter.getNumSessionsDestroyed());
     }
-    
+
+    @Test
+    public void testMaxTimeToLive() throws Exception {
+        BasicPoolingRepository repository = poolingRepository;
+        repository.setMaxIdle(1);
+        repository.setMaxTimeToLiveMillis(5000L); // 5 s
+        assertEquals(5000L, repository.getMaxTimeToLiveMillis());
+
+        long start = System.currentTimeMillis();
+        PooledSession sessionA = (PooledSession)repository.login();
+        sessionA.logout();
+        Thread.sleep(1000L);
+        PooledSession sessionB = (PooledSession)repository.login();
+        sessionB.logout();
+        long end = System.currentTimeMillis();
+        if (end - start < repository.getMaxTimeToLiveMillis()) {
+            assertEquals(sessionA.timeCreated(), sessionB.timeCreated());
+            assertEquals(sessionA, sessionB);
+        }
+        Thread.sleep(5000L);
+        PooledSession sessionC = (PooledSession)repository.login();
+        sessionC.logout();
+        assertTrue(sessionC.timeCreated() > end);
+        assertTrue(sessionC.timeCreated() > sessionA.timeCreated());
+        assertFalse(sessionA.equals(sessionC));
+    }
+
+    @Test
+    public void testInvalidateOldSessions() throws Exception {
+        BasicPoolingRepository repository = poolingRepository;
+        repository.setMaxIdle(2);
+        PooledSession sessionA = (PooledSession)repository.login();
+        PooledSession sessionB = (PooledSession)repository.login();
+        sessionA.logout();
+        // this should invalidate both the idle sessionA and the active sessionB
+        long clearedAt = System.currentTimeMillis();
+        repository.setSessionsInvalidIfCreatedBeforeTimeMillis(clearedAt);
+        sessionB.logout();
+        PooledSession sessionC = (PooledSession)repository.login();
+        PooledSession sessionD = (PooledSession)repository.login();
+        sessionC.logout();
+        sessionD.logout();
+        // sessions C and D should be freshly created, not equal to A or B
+        assertFalse(sessionC.equals(sessionA));
+        assertFalse(sessionC.equals(sessionB));
+        assertFalse(sessionD.equals(sessionA));
+        assertFalse(sessionD.equals(sessionB));
+    }
+
     @Ignore
     public void testSessionValidity() throws Exception {
         Session session = poolingRepository.login();

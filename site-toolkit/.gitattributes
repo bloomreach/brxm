@@ -894,6 +894,7 @@ components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/MultiplePoo
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/MultipleRepositoryImpl.java svneol=native#text/plain
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/PooledSessionDecoratorProxyFactoryImpl.java svneol=native#text/plain
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/PooledSessionResourceManagement.java svneol=native#text/plain
+components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/PoolingRepositorySessionMustBeLoggedOutListener.java svneol=native#text/plain
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/PoolingRepositorySessionsRefreshEventListener.java svneol=native#text/plain
 components/session-pool/src/main/java/org/hippoecm/hst/core/jcr/pool/util/ProxyFactory.java svneol=native#text/plain
 components/session-pool/src/site/site.xml -text
