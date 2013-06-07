@@ -63,6 +63,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -335,6 +336,11 @@ public class HippoTester extends WicketTester {
         }
 
         public void registerSessionCloseCallback(CloseCallback callback) {
+        }
+
+        @Override
+        public Session createSecurityDelegate(final Session session, final DomainRuleExtension... domainExtensions) throws RepositoryException {
+            throw new UnsupportedOperationException();
         }
     }
 
