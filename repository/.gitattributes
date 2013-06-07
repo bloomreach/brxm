@@ -157,7 +157,6 @@ engine/src/main/java/org/hippoecm/repository/query/lucene/RangeFields.java svneo
 engine/src/main/java/org/hippoecm/repository/query/lucene/StandardHippoAnalyzer.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCache.java -text svneol=unset#text/plain
 engine/src/main/java/org/hippoecm/repository/query/lucene/caching/FacetedEngineCacheManager.java -text svneol=unset#text/plain
-engine/src/main/java/org/hippoecm/repository/security/DelegatorAccessManager.java -text
 engine/src/main/java/org/hippoecm/repository/security/ExampleLoginModule.java -text
 engine/src/main/java/org/hippoecm/repository/security/FacetAuthConstants.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/HippoAMContext.java -text svneol=unset#text/plain
@@ -167,7 +166,7 @@ engine/src/main/java/org/hippoecm/repository/security/domain/AuthRole.java svneo
 engine/src/main/java/org/hippoecm/repository/security/domain/Domain.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/domain/DomainRule.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/domain/Domains.java svneol=native#text/plain
-engine/src/main/java/org/hippoecm/repository/security/domain/FacetRule.java svneol=native#text/plain
+engine/src/main/java/org/hippoecm/repository/security/domain/QFacetRule.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/group/GroupManager.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/group/RepositoryGroupManager.java svneol=native#text/plain
 engine/src/main/java/org/hippoecm/repository/security/principals/AdminPrincipal.java svneol=native#text/plain

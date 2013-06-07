@@ -25,10 +25,12 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
+import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.api.JackrabbitSession;
 import org.apache.jackrabbit.spi.commons.conversion.IdentifierResolver;
@@ -36,7 +38,6 @@ import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
-import org.hippoecm.repository.security.HippoAccessManager;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.xml.sax.ContentHandler;
 
@@ -45,6 +46,8 @@ import org.xml.sax.ContentHandler;
  * The session class hierarchy branches before it reaches the hippo specific implementations.
  */
 public interface InternalHippoSession extends JackrabbitSession, NamespaceResolver, NamePathResolver, IdentifierResolver {
+
+    Subject getSubject();
 
     NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException, NoSuchNodeTypeException, RepositoryException;
 
@@ -60,7 +63,6 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     AuthorizationQuery getAuthorizationQuery();
 
-    void createDelegatorAccessManager(InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException;
+    Session createDelegatedSession(InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException;
 
-    HippoAccessManager getHippoAccessManager();
 }

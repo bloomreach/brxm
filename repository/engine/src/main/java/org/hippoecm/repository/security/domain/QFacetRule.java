@@ -25,11 +25,12 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
+import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.FacetAuthConstants;
+import org.onehippo.repository.security.domain.FacetRule;
 
 /**
  * The facet rule consist of a facet (property) and a value.
@@ -41,7 +42,7 @@ import org.hippoecm.repository.security.FacetAuthConstants;
  * matches if the node is of nodeType or is a subtype of nodetype or
  * has a mixin type of nodetype.
  */
-public class FacetRule implements Serializable {
+public class QFacetRule implements Serializable {
 
     /**
      * Serial version id
@@ -90,12 +91,12 @@ public class FacetRule implements Serializable {
     private transient int hash;
 
 
-    public FacetRule(org.onehippo.repository.security.domain.FacetRule facetRule, NamespaceResolver namespaceResolver) throws RepositoryException {
+    public QFacetRule(FacetRule facetRule, NameResolver nameResolver) throws RepositoryException {
         this.type = facetRule.getType();
         this.facet = facetRule.getFacet();
-        this.facetName = NameParser.parse(facet, namespaceResolver, NameFactoryImpl.getInstance());
+        this.facetName = nameResolver.getQName(facet);
         this.value = facetRule.getValue();
-        this.valueName = NameParser.parse(value, namespaceResolver, NameFactoryImpl.getInstance());
+        this.valueName = nameResolver.getQName(value);
         this.equals = facetRule.isEqual();
         this.optional = facetRule.isOptional();
     }
@@ -105,9 +106,9 @@ public class FacetRule implements Serializable {
      * @param node
      * @throws RepositoryException
      */
-    public FacetRule(final Node node) throws RepositoryException {
+    public QFacetRule(final Node node) throws RepositoryException {
         if (node == null) {
-            throw new IllegalArgumentException("FacetRule node cannot be null");
+            throw new IllegalArgumentException("QFacetRule node cannot be null");
         }
 
 
@@ -142,8 +143,8 @@ public class FacetRule implements Serializable {
 
     /**
      * Parse the facet rule of type Reference. Try to find the UUID of the
-     * value of the FacetRule.
-     * @param facetNode the node of the FacetRule
+     * value of the QFacetRule.
+     * @param facetNode the node of the QFacetRule
      * @return String the String representation of the UUID
      * @throws RepositoryException
      */
@@ -160,7 +161,7 @@ public class FacetRule implements Serializable {
                 StringBuilder msg = new StringBuilder();
                 msg.append("Path not found for facetRule ");
                 msg.append("'").append(facetNode.getPath()).append("' : ");
-                msg.append("FacetRule");
+                msg.append("QFacetRule");
                 msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString()).append(")");
                 msg.append("[");
                 msg.append(facet);
@@ -175,7 +176,7 @@ public class FacetRule implements Serializable {
                 StringBuilder msg = new StringBuilder();
                 msg.append("Node is not referenceable for facetRule ");
                 msg.append("'").append(facetNode.getPath()).append("' : ");
-                msg.append("FacetRule");
+                msg.append("QFacetRule");
                 msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString()).append(")");
                 msg.append("[");
                 msg.append(facet);
@@ -258,7 +259,7 @@ public class FacetRule implements Serializable {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("FacetRule");
+        sb.append("QFacetRule");
         sb.append("(").append(PropertyType.nameFromValue(type)).append(")");
         sb.append("[");
         sb.append(facet);
@@ -281,10 +282,10 @@ public class FacetRule implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof FacetRule)) {
+        if (!(obj instanceof QFacetRule)) {
             return false;
         }
-        FacetRule other = (FacetRule) obj;
+        QFacetRule other = (QFacetRule) obj;
         return facet.equals(other.getFacet()) && value.equals(other.getValue()) && (equals == other.isEqual());
     }
 

@@ -45,7 +45,7 @@ import org.apache.lucene.search.TermQuery;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.security.FacetAuthConstants;
 import org.hippoecm.repository.security.domain.DomainRule;
-import org.hippoecm.repository.security.domain.FacetRule;
+import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.slf4j.Logger;
@@ -106,7 +106,7 @@ public class AuthorizationQuery {
             }
             for (final DomainRule domainRule : facetAuthPrincipal.getRules()) {
                 BooleanQuery facetQuery = new BooleanQuery(true);
-                for (final FacetRule facetRule : domainRule.getFacetRules()) {
+                for (final QFacetRule facetRule : domainRule.getFacetRules()) {
                     Query q = getFacetRuleQuery(facetRule, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (q == null) {
                         continue;
@@ -132,7 +132,7 @@ public class AuthorizationQuery {
         return authQuery;
     }
 
-    private Query getFacetRuleQuery(final FacetRule facetRule,
+    private Query getFacetRuleQuery(final QFacetRule facetRule,
                                     final Set<String> memberships,
                                     final Set<String> roles,
                                     final ServicingIndexingConfiguration indexingConfig,
@@ -206,7 +206,7 @@ public class AuthorizationQuery {
         return QueryHelper.getNoHitsQuery();
     }
 
-    private Query getPropertyQuery(final FacetRule facetRule, final String value, final String fieldName, final String internalNameTerm) {
+    private Query getPropertyQuery(final QFacetRule facetRule, final String value, final String fieldName, final String internalNameTerm) {
         Query tq = new TermQuery(new Term(fieldName, value));
         if (facetRule.isFacetOptional()) {
             // If the property exists, it must be equal. Else, it is also ok
@@ -227,7 +227,7 @@ public class AuthorizationQuery {
             }
         } else {
             // Property MUST exist and it MUST (or MUST NOT) equal the value,
-            // depending on FacetRule#isEqual.
+            // depending on QFacetRule#isEqual.
             if (facetRule.isEqual()) {
                 return tq;
             } else {
@@ -236,7 +236,7 @@ public class AuthorizationQuery {
         }
     }
 
-    private Query getNodeTypeDescendantQuery(final FacetRule facetRule,
+    private Query getNodeTypeDescendantQuery(final QFacetRule facetRule,
                                              final NodeTypeManager ntMgr,
                                              final InternalHippoSession session,
                                              final NamespaceMappings nsMappings) {
@@ -296,7 +296,7 @@ public class AuthorizationQuery {
         }
     }
 
-    private Query getNodeTypeQuery(String luceneFieldName, FacetRule facetRule, InternalHippoSession session, NamespaceMappings nsMappings) throws IllegalNameException, NamespaceException {
+    private Query getNodeTypeQuery(String luceneFieldName, QFacetRule facetRule, InternalHippoSession session, NamespaceMappings nsMappings) throws IllegalNameException, NamespaceException {
         String termValue = facetRule.getValue();
         String name = getNtName(termValue, session, nsMappings);
         Query nodetypeQuery = new TermQuery(new Term(luceneFieldName, name));
@@ -316,7 +316,7 @@ public class AuthorizationQuery {
         return query;
     }
 
-    private Query getNodeNameQuery(FacetRule facetRule, InternalHippoSession session, Set<String> roles, Set<String> memberShips, final NamespaceMappings nsMappings) {
+    private Query getNodeNameQuery(QFacetRule facetRule, InternalHippoSession session, Set<String> roles, Set<String> memberShips, final NamespaceMappings nsMappings) {
         try {
             String fieldName = ServicingNameFormat.getInternalFacetName(NameConstants.JCR_NAME, nsMappings);
             String value = facetRule.getValue();
@@ -347,7 +347,7 @@ public class AuthorizationQuery {
         }
     }
 
-    private Query expandUser(final String field, final FacetRule facetRule, final InternalHippoSession session) {
+    private Query expandUser(final String field, final QFacetRule facetRule, final InternalHippoSession session) {
         if (facetRule.isEqual()) {
             return new TermQuery(new Term(field, session.getUserID()));
         } else {
@@ -355,7 +355,7 @@ public class AuthorizationQuery {
         }
     }
 
-    private Query expandGroup(final String field, final FacetRule facetRule, final Set<String> memberships) {
+    private Query expandGroup(final String field, final QFacetRule facetRule, final Set<String> memberships) {
         // boolean OR query of groups
         if (memberships.isEmpty()) {
             return QueryHelper.getNoHitsQuery();
@@ -372,7 +372,7 @@ public class AuthorizationQuery {
         }
     }
 
-    private Query expandRole(final String field, final FacetRule facetRule, final Set<String> roles) {
+    private Query expandRole(final String field, final QFacetRule facetRule, final Set<String> roles) {
         // boolean Or query of roles
         if (roles.size() == 0) {
             return QueryHelper.getNoHitsQuery();

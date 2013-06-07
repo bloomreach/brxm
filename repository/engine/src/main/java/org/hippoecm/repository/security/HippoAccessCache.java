@@ -101,7 +101,7 @@ public class HippoAccessCache {
     /**
      * private constructor
      */
-    private HippoAccessCache() {
+    HippoAccessCache() {
         // set the current size;
         currentMaxSize = maxSize;
         if (currentMaxSize < 1) {
@@ -216,7 +216,7 @@ public class HippoAccessCache {
         return currentMaxSize;
     }
 
-    class LRUCache<K, V> extends LinkedHashMap<K, V> {
+    static class LRUCache<K, V> extends LinkedHashMap<K, V> {
         private static final long serialVersionUID = 1L;
         private int maxCacheSize;
         private static final int DEFAULT_MAX_CAPACITY = 10000;

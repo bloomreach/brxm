@@ -36,7 +36,6 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.ValueFormatException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
@@ -56,14 +55,14 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
 import org.apache.jackrabbit.spi.Path;
-import org.hippoecm.repository.api.HippoWorkspace;
-import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.ImportMergeBehavior;
 import org.hippoecm.repository.api.ImportReferenceBehavior;
 import org.hippoecm.repository.decorating.DecoratorFactory;
 import org.hippoecm.repository.decorating.NodeIteratorDecorator;
+import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.jackrabbit.xml.DereferencedSysViewSAXEventGenerator;
@@ -468,18 +467,17 @@ public class SessionDecorator extends org.hippoecm.repository.decorating.Session
 
     @Override
     public Session createSecurityDelegate(final Session session, DomainRuleExtension... domainExtensions) throws RepositoryException {
+        if (!(super.session instanceof InternalHippoSession)) {
+            throw new UnsupportedOperationException("Decorated session is not of type " + InternalHippoSession.class.getName());
+        }
         if (!(session instanceof SessionDecorator)) {
             throw new IllegalArgumentException("Expected session of type " + getClass().getName());
         }
         final SessionDecorator other = (SessionDecorator) session;
-        if (!(super.session instanceof InternalHippoSession)) {
-            throw new IllegalArgumentException("Expected session of type " + InternalHippoSession.class.getName());
+        if (!(other.session instanceof InternalHippoSession)) {
+            throw new UnsupportedOperationException("Decorated session is not of type " + InternalHippoSession.class.getName());
         }
-
-        final Repository repository = RepositoryDecorator.unwrap(getRepository());
-        final InternalHippoSession delegate = (InternalHippoSession) repository.login(credentials);
-        delegate.createDelegatorAccessManager(other.getInternalHippoSession(), domainExtensions);
-        return delegate;
+        return ((InternalHippoSession) super.session).createDelegatedSession((InternalHippoSession) other.session, domainExtensions);
     }
 
     private InternalHippoSession getInternalHippoSession() {

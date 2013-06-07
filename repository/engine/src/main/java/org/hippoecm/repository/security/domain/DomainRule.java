@@ -27,7 +27,7 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.HippoNodeType;
 
 /**
- * A DomainRule holds a set of {@link FacetRule}s that define a subset of the domain.
+ * A DomainRule holds a set of {@link QFacetRule}s that define a subset of the domain.
  * The FacetRules must be merged together with ANDs.
  *
  * In JCR:
@@ -40,12 +40,12 @@ public class DomainRule implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Set<FacetRule> facetRules = new HashSet<FacetRule>();
+    private Set<QFacetRule> facetRules = new HashSet<QFacetRule>();
     private String name;
     private String domainName;
     private transient int hash;
 
-    public DomainRule(String name, String domainName, Set<FacetRule> facetRules) {
+    public DomainRule(String name, String domainName, Set<QFacetRule> facetRules) {
         this.name = name;
         this.domainName = domainName;
         this.facetRules = facetRules;
@@ -53,7 +53,7 @@ public class DomainRule implements Serializable {
 
     /**
      * Instantiate the domain rule with the given configuration node. If
-     * a FacetRule of this DomainRule fails, the complete DomainRule must
+     * a QFacetRule of this DomainRule fails, the complete DomainRule must
      * fail to prevent widening the authorization on misconfiguration.
      * @param node the node folding the domain rule configuration
      * @throws RepositoryException
@@ -62,12 +62,13 @@ public class DomainRule implements Serializable {
         if (node == null) {
             throw new IllegalArgumentException("DomainRule node cannot be null");
         }
+
         // loop over all the facet rules
         NodeIterator iter = node.getNodes();
         while (iter.hasNext()) {
             Node child = iter.nextNode();
             if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_FACETRULE)) {
-                facetRules.add(new FacetRule(child));
+                facetRules.add(new QFacetRule(child));
             }
         }
         this.name = node.getName();
@@ -91,7 +92,7 @@ public class DomainRule implements Serializable {
     /**
      * Get the facet rules defining the domain rule
      */
-    public Set<FacetRule> getFacetRules() {
+    public Set<QFacetRule> getFacetRules() {
         return Collections.unmodifiableSet(facetRules);
     }
 
@@ -100,10 +101,10 @@ public class DomainRule implements Serializable {
      */
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        Set<FacetRule> fr = getFacetRules();
+        Set<QFacetRule> fr = getFacetRules();
         sb.append("DomainRule: ");
         sb.append("\r\n");
-        for (FacetRule rule : fr) {
+        for (QFacetRule rule : fr) {
             sb.append("  ");
             sb.append(rule.toString());
             sb.append("\r\n");

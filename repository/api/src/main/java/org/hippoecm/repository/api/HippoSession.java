@@ -211,7 +211,8 @@ public interface HippoSession extends Session {
     /**
      * Create a new Session that contains the union of access control rules
      * of this Session and the provided session, with the optional addition
-     * of custom domain rules.
+     * of custom domain rules.  Those rules will be added to existing domain
+     * rules, imposing additional restrictions on the session.
      */
     Session createSecurityDelegate(Session session, DomainRuleExtension... domainExtensions) throws RepositoryException;
 

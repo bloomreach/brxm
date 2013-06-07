@@ -17,7 +17,7 @@ package org.onehippo.repository.security.domain;
 
 import java.util.Collection;
 
-public class DomainRuleExtension {
+public final class DomainRuleExtension {
 
     private final String domainName;
     private final String domainRuleName;
@@ -28,7 +28,6 @@ public class DomainRuleExtension {
         this.domainRuleName = domainRuleName;
         this.facetRules = facetRules;
     }
-
 
     public String getDomainName() {
         return domainName;

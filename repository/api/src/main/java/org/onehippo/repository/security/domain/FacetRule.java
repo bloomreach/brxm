@@ -15,7 +15,9 @@
  */
 package org.onehippo.repository.security.domain;
 
-public class FacetRule {
+import javax.jcr.PropertyType;
+
+public final class FacetRule {
 
     private final String facet;
     private final String value;
@@ -75,4 +77,45 @@ public class FacetRule {
         return type;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("FacetRule");
+        sb.append("(").append(PropertyType.nameFromValue(type)).append(")");
+        sb.append("[");
+        sb.append(facet);
+        if (equal) {
+            sb.append(" == ");
+        } else {
+            sb.append(" != ");
+        }
+        sb.append(value).append("]");
+        return sb.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof FacetRule)) {
+            return false;
+        }
+        FacetRule other = (FacetRule) obj;
+        return facet.equals(other.getFacet()) && value.equals(other.getValue()) && (equal == other.isEqual());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
 }
