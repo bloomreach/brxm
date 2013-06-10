@@ -17,15 +17,27 @@ package org.hippoecm.repository.translation.impl;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.AbstractList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Vector;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
+import javax.jcr.query.InvalidQueryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
@@ -47,7 +59,7 @@ import org.slf4j.LoggerFactory;
 public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWorkflow {
 
     private static final long serialVersionUID = 1L;
-
+    private static final Logger log = LoggerFactory.getLogger(TranslationWorkflowImpl.class);
     private final Session userSession;
     private final Session rootSession;
     private final WorkflowContext workflowContext;
@@ -142,7 +154,8 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
                 copiedDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
             }
             copiedDoc.setProperty(HippoTranslationNodeType.ID,
-                                  userSubject.getProperty(HippoTranslationNodeType.ID).getString());
+                    userSubject.getProperty(HippoTranslationNodeType.ID).getString());
+            copyFolderTypes(copiedDoc, prototypes);
         }
 
         copiedDoc.setProperty(HippoTranslationNodeType.LOCALE, language);
@@ -210,7 +223,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         } catch (RepositoryException ex) {
             throw new WorkflowException("Exception during searching for available translations", ex);
         }
-        
+
         hints.put("locales", (Serializable) translations);
 
         Set<String> available = new TreeSet<String>();
@@ -228,6 +241,94 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         hints.put("available", (Serializable) available);
         hints.put("locale", translatedNode.getLocale());
         return hints;
+    }
+
+    private void copyFolderTypes(final Node copiedDoc, final Map<String, Set<String>> prototypes) throws RepositoryException {
+        // check if we have all subject folder types;
+        final Map<String, Set<String>> copyPrototypes = prototypes(rootSubject);
+        if (copyPrototypes != null && copyPrototypes.size() > 0) {
+            // got some stuff...check if equal:
+            final Set<String> protoKeys = prototypes.keySet();
+            final Set<String> copyKeys = copyPrototypes.keySet();
+            // check if we have a difference and overwrite
+            if (copyKeys.size() != protoKeys.size() || !copyKeys.containsAll(protoKeys)) {
+                final String[] newValues = copyKeys.toArray(new String[copyKeys.size()]);
+                copiedDoc.setProperty("hippostd:foldertype", newValues);
+            }
+        }
+    }
+
+    /**
+     * Copy from WorkflowFolderImpl
+     * @param subject subject node
+     * @return  set of
+     * @throws RepositoryException
+     */
+    private Map<String, Set<String>> prototypes(final Node subject) throws RepositoryException {
+        Map<String, Set<String>> types = new LinkedHashMap<String, Set<String>>();
+        try {
+            QueryManager queryManager = userSession.getWorkspace().getQueryManager();
+            AbstractList<Node> folderTypes = new Vector<Node>();
+            Node templates = userSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
+            Value[] foldertypeRefs = null;
+            if (subject.hasProperty("hippostd:foldertype")) {
+                try {
+                    foldertypeRefs = subject.getProperty("hippostd:foldertype").getValues();
+                    for (final Value foldertypeRef : foldertypeRefs) {
+                        String foldertype = foldertypeRef.getString();
+                        if (templates.hasNode(foldertype)) {
+                            folderTypes.add(templates.getNode(foldertype));
+                        } else {
+                            log.warn("Unknown folder type {}", foldertype);
+                        }
+                    }
+                } catch (PathNotFoundException ex) {
+                    foldertypeRefs = null;
+                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                } catch (ValueFormatException ex) {
+                    foldertypeRefs = null;
+                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                }
+            }
+            if (foldertypeRefs == null) {
+                try {
+                    for (NodeIterator iter = templates.getNodes(); iter.hasNext(); ) {
+                        folderTypes.add(iter.nextNode());
+                    }
+                } catch (PathNotFoundException ex) {
+                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                }
+            }
+
+            for (Node foldertype : folderTypes) {
+                try {
+                    Set<String> prototypes = new TreeSet<String>();
+                    if (foldertype.isNodeType("nt:query")) {
+                        Query query = queryManager.getQuery(foldertype);
+                        query = queryManager.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
+                        QueryResult rs = query.execute();
+                        for (NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
+                            Node typeNode = iter.nextNode();
+                            if (typeNode.getName().equals("hipposysedit:prototype")) {
+                                String documentType = typeNode.getPrimaryNodeType().getName();
+                                if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
+                                        && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:")) {
+                                    prototypes.add(documentType);
+                                }
+                            } else {
+                                prototypes.add(typeNode.getName());
+                            }
+                        }
+                    }
+                    types.put(foldertype.getName(), prototypes);
+                } catch (InvalidQueryException ex) {
+                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+                }
+            }
+        } catch (RepositoryException ex) {
+            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+        }
+        return types;
     }
 
 
