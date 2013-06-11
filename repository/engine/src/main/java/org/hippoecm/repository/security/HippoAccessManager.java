@@ -43,6 +43,7 @@ import javax.jcr.security.AccessControlPolicyIterator;
 import javax.jcr.security.Privilege;
 import javax.security.auth.Subject;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.commons.iterator.AccessControlPolicyIteratorAdapter;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
@@ -182,9 +183,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private boolean isSystem = false;
 
     /**
-     * The userId of the logged in user
+     * The userIds of the logged in user
      */
-    private String userId;
+    private List<String> userIds = new ArrayList<String>();
 
     private final List<String> groupIds = new ArrayList<String>();
     private final List<String> currentDomainRoleIds = new ArrayList<String>();
@@ -231,14 +232,20 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         isAnonymous = !subject.getPrincipals(AnonymousPrincipal.class).isEmpty();
 
         // prefetch userId
+        userIds = new ArrayList<String>();
         if (isSystem) {
-            userId = subject.getPrincipals(SystemPrincipal.class).iterator().next().getName();
+            for (SystemPrincipal principal : subject.getPrincipals(SystemPrincipal.class)) {
+                userIds.add(principal.getName());
+            }
         } else if (isUser) {
-            userId = subject.getPrincipals(UserPrincipal.class).iterator().next().getName();
+            for (UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
+                userIds.add(principal.getName());
+            }
         } else if (isAnonymous) {
-            userId = subject.getPrincipals(AnonymousPrincipal.class).iterator().next().getName();
-        } else {
-            userId = "";
+            userIds.add(subject.getPrincipals(AnonymousPrincipal.class).iterator().next().getName());
+        }
+        if (userIds.size() == 0) {
+            userIds.add("");
         }
 
         // prefetch groupId's
@@ -260,9 +267,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         final Set<AuthorizationFilterPrincipal> filterPrincipals = subject.getPrincipals(AuthorizationFilterPrincipal.class);
-        if (filterPrincipals.isEmpty()) {
+        if (filterPrincipals.isEmpty() && userIds.size() == 1) {
             HippoAccessCache.setMaxSize(cacheSize);
-            readAccessCache = HippoAccessCache.getInstance(userId);
+            readAccessCache = HippoAccessCache.getInstance(userIds.get(0));
         } else {
             initializeExtendedFacetRules(filterPrincipals);
 
@@ -273,13 +280,21 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         // we're done
         initialized = true;
 
-        log.info("Initialized HippoAccessManager for user " + userId + " with cache size " + cacheSize);
+        log.info("Initialized HippoAccessManager for user " + getUserIdAsString() + " with cache size " + cacheSize);
     }
 
     private void initializeExtendedFacetRules(final Set<AuthorizationFilterPrincipal> filterPrincipals) throws RepositoryException {
         extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
+        final Set<FacetAuthPrincipal> facetAuthPrincipals = subject.getPrincipals(FacetAuthPrincipal.class);
         for (AuthorizationFilterPrincipal afp : filterPrincipals) {
-            extendedFacetRules.putAll(afp.getFacetRules());
+            final Map<String, Collection<QFacetRule>> facetRules = afp.getExpandedFacetRules(facetAuthPrincipals);
+            for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
+                final String domainPath = entry.getKey();
+                if (!extendedFacetRules.containsKey(domainPath)) {
+                    extendedFacetRules.put(domainPath, new ArrayList<QFacetRule>());
+                }
+                extendedFacetRules.get(domainPath).addAll(entry.getValue());
+            }
         }
     }
 
@@ -303,7 +318,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         itemMgr = null;
         ntMgr = null;
         npRes = null;
-        log.info("Closed HippoAccessManager for user " + userId);
+        log.info("Closed HippoAccessManager for user " + getUserIdAsString());
+    }
+
+    private String getUserIdAsString() {
+        return StringUtils.join(userIds, ',');
     }
 
     /**
@@ -385,7 +404,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
         if (log.isInfoEnabled()) {
             log.info("Checking [{}] for user {} absPath: {}",
-                    new Object[] { permsString(permissions), userId, npRes.getJCRPath(absPath) });
+                    new Object[] { permsString(permissions), getUserIdAsString(), npRes.getJCRPath(absPath) });
         }
 
         // fasttrack read permissions check
@@ -697,7 +716,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     log.warn("Failed to resolve name of {}", nodeState.getNodeId());
                 } else {
                     if (FacetAuthConstants.EXPANDER_USER.equals(facetRule.getValue())) {
-                        if (isUser && userId.equals(npRes.getJCRName(nodeName))) {
+                        if (isUser && userIds.contains(npRes.getJCRName(nodeName))) {
                             match = true;
                         }
                     } else if (FacetAuthConstants.EXPANDER_GROUP.equals(facetRule.getValue())) {
@@ -907,7 +926,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
                 // expander matches
                 if (FacetAuthConstants.EXPANDER_USER.equals(rule.getValue())) {
-                    if (isUser && userId.equals(iVal.getString())) {
+                    if (isUser && userIds.contains(iVal.getString())) {
                         match = true;
                         break;
                     }
@@ -1420,7 +1439,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     if (isNodeInDomain(nodeState, fap)) {
                         allowed = true;
                         if (log.isInfoEnabled()) {
-                            log.info("GRANT: " + priv.getName() + " to user " + userId + " in domain " + fap + " for "
+                            log.info("GRANT: " + priv.getName() + " to user " + getUserIdAsString() + " in domain " + fap + " for "
                                     + npRes.getJCRPath(absPath));
                         }
                         if (priv.getName().equals("jcr:setProperties")) {
@@ -1432,7 +1451,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
             if (!allowed) {
                 if (log.isInfoEnabled()) {
-                    log.info("DENY: " + priv.getName() + " to user " + userId + " for " + npRes.getJCRPath(absPath));
+                    log.info("DENY: " + priv.getName() + " to user " + getUserIdAsString() + " for " + npRes.getJCRPath(absPath));
                 }
                 return false;
             }

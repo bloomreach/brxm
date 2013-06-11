@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
@@ -643,6 +644,9 @@ public class SecurityManager implements HippoSecurityManager {
         if (creds.hasNext()) {
             SimpleCredentials sc = (SimpleCredentials) creds.next();
             uid = sc.getUserID();
+            if (!subject.getPrincipals(FacetAuthPrincipal.class).isEmpty()) {
+                uid = uid + "-" + UUID.randomUUID().toString();
+            }
         } else {
             // assume that UserID and principal name
             // are the same (not totally correct) and thus return the name

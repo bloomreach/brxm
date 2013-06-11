@@ -36,6 +36,7 @@ import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
+import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
@@ -91,9 +92,14 @@ public class AuthorizationQuery {
             for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
                 memberships.add(groupPrincipal.getName());
             }
+            final Set<String> userIds = new HashSet<String>();
+            for (UserPrincipal userPrincipal : subject.getPrincipals(UserPrincipal.class)) {
+                userIds.add(userPrincipal.getName());
+            }
             long start = System.currentTimeMillis();
             this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class),
                                     subject.getPrincipals(AuthorizationFilterPrincipal.class),
+                                    userIds,
                                     memberships,
                                     (InternalHippoSession)session,
                                     indexingConfig,
@@ -105,17 +111,22 @@ public class AuthorizationQuery {
 
     private BooleanQuery initQuery(final Set<FacetAuthPrincipal> facetAuths,
                                    final Set<AuthorizationFilterPrincipal> authorizationFilterPrincipals,
+                                   final Set<String> userIds,
                                    final Set<String> memberships,
                                    final InternalHippoSession session,
                                    final ServicingIndexingConfiguration indexingConfig,
                                    final NamespaceMappings nsMappings,
                                    final NodeTypeManager ntMgr) {
 
-        Map<String, Collection<QFacetRule>> extendedFacetRules = null;
-        if (!authorizationFilterPrincipals.isEmpty()) {
-            extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
-            for (AuthorizationFilterPrincipal afp : authorizationFilterPrincipals) {
-                extendedFacetRules.putAll(afp.getFacetRules());
+        Map<String, Collection<QFacetRule>> extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
+        for (AuthorizationFilterPrincipal afp : authorizationFilterPrincipals) {
+            final Map<String, Collection<QFacetRule>> facetRules = afp.getExpandedFacetRules(facetAuths);
+            for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
+                final String domainPath = entry.getKey();
+                if (!extendedFacetRules.containsKey(domainPath)) {
+                    extendedFacetRules.put(domainPath, new ArrayList<QFacetRule>());
+                }
+                extendedFacetRules.get(domainPath).addAll(entry.getValue());
             }
         }
 
@@ -127,7 +138,7 @@ public class AuthorizationQuery {
             for (final DomainRule domainRule : facetAuthPrincipal.getRules()) {
                 BooleanQuery facetQuery = new BooleanQuery(true);
                 for (final QFacetRule facetRule : getFacetRules(domainRule, extendedFacetRules)) {
-                    Query q = getFacetRuleQuery(facetRule, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
+                    Query q = getFacetRuleQuery(facetRule, userIds, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (q == null) {
                         continue;
                     }
@@ -166,6 +177,7 @@ public class AuthorizationQuery {
     }
 
     private Query getFacetRuleQuery(final QFacetRule facetRule,
+                                    final Set<String> userIds,
                                     final Set<String> memberships,
                                     final Set<String> roles,
                                     final ServicingIndexingConfiguration indexingConfig,
@@ -189,7 +201,7 @@ public class AuthorizationQuery {
                                         new TermQuery(new Term(ServicingFieldNames.FACET_PROPERTIES_SET, internalNameTerm)));
                             }
                         } else if (FacetAuthConstants.EXPANDER_USER.equals(value)) {
-                            return expandUser(fieldName, facetRule, session);
+                            return expandUser(fieldName, facetRule, userIds);
                         } else if (FacetAuthConstants.EXPANDER_ROLE.equals(value)) {
                             return expandRole(fieldName, facetRule, roles);
                         } else if (FacetAuthConstants.EXPANDER_GROUP.equals(value)) {
@@ -216,7 +228,7 @@ public class AuthorizationQuery {
                 } else if (NODETYPE.equalsIgnoreCase(nodeNameString)) {
                     return getNodeTypeDescendantQuery(facetRule, ntMgr, session, nsMappings);
                 } else if (NODENAME.equalsIgnoreCase(nodeNameString)) {
-                    return getNodeNameQuery(facetRule, session, roles, memberships, nsMappings);
+                    return getNodeNameQuery(facetRule, userIds, roles, memberships, nsMappings);
                 } else {
                     try {
                         if ("jcr:primaryType".equals(nodeNameString)) {
@@ -349,7 +361,7 @@ public class AuthorizationQuery {
         return query;
     }
 
-    private Query getNodeNameQuery(QFacetRule facetRule, InternalHippoSession session, Set<String> roles, Set<String> memberShips, final NamespaceMappings nsMappings) {
+    private Query getNodeNameQuery(QFacetRule facetRule, Set<String> userIds, Set<String> roles, Set<String> memberShips, final NamespaceMappings nsMappings) {
         try {
             String fieldName = ServicingNameFormat.getInternalFacetName(NameConstants.JCR_NAME, nsMappings);
             String value = facetRule.getValue();
@@ -360,7 +372,7 @@ public class AuthorizationQuery {
                     return QueryHelper.getNoHitsQuery();
                 }
             } else if (FacetAuthConstants.EXPANDER_USER.equals(value)) {
-                return expandUser(fieldName, facetRule, session);
+                return expandUser(fieldName, facetRule, userIds);
             } else if (FacetAuthConstants.EXPANDER_ROLE.equals(value)) {
                 return expandRole(fieldName, facetRule, roles);
             } else if (FacetAuthConstants.EXPANDER_GROUP.equals(value)) {
@@ -380,11 +392,29 @@ public class AuthorizationQuery {
         }
     }
 
-    private Query expandUser(final String field, final QFacetRule facetRule, final InternalHippoSession session) {
-        if (facetRule.isEqual()) {
-            return new TermQuery(new Term(field, session.getUserID()));
+    private Query expandUser(final String field, final QFacetRule facetRule, final Set<String> userIds) {
+        if (userIds.isEmpty()) {
+            return QueryHelper.getNoHitsQuery();
+        }
+        // optimize the single-user principal case
+        if (userIds.size() == 1) {
+            String userId = userIds.iterator().next();
+            if (facetRule.isEqual()) {
+                return new TermQuery(new Term(field, userId));
+            } else {
+                return QueryHelper.negateQuery(new TermQuery(new Term(field, userId)));
+            }
         } else {
-            return QueryHelper.negateQuery(new TermQuery(new Term(field, session.getUserID())));
+            BooleanQuery b = new BooleanQuery(true);
+            for (String groupName : userIds) {
+                Term term = new Term(field, groupName);
+                b.add(new TermQuery(term), Occur.SHOULD);
+            }
+            if (facetRule.isEqual()) {
+                return b;
+            } else {
+                return QueryHelper.negateQuery(b);
+            }
         }
     }
 

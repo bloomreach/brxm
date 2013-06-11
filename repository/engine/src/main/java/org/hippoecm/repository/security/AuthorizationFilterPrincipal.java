@@ -16,10 +16,15 @@
 package org.hippoecm.repository.security;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.QFacetRule;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 public class AuthorizationFilterPrincipal implements Principal {
 
@@ -37,4 +42,54 @@ public class AuthorizationFilterPrincipal implements Principal {
     public Map<String, Collection<QFacetRule>> getFacetRules() {
         return facetRules;
     }
+
+    public Map<String, Collection<QFacetRule>> getExpandedFacetRules(Set<FacetAuthPrincipal> faps) {
+        Map<String, Collection<QFacetRule>> expandedFacetRules = new HashMap<String, Collection<QFacetRule>>();
+
+        final Map<String, Collection<QFacetRule>> facetRules = getFacetRules();
+        for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
+            final String domainPath = entry.getKey();
+            if (domainPath.startsWith("*/") || domainPath.endsWith("/*")) {
+                continue;
+            }
+            if (!expandedFacetRules.containsKey(domainPath)) {
+                expandedFacetRules.put(domainPath, new ArrayList<QFacetRule>());
+            }
+            expandedFacetRules.get(domainPath).addAll(entry.getValue());
+        }
+
+        for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
+            final String domainPath = entry.getKey();
+            if (!domainPath.startsWith("*/") && !domainPath.endsWith("/*")) {
+                continue;
+            }
+            final String[] parts = domainPath.split("/");
+            if (parts.length != 2) {
+                continue;
+            }
+
+            final String domainName = parts[0] + "/";
+            final boolean matchDomain = !parts[0].equals("*");
+            final String domainRuleName = "/" + parts[1];
+            final boolean matchDomainRule = !parts[1].equals("*");
+
+            for (FacetAuthPrincipal fap : faps) {
+                if (matchDomain && !fap.getName().equals(domainName)) {
+                    continue;
+                }
+                for (DomainRule domainRule : fap.getRules()) {
+                    if (matchDomainRule && !domainRule.getName().equals(domainRuleName)) {
+                        continue;
+                    }
+                    String expandedPath = fap.getName() + "/" + domainRule.getName();
+                    if (!expandedFacetRules.containsKey(expandedPath)) {
+                        expandedFacetRules.put(expandedPath, new ArrayList<QFacetRule>());
+                    }
+                    expandedFacetRules.get(expandedPath).addAll(entry.getValue());
+                }
+            }
+        }
+        return expandedFacetRules;
+    }
+
 }

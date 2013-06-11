@@ -1215,11 +1215,11 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
             // XPath doesn't like the query from the root
             Query query = queryManager.createQuery("//element(*,hippo:ntunstructured) order by @jcr:score", Query.XPATH);
             NodeIterator iter = query.execute().getNodes();
-            assertEquals(12L, iter.getSize());
+            assertEquals(13L, iter.getSize());
 
             // Nodes 'nothing0/subread' and 'nothing0/subwrite' are counted but not instantiated.
             // The hierarchical constraint (can read parent) is not taken into account.
-            assertEquals(14L, ((HippoNodeIterator) iter).getTotalSize());
+            assertEquals(15L, ((HippoNodeIterator) iter).getTotalSize());
 
             extendedSession.logout();
         }
