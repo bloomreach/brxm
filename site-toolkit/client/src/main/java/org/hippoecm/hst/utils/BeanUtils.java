@@ -478,8 +478,11 @@ public class BeanUtils {
             Credentials cred = null;
             // if there exists subject based session, do use the credentials of that session to create session from disposable pool
             Session existingSession = requestContext.getSession(false);
+            if (!(existingSession instanceof LazySession) && existingSession != null) {
+               return existingSession;
+            }
+
             if (existingSession instanceof LazySession) {
-                existingSession.getUserID();
                 Subject subject = HstSubject.getSubject(null);
                 if (subject != null) {
                     Set<Credentials> repoCredsSet = subject.getPrivateCredentials(Credentials.class);

@@ -59,7 +59,7 @@ import org.onehippo.sso.CredentialCipher;
  */
 public class CmsSecurityValve extends AbstractBaseOrderableValve {
 
-    private final static String CMS_USER_ID_ATTR = CmsSecurityValve.class.getName() + ".cms_user_id";
+    public final static String CMS_USER_ID_ATTR = CmsSecurityValve.class.getName() + ".cms_user_id";
     private static final String HSTSESSIONID_COOKIE_NAME = "HSTSESSIONID";
 
     private Repository repository;
@@ -187,22 +187,22 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
         // if another thread flushes this session.
         synchronized (httpSession) {
-            Session lazySession = null;
+            Session jcrSession = null;
             try {
                 if (isCmsRestRequestContext(servletRequest)) {
-                    lazySession = createCmsRestSession(httpSession);
+                    jcrSession = createCmsRestSession(httpSession);
                 } else {
-                    lazySession = createCmsPreviewSession(httpSession);
+                    jcrSession = createCmsPreviewSession(httpSession);
                 }
 
-                httpSession.setAttribute(CMS_USER_ID_ATTR, lazySession.getUserID());
+                httpSession.setAttribute(CMS_USER_ID_ATTR, jcrSession.getUserID());
 
                 // only set the cms based lazySession on the request context when the context is the cms context
-                ((HstMutableRequestContext) requestContext).setSession(lazySession);
+                ((HstMutableRequestContext) requestContext).setSession(jcrSession);
                 context.invokeNext();
             } finally {
-                if (lazySession != null) {
-                    lazySession.logout();
+                if (jcrSession != null) {
+                    jcrSession.logout();
                 }
             }
         }
@@ -249,14 +249,18 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
     }
 
     private Session createCmsRestSession(final HttpSession httpSession) throws ContainerException {
+        long start = System.currentTimeMillis();
         try {
-            return repository.login((Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
+            Session session =  repository.login((Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
+            log.debug("Acquiring cms rest session took '{}' ms.", (System.currentTimeMillis() - start));
+            return session;
         } catch (Exception e) {
             throw new ContainerException("Failed to create session based on SSO.", e);
         }
     }
 
     private Session createCmsPreviewSession(final HttpSession httpSession) throws ContainerException {
+        long start = System.currentTimeMillis();
         Session jcrSession = null;
         try {
             Session cmsUserSession = repository.login((Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
@@ -282,30 +286,8 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         } catch (Exception e) {
             throw new ContainerException("Failed to create Session based on SSO.", e);
         }
-
-        // only set the cms based jcrSession on the request context when the context is the cms context
-        final Session finalJcrSession = jcrSession;
-        return (Session) Proxy.newProxyInstance(CmsSecurityValve.class.getClassLoader(), new Class[]{LazySession.class}, new InvocationHandler() {
-
-            private final Session session = finalJcrSession;
-
-            @Override
-            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
-                if (method.getDeclaringClass() == LazySession.class) {
-                    return null;
-                }
-                if (method.getDeclaringClass() == Session.class) {
-                    return method.invoke(session, args);
-                }
-
-                // to override default toString() implemented in AbstractInvocationHandler.
-                if ("toString".equals(method.getName())) {
-                    return "LazySession for CMS user '" + session.getUserID() + "'";
-                }
-
-                return null;
-            }
-        });
+        log.debug("Acquiring security delegate session took '{}' ms.", (System.currentTimeMillis() - start));
+        return jcrSession;
     }
 
 }
