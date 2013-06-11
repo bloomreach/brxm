@@ -68,9 +68,9 @@ public class AuthorizationFilterPrincipal implements Principal {
                 continue;
             }
 
-            final String domainName = parts[0] + "/";
+            final String domainName = parts[0];
             final boolean matchDomain = !parts[0].equals("*");
-            final String domainRuleName = "/" + parts[1];
+            final String domainRuleName = parts[1];
             final boolean matchDomainRule = !parts[1].equals("*");
 
             for (FacetAuthPrincipal fap : faps) {
