@@ -46,6 +46,7 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -478,8 +479,10 @@ public class BeanUtils {
             Credentials cred = null;
             // if there exists subject based session, do use the credentials of that session to create session from disposable pool
             Session existingSession = requestContext.getSession(false);
-            if (!(existingSession instanceof LazySession) && existingSession != null) {
-               return existingSession;
+
+            if (requestContext.isCmsRequest() && existingSession instanceof HippoSession) {
+                // this is an non-proxied jcr session : for this, we do not instantiate disposable session pools
+                return existingSession;
             }
 
             if (existingSession instanceof LazySession) {
