@@ -70,7 +70,15 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
 
     protected XASessionImpl(RepositoryContext repositoryContext, AuthContext loginContext, WorkspaceConfig wspConfig)
             throws AccessDeniedException, RepositoryException {
-        this(repositoryContext, loginContext.getSubject(), wspConfig);
+        super(repositoryContext, loginContext, wspConfig);
+        namePathResolver = new HippoNamePathResolver(this, true);
+        helper = new SessionImplHelper(this, repositoryContext, context, subject) {
+            @Override
+            SessionItemStateManager getItemStateManager() {
+                return context.getItemStateManager();
+            }
+        };
+        helper.init();
     }
 
     protected XASessionImpl(RepositoryContext repositoryContext, Subject subject, WorkspaceConfig wspConfig) throws AccessDeniedException,
