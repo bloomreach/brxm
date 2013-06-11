@@ -17,9 +17,6 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.security.SignatureException;
 import java.util.Arrays;
 
@@ -36,7 +33,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
-import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
@@ -273,7 +269,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             try {
                 previewSession = repository.login(previewCredentials);
                 FacetRule facetRule = new FacetRule(HippoNodeType.HIPPO_AVAILABILITY, "preview", true, true, PropertyType.STRING);
-                DomainRuleExtension dre = new DomainRuleExtension("hippodocuments", "hippo-document", Arrays.asList(facetRule));
+                DomainRuleExtension dre = new DomainRuleExtension("*", "*", Arrays.asList(facetRule));
                 jcrSession = ((HippoSession) cmsUserSession).createSecurityDelegate(previewSession, dre);
             } finally {
                 if (previewSession != null) {
