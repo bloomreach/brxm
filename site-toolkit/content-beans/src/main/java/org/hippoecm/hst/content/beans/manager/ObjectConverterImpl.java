@@ -100,7 +100,11 @@ public class ObjectConverterImpl implements ObjectConverter {
             }   
             
         } catch (RepositoryException e) {
-            log.warn("Cannot get object for node '{}' with relPath '{}'",nodePath , relPath);
+            if (log.isDebugEnabled()) {
+                log.warn("Cannot get object for node '"+nodePath+"' with relPath '"+relPath+"'" , e);
+            } else {
+                log.warn("Cannot get object for node '{}' with relPath '{}'",nodePath , relPath);
+            }
             return null;
         }
     }
