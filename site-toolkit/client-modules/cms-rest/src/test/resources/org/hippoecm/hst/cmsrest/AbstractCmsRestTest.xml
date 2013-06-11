@@ -44,7 +44,12 @@
     <constructor-arg value="admin@preview" />
     <constructor-arg value="admin" />
   </bean>
-  
+
+  <bean id="javax.jcr.Credentials.cmspreview" class="javax.jcr.SimpleCredentials">
+    <constructor-arg value="admin" />
+    <constructor-arg value="admin" />
+  </bean>
+
   <bean id="javax.jcr.Credentials.writable" class="javax.jcr.SimpleCredentials">
     <constructor-arg value="admin@writable" />
     <constructor-arg value="admin" />
@@ -54,12 +59,9 @@
     <constructor-arg value="${hstconfigreader.repository.user.name}${repository.pool.user.name.separator}${hstconfigreader.repository.pool.name}"/>
     <constructor-arg value="${hstconfigreader.repository.password}"/>
   </bean>
-  
-  
+
   <!-- SSO cms non-pooling delegating repository -->
-  <bean id="javax.jcr.Repository.cms" class="org.hippoecm.hst.core.jcr.LazySessionDelegatingRepository">
-    <constructor-arg ref="javax.jcr.Repository.delegating" />
-    <property name="logoutOnSessionUnbound" value="true" />
+  <bean id="javax.jcr.Repository.cms" class="org.hippoecm.hst.core.jcr.pool.JcrHippoRepository">
   </bean>
   
   <bean id="javax.jcr.Repository" class="org.hippoecm.hst.core.jcr.pool.MultipleRepositoryImpl">

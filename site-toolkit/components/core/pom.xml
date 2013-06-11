@@ -204,7 +204,14 @@
       <artifactId>hippo-cms7-commons</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
+    <!-- repository api for cms security valve -->
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-repository-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.slf4j</groupId>

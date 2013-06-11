@@ -61,6 +61,7 @@
   <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsSecurityValve">
     <property name="valveName" value="cmsSecurityValve" />
     <property name="repository" ref="javax.jcr.Repository.cms"/>
+    <property name="previewCredentials" ref="javax.jcr.Credentials.cmspreview"/>
   </bean>
 
   <bean id="cmsRestSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsRestSecurityValve">

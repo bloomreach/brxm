@@ -17,10 +17,17 @@ package org.hippoecm.hst.core.container;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.security.SignatureException;
+import java.util.Arrays;
 
 import javax.jcr.Credentials;
+import javax.jcr.PropertyType;
 import javax.jcr.Repository;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,6 +38,10 @@ import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.jcr.LazySession;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.repository.security.domain.DomainRuleExtension;
+import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.sso.CredentialCipher;
 
 /**
@@ -52,9 +63,14 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
     private static final String HSTSESSIONID_COOKIE_NAME = "HSTSESSIONID";
 
     private Repository repository;
+    private Credentials previewCredentials;
 
     public void setRepository(Repository repository) {
         this.repository = repository;
+    }
+
+    public void setPreviewCredentials(SimpleCredentials credentials) {
+        this.previewCredentials = credentials;
     }
 
     @Override
@@ -79,22 +95,22 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
         }
 
         log.debug("Request '{}' is invoked from CMS context. Check whether the sso handshake is done.", servletRequest.getRequestURL());
-        HttpSession session = servletRequest.getSession(true);
+        HttpSession httpSession = servletRequest.getSession(true);
 
         // Verify that cms user in request header is same as the one associated
         // with the credentials on the HttpSession
         String cmsUser = servletRequest.getHeader("CMS-User");
         if (cmsUser != null) {
-            String currentCmsUser = (String) session.getAttribute(CMS_USER_ID_ATTR);
+            String currentCmsUser = (String) httpSession.getAttribute(CMS_USER_ID_ATTR);
             if (currentCmsUser != null && !currentCmsUser.equals(cmsUser)) {
-                session.removeAttribute(CMS_USER_ID_ATTR);
-                session.removeAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
-                session.removeAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED);
+                httpSession.removeAttribute(CMS_USER_ID_ATTR);
+                httpSession.removeAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME);
+                httpSession.removeAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED);
             }
         }
 
-        if (session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME) == null) {
-            String key = session.getId();
+        if (httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME) == null) {
+            String key = httpSession.getId();
             String credentialParam = servletRequest.getParameter("cred");
   
             //If there is no secret or credentialParam, add the secret and request for credentialParam by redirecting back to CMS.
@@ -157,45 +173,42 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 CredentialCipher credentialCipher = CredentialCipher.getInstance();
                 try {
                     Credentials cred = credentialCipher.decryptFromString(key, credentialParam);
-                    session.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, cred);
-                    session.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, true);
+                    httpSession.setAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME, cred);
+                    httpSession.setAttribute(ContainerConstants.CMS_SSO_AUTHENTICATED, true);
                 } catch (SignatureException se) {
                     throw new ContainerException(se);
                 }
             } 
         }
 
-        updateHstSessionCookie(servletRequest, servletResponse, session);
+        updateHstSessionCookie(servletRequest, servletResponse, httpSession);
 
-        if (isCmsRestRequestContext(servletRequest)) {
-            // we are in a request for the REST template composer
-            // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
-            // if another thread flushes this session.
-            synchronized (session) {
-                LazySession lazySession = null;
-                try {
-                    try {
-                        lazySession = (LazySession) repository.login((Credentials) session.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
-                        session.setAttribute(CMS_USER_ID_ATTR, lazySession.getUserID());
-                    } catch (Exception e) {
-                        throw new ContainerException("Failed to create session based on SSO.", e);
-                    }
-                    // only set the cms based lazySession on the request context when the context is the cms context
-                    ((HstMutableRequestContext) requestContext).setSession(lazySession);
-                    context.invokeNext();
-                } finally {
-                    if (lazySession != null) {
-                        lazySession.logout();
-                    }
+        // we are in a request for the REST template composer
+        // we need to synchronize on a http session as a jcr session which is tied to it is not thread safe. Also, virtual states will be lost
+        // if another thread flushes this session.
+        synchronized (httpSession) {
+            Session lazySession = null;
+            try {
+                if (isCmsRestRequestContext(servletRequest)) {
+                    lazySession = createCmsRestSession(httpSession);
+                } else {
+                    lazySession = createCmsPreviewSession(httpSession);
+                }
+
+                httpSession.setAttribute(CMS_USER_ID_ATTR, lazySession.getUserID());
+
+                // only set the cms based lazySession on the request context when the context is the cms context
+                ((HstMutableRequestContext) requestContext).setSession(lazySession);
+                context.invokeNext();
+            } finally {
+                if (lazySession != null) {
+                    lazySession.logout();
                 }
             }
-        } else {
-            context.invokeNext();
         }
     }
 
     private void updateHstSessionCookie(final HttpServletRequest servletRequest, final HttpServletResponse servletResponse, final HttpSession session) {
-
         final Cookie[] cookies = servletRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
@@ -233,6 +246,66 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
             throw new ContainerException("Could not establish a SSO between CMS & site application because cannot get a cms url from the referer '"+url+"'");
         }
         return url.substring(0, indexOfRequestURI);
+    }
+
+    private Session createCmsRestSession(final HttpSession httpSession) throws ContainerException {
+        try {
+            return repository.login((Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
+        } catch (Exception e) {
+            throw new ContainerException("Failed to create session based on SSO.", e);
+        }
+    }
+
+    private Session createCmsPreviewSession(final HttpSession httpSession) throws ContainerException {
+        Session jcrSession = null;
+        try {
+            Session cmsUserSession = repository.login((Credentials) httpSession.getAttribute(ContainerConstants.CMS_SSO_REPO_CREDS_ATTR_NAME));
+            if (!(cmsUserSession instanceof HippoSession)) {
+                cmsUserSession.logout();
+                throw new ContainerException("Repository returned Session is not a HippoSession.");
+            }
+
+            Session previewSession = null;
+            try {
+                previewSession = repository.login(previewCredentials);
+                FacetRule facetRule = new FacetRule(HippoNodeType.HIPPO_AVAILABILITY, "preview", true, true, PropertyType.STRING);
+                DomainRuleExtension dre = new DomainRuleExtension("hippodocuments", "hippo-document", Arrays.asList(facetRule));
+                jcrSession = ((HippoSession) cmsUserSession).createSecurityDelegate(previewSession, dre);
+            } finally {
+                if (previewSession != null) {
+                    previewSession.logout();
+                }
+                if (jcrSession != null) {
+                    cmsUserSession.logout();
+                }
+            }
+        } catch (Exception e) {
+            throw new ContainerException("Failed to create Session based on SSO.", e);
+        }
+
+        // only set the cms based jcrSession on the request context when the context is the cms context
+        final Session finalJcrSession = jcrSession;
+        return (Session) Proxy.newProxyInstance(CmsSecurityValve.class.getClassLoader(), new Class[]{LazySession.class}, new InvocationHandler() {
+
+            private final Session session = finalJcrSession;
+
+            @Override
+            public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+                if (method.getDeclaringClass() == LazySession.class) {
+                    return null;
+                }
+                if (method.getDeclaringClass() == Session.class) {
+                    return method.invoke(session, args);
+                }
+
+                // to override default toString() implemented in AbstractInvocationHandler.
+                if ("toString".equals(method.getName())) {
+                    return "LazySession for CMS user '" + session.getUserID() + "'";
+                }
+
+                return null;
+            }
+        });
     }
 
 }
