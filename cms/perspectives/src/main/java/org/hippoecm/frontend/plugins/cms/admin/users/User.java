@@ -68,12 +68,12 @@ public class User implements Comparable<User>, IClusterable {
 
         @Override
         public K getKey() {
-            return null;
+            return key;
         }
 
         @Override
         public V getValue() {
-            return null;
+            return value;
         }
 
         @Override
