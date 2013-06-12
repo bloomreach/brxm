@@ -239,13 +239,10 @@
               <value>hipposys:domainfolder</value>
               <value>hipposys:role</value>
               <value>hipposys:rolefolder</value>
-              <value>hipposys:user</value>
-              <value>hipposys:userfolder</value>
               <value>hipposys:group</value>
               <value>hipposys:groupfolder</value>
               <value>hipposys:externalgroup</value>
               <value>hipposys:externalrole</value>
-              <value>hipposys:externaluser</value>
             </list>
           </property>
           <property name="noLocal" value="false"/>
@@ -291,7 +288,6 @@
                   </bean>
                 </list>
               </property>
-              <property name="refreshDisposableRepositories" value="true" />
               <property name="multipleRepository" ref="javax.jcr.Repository" />
             </bean>
           </property>

@@ -23,6 +23,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.core.jcr.GenericEventListener;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +74,16 @@ public class PoolingRepositorySessionMustBeLoggedOutListener extends GenericEven
             log.debug("Event received. Invalidating session pools.");
             doInvalidation();
         }
+    }
+
+    @Override
+    protected boolean isEventOnSkippedPath(Event event) throws RepositoryException {
+        String eventPath = event.getPath();
+        if (eventPath.endsWith("/"+ HippoNodeType.HIPPO_PASSKEY)) {
+            // we skip this property as it gets written if people login in the cms with remember me enabled
+            return true;
+        }
+        return super.isEventOnSkippedPath(event);
     }
 
     private void doInvalidation() {
