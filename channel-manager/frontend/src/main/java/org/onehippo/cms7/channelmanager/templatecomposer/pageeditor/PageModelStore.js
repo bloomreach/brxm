@@ -19,12 +19,17 @@
     Hippo.ChannelManager.TemplateComposer.PageModelStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
         constructor: function(config) {
-            var composerRestMountUrl, PageModelProxy, cfg;
+            var composerRestMountUrl, PageModelProxy, cfg, lastModifiedTimestamp;
 
             composerRestMountUrl = config.composerRestMountUrl;
             PageModelProxy = Ext.extend(Ext.data.HttpProxy, {
                 buildUrl: function() {
-                    return PageModelProxy.superclass.buildUrl.apply(this, arguments) + '?FORCE_CLIENT_HOST=true';
+                    var url = PageModelProxy.superclass.buildUrl.apply(this, arguments);
+                    url = Ext.urlAppend(url, 'FORCE_CLIENT_HOST=true');
+                    if (!Ext.isEmpty(lastModifiedTimestamp)) {
+                        url = Ext.urlAppend(url, 'lastModifiedTimestamp=' + lastModifiedTimestamp);
+                    }
+                    return url;
                 }
             });
 
@@ -39,20 +44,33 @@
                     listeners: {
                         beforewrite: {
                             fn: function(proxy, action, rs, params) {
-                                var prototypeId, parentId, id;
+                                var prototypeId, parentId, id, endpoint;
+
+                                lastModifiedTimestamp = rs.get('lastModifiedTimestamp');
+
                                 if (action === 'create') {
                                     prototypeId = rs.get('id');
                                     parentId = rs.get('parentId');
-                                    proxy.setApi(action, {url: composerRestMountUrl + '/' + parentId + './create/' + prototypeId, method: 'POST'});
+                                    endpoint = {
+                                        url: composerRestMountUrl + '/' + parentId + './create/' + prototypeId,
+                                        method: 'POST'
+                                    };
                                 } else if (action === 'update') {
                                     //Ext appends the item ID automatically
                                     id = rs.get('id');
-                                    proxy.setApi(action, {url: composerRestMountUrl + '/' + id + './update', method: 'POST'});
+                                    endpoint = {
+                                        url: composerRestMountUrl + '/' + id + './update',
+                                        method: 'POST'
+                                    };
                                 } else if (action === 'destroy') {
                                     //Ext appends the item ID automatically
                                     parentId = rs.get('parentId');
-                                    proxy.setApi(action, {url: composerRestMountUrl + '/' + parentId + './delete', method: 'GET'});
+                                    endpoint = {
+                                        url: composerRestMountUrl + '/' + parentId + './delete',
+                                        method: 'GET'
+                                    };
                                 }
+                                proxy.setApi(action, endpoint);
                             }
                         }
                     }
@@ -126,6 +144,7 @@
                     {name: 'template', mapping: 'template'},
                     {name: 'type', mapping: 'type'},
                     {name: 'xtype', mapping: 'xtype'},
+                    {name: 'lastModifiedTimestamp', mapping: 'lastModifiedTimestamp'},
                     {name: 'children', mapping: 'children'}
                 ]
             };

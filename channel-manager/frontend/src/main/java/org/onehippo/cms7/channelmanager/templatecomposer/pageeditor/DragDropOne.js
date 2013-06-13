@@ -54,7 +54,7 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                         if (record.get('type') === HST.CONTAINER) {
                             id = record.get('id');
                             el = iframe.getElement(id + '-overlay');
-                            if (el !== null && !iframe.getElement(id).getAttribute(HST.ATTR.INHERITED)) {
+                            if (el !== null && !iframe.getElement(id).getAttribute(HST.ATTR.HST_CONTAINER_DISABLED)) {
                                 box = Ext.Element.fly(el).getBox();
                                 self.boxes.push({record: record, box: box});
                             }
@@ -106,14 +106,16 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                 //any data we decided to attach in the DragZone's getDragData method.
                 onNodeDrop: function() {
                     if (self.nodeOverRecord !== null) {
-                        var pageContainer, selections, pmRecord, parentId, pmStore, offset, at, i, len, record, newRecord;
+                        var pageContainer, selections, pmRecord, parentId, parentLastModifiedTimestamp, pmStore, offset, at, i, len, record, newRecord;
                         pageContainer = pageContext.getPageContainer();
 
                         selections = self.getSelectionModel().getSelections();
 
                         pmRecord = self.nodeOverRecord;
                         parentId = pmRecord.get('id');
+                        parentLastModifiedTimestamp = pmRecord.get('lastModifiedTimestamp');
                         pmStore = pmRecord.store;
+
 
                         offset = pmRecord.data.children.length + 1;
                         at = pmStore.indexOf(pmRecord) + offset;
@@ -131,7 +133,8 @@ Hippo.ChannelManager.TemplateComposer.DragDropOne = (function() {
                                 componentClassName: record.get('componentClassName'),
                                 xtype: record.get('xtype'),
                                 isRoot: false,
-                                children: []
+                                children: [],
+                                lastModifiedTimestamp: parentLastModifiedTimestamp
                             };
                             pmStore.on('write', pageContainer.refreshIframe, pageContainer, {single: true});
                             pmStore.insert(at + i, new pmStore.recordType(newRecord));

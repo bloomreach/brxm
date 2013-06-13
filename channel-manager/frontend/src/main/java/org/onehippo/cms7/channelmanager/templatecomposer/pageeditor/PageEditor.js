@@ -705,8 +705,8 @@
                 this.enableUI(pageContext);
             }, this);
 
-            this.on('selectItem', function(record, variant, inherited) {
-                if (record.get('type') === HST.CONTAINERITEM && inherited !== true) {
+            this.on('selectItem', function(record, variant, containerDisabled) {
+                if (record.get('type') === HST.CONTAINERITEM && containerDisabled !== true) {
                     this.showProperties(record, variant);
                 }
             }, this);
@@ -794,6 +794,7 @@
         showProperties: function(record, variant) {
             var componentPropertiesPanel = Ext.getCmp('componentPropertiesPanel');
             componentPropertiesPanel.setComponentId(record.get('id'));
+            componentPropertiesPanel.setLastModifiedTimestamp(record.get('lastModifiedTimestamp'));
             componentPropertiesPanel.setPageRequestVariants(this.pageContainer.pageContext.pageRequestVariants);
             componentPropertiesPanel.load(variant);
             if (this.propertiesWindow) {

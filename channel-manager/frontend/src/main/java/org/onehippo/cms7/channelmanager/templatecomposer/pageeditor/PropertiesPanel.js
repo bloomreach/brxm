@@ -77,6 +77,10 @@
             this.componentId = componentId;
         },
 
+        setLastModifiedTimestamp: function(lastModifiedTimestamp) {
+            this.lastModifiedTimestamp = lastModifiedTimestamp;
+        },
+
         setPageRequestVariants: function(pageRequestVariants) {
             this.pageRequestVariants = pageRequestVariants;
         },
@@ -223,6 +227,7 @@
                         composerRestMountUrl: this.composerRestMountUrl,
                         locale: this.locale,
                         componentId: this.componentId,
+                        lastModifiedTimestamp: this.lastModifiedTimestamp,
                         bubbleEvents: ['cancel'],
                         margins: {
                             top: 0,
@@ -355,7 +360,9 @@
                     method: 'POST',
                     url: this.composerRestMountUrl + '/' + this.componentId + './' + '?FORCE_CLIENT_HOST=true',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'FORCE_CLIENT_HOST': 'true',
+                        'Content-Type': 'application/json',
+                        'lastModifiedTimestamp': this.lastModifiedTimestamp
                     },
                     params: Ext.util.JSON.encode(variantIds),
                     scope: this
@@ -381,6 +388,7 @@
             this.composerRestMountUrl = config.composerRestMountUrl;
             this.locale = config.locale;
             this.componentId = config.componentId;
+            this.lastModifiedTimestamp = config.lastModifiedTimestamp;
 
             Hippo.ChannelManager.TemplateComposer.PropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
                 cls: 'templateComposerPropertiesForm'
@@ -467,7 +475,8 @@
 
             this.getForm().submit({
                 headers: {
-                    'FORCE_CLIENT_HOST': 'true'
+                    'FORCE_CLIENT_HOST': 'true',
+                    'lastModifiedTimestamp': this.lastModifiedTimestamp
                 },
                 params: uncheckedValues,
                 url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId) + '?FORCE_CLIENT_HOST=true',

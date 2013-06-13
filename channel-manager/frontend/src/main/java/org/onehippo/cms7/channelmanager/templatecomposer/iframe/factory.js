@@ -66,7 +66,8 @@
             },
 
             _enhance : function(element) {
-                var hstContainerMetaData, id, type, base, xtype, url, refNS, inherited, variant;
+                var hstContainerMetaData, id, type, base, xtype, url, refNS, variant,
+                        hstContainerLockedBy, hstContainerLockedByCurrentUser, hstContainerLockedOn, hstContainerLastModified, disabled;
 
                 hstContainerMetaData = this.getContainerMetaData(element);
                 if (hstContainerMetaData === null) {
@@ -125,14 +126,35 @@
                     element.setAttribute(HST.ATTR.REF_NS, refNS);
                 }
 
-                inherited = hstContainerMetaData[HST.ATTR.INHERITED];
-                if (inherited !== undefined) {
-                    element.setAttribute(HST.ATTR.INHERITED, inherited);
+                if (hstContainerMetaData[HST.ATTR.INHERITED] !== undefined) {
+                    element.setAttribute(HST.ATTR.HST_CONTAINER_DISABLED, "true");
                 }
 
                 variant = hstContainerMetaData[HST.ATTR.VARIANT];
                 if (variant !== undefined) {
                     element.setAttribute(HST.ATTR.VARIANT, variant);
+                }
+
+                if (type === HST.CONTAINER || type === HST.CONTAINERITEM) {
+                    hstContainerLockedBy = hstContainerMetaData[HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY];
+                    if (hstContainerLockedBy !== undefined) {
+                        element.setAttribute(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY, hstContainerLockedBy);
+                    }
+                    hstContainerLockedByCurrentUser = hstContainerMetaData[HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER];
+                    if (hstContainerLockedByCurrentUser !== undefined) {
+                        element.setAttribute(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, hstContainerLockedByCurrentUser);
+                        if (hstContainerLockedBy && hstContainerLockedByCurrentUser === "false") {
+                            element.setAttribute(HST.ATTR.HST_CONTAINER_DISABLED, "true");
+                        }
+                    }
+                    hstContainerLockedOn = hstContainerMetaData[HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON];
+                    if (hstContainerLockedOn !== undefined) {
+                        element.setAttribute(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON, hstContainerLockedOn);
+                    }
+                    hstContainerLastModified = hstContainerMetaData[HST.ATTR.HST_CONTAINER_COMPONENT_LAST_MODIFIED];
+                    if (hstContainerLastModified !== undefined) {
+                        element.setAttribute(HST.ATTR.HST_CONTAINER_COMPONENT_LAST_MODIFIED, hstContainerLastModified);
+                    }
                 }
 
                 return {

@@ -343,6 +343,9 @@
                         },
                         success: function(response) {
                             var lockState = Ext.decode(response.responseText).data;
+                            // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
+                            self.refreshIframe.call(self, null);
+
                             if (lockState === 'lock-acquired') {
                                 doneCallback();
                             } else {
@@ -366,8 +369,7 @@
                         success: function() {
                             // reset pageContext, the page and toolkit stores must be reloaded
                             self.pageContext = null;
-                            // refresh iframe to get new hst config uuids. previewMode=false will initialize
-                            // the editor for editing with the refresh
+                            // refresh iframe to get new hst config uuids.
                             self.refreshIframe.call(self, null);
                         },
                         failure: function(result) {
@@ -556,10 +558,10 @@
         },
 
         _onClick: function(data) {
-            var id, variant, inherited, record;
+            var id, variant, containerDisabled, record;
             id = data.elementId;
             variant = data.variant;
-            inherited = data.inherited;
+            containerDisabled = data.containerDisabled;
             record = this.pageContext.stores.pageModel.getById(id);
 
             if (!record) {
@@ -570,7 +572,7 @@
             if (this.selectedRecord !== record) {
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('select', record.data.id);
                 this.selectedRecord = record;
-                this.fireEvent('selectItem', record, variant, inherited);
+                this.fireEvent('selectItem', record, variant, containerDisabled);
             }
         },
 

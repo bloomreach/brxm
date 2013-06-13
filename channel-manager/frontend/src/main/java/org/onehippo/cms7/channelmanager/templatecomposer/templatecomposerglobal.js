@@ -27,6 +27,11 @@
             TYPE : 'type',
             XTYPE : 'xtype',
             INHERITED : 'inherited',
+            HST_CONTAINER_COMPONENT_LOCKED_BY : 'HST-Container-LockedBy',
+            HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER : "HST-Container-LockedBy-Current-User",
+            HST_CONTAINER_COMPONENT_LOCKED_ON : "HST-Container-LockedOn",
+            HST_CONTAINER_COMPONENT_LAST_MODIFIED : "HST-Container-LastModified",
+            HST_CONTAINER_DISABLED : "HST-Container-disabled",
             URL : 'url',
             REF_NS : 'refNS',
             VARIANT : 'hst_internal_variant'
