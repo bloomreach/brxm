@@ -29,6 +29,7 @@ import javax.jcr.Value;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -174,7 +175,22 @@ public class HstComponentParameters {
         return false;
     }
 
-    public void save() throws RepositoryException {
+    public void save(long validateLastModifiedTimestampAgainst) throws RepositoryException, IllegalStateException {
+        if (hstManager == null || RequestContextProvider.get() == null) {
+            node.getSession().save();
+        } else {
+            if (!node.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT)) {
+                throw new IllegalStateException("Node to be saved must be of type '"+HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT+"' but " +
+                        "was of type '"+node.getPrimaryNodeType().getName()+"'. Skip save");
+            }
+            setNodeChanges();
+            HstConfigurationUtils.tryLockIfNeeded(node, validateLastModifiedTimestampAgainst, RequestContextProvider.get().getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().isFinegrainedLocking());
+            HstConfigurationUtils.setLastModifiedTimestampForContainer(node);
+            HstConfigurationUtils.persistChanges(node.getSession(), hstManager);
+        }
+    }
+
+    private void setNodeChanges() throws RepositoryException {
         List<String> prefixes = new ArrayList<String>();
         List<String> names = new ArrayList<String>();
         List<String> values = new ArrayList<String>();
@@ -217,10 +233,6 @@ public class HstComponentParameters {
             node.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES, names.toArray(new String[names.size()]));
             node.setProperty(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES, values.toArray(new String[values.size()]));
         }
-        if (hstManager != null) {
-            hstManager.invalidatePendingHstConfigChanges(node.getSession());
-        }
-        node.getSession().save();
     }
 
 }

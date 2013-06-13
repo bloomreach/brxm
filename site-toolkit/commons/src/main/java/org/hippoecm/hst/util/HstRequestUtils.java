@@ -270,6 +270,9 @@ public class HstRequestUtils {
 
     private static String getRenderingHostName(final HttpServletRequest request) {
         String forceClientHost = request.getParameter("FORCE_CLIENT_HOST");
+        if (forceClientHost == null) {
+            forceClientHost = request.getHeader("FORCE_CLIENT_HOST");
+        }
         if (Boolean.parseBoolean(forceClientHost) == Boolean.TRUE) {
             return null;
         }

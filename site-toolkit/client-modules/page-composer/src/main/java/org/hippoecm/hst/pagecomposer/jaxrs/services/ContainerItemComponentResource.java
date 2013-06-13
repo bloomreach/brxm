@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -43,6 +44,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.LocaleUtils;
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -82,7 +84,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getVariants(@Context HttpServletRequest servletRequest) {
-        final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+        final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             Set<String> variants = doGetVariants(containerItem);
             return ok("Available variants: ", variants);
@@ -108,12 +110,16 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response retainVariants(@Context HttpServletRequest servletRequest, String[] variants) {
-        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+    public Response retainVariants(@Context HttpServletRequest servletRequest, String[] variants,
+                                   @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
+        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
-            Set<String> removedVariants = doRetainVariants(containerItem, variants);
+            Set<String> removedVariants = doRetainVariants(containerItem, variants, lastModifiedTimestamp);
             return ok("Removed variants:", removedVariants);
         } catch (RepositoryException e) {
+            log.error("Unable to cleanup the variants of the component", e);
+            throw new WebApplicationException(e);
+        } catch (IllegalStateException e) {
             log.error("Unable to cleanup the variants of the component", e);
             throw new WebApplicationException(e);
         }
@@ -128,7 +134,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * @return a list of variants that have been removed
      * @throws RepositoryException when some repository exception happened
      */
-    private Set<String> doRetainVariants(final Node containerItem, final String[] variants) throws RepositoryException {
+    private Set<String> doRetainVariants(final Node containerItem, final String[] variants, final long lastModifiedTimestamp) throws RepositoryException, IllegalStateException {
         final Set<String> keepVariants = new HashSet<String>();
         keepVariants.addAll(Arrays.asList(variants));
 
@@ -141,8 +147,9 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 removed.add(variant);
             }
         }
+
         if (!removed.isEmpty()) {
-            componentParameters.save();
+            componentParameters.save(lastModifiedTimestamp);
         }
 
         return removed;
@@ -172,7 +179,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 locale = Locale.getDefault();
             }
             String currentMountCanonicalContentPath = getCurrentMountCanonicalContentPath(servletRequest);
-            return doGetParameters(getRequestConfigNode(requestContext), locale, variant, currentMountCanonicalContentPath);
+            return doGetParameters(getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT), locale, variant, currentMountCanonicalContentPath);
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Failed to retrieve parameters.", e);
@@ -243,11 +250,12 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response setParameters(@Context HttpServletRequest servletRequest,
                             @PathParam("variant") String variant,
+                            @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp,
                             MultivaluedMap<String, String> params) {
         try {
-            final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+            final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
-            doSetParameters(componentParameters, variant, params);
+            doSetParameters(componentParameters, variant, params, lastModifiedTimestamp);
             return ok("Parameters for '" + variant + "' saved successfully.", null);
         } catch (IllegalStateException e) {
             return error(e.getMessage());
@@ -275,12 +283,13 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     public Response setParametersAndRenameVariant(@Context HttpServletRequest servletRequest,
                                   @PathParam("oldVariant") String oldVariant,
                                   @PathParam("newVariant") String newVariant,
+                                  @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp,
                                   MultivaluedMap<String, String> params) {
         try {
-            final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+            final Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
             componentParameters.removePrefix(oldVariant);
-            doSetParameters(componentParameters, newVariant, params);
+            doSetParameters(componentParameters, newVariant, params, lastModifiedTimestamp);
             return ok("Parameters renamed from '" + oldVariant + "' to '" + newVariant + "' and saved successfully.", null);
         } catch (IllegalStateException e) {
             return error(e.getMessage());
@@ -292,7 +301,8 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
         }
     }
 
-    void doSetParameters(HstComponentParameters componentParameters, String prefix, MultivaluedMap<String, String> parameters) throws RepositoryException {
+    void doSetParameters(HstComponentParameters componentParameters, String prefix, MultivaluedMap<String, String> parameters,
+                         long lastModifiedTimestamp) throws RepositoryException, IllegalStateException {
         componentParameters.removePrefix(prefix);
         for (String parameterName : parameters.keySet()) {
             // the FORCE_CLIENT_HOST is some 'magic' parameter we do not need to store
@@ -303,7 +313,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
                 componentParameters.setValue(prefix, parameterName, parameterValue);
             }
         }
-        componentParameters.save();
+        componentParameters.save(lastModifiedTimestamp);
     }
 
     /**
@@ -325,14 +335,15 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @POST
     @Path("/{variant}/default")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createVariant(@Context HttpServletRequest servletRequest, @PathParam("variant") String variant) {
-        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+    public Response createVariant(@Context HttpServletRequest servletRequest, @PathParam("variant") String variant,
+                                  @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
+        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
             if (componentParameters.hasPrefix(variant)) {
                 return conflict("Cannot create variant '" + variant + "' because it already exists");
             }
-            doCreateVariant(containerItem, componentParameters, variant);
+            doCreateVariant(containerItem, componentParameters, variant, lastModifiedTimestamp);
             return created("Variant '" + variant + "' created successfully");
         } catch (IllegalStateException e) {
             log.warn("Could not create variant ", e);
@@ -357,27 +368,29 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      *
      * @throws RepositoryException when something went wrong in the repository
      */
-    void doCreateVariant(Node containerItem, HstComponentParameters componentParameters, String variantId) throws RepositoryException {
+    void doCreateVariant(Node containerItem, HstComponentParameters componentParameters, String variantId,
+                         long lastModifiedTimestamp) throws RepositoryException, IllegalStateException {
         Map<String, String> annotatedParameters = getAnnotatedDefaultValues(containerItem);
 
         for(String parameterName : annotatedParameters.keySet()) {
             String value = componentParameters.hasDefaultParameter(parameterName) ? componentParameters.getDefaultValue(parameterName) : annotatedParameters.get(parameterName);
             componentParameters.setValue(variantId, parameterName, value);
         }
-        componentParameters.save();
+        componentParameters.save(lastModifiedTimestamp);
     }
 
     @DELETE
     @Path("/{variant}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteVariant(@Context HttpServletRequest servletRequest, @PathParam("variant") String variant) {
-        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest));
+    public Response deleteVariant(@Context HttpServletRequest servletRequest, @PathParam("variant") String variant,
+                                  @HeaderParam("lastModifiedTimestamp") long lastModifiedTimestamp) {
+        Node containerItem = getRequestConfigNode(getRequestContext(servletRequest), HstNodeTypes.NODETYPE_HST_CONTAINERITEMCOMPONENT);
         try {
             HstComponentParameters componentParameters = new HstComponentParameters(containerItem, getHstManager());
             if (!componentParameters.hasPrefix(variant)) {
                 return conflict("Cannot delete variant '" + variant + "' because it does not exist");
             }
-            doDeleteVariant(componentParameters, variant);
+            doDeleteVariant(componentParameters, variant, lastModifiedTimestamp);
             return ok("Variant '" + variant + "' deleted successfully");
         } catch (IllegalStateException e) {
             log.warn("Could not delete variant '" + variant + "'", e);
@@ -399,11 +412,12 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
      * @throws IllegalArgumentException when the variant is the 'default' variant
      * @throws RepositoryException
      */
-    void doDeleteVariant(HstComponentParameters componentParameters, String variantId) throws IllegalArgumentException, RepositoryException {
+    void doDeleteVariant(HstComponentParameters componentParameters, String variantId, long lastModifiedTimestamp)
+            throws IllegalArgumentException, RepositoryException, IllegalStateException {
         if (!componentParameters.removePrefix(variantId)) {
             throw new IllegalStateException("Variant '" + variantId + "' could not be removed");
         }
-        componentParameters.save();
+        componentParameters.save(lastModifiedTimestamp);
     }
 
     /**

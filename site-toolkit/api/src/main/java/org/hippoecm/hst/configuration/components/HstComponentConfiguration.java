@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.components;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -89,7 +90,7 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * The delimiter that is used between the parametername and the parameterprefix when there is a prefix value
      */
     static final char PARAMETER_PREFIX_NAME_DELIMITER  = '\uFFFF';
- 
+
     /**
      * A {@link HstComponentConfiguration} comes in three different main types. The {@link Type} enum describes the possible
      * values. This {@link Type} is similar to the {@link HstComponentConfiguration#getComponentType()} which is the {@link String} representation
@@ -269,5 +270,20 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * to the site webapp 
      */
     String getIconPath();
+
+    /**
+     * @return if this hst component is locked, this method returns by whom it is locked
+     */
+    String getLockedBy();
+
+    /**
+     * @return if {@link Calendar} time this component got locked or <code>null</code> if it is not locked
+     */
+    Calendar getLockedOn();
+
+    /**
+     * @return if {@link Calendar} time this component got changed for the last time or <code>null</code> if not available
+     */
+    Calendar getLastModified();
 
 }

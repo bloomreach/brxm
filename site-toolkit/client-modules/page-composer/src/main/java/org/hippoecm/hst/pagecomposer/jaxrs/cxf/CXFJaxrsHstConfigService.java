@@ -77,7 +77,10 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 		String resourceType = "";
 		
         try {
-        	Session jcrSession = requestContext.getSession();
+        	Session jcrSession = requestContext.getSession(false);
+            if (jcrSession == null) {
+                throw new RepositoryException("No jcr session available on hst request context.");
+            }
         	// we explicitly call a refresh here. Normally, the sessionstateful jcr session is already refreshed. However, due to asychronous
         	// jcr event dispatching, there might be changes in the repository, but not yet a jcr event was sent that triggers a jcr session refresh. Hence, here
         	// we explicitly refresh the jcr session again. 
@@ -116,7 +119,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 		} 
 
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, uuid);
-    	
+
         // use JAX-RS service endpoint url-template: /{resourceType}/{suffix}
         StringBuilder jaxrsEndpointRequestPath = new StringBuilder("/").append(resourceType).append("/");
     	if (requestContext.getPathSuffix() != null) {

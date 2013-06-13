@@ -85,7 +85,7 @@ public class HstComponentParametersTest {
         MockNode node = MockNodeFactory.fromXml("/org/hippoecm/hst/pagecomposer/jaxrs/util/HstComponentParametersTest-no-prefixes-one-parameter.xml");
 
         HstComponentParameters parameters = new HstComponentParameters(node, null);
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, false, true, true);
 
@@ -104,7 +104,7 @@ public class HstComponentParametersTest {
 
         HstComponentParameters parameters = new HstComponentParameters(node, null);
         parameters.setValue("hippo-default", "parameterOne", "bar");
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, false, true, true);
 
@@ -121,7 +121,7 @@ public class HstComponentParametersTest {
 
         HstComponentParameters parameters = new HstComponentParameters(node, null);
         parameters.setValue("", "parameterTwo", "valueTwo");
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, false, true, true);
 
@@ -140,7 +140,7 @@ public class HstComponentParametersTest {
 
         HstComponentParameters parameters = new HstComponentParameters(node, null);
         parameters.setValue("prefix", "parameterOne", "valueOne");
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, true, true, true);
 
@@ -160,7 +160,7 @@ public class HstComponentParametersTest {
 
         HstComponentParameters parameters = new HstComponentParameters(node, null);
         parameters.removePrefix("prefix");
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, false, false, false);
     }
@@ -171,7 +171,7 @@ public class HstComponentParametersTest {
 
         HstComponentParameters parameters = new HstComponentParameters(node, null);
         parameters.setValue("prefix", "parameterOne", "valueOne");
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, true, true, true);
 
@@ -191,7 +191,7 @@ public class HstComponentParametersTest {
 
         HstComponentParameters parameters = new HstComponentParameters(node, null);
         parameters.setValue("prefix", "parameterTwo", "valueTwo");
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, true, true, true);
 
@@ -211,7 +211,7 @@ public class HstComponentParametersTest {
 
         HstComponentParameters parameters = new HstComponentParameters(node, null);
         parameters.renamePrefix("prefix", "foo");
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, true, true, true);
 
@@ -247,7 +247,7 @@ public class HstComponentParametersTest {
 
         HstComponentParameters parameters = new HstComponentParameters(node, null);
         parameters.renamePrefix("prefix", "foo");
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, true, true, true);
 
@@ -271,7 +271,7 @@ public class HstComponentParametersTest {
                 parameters.removePrefix(prefix);
             }
         }
-        parameters.save();
+        parameters.save(0);
 
         assertHasPrefixesNamesValues(node, true, true, true);
 

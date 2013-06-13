@@ -52,6 +52,8 @@ public interface HstNodeTypes {
     static final String GENERAL_PROPERTY_INHERITS_FROM = "hst:inheritsfrom";
     static final String GENERAL_PROPERTY_LOCKED_BY = "hst:lockedby";
     static final String GENERAL_PROPERTY_LOCKED_ON = "hst:lockedon";
+    static final String GENERAL_PROPERTY_LAST_MODIFIED = "hst:lastmodified";
+    static final String GENERAL_PROPERTY_LAST_MODIFIED_BY = "hst:lastmodifiedby";
     static final String GENERAL_PROPERTY_PARAMETER_NAMES = "hst:parameternames";
     static final String GENERAL_PROPERTY_PARAMETER_VALUES = "hst:parametervalues";
     static final String GENERAL_PROPERTY_HOMEPAGE = "hst:homepage";
@@ -125,6 +127,7 @@ public interface HstNodeTypes {
     static final String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_HOSTGROUP = "hst:channelmanagerhostgroup";
     static final String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITES = "hst:channelmanagersites";
     static final String VIRTUALHOSTS_PROPERTY_CHANNEL_MNGR_SITE_AUTHENTICATION_SKIPPED = "hst:channelmanagersiteauthenticationskipped";
+    static final String VIRTUALHOSTS_PROPERTY_FINAGRAINEDLOCKING = "hst:finegrainedlocking";
     
     static final String VIRTUALHOSTGROUP_PROPERTY_CMS_LOCATION =  "hst:cmslocation" ;
     static final String VIRTUALHOSTGROUP_PROPERTY_DEFAULT_PORT = "hst:defaultport";

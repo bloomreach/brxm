@@ -16,6 +16,7 @@
 package org.hippoecm.hst.configuration.components;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -165,6 +166,10 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
      * Contains all the variants for all the {@link HstComponentConfiguration} for the {@link HstComponentsConfiguration}
      */
     private List<String> mountVariants = Collections.emptyList();
+
+    private String lockedBy;
+    private Calendar lockedOn;
+    private Calendar lastModified;
     
     // constructor for copy purpose only
     private HstComponentConfigurationService(String id) {
@@ -287,6 +292,19 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
 
         if(node.getValueProvider().hasProperty(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE)) {
             this.cacheable = node.getValueProvider().getBoolean(HstNodeTypes.GENERAL_PROPERTY_CACHEABLE);
+        }
+
+        if (type == Type.CONTAINER_COMPONENT) {
+            lockedBy = node.getValueProvider().getString(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            lockedOn = node.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON);
+            lastModified = node.getValueProvider().getDate(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED);
+        }
+        // regardless merging/referencing of components, we directly inherit lock props: They are normally
+        // only stored on hst container items and those don't support merging any way
+        if (parent != null) {
+            lockedBy = (lockedBy == null) ?  parent.getLockedBy() : lockedBy;
+            lockedOn = (lockedOn == null) ?  parent.getLockedOn() : lockedOn;
+            lastModified = (lastModified == null) ?  parent.getLastModified() : lastModified;
         }
 
         if(!traverseDescendants) {
@@ -504,6 +522,22 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         return iconPath;
     }
 
+    @Override
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    @Override
+    public Calendar getLockedOn() {
+        return lockedOn;
+    }
+
+    @Override
+    public Calendar getLastModified() {
+        return lastModified;
+    }
+
+
     private HstComponentConfigurationService deepCopy(HstComponentConfigurationService parent, String newId,
             HstComponentConfigurationService child, List<HstComponentConfiguration> populated,
             Map<String, HstComponentConfiguration> rootComponentConfigurations) throws ServiceException {
@@ -541,6 +575,9 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         // localParameters have no merging, but for copy, the localParameters are copied 
         copy.localParameters = new LinkedHashMap<String, String>(child.localParameters);
         copy.usedChildReferenceNames = new ArrayList<String>(child.usedChildReferenceNames);
+        copy.lockedBy = child.lockedBy;
+        copy.lockedOn = child.lockedOn;
+        copy.lastModified = child.lastModified;
         for (HstComponentConfigurationService descendant : child.orderedListConfigs) {
             String descId = StringPool.get(copy.id + descendant.id);
             HstComponentConfigurationService copyDescendant = deepCopy(copy, descId, descendant, populated,
@@ -634,7 +671,17 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
                 if (this.cacheable == null) {
                     this.cacheable = referencedComp.cacheable;
                 }
-                
+
+                if (this.lockedBy == null) {
+                    this.lockedBy = referencedComp.lockedBy;
+                }
+                if (this.lockedOn == null) {
+                    this.lockedOn = referencedComp.lockedOn;
+                }
+                if (this.lastModified == null) {
+                    this.lastModified = referencedComp.lastModified;
+                }
+
                 // inherited variable flag not needed to take from the referencedComp so no check here for that variable!
                 
                 if (!referencedComp.parameters.isEmpty()) {
@@ -755,7 +802,16 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         if (this.cacheable == null) {
             this.cacheable = childToMerge.cacheable;
         }
-        
+        if (this.lockedBy == null) {
+            this.lockedBy = childToMerge.lockedBy;
+        }
+        if (this.lockedOn == null) {
+            this.lockedOn = childToMerge.lockedOn;
+        }
+        if (this.lastModified == null) {
+            this.lastModified = childToMerge.lastModified;
+        }
+
         // inherited flag not needed to merge
         
         if (!childToMerge.parameters.isEmpty()) {

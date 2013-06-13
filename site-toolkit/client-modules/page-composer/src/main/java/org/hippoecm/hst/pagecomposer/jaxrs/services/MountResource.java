@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpServletRequest;
@@ -42,18 +44,20 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
-import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,9 +122,14 @@ public class MountResource extends AbstractConfigResource {
     public Response setLock(@Context HttpServletRequest servletRequest) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
 
-        Mount editingPreviewMount = getEditingPreviewMount(requestContext);
+        MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
         if (editingPreviewMount == null) {
             return error("This mount is not suitable for the template composer.");
+        }
+
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking()) {
+            log.debug("Mount '{}' is finegrained locking hence setting lock is skipped", editingPreviewMount.getIdentifier());
+            return ok("Finegrained locked mounts are lock free. Use lock-acquired to fake this. ", "lock-acquired");
         }
 
         String configPath = editingPreviewMount.getHstSite().getConfigurationPath();
@@ -129,12 +138,11 @@ public class MountResource extends AbstractConfigResource {
             try {
                 Session session = requestContext.getSession();
                 Node configurationNode = session.getNode(configPath);
-                if (isLockedBySomeoneElse(configurationNode)) {
+                if (HstConfigurationUtils.isLockedBySomeoneElse(configurationNode)) {
                     return ok("This configuration was already locked.", "already-locked");
                 } else {
                     setLockProperties(configurationNode);
-                    getHstManager().invalidatePendingHstConfigChanges(session);
-                    session.save();
+                    HstConfigurationUtils.persistChanges(session, getHstManager());
                     return ok("This configuration lock was acquired.", "lock-acquired");
                 }
             } catch (LoginException e) {
@@ -159,28 +167,33 @@ public class MountResource extends AbstractConfigResource {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
 
         try {
-            HstSite ctxEditingPreviewSite = getEditingPreviewMount(requestContext).getHstSite();
+            final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
+            final HstSite ctxEditingPreviewSite = editingPreviewMount.getHstSite();
             
             Session session = requestContext.getSession();
             
             if (ctxEditingPreviewSite.hasPreviewConfiguration()) {
+                if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking()) {
+                    log.debug("Mount '{}' is finegrained locking hence checking lock is skipped", editingPreviewMount.getIdentifier());
+                    return ok("Site can be edited now");
+                }
                 String configPath = ctxEditingPreviewSite.getConfigurationPath();
                 Node configurationNode = session.getNode(configPath);
-                if (isLockedBySomeoneElse(configurationNode)) {
+                if (HstConfigurationUtils.isLockedBySomeoneElse(configurationNode)) {
                     return error("This channel is locked.", "locked");
                 }
-                if (!isLockedBySession(configurationNode)) {
+                if (!HstConfigurationUtils.isLockedBySession(configurationNode)) {
                     setLockProperties(configurationNode);
-                    getHstManager().invalidatePendingHstConfigChanges(session);
-                    session.save();
+                    HstConfigurationUtils.persistChanges(session, getHstManager());
                 }
                 return ok("Site can be edited now");
             }
 
             Node newPreviewConfigurationNode = createPreviewConfigurationNode(requestContext);
-            setLockProperties(newPreviewConfigurationNode);
-            getHstManager().invalidatePendingHstConfigChanges(session);
-            session.save();
+            if (!editingPreviewMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking()) {
+                setLockProperties(newPreviewConfigurationNode);
+            }
+            HstConfigurationUtils.persistChanges(session, getHstManager());
         } catch (IllegalStateException e) {
             return error("Cannot start editing : " + e);
         } catch (LoginException e) {
@@ -202,7 +215,8 @@ public class MountResource extends AbstractConfigResource {
 
         // cannot cast session from request context to HippoSession, hence, get it from jcr node first
         Node liveConfiguration = session.getNode(liveConfigurationPath);
-        ((HippoSession)liveConfiguration.getSession()).copy(liveConfiguration, newPreviewConfigurationPath);
+        HippoSession hippoSession = HstConfigurationUtils.getNonProxiedSession(session);
+        hippoSession.copy(liveConfiguration, newPreviewConfigurationPath);
         Node newPreviewConfigurationNode = session.getNode(newPreviewConfigurationPath);
 
         setVersionForPreviewSitesWithConfiguration(liveConfigurationPath, requestContext, newVersion);
@@ -219,7 +233,12 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response discardChanges(@Context HttpServletRequest servletRequest) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
-        return deletePreviewConfigurationIfNotLocked(requestContext);
+        final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking()) {
+            return fineGrainedDiscardChangesOfCurrentUser(requestContext);
+        } else {
+            return coarseGrainedDiscardIfNotLocked(requestContext);
+        }
     }
 
     /**
@@ -232,6 +251,15 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response unlock(@Context HttpServletRequest servletRequest) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
+        MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
+        if (editingPreviewMount == null) {
+            return error("This mount is not suitable for the template composer.");
+        }
+
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking()) {
+            log.debug("Mount '{}' is finegrained locking hence unlocking is skipped", editingPreviewMount.getIdentifier());
+            return ok("Unlocking global lock skipped for finegrained locking mounts.");
+        }
         return deletePreviewConfiguration(requestContext);
     }
 
@@ -246,12 +274,20 @@ public class MountResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response publish(@Context HttpServletRequest servletRequest) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
-        final Mount editingPreviewMount = getEditingPreviewMount(requestContext);
+        final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
 
         if (!hasPreviewConfiguration(editingPreviewMount)) {
             return error("Cannot publish non preview site");
         }
 
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking()) {
+            return fineGrainedPublishChangesOfCurrentUser(requestContext);
+        } else {
+            return coarseGrainedPublicationIfNotLocked(requestContext);
+        }
+    }
+
+    private Response coarseGrainedPublicationIfNotLocked(final HstRequestContext requestContext) {
         final HstSite editingLiveSite = getEditingLiveSite(requestContext);
         final HstSite editingPreviewSite = getEditingPreviewSite(requestContext);
 
@@ -260,16 +296,15 @@ public class MountResource extends AbstractConfigResource {
         try {
             Session session = requestContext.getSession();
             Node previewConfigurationNode = session.getNode(previewConfigPath);
-            if (isLockedBySomeoneElse(previewConfigurationNode)) {
+            if (HstConfigurationUtils.isLockedBySomeoneElse(previewConfigurationNode)) {
                 return error("Locked by another user.", "locked");
             }
-            
+
             removeLockProperties(previewConfigurationNode);
             session.removeItem(editingLiveSite.getConfigurationPath());
             long newVersion = editingPreviewSite.getVersion();
             setVersionForLiveSitesWithConfiguration(editingLiveSite.getConfigurationPath(), requestContext, newVersion);
-            getHstManager().invalidatePendingHstConfigChanges(session);
-            session.save();
+            HstConfigurationUtils.persistChanges(session, getHstManager());
         } catch (LoginException e) {
             return error("Could not get a jcr session : " + e + ". Cannot publish configuration.");
         } catch (RepositoryException e) {
@@ -278,6 +313,20 @@ public class MountResource extends AbstractConfigResource {
 
         return ok("Site is published");
 
+    }
+
+    private Response fineGrainedPublishChangesOfCurrentUser(final HstRequestContext requestContext) {
+        try {
+            String liveConfigurationPath = getEditingLiveMount(requestContext).getHstSite().getConfigurationPath();
+            String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
+
+            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
+            List<String> relativePathsToPublish = findChangedContainersForUser(session, previewConfigurationPath);
+            pushNodes(session, previewConfigurationPath, liveConfigurationPath, relativePathsToPublish);
+            return ok("Site is published");
+        } catch (RepositoryException e) {
+            return error("Could not publish preview configuration : " + e);
+        }
     }
 
     private String getNewPreviewConfigurationPath(final long newVersion, final String liveConfigurationPath) {
@@ -447,11 +496,11 @@ public class MountResource extends AbstractConfigResource {
         return ok("Document list", documentLocations);
     }
 
-    private Response deletePreviewConfigurationIfNotLocked(final HstRequestContext requestContext) {
+    private Response coarseGrainedDiscardIfNotLocked(final HstRequestContext requestContext) {
         final Mount editingPreviewMount = getEditingPreviewMount(requestContext);
         try {
             Node previewConfigurationNode = getConfigurationNodeForMount(requestContext.getSession(), editingPreviewMount);
-            if (isLockedBySomeoneElse(previewConfigurationNode)) {
+            if (HstConfigurationUtils.isLockedBySomeoneElse(previewConfigurationNode)) {
                 return error("Preview for '"+editingPreviewMount.getMountPoint()+"' cannot be deleted because locked by another user.", "locked");
             }
         } catch (RepositoryException e) {
@@ -472,8 +521,7 @@ public class MountResource extends AbstractConfigResource {
             Session session = requestContext.getSession();
             session.removeItem(previewConfigPath);
             resetVersionToLive(requestContext);
-            getHstManager().invalidatePendingHstConfigChanges(session);
-            session.save();
+            HstConfigurationUtils.persistChanges(session, getHstManager());
         } catch (LoginException e) {
             return error("Could not get a jcr session : " + e  + ". Cannot discard configuration.");
         } catch (RepositoryException e) {
@@ -489,6 +537,82 @@ public class MountResource extends AbstractConfigResource {
         setVersionForPreviewSitesWithConfiguration(previewSite.getConfigurationPath(), requestContext, liveVersion);
     }
 
+
+    /**
+     * reverts the changes for the current cms user for the channel he is working on.
+     * reverting changes need to be done directly on JCR level as for the hst model it get very complex as the
+     * hst model has an enhanced model on top of jcr, with for example inheritance and referencing resolved
+     */
+    private Response fineGrainedDiscardChangesOfCurrentUser(final HstRequestContext requestContext) {
+        try {
+            String liveConfigurationPath = getEditingLiveMount(requestContext).getHstSite().getConfigurationPath();
+            String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
+
+            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
+            List<String> relativePathsToRevert = findChangedContainersForUser(session, previewConfigurationPath);
+            pushNodes(session, liveConfigurationPath, previewConfigurationPath, relativePathsToRevert);
+            return ok("Changes of user '"+session.getUserID()+"' for site '"+getEditingPreviewMount(requestContext).getHstSite().getName()+"' are discarded.");
+
+        } catch (RepositoryException e) {
+            return error("Could not discard preview configuration : " + e);
+        }
+    }
+
+    private List<String> findChangedContainersForUser(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
+        String xpath = "/jcr:root" + previewConfigurationPath+"//element(*,"+HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT+")" +
+                "[@"+HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY+" = '"+session.getUserID()+"']";
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
+
+        final NodeIterable containersToRevert = new NodeIterable(result.getNodes());
+        List<String> relativePathsToRevert = new ArrayList<String>();
+        for (Node containerToRevert : containersToRevert) {
+            String containerPath = containerToRevert.getPath();
+            if (!containerPath.startsWith(previewConfigurationPath)) {
+                log.warn("Cannot discard container '{}' because does not start with preview config path '{}'.");
+                continue;
+            }
+            relativePathsToRevert.add(containerToRevert.getPath().substring(previewConfigurationPath.length()));
+        }
+        return relativePathsToRevert;
+    }
+
+    private void pushNodes(final HippoSession session,
+                           final String fromConfig,
+                           final String toConfig,
+                           final List<String> relativeConfigPaths) throws RepositoryException {
+
+        for (String relativeConfigPath : relativeConfigPaths) {
+            String absFromPath = fromConfig + relativeConfigPath;
+            String absToPath = toConfig + relativeConfigPath;
+            final Node rootNode = session.getRootNode();
+            if (rootNode.hasNode(absFromPath.substring(1)) && rootNode.hasNode(absToPath.substring(1))) {
+                final Node containerToRemove = rootNode.getNode(absToPath.substring(1));
+                Node absFromNode = rootNode.getNode(absFromPath.substring(1));
+                if (!containerToRemove.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT) ||
+                        !absFromNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
+                    log.warn("Cannot publish/discard nodes that are not of type hst:containercomponent. Cannot push " +
+                            " '{}' to '{}'.", containerToRemove.getPath(), absFromNode.getPath());
+                    continue;
+                }
+                containerToRemove.remove();
+                if (absFromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+                    absFromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
+                }
+                if (absFromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
+                    absFromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
+                }
+                absFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
+                absFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
+                session.copy(absFromNode, absToPath);
+            } else {
+                log.warn("Cannot push node path '{}' because live or preview version for '{}' is not available.",
+                        absToPath, relativeConfigPath);
+            }
+        }
+        HstConfigurationUtils.persistChanges(session, getHstManager());
+    }
+
+
     private Node getConfigurationNodeForMount(final Session session, final Mount mount) throws RepositoryException {
         String previewConfigPath = mount.getHstSite().getConfigurationPath();
         return session.getNode(previewConfigPath);
@@ -498,35 +622,12 @@ public class MountResource extends AbstractConfigResource {
         return editingPreviewMount.getHstSite().hasPreviewConfiguration();
     }
 
-    private boolean isLockedBySomeoneElse(Node configurationNode) throws RepositoryException {
-        final String holder = getLockedBy(configurationNode);
-        if (StringUtils.isEmpty(holder)) {
-            return false;
-        }
-        return !configurationNode.getSession().getUserID().equals(holder);
-    }
-
-    private boolean isLockedBySession(Node configurationNode) throws RepositoryException {
-        final String holder = getLockedBy(configurationNode);
-        if (StringUtils.isEmpty(holder)) {
-            return false;
-        }
-        return configurationNode.getSession().getUserID().equals(holder);
-    }
-
-    private String getLockedBy(Node configurationNode) throws RepositoryException {
-        if (!configurationNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-            return null;
-        }
-        return configurationNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).getString();
-    }
-
     /**
      * sets a not yet saved lock properties
      */
     private void setLockProperties(Node configurationNode) throws RepositoryException {
         assertCorrectNodeType(configurationNode, HstNodeTypes.NODETYPE_HST_CONFIGURATION);
-        if (isLockedBySomeoneElse(configurationNode)) {
+        if (HstConfigurationUtils.isLockedBySomeoneElse(configurationNode)) {
             throw new IllegalStateException("Cannot lock '"+configurationNode.getPath()+"' because locked by someone else.");
         }
         configurationNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, configurationNode.getSession().getUserID());
@@ -542,7 +643,6 @@ public class MountResource extends AbstractConfigResource {
             configurationNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
         }
     }
-
 
     private void assertCorrectNodeType(final Node node, String nodeType) throws RepositoryException {
         if (!node.isNodeType(nodeType)) {

@@ -71,6 +71,10 @@
 
 [hst:containercomponent] > hst:abstractcomponent orderable
 - hst:xtype (string) mandatory
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
 + * (hst:containeritemcomponent)
 
 [hst:containeritempackage] > nt:base, mix:referenceable orderable
@@ -328,6 +332,7 @@
 - hst:cacheable (boolean)
 - hst:defaultresourcebundleid (string)
 - hst:channelmanagersiteauthenticationskipped (boolean)
+- hst:finegrainedlocking (boolean)
 + * (hst:virtualhostgroup)
 
 [hst:blueprint] > nt:base, mix:referenceable, mix:versionable

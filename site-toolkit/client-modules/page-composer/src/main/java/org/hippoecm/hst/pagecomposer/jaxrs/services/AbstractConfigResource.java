@@ -117,8 +117,12 @@ public class AbstractConfigResource {
         return result == null ? null : result.toString();
     }
 
-    protected Node getRequestConfigNode(HstRequestContext requestContext) {
-        String id = (String)requestContext.getAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
+    /**
+     * @deprecated use the more specific {@link #getRequestConfigNode(org.hippoecm.hst.core.request.HstRequestContext, String)}
+     */
+    @Deprecated
+    protected Node getRequestConfigNode(final HstRequestContext requestContext) {
+        String id = getRequestConfigIdentifier(requestContext);
         if(id == null) {
             log.warn("Cannot get requestConfigNode because no attr '{}' on request. Return null", CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
         }
@@ -128,7 +132,26 @@ public class AbstractConfigResource {
             log.warn("Cannot find requestConfigNode because could not get node with id '{}' : {}", id, e.toString());
             return null;
         }
-        
+    }
+
+    protected Node getRequestConfigNode(final HstRequestContext requestContext, final String expectedNodeType) {
+        String id = getRequestConfigIdentifier(requestContext);
+        if(id == null) {
+            log.warn("Cannot get requestConfigNode because no attr '{}' on request. Return null", CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER);
+        }
+        try {
+            Node configNode = requestContext.getSession().getNodeByIdentifier(id);
+            if (configNode.isNodeType(expectedNodeType)) {
+                return configNode;
+            } else {
+                log.warn("Expected node was of type '' but actual node is of type '{}'. Return null.", expectedNodeType, configNode.getPrimaryNodeType().getName());
+                return null;
+            }
+        } catch (RepositoryException e) {
+            log.warn("Cannot find requestConfigNode because could not get node with id '{}' : {}", id, e.toString());
+            return null;
+        }
+
     }
 
     protected Response ok(String msg) {
@@ -189,5 +212,7 @@ public class AbstractConfigResource {
         }
         return objectConverter;
     }
+
+
 
 }

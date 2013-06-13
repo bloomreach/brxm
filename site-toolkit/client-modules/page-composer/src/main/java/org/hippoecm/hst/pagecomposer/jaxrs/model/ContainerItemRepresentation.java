@@ -29,7 +29,7 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 
 public class ContainerItemRepresentation extends ComponentRepresentation {
 
-    public ContainerItemRepresentation represent(Node node) throws RepositoryException {
+    public ContainerItemRepresentation represent(Node node, final long newLastModifiedTimestamp) throws RepositoryException {
         setId(node.getIdentifier());
         setName(node.getName());
         setPath(node.getPath());
@@ -41,8 +41,9 @@ public class ContainerItemRepresentation extends ComponentRepresentation {
         setComponentClassName(node.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME) ?
                 node.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString() : "");
 
+        setLastModifiedTimestamp(newLastModifiedTimestamp);
+
         return this;
     }
-    
 
 }

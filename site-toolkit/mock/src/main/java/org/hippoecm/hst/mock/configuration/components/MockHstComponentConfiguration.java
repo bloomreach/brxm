@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.mock.configuration.components;
 
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +60,9 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
     private boolean compositeCacheable;
     private List<String> variants;
     private List<String> mountVariants;
+    private String lockedBy;
+    private Calendar lockedOn;
+    private Calendar lastModified;
 
     public MockHstComponentConfiguration(String id) {
         this.id = id;
@@ -304,4 +308,30 @@ public class MockHstComponentConfiguration implements HstComponentConfiguration 
         return mountVariants;
     }
 
+    @Override
+    public String getLockedBy() {
+        return lockedBy;
+    }
+
+    public void setLockedBy(final String lockedBy) {
+        this.lockedBy = lockedBy;
+    }
+
+    @Override
+    public Calendar getLockedOn() {
+        return lockedOn;
+    }
+
+    public void setLockedOn(final Calendar lockedOn) {
+        this.lockedOn = lockedOn;
+    }
+
+    @Override
+    public Calendar getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(final Calendar lastModified) {
+        this.lastModified = lastModified;
+    }
 }
