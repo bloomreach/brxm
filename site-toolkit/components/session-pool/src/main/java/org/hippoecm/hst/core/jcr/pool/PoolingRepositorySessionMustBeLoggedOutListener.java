@@ -93,10 +93,8 @@ public class PoolingRepositorySessionMustBeLoggedOutListener extends GenericEven
             for (Repository repository : multipleRepository.getRepositoryMap().values()) {
                 if (repository instanceof PoolingRepository) {
                     PoolingRepository poolingRepository = (PoolingRepository) repository;
-                    if (poolingRepository.isDisposableWhenNotInUse()) {
-                        poolingRepository.clear();
-                        poolingRepository.setSessionsInvalidIfCreatedBeforeTimeMillis(currentTimeMillis);
-                    }
+                    poolingRepository.clear();
+                    poolingRepository.setSessionsInvalidIfCreatedBeforeTimeMillis(currentTimeMillis);
                 }
             }
         }
