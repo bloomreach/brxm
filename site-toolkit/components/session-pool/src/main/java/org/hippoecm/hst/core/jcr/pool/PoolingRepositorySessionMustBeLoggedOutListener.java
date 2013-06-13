@@ -34,18 +34,11 @@ public class PoolingRepositorySessionMustBeLoggedOutListener extends GenericEven
     // This is the statically decided pools list which should be refreshed on the specific content changes.
     protected List<PoolingRepository> poolingRepositories;
 
-    // flag whether or not refresh disposable session pools from the multipleRepository.
-    private boolean refreshDisposableRepositories;
-
     // This is just for finding the disposable pools
     private MultipleRepository multipleRepository;
 
     public void setPoolingRepositories(List<PoolingRepository> poolingRepositories) {
         this.poolingRepositories = poolingRepositories;
-    }
-
-    public void setRefreshDisposableRepositories(boolean refreshDisposableRepositories) {
-        this.refreshDisposableRepositories = refreshDisposableRepositories;
     }
 
     public void setMultipleRepository(MultipleRepository multipleRepository) {
@@ -96,7 +89,7 @@ public class PoolingRepositorySessionMustBeLoggedOutListener extends GenericEven
             }
         }
 
-        if (refreshDisposableRepositories && multipleRepository != null) {
+        if (multipleRepository != null) {
             for (Repository repository : multipleRepository.getRepositoryMap().values()) {
                 if (repository instanceof PoolingRepository) {
                     PoolingRepository poolingRepository = (PoolingRepository) repository;
