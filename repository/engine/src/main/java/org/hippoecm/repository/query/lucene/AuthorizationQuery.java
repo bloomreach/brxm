@@ -406,8 +406,8 @@ public class AuthorizationQuery {
             }
         } else {
             BooleanQuery b = new BooleanQuery(true);
-            for (String groupName : userIds) {
-                Term term = new Term(field, groupName);
+            for (String userId : userIds) {
+                Term term = new Term(field, userId);
                 b.add(new TermQuery(term), Occur.SHOULD);
             }
             if (facetRule.isEqual()) {
