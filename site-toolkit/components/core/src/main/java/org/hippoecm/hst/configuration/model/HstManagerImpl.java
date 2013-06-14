@@ -35,7 +35,7 @@ import javax.jcr.observation.EventIterator;
 
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.StringPool;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.channel.MutableChannelManager;
 import org.hippoecm.hst.configuration.components.HstComponentsConfigurationService;
 import org.hippoecm.hst.configuration.hosting.MutableVirtualHosts;

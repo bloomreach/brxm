@@ -29,6 +29,7 @@ import javax.jcr.ValueFormatException;
 import javax.jcr.nodetype.PropertyDefinition;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.provider.PropertyMap;
 import org.hippoecm.repository.api.HippoNode;
@@ -53,26 +54,28 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     
     private boolean detached = false;
     private boolean isLoaded = false;
-   
+    private boolean useStringPool = false;
+
     private PropertyMapImpl propertyMap = new PropertyMapImpl();
     
     public JCRValueProviderImpl(Node jcrNode) {
-        this(jcrNode, true);
+        this(jcrNode, true, false);
     }
-    
+
     /**
      * if <code>lazyLoading</code> is false, we'll actively fill all the properties of the jcr node in the properties map
      * and fetch the canonical path
      * @param jcrNode
      * @param lazyLoading
      */
-    public JCRValueProviderImpl(Node jcrNode, boolean lazyLoading) {
+    public JCRValueProviderImpl(Node jcrNode, boolean lazyLoading, boolean useStringPool) {
         this.jcrNode = jcrNode;
+        this.useStringPool = useStringPool;
         if(jcrNode == null) {
             return;
         }
         try {
-            this.nodeName = jcrNode.getName();
+            this.nodeName = stringPool(jcrNode.getName());
             this.nodePath = jcrNode.getPath();
             if(!lazyLoading) {
                 populate();
@@ -115,7 +118,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         this.detached = true;
         this.jcrNode = null;
         // AFTER a valueprovider is detached, properties cannot be populated any more. This means 
-        // we can optimize the PropertyMapImpl now to not use all unique empty hashmaps. 
+        // we can optimize the PropertyMapImpl
         propertyMap.providerDetached();
     }
     
@@ -209,7 +212,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 PropertyDefinition propDef = prop.getDefinition();
                 loadProperty(prop, propDef, propertyName);
             } else {
-                this.propertyMap.addUnAvailableProperty(propertyName);
+                this.propertyMap.addUnAvailableProperty(stringPool(propertyName));
             }
             return bool;
         } catch (RepositoryException e) {
@@ -253,14 +256,14 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             return o;
         }
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
-            return new Double(0);
+            return Double.valueOf(0);
         }
         
         loadProperty(propertyName,PropertyType.DOUBLE, false);
         
         o = this.propertyMap.getDoubles().get(propertyName);
         if(o == null) {
-           return new Double(0); 
+           return Double.valueOf(0);
         } 
         return o;
     }
@@ -285,7 +288,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
     public Long getLong(String propertyName) {
         Long o = this.propertyMap.getLongs().get(propertyName);
         if(o != null) {
-            return (Long)o;
+            return o;
         } 
         
         if(this.propertyMap.isUnAvailableProperty(propertyName)) {
@@ -427,7 +430,7 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                 }
             }
             else {
-                this.propertyMap.addUnAvailableProperty(propertyName);
+                this.propertyMap.addUnAvailableProperty(stringPool(propertyName));
                 log.debug("Property '{}' not found at '{}'.Return null", propertyName, nodePath);
                 return;
             }
@@ -436,8 +439,10 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         }
     }
     
-    private void loadProperty(Property p, PropertyDefinition propDef, String propertyName){
-       
+    private void loadProperty(Property p, PropertyDefinition propDef, String propertyName) {
+
+        propertyName = stringPool(propertyName);
+
         try {
             switch (p.getType()) {
             case PropertyType.BOOLEAN : 
@@ -451,12 +456,12 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         i++;
                     }
 
-                    this.propertyMap.getBooleanArrays().put(propertyName, bools);
+                    this.propertyMap.put(propertyName, bools);
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 }
                 else {
-                    this.propertyMap.getBooleans().put(propertyName, p.getBoolean());
+                    this.propertyMap.put(propertyName, p.getBoolean());
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 }
@@ -466,14 +471,14 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                     String[] strings = new String[values.length];
                     int i = 0;
                     for(Value val : values) {
-                        strings[i] = val.getString();
+                        strings[i] = stringPool(val.getString());
                         i++;
                     }
-                    this.propertyMap.getStringArrays().put(propertyName, strings);
+                    this.propertyMap.put(propertyName, strings);
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 } else {
-                    this.propertyMap.getStrings().put(propertyName, p.getString());
+                    this.propertyMap.put(propertyName, stringPool(p.getString()));
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 }
@@ -486,11 +491,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         longs[i] = val.getLong();
                         i++;
                     }
-                    this.propertyMap.getLongArrays().put(propertyName, longs);
+                    this.propertyMap.put(propertyName, longs);
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 } else {
-                    this.propertyMap.getLongs().put(propertyName, p.getLong());
+                    this.propertyMap.put(propertyName, p.getLong());
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 }
@@ -503,11 +508,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         doubles[i] = val.getDouble();
                         i++;
                     }
-                    this.propertyMap.getDoubleArrays().put(propertyName, doubles);
+                    this.propertyMap.put(propertyName, doubles);
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 } else {
-                    this.propertyMap.getDoubles().put(propertyName, p.getDouble());
+                    this.propertyMap.put(propertyName, p.getDouble());
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 }    
@@ -520,11 +525,11 @@ public class JCRValueProviderImpl implements JCRValueProvider{
                         dates[i] = val.getDate();
                         i++;
                     }
-                    this.propertyMap.getCalendarArrays().put(propertyName, dates);
+                    this.propertyMap.put(propertyName, dates);
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 } else {
-                    this.propertyMap.getCalendars().put(propertyName, p.getDate());
+                    this.propertyMap.put(propertyName, p.getDate());
                     this.propertyMap.addAvailableProperty(propertyName);
                     return;
                 }    
@@ -616,6 +621,10 @@ public class JCRValueProviderImpl implements JCRValueProvider{
             }
             
         }
+    }
+
+    private String stringPool(String string) {
+        return useStringPool ? StringPool.get(string) : string;
     }
 
 }

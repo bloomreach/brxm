@@ -31,7 +31,8 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.StringPool;
+import org.hippoecm.hst.core.internal.CollectionOptimizer;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
@@ -108,7 +109,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     /*
      * Internal only: needed for context aware linkrewriting
      */
-    private Map<String, String> keyToPropertyPlaceHolderMap = new HashMap<String,String>();
+    private Map<String, String> keyToPropertyPlaceHolderMap = new HashMap<String,String>(0);
 
     private int depth;
 
@@ -132,7 +133,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     private int schemeNotMatchingResponseCode = -1;
     private final String resourceBundleId;
 
-    public HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
+    HstSiteMapItemService(HstNode node, Mount mount, HstSiteMapItemHandlersConfiguration siteMapItemHandlersConfiguration, HstSiteMapItem parentItem, HstSiteMap hstSiteMap, int depth) throws ServiceException{
         this.parentItem = (HstSiteMapItemService)parentItem;
         this.hstSiteMap = hstSiteMap;
         this.depth = depth;
@@ -149,7 +150,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             idBuilder.insert(0, crNode.getValueProvider().getName()).insert(0, "/");
         }
         // we take substring(1) to remove the first slash
-        this.id = idBuilder.toString().substring(1);
+        this.id = StringPool.get(idBuilder.toString().substring(1));
 
         // currently, the value is always the nodename
         this.value = StringPool.get(node.getValueProvider().getName());
@@ -208,7 +209,10 @@ public class HstSiteMapItemService implements HstSiteMapItem {
             parameterizedPath = parameterizedPath + value;
         }
 
-        parameterizedPath = StringPool.get(parameterizedPath);
+        this.parameterizedPath = StringPool.get(this.parameterizedPath);
+        this.prefix = StringPool.get(this.prefix);
+        this.postfix = StringPool.get(this.postfix);
+        this.extension = StringPool.get(this.extension);
 
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
@@ -420,7 +424,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
 
     public Map<String, String> getParameters() {
-        return Collections.unmodifiableMap(this.parameters);
+        return this.parameters;
     }
 
 
@@ -429,7 +433,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 	}
 
 	public Map<String, String> getLocalParameters() {
-		return Collections.unmodifiableMap(this.localParameters);
+		return this.localParameters;
 	}
 
 
@@ -454,11 +458,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
     }
 
     public Set<String> getRoles() {
-        return Collections.unmodifiableSet(this.roles);
+        return this.roles;
     }
 
     public Set<String> getUsers() {
-        return Collections.unmodifiableSet(this.users);
+        return this.users;
     }
 
     public String getValue() {
@@ -643,5 +647,23 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         return isExcludedForLinkRewriting;
     }
 
+
+    void optimize() {
+
+        childSiteMapItems = CollectionOptimizer.optimizeHashMap(childSiteMapItems);
+        siteMapItemHandlerConfigurations = CollectionOptimizer.optimizeLinkedHashMap(siteMapItemHandlerConfigurations);
+        componentConfigurationIdMappings = CollectionOptimizer.optimizeHashMap(componentConfigurationIdMappings);
+        users = CollectionOptimizer.optimizeHashSet(users);
+        roles = CollectionOptimizer.optimizeHashSet(roles);
+        parameters = CollectionOptimizer.optimizeHashMap(parameters);
+        localParameters = CollectionOptimizer.optimizeHashMap(localParameters);
+        containsAnyChildSiteMapItems = CollectionOptimizer.optimizeArrayList(containsAnyChildSiteMapItems);
+        containsWildCardChildSiteMapItems = CollectionOptimizer.optimizeArrayList(containsWildCardChildSiteMapItems);
+
+        // optimize all
+        for (HstSiteMapItem child : childSiteMapItems.values()) {
+            ((HstSiteMapItemService)child).optimize();
+        }
+    }
 
 }

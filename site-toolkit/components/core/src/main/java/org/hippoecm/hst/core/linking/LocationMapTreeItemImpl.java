@@ -21,10 +21,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.StringPool;
+import org.hippoecm.hst.core.internal.CollectionOptimizer;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 
-public class LocationMapTreeItemImpl implements LocationMapTreeItem{
+public class LocationMapTreeItemImpl implements LocationMapTreeItem {
 
     private List<HstSiteMapItem> hstSiteMapItems = new ArrayList<HstSiteMapItem>();
     
@@ -35,7 +36,7 @@ public class LocationMapTreeItemImpl implements LocationMapTreeItem{
     private boolean isWildCard;
     private boolean isAny;
     
-    public void addSiteMapItem(List<String> pathFragment, HstSiteMapItem hstSiteMapItem){
+    void addSiteMapItem(List<String> pathFragment, HstSiteMapItem hstSiteMapItem) {
         if(pathFragment.isEmpty()) {
             // when the pathFragments are empty, the entire relative content path is processed.
             this.hstSiteMapItems.add(hstSiteMapItem);
@@ -69,7 +70,7 @@ public class LocationMapTreeItemImpl implements LocationMapTreeItem{
         return this.parentItem;
     }
     
-    public void setParentItem(LocationMapTreeItem parentItem){
+    void setParentItem(LocationMapTreeItem parentItem){
         this.parentItem = parentItem;
     }
     
@@ -82,15 +83,21 @@ public class LocationMapTreeItemImpl implements LocationMapTreeItem{
         return this.isWildCard;
     }
     
-    public void setIsAny(boolean isAny) {
+    void setIsAny(boolean isAny) {
         this.isAny = isAny;
     }
 
-    public void setIsWildCard(boolean isWildCard) {
+    void setIsWildCard(boolean isWildCard) {
         this.isWildCard = isWildCard;
     }
 
+    void optimize() {
+        children = CollectionOptimizer.optimizeHashMap(children);
+        hstSiteMapItems = CollectionOptimizer.optimizeArrayList(hstSiteMapItems);
+        for (LocationMapTreeItem child : children.values()) {
+            ((LocationMapTreeItemImpl)child).optimize();
+        }
+    }
 
-    
 
 }

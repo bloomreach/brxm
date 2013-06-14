@@ -23,7 +23,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.StringPool;
+import org.hippoecm.hst.core.internal.CollectionOptimizer;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItemService;
 import org.hippoecm.hst.core.util.PropertyParser;
@@ -32,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class LocationMapTreeImpl implements LocationMapTree{
+public class LocationMapTreeImpl implements LocationMapTree {
 
     private static final String KEY_TO_PROPERTY_PREFIX = "key";
 
@@ -43,6 +44,10 @@ public class LocationMapTreeImpl implements LocationMapTree{
     public LocationMapTreeImpl(List<HstSiteMapItem> siteMapItems) {
         for(HstSiteMapItem siteMapItem : siteMapItems ){
             add2LocationMap(siteMapItem);
+        }
+        children = CollectionOptimizer.optimizeHashMap(children);
+        for (LocationMapTreeItem child : children.values()) {
+            ((LocationMapTreeItemImpl)child).optimize();
         }
     }
 
@@ -57,7 +62,7 @@ public class LocationMapTreeImpl implements LocationMapTree{
     }
 
     
-    public void addSiteMapItem(String unresolvedPath, HstSiteMapItem hstSiteMapItem){
+    private void addSiteMapItem(String unresolvedPath, HstSiteMapItem hstSiteMapItem) {
         if(unresolvedPath == null) {
             log.debug("HstSiteMapItem '{}' will not be used for linkrewriting as it has an empty relative content path.", hstSiteMapItem.getId());
             return;
@@ -168,7 +173,7 @@ public class LocationMapTreeImpl implements LocationMapTree{
         addSiteMapItem(pathFragment, hstSiteMapItem);
     }
     
-    public void addSiteMapItem(List<String> pathFragment, HstSiteMapItem hstSiteMapItem){
+    private void addSiteMapItem(List<String> pathFragment, HstSiteMapItem hstSiteMapItem){
         
         LocationMapTreeItemImpl child = (LocationMapTreeItemImpl) getTreeItem(pathFragment.get(0));
         if(child == null) {

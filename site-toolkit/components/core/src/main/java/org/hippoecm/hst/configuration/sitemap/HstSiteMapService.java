@@ -84,6 +84,10 @@ public class HstSiteMapService implements HstSiteMap {
         for(HstSiteMapItem child : this.rootSiteMapItems.values()) {
             populateDescendants(child);
         }
+
+        for(HstSiteMapItem child : this.rootSiteMapItems.values()) {
+            ((HstSiteMapItemService)child).optimize();
+        }
         
     }
     

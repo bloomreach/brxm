@@ -68,12 +68,12 @@ public class HstNodeImpl implements HstNode {
      */
     private boolean inherited = false; 
     
-    public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChilds) throws RepositoryException {
+    public HstNodeImpl(Node jcrNode, HstNode parent, boolean loadChildren) throws RepositoryException {
         this.parent = parent;
-        provider = new JCRValueProviderImpl(jcrNode, false);
+        provider = new JCRValueProviderImpl(jcrNode, false, true);
         nodeTypeName = jcrNode.getPrimaryNodeType().getName();
-        if(loadChilds) {
-            loadChilds(jcrNode);
+        if(loadChildren) {
+            loadChildren(jcrNode);
         }
         // detach the backing jcr node now we are done.       
         stale = false;
@@ -115,21 +115,21 @@ public class HstNodeImpl implements HstNode {
         this.parent = parent;
         this.inherited = inherited;
         if(node.children != null) {
-            children = new LinkedHashMap<String, HstNode>();
+            children = new LinkedHashMap<String, HstNode>(node.children.size() * 4 / 3);
             for(Entry<String, HstNode> entry : node.children.entrySet()) {
                 children.put(entry.getKey(), new HstNodeImpl(inherited, (HstNodeImpl)entry.getValue(), this));
             }
         }
     }
 
-    protected void loadChilds(Node jcrNode) throws RepositoryException {
+    protected void loadChildren(Node jcrNode) throws RepositoryException {
         NodeIterator nodes = jcrNode.getNodes();
         long iteratorSizeBeforeLoop = nodes.getSize();
         while (nodes.hasNext()) {
             Node child = nodes.nextNode();
             HstNode childRepositoryNode = createNew(child, this, true);
             if(children == null) {
-                children = new LinkedHashMap<String, HstNode>();
+                children = new LinkedHashMap<String, HstNode>((int)iteratorSizeBeforeLoop * 4 / 3);
             }
             HstNodeImpl existing = (HstNodeImpl) children.get(childRepositoryNode.getValueProvider().getName());
             if (existing != null) {

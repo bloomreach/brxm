@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.hippoecm.hst.configuration.StringPool;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
