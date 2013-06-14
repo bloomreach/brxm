@@ -660,6 +660,8 @@
                 <exclude>richtext/resources/src/main/resources/xinha/plugins/InsertAnchor/InsertAnchor.js</exclude>
                 <exclude>richtext/resources/src/main/resources/xinha/plugins/UnFormat/UnFormat.js</exclude>
                 <exclude>richtext/resources/src/main/resources/xinha/plugins/IndentOutdent/IndentOutdent.js</exclude>
+                <exclude>richtext/resources/src/main/resources/xinha/plugins/Stylist/Stylist.js</exclude>
+                <exclude>richtext/resources/src/main/resources/xinha/plugins/Stylist/rangy-core-min.js</exclude>
                 <exclude>richtext/resources/src/main/resources/xinha/XinhaCore.js</exclude>
                 <exclude>tools/development-content/src/main/java/org/hippoecm/frontend/plugins/development/content/names/Names.java</exclude>
                 <exclude>translation/frontend/src/main/java/org/hippoecm/frontend/translation/components/folder/treegrid/*</exclude>
