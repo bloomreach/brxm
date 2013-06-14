@@ -39,6 +39,7 @@ public class TemplateComposerResourceBehavior extends AbstractBehavior {
             component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.ICON_GRID_VIEW));
             component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.TOOLKIT_GRID_PANEL));
             component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.ICON_TOOLBAR_WINDOW));
+            component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.MANAGE_CHANGES_WINDOW));
             component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.NOTIFICATION));
             component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.REST_STORE));
             component.add(JavascriptPackageResource.getHeaderContribution(PageEditorBundle.class, PageEditorBundle.PROPERTIES_PANEL));

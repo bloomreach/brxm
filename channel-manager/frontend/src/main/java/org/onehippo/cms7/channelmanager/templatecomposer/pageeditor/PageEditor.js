@@ -32,6 +32,37 @@
         });
     }
 
+    function swapElements(array, firstIndex, secondIndex) {
+        var tmp = array[firstIndex];
+        array[firstIndex] = array[secondIndex];
+        array[secondIndex] = tmp;
+    }
+
+    function moveFirstIfExists(array, element) {
+        var index = array.indexOf(element);
+        if (index > 0) {
+            swapElements(array, 0, index);
+        }
+    }
+
+    function createChangesForUsersNotificationMessage(userIds, cmsUser, resources) {
+        if (userIds.length === 1) {
+            if (userIds[0] === cmsUser) {
+                return String.format(resources['notification-unpublished-changes-of-cms-user']);
+            }
+            return String.format(resources['notification-unpublished-changes-of-other-user'], userIds[0]);
+        } else {
+            if (userIds[0] === cmsUser) {
+                userIds[0] = resources['notification-unpublished-changes-cms-user']
+            }
+            if (userIds.length == 2) {
+                return String.format(resources['notification-unpublished-changes-of-two-users'], userIds[0], userIds[1]);
+            }
+            return String.format(resources['notification-unpublished-changes-of-comma-separated-users-and-last-one'],
+                userIds.slice(0, userIds.length - 1).join(', '), userIds[userIds.length - 1]);
+        }
+    }
+
     Hippo.ChannelManager.TemplateComposer.GlobalVariantsStore = Ext.extend(Hippo.ChannelManager.TemplateComposer.RestStore, {
 
         constructor: function(config) {
@@ -127,6 +158,8 @@
             }
 
             this.title = config.title;
+            this.resources = config.resources;
+            this.cmsUser = config.cmsUser;
             config.header = false;
 
             this.composerRestMountUrl = config.templateComposerContextPath + config.composerRestMountPath;
@@ -211,10 +244,10 @@
                         }
                     },
                     {
-                        id: 'previousLiveNotification',
+                        id: 'channelChangesNotification',
                         xtype: 'Hippo.ChannelManager.TemplateComposer.Notification',
                         alignToElementId: 'pageEditorToolbar',
-                        message: config.resources['previous-live-msg']
+                        message: ''
                     },
                     {
                         id: 'icon-toolbar-window',
@@ -348,6 +381,7 @@
                         toolbarButtons.edit,
                         toolbarButtons.publish,
                         toolbarButtons.discard,
+                        toolbarButtons.manageChanges,
                         toolbarButtons.unlock,
                         toolbarButtons.label,
                         ' ',
@@ -572,7 +606,7 @@
                 toolkitGrid = Ext.getCmp('ToolkitGrid');
                 toolkitGrid.reconfigure(pageContext.stores.toolkit, toolkitGrid.getColumnModel());
 
-                Ext.getCmp('previousLiveNotification').hide();
+                this.hideChannelChangesNotification();
             } else {
                 this.createViewToolbar();
 
@@ -588,15 +622,52 @@
                 }
 
                 if (!this.fullscreen && this.pageContainer.pageContext.hasPreviewHstConfig) {
-                    Ext.getCmp('previousLiveNotification').show();
+                    this.showChannelChangesNotification(pageContext);
                 } else {
-                    Ext.getCmp('previousLiveNotification').hide();
+                    this.hideChannelChangesNotification();
                 }
 
                 Ext.getCmp('icon-toolbar-window').hide();
             }
 
             Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.show();
+        },
+
+        showChannelChangesNotification: function(pageContext) {
+            var notification = Ext.getCmp('channelChangesNotification');
+
+            if (pageContext.fineGrainedLocking) {
+                this.updateAndShowChangesForUsersNotification(notification, pageContext.ids.mountId);
+            } else {
+                notification.setMessage(this.resources['previous-live-msg']);
+                notification.show();
+            }
+        },
+
+        updateAndShowChangesForUsersNotification: function(notification, mountId) {
+            var self = this;
+            Ext.Ajax.request({
+                url: this.composerRestMountUrl + '/' + mountId + './userswithchanges/?FORCE_CLIENT_HOST=true',
+                success: function(response) {
+                    var userObjects = Ext.decode(response.responseText).data,
+                        userIds = Ext.pluck(userObjects, 'id').sort();
+                    if (Ext.isEmpty(userIds)) {
+                        notification.hide();
+                    } else {
+                        moveFirstIfExists(userIds, self.cmsUser);
+                        notification.setMessage(createChangesForUsersNotificationMessage(userIds, self.cmsUser, self.resources));
+                        notification.show();
+                    }
+                },
+                failure: function() {
+                    notification.setMessage(self.resources['notification-unpublished-changes-error']);
+                    notification.show();
+                }.createDelegate(this)
+            });
+        },
+
+        hideChannelChangesNotification: function() {
+            Ext.getCmp('channelChangesNotification').hide();
         },
 
         disableUI: function() {
@@ -854,12 +925,11 @@
         },
 
         getToolbarButtons: function() {
-            var editButton, publishButton, discardButton, unlockButton, lockLabel, lockedOn;
+            var editButton, publishButton, discardButton, manageChangesButton, unlockButton, lockLabel, lockedOn;
             editButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-edit-button',
                 text: this.initialConfig.resources['edit-button'],
                 iconCls: 'edit-channel',
-                allowDepress: false,
                 disabled: this.pageContainer.pageContext.locked,
                 width: 120,
                 listeners: {
@@ -873,7 +943,6 @@
                 id: 'template-composer-toolbar-publish-button',
                 text: this.initialConfig.resources['publish-button'],
                 iconCls: 'publish-channel',
-                allowDepress: false,
                 disabled: this.pageContainer.pageContext.locked,
                 width: 120,
                 hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
@@ -888,7 +957,6 @@
                 id: 'template-composer-toolbar-discard-button',
                 text: this.initialConfig.resources['discard-button'],
                 iconCls: 'discard-channel',
-                allowDespress: false,
                 disabled: this.pageContainer.pageContext.locked,
                 width: 120,
                 hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
@@ -899,11 +967,23 @@
                     }
                 }
             });
+            manageChangesButton = new Ext.Toolbar.Button({
+                id: 'template-composer-toolbar-manage-changes-button',
+                text: this.initialConfig.resources['manage-changes-button'],
+                iconCls: 'publish-channel',
+                width: 120,
+                hidden: false, // TODO: hide the button when you are not an admin
+                listeners: {
+                    click: {
+                        fn: this.pageContainer.manageChanges,
+                        scope: this.pageContainer
+                    }
+                }
+            });
             unlockButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-unlock-button',
                 text: this.initialConfig.resources['unlock-button'],
                 iconCls: 'remove-lock',
-                allowDepress: false,
                 hidden: !this.pageContainer.pageContext.locked || !this.canUnlockChannels,
                 width: 120,
                 listeners: {
@@ -920,7 +1000,14 @@
                 lockedOn = new Date(this.pageContainer.pageContext.lockedOn).format(this.initialConfig.resources['mount-locked-format']);
                 lockLabel.setText(this.initialConfig.resources['mount-locked-toolbar'].format(this.pageContainer.pageContext.lockedBy, lockedOn));
             }
-            return {'edit': editButton, 'publish': publishButton, 'discard': discardButton, 'unlock': unlockButton, 'label': lockLabel};
+            return {
+                edit: editButton,
+                publish: publishButton,
+                discard: discardButton,
+                manageChanges: manageChangesButton,
+                unlock: unlockButton,
+                label: lockLabel
+            };
         }
 
     });

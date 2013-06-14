@@ -27,6 +27,8 @@ public final class PageEditorBundle {
 
     public static final String ICON_TOOLBAR_WINDOW = "IconToolbarWindow.js";
 
+    public static final String MANAGE_CHANGES_WINDOW = "ManageChangesWindow.js";
+
     public static final String DRAG_DROP_ONE = "DragDropOne.js";
 
     public static final String NOTIFICATION = "Notification.js";

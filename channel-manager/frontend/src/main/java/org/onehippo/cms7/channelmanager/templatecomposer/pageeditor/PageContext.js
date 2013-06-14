@@ -145,7 +145,7 @@
             }.createDelegate(this));
         },
 
-        _initPageModelStore: function(mountId, pageId) {
+        _initPageModelStore: function(mountId, pageId, finegrainedLocking) {
             if (this.ids.pageId === pageId) {
                 return new Hippo.Future(function(onSuccess) {
                     onSuccess(this.stores.pageModel);
@@ -153,7 +153,7 @@
             }
 
             this.ids.pageId = pageId;
-            this.stores.pageModel = this._createPageModelStore(mountId, pageId);
+            this.stores.pageModel = this._createPageModelStore(mountId, pageId, finegrainedLocking);
             this.stores.pageModel.on('exception', function(dataProxy, type, action, options, response) {
                 if (type === 'response') {
                     console.error('Server returned status ' + response.status + " for the page store.");
@@ -189,6 +189,7 @@
                     var pageId, mountId, lockedBy, pageRequestVariantsHeader, futures;
                     pageId = response.getResponseHeader('HST-Page-Id');
                     mountId = response.getResponseHeader('HST-Mount-Id');
+
                     if (pageId === undefined || mountId === undefined) {
                         onFail('No page and/or mount information found');
                         return;
@@ -199,6 +200,8 @@
                     if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;
                     }
+
+                    self.fineGrainedLocking = self._getBoolean(response.getResponseHeader('HST-Mount-FineGrainedLocking'));
 
                     lockedBy = response.getResponseHeader('HST-Mount-LockedBy');
                     if (lockedBy !== undefined) {
@@ -225,7 +228,7 @@
                     if (canEdit) {
                         futures = [
                             self._initToolkitStore.call(self, mountId),
-                            self._initPageModelStore.apply(self, [mountId, pageId])
+                            self._initPageModelStore.apply(self, [mountId, pageId, self.fineGrainedLocking])
                         ];
                         Hippo.Future.join(futures).when(function() {
                             onSuccess();
@@ -312,11 +315,11 @@
             });
         },
 
-        _createPageModelStore: function(mountId, pageId) {
+        _createPageModelStore: function(mountId, pageId, finegrainedLocking) {
             return new Hippo.ChannelManager.TemplateComposer.PageModelStore({
-                rootComponentIdentifier: this.rootComponentIdentifier,
                 mountId: mountId,
                 pageId: pageId,
+                finegrainedLocking : finegrainedLocking,
                 composerRestMountUrl: this.composerRestMountUrl,
                 resources: this.resources
             });

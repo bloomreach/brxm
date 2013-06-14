@@ -305,6 +305,28 @@
             }
         },
 
+        manageChanges: function() {
+            var self, manageChangesWindow;
+
+            self = this;
+
+            manageChangesWindow = new Hippo.ChannelManager.TemplateComposer.ManageChangesWindow({
+                cmsUser: this.cmsUser,
+                composerRestMountUrl: this.composerRestMountUrl,
+                mountId: this.pageContext.ids.mountId,
+                resources: this.resources,
+                onSuccess: this.refreshIframe.createDelegate(this),
+                onFailure: function() {
+                    Hippo.Msg.alert(
+                        self.resources['manage-changes-failed-title'],
+                        self.resources['manage-changes-failed-message'],
+                        self.initComposer.createDelegate(self)
+                    );
+                }
+            });
+            manageChangesWindow.show();
+        },
+
         toggleMode: function() {
             var self, hostToIFrame, mountId, hasPreviewHstConfig, doneCallback;
 

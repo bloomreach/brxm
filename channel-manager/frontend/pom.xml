@@ -213,6 +213,7 @@
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconGridView.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ToolkitGridPanel.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconToolbarWindow.js</include>
+                <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ManageChangesWindow.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Notification.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/DragDropOne.js</include>
                 <include>${project.build.directory}/classes/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js</include>

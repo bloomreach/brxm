@@ -29,11 +29,12 @@
             }, config.prototypeRecord);
 
             writer = new Ext.data.JsonWriter({
-                encode: false   // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
+                encode: false,  // <-- don't return encoded JSON -- causes Ext.Ajax#request to send data using jsonData config rather than HTTP params
+                listful: config.listful || false
             });
 
             cfg = {
-                restful: true,
+                restful: Ext.value(config.restful, true),
                 reader: reader,
                 writer: writer
             };

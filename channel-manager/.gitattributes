@@ -161,6 +161,7 @@ frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageedi
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Hippo.Msg.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconGridView.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/IconToolbarWindow.js -text
+frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/ManageChangesWindow.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/Notification.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContainer.js -text
 frontend/src/main/java/org/onehippo/cms7/channelmanager/templatecomposer/pageeditor/PageContext.js -text
