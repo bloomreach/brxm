@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
@@ -52,11 +53,15 @@ import org.hippoecm.hst.content.beans.ObjectBeanPersistenceException;
 import org.hippoecm.hst.content.beans.manager.workflow.WorkflowPersistenceManagerImpl;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.PageModelRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ToolkitRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.UserRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
+import org.hippoecm.repository.RepositoryUrl;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,6 +112,50 @@ public class MountResource extends AbstractConfigResource {
 
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
         return ok("Toolkit items loaded successfully", toolkitRepresentation.getComponents().toArray());
+    }
+
+    @GET
+    @Path("/userswithchanges/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsersWithChanges(@Context HttpServletRequest servletRequest) {
+        final HstRequestContext requestContext = getRequestContext(servletRequest);
+        try {
+            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
+            String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
+
+            Set<String> usersWithLockedContainers = findUsersWithLockedContainers(session, previewConfigurationPath);
+
+            List<UserRepresentation> usersWithChanges = new ArrayList<UserRepresentation>(usersWithLockedContainers.size());
+            for (String userId : usersWithLockedContainers) {
+                usersWithChanges.add(new UserRepresentation(userId));
+            }
+
+            return ok("Found " + usersWithChanges.size() + " users with changes", usersWithChanges);
+        } catch (LoginException e) {
+            return error("Could not get a JCR session: " + e + ". Cannot retrieve users with changes.");
+        } catch (RepositoryException e) {
+            return error("Could not retrieve users with changes: " + e);
+        }
+    }
+
+    private Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
+        final String xpath = buildXPathQueryToFindLockedContainersForUsers(previewConfigurationPath);
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
+
+        final NodeIterable lockedContainers = new NodeIterable(result.getNodes());
+        Set<String> userIds = new HashSet<String>();
+        for (Node lockedContainer : lockedContainers) {
+            String userId = JcrUtils.getStringProperty(lockedContainer, HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, null);
+            if (userId != null) {
+                userIds.add(userId);
+            }
+        }
+        return userIds;
+    }
+
+    private String buildXPathQueryToFindLockedContainersForUsers(String previewConfigurationPath) {
+        return "/jcr:root" + previewConfigurationPath + "//element(*," + HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT + ")"
+                + "[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
     }
 
     /**
@@ -241,6 +290,24 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
+    @POST
+    @Path("/userswithchanges/discard")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response discardChangesOfUsers(@Context HttpServletRequest servletRequest, ExtIdsRepresentation ids) {
+        final HstRequestContext requestContext = getRequestContext(servletRequest);
+        final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
+
+        if (!hasPreviewConfiguration(editingPreviewMount)) {
+            return error("Cannot discard changes of users in a non-preview site");
+        }
+
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking()) {
+            return fineGrainedDiscardChanges(requestContext, ids.getData());
+        } else {
+            return error("This mount does not use fine-grained locking");
+        }
+    }
+
     /**
      * If the {@link Mount} that this request belongs to has a preview configuration, it will be unlocked and deleted.
      * @param servletRequest
@@ -287,6 +354,24 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
+    @POST
+    @Path("/userswithchanges/publish")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response publishChangesOfUsers(@Context HttpServletRequest servletRequest, ExtIdsRepresentation ids) {
+        final HstRequestContext requestContext = getRequestContext(servletRequest);
+        final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
+
+        if (!hasPreviewConfiguration(editingPreviewMount)) {
+            return error("Cannot publish non preview site");
+        }
+
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking()) {
+            return fineGrainedPublishChangesOfUsers(requestContext, ids.getData());
+        } else {
+            return error("This mount does not use fine-grained locking");
+        }
+    }
+
     private Response coarseGrainedPublicationIfNotLocked(final HstRequestContext requestContext) {
         final HstSite editingLiveSite = getEditingLiveSite(requestContext);
         final HstSite editingPreviewSite = getEditingPreviewSite(requestContext);
@@ -317,11 +402,21 @@ public class MountResource extends AbstractConfigResource {
 
     private Response fineGrainedPublishChangesOfCurrentUser(final HstRequestContext requestContext) {
         try {
+            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
+            String currentUserId = session.getUserID();
+            return fineGrainedPublishChangesOfUsers(requestContext, Collections.singletonList(currentUserId));
+        } catch (RepositoryException e) {
+            return error("Could not publish preview configuration of the current user: " + e);
+        }
+    }
+
+    private Response fineGrainedPublishChangesOfUsers(final HstRequestContext requestContext, List<String> userIds) {
+        try {
             String liveConfigurationPath = getEditingLiveMount(requestContext).getHstSite().getConfigurationPath();
             String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            List<String> relativePathsToPublish = findChangedContainersForUser(session, previewConfigurationPath);
+            List<String> relativePathsToPublish = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
             pushNodes(session, previewConfigurationPath, liveConfigurationPath, relativePathsToPublish);
             return ok("Site is published");
         } catch (RepositoryException e) {
@@ -545,22 +640,34 @@ public class MountResource extends AbstractConfigResource {
      */
     private Response fineGrainedDiscardChangesOfCurrentUser(final HstRequestContext requestContext) {
         try {
+            HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
+            String currentUserId = session.getUserID();
+            return fineGrainedDiscardChanges(requestContext, Collections.singletonList(currentUserId));
+        } catch (RepositoryException e) {
+            return error("Could not discard preview configuration of the current user: " + e);
+        }
+    }
+
+    private Response fineGrainedDiscardChanges(final HstRequestContext requestContext, List<String> userIds) {
+        try {
             String liveConfigurationPath = getEditingLiveMount(requestContext).getHstSite().getConfigurationPath();
             String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            List<String> relativePathsToRevert = findChangedContainersForUser(session, previewConfigurationPath);
+            List<String> relativePathsToRevert = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
             pushNodes(session, liveConfigurationPath, previewConfigurationPath, relativePathsToRevert);
             return ok("Changes of user '"+session.getUserID()+"' for site '"+getEditingPreviewMount(requestContext).getHstSite().getName()+"' are discarded.");
-
         } catch (RepositoryException e) {
-            return error("Could not discard preview configuration : " + e);
+            return error("Could not discard preview configuration: " + e);
         }
     }
 
-    private List<String> findChangedContainersForUser(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
-        String xpath = "/jcr:root" + previewConfigurationPath+"//element(*,"+HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT+")" +
-                "[@"+HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY+" = '"+session.getUserID()+"']";
+    private List<String> findChangedContainersForUsers(final HippoSession session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
+        if (userIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final String xpath = buildXPathQueryToFindContainersForUsers(previewConfigurationPath, userIds);
         final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
 
         final NodeIterable containersToRevert = new NodeIterable(result.getNodes());
@@ -574,6 +681,32 @@ public class MountResource extends AbstractConfigResource {
             relativePathsToRevert.add(containerToRevert.getPath().substring(previewConfigurationPath.length()));
         }
         return relativePathsToRevert;
+    }
+
+    private String buildXPathQueryToFindContainersForUsers(String previewConfigurationPath, List<String> userIds) {
+        if (userIds.isEmpty()) {
+            throw new IllegalArgumentException("List of user IDs cannot be empty");
+        }
+
+        StringBuilder xpath = new StringBuilder("/jcr:root");
+        xpath.append(previewConfigurationPath);
+        xpath.append("//element(*,");
+        xpath.append(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
+        xpath.append(")[");
+
+        String concat = "";
+        for (String userId : userIds) {
+            xpath.append(concat);
+            xpath.append('@');
+            xpath.append(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            xpath.append(" = '");
+            xpath.append(userId);
+            xpath.append("'");
+            concat = " or ";
+        }
+        xpath.append("]");
+
+        return xpath.toString();
     }
 
     private void pushNodes(final HippoSession session,

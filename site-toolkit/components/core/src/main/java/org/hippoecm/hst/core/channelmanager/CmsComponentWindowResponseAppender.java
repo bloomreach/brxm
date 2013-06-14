@@ -55,11 +55,14 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             response.addHeader(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
             if (mount instanceof MutableMount) {
                 MutableMount mutableMount = (MutableMount)mount;
+
+                boolean isFineGrainedLocking = mutableMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking();
+                response.addHeader(ChannelManagerConstants.HST_MOUNT_FINEGRAINED_LOCKING, String.valueOf(isFineGrainedLocking));
+
                 final String lockedBy = mutableMount.getLockedBy();
-                if (StringUtils.isNotBlank(lockedBy)) {
+                if (!isFineGrainedLocking && StringUtils.isNotBlank(lockedBy)) {
                     response.addHeader(ChannelManagerConstants.HST_MOUNT_LOCKED_BY, lockedBy);
                     response.addHeader(ChannelManagerConstants.HST_MOUNT_LOCKED_ON, String.valueOf(mutableMount.getLockedOn().getTimeInMillis()));
-                    response.addHeader(ChannelManagerConstants.HST_MOUNT_FINEGRAINED_LOCKING, String.valueOf(mutableMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking()));
                 }
             }
             Object variant = session.getAttribute(ContainerConstants.RENDER_VARIANT);
