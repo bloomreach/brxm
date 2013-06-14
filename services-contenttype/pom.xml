@@ -162,7 +162,7 @@
                 <!-- largely forked but heavily modified and simplified version of Jackrabbit 2.6 org.apache.jackrabbit.core.nodetype.BitSetENTCacheImpl.java
                      retaining its original AS2.0 license header
                 -->
-                <exclude>src/main/java/org/onehippo/cms7/services/contenttype/AggregatedDocumentTypesCache.java</exclude>
+                <exclude>src/main/java/org/onehippo/cms7/services/contenttype/AggregatedContentTypesCache.java</exclude>
                 <!-- test output json file which cannot have embedded comments -->
                 <exclude>src/test/resources/org/onehippo/cms7/services/contenttype/nt-file.json</exclude>
               </excludes>
