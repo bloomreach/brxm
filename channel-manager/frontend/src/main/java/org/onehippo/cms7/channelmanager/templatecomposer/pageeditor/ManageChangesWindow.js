@@ -69,7 +69,7 @@
                 listeners: {
                     save: {
                         fn: this.onChangesSucceeded,
-                        scope: this,
+                        scope: this
                     },
                     exception: {
                         fn: this.onChangesFailed,

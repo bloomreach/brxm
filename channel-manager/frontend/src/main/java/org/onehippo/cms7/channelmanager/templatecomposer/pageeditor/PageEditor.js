@@ -53,9 +53,9 @@
             return String.format(resources['notification-unpublished-changes-of-other-user'], userIds[0]);
         } else {
             if (userIds[0] === cmsUser) {
-                userIds[0] = resources['notification-unpublished-changes-cms-user']
+                userIds[0] = resources['notification-unpublished-changes-cms-user'];
             }
-            if (userIds.length == 2) {
+            if (userIds.length === 2) {
                 return String.format(resources['notification-unpublished-changes-of-two-users'], userIds[0], userIds[1]);
             }
             return String.format(resources['notification-unpublished-changes-of-comma-separated-users-and-last-one'],
