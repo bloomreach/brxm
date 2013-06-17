@@ -168,6 +168,7 @@
             this.locale = config.locale;
 
             this.canUnlockChannels = config.canUnlockChannels;
+            this.canManageChanges = config.canManageChanges;
             this.toolbarPlugins = config.toolbarPlugins;
 
             this.templateComposerApi = new Hippo.ChannelManager.TemplateComposer.API({
@@ -972,7 +973,7 @@
                 text: this.initialConfig.resources['manage-changes-button'],
                 iconCls: 'publish-channel',
                 width: 120,
-                hidden: false, // TODO: hide the button when you are not an admin
+                hidden: !this.canManageChanges || !this.pageContainer.pageContext.fineGrainedLocking || !this.pageContainer.pageContext.hasPreviewHstConfig,
                 listeners: {
                     click: {
                         fn: this.pageContainer.manageChanges,

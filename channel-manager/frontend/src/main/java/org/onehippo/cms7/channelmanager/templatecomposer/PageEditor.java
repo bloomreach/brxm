@@ -115,6 +115,10 @@ public class PageEditor extends ExtPanel {
     private Boolean canUnlockChannels = Boolean.FALSE;
 
     @ExtProperty
+    @SuppressWarnings("unused")
+    private Boolean canManageChanges = Boolean.FALSE;
+
+    @ExtProperty
     private Boolean previewMode = DEFAULT_PREVIEW_MODE;
 
     @ExtProperty
@@ -147,35 +151,22 @@ public class PageEditor extends ExtPanel {
     public PageEditor(final IPluginContext context, final IPluginConfig config, final HstConfigEditor hstConfigEditor, final ExtStoreFuture<Object> channelStoreFuture) {
         this.context = context;
         this.channelStoreFuture = channelStoreFuture;
+        this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
+        this.locale = Session.get().getLocale().toString();
+        this.cmsUser = UserSession.get().getJcrSession().getUserID();
+
         String variantsPath = null;
         if (config != null) {
+            variantsPath = config.getString("variantsPath");
             this.composerRestMountPath = config.getString("composerRestMountPath", composerRestMountPath);
             this.templateComposerContextPath = config.getString("templateComposerContextPath", templateComposerContextPath);
             this.contextPath = config.getString("contextPath", contextPath);
             this.initialHstConnectionTimeout = config.getLong("initialHstConnectionTimeout", DEFAULT_INITIAL_CONNECTION_TIMEOUT);
             this.previewMode = config.getAsBoolean("previewMode", DEFAULT_PREVIEW_MODE);
-            variantsPath = config.getString("variantsPath");
             this.initializeHstConfigEditorWithPreviewContext = config.getAsBoolean("initializeHstConfigEditorWithPreviewContext", DEFAULT_INITIALIZE_HST_CONFIG_EDITOR_WITH_PREVIEW_CONTEXT);
-
-            // Check whether user can unlock channels or not
-            try {
-                final String unlockChannelPrivilege = config.getString("channel.unlock.privileges", "hippo:admin");
-                final String unlockChannelPathToCheck = config.getString("channel.unlock.privileges.path", "/hst:hst/hst:channels");
-                UserSession.get().getJcrSession().checkPermission(unlockChannelPathToCheck, unlockChannelPrivilege);
-                this.canUnlockChannels = true;
-            } catch(AccessControlException ex) {
-                log.info("User '{}' is not allowed to unlock channels.", this.cmsUser);
-            } catch (RepositoryException ex) {
-                if (log.isDebugEnabled()) {
-                    log.warn("Problems while checking if user '" + this.cmsUser + "' can unlock channels or not", ex);
-                } else {
-                    log.warn("Problems while checking if user '{}' can unlock channels or not. {}", this.cmsUser, ex);
-                }
-            }
+            this.canUnlockChannels = canUnlockChannels(this.cmsUser, config);
+            this.canManageChanges = canManageChanges(this.cmsUser, config);
         }
-        this.debug = Application.get().getDebugSettings().isAjaxDebugModeEnabled();
-        this.locale = Session.get().getLocale().toString();
-        this.cmsUser = UserSession.get().getJcrSession().getUserID();
         this.variantsUuid = getVariantsUuidOrNull(variantsPath);
 
         add(CSSPackageResource.getHeaderContribution(PageEditor.class, "plugins/colorfield/colorfield.css"));
@@ -265,6 +256,38 @@ public class PageEditor extends ExtPanel {
                 }
             }
         });
+    }
+
+    private static boolean canUnlockChannels(final String user, final IPluginConfig config) {
+        final String unlockChannelPrivileges = config.getString("channel.unlock.privileges", "hippo:admin");
+        final String unlockChannelPathToCheck = config.getString("channel.unlock.privileges.path", "/hst:hst/hst:channels");
+        return isAllowedTo(user, "unlock channels", unlockChannelPrivileges, unlockChannelPathToCheck);
+    }
+
+    private static boolean canManageChanges(final String user, final IPluginConfig config) {
+        final String manageChangesPrivilege = config.getString("manage.changes.privileges", "hippo:admin");
+        final String manageChangesPathToCheck = config.getString("manage.changes.privileges.path", "/hst:hst/hst:channels");
+        return isAllowedTo(user, "manage changes", manageChangesPrivilege, manageChangesPathToCheck);
+    }
+
+    private static boolean isAllowedTo(final String user, final String description, final String privileges, final String pathToCheck) {
+        boolean isAllowed = false;
+        try {
+            UserSession.get().getJcrSession().checkPermission(pathToCheck, privileges);
+            isAllowed = true;
+            log.info("User '{}' is allowed to {}.", user, description);
+        } catch(AccessControlException e) {
+            log.info("User '{}' is not allowed to {}.", user, description);
+        } catch (RepositoryException e) {
+            if (log.isDebugEnabled()) {
+                log.warn("Problems while checking if user '" + user + "' is allowed to " + description
+                        + ", assuming user is not allowed.", e);
+            } else {
+                log.warn("Problems while checking if user '{}' is allowed to {}, assuming user is not allowed. {}",
+                        new Object[]{user, description, e});
+            }
+        }
+        return isAllowed;
     }
 
     private static String getVariantsUuidOrNull(final String variantsPath) {
