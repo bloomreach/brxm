@@ -62,6 +62,10 @@ public class JCRValueProviderImpl implements JCRValueProvider{
         this(jcrNode, true, false);
     }
 
+    public JCRValueProviderImpl(Node jcrNode, boolean lazyLoading) {
+        this(jcrNode, lazyLoading, false);
+    }
+
     /**
      * if <code>lazyLoading</code> is false, we'll actively fill all the properties of the jcr node in the properties map
      * and fetch the canonical path

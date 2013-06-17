@@ -30,7 +30,7 @@ public final class CollectionOptimizer {
 
     /**
      * @param map the map to optimize, not allowed to be <code>null</code>
-     * @return an immutable map
+     * @return an immutable optimized map
      */
     public static <K,V> Map<K,V> optimizeHashMap(Map<K,V> map) {
         if (map.isEmpty()) {
@@ -48,7 +48,7 @@ public final class CollectionOptimizer {
 
     /**
      * @param map the map to optimize, not allowed to be <code>null</code>
-     * @return an immutable linked hashmap
+     * @return an immutable optimized linked hashmap
      */
     public static <K,V> Map<K,V> optimizeLinkedHashMap(Map<K,V> map) {
         if (map.isEmpty()) {
@@ -66,7 +66,7 @@ public final class CollectionOptimizer {
 
     /**
      * @param set the set to optimize, not allowed to be <code>null</code>
-     * @return an immutable set
+     * @return an immutable optimized set
      */
     public static <V> Set<V> optimizeHashSet(Set<V> set) {
         if (set.isEmpty()) {
@@ -83,7 +83,7 @@ public final class CollectionOptimizer {
 
     /**
      * @param list the list to optimize, not allowed to be <code>null</code>
-     * @return an immutable list
+     * @return an immutable optimized list
      */
     public static <E> List<E> optimizeArrayList(List<E> list) {
         if (list.isEmpty()) {
