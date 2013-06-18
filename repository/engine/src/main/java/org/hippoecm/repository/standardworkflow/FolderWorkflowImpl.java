@@ -44,6 +44,7 @@ import javax.jcr.Value;
 import javax.jcr.ValueFormatException;
 import javax.jcr.Workspace;
 import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.nodetype.NodeDefinition;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.PropertyDefinition;
 import javax.jcr.query.InvalidQueryException;
@@ -51,9 +52,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 import javax.jcr.version.VersionException;
-import javax.jcr.version.VersionManager;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HierarchyResolver;
@@ -490,12 +489,25 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         if (folder.hasNode(name)) {
             Node offspring = folder.getNode(name);
-            if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                offspring = offspring.getParent();
-            }
-            offspring.remove();
-            folder.save();
+            delete(folder, offspring);
         }
+    }
+
+    private void delete(Node folder, Node offspring) throws RepositoryException, WorkflowException {
+        if (offspring.isNodeType(HippoNodeType.NT_DOCUMENT) && offspring.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
+            offspring = offspring.getParent();
+        }
+        if (!offspring.isNodeType(HippoNodeType.NT_HANDLE)) {
+            for (NodeIterator iter = offspring.getNodes(); iter.hasNext(); ) {
+                Node child = iter.nextNode();
+                NodeDefinition nd = child.getDefinition();
+                if (!nd.getDeclaringNodeType().isMixin()) {
+                    throw new WorkflowException("Folder is not empty; cannot be deleted");
+                }
+            }
+        }
+        offspring.remove();
+        folder.save();
     }
 
     public void delete(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
@@ -503,11 +515,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node folderNode = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         Node documentNode = rootSession.getNodeByUUID(document.getIdentity());
         if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
-            if (documentNode.isNodeType(HippoNodeType.NT_DOCUMENT) && documentNode.getParent().isNodeType(HippoNodeType.NT_HANDLE)) {
-                documentNode = documentNode.getParent();
-            }
-            documentNode.remove();
-            folderNode.save();
+            delete(folderNode, documentNode);
         }
     }
 

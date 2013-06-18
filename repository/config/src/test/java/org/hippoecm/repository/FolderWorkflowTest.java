@@ -49,7 +49,6 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.After;
 import org.junit.Before;
@@ -140,16 +139,23 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         assertEquals("/test/aap/noot/mies", iter.nextNode().getPath());
     }
 
-    // FIXME: Re-enable test. Maybe some configuration is missing? Does the (root) user have the correct privileges (hippo:editor)?
-    @Ignore
-    public void testDelete() throws Exception {
-        Node document = session.getRootNode().getNode("test/aap/noot/mies/vuur/jot/gijs");
-        Workflow workflow = manager.getWorkflow("default", document);
+    @Test
+    public void testDeleteNonEmptyFolderFails() throws Exception {
+        final Node g = node.addNode("g", "hippostd:folder");
+        g.addMixin("hippo:harddocument");
+        g.addNode("h", "hippo:handle").addMixin("hippo:hardhandle");
+        session.save();
+
+        Workflow workflow = manager.getWorkflow("internal", node);
         assertNotNull(workflow);
-        assertTrue(workflow instanceof DefaultWorkflow);
-        ((DefaultWorkflow)workflow).delete();
-        assertTrue(root.hasNode("aap/noot/mies/vuur/jot"));
-        assertFalse(root.hasNode("aap/noot/mies/vuur/jot/gijs"));
+        assertTrue(workflow instanceof FolderWorkflow);
+        try {
+            ((FolderWorkflow) workflow).delete("g");
+            fail("Succeeded in deleting non-empty folder");
+        } catch (WorkflowException we) {
+            // expected
+        }
+        assertTrue(node.hasNode("g"));
     }
 
     @Test
