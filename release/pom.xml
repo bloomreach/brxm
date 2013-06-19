@@ -44,7 +44,7 @@
     <hippo.addon-search-service.version>1.01.01-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.commons.version>1.02.03-SNAPSHOT</hippo.commons.version>
     <hippo.cms.version>2.25.00-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>2.27.00-SNAPSHOT</hippo.hst.version>
+    <hippo.hst.version>2.26.03-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>2.25.00-SNAPSHOT</hippo.packages.version>
     <hippo.release.version>7.9.0-SNAPSHOT</hippo.release.version>
     <hippo.repository.version>2.25.01-SNAPSHOT</hippo.repository.version>
@@ -55,7 +55,7 @@
 
     <forge.content-blocks.version>1.09.02</forge.content-blocks.version>
     <forge.dashboard-document-wizard.version>1.03.11</forge.dashboard-document-wizard.version>
-    <forge.easy-forms.version>2.12.10</forge.easy-forms.version>
+    <forge.easy-forms.version>2.12.11-SNAPSHOT</forge.easy-forms.version>
     <forge.ecm-tagging.version>4.05.00</forge.ecm-tagging.version>
     <forge.gallerypicker.version>1.11.00</forge.gallerypicker.version>
     <forge.poll.version>1.06.01-SNAPSHOT</forge.poll.version>
