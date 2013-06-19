@@ -507,13 +507,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             }
         }
         offspring.remove();
-        folder.save();
+        folder.getSession().save();
     }
 
     public void delete(Document document) throws WorkflowException, MappingException, RepositoryException, RemoteException {
         String path = subject.getPath().substring(1);
         Node folderNode = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
-        Node documentNode = rootSession.getNodeByUUID(document.getIdentity());
+        Node documentNode = rootSession.getNodeByIdentifier(document.getIdentity());
         if (documentNode.getPath().startsWith(folderNode.getPath()+"/")) {
             delete(folderNode, documentNode);
         }

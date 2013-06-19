@@ -140,7 +140,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testDeleteNonEmptyFolderFails() throws Exception {
+    public void testDeleteFolderWithHandlesFails() throws Exception {
         final Node g = node.addNode("g", "hippostd:folder");
         g.addMixin("hippo:harddocument");
         g.addNode("h", "hippo:handle").addMixin("hippo:hardhandle");
@@ -156,6 +156,27 @@ public class FolderWorkflowTest extends RepositoryTestCase {
             // expected
         }
         assertTrue(node.hasNode("g"));
+    }
+
+    @Test
+    public void testDeleteFolderWithTranslationsButNoHandlesPass() throws Exception {
+        final Node g = node.addNode("g", "hippostd:folder");
+        g.addMixin("hippo:harddocument");
+        g.addMixin("hippo:translated");
+        Node translation = g.addNode("hippo:translation", "hippo:translation");
+        translation.setProperty("hippo:message", "test");
+        translation.setProperty("hippo:language", "en");
+        session.save();
+
+        Workflow workflow = manager.getWorkflow("internal", node);
+        assertNotNull(workflow);
+        assertTrue(workflow instanceof FolderWorkflow);
+        try {
+            ((FolderWorkflow) workflow).delete("g");
+        } catch (WorkflowException we) {
+            // expected
+        }
+        assertFalse(node.hasNode("g"));
     }
 
     @Test
