@@ -48,7 +48,7 @@ IndentOutdent._pluginInfo = {
     version         : "1.0",
     developer       : "a.bogaart@1hippo.com",
     developer_url   : "http://www.onehippo.com",
-    license         : "dojo",
+    license         : "dojo"
 };
 
 IndentOutdent.prototype = {
