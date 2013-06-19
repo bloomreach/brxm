@@ -566,6 +566,7 @@ richtext/resources/src/main/resources/xinha/modules/Gecko/paraHandlerBest.js
 richtext/resources/src/main/resources/xinha/modules/GetHtml/TransformInnerHTML.js
 richtext/resources/src/main/resources/xinha/modules/InsertTable/insert_table.js
 richtext/resources/src/main/resources/xinha/modules/InternetExplorer/InternetExplorer.js
+richtext/resources/src/main/resources/xinha/modules/WebKit/WebKit.js
 richtext/resources/src/main/resources/xinha/plugins/InsertAnchor/InsertAnchor.js
 richtext/resources/src/main/resources/xinha/plugins/UnFormat/UnFormat.js
 richtext/resources/src/main/resources/xinha/plugins/Stylist/Stylist.js
