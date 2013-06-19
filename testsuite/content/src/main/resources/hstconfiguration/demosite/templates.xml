@@ -30,6 +30,7 @@
             &lt;p&gt;${document.summary}&lt;/p&gt; &lt;@hst.html 
             hippohtml=document.html/&gt;
             &lt;p&gt;Example channel property: '${channelInfoExample}'&lt;/p&gt;
+            &lt;p&gt;Example mount property fetched through hst component: '${testParamFromMount}'&lt;/p&gt;
             &lt;#if "${document.resource!}" != ""&gt;
             &lt;@hst.link var="resource"
             hippobean=document.resource /&gt; &lt;#if

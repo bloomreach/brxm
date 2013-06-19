@@ -93,6 +93,12 @@
         <sv:property sv:name="hst:cacheable" sv:type="Boolean">
           <sv:value>true</sv:value>
         </sv:property>
+        <sv:property sv:name="hst:parameternames" sv:type="String">
+          <sv:value>exampleMountParam</sv:value>
+        </sv:property>
+        <sv:property sv:name="hst:parametervalues" sv:type="String">
+          <sv:value>testValue</sv:value>
+        </sv:property>
         <sv:node sv:name="demosite_fr">
           <sv:property sv:name="jcr:primaryType" sv:type="Name">
             <sv:value>hst:mount</sv:value>

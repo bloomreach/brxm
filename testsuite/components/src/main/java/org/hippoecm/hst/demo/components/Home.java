@@ -58,6 +58,9 @@ public class Home extends BaseHstComponent {
         }
 
         request.setAttribute("document", n);
+
+        // test parametere from mount property
+        request.setAttribute("testParamFromMount", getComponentParameter("testParamFromMount"));
     }
 
 

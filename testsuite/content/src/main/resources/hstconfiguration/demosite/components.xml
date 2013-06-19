@@ -56,6 +56,12 @@
       <sv:property sv:name="hst:componentclassname" sv:type="String">
         <sv:value>org.hippoecm.hst.demo.components.Home</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:parameternames" sv:type="String">
+        <sv:value>testParamFromMount</sv:value>
+      </sv:property>
+      <sv:property sv:name="hst:parametervalues" sv:type="String">
+        <sv:value>${exampleMountParam}</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
         <sv:value>homepage.ftl</sv:value>
       </sv:property>
