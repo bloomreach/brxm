@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * ResolvedSiteMapItemImpl
- * 
+ *
  * @version $Id$
  */
 public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
@@ -54,33 +54,40 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private boolean isComponentResolved;
 
     public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedMount resolvedMount) {
-       this.pathInfo = PathUtils.normalizePath(pathInfo);
-       this.hstSiteMapItem = hstSiteMapItem;
-       this.resolvedMount = resolvedMount;
+        this.pathInfo = PathUtils.normalizePath(pathInfo);
+        this.hstSiteMapItem = hstSiteMapItem;
+        this.resolvedMount = resolvedMount;
 
        /*
         * We take the properties form the hstSiteMapItem getParameters and replace params (like ${1}) with the params[] array 
         */
-       
-       this.resolvedParameters = new Properties();
-       this.localResolvedParameters = new Properties();
-       
-       resolvedParameters.putAll(params);
-       localResolvedParameters.putAll(params);
-       
-       pp = new PropertyParser(params);
-       
-       for(Entry<String, String> entry : hstSiteMapItem.getParameters().entrySet()) {
-           Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
-           resolvedParameters.put(entry.getKey(), o);
-       }
-       
-       for(Entry<String, String> entry : hstSiteMapItem.getLocalParameters().entrySet()) {
-           Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
-           localResolvedParameters.put(entry.getKey(), o);
-       }
-       
-       relativeContentPath = (String)pp.resolveProperty("relativeContentPath", hstSiteMapItem.getRelativeContentPath());
+
+        this.resolvedParameters = new Properties();
+        this.localResolvedParameters = new Properties();
+
+        resolvedParameters.putAll(params);
+        localResolvedParameters.putAll(params);
+
+        pp = new PropertyParser(params);
+
+        for(Entry<String, String> entry : hstSiteMapItem.getParameters().entrySet()) {
+            Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
+            resolvedParameters.put(entry.getKey(), o);
+        }
+        for (Entry<String, String> mountParams : resolvedMount.getMount().getParameters().entrySet()) {
+            if (resolvedParameters.contains(mountParams.getKey())) {
+                continue;
+            }
+            Object o = pp.resolveProperty(mountParams.getKey(), mountParams.getValue());
+            resolvedParameters.put(mountParams.getKey(), o);
+        }
+
+        for(Entry<String, String> entry : hstSiteMapItem.getLocalParameters().entrySet()) {
+            Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
+            localResolvedParameters.put(entry.getKey(), o);
+        }
+
+        relativeContentPath = (String)pp.resolveProperty("relativeContentPath", hstSiteMapItem.getRelativeContentPath());
 
     }
 
@@ -91,7 +98,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     public int getErrorCode(){
         return this.hstSiteMapItem.getErrorCode();
     }
-    
+
     public HstSiteMapItem getHstSiteMapItem() {
         return this.hstSiteMapItem;
     }
@@ -109,19 +116,18 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     public String getParameter(String name) {
         return (String)resolvedParameters.get(name);
     }
-    
+
     public Properties getParameters(){
         return this.resolvedParameters;
     }
-    
 
-	public String getLocalParameter(String name) {
-		return (String)localResolvedParameters.get(name);
-	}
+    public String getLocalParameter(String name) {
+        return (String)localResolvedParameters.get(name);
+    }
 
-	public Properties getLocalParameters() {
-		return this.localResolvedParameters;
-	}
+    public Properties getLocalParameters() {
+        return this.localResolvedParameters;
+    }
 
     public String getRelativeContentPath() {
         return relativeContentPath;
@@ -130,9 +136,9 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     public String getPathInfo() {
         return this.pathInfo;
     }
-    
+
     public ResolvedMount getResolvedMount() {
-       return resolvedMount;
+        return resolvedMount;
     }
 
     public String getNamedPipeline() {
@@ -184,7 +190,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
      */
     private String resolveMappedConponentConfigurationId() {
         if (hstSiteMapItem.getComponentConfigurationIdMappings() == null
-               || hstSiteMapItem.getComponentConfigurationIdMappings().isEmpty()) {
+                || hstSiteMapItem.getComponentConfigurationIdMappings().isEmpty()) {
             return null;
         }
 
@@ -199,7 +205,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
                 log.debug("No node found at '{}'. No mapped configuration can be returned", absPath);
                 return null;
             }
-            
+
             Node node =  session.getNode(absPath);
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 // we need to fetch the document below the handle if it is present

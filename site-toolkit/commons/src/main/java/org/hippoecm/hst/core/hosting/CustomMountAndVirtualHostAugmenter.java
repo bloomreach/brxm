@@ -624,6 +624,16 @@ public class CustomMountAndVirtualHostAugmenter implements HstConfigurationAugme
         }
 
         @Override
+        public String getParameter(String name) {
+            return null;
+        }
+
+        @Override
+        public Map<String, String> getParameters() {
+            return Collections.emptyMap();
+        }
+
+        @Override
         public String getIdentifier() {
             return identifier;
         }

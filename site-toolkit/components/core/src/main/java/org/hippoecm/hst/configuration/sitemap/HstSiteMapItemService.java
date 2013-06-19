@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -31,12 +32,14 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.hosting.MountService;
 import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
+import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -214,6 +217,15 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.postfix = StringPool.get(this.postfix);
         this.extension = StringPool.get(this.extension);
 
+        Properties mountParameters = new Properties();
+        for (Map.Entry<String, String> entry : mount.getParameters().entrySet()) {
+            mountParameters.setProperty(entry.getKey(), entry.getValue());
+        }
+        PropertyParser mountParameterParser = new PropertyParser(mountParameters,
+                PropertyParser.DEFAULT_PLACEHOLDER_PREFIX, PropertyParser.DEFAULT_PLACEHOLDER_SUFFIX,
+                PropertyParser.DEFAULT_VALUE_SEPARATOR,
+                true);
+
         String[] parameterNames = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
         String[] parameterValues = node.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
 
@@ -236,7 +248,13 @@ public class HstSiteMapItemService implements HstSiteMapItem {
            if(parameterNames.length != parameterValues.length) {
                log.warn("Skipping parameters for sitemapitem '{}' because they only make sense if there are equal number of names and values", id);
            }  else {
-               for(int i = 0; i < parameterNames.length ; i++) {
+               for (int i = 0; i < parameterNames.length ; i++) {
+                   if(parameterValues[i] != null && parameterValues[i].contains("${")) {
+                       String resolved = (String) mountParameterParser.resolveProperty(parameterNames[i], parameterValues[i]);
+                       if (resolved != null) {
+                           parameterValues[i] = resolved;
+                       }
+                   }
                    this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                    this.localParameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
                }
@@ -260,9 +278,23 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                  relativeContentPath = relativeContentPath.replace(PARENT_PROPERTY_PLACEHOLDER, parentItem.getRelativeContentPath());
              }
         }
+
+        if(relativeContentPath != null && relativeContentPath.contains("${")) {
+            String resolved = (String) mountParameterParser.resolveProperty("relativeContentPath", relativeContentPath);
+            if (resolved != null) {
+                relativeContentPath = resolved;
+            }
+        }
         relativeContentPath = StringPool.get(relativeContentPath);
 
-        this.componentConfigurationId = StringPool.get(node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID));
+        this.componentConfigurationId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
+        if (componentConfigurationId != null && componentConfigurationId.contains("${")) {
+            String resolved = (String) mountParameterParser.resolveProperty("componentConfigurationId", componentConfigurationId);
+            if (resolved != null) {
+                componentConfigurationId = resolved;
+            }
+        }
+        componentConfigurationId = StringPool.get(componentConfigurationId);
 
         String[] siteMapItemHandlerIds = node.getValueProvider().getStrings(HstNodeTypes.SITEMAPITEM_PROPERTY_SITEMAPITEMHANDLERIDS);
         if (ArrayUtils.isEmpty(siteMapItemHandlerIds)) {

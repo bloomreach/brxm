@@ -436,6 +436,21 @@ public interface Mount {
     Map<String, String> getMountProperties();
 
     /**
+     * The String value of the mount parameter.
+     *
+     * @param name the parameter name
+     * @return the parameter value, <code>null</code> if not present
+     */
+    String getParameter(String name);
+
+    /**
+     * Returns an unmodifiable map of all mount parameters, empty map if none.
+     *
+     * @return map of all mount parameters
+     */
+    Map<String, String> getParameters();
+
+    /**
      * @return the identifier of this {@link Mount}
      */
     String getIdentifier();

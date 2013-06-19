@@ -285,6 +285,16 @@ public class MountDecoratorImpl implements MountDecorator {
         }
 
         @Override
+        public String getParameter(String name) {
+            return delegatee.getParameter(name);
+        }
+
+        @Override
+        public Map<String, String> getParameters() {
+            return delegatee.getParameters();
+        }
+
+        @Override
         public Set<String> getRoles() {
             return delegatee.getRoles();
         }

@@ -30,6 +30,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.core.internal.CollectionOptimizer;
 import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.channel.Channel;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
@@ -243,6 +244,8 @@ public class MountService implements ContextualizableMount, MutableMount {
     private String lockedBy;
     private Calendar lockedOn;
 
+    private Map<String, String> parameters;
+
     public MountService(HstNode mount, Mount parent, VirtualHost virtualHost, HstManagerImpl hstManager, int port) throws ServiceException {
         this.virtualHost = virtualHost;
         this.parent = parent;
@@ -252,7 +255,30 @@ public class MountService implements ContextualizableMount, MutableMount {
         // default for when there is no alias property
         
         this.allProperties = mount.getValueProvider().getProperties();
-      
+
+        this.parameters = new HashMap<String, String>();
+        String[] parameterNames = mount.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_NAMES);
+        String[] parameterValues = mount.getValueProvider().getStrings(HstNodeTypes.GENERAL_PROPERTY_PARAMETER_VALUES);
+        if(parameterNames != null && parameterValues != null){
+            if(parameterNames.length != parameterValues.length) {
+                log.warn("Skipping parameters for mount '{}' at '{}' because they only make sense if there are equal number of names and values",
+                        getName(), mount.getValueProvider().getPath());
+            }  else {
+                for(int i = 0; i < parameterNames.length ; i++) {
+                    this.parameters.put(StringPool.get(parameterNames[i]), StringPool.get(parameterValues[i]));
+                }
+            }
+        }
+        if(this.parent != null){
+            // add the parent parameters that are not already present
+            for(Entry<String, String> parentParam : ((MountService)this.parent).getParameters().entrySet()) {
+                if(!this.parameters.containsKey(parentParam.getKey())) {
+                    this.parameters.put(StringPool.get(parentParam.getKey()), StringPool.get(parentParam.getValue()));
+                }
+            }
+        }
+        this.parameters = CollectionOptimizer.optimizeHashMap(this.parameters);
+
         if(mount.getValueProvider().hasProperty(HstNodeTypes.MOUNT_PROPERTY_ALIAS)) {
             this.alias = StringPool.get(mount.getValueProvider().getString(HstNodeTypes.MOUNT_PROPERTY_ALIAS).toLowerCase());
         }
@@ -590,7 +616,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         }
 
         // add this Mount to the maps in the VirtualHostsService
-        ((VirtualHostsService)virtualHost.getVirtualHosts()).addMount(this);
+                ((VirtualHostsService) virtualHost.getVirtualHosts()).addMount(this);
     }
 
     /**
@@ -886,6 +912,16 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
         }
         return mountProperties;
+    }
+
+    @Override
+    public String getParameter(String name) {
+        return this.parameters.get(name);
+    }
+
+    @Override
+    public Map<String, String> getParameters() {
+        return this.parameters;
     }
 
     @Override
