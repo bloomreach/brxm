@@ -2236,6 +2236,7 @@ richtext/resources/src/main/resources/xinha/modules/FullScreen/full-screen.js -t
 richtext/resources/src/main/resources/xinha/modules/Gecko/paraHandlerBest.js -text
 richtext/resources/src/main/resources/xinha/modules/GetHtml/TransformInnerHTML.js -text
 richtext/resources/src/main/resources/xinha/modules/InternetExplorer/InternetExplorer.js -text
+richtext/resources/src/main/resources/xinha/modules/WebKit/WebKit.js -text
 richtext/resources/src/main/resources/xinha/plugins/AutoResize/AutoResize.js svneol=native#text/plain
 richtext/resources/src/main/resources/xinha/plugins/AutoSave/lang/de.js -text
 richtext/resources/src/main/resources/xinha/plugins/AutoSave/lang/fr.js -text
