@@ -245,91 +245,29 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
     private void copyFolderTypes(final Node copiedDoc, final Map<String, Set<String>> prototypes) throws RepositoryException {
         // check if we have all subject folder types;
-        final Map<String, Set<String>> copyPrototypes = prototypes(rootSubject);
-        if (copyPrototypes != null && copyPrototypes.size() > 0) {
-            // got some stuff...check if equal:
-            final Set<String> protoKeys = prototypes.keySet();
-            final Set<String> copyKeys = copyPrototypes.keySet();
-            // check if we have a difference and overwrite
-            if (copyKeys.size() != protoKeys.size() || !copyKeys.containsAll(protoKeys)) {
-                final String[] newValues = copyKeys.toArray(new String[copyKeys.size()]);
-                copiedDoc.setProperty("hippostd:foldertype", newValues);
-            }
-        }
-    }
-
-    /**
-     * Copy from WorkflowFolderImpl
-     * @param subject subject node
-     * @return  set of
-     * @throws RepositoryException
-     */
-    private Map<String, Set<String>> prototypes(final Node subject) throws RepositoryException {
-        Map<String, Set<String>> types = new LinkedHashMap<String, Set<String>>();
+        Document rootDocument = new Document(rootSubject.getIdentifier());
+        Workflow internalWorkflow = null;
         try {
-            QueryManager queryManager = userSession.getWorkspace().getQueryManager();
-            AbstractList<Node> folderTypes = new Vector<Node>();
-            Node templates = userSession.getRootNode().getNode("hippo:configuration/hippo:queries/hippo:templates");
-            Value[] foldertypeRefs = null;
-            if (subject.hasProperty("hippostd:foldertype")) {
-                try {
-                    foldertypeRefs = subject.getProperty("hippostd:foldertype").getValues();
-                    for (final Value foldertypeRef : foldertypeRefs) {
-                        String foldertype = foldertypeRef.getString();
-                        if (templates.hasNode(foldertype)) {
-                            folderTypes.add(templates.getNode(foldertype));
-                        } else {
-                            log.warn("Unknown folder type {}", foldertype);
-                        }
-                    }
-                } catch (PathNotFoundException ex) {
-                    foldertypeRefs = null;
-                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                } catch (ValueFormatException ex) {
-                    foldertypeRefs = null;
-                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+            internalWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("internal", rootDocument);
+            if (!(internalWorkflow instanceof FolderWorkflow)) {
+                throw new WorkflowException(
+                        "Target folder does not have a folder workflow in the category 'internal'.");
+            }
+            final Map<String, Set<String>> copyPrototypes = (Map<String, Set<String>>) internalWorkflow.hints().get("prototypes");
+            if (copyPrototypes != null && copyPrototypes.size() > 0) {
+                // got some stuff...check if equal:
+                final Set<String> protoKeys = prototypes.keySet();
+                final Set<String> copyKeys = copyPrototypes.keySet();
+                // check if we have a difference and overwrite
+                if (copyKeys.size() != protoKeys.size() || !copyKeys.containsAll(protoKeys)) {
+                    final String[] newValues = copyKeys.toArray(new String[copyKeys.size()]);
+                    copiedDoc.setProperty("hippostd:foldertype", newValues);
                 }
             }
-            if (foldertypeRefs == null) {
-                try {
-                    for (NodeIterator iter = templates.getNodes(); iter.hasNext(); ) {
-                        folderTypes.add(iter.nextNode());
-                    }
-                } catch (PathNotFoundException ex) {
-                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                }
-            }
-
-            for (Node foldertype : folderTypes) {
-                try {
-                    Set<String> prototypes = new TreeSet<String>();
-                    if (foldertype.isNodeType("nt:query")) {
-                        Query query = queryManager.getQuery(foldertype);
-                        query = queryManager.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
-                        QueryResult rs = query.execute();
-                        for (NodeIterator iter = rs.getNodes(); iter.hasNext(); ) {
-                            Node typeNode = iter.nextNode();
-                            if (typeNode.getName().equals("hipposysedit:prototype")) {
-                                String documentType = typeNode.getPrimaryNodeType().getName();
-                                if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
-                                        && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:")) {
-                                    prototypes.add(documentType);
-                                }
-                            } else {
-                                prototypes.add(typeNode.getName());
-                            }
-                        }
-                    }
-                    types.put(foldertype.getName(), prototypes);
-                } catch (InvalidQueryException ex) {
-                    log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
-                }
-            }
-        } catch (RepositoryException ex) {
-            log.error(ex.getClass().getName() + ": " + ex.getMessage(), ex);
+        } catch (WorkflowException e) {
+            log.warn(e.getClass().getName() + ": " + e.getMessage(), e);
+        } catch (RemoteException e) {
+            log.error(e.getClass().getName() + ": " + e.getMessage(), e);
         }
-        return types;
     }
-
-
 }
