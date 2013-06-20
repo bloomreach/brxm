@@ -79,7 +79,7 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
     private static final String ITEMS_QUERY_ITEM_TIMEOUT = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
     private static final int EVENT_TYPES = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
     private static final long ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
-    private static final AtomicBoolean buzy = new AtomicBoolean(false);
+    private static final AtomicBoolean busy = new AtomicBoolean(false);
 
     private Session session;
     private Scheduler scheduler;
@@ -196,7 +196,7 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
         @Override
         public void execute(JobExecutionContext context) throws JobExecutionException {
 
-            if (!buzy.compareAndSet(false, true)) {
+            if (!busy.compareAndSet(false, true)) {
                 return;
             }
 
@@ -220,7 +220,7 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
                 log.error("Error while cleaning up event log", e);
             } finally {
                 unlock(session, moduleConfigPath);
-                buzy.set(false);
+                busy.set(false);
             }
 
         }
