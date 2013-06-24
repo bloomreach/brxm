@@ -171,11 +171,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         Workflow workflow = manager.getWorkflow("internal", node);
         assertNotNull(workflow);
         assertTrue(workflow instanceof FolderWorkflow);
-        try {
-            ((FolderWorkflow) workflow).delete("g");
-        } catch (WorkflowException we) {
-            // expected
-        }
+        ((FolderWorkflow) workflow).delete("g");
         assertFalse(node.hasNode("g"));
     }
 
