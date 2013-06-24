@@ -27,13 +27,11 @@ import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
 import javax.jcr.observation.Event;
-import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.modules.ConfigurableDaemonModule;
+import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -49,7 +47,7 @@ import org.quartz.simpl.SimpleThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FormDataCleanupModule implements ConfigurableDaemonModule {
+public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(FormDataCleanupModule.class);
 
@@ -58,7 +56,6 @@ public class FormDataCleanupModule implements ConfigurableDaemonModule {
     private static final String CONFIG_MINUTES_TO_LIVE_PROPERTY = "minutestolive";
     private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
     private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
-    private static final int CONFIGURATION_EVENT_TYPES = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
     private static final long ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
 
     private static final Properties SCHEDULER_FACTORY_PROPERTIES = new Properties();
@@ -74,47 +71,52 @@ public class FormDataCleanupModule implements ConfigurableDaemonModule {
 
     private static final AtomicBoolean busy = new AtomicBoolean(false);
 
-    private String moduleConfigPath;
     private String cronExpression;
     private long minutesToLive;
-    private Session session;
     private Scheduler scheduler;
-    private EventListener configurationListener;
     private JobDetail job;
     private JobListener jobListener = null;
     private String quartzNamePostfix = "";
 
 
     @Override
-    public void configure(final Node moduleConfig) throws RepositoryException {
-        moduleConfigPath = moduleConfig.getPath();
+    protected void doConfigure(final Node moduleConfig) throws RepositoryException {
         cronExpression = JcrUtils.getStringProperty(moduleConfig, CONFIG_CRONEXPRESSION_PROPERTY, null);
         minutesToLive = JcrUtils.getLongProperty(moduleConfig, CONFIG_MINUTES_TO_LIVE_PROPERTY, 30l);
     }
 
     @Override
-    public void initialize(final Session session) throws RepositoryException {
-        this.session = session;
-        this.configurationListener = new ConfigurationListener();
+    protected void doInitialize(final Session session) throws RepositoryException {
         startScheduler();
         scheduleJob();
-        session.getWorkspace().getObservationManager().addEventListener(configurationListener, CONFIGURATION_EVENT_TYPES, moduleConfigPath, false, null, null, true);
     }
 
     @Override
-    public void shutdown() {
-        if (configurationListener != null) {
-            try {
-                session.getWorkspace().getObservationManager().removeEventListener(configurationListener);
-            } catch (RepositoryException e) {
-                log.error("Error removing configuration event listener: " + e);
-            }
-        }
+    protected void doShutdown() {
         if (scheduler != null) {
             try {
                 scheduler.shutdown();
             } catch (SchedulerException e) {
                 log.error("Error shutting down quartz scheduler: " + e);
+            }
+        }
+    }
+
+    @Override
+    protected boolean isReconfigureEvent(Event event) throws RepositoryException {
+        String eventPath = event.getPath();
+        return !eventPath.endsWith(CONFIG_LOCK_ISDEEP_PROPERTY) && !eventPath.endsWith(CONFIG_LOCK_OWNER);
+    }
+
+    @Override
+    protected void onConfigurationChange(final Node moduleConfig) throws RepositoryException {
+        synchronized (FormDataCleanupModule.this) {
+            try {
+                unscheduleJob();
+                configure(session.getNode(moduleConfigPath));
+                scheduleJob();
+            } catch (SchedulerException e) {
+                log.error("Failed to reconfigure form data cleaner", e);
             }
         }
     }
@@ -281,37 +283,5 @@ public class FormDataCleanupModule implements ConfigurableDaemonModule {
 
     }
 
-    private class ConfigurationListener implements EventListener {
-
-        @Override
-        public void onEvent(EventIterator events) {
-            boolean reconfigure = false;
-            // only reconfigure if any configuration properties changed
-            while(events.hasNext()) {
-                try {
-                    String eventPath = events.nextEvent().getPath();
-                    if (!eventPath.endsWith(CONFIG_LOCK_ISDEEP_PROPERTY) && !eventPath.endsWith(CONFIG_LOCK_OWNER)) {
-                        reconfigure = true;
-                        break;
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Failed to determine if event is a reconfigure event", e);
-                }
-            }
-            if (reconfigure) {
-                try {
-                    synchronized (FormDataCleanupModule.this) {
-                        unscheduleJob();
-                        configure(session.getNode(moduleConfigPath));
-                        scheduleJob();
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Failed to reconfigure event log cleaner", e);
-                } catch (SchedulerException e) {
-                    log.error("Failed to reconfigure event log cleaner", e);
-                }
-            }
-        }
-    }
 }
 
