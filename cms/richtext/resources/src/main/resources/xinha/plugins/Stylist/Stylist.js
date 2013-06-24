@@ -460,7 +460,7 @@ Xinha.prototype._stylistAddClasses = function (editor, el, tag, classes) {
         var selectedHTML = this.getSelectedHTML();
         XinhaTools.log("selected:", selectedHTML);
         var doNewWrapping = false;
-        var canWrap = XinhaTools.isIe9 || XinhaTools.firefox || XinhaTools.chrome;
+        var canWrap = (Xinha.is_ie && Xinha.ie_version >= 9) || Xinha.is_real_gecko || Xinha.is_webkit;
 
         if (canWrap && tag != null) {
             var parser = new DOMParser();

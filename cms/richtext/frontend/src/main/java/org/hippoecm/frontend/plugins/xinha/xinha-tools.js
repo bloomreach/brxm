@@ -21,13 +21,6 @@
         };
     }
 
-    //Browser detection
-    XinhaTools.opera =  !!window.opera || navigator.userAgent.indexOf('Opera') >= 0;
-    XinhaTools.firefox = InstallTrigger !== undefined;
-    XinhaTools.safari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-    XinhaTools.chrome =  !!window.chrome;
-    XinhaTools.explorer = /*@cc_on!@*/false;
-
     /**
      * Return a new function and ensure the provided function is always executed within the provided context
      * with the arguments passed to the wrapping function.
