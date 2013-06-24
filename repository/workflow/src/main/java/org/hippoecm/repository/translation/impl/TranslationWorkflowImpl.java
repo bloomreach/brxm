@@ -17,27 +17,15 @@ package org.hippoecm.repository.translation.impl;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.AbstractList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.Vector;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.query.InvalidQueryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
@@ -60,7 +48,6 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
 
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(TranslationWorkflowImpl.class);
-    private final Session userSession;
     private final Session rootSession;
     private final WorkflowContext workflowContext;
     private final Node rootSubject;
@@ -69,7 +56,6 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
     public TranslationWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject)
             throws RemoteException, RepositoryException {
         this.workflowContext = context;
-        this.userSession = userSession;
         this.rootSession = rootSession;
         this.userSubject = userSession.getNodeByIdentifier(subject.getIdentifier());
         this.rootSubject = rootSession.getNodeByIdentifier(subject.getIdentifier());
@@ -82,7 +68,6 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
     public Document addTranslation(String language, String name) throws WorkflowException, MappingException,
             RepositoryException, RemoteException {
         HippoTranslatedNode translatedNode = new HippoTranslatedNode(rootSubject);
-
         Node lclContainingFolder = translatedNode.getContainingFolder();
         if (!lclContainingFolder.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
             throw new WorkflowException("No translated ancestor found");
@@ -112,6 +97,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             }
             copiedDoc = copiedDoc.getNode(copiedDoc.getName());
             JcrUtils.ensureIsCheckedOut(copiedDoc, false);
+            copiedDoc.setProperty(HippoTranslationNodeType.LOCALE, language);
         } else {
             Workflow internalWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("internal", targetFolder);
             if (!(internalWorkflow instanceof FolderWorkflow)) {
@@ -143,27 +129,30 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
                 }
             }
 
-            if (category != null && type != null) {
-                String path = ((FolderWorkflow) internalWorkflow).add(category, type, name);
-                copiedDoc = rootSession.getNode(path);
-            } else {
+            if (category == null) {
                 throw new WorkflowException("No category found to use for adding translation to target folder");
             }
+            if (type == null) {
+                throw new WorkflowException("No type found to use for adding translation to target folder");
+            }
+
+            String path = ((FolderWorkflow) internalWorkflow).add(category, type, name);
+            copiedDoc = rootSession.getNode(path);
+
             JcrUtils.ensureIsCheckedOut(copiedDoc, false);
             if (!copiedDoc.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)) {
                 copiedDoc.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
             }
             copiedDoc.setProperty(HippoTranslationNodeType.ID,
                     userSubject.getProperty(HippoTranslationNodeType.ID).getString());
+            copiedDoc.setProperty(HippoTranslationNodeType.LOCALE, language);
+            rootSession.save();
             copyFolderTypes(copiedDoc, prototypes);
         }
 
-        copiedDoc.setProperty(HippoTranslationNodeType.LOCALE, language);
-        Document copy = new Document(copiedDoc.getIdentifier());
-
         rootSession.save();
         rootSession.refresh(false);
-        return copy;
+        return new Document(copiedDoc.getIdentifier());
     }
 
     public void addTranslation(String language, Document document) throws WorkflowException, MappingException,
@@ -246,7 +235,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
     private void copyFolderTypes(final Node copiedDoc, final Map<String, Set<String>> prototypes) throws RepositoryException {
         // check if we have all subject folder types;
         Document rootDocument = new Document(rootSubject.getIdentifier());
-        Workflow internalWorkflow = null;
+        Workflow internalWorkflow;
         try {
             internalWorkflow = workflowContext.getWorkflowContext(null).getWorkflow("internal", rootDocument);
             if (!(internalWorkflow instanceof FolderWorkflow)) {
