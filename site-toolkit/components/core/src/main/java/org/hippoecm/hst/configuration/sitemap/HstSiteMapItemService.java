@@ -250,7 +250,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                for (int i = 0; i < parameterNames.length ; i++) {
                    if (parameterValues[i] != null && parameterValues[i].contains("${")) {
                        String resolved = (String) mountParameterParser.resolveProperty(parameterNames[i], parameterValues[i]);
-                       if (containsNonIntegerPlaceholders(resolved)) {
+                       if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
                            log.warn("Invalid irreplaceable property placeholder found for parameter name '{}' with value '{}' for " +
                                    "sitemap item '{}'. Setting value for '{}' to null", new String[]{parameterNames[i], parameterValues[i],
                                     id, parameterNames[i]});
@@ -285,7 +285,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
         if(relativeContentPath != null && relativeContentPath.contains("${")) {
             String resolved = (String) mountParameterParser.resolveProperty("relativeContentPath", relativeContentPath);
-            if (containsNonIntegerPlaceholders(resolved)) {
+            if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
                 log.warn("Invalid irreplaceable property placeholder found for hst:relativecontentpath '{}' for sitemap item '{}'. " +
                         "Setting relativeContentPath to null", relativeContentPath, id);
                 relativeContentPath = null;
@@ -298,7 +298,7 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.componentConfigurationId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
         if (componentConfigurationId != null && componentConfigurationId.contains("${")) {
             String resolved = (String) mountParameterParser.resolveProperty("componentConfigurationId", componentConfigurationId);
-            if (containsNonIntegerPlaceholders(resolved)) {
+            if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
                 log.warn("Invalid irreplaceable property placeholder found for hst:componentconfigurationid '{}' for sitemap item '{}'. " +
                         "Setting relativeContentPath to null", relativeContentPath, id);
                 componentConfigurationId = null;
@@ -696,31 +696,23 @@ public class HstSiteMapItemService implements HstSiteMapItem {
      * ${1}, ${2} etc are allowed. Note this method does not check broken property place holder values, eg 'foo${' or
      * 'foo${$}}'
      */
-    static boolean containsNonIntegerPlaceholders(final String input) {
+    static boolean containsInvalidOrNonIntegerPlaceholders(final String input) {
         if (input == null) {
             return false;
         }
-        boolean insideProperty = false;
-        boolean foundNonIntegerPlaceHolder = false;
-        for (int i = 0; i < input.length(); i++) {
-            char c = input.charAt(i);
-            if (insideProperty && c != '}') {
-                if (!Character.isDigit(c)) {
-                    foundNonIntegerPlaceHolder =  true;
-                }
-                continue;
+        int nextPlaceholder = input.indexOf("${");
+        while (nextPlaceholder >= 0) {
+            int start = nextPlaceholder + 2;
+            int end = input.indexOf('}', start + 1);
+            if (end < 0) {
+                return true; // unclosed ${
             }
-            if (c == '$' && input.length() > (i + 1) && input.charAt(i + 1) == '{') {
-                // increasing loop counter, be aware
-                i++;
-                insideProperty = true;
-            }
-            if (c == '}') {
-                insideProperty = false;
-                if (foundNonIntegerPlaceHolder) {
+            for (int i = start; i < end; i++) {
+                if (!Character.isDigit(input.charAt(i))) {
                     return true;
                 }
             }
+            nextPlaceholder = input.indexOf("${", end);
         }
         return false;
     }

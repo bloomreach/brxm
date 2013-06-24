@@ -25,13 +25,26 @@ public class TestHstSiteMapItemIntegerPlaceHolders {
     @Test
     public void testContainsNonIntegerPlaceholders() {
 
-        assertFalse(HstSiteMapItemService.containsNonIntegerPlaceholders(null));
-        assertFalse(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${1}"));
-        assertFalse(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${1}${2}"));
-        assertTrue(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${foo}"));
-        assertTrue(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${1}${foo}"));
+        assertFalse(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders(null));
+        assertFalse(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${1}"));
+        assertFalse(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${1}${2}"));
+        assertFalse(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${14}"));
+        assertFalse(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${1}ff${255}"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${}"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${asdsad"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${1"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${foo}"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${1}${foo}"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${23foo}"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${1}h${f23oo}"));
         // we do not so much check invalid property place holders (yet)
-        assertFalse(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${aa"));
-        assertTrue(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${aa/${1}"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${aa"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("/a/b/${aa/${1}"));
+        assertFalse(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("a"));
+        assertFalse(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("$"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("${"));
+        assertTrue(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("${}"));
+        assertFalse(HstSiteMapItemService.containsInvalidOrNonIntegerPlaceholders("${1}"));
     }
 }
