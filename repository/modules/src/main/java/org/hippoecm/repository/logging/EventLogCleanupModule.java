@@ -27,14 +27,12 @@ import javax.jcr.lock.Lock;
 import javax.jcr.lock.LockException;
 import javax.jcr.lock.LockManager;
 import javax.jcr.observation.Event;
-import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.modules.ConfigurableDaemonModule;
+import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
 import org.quartz.CronTrigger;
 import org.quartz.Job;
 import org.quartz.JobDetail;
@@ -57,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * - property 'maxitems' (Long) the maximum number of items to keep in the logs. Defaults to -1, which means no maximum.
  * - property 'keepitemsfor' (Long) the number of milliseconds to keep items in the logs.
  */
-public class EventLogCleanupModule implements ConfigurableDaemonModule {
+public class EventLogCleanupModule extends AbstractReconfigurableDaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(EventLogCleanupModule.class);
     private static final String CONFIG_MODULECONFIGPATH = "moduleconfigpath";
@@ -77,20 +75,16 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
     
     private static final String ITEMS_QUERY_MAX_ITEMS = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
     private static final String ITEMS_QUERY_ITEM_TIMEOUT = "SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC";
-    private static final int EVENT_TYPES = Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED;
     private static final long ONE_WEEK = 1000 * 60 * 60 * 24 * 7;
     private static final AtomicBoolean busy = new AtomicBoolean(false);
 
-    private Session session;
     private Scheduler scheduler;
     private String cronExpression = null;
     private long maxitems = -1;
     private long itemtimeout = -1;
     private JobListener jobListener;
-    private EventListener configurationListener;
     private JobDetail job;
     private String quartzNamePostfix = "";
-    private String moduleConfigPath;
 
     public EventLogCleanupModule() {
     }
@@ -106,6 +100,49 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
         quartzNamePostfix = "Test";
         startScheduler();
         scheduleJob();
+    }
+
+    @Override
+    protected void doConfigure(final Node moduleConfig) throws RepositoryException {
+        cronExpression = JcrUtils.getStringProperty(moduleConfig, CONFIG_CRONEXPRESSION_PROPERTY, null);
+        maxitems = JcrUtils.getLongProperty(moduleConfig, CONFIG_MAXITEMS_PROPERTY, -1l);
+        itemtimeout = JcrUtils.getLongProperty(moduleConfig, CONFIG_KEEP_ITEMS_FOR, -1l);
+    }
+
+    @Override
+    protected void doInitialize(final Session session) throws RepositoryException {
+        startScheduler();
+        scheduleJob();
+    }
+
+    @Override
+    protected void doShutdown() {
+        if (scheduler != null) {
+            try {
+                scheduler.shutdown();
+            } catch (SchedulerException e) {
+                log.error("Error shutting down quartz scheduler: " + e);
+            }
+        }
+    }
+
+    @Override
+    protected boolean isReconfigureEvent(Event event) throws RepositoryException {
+        String eventPath = event.getPath();
+        return !eventPath.endsWith(CONFIG_LOCK_ISDEEP_PROPERTY) && !eventPath.endsWith(CONFIG_LOCK_OWNER);
+    }
+
+    @Override
+    protected void onConfigurationChange(final Node moduleConfig) throws RepositoryException {
+        try {
+            synchronized (EventLogCleanupModule.this) {
+                unscheduleJob();
+                configure(session.getNode(moduleConfigPath));
+                scheduleJob();
+            }
+        } catch (SchedulerException e) {
+            log.error("Failed to reconfigure event log cleaner", e);
+        }
     }
 
     private void startScheduler() {
@@ -152,41 +189,6 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
 
     private void unscheduleJob() throws SchedulerException {
         scheduler.deleteJob(job.getName(), job.getGroup());
-    }
-
-    @Override
-    public void configure(final Node moduleConfig) throws RepositoryException {
-        moduleConfigPath = moduleConfig.getPath();
-        cronExpression = JcrUtils.getStringProperty(moduleConfig, CONFIG_CRONEXPRESSION_PROPERTY, null);
-        maxitems = JcrUtils.getLongProperty(moduleConfig, CONFIG_MAXITEMS_PROPERTY, -1l);
-        itemtimeout = JcrUtils.getLongProperty(moduleConfig, CONFIG_KEEP_ITEMS_FOR, -1l);
-    }
-
-    @Override
-    public void initialize(final Session session) throws RepositoryException {
-        this.session = session;
-        startScheduler();
-        scheduleJob();
-        configurationListener = new ConfigurationListener();
-        session.getWorkspace().getObservationManager().addEventListener(configurationListener, EVENT_TYPES, moduleConfigPath, false, null, null, true);
-    }
-
-    @Override
-    public void shutdown() {
-        if (configurationListener != null) {
-            try {
-                session.getWorkspace().getObservationManager().removeEventListener(configurationListener);
-            } catch (RepositoryException e) {
-                log.error("Error removing configuration event listener: " + e);
-            }
-        }
-        if (scheduler != null) {
-            try {
-                scheduler.shutdown();
-            } catch (SchedulerException e) {
-                log.error("Error shutting down quartz scheduler: " + e);
-            }
-        }
     }
 
     public static class EventLogCleanupJob implements Job {
@@ -345,35 +347,4 @@ public class EventLogCleanupModule implements ConfigurableDaemonModule {
         }
     }
 
-    private class ConfigurationListener implements EventListener {
-
-        @Override
-        public void onEvent(EventIterator events) {
-            boolean reconfigure = false;
-            // only reconfigure if any configuration properties changed
-            while(events.hasNext()) {
-                try {
-                    String eventPath = events.nextEvent().getPath();
-                    if (!eventPath.endsWith(CONFIG_LOCK_ISDEEP_PROPERTY) && !eventPath.endsWith(CONFIG_LOCK_OWNER)) {
-                        reconfigure = true;
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Failed to determine if event is a reconfigure event", e);
-                }
-            }
-            if (reconfigure) {
-                try {
-                    synchronized (EventLogCleanupModule.this) {
-                        unscheduleJob();
-                        configure(session.getNode(moduleConfigPath));
-                        scheduleJob();
-                    }
-                } catch (RepositoryException e) {
-                    log.error("Failed to reconfigure event log cleaner", e);
-                } catch (SchedulerException e) {
-                    log.error("Failed to reconfigure event log cleaner", e);
-                }
-            }
-        }
-    }
 }
