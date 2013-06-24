@@ -32,13 +32,12 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.hosting.MountService;
-import org.hippoecm.hst.core.internal.CollectionOptimizer;
-import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlerConfiguration;
 import org.hippoecm.hst.configuration.sitemapitemhandlers.HstSiteMapItemHandlersConfiguration;
+import org.hippoecm.hst.core.internal.CollectionOptimizer;
+import org.hippoecm.hst.core.internal.StringPool;
 import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.service.ServiceException;
 import org.slf4j.Logger;
@@ -249,9 +248,14 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                log.warn("Skipping parameters for sitemapitem '{}' because they only make sense if there are equal number of names and values", id);
            }  else {
                for (int i = 0; i < parameterNames.length ; i++) {
-                   if(parameterValues[i] != null && parameterValues[i].contains("${")) {
+                   if (parameterValues[i] != null && parameterValues[i].contains("${")) {
                        String resolved = (String) mountParameterParser.resolveProperty(parameterNames[i], parameterValues[i]);
-                       if (resolved != null) {
+                       if (containsNonIntegerPlaceholders(resolved)) {
+                           log.warn("Invalid irreplaceable property placeholder found for parameter name '{}' with value '{}' for " +
+                                   "sitemap item '{}'. Setting value for '{}' to null", new String[]{parameterNames[i], parameterValues[i],
+                                    id, parameterNames[i]});
+                           parameterValues[i] = null;
+                       } else {
                            parameterValues[i] = resolved;
                        }
                    }
@@ -281,7 +285,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
 
         if(relativeContentPath != null && relativeContentPath.contains("${")) {
             String resolved = (String) mountParameterParser.resolveProperty("relativeContentPath", relativeContentPath);
-            if (resolved != null) {
+            if (containsNonIntegerPlaceholders(resolved)) {
+                log.warn("Invalid irreplaceable property placeholder found for hst:relativecontentpath '{}' for sitemap item '{}'. " +
+                        "Setting relativeContentPath to null", relativeContentPath, id);
+                relativeContentPath = null;
+            } else {
                 relativeContentPath = resolved;
             }
         }
@@ -290,7 +298,11 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         this.componentConfigurationId = node.getValueProvider().getString(HstNodeTypes.SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID);
         if (componentConfigurationId != null && componentConfigurationId.contains("${")) {
             String resolved = (String) mountParameterParser.resolveProperty("componentConfigurationId", componentConfigurationId);
-            if (resolved != null) {
+            if (containsNonIntegerPlaceholders(resolved)) {
+                log.warn("Invalid irreplaceable property placeholder found for hst:componentconfigurationid '{}' for sitemap item '{}'. " +
+                        "Setting relativeContentPath to null", relativeContentPath, id);
+                componentConfigurationId = null;
+            } else {
                 componentConfigurationId = resolved;
             }
         }
@@ -679,6 +691,39 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         return isExcludedForLinkRewriting;
     }
 
+    /**
+     * returns <code>true</code> if <code>input</code> contains a non integer property placeholder, for example ${foo}.
+     * ${1}, ${2} etc are allowed. Note this method does not check broken property place holder values, eg 'foo${' or
+     * 'foo${$}}'
+     */
+    static boolean containsNonIntegerPlaceholders(final String input) {
+        if (input == null) {
+            return false;
+        }
+        boolean insideProperty = false;
+        boolean foundNonIntegerPlaceHolder = false;
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (insideProperty && c != '}') {
+                if (!Character.isDigit(c)) {
+                    foundNonIntegerPlaceHolder =  true;
+                }
+                continue;
+            }
+            if (c == '$' && input.length() > (i + 1) && input.charAt(i + 1) == '{') {
+                // increasing loop counter, be aware
+                i++;
+                insideProperty = true;
+            }
+            if (c == '}') {
+                insideProperty = false;
+                if (foundNonIntegerPlaceHolder) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     void optimize() {
 

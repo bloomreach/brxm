@@ -1,0 +1,37 @@
+/*
+ *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.hippoecm.hst.configuration.sitemap;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class TestHstSiteMapItemIntegerPlaceHolders {
+
+    @Test
+    public void testContainsNonIntegerPlaceholders() {
+
+        assertFalse(HstSiteMapItemService.containsNonIntegerPlaceholders(null));
+        assertFalse(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${1}"));
+        assertFalse(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${1}${2}"));
+        assertTrue(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${foo}"));
+        assertTrue(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${1}${foo}"));
+        // we do not so much check invalid property place holders (yet)
+        assertFalse(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${aa"));
+        assertTrue(HstSiteMapItemService.containsNonIntegerPlaceholders("/a/b/${aa/${1}"));
+    }
+}

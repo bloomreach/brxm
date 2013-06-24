@@ -967,7 +967,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         .append(", scheme=").append(scheme).append(", locale=").append(locale).append(", authenticated=").append(authenticated)
         .append(", roles=").append(roles).append(", users=").append(users).append(", subjectBasedSession=")
         .append(subjectBasedSession).append(", sessionStateful=").append(sessionStateful).append(", formLoginPage=" ).append(formLoginPage)
-        .append(", cmsLocation=" ).append(cmsLocation)
+        .append(", cmsLocation=" ).append(cmsLocation).append(", parameters=").append(parameters)
         .append("]");
         return  builder.toString();
     }
