@@ -14,81 +14,87 @@
  * limitations under the License.
  */
 
-var openModalDialog = null;
+/*global wicketAjaxGet, Xinha */
+(function () {
+    var openModalDialog = null, ModalDialog;
 
-ModalDialog = function(url, plugin, token, editor) {
-    this.editor = editor;
-    this.callbackUrl = url; 
-    this.callbackUrl += url.indexOf('?') > -1 ? "&" : "?";
-    this.callbackUrl += ('pluginName=' + encodeURIComponent(plugin));
-    this.token = token;
-};
+    ModalDialog = function (url, plugin, token, editor) {
+        this.editor = editor;
+        this.callbackUrl = url;
+        this.callbackUrl += url.indexOf('?') > -1 ? "&" : "?";
+        this.callbackUrl += ('pluginName=' + encodeURIComponent(plugin));
+        this.token = token;
+    };
 
-ModalDialog.prototype = {
-    _values : null,
-    _lastRange: null,
-        
-    show : function(parameters) {
-        this.saveState();
-        var url = this.callbackUrl;
-        for (var p in parameters) {
-            url += ('&' + this.token + p + '=' + encodeURIComponent(parameters[p]));
-        }
-        wicketAjaxGet(url, null, null, null);
-        openModalDialog = this;
-    },
+    ModalDialog.prototype = {
+        _values: null,
+        _lastRange: null,
 
-    close : function(values) {
-        this.restoreState();
-        this._values = values;
-        this.onOk(values);
-        openModalDialog = null;
-    },
-
-    cancel : function() {
-        this.restoreState();
-        this.onCancel();
-        openModalDialog = null;        
-        this._values = null;
-    },
-    
-    hide : function() {
-        return this._values;
-    },
-    
-    onOk : function(values){
-    },
-    onCancel: function(){
-    },
-    
-    saveState: function() {
-        // We need to preserve the selection
-        // if this is called before some editor has been activated, it activates the editor
-        if (Xinha._someEditorHasBeenActivated)
-        {
-          this._lastRange = this.editor.saveSelection();
-        }
-        this.editor.deactivateEditor();
-        this.editor.suspendUpdateToolbar = true;
-        this.editor.currentModal = this;
-    },
-    
-    restoreState: function() {
-        if(this.editor.editorIsActivated() && Xinha._currentlyActiveEditor) {
-            return;
-        }
-        this.editor.suspendUpdateToolbar = false;
-        this.editor.currentModal = null;
-        this.editor.activateEditor();
-        if (this._lastRange != null) {
-            try {
-                this.editor.restoreSelection(this._lastRange);
-            } catch(e) {
-                //A bug in IE brings us here. Ignore it.
+        show: function (parameters) {
+            this.saveState();
+            var url = this.callbackUrl, p;
+            for (p in parameters) {
+                if (parameters.hasOwnProperty(p)) {
+                    url += ('&' + this.token + p + '=' + encodeURIComponent(parameters[p]));
+                }
             }
-         }
-        this.editor.updateToolbar();
-        this.editor.focusEditor();
-    }
-}
+            wicketAjaxGet(url, null, null, null);
+            openModalDialog = this;
+        },
+
+        close: function (values) {
+            this.restoreState();
+            this._values = values;
+            this.onOk(values);
+            openModalDialog = null;
+        },
+
+        cancel: function () {
+            this.restoreState();
+            this.onCancel();
+            openModalDialog = null;
+            this._values = null;
+        },
+
+        hide: function () {
+            return this._values;
+        },
+
+        onOk: function (values) {
+        },
+        onCancel: function () {
+        },
+
+        saveState: function () {
+            // We need to preserve the selection
+            // if this is called before some editor has been activated, it activates the editor
+            if (Xinha._someEditorHasBeenActivated) {
+                this._lastRange = this.editor.saveSelection();
+            }
+            this.editor.deactivateEditor();
+            this.editor.suspendUpdateToolbar = true;
+            this.editor.currentModal = this;
+        },
+
+        restoreState: function () {
+            if (this.editor.editorIsActivated() && Xinha._currentlyActiveEditor) {
+                return;
+            }
+            this.editor.suspendUpdateToolbar = false;
+            this.editor.currentModal = null;
+            this.editor.activateEditor();
+            if (this._lastRange !== null) {
+                try {
+                    this.editor.restoreSelection(this._lastRange);
+                } catch (e) {
+                    //A bug in IE brings us here. Ignore it.
+                }
+            }
+            this.editor.updateToolbar();
+            this.editor.focusEditor();
+        }
+    };
+
+    window.ModalDialog = ModalDialog;
+}());
 

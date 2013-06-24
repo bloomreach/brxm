@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
+/*global console */
 (function(XinhaTools) {
 
     XinhaTools.log = function () {
         console.log(arguments);
     };
 
-})(window.XinhaTools = window.XinhaTools || {});
+}(window.XinhaTools = window.XinhaTools || {}));

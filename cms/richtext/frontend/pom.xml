@@ -116,6 +116,17 @@
           <workingDirectory>${project.build.directory}</workingDirectory>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jslint-maven-plugin</artifactId>
+        <configuration>
+          <predefinedVars>
+            Hippo, YAHOO, window, Wicket
+          </predefinedVars>
+          <sourceJsFolder>${basedir}/src/main/java</sourceJsFolder>
+          <disallowInsecureCharsInRegExp>false</disallowInsecureCharsInRegExp>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

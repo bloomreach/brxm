@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+/*global DOMParser */
 (function(XinhaTools) {
+
+    "use strict";
 
     if (XinhaTools.log === undefined) {
         XinhaTools.log = function() {
@@ -42,10 +45,12 @@
      * Return the object referenced by the path array or null if not found.
      */
     XinhaTools.nullOrValue = function(ref, path) {
+        var i;
+
         if (ref === null) {
             return null;
         }
-        for (var i = 0; i < path.length; i++) {
+        for (i = 0; i < path.length; i++) {
             if (XinhaTools.isValue(ref[path[i]])) {
                 ref = ref[path[i]];
             } else {
@@ -66,13 +71,16 @@
      * Return first text node in provided node
      */
     XinhaTools.findFirstTextNode = function(node) {
-        for (var i=0; i<node.childNodes.length; i++) {
-            var child = node.childNodes[i];
+        var i, child, value;
+
+        for (i=0; i<node.childNodes.length; i++) {
+            child = node.childNodes[i];
             if (child.nodeType === 3) {
                 return child;
-            } else if (child.nodeType === 1) {
-                var value = XinhaTools.findFirstTextNode(child);
-                if (value != child) {
+            }
+            if (child.nodeType === 1) {
+                value = XinhaTools.findFirstTextNode(child);
+                if (value !== child) {
                     return value;
                 }
             }
@@ -103,11 +111,11 @@
      * @returns {{}}
      */
     XinhaTools.collection = function (optional) {
-        var obj = {}, arr = arguments;
+        var i, obj = {}, arr = arguments;
         if (optional instanceof Array) {
             arr = optional;
         }
-        for (var i = 0; i < arr.length; i++) {
+        for (i = 0; i < arr.length; i++) {
             obj[arr[i]] = true;
         }
         return obj;
@@ -121,10 +129,11 @@
      * @returns {Array}
      */
     XinhaTools.intersect = function (array1, array2) {
-        var result = [];
-        var c = XinhaTools.collection(array2);
-        for (var i = 0; i < array1.length; i++) {
-            if (array1[i] in c) {
+        var result = [],
+            c = XinhaTools.collection(array2),
+            i;
+        for (i = 0; i < array1.length; i++) {
+            if (c.indexOf(array1[i]) >= 0) {
                 result.push(array1[i]);
             }
         }
@@ -138,10 +147,11 @@
      * @returns {Array}
      */
     XinhaTools.complement = function (array1, array2) {
-        var result = [];
-        var c = XinhaTools.collection(array2);
-        for (var i = 0; i < array1.length; i++) {
-            if (!(array1[i] in c)) {
+        var result = [],
+            c = XinhaTools.collection(array2),
+            i;
+        for (i = 0; i < array1.length; i++) {
+            if (c.indexOf(array1[i]) < 0) {
                 result.push(array1[i]);
             }
         }
@@ -149,7 +159,7 @@
     };
 
     XinhaTools.isEmpty = function (str) {
-        return typeof str === "undefined" || str == null || str.trim().length == 0;
+        return str === undefined || str === null || str.trim().length === 0;
     };
 
     XinhaTools.removeAttribute = function (el, name) {
@@ -167,28 +177,30 @@
      * @param el  element to unwrap
      */
     XinhaTools.unwrap = function (editor, el) {
-        if (el == null || el.parentNode == null) {
+        var parent, html, range, fragment, Range = document.Range;
+
+        if (el === null || el.parentNode === null) {
             return;
         }
-        var parent = el.parentNode;
-        var html = el.innerHTML;
-        var range;
+
+        parent = el.parentNode;
+        html = el.innerHTML;
         if (document.createRange) {
             range = document.createRange();
             range.selectNodeContents(el);
         }
         // IE 9
-        if ((typeof Range !== 'undefined') && !Range.prototype.createContextualFragment) {
+        if ((Range !== undefined) && !Range.prototype.createContextualFragment) {
             Range.prototype.createContextualFragment = function (html) {
-                var frag = document.createDocumentFragment();
-                var div = document.createElement('div');
+                var frag = document.createDocumentFragment(),
+                    div = document.createElement('div');
                 frag.appendChild(div);
                 div.outerHTML = html;
                 return frag;
             };
         }
         if (document.createRange) {
-            var fragment = range.createContextualFragment(html);
+            fragment = range.createContextualFragment(html);
             parent.replaceChild(fragment, el);
         } else {
             // IE 8
@@ -205,25 +217,27 @@
      * @param skipTextNodes skip wrapping if text node
      */
     XinhaTools.wrap = function (el, wrapperName, classes, skipTextNodes) {
-        if (el == null || el.parentNode == null) {
+        var nodeType, parent, wrapper, classesString;
+
+        if (el === null || el.parentNode === null) {
             XinhaTools.log("Empty element, skipping");
             return;
         }
-        var nodeType = el.nodeType;
-        if (skipTextNodes && nodeType == 3) {
+        nodeType = el.nodeType;
+        if (skipTextNodes && nodeType === 3) {
             XinhaTools.log("skipping text node", el);
             return;
         }
-        if(nodeType == 3 && el.nodeValue.trim().length == 0){
+        if(nodeType === 3 && el.nodeValue.trim().length === 0){
             XinhaTools.log("skipping *empty* text node", el);
             return;
         }
-        var parent = el.parentNode;
-        var wrapper = document.createElement(wrapperName);
+        parent = el.parentNode;
+        wrapper = document.createElement(wrapperName);
         parent.insertBefore(wrapper, el);
         parent.removeChild(el);
         wrapper.appendChild(el);
-        var classesString = classes;
+        classesString = classes;
         if (classes instanceof Array) {
             classesString = classes.join(' ');
         }
@@ -231,19 +245,20 @@
     };
 
     XinhaTools.wrapKid = function (el, wrapperName, classes, skipText) {
-        if (el == null || el.parentNode == null) {
+        var i, kids;
+
+        if (el === null || el.parentNode === null) {
             XinhaTools.log("Empty element, skipping");
             return;
         }
-        if (el.nodeType == 3) {
+        if (el.nodeType === 3) {
             XinhaTools.wrap(el, wrapperName, classes, false);
             return;
         }
-        var kids = el.childNodes;
-        if (kids != null) {
-            for (var i = 0; i < kids.length; i++) {
-                var node = kids[i];
-                XinhaTools.wrap(node, wrapperName, classes, skipText);
+        kids = el.childNodes;
+        if (kids !== null) {
+            for (i = 0; i < kids.length; i++) {
+                XinhaTools.wrap(kids[i], wrapperName, classes, skipText);
             }
         }
     };
@@ -254,15 +269,14 @@
      * @param callback function callback
      */
     XinhaTools.walk = function (node, callback) {
-        var stopTraversing, tmp;
-        var depth = 0;
+        var stopTraversing, tmp, depth = 0;
         do {
             if (!stopTraversing) {
                 stopTraversing = callback.call(node, depth) === false;
             }
-            if (!stopTraversing && (tmp = node.firstChild)) {
+            if (!stopTraversing && (tmp = node.firstChild) !== undefined) {
                 depth++;
-            } else if (tmp = node.nextSibling) {
+            } else if ((tmp = node.nextSibling) !== undefined) {
                 stopTraversing = false;
             } else {
                 tmp = node.parentNode;
@@ -275,10 +289,10 @@
 
 
     XinhaTools.findElements = function (node, name) {
-        name = name.toUpperCase();
         var el = [];
+        name = name.toUpperCase();
         XinhaTools.walk(node, function () {
-            if (this.nodeType == 1 && this.nodeName.toUpperCase() == name) {
+            if (this.nodeType === 1 && this.nodeName.toUpperCase() === name) {
                 el.push(this);
             }
             return true;
@@ -289,17 +303,17 @@
     XinhaTools.containsSameNodes = function (node, name) {
         name = name.toUpperCase();
         XinhaTools.walk(node, function () {
-            return !(this.nodeType == 1 && this.nodeName.toUpperCase() != name);
+            return !(this.nodeType === 1 && this.nodeName.toUpperCase() !== name);
 
         });
         return true;
     };
 
     XinhaTools.findElement = function (node, name) {
-        name = name.toUpperCase();
         var el = null;
+        name = name.toUpperCase();
         XinhaTools.walk(node, function () {
-            if (this.nodeType == 1 && this.nodeName.toUpperCase() == name) {
+            if (this.nodeType === 1 && this.nodeName.toUpperCase() === name) {
                 el = this;
                 return false;
             }
@@ -311,13 +325,12 @@
 
     XinhaTools.wrapKidsOfNodes = function (node, tagCollection) {
         XinhaTools.walk(node, function () {
-            return !(this.nodeType == 1 && this.nodeName.toUpperCase() in tagCollection);
-
+            return !(this.nodeType === 1 && tagCollection.indexOf(this.nodeName.toUpperCase()) >= 0);
         });
         return true;
     };
 
-})(window.XinhaTools = window.XinhaTools || {});
+}(window.XinhaTools = window.XinhaTools || {}));
 
 // https://developer.mozilla.org/en-US/docs/Web/API/DOMParser?redirectlocale=en-US&redirectslug=DOM%2FDOMParser
 (function (DOMParser) {
@@ -329,7 +342,7 @@
     // Firefox/Opera/IE throw errors on unsupported types
     try {
         // WebKit returns null on unsupported types
-        if ((new DOMParser).parseFromString("", "text/html")) {
+        if ((new DOMParser()).parseFromString("", "text/html")) {
             // text/html parsing is natively supported
             return;
         }

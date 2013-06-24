@@ -23,6 +23,8 @@
 YAHOO.namespace("hippo"); 
 
 ( function() {
+    "use strict";
+
     var Dom = YAHOO.util.Dom, Lang = YAHOO.lang;
 
     YAHOO.hippo.DDDropModel = function(id, sGroup, config) { 
@@ -33,22 +35,27 @@ YAHOO.namespace("hippo");
         
         TYPE: "DDDropModel",
         
+        /**
+         * lookup drop model, getParameters, add to own and return;
+         */
         getCallbackParameters : function(dropId) {
-            var cp = YAHOO.hippo.DDDropModel.superclass.getCallbackParameters.call(this, dropId);
+            var cp, textAreas, editor, xinha, sel, activeElement;
             
-            var textAreas = Dom.getElementsByClassName('xinha_textarea', 'textarea', Dom.get(dropId));
-            if(textAreas == null || textAreas[0] == null)
+            cp = YAHOO.hippo.DDDropModel.superclass.getCallbackParameters.call(this, dropId);
+
+            textAreas = Dom.getElementsByClassName('xinha_textarea', 'textarea', Dom.get(dropId));
+            if(textAreas === null || textAreas[0] === null) {
                 return cp;
-            
-            var editor = YAHOO.hippo.EditorManager.getEditorByWidgetId(textAreas[0].id);
-            if(editor != null) {
-                var xinha = editor.xinha;
-                var sel = xinha.getSelection();
-                var range = xinha.createRange(sel);
+            }
+
+            editor = YAHOO.hippo.EditorManager.getEditorByWidgetId(textAreas[0].id);
+            if(editor !== null) {
+                xinha = editor.xinha;
+                sel = xinha.getSelection();
     
                 cp.put("emptySelection", xinha.selectionEmpty(sel));
-                var activeElement = xinha.activeElement(sel);
-                if(activeElement != null) {
+                activeElement = xinha.activeElement(sel);
+                if(activeElement !== null) {
                     YAHOO.log("Active element: " + activeElement.tagName.toLowerCase(), "info", "DragDropModel");
                     cp.put("activeElement", activeElement.tagName.toLowerCase());
                 }
@@ -57,4 +64,4 @@ YAHOO.namespace("hippo");
         }       
         
     });
-})();
+}());
