@@ -56,7 +56,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             if (mount instanceof MutableMount) {
                 MutableMount mutableMount = (MutableMount)mount;
 
-                boolean isFineGrainedLocking = mutableMount.getVirtualHost().getVirtualHosts().isFinegrainedLocking();
+                boolean isFineGrainedLocking = mutableMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking();
                 response.addHeader(ChannelManagerConstants.HST_MOUNT_FINEGRAINED_LOCKING, String.valueOf(isFineGrainedLocking));
 
                 final String lockedBy = mutableMount.getLockedBy();
@@ -89,7 +89,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             attributes.put("url", url.toString());
             attributes.put("refNS", window.getReferenceNamespace());
             if (mount instanceof MutableMount) {
-                if ( mount.getVirtualHost().getVirtualHosts().isFinegrainedLocking() && compConfig.getLockedBy() != null) {
+                if ( mount.getVirtualHost().getVirtualHosts().isFineGrainedLocking() && compConfig.getLockedBy() != null) {
 
                     String cmsUserId = (String)session.getAttribute(CmsSecurityValve.CMS_USER_ID_ATTR);
                     attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY, compConfig.getLockedBy());

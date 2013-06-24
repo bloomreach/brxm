@@ -139,7 +139,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
      */
     private Map<String, ResolvedVirtualHost> resolvedMapCache = new HashMap<String, ResolvedVirtualHost>();
 
-    private boolean finegrainedLocking;
+    private boolean fineGrainedLocking;
 
     public VirtualHostsService(HstNode virtualHostsConfigurationNode, HstManagerImpl hstManager) throws ServiceException {
         this.hstManager = hstManager;
@@ -149,7 +149,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
         defaultContextPath = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DEFAULTCONTEXTPATH);
         cmsPreviewPrefix = vHostConfValueProvider.getString(HstNodeTypes.VIRTUALHOSTS_PROPERTY_CMSPREVIEWPREFIX);
         diagnosticsEnabled = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTISC_ENABLED);
-        finegrainedLocking = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_FINAGRAINEDLOCKING);
+        fineGrainedLocking = vHostConfValueProvider.getBoolean(HstNodeTypes.VIRTUALHOSTS_PROPERTY_FINAGRAINEDLOCKING);
 
         String[] ips = vHostConfValueProvider.getStrings(HstNodeTypes.VIRTUALHOSTS_PROPERTY_DIAGNOSTICS_FOR_IPS);
         Collections.addAll(diagnosticsForIps, ips);
@@ -644,7 +644,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     @Override
-    public boolean isFinegrainedLocking() {
-        return finegrainedLocking;
+    public boolean isFineGrainedLocking() {
+        return fineGrainedLocking;
     }
 }

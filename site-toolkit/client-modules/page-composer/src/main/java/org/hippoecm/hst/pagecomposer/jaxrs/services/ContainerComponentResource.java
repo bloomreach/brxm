@@ -94,7 +94,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             }
 
             try {
-                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp, requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().isFinegrainedLocking());
+                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp, requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().isFineGrainedLocking());
             } catch (IllegalStateException e) {
                 return error(e.getMessage());
             }
@@ -145,7 +145,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             Node containerNode = getRequestConfigNode(requestContext, HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
             try {
-                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp, requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().isFinegrainedLocking());
+                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp, requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().isFineGrainedLocking());
             } catch (IllegalStateException e) {
                 return error(e.getMessage());
             }
@@ -214,7 +214,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
                 return error("The item to be deleted is not a child of a container component. Cannot delete item '"+itemUUID+"'");
             }
             try {
-                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp, requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().isFinegrainedLocking());
+                HstConfigurationUtils.tryLockIfNeeded(containerNode, lastModifiedTimestamp, requestContext.getResolvedMount().getResolvedVirtualHost().getVirtualHost().getVirtualHosts().isFineGrainedLocking());
             } catch (IllegalStateException e) {
                 return error(e.getMessage());
             }
