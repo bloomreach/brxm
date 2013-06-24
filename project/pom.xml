@@ -176,17 +176,13 @@
   </ciManagement>
 
   <mailingLists>
-   <mailingList>
-    <name>Hippo CMS 7 User Forums</name>
-    <subscribe>hippo-cms7-user-join@lists.onehippo.org</subscribe>
-    <unsubscribe>hippo-cms7-user-leave@lists.onehippo.org</unsubscribe>
-    <!--<post>hippo-cms7-user@lists.onehippo.org</post>-->
-    <archive>http://lists.onehippo.org/pipermail/hippo-cms7-user/</archive>
-   </mailingList>
-   <mailingList>
-    <name>Hippo Repository 2 Dev List</name>
-    <archive>http://lists.onehippo.org/pipermail/hipporepos-dev/</archive>
-   </mailingList>
+    <mailingList>
+      <name>Hippo Community </name>
+      <subscribe>hippo-community+subscribe@googlegroups.com</subscribe>
+      <unsubscribe>hippo-community+unsubscribe@googlegroups.com</unsubscribe>
+      <!--<post>hippo-community@googlegroups.com</post>-->
+      <archive>https://groups.google.com/d/forum/hippo-community</archive>
+    </mailingList>
   </mailingLists>
 
   <repositories>
