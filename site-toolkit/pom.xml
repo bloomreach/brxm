@@ -107,7 +107,6 @@
     <maven.plugins.jaxb-schemagen.version>1.2</maven.plugins.jaxb-schemagen.version>
 
     <dependency.solr.version>3.5.0</dependency.solr.version>
-    <quartz.version>1.8.5</quartz.version>
   </properties>
 
   <!--
@@ -680,19 +679,6 @@
           <exclusion>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.quartz-scheduler</groupId>
-        <artifactId>quartz</artifactId>
-        <scope>provided</scope>
-        <version>${quartz.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.transaction</groupId>
-            <artifactId>jta</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
