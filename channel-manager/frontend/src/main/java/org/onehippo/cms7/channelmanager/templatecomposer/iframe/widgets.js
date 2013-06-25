@@ -84,7 +84,7 @@
         },
 
         render : function(parent) {
-            var parentOverlay, overlay, self = this;
+            var parentOverlay, overlay, self = this, formattedDate;
             if (this.rendered) {
                 return;
             }
@@ -104,8 +104,14 @@
                     if (this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY) &&
                            (this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER) === "false")) {
                        overlay.addClass(this.cls.overlay.locked);
-                       overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY) + "' on " +
-                               this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON));
+                        if (this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON)) {
+                            formattedDate = new Date(parseInt(this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_ON), 10));
+                        }
+                        if (formattedDate) {
+                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY) + "' on " + formattedDate);
+                        } else {
+                            overlay.attr("title", "Locked by  '" + this.el.attr(HST.ATTR.HST_CONTAINER_COMPONENT_LOCKED_BY));
+                        }
                     }
                 }
             }
