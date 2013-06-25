@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.model;
 
 import java.io.Serializable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -30,8 +31,11 @@ public class ObservableModel<T extends Serializable> extends Model<T> implements
 
     private static final long serialVersionUID = 1L;
 
+    private static volatile AtomicInteger n_objects = new AtomicInteger();
+
     private IObservationContext obContext;
     private boolean observing = false;
+    private final int objectId = n_objects.incrementAndGet();
 
     public ObservableModel(T object) {
         super(object);
@@ -68,4 +72,13 @@ public class ObservableModel<T extends Serializable> extends Model<T> implements
         }
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        return obj == this;
+    }
+
+    @Override
+    public int hashCode() {
+        return objectId;
+    }
 }
