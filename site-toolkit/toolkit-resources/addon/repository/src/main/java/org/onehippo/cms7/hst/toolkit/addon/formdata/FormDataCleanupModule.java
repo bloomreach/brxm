@@ -47,6 +47,12 @@ import org.quartz.simpl.SimpleThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Deletes old hst:formdata nodes. Configuration is at /hippo:configuration/hippo:modules/formdatacleanup/hippo:moduleconfig.
+ * The following properties can be configured:
+ * 'cronexpression' (String) a quartz cron expression specifying when to run
+ * 'minutestolive' (Long) the maximum lifetime of a hst:formdata node in minutes, based on its hst:creationtime value
+ */
 public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(FormDataCleanupModule.class);

@@ -29,10 +29,12 @@
       <sv:value>mix:lockable</sv:value>
     </sv:property>
     <sv:property sv:name="cronexpression" sv:type="String">
-      <sv:value>0 3/10 * * * ?</sv:value>
+      <!-- runs at 04:14 every morning -->
+      <sv:value>0 14 4 * * ?</sv:value>
     </sv:property>
     <sv:property sv:name="minutestolive" sv:type="Long">
-      <sv:value>60</sv:value>
+      <!-- delete nodes older than 24h -->
+      <sv:value>1440</sv:value>
     </sv:property>
   </sv:node>
 </sv:node>
