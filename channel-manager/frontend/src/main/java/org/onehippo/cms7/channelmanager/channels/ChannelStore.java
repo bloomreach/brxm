@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -83,6 +84,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         cmsPreviewPrefix,
         contextPath,
         url,
+        fineGrainedLocking,
+        changedBySet,
         lockedBy,
         lockedOn,
         defaultDevice,
@@ -101,7 +104,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         INTERNAL_FIELDS = Collections.unmodifiableList(
                 Arrays.asList(ChannelField.cmsPreviewPrefix.name(),
                         ChannelField.hstPreviewMountPoint.name(),
-                        ChannelField.devices.name()));
+                        ChannelField.devices.name(),
+                        ChannelField.fineGrainedLocking.name()));
     }
 
     public static enum SortOrder {ascending, descending}
@@ -177,6 +181,15 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     if (devices != null) {
                         for (String device : devices) {
                             values.put(device);
+                        }
+                    }
+                    object.put(field.getName(), values);
+                } else if  (ChannelField.changedBySet.name().equals(field.getName())) {
+                    JSONArray values = new JSONArray();
+                    final Set<String> lockedBySet = channel.getChangedBySet();
+                    if (lockedBySet != null) {
+                        for (String lockedBy : lockedBySet) {
+                            values.put(lockedBy);
                         }
                     }
                     object.put(field.getName(), values);
@@ -444,7 +457,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         int hashCode = 0;
         if (channels != null) {
             for (Channel channel : channels.values()) {
-                hashCode += channel.toString().hashCode();
+                hashCode += channel.hashCode();
             }
         }
         return hashCode;

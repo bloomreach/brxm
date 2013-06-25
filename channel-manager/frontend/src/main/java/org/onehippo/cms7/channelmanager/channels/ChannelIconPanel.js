@@ -28,7 +28,7 @@
                 '<li class="channel" channelId="{id}">',
                 '<img src="{channelTypeImg}" />',
                 '<br /><img src="{channelRegionImg}" class="regionIcon" /><span class="channel-name">{name}</span>',
-                '<tpl if="lockedBy.length &gt; 0"><br /><span class="lockedBy">{lockedLabel}</span></tpl>',
+                '<tpl if="lockedBy.length &gt; 0"><br /><span class="lockedBy" title="{lockedDetail}">{lockedLabel}</span></tpl>',
                 '</li>',
                 '</tpl>',
                 '</ul>',
@@ -76,12 +76,30 @@
         },
 
         collectData: function(records, startIndex) {
-            var groups = {}, i, len, data, lockedDate, groupId, dataObject;
+            var groups = {}, i, len, data, lockedDate, groupId, dataObject, changedByCurrentUser, k, klen;
 
             for (i = 0, len = records.length; i < len; i++) {
                 data = this.prepareData(records[i].json, startIndex + i, records[i]);
+                if (data.fineGrainedLocking === "true" && data.changedBySet.length > 0) {
+                    data.lockedDetail = data.changedBySet.join();
+                    for (k = 0, klen = data.changedBySet.length; k < klen; k++ ) {
+                        if (data.changedBySet[k] === this.userId) {
+                            changedByCurrentUser = true;
+                        }
+                    }
+                    if (changedByCurrentUser && data.changedBySet.length === 1) {
+                        data.lockedLabel = this.resources['you-have-unpublished-changes'];
+                    } else if (changedByCurrentUser && data.changedBySet.length === 2){
+                        data.lockedLabel = this.resources['you-and-one-user-have-unpublished-changes'];
+                    } else if (changedByCurrentUser && data.changedBySet.length > 2){
+                        data.lockedLabel = this.resources['you-and-x-users-have-unpublished-changes'].format(data.changedBySet.length -1);
+                    } else if (data.changedBySet.length === 1) {
+                        data.lockedLabel = this.resources['one-user-has-unpublished-changes'];
+                    } else {
+                        data.lockedLabel = this.resources['x-users-have-unpublished-changes'].format(data.changedBySet.length);
+                    }
 
-                if (data.lockedBy.length > 0) {
+                } else if(data.lockedBy.length > 0) {
                     lockedDate = new Date(parseInt(data.lockedOn, 10)).format(this.resources['locked-date-format']);
                     data.lockedLabel = this.resources.locked.format(data.lockedBy, lockedDate);
                 }
@@ -132,6 +150,7 @@
             var self, toolbar, channelTypeDataView, channelRegionDataView;
             this.resources = config.resources;
             this.store = config.store;
+            this.userId = config.userId;
 
             self = this;
             toolbar = new Ext.Toolbar({
@@ -194,6 +213,7 @@
             var dataView = new Hippo.ChannelManager.ChannelIconDataView({
                 groupByProperty: groupByProperty,
                 store: this.store,
+                userId: this.userId,
                 itemSelector: 'li.channel',
                 overClass: 'channel-hover',
                 autoScroll: true,

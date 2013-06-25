@@ -15,11 +15,8 @@
  */
 package org.onehippo.cms7.channelmanager.channels;
 
-import java.util.Arrays;
-
-import org.apache.wicket.RequestCycle;
-import org.apache.wicket.ResourceReference;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.session.UserSession;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onehippo.cms7.channelmanager.ExtStoreFuture;
@@ -36,11 +33,15 @@ public class ChannelIconPanel extends ExtPanel {
     private ChannelStore store;
 
     @ExtProperty
+    private String userId;
+
+    @ExtProperty
     @SuppressWarnings("unused")
     private String composerRestMountUrl;
 
     public ChannelIconPanel(IPluginConfig channelListConfig, ExtStoreFuture storeFuture) {
         this.store = (ChannelStore) storeFuture.getStore();
+        this.userId = UserSession.get().getJcrSession().getUserID();
     }
 
     @Override

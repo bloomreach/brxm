@@ -422,7 +422,7 @@
                     },
                     {
                         id: 'template-composer-toolbar-discard-button',
-                        text: this.initialConfig.resources['discard-button'],
+                        text: this.pageContainer.pageContext.fineGrainedLocking?  this.initialConfig.resources['discard-my-button'] : this.initialConfig.resources['discard-button'],
                         iconCls: 'discard-channel',
                         allowDepress: false,
                         width: 120,
@@ -942,7 +942,7 @@
             });
             publishButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-publish-button',
-                text: this.initialConfig.resources['publish-button'],
+                text: this.pageContainer.pageContext.fineGrainedLocking? this.initialConfig.resources['publish-my-button'] : this.initialConfig.resources['publish-button'] ,
                 iconCls: 'publish-channel',
                 disabled: this.pageContainer.pageContext.locked,
                 width: 120,
@@ -956,7 +956,7 @@
             });
             discardButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-discard-button',
-                text: this.initialConfig.resources['discard-button'],
+                text: this.pageContainer.pageContext.fineGrainedLocking?  this.initialConfig.resources['discard-my-button'] : this.initialConfig.resources['discard-button'],
                 iconCls: 'discard-channel',
                 disabled: this.pageContainer.pageContext.locked,
                 width: 120,
