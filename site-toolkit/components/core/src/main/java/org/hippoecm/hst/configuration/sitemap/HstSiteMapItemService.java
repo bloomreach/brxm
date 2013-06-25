@@ -252,8 +252,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
                        String resolved = (String) mountParameterParser.resolveProperty(parameterNames[i], parameterValues[i]);
                        if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
                            log.warn("Invalid irreplaceable property placeholder found for parameter name '{}' with value '{}' for " +
-                                   "sitemap item '{}'. Setting value for '{}' to null", new String[]{parameterNames[i], parameterValues[i],
-                                    id, parameterNames[i]});
+                                   "sitemap item '{}' for mount '{}'. Setting value for '{}' to null", new String[]{parameterNames[i], parameterValues[i],
+                                    id, mount.toString(), parameterNames[i]});
                            parameterValues[i] = null;
                        } else {
                            parameterValues[i] = resolved;
@@ -286,8 +286,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         if(relativeContentPath != null && relativeContentPath.contains("${")) {
             String resolved = (String) mountParameterParser.resolveProperty("relativeContentPath", relativeContentPath);
             if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
-                log.warn("Invalid irreplaceable property placeholder found for hst:relativecontentpath '{}' for sitemap item '{}'. " +
-                        "Setting relativeContentPath to null", relativeContentPath, id);
+                log.warn("Invalid irreplaceable property placeholder found for hst:relativecontentpath '{}' for sitemap item '{}' for mount '{}'." +
+                        "Setting relativeContentPath to null", new String[]{relativeContentPath, id, mount.toString()});
                 relativeContentPath = null;
             } else {
                 relativeContentPath = resolved;
@@ -299,8 +299,8 @@ public class HstSiteMapItemService implements HstSiteMapItem {
         if (componentConfigurationId != null && componentConfigurationId.contains("${")) {
             String resolved = (String) mountParameterParser.resolveProperty("componentConfigurationId", componentConfigurationId);
             if (containsInvalidOrNonIntegerPlaceholders(resolved)) {
-                log.warn("Invalid irreplaceable property placeholder found for hst:componentconfigurationid '{}' for sitemap item '{}'. " +
-                        "Setting relativeContentPath to null", relativeContentPath, id);
+                log.warn("Invalid irreplaceable property placeholder found for hst:componentconfigurationid '{}' for sitemap item '{}' for mount '{}'. " +
+                        "Setting relativeContentPath to null", new String[]{relativeContentPath, id, mount.toString()});
                 componentConfigurationId = null;
             } else {
                 componentConfigurationId = resolved;

@@ -55,6 +55,8 @@ public class MountService implements ContextualizableMount, MutableMount {
      * The name of this {@link Mount}. If it is the root, it is called hst:root
      */
     private String name;
+
+    private String jcrLocation;
     
     /**
      * the identifier of this {@link Mount}
@@ -251,6 +253,7 @@ public class MountService implements ContextualizableMount, MutableMount {
         this.parent = parent;
         this.port = port;
         this.name = StringPool.get(mount.getValueProvider().getName());
+        this.jcrLocation = mount.getValueProvider().getPath();
         this.uuid = mount.getValueProvider().getIdentifier();
         // default for when there is no alias property
         
@@ -958,21 +961,8 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     @Override
     public String toString() {
-        
-        StringBuilder builder = new StringBuilder("MountService [name=");
-        builder.append(name).append(", uuid=").append(uuid).append(", hostName=").append(virtualHost.getHostName())
-        .append(", channelPath=").append(channelPath).append(", alias=").append(alias).append(", type=").append(type)
-        .append(", types=").append(types).append(", versionInPreviewHeader=").append(versionInPreviewHeader)
-        .append(", namedPipeline=").append(namedPipeline).append(", mountPath=").append(mountPath)
-        .append(", contentPath=").append(contentPath).append(", mountPoint=").append(mountPoint)
-        .append( ", isMapped=").append(isMapped).append(", homepage=").append(homepage).append(", pageNotFound=").append(pageNotFound)
-        .append(", contextPathInUrl=").append(contextPathInUrl).append(", isSite=").append(isSite).append(", showPort=")
-        .append(showPort).append(", port=").append(port).append(", onlyForContextPath=").append(onlyForContextPath)
-        .append(", scheme=").append(scheme).append(", locale=").append(locale).append(", authenticated=").append(authenticated)
-        .append(", roles=").append(roles).append(", users=").append(users).append(", subjectBasedSession=")
-        .append(subjectBasedSession).append(", sessionStateful=").append(sessionStateful).append(", formLoginPage=" ).append(formLoginPage)
-        .append(", cmsLocation=" ).append(cmsLocation).append(", parameters=").append(parameters)
-        .append("]");
+        StringBuilder builder = new StringBuilder("MountService [jcrPath=");
+        builder.append(jcrLocation).append(", hostName=").append(virtualHost.getHostName()).append("]");
         return  builder.toString();
     }
 
