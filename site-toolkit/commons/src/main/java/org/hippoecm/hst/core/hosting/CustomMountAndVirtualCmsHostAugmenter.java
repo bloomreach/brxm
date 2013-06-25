@@ -810,21 +810,25 @@ public class CustomMountAndVirtualCmsHostAugmenter implements HstConfigurationAu
             return null;
         }
 
+        @Deprecated
         @Override
         public String getLockedBy() {
             return null;
         }
 
+        @Deprecated
         @Override
         public void setLockedBy(final String userId) {
             throw new UnsupportedOperationException("CustomMount does not support locking");
         }
 
+        @Deprecated
         @Override
         public Calendar getLockedOn() {
             return null;
         }
 
+        @Deprecated
         @Override
         public void setLockedOn(final Calendar lockedOn) {
             throw new UnsupportedOperationException("CustomMount does not support locking");

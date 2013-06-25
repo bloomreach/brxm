@@ -18,8 +18,10 @@ package org.hippoecm.hst.configuration.channel;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Channel implements Serializable {
 
@@ -46,10 +48,12 @@ public class Channel implements Serializable {
     private String channelInfoClassName;
     private String mountId;
     private String locale;
-    private String lockedBy;
+    private boolean fineGrainedLocking;
+    private Set<String> changedBySet;
     private Long lockedOn;
     private String defaultDevice = DEFAULT_DEVICE;
     private List<String> devices = Collections.EMPTY_LIST;
+    private int hashCode;
 
     /**
      * {@link Channel} default constructor it is required for REST de/serialization 
@@ -223,28 +227,65 @@ public class Channel implements Serializable {
         this.contextPath = contextPath;
     }
 
+    public boolean isFineGrainedLocking() {
+        return fineGrainedLocking;
+    }
+
+    public void setFineGrainedLocking(final boolean fineGrainedLocking) {
+        this.fineGrainedLocking = fineGrainedLocking;
+    }
+
     /**
-     * Retrieve this channel lock owner's userId. Returns null if the channel is not locked.
-     * @return this channel lock owner's userId
+     * @return In coarse grained locking mode: retrieves this channel lock owner's userId. Returns <code>null</code> if the channel is not locked.
+     * In finagrained locking mode : retrieves just one of the users that have a lock on a container or <code>null</code>
+     * when locked by no-one.
      */
     public String getLockedBy() {
-        return lockedBy;
+       if (changedBySet != null && changedBySet.size() > 0) {
+           return changedBySet.iterator().next();
+       }
+       return null;
     }
 
     /**
-     * Set owner of this channel's lock. Set to null if the channel is not locked.
-     * @param lockedBy this channel lock owner's userId
+     * @deprecated use {@link #setChangedBySet(java.util.Set)} instead
      */
+    @Deprecated
     public void setLockedBy(final String lockedBy) {
-        this.lockedBy = lockedBy;
+        if (changedBySet != null) {
+            changedBySet.add(lockedBy);
+        } else {
+            changedBySet = new HashSet<String>(1);
+            changedBySet.add(lockedBy);
+        }
     }
 
     /**
-     * Retrieve the timestamp when the lock was set. Be warned that this method returns gives invalid results if the
+     * @return all users that have a lock on the channel or some part of the channel. If no users have a lock, and empty set
+     * is returned
+     */
+    public Set<String> getChangedBySet() {
+        return changedBySet;
+    }
+
+    /**
+     * sets all users that have a lock on the channel or some part of the channel
+     */
+    public void setChangedBySet(final Set<String> changedBySet) {
+        this.changedBySet = changedBySet;
+    }
+
+    /**
+     * In coarse grained locking mode: retrieve the timestamp when the lock was set. Be warned that this method returns gives invalid results if the
      * channel is not locked.
-     * @return timestamp in milliseconds of when channel lock was acquired
+     * In finegrained locking mode it always returns <code>null</code>
+     * @return In coarse grained locking mode the timestamp in milliseconds of when channel lock was acquired and in finegrained locking
+     * mode always returns null
      */
     public Long getLockedOn() {
+        if (fineGrainedLocking) {
+            return null;
+        }
         return lockedOn;
     }
 
@@ -272,8 +313,35 @@ public class Channel implements Serializable {
         this.devices = devices;
     }
 
+    @Override
     public int hashCode() {
-        return id.hashCode() ^ 317;
+        if (hashCode != 0) {
+            return hashCode;
+        }
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (hostname != null ? hostname.hashCode() : 0);
+        result = 31 * result + (contextPath != null ? contextPath.hashCode() : 0);
+        result = 31 * result + (cmsPreviewPrefix != null ? cmsPreviewPrefix.hashCode() : 0);
+        result = 31 * result + (mountPath != null ? mountPath.hashCode() : 0);
+        result = 31 * result + (url != null ? url.hashCode() : 0);
+        result = 31 * result + (hstMountPoint != null ? hstMountPoint.hashCode() : 0);
+        result = 31 * result + (hstPreviewMountPoint != null ? hstPreviewMountPoint.hashCode() : 0);
+        result = 31 * result + (hstConfigPath != null ? hstConfigPath.hashCode() : 0);
+        result = 31 * result + (contentRoot != null ? contentRoot.hashCode() : 0);
+        result = 31 * result + (composerModeEnabled ? 1 : 0);
+        result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        result = 31 * result + (channelInfoClassName != null ? channelInfoClassName.hashCode() : 0);
+        result = 31 * result + (mountId != null ? mountId.hashCode() : 0);
+        result = 31 * result + (locale != null ? locale.hashCode() : 0);
+        result = 31 * result + (fineGrainedLocking ? 1 : 0);
+        result = 31 * result + (changedBySet != null ? changedBySet.hashCode() : 0);
+        result = 31 * result + (lockedOn != null ? lockedOn.hashCode() : 0);
+        result = 31 * result + (defaultDevice != null ? defaultDevice.hashCode() : 0);
+        result = 31 * result + (devices != null ? devices.hashCode() : 0);
+        hashCode = result;
+        return hashCode;
     }
 
     public boolean equals(Object other) {
@@ -302,7 +370,7 @@ public class Channel implements Serializable {
         b.append(",contextPath=").append(contextPath);
         b.append(",cmsPreviewPrefix=").append(cmsPreviewPrefix);
         b.append(",mountPath=").append(mountPath);
-        b.append(",lockedBy=").append(lockedBy);
+        b.append(",changedBySet=").append(changedBySet);
         b.append(",lockedOn=").append(lockedOn);
         b.append(",devices=").append(devices);
         b.append(",defaultDevice=").append(defaultDevice);

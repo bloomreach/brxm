@@ -23,10 +23,12 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -42,16 +44,18 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelException.Type;
 import org.hippoecm.hst.configuration.channel.ChannelManagerEventListenerException.Status;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutableMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
+import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.core.internal.MountDecorator;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -89,9 +93,14 @@ public class ChannelManagerImpl implements MutableChannelManager {
             new ArrayList<ChannelManagerEventListener>());
 
     private HstManager hstManager;
+    private MountDecorator mountDecorator;
 
     public void setHstManager(HstManager hstManager) {
         this.hstManager = hstManager;
+    }
+
+    public void setMountDecorator(MountDecorator mountDecorator) {
+        this.mountDecorator = mountDecorator;
     }
 
     public ChannelManagerImpl() {
@@ -156,7 +165,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         channels.put(channel.getId(), channel);
     }
 
-    private void populateChannelForMount(MutableMount mount) {
+    private void populateChannelForMount(ContextualizableMount mount) {
         // we are only interested in Mount's that have isMapped = true and that 
         // are live mounts: We do not display 'preview' Mounts in cms: instead, a 
         // live mount decorated as preview are shown
@@ -203,11 +212,23 @@ public class ChannelManagerImpl implements MutableChannelManager {
             }
         }
 
-        channel.setLockedBy(mount.getLockedBy());
-        final Calendar lockedOn = mount.getLockedOn();
-        if (lockedOn != null) {
-            channel.setLockedOn(lockedOn.getTimeInMillis());
+        boolean fineGrainedLocking = mount.getVirtualHost().getVirtualHosts().isFineGrainedLocking();
+
+        Set<String> s = new HashSet<String>();
+        if (fineGrainedLocking) {
+            channel.setFineGrainedLocking(true);
+            // all the locks are on the preview mount, hence decorate it first
+            Set<String> lockedBySet = getAllUsersWithAContainerLock(mountDecorator.decorateMountAsPreview(mount));
+            channel.setChangedBySet(lockedBySet);
+        } else if (mount.getLockedBy() != null){
+            s.add(mount.getLockedBy());
+            channel.setChangedBySet(s);
+            final Calendar lockedOn = mount.getLockedOn();
+            if (lockedOn != null) {
+                channel.setLockedOn(lockedOn.getTimeInMillis());
+            }
         }
+
 
         String mountPath = mount.getMountPath();
 
@@ -242,6 +263,23 @@ public class ChannelManagerImpl implements MutableChannelManager {
         }
         channel.setUrl(url.toString());
         mount.setChannel(channel);
+    }
+
+    private Set<String> getAllUsersWithAContainerLock(final Mount mount) {
+        Set<String> usersWithLock = new HashSet<String>();
+        for (HstComponentConfiguration hstComponentConfiguration : mount.getHstSite().getComponentsConfiguration().getComponentConfigurations().values()) {
+            addUsersWithContainerLock(hstComponentConfiguration, usersWithLock);
+        }
+        return usersWithLock;
+    }
+
+    private void addUsersWithContainerLock(final HstComponentConfiguration config, final Set<String> usersWithLock) {
+        if (config.getComponentType() == HstComponentConfiguration.Type.CONTAINER_COMPONENT && config.getLockedBy() != null) {
+            usersWithLock.add(config.getLockedBy());
+        }
+        for (HstComponentConfiguration hstComponentConfiguration : config.getChildren().values()) {
+            addUsersWithContainerLock(hstComponentConfiguration, usersWithLock);
+        }
     }
 
     /**
@@ -291,8 +329,8 @@ public class ChannelManagerImpl implements MutableChannelManager {
             loadChannels(configNode);
 
             for (Mount mountForCurrentHostGroup : mountsForCurrentHostGroup) {
-                if (mountForCurrentHostGroup instanceof MutableMount) {
-                    populateChannelForMount((MutableMount) mountForCurrentHostGroup);
+                if (mountForCurrentHostGroup instanceof ContextualizableMount) {
+                    populateChannelForMount((ContextualizableMount) mountForCurrentHostGroup);
                 }
             }
 

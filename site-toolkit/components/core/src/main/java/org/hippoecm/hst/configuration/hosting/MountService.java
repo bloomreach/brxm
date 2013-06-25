@@ -822,21 +822,25 @@ public class MountService implements ContextualizableMount, MutableMount {
         return cmsLocation;
     }
 
+    @Deprecated
     @Override
     public String getLockedBy() {
         return lockedBy;
     }
 
+    @Deprecated
     @Override
     public void setLockedBy(final String userId) {
         lockedBy = userId;
     }
 
+    @Deprecated
     @Override
     public Calendar getLockedOn() {
         return lockedOn;
     }
 
+    @Deprecated
     @Override
     public void setLockedOn(final Calendar lockedOn) {
         this.lockedOn = lockedOn;

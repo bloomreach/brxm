@@ -415,8 +415,8 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            List<String> relativePathsToPublish = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
-            pushNodes(session, previewConfigurationPath, liveConfigurationPath, relativePathsToPublish);
+            List<String> relativeContainerPathsToPublish = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
+            pushContainerChildrenNodes(session, previewConfigurationPath, liveConfigurationPath, relativeContainerPathsToPublish);
             return ok("Site is published");
         } catch (RepositoryException e) {
             return error("Could not publish preview configuration : " + e);
@@ -653,8 +653,8 @@ public class MountResource extends AbstractConfigResource {
             String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
-            List<String> relativePathsToRevert = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
-            pushNodes(session, liveConfigurationPath, previewConfigurationPath, relativePathsToRevert);
+            List<String> relativeContainerPathsToRevert = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
+            pushContainerChildrenNodes(session, liveConfigurationPath, previewConfigurationPath, relativeContainerPathsToRevert);
             return ok("Changes of user '"+session.getUserID()+"' for site '"+getEditingPreviewMount(requestContext).getHstSite().getName()+"' are discarded.");
         } catch (RepositoryException e) {
             return error("Could not discard preview configuration: " + e);
@@ -708,37 +708,52 @@ public class MountResource extends AbstractConfigResource {
         return xpath.toString();
     }
 
-    private void pushNodes(final HippoSession session,
-                           final String fromConfig,
-                           final String toConfig,
-                           final List<String> relativeConfigPaths) throws RepositoryException {
+    private void pushContainerChildrenNodes(final HippoSession session,
+                                            final String fromConfig,
+                                            final String toConfig,
+                                            final List<String> relativeContainerPaths) throws RepositoryException {
 
-        for (String relativeConfigPath : relativeConfigPaths) {
-            String absFromPath = fromConfig + relativeConfigPath;
-            String absToPath = toConfig + relativeConfigPath;
+        for (String relativeContainerPath : relativeContainerPaths) {
+            String absFromPath = fromConfig + relativeContainerPath;
+            String absToContainerPath = toConfig + relativeContainerPath;
             final Node rootNode = session.getRootNode();
-            if (rootNode.hasNode(absFromPath.substring(1)) && rootNode.hasNode(absToPath.substring(1))) {
-                final Node containerToRemove = rootNode.getNode(absToPath.substring(1));
-                Node absFromNode = rootNode.getNode(absFromPath.substring(1));
-                if (!containerToRemove.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT) ||
-                        !absFromNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
+            if (rootNode.hasNode(absFromPath.substring(1)) && rootNode.hasNode(absToContainerPath.substring(1))) {
+                final Node containerToRelaceChildrenFrom = rootNode.getNode(absToContainerPath.substring(1));
+                Node fromNode = rootNode.getNode(absFromPath.substring(1));
+                if (!containerToRelaceChildrenFrom.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT) ||
+                        !fromNode.isNodeType(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT)) {
                     log.warn("Cannot publish/discard nodes that are not of type hst:containercomponent. Cannot push " +
-                            " '{}' to '{}'.", containerToRemove.getPath(), absFromNode.getPath());
+                            " '{}' to '{}'.", containerToRelaceChildrenFrom.getPath(), fromNode.getPath());
                     continue;
                 }
-                containerToRemove.remove();
-                if (absFromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
-                    absFromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
+                // WARN DO NOT JUST DELETE OLD CONTAINER AS THIS INTRODUCES ORDERING ISSUES IN CASE OF SIBBLING CONTAINERS
+                // WHEN THE NEW CONTAINER IS COPIED BACK. INSTEAD, REMOVE CHILDREN AND ADD
+                for (Node oldNode : new NodeIterable(containerToRelaceChildrenFrom.getNodes())) {
+                    oldNode.remove();
                 }
-                if (absFromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
-                    absFromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
+
+                if (fromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+                    fromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
                 }
-                absFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
-                absFromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
-                session.copy(absFromNode, absToPath);
+                if (fromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
+                    fromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
+                }
+                if (containerToRelaceChildrenFrom.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+                    containerToRelaceChildrenFrom.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
+                }
+                if (containerToRelaceChildrenFrom.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
+                    containerToRelaceChildrenFrom.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
+                }
+                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
+                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
+                containerToRelaceChildrenFrom.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
+                containerToRelaceChildrenFrom.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
+                for (Node newNode : new NodeIterable(fromNode.getNodes())) {
+                    session.copy(newNode, absToContainerPath + "/" + newNode.getName());
+                }
             } else {
                 log.warn("Cannot push node path '{}' because live or preview version for '{}' is not available.",
-                        absToPath, relativeConfigPath);
+                        absToContainerPath, relativeContainerPath);
             }
         }
         HstConfigurationUtils.persistChanges(session, getHstManager());

@@ -22,6 +22,7 @@
     <property name="rootPath" value="${hst.configuration.rootPath}"/>
     <property name="contentRoot" value="${channel.manager.contentRoot}"/>
     <property name="hstManager" ref="org.hippoecm.hst.configuration.model.HstManager"/>
+    <property name="mountDecorator" ref="org.hippoecm.hst.core.internal.MountDecorator" />
   </bean>
 
   <bean class="org.hippoecm.hst.site.container.ApplicationEventMethodsInvoker">

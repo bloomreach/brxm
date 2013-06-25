@@ -385,21 +385,25 @@ public class MountDecoratorImpl implements MountDecorator {
             return delegatee.getCmsLocation();
         }
 
+        @Deprecated
         @Override
         public String getLockedBy() {
             return delegatee.getLockedBy();
         }
 
+        @Deprecated
         @Override
         public void setLockedBy(final String userId) {
             delegatee.setLockedBy(userId);
         }
 
+        @Deprecated
         @Override
         public Calendar getLockedOn() {
             return delegatee.getLockedOn();
         }
 
+        @Deprecated
         @Override
         public void setLockedOn(final Calendar date) {
             delegatee.setLockedOn(date);

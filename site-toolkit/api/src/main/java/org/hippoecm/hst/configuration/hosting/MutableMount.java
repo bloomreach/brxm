@@ -60,26 +60,34 @@ public interface MutableMount extends Mount {
      * Return null when the mount is not locked.
      *
      * @return userId of the lock owner or null if not locked
+     * @deprecated deprecated since 7.8.4 and will be removed in 7.9.x
      */
+    @Deprecated
     String getLockedBy();
 
     /**
      * Set the mount's lock owner userId.
+     * @deprecated deprecated since 7.8.4 and will be removed in 7.9.x
      */
+    @Deprecated
     void setLockedBy(String userId);
 
     /**
      * Get the date on which the mount was locked. If the mount is not locked, this date can by any date and null.
      *
      * @return the date on which the mount was locked
+     * @deprecated deprecated since 7.8.4 and will be removed in 7.9.x
      */
+    @Deprecated
     Calendar getLockedOn();
 
     /**
      * Set the date on which the mount was locked.
      *
      * @param lockedOn
+     * @deprecated deprecated since 7.8.4 and will be removed in 7.9.x
      */
+    @Deprecated
     void setLockedOn(Calendar lockedOn);
 
 }
