@@ -80,7 +80,7 @@ public class ClassResourceModel extends LoadableDetachableModel<String> {
             return value;
         }
         
-        if (Application.DEPLOYMENT.equals(Application.get().getConfigurationType())) {
+        if (Application.DEVELOPMENT.equals(Application.get().getConfigurationType())) {
             throw new RuntimeException("No translation found for " + this);
         } else {
             return key;
