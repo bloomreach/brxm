@@ -104,6 +104,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         INTERNAL_FIELDS = Collections.unmodifiableList(
                 Arrays.asList(ChannelField.cmsPreviewPrefix.name(),
                         ChannelField.hstPreviewMountPoint.name(),
+                        ChannelField.changedBySet.name(),
                         ChannelField.devices.name(),
                         ChannelField.fineGrainedLocking.name()));
     }
