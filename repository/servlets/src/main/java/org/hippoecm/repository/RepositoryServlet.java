@@ -46,6 +46,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
+import javax.jcr.observation.Event;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
@@ -58,6 +59,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.jackrabbit.api.observation.JackrabbitEvent;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.NodeNameCodec;
@@ -67,6 +69,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.GuavaHippoEventBus;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.RepositoryService;
+import org.onehippo.repository.cluster.RepositoryClusterService;
 import org.onehippo.repository.events.Persisted;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,6 +113,7 @@ public class RepositoryServlet extends HttpServlet {
 
     private HippoRepository repository;
     private RepositoryService repositoryService;
+    private RepositoryClusterService repositoryClusterService;
     private String bindingAddress;
     private String storageLocation;
     private String repositoryConfig;
@@ -213,6 +217,15 @@ public class RepositoryServlet extends HttpServlet {
                     return repository.login(credentials);
                 }
             }, RepositoryService.class);
+            HippoServiceRegistry.registerService(repositoryClusterService = new RepositoryClusterService() {
+                @Override
+                public boolean isExternalEvent(final Event event) {
+                    if (!(event instanceof JackrabbitEvent)) {
+                        throw new IllegalArgumentException("Event is not an instance of JackrabbitEvent");
+                    }
+                    return ((JackrabbitEvent) event).isExternal();
+                }
+            }, RepositoryClusterService.class);
         } catch (MalformedURLException ex) {
             log.error("MalformedURLException exception: " + bindingAddress, ex);
             throw new ServletException("RemoteException: " + ex.getMessage());
@@ -294,6 +307,9 @@ public class RepositoryServlet extends HttpServlet {
 
         if (repositoryService != null) {
             HippoServiceRegistry.unregisterService(repositoryService, RepositoryService.class);
+        }
+        if (repositoryClusterService != null) {
+            HippoServiceRegistry.unregisterService(repositoryClusterService, RepositoryClusterService.class);
         }
         HippoServiceRegistry.unregisterService(listener, HippoEventBus.class);
         HippoServiceRegistry.unregisterService(hippoEventBus, HippoEventBus.class);
