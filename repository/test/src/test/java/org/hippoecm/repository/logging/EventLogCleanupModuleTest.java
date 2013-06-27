@@ -28,17 +28,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.repository.testutils.RepositoryTestCase;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-import org.quartz.JobListener;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.fail;
 
 public class EventLogCleanupModuleTest extends RepositoryTestCase {
-
-    private boolean jobExecuted;
-    private final Object monitor = new Object();
 
     private RepositoryLogger eventLogger;
 
@@ -69,8 +63,8 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
 
     protected void logEvent(String userName, String className, String methodName) {
         HippoEvent event = new HippoEvent("repository");
-        event.user("userName").category("workflow").result("resultValue");
-        event.set("className", "className").set("methodName", "methodName");
+        event.user(userName).category("workflow").result("resultValue");
+        event.set("className", className).set("methodName", methodName);
         eventLogger.logHippoEvent(event);
     }
 
@@ -82,14 +76,10 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
 
         // run cleanup module with maximum items of 1 and no item timeout
         EventLogCleanupModule module = new EventLogCleanupModule("/hippo:configuration/hippo:modules/eventlogcleanup/hippo:moduleconfig",
-                "0/2 * * * * ?", 1l, -1l, new TestJobListener(), session);
+                "0/2 * * * * ?", 1l, -1l, session, "TestEventLogCleanupMaxItems");
 
-        synchronized (monitor) {
-            while (!jobExecuted) {
-                monitor.wait(3000);
-            }
-        }
-        module.shutdown();
+        Thread.sleep(5000);
+
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         // it seems we need to specify an order by clause to get the total size...
         NodeIterator nodes = queryManager.createQuery("SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC", Query.SQL).execute().getNodes();
@@ -106,15 +96,10 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
 
         // run cleanup module with no maximum to the number of items and all items timed out
         EventLogCleanupModule module = new EventLogCleanupModule("/hippo:configuration/hippo:modules/eventlogcleanup/hippo:moduleconfig",
-                "0/2 * * * * ?", -1l, 0l, new TestJobListener(), session);
+                "0/2 * * * * ?", -1l, 0l, session, "TestEventLogCleanupTimeout");
 
-        synchronized (monitor) {
-            while (!jobExecuted) {
-                monitor.wait(3000);
-            }
-        }
-        module.shutdown();
-        
+        Thread.sleep(5000);
+
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         // it seems we need to specify an order by clause to get the total size...
         NodeIterator nodes = queryManager.createQuery("SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC", Query.SQL).execute().getNodes();
@@ -139,27 +124,4 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
         }
     }
 
-    private class TestJobListener implements JobListener {
-
-        @Override
-        public String getName() {
-            return "testJobListener";
-        }
-
-        @Override
-        public void jobToBeExecuted(JobExecutionContext context) {
-        }
-
-        @Override
-        public void jobExecutionVetoed(JobExecutionContext context) {
-        }
-
-        @Override
-        public void jobWasExecuted(JobExecutionContext context, JobExecutionException jobException) {
-            jobExecuted = true;
-            synchronized (monitor) {
-                monitor.notify();
-            }
-        }
-    }
 }
