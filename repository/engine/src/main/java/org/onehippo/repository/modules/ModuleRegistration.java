@@ -110,7 +110,7 @@ class ModuleRegistration {
                 return -1;
             }
         }
-        return 0;
+        return moduleName.compareTo(other.moduleName);
     }
 
     void setSession(final Session session) {
