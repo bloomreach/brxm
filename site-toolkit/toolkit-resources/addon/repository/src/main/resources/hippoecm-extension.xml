@@ -167,19 +167,4 @@
     </sv:property>
   </sv:node>
 
-  <sv:node sv:name="formdatacleanup-module-add-classname">
-    <sv:property sv:name="jcr:primaryType" sv:type="Name">
-      <sv:value>hippo:initializeitem</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentpropset" sv:type="String">
-      <sv:value>org.onehippo.cms7.hst.toolkit.addon.formdata.FormDataCleanupModule</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:contentroot" sv:type="String">
-      <sv:value>/hippo:configuration/hippo:modules/formdatacleanup/hipposys:className</sv:value>
-    </sv:property>
-    <sv:property sv:name="hippo:sequence" sv:type="Double">
-      <sv:value>943</sv:value>
-    </sv:property>
-  </sv:node>
-
 </sv:node>

@@ -24,6 +24,7 @@ import javax.jcr.observation.Event;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
+import org.apache.jackrabbit.api.observation.JackrabbitEvent;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
@@ -52,6 +53,9 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
     private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
 
+    private static final String SCHEDULER_JOB_NAME = "FormDataCleanup";
+    private static final String SCHEDULER_GROUP_NAME = "default";
+
     private static String FORMDATA_QUERY = "SELECT * FROM hst:formdata ORDER BY hst:creationtime ASC";
 
     private String cronExpression;
@@ -67,20 +71,22 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
 
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
+        final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
+        if (repositoryScheduler.checkExists(SCHEDULER_JOB_NAME, SCHEDULER_GROUP_NAME)) {
+            return;
+        }
         scheduleJob();
     }
 
     @Override
     protected void doShutdown() {
-        try {
-            unscheduleJob();
-        } catch (RepositoryException e) {
-            log.error("Error shutting down FormDataCleanupModule", e);
-        }
     }
 
     @Override
     protected boolean isReconfigureEvent(Event event) throws RepositoryException {
+        if (((JackrabbitEvent)event).isExternal()) {
+            return false;
+        }
         String eventPath = event.getPath();
         return !eventPath.endsWith(CONFIG_LOCK_ISDEEP_PROPERTY) && !eventPath.endsWith(CONFIG_LOCK_OWNER);
     }
@@ -103,14 +109,10 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
             return;
         }
         final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        if (jobInfo != null) {
-            log.error("Job already scheduled, deleting old job");
-            repositoryScheduler.deleteJob(jobInfo.getName(), jobInfo.getGroup());
-        }
-        jobInfo = new RepositoryJobInfo("FormDataCleanup", FormDataCleanupJob.class);
+        jobInfo = new RepositoryJobInfo(SCHEDULER_JOB_NAME, SCHEDULER_GROUP_NAME, FormDataCleanupJob.class);
         jobInfo.setAttribute(CONFIG_MODULECONFIGPATH, moduleConfigPath);
         jobInfo.setAttribute(CONFIG_MINUTES_TO_LIVE_PROPERTY, String.valueOf(minutesToLive));
-        final RepositoryJobTrigger jobTrigger = new RepositoryJobCronTrigger("FormDataCleanupTrigger", cronExpression);
+        final RepositoryJobTrigger jobTrigger = new RepositoryJobCronTrigger(SCHEDULER_JOB_NAME + "Trigger", cronExpression);
         repositoryScheduler.scheduleJob(jobInfo, jobTrigger);
     }
 

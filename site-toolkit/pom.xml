@@ -85,6 +85,7 @@
     <aspectj.version>1.6.9</aspectj.version>
 
     <jackrabbit-ocm.version>1.5.3</jackrabbit-ocm.version>
+    <jackrabbit-api.version>2.6.2</jackrabbit-api.version>
 
     <hippo.commons.version>1.02.01</hippo.commons.version>
     <hippo.repository.version>2.25.01-SNAPSHOT</hippo.repository.version>
@@ -517,6 +518,12 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>jackrabbit-api</artifactId>
+        <version>${jackrabbit-api.version}</version>
       </dependency>
 
       <dependency>
