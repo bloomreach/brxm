@@ -44,7 +44,6 @@ public class ContentTypeImpl extends Sealable implements ContentType {
     private boolean documentType;
     private boolean compoundType;
     private boolean mixin;
-    private boolean templateType;
     private boolean cascadeValidate;
     private Map<String, ContentTypeProperty> properties = new LinkedHashMap<String, ContentTypeProperty>();
     private Map<String, ContentTypeChild> children = new LinkedHashMap<String, ContentTypeChild>();
@@ -68,7 +67,6 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         documentType = false;
         compoundType = false;
         mixin = ent.isMixin();
-        templateType = false;
         superTypes.addAll(ent.getSuperTypes());
         aggregatedTypes.addAll(ent.getAggregatedTypes());
         cascadeValidate = false;
@@ -84,7 +82,6 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         documentType = other.documentType;
         compoundType = other.compoundType;
         mixin = other.mixin;
-        templateType = other.templateType;
         superTypes.addAll(other.superTypes);
         aggregatedTypes.addAll(other.aggregatedTypes);
         cascadeValidate = other.cascadeValidate;
@@ -136,6 +133,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         this.ent = ent;
         superTypes.addAll(ent.getSuperTypes());
         aggregatedTypes.addAll(ent.getAggregatedTypes());
+        this.name = null; // reset possible cached derived name
     }
 
     @Override
@@ -202,21 +200,12 @@ public class ContentTypeImpl extends Sealable implements ContentType {
     }
 
     @Override
-    public boolean isTemplateType() {
-        return templateType;
-    }
-
-    public void setTemplateType(boolean templateType) {
-        checkSealed();
-        this.templateType = templateType;
-    }
-
-    @Override
     public boolean isCascadeValidate() {
         return cascadeValidate;
     }
 
     public void setCascadeValidate(boolean cascadeValidate) {
+        checkSealed();
         this.cascadeValidate = cascadeValidate;
     }
 
@@ -265,6 +254,7 @@ public class ContentTypeImpl extends Sealable implements ContentType {
     }
 
     public boolean merge(ContentTypeImpl other, boolean superType) {
+        checkSealed();
         if (!ent.merge(other.getEffectiveNodeType(), superType) && contains(other)) {
             return false;
         }

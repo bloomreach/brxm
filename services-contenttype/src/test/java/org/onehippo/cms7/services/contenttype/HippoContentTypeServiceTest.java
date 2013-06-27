@@ -304,6 +304,51 @@ public class HippoContentTypeServiceTest extends PluginTest {
     }
 
     @Test
+    public void testRecursiveSuperType() throws Exception {
+        ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
+        if (service != null) {
+            ContentTypes ctCache = service.getContentTypes();
+            ContentType ct = ctCache.getType("test:test");
+
+            assertNotNull(ct);
+            assertTrue(!ct.isDerivedType());
+            assertTrue(!ct.getSuperTypes().contains("test:inheriting"));
+
+            ct = ctCache.getType("test:inheriting");
+
+            assertNotNull(ct);
+            assertTrue(!ct.isDerivedType());
+            assertTrue(ct.getSuperTypes().contains("test:test"));
+            assertTrue(ct.isContentType("test:test"));
+
+            // add circular super type inheritance between edited and inheritingfromedited
+            Node testNodeType = session.getNode("/hippo:namespaces/test/test/hipposysedit:nodetype/hipposysedit:nodetype[2]");
+            testNodeType.setProperty("hipposysedit:supertype", new String[]{"test:inheriting"});
+            session.save();
+            session.refresh(false);
+
+            // need to wait a bit to get Jackrabbit to refresh and notify the changes
+            Thread.sleep(1000);
+            ctCache = service.getContentTypes();
+
+            ct = ctCache.getType("test:test");
+
+            assertNotNull(ct);
+
+            // check circular inheritance is 'repaired' by fallback to underlying derived types
+            assertTrue(ct.isDerivedType());
+            assertTrue(!ct.getSuperTypes().contains("test:inheriting"));
+
+            ct = ctCache.getType("test:inheriting");
+
+            assertNotNull(ct);
+            assertTrue(ct.isDerivedType());
+            assertTrue(ct.getSuperTypes().contains("test:test"));
+            assertTrue(ct.isContentType("test:test"));
+        }
+    }
+
+    @Test
     public void testNodeTypeChangeListener() throws Exception {
         ContentTypeService service = HippoServiceRegistry.getService(ContentTypeService.class);
         if (service != null) {

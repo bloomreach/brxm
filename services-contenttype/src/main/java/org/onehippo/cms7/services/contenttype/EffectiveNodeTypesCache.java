@@ -60,6 +60,7 @@ class EffectiveNodeTypesCache extends Sealable implements EffectiveNodeTypes {
             if (allowRetry) {
                 // for now only do and support retrying once
                 loadEffectiveNodeTypes(session, false);
+                return;
             }
             throw re;
         }

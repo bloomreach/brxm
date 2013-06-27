@@ -37,6 +37,7 @@ import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,21 +84,16 @@ class ContentTypesCache extends Sealable implements ContentTypes {
             Map<String, Node> typeNodes = new HashMap<String, Node>();
 
             Node namespacePrefixes = session.getRootNode().getNode(HippoNodeType.NAMESPACES_PATH);
-            for (NodeIterator prefixIterator = namespacePrefixes.getNodes(); prefixIterator.hasNext(); ) {
-                Node namespacePrefix = prefixIterator.nextNode();
+            for (Node namespacePrefix : new NodeIterable(namespacePrefixes.getNodes())) {
 
                 if (namespacePrefix.hasNodes()) {
 
-                    for (NodeIterator templatesIterator = namespacePrefix.getNodes(); templatesIterator.hasNext(); ) {
-
-                        Node typeTemplate = templatesIterator.nextNode();
+                    for (Node typeTemplate : new NodeIterable(namespacePrefix.getNodes())) {
                         if (typeTemplate.hasNode(HippoNodeType.NT_NODETYPE)) {
 
                             Node handle = typeTemplate.getNode(HippoNodeType.NT_NODETYPE);
-                            Node typeNode = null;
 
-                            for (NodeIterator typeIterator = handle.getNodes(HippoNodeType.NT_NODETYPE); typeIterator.hasNext(); ) {
-                                typeNode = typeIterator.nextNode();
+                            for (Node typeNode : new NodeIterable(handle.getNodes(HippoNodeType.NT_NODETYPE))) {
                                 if (typeNode.isNodeType(HippoNodeType.NT_REMODEL)) {
                                     // use-case: hippo:namespaces/hippo:document doesn't have NIPPO_NODE property
                                     if (!JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_NODE, true)) {
@@ -137,9 +133,10 @@ class ContentTypesCache extends Sealable implements ContentTypes {
             }
 
             /* TODO
-               not resolving 'extended' field properties like captions etc. because of the complicated and many different 'mapping' use-cases
-               furthermore the order of processing is complicated as well as inherited fields are only resolved 2 steps down while matching to
-               these extended field properties needs to have all fields resolved first which complicates the proper moment for sealing
+               - Not resolving 'extended' field properties like captions etc. because of the complicated and many different 'mapping' use-cases
+               - Another use-case here would be to capture i18n labels for types and fields, see: CMS7-7190
+               - Furthermore the order of processing is complicated as well as inherited fields are only resolved 2 steps down while matching to
+                 these extended field properties needs to have all fields resolved first which complicates the proper moment for sealing
 
             for (String typeName : typeNodes.keySet()) {
                 loadContentTypeItemProperties(types.get(typeName), typeNodes.get(typeName));
@@ -160,8 +157,42 @@ class ContentTypesCache extends Sealable implements ContentTypes {
             }
 
             // 4th pass: resolve and cache all ContentTypes
+            // guard against recursion loop while resolving types (recursion in super types configuration)
+            Set<String> resolvingTypes = new HashSet<String>();
             for (String name : types.keySet()) {
-                resolveContentType(name);
+                resolveContentType(name, resolvingTypes);
+            }
+            if (!resolvingTypes.isEmpty()) {
+                Set<String> unresolvedTypes = new HashSet<String>(resolvingTypes);
+                // handle types which couldn't be resolved (recursive inheritance)
+                for (Iterator<String> unresolvedIterator = unresolvedTypes.iterator(); unresolvedIterator.hasNext(); ) {
+                    String name = unresolvedIterator.next();
+                    ContentTypeImpl ct = types.get(name);
+                    if (ct.isDerivedType()) {
+                        // no fallback for derived types: drop it
+                        log.error("Recursive super type inheritance detected for derived ContentType {}. ContentType not resolved and removed.", name);
+                        types.remove(name);
+                        unresolvedIterator.remove();
+                    }
+                    else {
+                        ct = new ContentTypeImpl(ct.getEffectiveNodeType(), ct.version());
+                        log.warn("Recursive super type inheritance detected for non-derived ContentType {}. ContentType replaced by fallback derived type.", name);
+                        types.put(name, ct);
+                    }
+                }
+                if (!unresolvedTypes.isEmpty()) {
+                    // try again for remaining unresolved types
+                    resolvingTypes.clear();
+                    for (String name : unresolvedTypes) {
+                        resolveContentType(name, unresolvedTypes);
+                    }
+
+                    for (String name : resolvingTypes) {
+                        // no fallback for derived types: drop it
+                        log.error("Recursive super type inheritance detected for derived ContentType {}. ContentType not resolved and removed.", name);
+                        types.remove(name);
+                    }
+                }
             }
 
             // 5th pass: resolve all ContentTypeItems and seal all types
@@ -176,6 +207,7 @@ class ContentTypesCache extends Sealable implements ContentTypes {
         catch (RepositoryException re) {
             if (allowRetry) {
                 loadContentTypes(session, false);
+                return;
             }
             throw re;
         }
@@ -190,19 +222,18 @@ class ContentTypesCache extends Sealable implements ContentTypes {
             for (Value value : values) {
                 String superType = value.getString();
                 if (superType.length() == 0 || (types.get(superType) == null && entCache.getType(superType) == null)) {
-                    // TODO: log warn invalid/unknown supertype
-                    continue;
+                    log.error("ContentType {} defines unresolved super type {}. Super type ignored.", typeName, superType);
                 }
                 else {
                     ct.getSuperTypes().add(superType);
                 }
             }
         }
-        ct.setCascadeValidate(JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_CASCADEVALIDATION, false));
+        // TODO: the default 'true' below is conforming to current CMS behavior, but a false interpretation of an absent property would make more sense
+        ct.setCascadeValidate(JcrUtils.getBooleanProperty(typeNode, HippoNodeType.HIPPO_CASCADEVALIDATION, true));
 
         if (typeNode.hasNodes()) {
-            for (NodeIterator fieldsIterator = typeNode.getNodes(); fieldsIterator.hasNext(); ) {
-                Node field = fieldsIterator.nextNode();
+            for (Node field : new NodeIterable(typeNode.getNodes())) {
 
                 if (field.isNodeType(HippoNodeType.NT_FIELD)) {
 
@@ -228,7 +259,7 @@ class ContentTypesCache extends Sealable implements ContentTypes {
                         cti = new ContentTypeChildImpl(ct.getName(), fieldName, itemType);
                     }
                     else {
-                        // TODO: log warn unknown itemType value
+                        log.error("ContentType {} defines field {} with unknown type {}. Field ignored.", new String[]{typeName, fieldName, itemType});
                         continue;
                     }
                     cti.setMandatory(JcrUtils.getBooleanProperty(field, HippoNodeType.HIPPO_MANDATORY, false));
@@ -258,20 +289,29 @@ class ContentTypesCache extends Sealable implements ContentTypes {
         }
     }
 
-    private void resolveContentType(String name) {
+    private boolean resolveContentType(String name, Set<String> resolvingTypes) {
         ContentTypeImpl ct = types.get(name);
 
         // skip already resolved types
         if (actCache.get(name) != null) {
-            return;
+            return true;
+        }
+
+        if (!resolvingTypes.add(name)) {
+            return false;
         }
 
         Set<String> mixins = new TreeSet<String>();
 
         for (String superType : ct.getSuperTypes()) {
             // ensure inherited ContentTypes are resolved first
-            resolveContentType(superType);
+            if (!resolveContentType(superType, resolvingTypes)) {
+                // superType causes recursion loop: must be a wrongly configured non-derived type (derived types shouldn't have this problem, hopefully)
+                log.error("Recursive super type inheritance encountered for resolving ContentType {} its super type {}. ContentType not resolved.", name, superType);
+                return false;
+            }
         }
+        resolvingTypes.remove(name);
 
         // for non-derived types check if all super types are really defined in the underlying node type
         // this might not be the case for mixins added after initial definition/creation of the ContentType
@@ -335,6 +375,7 @@ class ContentTypesCache extends Sealable implements ContentTypes {
         }
         // update ct in types map to be picked up during the recursive resolving
         types.put(name, ct);
+        return true;
     }
 
     private ContentTypeImpl getAggregatedContentType(Set<String> names) {

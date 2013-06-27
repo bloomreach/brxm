@@ -8,8 +8,7 @@
   "documentType" : false,
   "compoundType" : false,
   "mixin" : false,
-  "templateType" : false,
-  "cascadeValidate" : false,
+  "cascadeValidate" : true,
   "properties" : {
     "test:title" : {
       "definingType" : "test:test",

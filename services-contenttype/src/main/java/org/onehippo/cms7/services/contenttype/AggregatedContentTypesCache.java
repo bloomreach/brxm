@@ -101,15 +101,15 @@ public class AggregatedContentTypesCache {
     }
 
     public ContentTypeImpl put(Key key, ContentTypeImpl dt) {
-        ContentTypeImpl existing = get(key);
-        if (existing != null) {
-            // don't overwrite an existing element, return what already was stored
-            return existing;
-        }
-        aggregates.put(key, dt);
-
         write.lock();
         try {
+            ContentTypeImpl existing = get(key);
+            if (existing != null) {
+                // don't overwrite an existing element, return what already was stored
+                return existing;
+            }
+            aggregates.put(key, dt);
+
             TreeSet<Key> keys = sortedKeys.get(key.numBits);
             if (keys == null) {
                 keys = new TreeSet<Key>();

@@ -50,7 +50,7 @@ public class EffectiveNodeTypeImpl extends Sealable implements EffectiveNodeType
         public int compare(final EffectiveNodeTypeProperty p1, final EffectiveNodeTypeProperty p2) {
             int val = p1.getRequiredType() - p2.getRequiredType();
             if (val == 0) {
-                val = p1.isMultiple() ? p2.isMultiple() ? 0 : 1 : -1;
+                val = (p1.isMultiple() ? (p2.isMultiple() ? 0 : 1) : (p2.isMultiple() ? -1 : 0));
             }
             return val;
         }
