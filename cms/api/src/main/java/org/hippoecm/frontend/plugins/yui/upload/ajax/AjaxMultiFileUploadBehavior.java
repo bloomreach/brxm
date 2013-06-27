@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.wicket.RequestCycle;
 import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.markup.html.IHeaderContributor;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.protocol.http.WebRequest;
 import org.apache.wicket.util.template.PackagedTextTemplate;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
@@ -32,12 +33,12 @@ import org.hippoecm.frontend.plugins.yui.header.templates.DynamicTextTemplate;
 
 public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
-    DynamicTextTemplate template;
+    IHeaderContributor template;
 
     public AjaxMultiFileUploadBehavior(final AjaxMultiFileUploadSettings settings) {
         super(settings);
 
-        template = new DynamicTextTemplate(new PackagedTextTemplate(getClass(), "add_upload.js")) {
+        template = new DynamicTextTemplate(new PackagedTextTemplate(getClass(), "add_upload.tpl")) {
 
             @Override
             public String getId() {
@@ -46,11 +47,13 @@ public class AjaxMultiFileUploadBehavior extends AbstractYuiAjaxBehavior {
 
             @Override
             public Serializable getSettings() {
-                settings.addTranslation("select.files.link",
-                   settings.isAllowMultipleFiles() ? new StringResourceModel("select.files.link", getComponent(), null).getString() :
-                   settings.isUploadAfterSelect() ? new StringResourceModel("upload.file.link", getComponent(), null).getString() :
-                                                    new StringResourceModel("select.file.link", getComponent(), null).getString()
-                );
+                final Model<AjaxMultiFileUploadSettings> settingsModel = Model.of(settings);
+                final String suffix = settings.getMaxNumberOfFiles() > 1 ? ".files.caption" : ".file.caption";
+
+                settings.addTranslation("select.caption", getComponent().getString("select" + suffix, settingsModel));
+                settings.addTranslation("browse.caption", getComponent().getString("browse" + suffix, settingsModel));
+                settings.addTranslation("list.caption", getComponent().getString("list" + suffix, settingsModel));
+
                 return settings;
             }
 

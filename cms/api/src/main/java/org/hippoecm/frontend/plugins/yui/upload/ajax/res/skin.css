@@ -1,5 +1,24 @@
+.browseOverlay {
+    position: absolute;
+    z-index: 2;
+}
+
+.browseOverlay:active, .browseOverlay:focus, .browseOverlay embed {
+    outline: 0;
+}
+
 .resource-values {
   overflow: auto;
+}
+
+.uploadCaption {
+    padding-left: 3px;
+    margin-bottom: 13px;
+}
+
+.listCaption {
+    padding-left: 3px;
+    margin-bottom: 2px;
 }
 
 .selectFilesLink {
@@ -13,6 +32,10 @@
 
 .selectFilesLink.rollover {
   background: url("select_upload_icononly_hover.png") no-repeat;
+}
+
+.selectFilesLink.disabled {
+    color: #999;
 }
 
 .yau-progressbar {
@@ -37,7 +60,6 @@
 }
 
 .dataTableContainer {
-  margin-top: 10px;
 }
 
 .dataTableContainer .remove_file {
@@ -226,6 +248,7 @@ version: 2.8.1
 /* scrolling */
 .hippo-root .yui-dt-scrollable {
   overflow: hidden;
+  border-right: 1px solid #7F7F7F;
 }
 
 .hippo-root .yui-dt-scrollable table {
@@ -243,10 +266,6 @@ version: 2.8.1
   border-bottom: 1px solid #7F7F7F;
   border-right: 1px solid #7F7F7F;
   background-color: #FFF;
-}
-
-.hippo-root .yui-dt-scrollable .yui-dt-data tr.yui-dt-last td {
-  border-bottom: 1px solid #7F7F7F;
 }
 
 /* sortable columns */
@@ -457,4 +476,12 @@ tbody .yui-dt-editable {
 .hippo-root .yui-dt-selected {
   border: 1px solid #fff;
   background-color: #fff;
+}
+
+.hippo-root th.yui-dt-last {
+  border-right: 0 none;
+}
+
+.hippo-root tbody.yui-dt-data {
+    outline: 0;
 }

@@ -126,64 +126,89 @@ if (!YAHOO.hippo.Upload) {
                 if (Lang.isValue(this.latest)) {
                     this.latest.removeItem(oRecord);
                 }
+            },
+
+            hasFilesSelected: function() {
+                if (Lang.isValue(this.latest)) {
+                    return this.latest.hasFilesSelected();
+                }
+                return false;
             }
         };
 
         YAHOO.hippo.UploadWidget = function(id, config) {
             this.id = id;
             this.config = config;
-            this.initializationAttempts = 0;
+            this.elements = {};
             this.scrollData = null;
+            this.selectedFiles = [];
             this.progressBars = new YAHOO.hippo.HashMap();
-            this.elements = {uiElements: null};
+            this.initializationAttempts = 0;
+            this.scrollbarThreshold = 9;
+            this.numberOfUploads = 0;
+            YAHOO.widget.Uploader.SWFURL = config.flashUrl;
 
-            if (this.config.ajaxIndicatorId !== null && this.config.ajaxIndicatorId !== undefined) {
+            if (Lang.isValue(this.config.ajaxIndicatorId)) {
                 this.indicator = new YAHOO.hippo.AjaxIndicator(this.config.ajaxIndicatorId);
             }
 
-            YAHOO.widget.Uploader.SWFURL = config.flashUrl;
-
-            this.root = new YAHOO.util.Element(Dom.get(id));
-            this.elements.uiElements = new YAHOO.util.Element(document.createElement('div'));
-            Dom.setStyle(this.elements.uiElements, 'display', 'inline');
-            this.root.appendChild(this.elements.uiElements);
-
-            this.elements.datatableContainer = new YAHOO.util.Element(document.createElement('div'));
-            Dom.addClass(this.elements.datatableContainer, 'dataTableContainer');
-            this.root.appendChild(this.elements.datatableContainer);
-
-            this.elements.uploaderContainer = new YAHOO.util.Element(document.createElement('div'));
-            this.elements.uiElements.appendChild(this.elements.uploaderContainer);
-
-            this.elements.uploaderOverlay = new YAHOO.util.Element(document.createElement('div'));
-            Dom.setStyle(this.elements.uploaderOverlay, 'position', 'absolute');
-            Dom.setStyle(this.elements.uploaderOverlay, 'z-index', 2);
-            this.elements.uploaderContainer.appendChild(this.elements.uploaderOverlay);
-
-            this.elements.selectFiles = new YAHOO.util.Element(document.createElement('div'));
-            Dom.setStyle(this.elements.selectFiles, 'z-index', 1);
-            this.elements.uploaderContainer.appendChild(this.elements.selectFiles);
-
-            this.elements.selectFilesLink = new YAHOO.util.Element(document.createElement('div'));
-            this.elements.selectFilesLink.get('element').innerHTML = this.config.translations['select.files.link'];
-
-            Dom.addClass(this.elements.selectFilesLink, 'selectFilesLink');
-            this.elements.selectFiles.appendChild(this.elements.selectFilesLink);
-
-            Dom.setStyle(this.elements.uploaderOverlay, 'width',
-                    config.buttonWidth === null || config.buttonWidth === ""  ? "155px" : config.buttonWidth);
-            Dom.setStyle(this.elements.uploaderOverlay, 'height',
-                    config.buttonHeight === null || config.buttonHeight === "" ? "26px" : config.buttonHeight);
-
-            this.dataArr = [];
-            this.numberOfUploads = 0;
-
+            this.setupHtml();
             this.initializeUploader();
 
             YAHOO.hippo.HippoAjax.registerDestroyFunction(this.elements.selectFilesLink.get('element'), this.destroy, this);
         };
 
         YAHOO.hippo.UploadWidget.prototype = {
+
+            setupHtml : function() {
+                this.root = new YAHOO.util.Element(Dom.get(this.id));
+
+                //Upload browse button
+                this.elements.uiElements = new YAHOO.util.Element(document.createElement('div'));
+                Dom.setStyle(this.elements.uiElements, 'display', 'inline');
+                this.root.appendChild(this.elements.uiElements);
+
+                if (this.config.alwaysShowLabel || this.config.maxNumberOfFiles > 1 || !this.config.uploadAfterSelect) {
+                    //Upload information caption
+                    this.elements.caption = new YAHOO.util.Element(document.createElement('div'));
+                    Dom.addClass(this.elements.caption, 'uploadCaption');
+                    this.elements.caption.get('element').innerHTML = this.config.translations['select.caption'];
+                    this.root.appendChild(this.elements.caption);
+                }
+
+                this.elements.listCaption = new YAHOO.util.Element(document.createElement('div'));
+                Dom.addClass(this.elements.listCaption, 'listCaption');
+                this.elements.listCaption.get('element').innerHTML = this.config.translations['list.caption'];
+                this.root.appendChild(this.elements.listCaption);
+                Dom.setStyle(this.elements.listCaption, 'display', 'none');
+
+                //datatable html container
+                this.elements.datatableContainer = new YAHOO.util.Element(document.createElement('div'));
+                Dom.addClass(this.elements.datatableContainer, 'dataTableContainer');
+                this.root.appendChild(this.elements.datatableContainer);
+
+                this.elements.uploaderContainer = new YAHOO.util.Element(document.createElement('div'));
+                this.elements.uiElements.appendChild(this.elements.uploaderContainer);
+
+                this.elements.uploaderOverlay = new YAHOO.util.Element(document.createElement('div'));
+                Dom.addClass(this.elements.uploaderOverlay, 'browseOverlay');
+                this.elements.uploaderContainer.appendChild(this.elements.uploaderOverlay);
+
+                this.elements.selectFiles = new YAHOO.util.Element(document.createElement('div'));
+                Dom.setStyle(this.elements.selectFiles, 'z-index', 1);
+                this.elements.uploaderContainer.appendChild(this.elements.selectFiles);
+
+                this.elements.selectFilesLink = new YAHOO.util.Element(document.createElement('div'));
+                this.elements.selectFilesLink.get('element').innerHTML = this.config.translations['browse.caption'];
+
+                Dom.addClass(this.elements.selectFilesLink, 'selectFilesLink');
+                this.elements.selectFiles.appendChild(this.elements.selectFilesLink);
+
+                Dom.setStyle(this.elements.uploaderOverlay, 'width',
+                        this.config.buttonWidth === null || this.config.buttonWidth === ""  ? "155px" : this.config.buttonWidth);
+                Dom.setStyle(this.elements.uploaderOverlay, 'height',
+                        this.config.buttonHeight === null || this.config.buttonHeight === "" ? "26px" : this.config.buttonHeight);
+            },
 
             initializeUploader : function() {
                 this.uploader = new YAHOO.widget.Uploader(this.elements.uploaderOverlay);
@@ -205,14 +230,14 @@ if (!YAHOO.hippo.Upload) {
             upload : function() {
                 var sizes, el, offsetY, sc, pixFromBottom;
 
-                if (this.dataArr.length > 0) {
-                    if (this.indicator !== null) {
+                if (this.selectedFiles.length > 0) {
+                    if (Lang.isValue(this.indicator)) {
                         this.indicator.show();
                     }
                     this.uploader.uploadAll(this.config.uploadUrl);
-                    this.numberOfUploads += this.dataArr.length;
+                    this.numberOfUploads += this.selectedFiles.length;
 
-                    if (this.layoutUnit !== null && this.layoutUnit !== undefined && this.layoutUnit.get('scroll') === true) {
+                    if (Lang.isValue(this.layoutUnit) && this.layoutUnit.get('scroll') === true) {
                         //save scroll position
                         sizes = this.layoutUnit.getSizes();
                         el = this.layoutUnit.body;
@@ -225,29 +250,56 @@ if (!YAHOO.hippo.Upload) {
             },
 
             onFileSelect : function(event) {
-                var fileName, file;
-
-                if (event.hasOwnProperty('fileList') && event.fileList !== null && event.fileList !== undefined) {
-                    this.dataArr = [];
-
-                    for (fileName in event.fileList) {
-                        if (event.fileList.hasOwnProperty(fileName)) {
-                            file = event.fileList[fileName];
+                var files = [], max = this.config.maxNumberOfFiles, file, i, remove;
+                if (Lang.hasOwnProperty(event, 'fileList') && Lang.isValue(event.fileList)) {
+                    for (file in event.fileList) {
+                        if (Lang.hasOwnProperty(event.fileList, file)) {
+                            file = event.fileList[file];
                             file.progress = -1;
-                            this.dataArr.unshift(file);
+                            files.push(file);
                         }
                     }
-                    this._createDatatable();
                 }
-                if (this.config.uploadAfterSelect === true) {
-                    this.upload();
+
+                if (files.length > 0) {
+                    //There is no way to restrict the number of files that can be selected in the browse dialog so in
+                    //order to comply to the maxNumberOfFiles property we have to remove any new items that are
+                    //out of bounds
+                    if ((files.length + this.selectedFiles.length) > max) {
+
+                        //sort on id to ensure the splice call only removes the latest additions
+                        files.sort(function(a, b) {
+                            var iA, iB;
+                            iA = parseInt(a.id.substr(4), 10);
+                            iB = parseInt(b.id.substr(4), 10);
+                            if (Lang.isNumber(iA) && Lang.isNumber(iB)) {
+                                return (iA > iB) ? 1 : ((iB > iA) ? -1 : 0);
+                            }
+                            throw new Error('Could not compare items');
+                        });
+                        remove = files.splice(max - files.length, files.length - max);
+                        for (i = 0; i < remove.length; i++) {
+                            this.uploader.removeFile(remove[i].id);
+                        }
+                    }
+
+                    if (files.length === max) {
+                        this.disableBrowseButton();
+                    }
+
+                    this.selectedFiles = files;
+                    this._renderDatatable();
+
+                    if (this.config.uploadAfterSelect === true && files.length === max) {
+                        this.upload();
+                    }
                 }
             },
 
             onUploadStart : function(event) {
                 var record, id, nameWidth, pb;
 
-                if (this.indicator !== null && this.indicator !== undefined) {
+                if (Lang.isValue(this.indicator)) {
                     this.indicator.show();
                 }
                 record = this._getRecordById(event.id);
@@ -314,16 +366,18 @@ if (!YAHOO.hippo.Upload) {
                 var url;
 
                 if (this.numberOfUploads === 0) {
-                    if (this.indicator !== null && this.indicator !== undefined) {
+                    if (Lang.isValue(this.indicator)) {
                         this.indicator.hide();
                     }
+
+                    this.enableBrowseButton();
 
                     if (this.config.clearAfterUpload === true) {
                         this.clearAfterUpload();
                     }
 
                     url = this.config.callbackUrl + "&finished=true";
-                    if (this.scrollData !== null && this.scrollData !== undefined) {
+                    if (Lang.isValue(this.scrollData)) {
                         url = url + this.scrollData;
                         this.scrollData = null;
                     }
@@ -347,7 +401,7 @@ if (!YAHOO.hippo.Upload) {
             },
 
             stopIndicator : function() {
-                if (this.indicator !== null && this.indicator !== undefined) {
+                if (Lang.isValue(this.indicator)) {
                     this.indicator.hide();
                 }
             },
@@ -386,11 +440,10 @@ if (!YAHOO.hippo.Upload) {
 
                     this.layoutUnit = YAHOO.hippo.LayoutManager.findLayoutUnit(Dom.get(this.id));
                 } else if (this.initializationAttempts++ < 20) {
-                    self = this;
                     window.setTimeout(function() {
-                        self.uploader.destroy();
-                        self.initializeUploader.call(self);
-                    }, 100);
+                        this.uploader.destroy();
+                        this.initializeUploader();
+                    }.bind(this), 100);
                 }
             },
 
@@ -414,9 +467,39 @@ if (!YAHOO.hippo.Upload) {
 
             },
 
+            enableBrowseButton : function() {
+                this.uploader.enable();
+                Dom.removeClass(this.elements.selectFilesLink, 'disabled');
+            },
+
+            disableBrowseButton : function() {
+                this.handleRollOut();
+                this.uploader.disable();
+                Dom.addClass(this.elements.selectFilesLink, 'disabled');
+            },
+
             removeItem : function(oRecord) {
                 this.uploader.removeFile(oRecord._oData.id);
                 this.datatable.deleteRow(oRecord._sId);
+                this.removeFromSelectedFiles(oRecord._oData.id);
+
+                if (this.datatable.getRecordSet().getLength() === 0) {
+                    this._removeDatatable();
+                } else if (this.datatable.getRecordSet().getLength() === this.scrollbarThreshold) {
+                    this._redrawDatatable();
+                }
+
+                this.enableBrowseButton();
+            },
+
+            removeFromSelectedFiles : function(id) {
+                var i, len;
+                for (i = 0, len = this.selectedFiles.length; i < len; i++) {
+                    if (this.selectedFiles[i].id === id) {
+                        this.selectedFiles.splice(i, 1);
+                        break;
+                    }
+                }
             },
 
             hasFilesSelected : function() {
@@ -438,45 +521,24 @@ if (!YAHOO.hippo.Upload) {
                 return null;
             },
 
-            _createDatatable : function() {
-                var nameWidth, myColumnDefs, myDataSource, sortedBy, state;
+            _renderDatatable : function() {
+                if (!Lang.isValue(this.datatable) ||
+                        (this.datatable.getRecordSet().getLength() <= this.scrollbarThreshold &&
+                        this.selectedFiles.length > this.scrollbarThreshold)) {
+                    this._createDatatable();
+                } else {
+                    this.datatable.load({
+                        datasource : this._createDataSource(this.datatable.getState().sortedBy)
+                    });
+                }
+            },
 
-                if (this.dataArr.length === 0) {
-                    return;
+            _createDataSource : function(sortedBy) {
+                if (!Lang.isValue(sortedBy)) {
+                    throw new Error('Argument sortedBy is required.');
                 }
 
-                nameWidth = 305;
-                if (this.dataArr.length > 10) {
-                    nameWidth -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
-                }
-
-                myColumnDefs = [
-                    {key: "name", label: "File Name", sortable: true, width: nameWidth, formatter: "titleFormatter"},
-                    {key: "size", label: "Size", sortable: true, width: 50, formatter: "bytesFormatter"},
-                    {key: "id", label: "", sortable: false, width: 20, formatter: "removeFormatter"}
-                ];
-
-                myDataSource = new YAHOO.util.LocalDataSource(this.dataArr);
-                myDataSource.responseType = YAHOO.util.LocalDataSource.TYPE_JSARRAY;
-                myDataSource.responseSchema = {
-                    fields: [
-                        "id",
-                        {key: "name", parser: "string"},
-                        "created",
-                        "modified",
-                        "type",
-                        {key: "size", parser: "number"},
-                        "progress"
-                    ]
-                };
-
-                sortedBy = {key: 'name', dir: YAHOO.widget.DataTable.CLASS_ASC};
-                if (this.datatable !== null && this.datatable !== undefined) {
-                    state = this.datatable.getState();
-                    sortedBy.key = state.sortedBy.key;
-                    sortedBy.dir = state.sortedBy.dir;
-                }
-                this.dataArr.sort(function(a, b) {
+                this.selectedFiles.sort(function(a, b) {
                     if (sortedBy.key === 'name') {
                         a = a.name.toLowerCase();
                         b = b.name.toLowerCase();
@@ -486,18 +548,50 @@ if (!YAHOO.hippo.Upload) {
                     }
                     return ((a < b) ? -1 : ((a > b) ? 1 : 0));
                 });
+
                 if (sortedBy.dir === YAHOO.widget.DataTable.CLASS_DESC) {
-                    this.dataArr.reverse();
+                    this.selectedFiles.reverse();
                 }
-                if (this.dataArr.length > 10) {
+
+                return new YAHOO.util.LocalDataSource(this.selectedFiles, {
+                    responseSchema : {
+                        fields: [
+                            "id",
+                            {key: "name", parser: "string"},
+                            "created",
+                            "modified",
+                            "type",
+                            {key: "size", parser: "number"},
+                            "progress"
+                        ]
+                    }
+                });
+            },
+
+            _createDatatable : function(sortedBy) {
+                if (this.selectedFiles.length === 0) {
+                    return;
+                }
+
+                Dom.setStyle(this.elements.listCaption, 'display', 'block');
+
+                if (sortedBy === undefined) {
+                    if (Lang.isValue(this.datatable)) {
+                        sortedBy = this.datatable.getState().sortedBy;
+                    } else {
+                        sortedBy = {key: 'name', dir: YAHOO.widget.DataTable.CLASS_ASC};
+                    }
+                }
+
+                if (this.selectedFiles.length > this.scrollbarThreshold) {
                     this.datatable = new YAHOO.widget.ScrollingDataTable(
                         this.elements.datatableContainer,
-                        myColumnDefs,
-                        myDataSource,
+                        this._createColumnDefinitions(),
+                        this._createDataSource(sortedBy),
                         {
                             selectionMode: "single",
                             width: '440px',
-                            height: '236px',
+                            height: '199px',
                             sortedBy: sortedBy,
                             MSG_EMPTY: ''
                         }
@@ -505,8 +599,8 @@ if (!YAHOO.hippo.Upload) {
                 } else {
                     this.datatable = new YAHOO.widget.DataTable(
                         this.elements.datatableContainer,
-                        myColumnDefs,
-                        myDataSource,
+                        this._createColumnDefinitions(),
+                        this._createDataSource(sortedBy),
                         {
                             selectionMode: "single",
                             sortedBy: sortedBy,
@@ -516,11 +610,33 @@ if (!YAHOO.hippo.Upload) {
                 }
             },
 
+            _createColumnDefinitions : function() {
+                var nameWidth = 305;
+                if (this.selectedFiles.length > this.scrollbarThreshold) {
+                    nameWidth -= YAHOO.hippo.HippoAjax.getScrollbarWidth();
+                }
+
+                return [
+                    {key: "name", label: "File Name", sortable: true, width: nameWidth, formatter: "titleFormatter"},
+                    {key: "size", label: "Size", sortable: true, width: 50, formatter: "bytesFormatter"},
+                    {key: "id", label: "", sortable: false, width: 20, formatter: "removeFormatter"}
+                ];
+            },
+
+            _redrawDatatable : function() {
+                if (Lang.isValue(this.datatable)) {
+                    var sortedBy = this.datatable.getState().sortedBy;
+                    this._removeDatatable();
+                    this._createDatatable(sortedBy);
+                }
+            },
+
             _removeDatatable : function() {
                 if (Lang.isValue(this.datatable)) {
                     this.datatable.destroy();
                 }
                 this.datatable = null;
+                Dom.setStyle(this.elements.listCaption, 'display', 'none');
             },
 
             _titleFormatter : function(elLiner, oRecord, oColumn, oData) {
@@ -556,12 +672,12 @@ if (!YAHOO.hippo.Upload) {
                     YAHOO.hippo.Upload.latest = null;
                 }
 
-                if (this.uploader !== null && this.uploader !== undefined) {
+                if (Lang.isValue(this.uploader)) {
                     this.uploader.destroy();
                     this.uploader = null;
                 }
 
-                if (this.indicator !== null && this.indicator !== undefined) {
+                if (Lang.isValue(this.indicator)) {
                     this.indicator.hide();
                 }
 
@@ -578,9 +694,10 @@ if (!YAHOO.hippo.Upload) {
         };
     }());
 
-   YAHOO.hippo.Upload = new YAHOO.hippo.UploadImpl();
+    YAHOO.hippo.Upload = new YAHOO.hippo.UploadImpl();
 
-   YAHOO.register("upload", YAHOO.hippo.Upload, {
-       version: "2.8.1", build: "19"
-   });
+    YAHOO.register("upload", YAHOO.hippo.Upload, {
+        version: "2.8.1",
+        build: "19"
+    });
 }

@@ -15,10 +15,10 @@
  */
 package org.hippoecm.frontend.plugins.yui.upload.ajax;
 
-import org.hippoecm.frontend.plugins.yui.AjaxSettings;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.hippoecm.frontend.plugins.yui.AjaxSettings;
 
 public class AjaxMultiFileUploadSettings extends AjaxSettings {
 
@@ -60,6 +60,12 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
 
     //Specify the height of the button
     private String buttonHeight;
+
+    //Specify the maximum number of files that can be selected
+    private int maxNumberOfFiles;
+
+    //The info label is hidden by default when autoUpload is true and maxFiles is 1, use this to override this behavior
+    private boolean alwaysShowLabel;
 
     public boolean isAllowMultipleFiles() {
         return allowMultipleFiles;
@@ -169,4 +175,19 @@ public class AjaxMultiFileUploadSettings extends AjaxSettings {
         this.buttonHeight = buttonHeight;
     }
 
+    public void setMaxNumberOfFiles(int maxNumberOfFiles) {
+        this.maxNumberOfFiles = maxNumberOfFiles;
+    }
+
+    public int getMaxNumberOfFiles() {
+        return maxNumberOfFiles;
+    }
+
+    public boolean isAlwaysShowLabel() {
+        return alwaysShowLabel;
+    }
+
+    public void setAlwaysShowLabel(final boolean alwaysShowLabel) {
+        this.alwaysShowLabel = alwaysShowLabel;
+    }
 }

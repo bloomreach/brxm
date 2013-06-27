@@ -105,7 +105,7 @@ public abstract class AjaxMultiFileUploadComponent extends Panel {
     private AjaxMultiFileUploadSettings settings;
 
     public AjaxMultiFileUploadComponent(String id, AjaxMultiFileUploadSettings settings) {
-        super(id, new Model(new LinkedList<FileUpload>()));
+        super(id, new Model<LinkedList<FileUpload>>(new LinkedList<FileUpload>()));
 
         setOutputMarkupId(true);
         settings.setFlashUrl(urlFor(flashResource).toString());
