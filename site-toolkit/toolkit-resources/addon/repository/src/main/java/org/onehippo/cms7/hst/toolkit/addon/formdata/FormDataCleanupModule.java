@@ -24,10 +24,11 @@ import javax.jcr.observation.Event;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
 
-import org.apache.jackrabbit.api.observation.JackrabbitEvent;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.cluster.RepositoryClusterService;
 import org.onehippo.repository.modules.AbstractReconfigurableDaemonModule;
+import org.onehippo.repository.modules.RequiresService;
 import org.onehippo.repository.scheduling.RepositoryJob;
 import org.onehippo.repository.scheduling.RepositoryJobCronTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobExecutionContext;
@@ -43,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * 'cronexpression' (String) a quartz cron expression specifying when to run
  * 'minutestolive' (Long) the maximum lifetime of a hst:formdata node in minutes, based on its hst:creationtime value
  */
+@RequiresService( types = { RepositoryScheduler.class } )
 public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
 
     private static final Logger log = LoggerFactory.getLogger(FormDataCleanupModule.class);
@@ -53,15 +55,28 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
     private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
 
-    private static final String SCHEDULER_JOB_NAME = "FormDataCleanup";
-    private static final String SCHEDULER_GROUP_NAME = "default";
-
     private static String FORMDATA_QUERY = "SELECT * FROM hst:formdata ORDER BY hst:creationtime ASC";
 
     private String cronExpression;
     private long minutesToLive;
     private RepositoryJobInfo jobInfo;
+    private String schedulerJobName = "FormDataCleanup";
+    private String schedulerGroupName = "default";
+    private RepositoryClusterService repositoryClusterService;
 
+    public FormDataCleanupModule() {
+    }
+
+    /* Test only */
+    public FormDataCleanupModule(String moduleName, String moduleConfigPath, String cronExpression, long minutesToLive)
+            throws RepositoryException {
+        this.moduleName = moduleName;
+        this.moduleConfigPath = moduleConfigPath;
+        this.cronExpression = cronExpression;
+        this.minutesToLive = minutesToLive;
+        this.schedulerJobName += "-test";
+        scheduleJob();
+    }
 
     @Override
     protected void doConfigure(final Node moduleConfig) throws RepositoryException {
@@ -72,9 +87,10 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     @Override
     protected void doInitialize(final Session session) throws RepositoryException {
         final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        if (repositoryScheduler.checkExists(SCHEDULER_JOB_NAME, SCHEDULER_GROUP_NAME)) {
+        if (repositoryScheduler.checkExists(schedulerJobName, schedulerGroupName)) {
             return;
         }
+        this.repositoryClusterService = HippoServiceRegistry.getService(RepositoryClusterService.class);
         scheduleJob();
     }
 
@@ -84,7 +100,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
 
     @Override
     protected boolean isReconfigureEvent(Event event) throws RepositoryException {
-        if (((JackrabbitEvent)event).isExternal()) {
+        if (repositoryClusterService.isExternalEvent(event)) {
             return false;
         }
         String eventPath = event.getPath();
@@ -109,10 +125,10 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
             return;
         }
         final RepositoryScheduler repositoryScheduler = HippoServiceRegistry.getService(RepositoryScheduler.class);
-        jobInfo = new RepositoryJobInfo(SCHEDULER_JOB_NAME, SCHEDULER_GROUP_NAME, FormDataCleanupJob.class);
+        jobInfo = new RepositoryJobInfo(schedulerJobName, schedulerGroupName, FormDataCleanupJob.class);
         jobInfo.setAttribute(CONFIG_MODULECONFIGPATH, moduleConfigPath);
         jobInfo.setAttribute(CONFIG_MINUTES_TO_LIVE_PROPERTY, String.valueOf(minutesToLive));
-        final RepositoryJobTrigger jobTrigger = new RepositoryJobCronTrigger(SCHEDULER_JOB_NAME + "Trigger", cronExpression);
+        final RepositoryJobTrigger jobTrigger = new RepositoryJobCronTrigger(schedulerJobName + "Trigger", cronExpression);
         repositoryScheduler.scheduleJob(jobInfo, jobTrigger);
     }
 

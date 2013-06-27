@@ -60,8 +60,10 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.jackrabbit</groupId>
-      <artifactId>jackrabbit-api</artifactId>
+      <groupId>org.onehippo.cms7.hst</groupId>
+      <artifactId>hst-test</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
     </dependency>
 
   </dependencies>
