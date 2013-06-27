@@ -92,9 +92,10 @@ public interface ContentTypeItem {
     List<EffectiveNodeTypeItem> getMultiTypes();
 
     /**
-     * @return True if this item denotes the primary item for the underlying EffectiveNodeType
+     * Primary items are for instance used in imagesets to define the cms preview resource.
+     * Since an imageset contains multiple images, one of them needs to be marked as the 'preview' variant.
+     * @return True if this item denotes the primary item
      */
-    // TODO: is this (still) used?
     boolean isPrimaryItem();
 
     /**
@@ -123,8 +124,9 @@ public interface ContentTypeItem {
     boolean isProtected();
 
     /**
-     * @return True if this item {@link #isMultiple()} and supports ordering of its Property values or its same-name-sibling Child items
-     * Note: while multi-value properties are ordered by definition, this method provides editor support for ordering prototype values or child items (if any)
+     * @return True if this item {@link #isMultiple()} and supports ordering of its Property values or its same-name-sibling Child items.<br/>
+     * Note: while multi-value properties are (JCR) ordered by definition, this method provides editor support for ordering prototype values or child items (if any),
+     * and only for this specific child item while the JCR hasOrderableChildren definition on NodeType level concerns all its children.
      */
     boolean isOrdered();
 

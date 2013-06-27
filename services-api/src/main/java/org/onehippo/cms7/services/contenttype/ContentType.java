@@ -111,12 +111,12 @@ public interface ContentType {
     boolean isMixin();
 
     /**
-     * @return True if this ContentType serves (only) as super type and/or as template for a new ContentType (inheriting its characteristics)
+     * isCascadeValidate indicates whether a content item will automatically be validated when it is of this type.
+     * If the value is false, the item will not be validated; then validation will only be trigger when the field that
+     * defines it has a 'required' validator.<br/>
+     * TODO: determine if 'true' is a proper or even meaningful if {@link #isDerivedType()}
+     * @return True when a content item of this type will automatically be validated
      */
-    // TODO: check if this actually matches the purpose
-    boolean isTemplateType();
-
-    // TODO
     boolean isCascadeValidate();
 
     /**
