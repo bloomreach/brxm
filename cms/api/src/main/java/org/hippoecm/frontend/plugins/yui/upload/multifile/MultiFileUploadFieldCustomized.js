@@ -63,28 +63,33 @@
  * - added scrollbars if list get's to big for dialog (very hard-coded atm)
  */
 
-function MultiSelector(eprefix, list_target, max, del_label) {
+/*global wicketSubmitForm, YAHOO*/
 
-    // Where to write the list
-    this.list_target = list_target;
-    this.list_container = null;
+function MultiSelector(prefix, listId, listLabel, deleteLabel, maxNumberOfFiles,
+                       submitAfterSelect, clearAfterSubmit) {
+    "use strict";
 
     // How many elements?
     this.count = 0;
-    // How many elements?
+    // Input[file] id count
     this.id = 0;
-    // Is there a maximum?
-    if (max) {
-        this.max = max;
-    } else {
-        this.max = -1;
-    }
 
+    this.element_name_prefix = prefix;
+
+    // Where to write the list
+    this.list_target = document.getElementById(listId);
+
+    this.list_label = null;
+    this.list_container = null;
+    this.selected_items = [];
     this.form = null;
-    this.submitAfterSelect = this.max === 1;
 
-    this.delete_label = del_label;
-    this.element_name_prefix = eprefix;
+    this.delete_label = deleteLabel;
+    this.listLabel = listLabel;
+
+    this.maxNumberOfFiles = maxNumberOfFiles || 1;
+    this.submitAfterSelect = submitAfterSelect || false;
+    this.clearAfterSubmit = clearAfterSubmit || false;
 
     this.maxLengthFilename = 70;
 
@@ -92,15 +97,15 @@ function MultiSelector(eprefix, list_target, max, del_label) {
      * Add a new file input element
      */
     this.addElement = function(element) {
-        var p, new_element;
+        var p, new_element, multiSelector;
 
         // Make sure it's a file input element
         if (element.tagName.toLowerCase() === 'input' && element.type.toLowerCase() === 'file') {
 
-            if(this.submitAfterSelect && this.form === null) {
+            if (this.submitAfterSelect && this.form === null) {
                 p = element.parentNode;
-                while(p !== document.body) {
-                    if(p.tagName.toLowerCase() === 'form') {
+                while (p !== document.body) {
+                    if (p.tagName.toLowerCase() === 'form') {
                         this.form = p;
                         break;
                     }
@@ -112,26 +117,40 @@ function MultiSelector(eprefix, list_target, max, del_label) {
             element.name = this.element_name_prefix + "_mf_" + this.id++;
 
             // Add reference to this object
-            element.multi_selector = this;
+            element.multi_selector = multiSelector = this;
 
             // What to do when a file is selected
             element.onchange = function() {
-                var form, filename;
+                var filename,
+                    submit = function() {
+                        var form = multiSelector.form,
+                            element = multiSelector.current_element;
+                        if (form.hasAttribute('action')) {
+                            // the action should be the form url
+                            wicketSubmitForm(form, form.getAttribute('action'), null, function() {
+                                //success
+                                if (multiSelector.clearAfterSubmit) {
+                                    multiSelector.reset();
+                                }
+                            }, function() {
+                                //failure
+                                multiSelector.reset();
+                            });
+                        }
+                    };
 
-                if (element.multi_selector.submitAfterSelect) {
-                    form = element.multi_selector.form;
-                    if (form.hasAttribute('action')) {
-                        // the action should be the form url
-                        wicketSubmitForm(form, form.getAttribute('action'));
-                    }
+                if (multiSelector.submitAfterSelect && multiSelector.maxNumberOfFiles === 1) {
+                    submit();
                 } else {
                     // Workaround for issue CMS7-6415: IE8: Extra empty files...
                     if (YAHOO.env.ua.ie === '8') {
-                        filename = this.multi_selector.parseFilename(this.value);
+                        filename = multiSelector.parseFilename(this.value);
                         if (filename === '' || YAHOO.lang.trim(filename) === '') {
                             return;
                         }
                     }
+
+                    multiSelector.selected_items.push(this);
 
                     // New file input
                     new_element = document.createElement('input');
@@ -141,23 +160,23 @@ function MultiSelector(eprefix, list_target, max, del_label) {
                     this.parentNode.insertBefore(new_element, this);
 
                     // Apply 'update' to element
-                    this.multi_selector.addElement(new_element);
+                    multiSelector.addElement(new_element);
+                    multiSelector.addListRow(this);
 
-                    // Update list
-                    this.multi_selector.addListRow(this);
+                    // If we've reached maximum number, disable input element
+                    if (multiSelector.count === multiSelector.maxNumberOfFiles) {
+                        new_element.disabled = true;
+                        if (multiSelector.submitAfterSelect) {
+                            submit();
+                        }
+                    }
 
                     // Hide this: we can't use display:none because Safari doesn't like it
                     this.style.position = 'absolute';
                     this.style.left = '-3000px';
                 }
             };
-            // If we've reached maximum number, disable input element
-            if (this.max !== -1 && this.count >= this.max) {
-                element.disabled = true;
-            }
 
-            // File element counter
-            this.count++;
             // Most recent element
             this.current_element = element;
 
@@ -174,7 +193,7 @@ function MultiSelector(eprefix, list_target, max, del_label) {
     this.addListRow = function(element) {
         var new_row, new_row_button, img, label;
 
-        if(this.count >= 8) {
+        if (this.count >= 8) {
             //turn container element into a scrollable unit with set height.
             this.list_container.className = 'wicket-mfu-row-container-scrollable';
         }
@@ -197,22 +216,24 @@ function MultiSelector(eprefix, list_target, max, del_label) {
 
         // Delete function
         new_row_button.onclick = function() {
+            var selector = this.parentNode.element.multi_selector;
 
-            // Remove element from form
-            this.parentNode.element.parentNode.removeChild(this.parentNode.element);
-
-            // Remove this row from the list
-            this.parentNode.parentNode.removeChild(this.parentNode);
+            selector.removeElement(this.parentNode);
 
             // Decrement counter
-            this.parentNode.element.multi_selector.count--;
+            selector.count--;
 
-            if(this.parentNode.element.multi_selector.count < 8) {
-                this.parentNode.element.multi_selector.list_container.className = 'wicket-mfu-row-container';
+            if (selector.count < 8) {
+                selector.list_container.className = 'wicket-mfu-row-container';
             }
 
             // Re-enable input element (if it's disabled)
-            this.parentNode.element.multi_selector.current_element.disabled = false;
+            selector.current_element.disabled = false;
+
+            //remove empty list and label form DOM if count == 0
+            if (selector.count === 0) {
+                selector.reset();
+            }
 
             // Appease Safari
             //    without it Safari wants to reload the browser window
@@ -231,15 +252,69 @@ function MultiSelector(eprefix, list_target, max, del_label) {
 
         // Add it to the list
         this.appendToList(new_row);
+
+        this.count++;
     };
 
     this.appendToList = function(row) {
         if (this.list_container === null || this.list_container === undefined) {
+            this.list_label = document.createElement("div");
+            this.list_label.className = 'wicket-mfu-row-container-label';
+            this.list_target.appendChild(this.list_label);
+            this.list_label.innerHTML = this.listLabel;
+
             this.list_container = document.createElement("div");
             this.list_container.className = 'wicket-mfu-row-container';
             this.list_target.appendChild(this.list_container);
         }
         this.list_container.appendChild(row);
+    };
+
+    this.reset = function() {
+        var i;
+
+        if (this.list_label !== null) {
+            this.list_target.removeChild(this.list_label);
+            this.list_label = null;
+        }
+
+        if (this.list_container !== null) {
+            this.list_target.removeChild(this.list_container);
+            this.list_container = null;
+        }
+
+        for (i = 0; i < this.selected_items.length; i++) {
+            this.selected_items[i].parentNode.removeChild(this.selected_items[i]);
+        }
+        this.selected_items = [];
+        this.count = 0;
+
+        //Reset input field. In IE the property is readonly and requires cloning the node which introduces issues
+        //with the custom onchange handler.
+        this.current_element.value = '';
+        if (!YAHOO.env.ua.ie) {
+            this.current_element.value = '';
+        }
+        // Re-enable input element (if it's disabled)
+        this.current_element.disabled = false;
+    };
+
+    this.removeElement = function(parent) {
+        var i;
+        // Remove from selected_items
+        for (i = 0; i < this.selected_items.length; i++) {
+            if (this.selected_items[i] === parent.element) {
+                this.selected_items.splice(i, 1);
+                break;
+            }
+        }
+
+        // Remove element from form
+        parent.element.parentNode.removeChild(parent.element);
+
+        // Remove this row from the list
+        parent.parentNode.removeChild(parent);
+
     };
 
     this.parseFilename = function(filename) {

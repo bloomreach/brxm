@@ -49,6 +49,7 @@ public class FileUploadWidgetSettings implements IClusterable {
     public static final String FILEUPLOAD_CLEAR_TIMEOUT = "fileupload.clearTimeout";
     public static final String FILEUPLOAD_HIDE_BROWSE_DURING_UPLOAD = "fileupload.hideBrowseDuringUpload";
     public static final String FILEUPLOAD_CONCURRENT_UPLOADS = "fileupload.concurrentUploads";
+    public static final String FILEUPLOAD_ALWAYS_SHOW_LABEL = "fileupload.alwaysShowLabel";
 
     //backwards compatibility
     public static final String FILE_EXTENSIONS_SETTING = "file.extensions";
@@ -63,6 +64,7 @@ public class FileUploadWidgetSettings implements IClusterable {
     private String buttonWidth;
     private String buttonHeight;
     private boolean flashUploadEnabled = true;
+    private boolean alwaysShowLabel;
 
     public FileUploadWidgetSettings() {
     }
@@ -161,6 +163,14 @@ public class FileUploadWidgetSettings implements IClusterable {
         this.simultaneousUploadLimit = simultaneousUploadLimit;
     }
 
+    public boolean isAlwaysShowLabel() {
+        return alwaysShowLabel;
+    }
+
+    public void setAlwaysShowLabel(final boolean alwaysShowLabel) {
+        this.alwaysShowLabel = alwaysShowLabel;
+    }
+
     private void parsePluginConfig(final IPluginConfig pluginConfig) {
 
         if (pluginConfig.containsKey(FILEUPLOAD_FLASH_ENABLED_SETTING)) {
@@ -206,6 +216,10 @@ public class FileUploadWidgetSettings implements IClusterable {
 
         if (pluginConfig.containsKey(FILEUPLOAD_CONCURRENT_UPLOADS)) {
             this.simultaneousUploadLimit = pluginConfig.getAsInteger(FILEUPLOAD_CONCURRENT_UPLOADS);
+        }
+
+        if (pluginConfig.containsKey(FILEUPLOAD_ALWAYS_SHOW_LABEL)) {
+            this.alwaysShowLabel = pluginConfig.getAsBoolean(FILEUPLOAD_ALWAYS_SHOW_LABEL);
         }
     }
 }

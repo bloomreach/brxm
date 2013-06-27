@@ -463,8 +463,9 @@ api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUp
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent_de.properties -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/MultiFileUploadComponent_it.properties -text
-api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/delete-small-16.png -text svneol=unset#image/png
-api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/image-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/createMultiSelector.tpl -text
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/res/delete-small-16.png -text svneol=unset#image/png
+api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/multifile/res/image-16.png -text svneol=unset#image/png
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/AssetUploadValidationPlugin.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/DefaultUploadValidationService.java -text
 api/src/main/java/org/hippoecm/frontend/plugins/yui/upload/validation/DefaultUploadValidationService.properties -text

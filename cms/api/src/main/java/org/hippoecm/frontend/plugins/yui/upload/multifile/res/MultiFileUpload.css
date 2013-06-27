@@ -15,7 +15,8 @@
  */
 
 .hippo-window .hippo-dialog-container .wicket-mfu-caption {
-    margin: 15px 0 10px 0;
+    margin: 8px 0 16px 1px;
+    font-size: 10px;
 }
 
 .hippo-window .hippo-dialog-container .wicket-mfu-row-container {
@@ -24,16 +25,18 @@
 
 .hippo-window .hippo-dialog-container .wicket-mfu-row-container-scrollable {
     border: 1px solid #AFAFAF;
-    height: 210px;
+    height: 216px;
     overflow: auto;
 }
 
-
 .hippo-window .hippo-dialog-container .wicket-mfu-row {
     border-bottom: 1px solid #F4F4F4;
-    height: 24px;
-    padding: 5px 0 0 2px;
+    height: 20px;
+    padding: 6px 0 0 2px;
+}
 
+.hippo-window .hippo-dialog-container .wicket-mfu-row:nth-child(2n) {
+    background-color: #F4F4F4;
 }
 
 .wicket-mfu-delete-button-inner {
@@ -51,4 +54,9 @@
     background-repeat: no-repeat;
     padding-left: 20px;
     height: 16px;
+}
+
+.wicket-mfu-row-container-label {
+    margin-bottom: 5px;
+    font-size: 10px;
 }

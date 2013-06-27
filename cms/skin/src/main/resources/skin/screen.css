@@ -2107,6 +2107,7 @@ body.hippo-root div.yui-log-container {
 
 .resource-upload {
   margin-top: 10px;
+  display: inline-table;
 }
 
 .resource-upload input {
