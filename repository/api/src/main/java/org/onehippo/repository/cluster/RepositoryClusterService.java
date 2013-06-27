@@ -22,6 +22,12 @@ import org.onehippo.cms7.services.SingletonService;
 @SingletonService
 public interface RepositoryClusterService {
 
+    /**
+     * Whether the JCR event is local or external to the current cluster node.
+     * 
+     * @param event  the event to check
+     * @return  Whether the JCR event is local or external to the current cluster node
+     */
     boolean isExternalEvent(Event event);
 
 }
