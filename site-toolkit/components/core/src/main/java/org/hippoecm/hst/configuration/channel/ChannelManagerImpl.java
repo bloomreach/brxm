@@ -64,6 +64,8 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -165,7 +167,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
         channels.put(channel.getId(), channel);
     }
 
-    private void populateChannelForMount(ContextualizableMount mount) {
+    private void populateChannelForMount(ContextualizableMount mount, final Session session) {
         // we are only interested in Mount's that have isMapped = true and that 
         // are live mounts: We do not display 'preview' Mounts in cms: instead, a 
         // live mount decorated as preview are shown
@@ -218,7 +220,22 @@ public class ChannelManagerImpl implements MutableChannelManager {
         if (fineGrainedLocking) {
             channel.setFineGrainedLocking(true);
             // all the locks are on the preview mount, hence decorate it first
+            Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
+            Set<String> mainConfigNodesLockedBySet = new HashSet<String>();
+            try {
+                Node channelRootConfigNode = session.getNode(previewMount.getHstSite().getConfigurationPath());
+                // in finegrained locking mode, hst:sitemap, hst:catalog, etc can be separately locked/changed
+                for (Node mainConfigNode : new NodeIterable(channelRootConfigNode.getNodes())) {
+                    final String lockedBy = JcrUtils.getStringProperty(mainConfigNode, HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY, null);
+                    if (lockedBy != null) {
+                     mainConfigNodesLockedBySet.add(lockedBy);
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.error("Expected configuration node at '"+previewMount.getHstSite().getConfigurationPath()+"' but not found.");
+            }
             Set<String> lockedBySet = getAllUsersWithAContainerLock(mountDecorator.decorateMountAsPreview(mount));
+            lockedBySet.addAll(mainConfigNodesLockedBySet);
             channel.setChangedBySet(lockedBySet);
         } else if (mount.getLockedBy() != null){
             s.add(mount.getLockedBy());
@@ -330,7 +347,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
             for (Mount mountForCurrentHostGroup : mountsForCurrentHostGroup) {
                 if (mountForCurrentHostGroup instanceof ContextualizableMount) {
-                    populateChannelForMount((ContextualizableMount) mountForCurrentHostGroup);
+                    populateChannelForMount((ContextualizableMount) mountForCurrentHostGroup, configNode.getSession());
                 }
             }
 

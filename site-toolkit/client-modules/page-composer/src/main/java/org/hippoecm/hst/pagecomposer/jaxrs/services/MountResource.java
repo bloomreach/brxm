@@ -122,10 +122,13 @@ public class MountResource extends AbstractConfigResource {
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             String previewConfigurationPath = getEditingPreviewMount(requestContext).getHstSite().getConfigurationPath();
 
+            Set<String> usersWithLockedMainConfigNode = findUsersWithLockedMainConfigNodes(session, previewConfigurationPath);
             Set<String> usersWithLockedContainers = findUsersWithLockedContainers(session, previewConfigurationPath);
-
-            List<UserRepresentation> usersWithChanges = new ArrayList<UserRepresentation>(usersWithLockedContainers.size());
-            for (String userId : usersWithLockedContainers) {
+            Set<String> usersWithLocks = new HashSet<String>();
+            usersWithLocks.addAll(usersWithLockedMainConfigNode);
+            usersWithLocks.addAll(usersWithLockedContainers);
+            List<UserRepresentation> usersWithChanges = new ArrayList<UserRepresentation>(usersWithLocks.size());
+            for (String userId : usersWithLocks) {
                 usersWithChanges.add(new UserRepresentation(userId));
             }
 
@@ -137,10 +140,27 @@ public class MountResource extends AbstractConfigResource {
         }
     }
 
-    private Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
+    private Set<String> findUsersWithLockedMainConfigNodes(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
         final String xpath = buildXPathQueryToFindLockedContainersForUsers(previewConfigurationPath);
-        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
+        return collectFromQueryUsersForLockedBy(session, xpath);
+    }
 
+    private Set<String> findUsersWithLockedContainers(final HippoSession session, String previewConfigurationPath) throws RepositoryException {
+        final String xpath = buildXPathQueryToFindLockedMainConfigNodesForUsers(previewConfigurationPath);
+        return collectFromQueryUsersForLockedBy(session, xpath);
+    }
+
+    private String buildXPathQueryToFindLockedMainConfigNodesForUsers(String previewConfigurationPath) {
+        return "/jcr:root" + previewConfigurationPath + "/*[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
+    }
+
+    private String buildXPathQueryToFindLockedContainersForUsers(String previewConfigurationPath) {
+        return "/jcr:root" + previewConfigurationPath + "//element(*," + HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT + ")"
+                + "[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
+    }
+
+    private Set<String> collectFromQueryUsersForLockedBy(final HippoSession session, final String xpath) throws RepositoryException {
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
         final NodeIterable lockedContainers = new NodeIterable(result.getNodes());
         Set<String> userIds = new HashSet<String>();
         for (Node lockedContainer : lockedContainers) {
@@ -152,10 +172,6 @@ public class MountResource extends AbstractConfigResource {
         return userIds;
     }
 
-    private String buildXPathQueryToFindLockedContainersForUsers(String previewConfigurationPath) {
-        return "/jcr:root" + previewConfigurationPath + "//element(*," + HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT + ")"
-                + "[@" + HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY + " != '']";
-    }
 
     /**
      * Try to lock a mount.
@@ -416,7 +432,12 @@ public class MountResource extends AbstractConfigResource {
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             List<String> relativeContainerPathsToPublish = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
+
+            List<String> mainConfigNodeNamesToPublish = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             pushContainerChildrenNodes(session, previewConfigurationPath, liveConfigurationPath, relativeContainerPathsToPublish);
+            copyChangedMainConfigNodes(session, previewConfigurationPath, liveConfigurationPath, mainConfigNodeNamesToPublish);
+
+            HstConfigurationUtils.persistChanges(session, getHstManager());
             return ok("Site is published");
         } catch (RepositoryException e) {
             return error("Could not publish preview configuration : " + e);
@@ -654,7 +675,11 @@ public class MountResource extends AbstractConfigResource {
 
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
             List<String> relativeContainerPathsToRevert = findChangedContainersForUsers(session, previewConfigurationPath, userIds);
+            List<String> mainConfigNodeNamesToRevert = findChangedMainConfigNodeNamesForUsers(session, previewConfigurationPath, userIds);
             pushContainerChildrenNodes(session, liveConfigurationPath, previewConfigurationPath, relativeContainerPathsToRevert);
+            copyChangedMainConfigNodes(session, liveConfigurationPath, previewConfigurationPath, mainConfigNodeNamesToRevert);
+
+            HstConfigurationUtils.persistChanges(session, getHstManager());
             return ok("Changes of user '"+session.getUserID()+"' for site '"+getEditingPreviewMount(requestContext).getHstSite().getName()+"' are discarded.");
         } catch (RepositoryException e) {
             return error("Could not discard preview configuration: " + e);
@@ -682,6 +707,27 @@ public class MountResource extends AbstractConfigResource {
         return relativePathsToRevert;
     }
 
+    private List<String> findChangedMainConfigNodeNamesForUsers(final HippoSession session, String previewConfigurationPath, List<String> userIds) throws RepositoryException {
+        if (userIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        final String xpath = buildXPathQueryToFindMainfConfigNodesForUsers(previewConfigurationPath, userIds);
+        final QueryResult result = session.getWorkspace().getQueryManager().createQuery(xpath, Query.XPATH).execute();
+
+        final NodeIterable mainConfigNodesToRevert = new NodeIterable(result.getNodes());
+        List<String> mainConfigNodeNamesToRevert = new ArrayList<String>();
+        for (Node mainConfigNodeToRevert : mainConfigNodesToRevert) {
+            String mainConfigNodePath = mainConfigNodeToRevert.getPath();
+            if (!mainConfigNodePath.startsWith(previewConfigurationPath)) {
+                log.warn("Cannot discard container '{}' because does not start with preview config path '{}'.");
+                continue;
+            }
+            mainConfigNodeNamesToRevert.add(mainConfigNodeToRevert.getPath().substring(previewConfigurationPath.length() + 1));
+        }
+        return mainConfigNodeNamesToRevert;
+    }
+
     private String buildXPathQueryToFindContainersForUsers(String previewConfigurationPath, List<String> userIds) {
         if (userIds.isEmpty()) {
             throw new IllegalArgumentException("List of user IDs cannot be empty");
@@ -692,6 +738,30 @@ public class MountResource extends AbstractConfigResource {
         xpath.append("//element(*,");
         xpath.append(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
         xpath.append(")[");
+
+        String concat = "";
+        for (String userId : userIds) {
+            xpath.append(concat);
+            xpath.append('@');
+            xpath.append(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY);
+            xpath.append(" = '");
+            xpath.append(userId);
+            xpath.append("'");
+            concat = " or ";
+        }
+        xpath.append("]");
+
+        return xpath.toString();
+    }
+
+    private String buildXPathQueryToFindMainfConfigNodesForUsers(String previewConfigurationPath, List<String> userIds) {
+        if (userIds.isEmpty()) {
+            throw new IllegalArgumentException("List of user IDs cannot be empty");
+        }
+
+        StringBuilder xpath = new StringBuilder("/jcr:root");
+        xpath.append(previewConfigurationPath);
+        xpath.append("/*[");
 
         String concat = "";
         for (String userId : userIds) {
@@ -756,7 +826,43 @@ public class MountResource extends AbstractConfigResource {
                         absToContainerPath, relativeContainerPath);
             }
         }
-        HstConfigurationUtils.persistChanges(session, getHstManager());
+    }
+
+    private void copyChangedMainConfigNodes(final HippoSession session,
+                                            final String fromConfig,
+                                            final String toConfig,
+                                            final List<String> mainConfigNodeNames) throws RepositoryException {
+        for (String mainConfigNodeName : mainConfigNodeNames) {
+            String absFromPath = fromConfig + "/" + mainConfigNodeName;
+            String absToPath = toConfig + "/" + mainConfigNodeName;
+            final Node rootNode = session.getRootNode();
+            if (rootNode.hasNode(absFromPath.substring(1)) && rootNode.hasNode(absToPath.substring(1))) {
+                final Node nodeToReplace = rootNode.getNode(absToPath.substring(1));
+                Node fromNode = rootNode.getNode(absFromPath.substring(1));
+                if (!fromNode.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION) ||
+                        !nodeToReplace.getParent().isNodeType(HstNodeTypes.NODETYPE_HST_CONFIGURATION)) {
+                    log.warn("Node '{}' or '{]' is not a main node below hst:configuration. Cannot be published or revered",
+                            fromNode.getPath(), nodeToReplace.getPath());
+                    continue;
+                }
+
+                nodeToReplace.remove();
+
+                if (fromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY)) {
+                    fromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY).remove();
+                }
+                if (fromNode.hasProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON)) {
+                    fromNode.getProperty(HstNodeTypes.GENERAL_PROPERTY_LOCKED_ON).remove();
+                }
+
+                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED, Calendar.getInstance());
+                fromNode.setProperty(HstNodeTypes.GENERAL_PROPERTY_LAST_MODIFIED_BY, session.getUserID());
+                session.copy(fromNode, absToPath);
+            } else {
+                log.warn("Cannot copy node '{}' because live or preview version for '{}' is not available.",
+                        absToPath, mainConfigNodeName);
+            }
+        }
     }
 
 

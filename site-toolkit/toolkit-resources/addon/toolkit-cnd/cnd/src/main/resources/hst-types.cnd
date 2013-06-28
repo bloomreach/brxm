@@ -31,6 +31,10 @@
 - * (string)
 
 [hst:templates] > nt:base, mix:referenceable orderable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
 + * (hst:template)
 
 [hst:abstractcomponent] > nt:base, mix:referenceable, hst:descriptive orderable 
@@ -81,6 +85,10 @@
 + * (hst:containeritemcomponent)
 
 [hst:catalog] > nt:base, mix:referenceable orderable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
 + * (hst:containeritempackage)
 
 [hst:components] > nt:base, mix:referenceable orderable
@@ -136,6 +144,10 @@
 + * (hst:sitemapitem)
 
 [hst:sitemap] > nt:base, mix:referenceable orderable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
 + * (hst:sitemapitem)
 
 [hst:sitemenuitem] > nt:base, mix:referenceable orderable
@@ -158,11 +170,16 @@
 + * (hst:sitemenuitem)
 
 [hst:sitemenus] > nt:base, mix:referenceable
+- hst:lockedby (string)
+- hst:lockedon (date)
+- hst:lastmodified (date)
+- hst:lastmodifiedby (string)
 + * (hst:sitemenu)
 
 
 [hst:configuration] > nt:base, mix:referenceable, mix:versionable
 - hst:inheritsfrom (string) multiple
+// the lock props used for coarse grained locking
 - hst:lockedby (string)
 - hst:lockedon (date)
 + hst:components (hst:components) = hst:components
