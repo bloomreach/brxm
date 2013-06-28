@@ -24,11 +24,15 @@ import java.util.Set;
 import javax.jcr.Item;
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
+import org.apache.wicket.MarkupContainer;
+import org.apache.wicket.ResourceReference;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -38,6 +42,7 @@ import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.compare.NodeComparer;
 import org.hippoecm.frontend.editor.compare.ObjectComparer;
+import org.hippoecm.frontend.editor.resources.EditorResources;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.event.IObservable;
@@ -570,5 +575,19 @@ public abstract class AbstractFieldPlugin<P extends Item, C extends IModel> exte
 
     public int getNumberOfItems() {
         return provider.size();
+    }
+
+    protected Component createHint() {
+        MarkupContainer hint = new MarkupContainer("hint") {};
+        String subtitle = getPluginConfig().getString("hint");
+        if (StringUtils.isBlank(subtitle)) {
+            // no hint available, display nothing
+            hint.setVisible(false);
+        } else {
+            // display the hint
+            hint.add(new Label("hint-text", subtitle));
+            hint.add(new Image("hint-image", new ResourceReference(EditorResources.class, "images/icons/hint.png")));
+        }
+        return hint;
     }
 }

@@ -76,6 +76,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         }
         add(required);
 
+        add(createHint());
         add(createAddLink());
     }
 

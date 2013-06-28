@@ -65,6 +65,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         }
         add(required);
 
+        add(createHint());
         add(createAddLink());
     }
 

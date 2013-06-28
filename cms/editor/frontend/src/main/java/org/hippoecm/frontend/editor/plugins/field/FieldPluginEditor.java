@@ -30,6 +30,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.AbstractRenderService;
+import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
 public class FieldPluginEditor extends Panel {
@@ -47,8 +48,10 @@ public class FieldPluginEditor extends Panel {
 
         if (editable) {
             add(new TextFieldWidget("caption-editor", new PropertyModel<String>(model, "caption")));
+            add(new TextAreaWidget("hint-editor", new PropertyModel<String>(model, "hint")));
         } else {
             add(new Label("caption-editor", new PropertyModel<String>(model, "caption")));
+            add(new Label("hint-editor", new PropertyModel<String>(model, "hint")));
         }
         add(new RefreshingView<String>("css") {
             private static final long serialVersionUID = 1L;
