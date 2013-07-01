@@ -20,6 +20,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 import javax.jcr.observation.Event;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
@@ -52,6 +53,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     private static final String CONFIG_MODULECONFIGPATH = "moduleconfigpath";
     private static final String CONFIG_CRONEXPRESSION_PROPERTY = "cronexpression";
     private static final String CONFIG_MINUTES_TO_LIVE_PROPERTY = "minutestolive";
+    private static final String CONFIG_EXCLUDE_PATHS = "excludepaths";
     private static final String CONFIG_LOCK_ISDEEP_PROPERTY = "jcr:lockIsDeep";
     private static final String CONFIG_LOCK_OWNER = "jcr:lockOwner";
 
@@ -59,6 +61,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
 
     private String cronExpression;
     private long minutesToLive;
+    private String excludePaths = "";
     private RepositoryJobInfo jobInfo;
     private String schedulerJobName = "FormDataCleanup";
     private String schedulerGroupName = "default";
@@ -68,13 +71,15 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     }
 
     /* Test only */
-    public FormDataCleanupModule(String moduleName, String moduleConfigPath, String cronExpression, long minutesToLive)
+    public FormDataCleanupModule(String moduleName, String moduleConfigPath, String cronExpression, long minutesToLive,
+                                 String excludePaths)
             throws RepositoryException {
         this.moduleName = moduleName;
         this.moduleConfigPath = moduleConfigPath;
         this.cronExpression = cronExpression;
         this.minutesToLive = minutesToLive;
         this.schedulerJobName += "-test";
+        this.excludePaths = excludePaths;
         scheduleJob();
     }
 
@@ -82,6 +87,15 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
     protected void doConfigure(final Node moduleConfig) throws RepositoryException {
         cronExpression = JcrUtils.getStringProperty(moduleConfig, CONFIG_CRONEXPRESSION_PROPERTY, null);
         minutesToLive = JcrUtils.getLongProperty(moduleConfig, CONFIG_MINUTES_TO_LIVE_PROPERTY, 30l);
+        if (moduleConfig.hasProperty(CONFIG_EXCLUDE_PATHS)) {
+            StringBuilder buf = new StringBuilder();
+            Value[] values = moduleConfig.getProperty(CONFIG_EXCLUDE_PATHS).getValues();
+            for (int i = 0; i < values.length; i++) {
+                buf.append(values[i].getString());
+                buf.append('|');
+            }
+            excludePaths = buf.toString();
+        }
     }
 
     @Override
@@ -128,6 +142,7 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
         jobInfo = new RepositoryJobInfo(schedulerJobName, schedulerGroupName, FormDataCleanupJob.class);
         jobInfo.setAttribute(CONFIG_MODULECONFIGPATH, moduleConfigPath);
         jobInfo.setAttribute(CONFIG_MINUTES_TO_LIVE_PROPERTY, String.valueOf(minutesToLive));
+        jobInfo.setAttribute(CONFIG_EXCLUDE_PATHS, excludePaths);
         final RepositoryJobTrigger jobTrigger = new RepositoryJobCronTrigger(schedulerJobName + "Trigger", cronExpression);
         repositoryScheduler.scheduleJob(jobInfo, jobTrigger);
     }
@@ -145,20 +160,27 @@ public class FormDataCleanupModule extends AbstractReconfigurableDaemonModule {
             log.info("Running form data cleanup job");
             final Session session = context.getSession(new SimpleCredentials("system", new char[] {}));
             long minutesToLive = Long.parseLong(context.getAttribute(CONFIG_MINUTES_TO_LIVE_PROPERTY));
-            removeOldFormData(minutesToLive, session);
+            String[] excludePaths = context.getAttribute(CONFIG_EXCLUDE_PATHS).split("\\|");
+            removeOldFormData(minutesToLive, excludePaths, session);
         }
 
-        private void removeOldFormData(long minutesToLive, final Session session) throws RepositoryException {
+        private void removeOldFormData(long minutesToLive, final String[] excludePaths, final Session session) throws RepositoryException {
             final QueryManager queryManager = session.getWorkspace().getQueryManager();
             final Query query = queryManager.createQuery(FORMDATA_QUERY, Query.SQL);
             final NodeIterator nodes = query.execute().getNodes();
             final long tooOldTimeStamp = System.currentTimeMillis() - minutesToLive * 60 * 1000L;
             int count = 0;
+            outer:
             while (nodes.hasNext()) {
                 try {
                     final Node node = nodes.nextNode();
                     if (node.getProperty("hst:creationtime").getDate().getTimeInMillis() > tooOldTimeStamp) {
-                        break;
+                        break outer;
+                    }
+                    for (String path : excludePaths) {
+                        if (!"".equals(path) && node.getPath().startsWith(path)) {
+                            continue outer;
+                        }
                     }
                     if (log.isDebugEnabled()) {
                         log.debug("Removing form data item at " + node.getPath());

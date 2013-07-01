@@ -36,5 +36,8 @@
       <!-- delete nodes older than 24h -->
       <sv:value>1440</sv:value>
     </sv:property>
+    <sv:property sv:name="excludepaths" sv:multiple="true" sv:type="String">
+      <sv:value>/formdata/permanent/</sv:value>
+    </sv:property>
   </sv:node>
 </sv:node>

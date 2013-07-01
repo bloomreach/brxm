@@ -29,6 +29,8 @@ import org.hippoecm.repository.api.HippoNodeIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.scheduling.RepositoryScheduler;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -50,13 +52,21 @@ public class FormDataCleanupModuleTest extends AbstractHstTestCase {
 
     @After
     public void tearDown() throws Exception {
+        HippoServiceRegistry.getService(RepositoryScheduler.class).deleteJob("FormDataCleanup-test", "default");
         super.tearDown();
     }
 
-    private void createFormDataNode(long creationTimeMillis) throws Exception {
+    private void createFormDataNode(String subPath, long creationTimeMillis) throws Exception {
         Session session = getSession();
         Node rootNode = session.getRootNode();
-        Node formData = rootNode.addNode("formdata", "hst:formdatacontainer");
+        Node formData = rootNode.getNode("formdata");
+        if (subPath != null) {
+            if (!formData.hasNode(subPath)) {
+                formData = formData.addNode(subPath, "hst:formdatacontainer");
+            } else {
+                formData = formData.getNode(subPath);
+            }
+        }
         Node postedFormDataNode = formData.addNode("tick_"+System.currentTimeMillis(), "hst:formdata");
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(creationTimeMillis);
@@ -75,21 +85,45 @@ public class FormDataCleanupModuleTest extends AbstractHstTestCase {
     @Test
     public void testFormDataCleanup() throws Exception {
         long now = System.currentTimeMillis();
-        createFormDataNode(now - 45 * 1000);
-        createFormDataNode(now - 65 * 1000);
+        createFormDataNode(null, now - 45 * 1000);
+        createFormDataNode(null, now - 65 * 1000);
         assertEquals(2l, getFormdataNodes().getTotalSize());
 
         FormDataCleanupModule formDataCleanupModule = new FormDataCleanupModule(
                 "FormDataCleanupModule",
                 "/hippo:configuration/hippo:modules/formdatacleanup/hippo:moduleconfig",
-                "0/2 * * * * ?", 1l);
+                "0/2 * * * * ?", 1l, "");
 
         Thread.sleep(2000);
         assertEquals(1l, getFormdataNodes().getTotalSize());
-        /* quartz scheduler does not really allow running every second, so need to wait about a minute to see the second removal
-        Thread.sleep(60000);
-        assertEquals(0l, getFormdataNodes().getTotalSize());
-        */
+        //quartz scheduler does not really allow running every second, so need to wait about a minute to see the second removal
+        //Thread.sleep(60000);
+        //assertEquals(0l, getFormdataNodes().getTotalSize());
         formDataCleanupModule.shutdown();
     }
+
+    @Test
+    public void testExcludeFormDataCleanup() throws Exception {
+        long now = System.currentTimeMillis();
+        createFormDataNode(null, now - 45 * 1000);
+        createFormDataNode("permanent", now - 45 * 1000);
+        createFormDataNode("abcd", now - 45 * 1000);
+        createFormDataNode(null, now - 65 * 1000);
+        createFormDataNode("permanent", now - 65 * 1000);
+        createFormDataNode("abcd", now - 65 * 1000);
+        assertEquals(6l, getFormdataNodes().getTotalSize());
+
+        FormDataCleanupModule formDataCleanupModule = new FormDataCleanupModule(
+                "FormDataCleanupModule",
+                "/hippo:configuration/hippo:modules/formdatacleanup/hippo:moduleconfig",
+                "0/2 * * * * ?", 1l, "/formdata/permanent/|/formdata/abcd|");
+
+        Thread.sleep(2000);
+        assertEquals(5l, getFormdataNodes().getTotalSize());
+        //quartz scheduler does not really allow running every second, so need to wait about a minute to see the second removal
+        //Thread.sleep(60000);
+        //assertEquals(4l, getFormdataNodes().getTotalSize());
+        formDataCleanupModule.shutdown();
+    }
+
 }
