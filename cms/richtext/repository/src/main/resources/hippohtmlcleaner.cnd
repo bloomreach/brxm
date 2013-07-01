@@ -48,6 +48,7 @@
 - hippohtmlcleaner:allowedParaClasses (string) multiple
 - hippohtmlcleaner:allowedPreClasses (string) multiple
 - hippohtmlcleaner:imgAlternateSrcAttr (string)
+- hippohtmlcleaner:forceEmptyField (boolean)
 + hippohtmlcleaner:allowedSingleWhitespaceElement (hippohtmlcleaner:allowedSingleWhitespaceElement) multiple
 + hippohtmlcleaner:cleanupElement (hippohtmlcleaner:cleanupElement) multiple
 
