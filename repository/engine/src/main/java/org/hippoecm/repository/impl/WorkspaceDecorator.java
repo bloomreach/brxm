@@ -296,9 +296,11 @@ public class WorkspaceDecorator extends org.hippoecm.repository.decorating.Works
     }
 
     private void touch(String destAbsPath) throws RepositoryException {
-        Node destination = null, parent = getSession().getRootNode().getNode(
-                destAbsPath.substring(1, destAbsPath.lastIndexOf("/")));
-        for (NodeIterator iter = parent.getNodes(destAbsPath.substring(destAbsPath.lastIndexOf("/") + 1)); iter
+        Node destination = null;
+        int parentPathEnd = destAbsPath.lastIndexOf("/");
+        Node parent = (parentPathEnd <= 0) ? getSession().getRootNode()
+                : getSession().getNode(destAbsPath.substring(0, parentPathEnd));
+        for (NodeIterator iter = parent.getNodes(destAbsPath.substring(parentPathEnd + 1)); iter
                 .hasNext();) {
             destination = iter.nextNode();
         }

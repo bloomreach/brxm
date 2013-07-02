@@ -199,10 +199,10 @@ public abstract class WorkspaceDecorator extends AbstractDecorator implements Hi
     }
 
     public void createWorkspace(String name, String srcWorkspace) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
-        createWorkspace(name, srcWorkspace);
+        workspace.createWorkspace(name, srcWorkspace);
     }
 
     public void deleteWorkspace(String name) throws AccessDeniedException, UnsupportedRepositoryOperationException, NoSuchWorkspaceException, RepositoryException {
-        deleteWorkspace(name);
+        workspace.deleteWorkspace(name);
     }
 }
