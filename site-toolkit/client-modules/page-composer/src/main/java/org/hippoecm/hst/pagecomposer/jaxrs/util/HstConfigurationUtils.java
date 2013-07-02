@@ -146,7 +146,7 @@ public class HstConfigurationUtils {
                     log.info("Container '{}' has been modified at '{}' but validation timestamp was '{}'. Cannot acquire lock now for user '{}'.",
                             new String[]{containerNode.getPath(), dateFormat.format(existing.getTime()),
                                     dateFormat.format(validate.getTime()) , session.getUserID()});
-                    throw new IllegalStateException("Container '"+containerNode.getPath()+"' cannot be changed as has been changed already by another user.");
+                    throw new IllegalStateException("Container '"+containerNode.getPath()+"' cannot be changed because timestamp validation did not pass.");
                 }
             }
             log.info("Container '{}' gets a lock for user '{}'.", containerNode.getPath(), session.getUserID());

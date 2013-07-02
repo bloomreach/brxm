@@ -292,12 +292,23 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
             doSetParameters(componentParameters, newVariant, params, lastModifiedTimestamp);
             return ok("Parameters renamed from '" + oldVariant + "' to '" + newVariant + "' and saved successfully.", null);
         } catch (IllegalStateException e) {
+            logParameterSettingFailed(e);
             return error(e.getMessage());
         } catch (IllegalArgumentException e) {
+            logParameterSettingFailed(e);
             return error(e.getMessage());
         } catch (RepositoryException e) {
-            log.error("Unable to set the parameters of component", e);
+            logParameterSettingFailed(e);
+            log.warn("Unable to set the parameters of component", e);
             throw new WebApplicationException(e);
+        }
+    }
+
+    private void logParameterSettingFailed(final Exception e) {
+        if (log.isDebugEnabled()) {
+            log.warn("Unable to set the parameters of component", e);
+        } else {
+            log.warn("Unable to set the parameters of component: {}", e.toString());
         }
     }
 

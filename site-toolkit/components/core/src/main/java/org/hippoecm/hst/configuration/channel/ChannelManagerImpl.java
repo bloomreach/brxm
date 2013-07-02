@@ -234,9 +234,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
             } catch (RepositoryException e) {
                 log.error("Expected configuration node at '"+previewMount.getHstSite().getConfigurationPath()+"' but not found.");
             }
-            Set<String> lockedBySet = getAllUsersWithAContainerLock(mountDecorator.decorateMountAsPreview(mount));
-            lockedBySet.addAll(mainConfigNodesLockedBySet);
-            channel.setChangedBySet(lockedBySet);
+            Set<String> changedBySet = getAllUsersWithAContainerLock(mountDecorator.decorateMountAsPreview(mount));
+            changedBySet.addAll(mainConfigNodesLockedBySet);
+            channel.setChangedBySet(changedBySet);
         } else if (mount.getLockedBy() != null){
             s.add(mount.getLockedBy());
             channel.setChangedBySet(s);

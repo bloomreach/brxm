@@ -25,6 +25,7 @@ public interface ChannelManagerConstants {
     static final String HST_MOUNT_FINEGRAINED_LOCKING = "HST-Mount-FineGrainedLocking";
     static final String HST_RENDER_VARIANT = "HST-Render-Variant";
     static final String HST_SITE_HAS_PREVIEW_CONFIG = "HST-Site-HasPreviewConfig";
+    static final String HST_SITE_CHANGED_BY_SET = "HST-Changed-By-Set";
     // below used outside HST
     static final String HST_PAGE_REQUEST_VARIANTS = "HST-Page-Request-Variants";
 

@@ -16,6 +16,7 @@
 package org.hippoecm.hst.core.channelmanager;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -71,7 +72,9 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             }
             response.addHeader(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
             response.addHeader(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
-
+            if (mount.getChannel() != null && mount.getChannel().getChangedBySet() != null && mount.getChannel().getChangedBySet().size() > 0) {
+                response.addHeader(ChannelManagerConstants.HST_SITE_CHANGED_BY_SET, getChangedBySetAsValue(mount.getChannel().getChangedBySet()));
+            }
         } else if (isComposerMode(request)) {
             HashMap<String, String> attributes = new HashMap<String, String>();
             attributes.put("uuid", compConfig.getCanonicalIdentifier());
@@ -89,17 +92,18 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             attributes.put("url", url.toString());
             attributes.put("refNS", window.getReferenceNamespace());
             if (mount instanceof MutableMount) {
-                if ( mount.getVirtualHost().getVirtualHosts().isFineGrainedLocking() && compConfig.getLockedBy() != null) {
-
-                    String cmsUserId = (String)session.getAttribute(CmsSecurityValve.CMS_USER_ID_ATTR);
-                    attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY, compConfig.getLockedBy());
-                    if (compConfig.getLockedBy().equals(cmsUserId)) {
-                        attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, "true");
-                    } else {
-                        attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, "false");
-                    }
-                    if (compConfig.getLockedOn() != null) {
-                        attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_ON, String.valueOf(compConfig.getLockedOn().getTimeInMillis()));
+                if (mount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+                    if (compConfig.getLockedBy() != null) {
+                        String cmsUserId = (String)session.getAttribute(CmsSecurityValve.CMS_USER_ID_ATTR);
+                        attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY, compConfig.getLockedBy());
+                        if (compConfig.getLockedBy().equals(cmsUserId)) {
+                            attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, "true");
+                        } else {
+                            attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY_CURRENT_USER, "false");
+                        }
+                        if (compConfig.getLockedOn() != null) {
+                            attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_ON, String.valueOf(compConfig.getLockedOn().getTimeInMillis()));
+                        }
                     }
                     if (compConfig.getLastModified() != null) {
                         attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LAST_MODIFIED, String.valueOf(compConfig.getLastModified().getTimeInMillis()));
@@ -111,6 +115,18 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             response.addPreamble(comment);
         }
 
+    }
+
+    private String getChangedBySetAsValue(final Set<String> set) {
+        StringBuilder builder = new StringBuilder();
+        for (String value : set) {
+            if (builder.length() > 0) {
+                builder.append(",");
+            }
+            builder.append("\"").append(value).append("\"");
+        }
+        builder.insert(0, "[").append("]");
+        return builder.toString();
     }
 
 

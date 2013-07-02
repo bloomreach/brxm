@@ -49,7 +49,7 @@ public class Channel implements Serializable {
     private String mountId;
     private String locale;
     private boolean fineGrainedLocking;
-    private Set<String> changedBySet;
+    private Set<String> changedBySet = new HashSet<String>();
     private Long lockedOn;
     private String defaultDevice = DEFAULT_DEVICE;
     private List<String> devices = Collections.EMPTY_LIST;
