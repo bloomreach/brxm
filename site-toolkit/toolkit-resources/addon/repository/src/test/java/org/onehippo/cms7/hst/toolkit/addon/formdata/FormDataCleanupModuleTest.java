@@ -68,6 +68,7 @@ public class FormDataCleanupModuleTest extends AbstractHstTestCase {
             }
         }
         Node postedFormDataNode = formData.addNode("tick_"+System.currentTimeMillis(), "hst:formdata");
+        Thread.sleep(2l);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(creationTimeMillis);
         postedFormDataNode.setProperty("hst:creationtime", calendar);
