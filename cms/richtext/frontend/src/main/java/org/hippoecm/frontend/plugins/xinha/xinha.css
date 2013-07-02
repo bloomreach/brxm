@@ -429,3 +429,7 @@ div.rte-preview-style {
     border: 1px solid #999;
     border-radius: 5px;
 }
+
+.htmlarea .panels_right {
+    background-color: #fff;
+}

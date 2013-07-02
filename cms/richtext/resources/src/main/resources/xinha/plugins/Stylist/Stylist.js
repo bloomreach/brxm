@@ -1,24 +1,8 @@
-
 //############################################
 // GLOBAL VARS
 //############################################
 
-/**
- * All tags defined in here will be removed (unwrapped) if:
- * - they have no id attribute
- * - class attribute value is empty
- * @type {*}
- */
-var EMPTY_WRAPPERS = XinhaTools.collection(["DIV", "SPAN"]);
-/**
- * All tags mentioned below will be wrapped by this plugin and styles will be applied
- * to a wrapper instead of element itself
- * so, <p>foo</p> will become <wrapper class="xx"><p>foo</p></wrapper>
- * @type {*}
- */
-var WRAP_TAGS = XinhaTools.collection(["P", "UL", "TABLE"]);
 // FOR CONVENIENCE: here are some tag names:
-
 /*
  var tagNames = ["A", "ABBR", "ADDRESS", "AREA", "ARTICLE", "ASIDE", "AUDIO"
  , "B", "BASE", "BDI", "BDO", "BLOCKQUOTE", "BODY", "BR", "BUTTON",
@@ -38,8 +22,33 @@ var WRAP_TAGS = XinhaTools.collection(["P", "UL", "TABLE"]);
  "U", "UL", "VAR", "VIDEO", "WBR"];
  */
 
-var KIDS_WRAPPING = ['LI', 'TD', "TR"];
-var WRAP_KID_TAGS = XinhaTools.collection(KIDS_WRAPPING);
+/**
+ * All tags defined in here will be removed (unwrapped) if:
+ * - they have no id attribute
+ * - class attribute value is empty
+ * @type {Array}
+ */
+var EMPTY_WRAPPERS = ["DIV", "SPAN"];
+
+/**
+ * All tags mentioned below will be wrapped by this plugin and styles will be applied
+ * to a wrapper instead of element itself
+ * so, <p>foo</p> will become <wrapper class="xx"><p>foo</p></wrapper>
+ * @type {Array}
+ */
+var WRAP_TAGS = ["P", "UL", "TABLE"];
+
+/**
+ * Tags mentioned below are considered valid child nodes of a span
+ * @type {Array}
+ */
+var SPAN_KIDS = ["A", "ABBR", "ACRONYM", "B", "BDO", "BIG", "BR", "BUTTON", "CITE", "CODE", "DEL", "DFN", "EM", "I", "IMG", "INPUT", "INS", "KDB", "LABEL", "MAP", "OBJECT", "Q", "SAMP", "SCRIPT", "SELECT", "SMALL", "SPAN", "STRONG", "SUB", "SUP", "TEXTAREA", "TT", "VAR"];
+
+/**
+ * Tags mentioned below will not be wrapped but instead a wrapper will be appended containing all child nodes
+ * @type {Array}
+ */
+var WRAP_KID_TAGS = ['LI', 'TD', "TR"];
 
 // Make our right side panel and insert appropriately
 function Stylist(editor, args) {
@@ -58,21 +67,21 @@ Stylist._pluginInfo = {
 };
 
 Stylist.prototype.onGenerateOnce = function () {
-
-    var cfg = XinhaTools.nullOrValue(this.editor, ['config', 'Stylist']);
-    var cssFiles = cfg !== null && cfg.css !== undefined &&
-            Xinha.objectProperties(cfg.css).length > 0 ? cfg.css.split(',') : [];
+    var i, j, cssUrl, skip,
+        cfg = XinhaTools.nullOrValue(this.editor, ['config', 'Stylist']),
+        cfgPageStyleSheets = this.editor.config.pageStyleSheets,
+        cssFiles = cfg !== null && cfg.css !== undefined && Xinha.objectProperties(cfg.css).length > 0 ?
+                cfg.css.split(',') : [];
 
     this.pageStyleSheets = this.pageStyleSheets || {};
 
-    var cfgPageStyleSheets = this.editor.config.pageStyleSheets;
-    if (typeof cfgPageStyleSheets != 'undefined') {
-        for (var j = 0; j < cfgPageStyleSheets.length; j++) {
-            var cssUrl = cfgPageStyleSheets[j], skip = false;
+    if (cfgPageStyleSheets !== 'undefined') {
+        for (i = 0; i < cfgPageStyleSheets.length; i++) {
+            cssUrl = cfgPageStyleSheets[i];
+            skip = false;
             if (cssFiles.length > 0) {
-
-                for (var k=0; k<cssFiles.length; k++) {
-                    if (cssUrl.indexOf(cssFiles[k]) === -1) {
+                for (j = 0; j < cssFiles.length; j++) {
+                    if (cssUrl.indexOf(cssFiles[j]) === -1) {
                         skip = true;
                         break;
                     }
@@ -95,117 +104,105 @@ Stylist.loadAssets = function() {
     }
     this.assetsLoaded = false;
 
-    var modules = ['rangy-core-min.js'];
-
-    var next = function() {
-        if (modules.length > 0) {
-            var url = _editor_url + 'plugins/Stylist/' + modules.shift();
-            Xinha._getback(url, function(data) {
-                eval.apply(window, [data]);
-                next();
-            });
-        } else {
-            this.assetsLoaded = true;
-
-            if (rangy !== undefined) {
-                rangy.init();
+    var modules = ['rangy-core-min.js'],
+        next = function() {
+            if (modules.length > 0) {
+                var url = window._editor_url + 'plugins/Stylist/' + modules.shift();
+                Xinha._getback(url, function(data) {
+                    eval.apply(window, [data]);
+                    next();
+                });
             } else {
-                console.error('Failed to load Rangy library.');
+                this.assetsLoaded = true;
+
+                if (rangy !== undefined) {
+                    rangy.init();
+                } else {
+                    XinhaTools.error('Failed to load Rangy library.');
+                }
             }
-        }
-    }.bind(this);
+        }.bind(this);
 
     next();
 };
 
 Stylist.prototype._prepareDialog = function () {
-    var editor = this.editor;
-    var stylist = this;
-
-    var html = '<h1><l10n>Styles</l10n></h1>';
+    var editor = this.editor,
+        stylist = this,
+        html = '<h1><l10n>Styles</l10n></h1>',
+        dialog = this.dialog = new Xinha.Dialog(editor, html, 'Stylist', {width: 200}, {modal: false, closable: false}),
+        main = this.dialog.main,
+        caption = this.dialog.captionBar;
 
     this.dialog = new Xinha.Dialog(editor, html, 'Stylist', {width: 200}, {modal: false, closable: false});
     Xinha._addClass(this.dialog.rootElem, 'Stylist');
     this.dialog.attachToPanel('right');
     this.dialog.show();
 
-    var dialog = this.dialog;
-    var main = this.dialog.main;
-    var caption = this.dialog.captionBar;
-
     main.style.overflow = "auto";
     main.style.height = this.editor._framework.ed_cell.offsetHeight - caption.offsetHeight + 'px';
 
-    editor.notifyOn('modechange',
-            function (e, args) {
-                if (!dialog.attached) {
-                    return;
-                }
-                switch (args.mode) {
-                    case 'text':
-                    {
-                        dialog.hide();
-                        break;
-                    }
-                    case 'wysiwyg':
-                    {
-                        dialog.show();
-                        break;
-                    }
-                }
-            }
-    );
-    editor.notifyOn('panel_change',
-            function (e, args) {
-                if (!dialog.attached) {
-                    return;
-                }
-                switch (args.action) {
-                    case 'show':
-                        var newHeight = main.offsetHeight - args.panel.offsetHeight;
-                        main.style.height = ((newHeight > 0) ? main.offsetHeight - args.panel.offsetHeight : 0) + 'px';
-                        dialog.rootElem.style.height = caption.offsetHeight + "px";
-                        editor.sizeEditor();
-                        break;
-                    case 'hide':
-                        stylist.resize();
-                        break;
-                }
-            }
-    );
-    editor.notifyOn('before_resize',
-            function () {
-                if (!dialog.attached) {
-                    return;
-                }
-                dialog.rootElem.style.height = caption.offsetHeight + "px";
-            }
-    );
-    editor.notifyOn('resize',
-            function () {
-                if (!dialog.attached) {
-                    return;
-                }
-                stylist.resize();
-            }
-    );
+    editor.notifyOn('modechange', function (e, args) {
+        if (!dialog.attached) {
+            return;
+        }
+        switch (args.mode) {
+        case 'text':
+            dialog.hide();
+            break;
+        case 'wysiwyg':
+            dialog.show();
+            break;
+        }
+    });
+
+    editor.notifyOn('panel_change', function (e, args) {
+        if (!dialog.attached) {
+            return;
+        }
+
+        switch (args.action) {
+        case 'show':
+            var newHeight = main.offsetHeight - args.panel.offsetHeight;
+            main.style.height = ((newHeight > 0) ? main.offsetHeight - args.panel.offsetHeight : 0) + 'px';
+            dialog.rootElem.style.height = caption.offsetHeight + "px";
+            editor.sizeEditor();
+            break;
+        case 'hide':
+            stylist.resize();
+            break;
+        }
+    });
+
+    editor.notifyOn('before_resize', function () {
+        if (!dialog.attached) {
+            return;
+        }
+        dialog.rootElem.style.height = caption.offsetHeight + "px";
+    });
+
+    editor.notifyOn('resize', function () {
+        if (!dialog.attached) {
+            return;
+        }
+        stylist.resize();
+    });
 };
 
 Stylist.prototype.resize = function () {
-    var rootElem = this.dialog.rootElem;
-
-    if (rootElem.style.display == 'none') {
+    if (this.dialog.rootElem.style.display === 'none') {
         return;
     }
 
-    var panelContainer = rootElem.parentNode;
+    var rootElem = this.dialog.rootElem,
+        panelContainer = rootElem.parentNode,
+        newSize = panelContainer.offsetHeight,
+        i;
 
-    var newSize = panelContainer.offsetHeight;
-    for (var i = 0; i < panelContainer.childNodes.length; ++i) {
-        if (panelContainer.childNodes[i] == rootElem || !panelContainer.childNodes[i].offsetHeight) {
-            continue;
+    for (i = 0; i < panelContainer.childNodes.length; ++i) {
+        if (panelContainer.childNodes[i] !== rootElem && panelContainer.childNodes[i].offsetHeight) {
+            newSize -= panelContainer.childNodes[i].offsetHeight;
         }
-        newSize -= panelContainer.childNodes[i].offsetHeight;
     }
     rootElem.style.height = newSize - 5 + 'px';
     this.dialog.main.style.height = newSize - this.dialog.captionBar.offsetHeight - 5 + 'px';
@@ -254,13 +251,10 @@ Xinha.Config.prototype.stylistLoadStyles = function (styles, altnames, skip_impo
     if (!altnames) {
         altnames = { };
     }
-    var newStyles = Xinha.ripStylesFromCSSString(styles, skip_imports);
-    for (var i in newStyles) {
-        if (altnames[i]) {
-            this.css_style[i] = altnames[i];
-        }
-        else {
-            this.css_style[i] = newStyles[i];
+    var newStyles = Xinha.ripStylesFromCSSString(styles, skip_imports), i;
+    for (i in newStyles) {
+        if (newStyles.hasOwnProperty(i)) {
+            this.css_style[i] = altnames[i] || newStyles[i];
         }
     }
     this.pageStyle += styles;
@@ -430,7 +424,7 @@ Xinha.prototype._stylistAddClasses = function (editor, el, tag, classes) {
         range = selection.getRangeAt(0);
         nodes = range.getNodes();
         if (nodes.length === 0) {
-            console.warn('No nodes found to replace element');
+            XinhaTools.log('No nodes found to replace element');
             return false;
         }
 
@@ -467,24 +461,54 @@ Xinha.prototype._stylistAddClasses = function (editor, el, tag, classes) {
             var myDom = parser.parseFromString(selectedHTML, "text/html");
             var myBody = XinhaTools.findElement(myDom, "body");
             var allSame = XinhaTools.wrapKidsOfNodes(myBody, WRAP_KID_TAGS);
+            XinhaTools.log("all same: " + allSame);
+
             //TODO: detect if a listitem is selected alongside with elements outside of the ul/ol element.
             //This will cause the selectedHTML to contain a ul/ol with only the selected li in it, not the other child
             //nodes, if present. Resolution would be to treat the li separate from the other elements
 
-            if (allSame) {
+            var elms = XinhaTools.findElements(myBody, WRAP_KID_TAGS);
+            var allElements = XinhaTools.getAllElements(myBody);
+            // check if tag is span with valid kids:
+            if (tag != null && tag.toUpperCase() === 'SPAN' && allElements.length > 0) {
+                XinhaTools.log("found elements:" + allElements);
+                var invalidKids = [];
+                for (var i = 0; i < allElements.length; i++) {
+                    var name = allElements[i];
+                    if (XinhaTools.contains(name, SPAN_KIDS)) {
+                        XinhaTools.log("Valid SPAN kid: ", name);
+                        continue;
+                    }
+                    if (XinhaTools.contains(name, invalidKids)) {
+                        invalidKids.push(name);
+                    }
+                }
+
+                if (invalidKids.length > 0) {
+                    alert("Cannot wrap following child elements:\n " + invalidKids + "\n into a span tag (invalid HTML). \nPlease use a DIV");
+                    return;
+                }
+            }
+
+            if (allSame && elms.length > 0) {
                 var kidNodes = myBody.childNodes;
                 for (var kidCounter = 0; kidCounter < kidNodes.length; kidCounter++) {
                     var node = kidNodes[kidCounter];
                     XinhaTools.log("wrapping kid", node);
-                    XinhaTools.wrapKid(node, tag, classes, false);
+                    XinhaTools.wrapKid(node, tag, classes, false, XinhaTools.contains(node.nodeName.toUpperCase(), WRAP_KID_TAGS));
                 }
                 XinhaTools.log("BODY: ", myBody);
                 XinhaTools.log("BODY: ", myBody.innerHTML);
                 XinhaTools.log("all same nodes, wrapped");
-                customReplaceHtml(myBody.innerHTML);
+                if (XinhaTools.findElement(myBody, "LI")) {
+                    customReplaceHtml(myBody.innerHTML);
+                } else {
+                    this.insertHTML(myBody.innerHTML);
+                }
                 doNewWrapping = true;
             }
         }
+
         if (!doNewWrapping) {
             XinhaTools.log("Wrapping whole selection into new tag:");
             this.insertHTML('<' + tag + ' class="' + classes + '">' + selectedHTML + '</' + tag + '>');
@@ -494,7 +518,7 @@ Xinha.prototype._stylistAddClasses = function (editor, el, tag, classes) {
         var existingTag = el.tagName.toUpperCase();
         if (tag != null) {
             var toInsertTag = tag.toUpperCase();
-            var shouldWrap = existingTag in WRAP_TAGS;
+            var shouldWrap = XinhaTools.contains(existingTag, WRAP_TAGS);
             // we should leave existing tag and wrap it:
             if (shouldWrap) {
                 XinhaTools.wrap(el, toInsertTag, classes);
@@ -540,7 +564,7 @@ Xinha.prototype._stylistRemoveClassesFull = function (editor, el, classes) {
                 // remove wrapping element:
                 // NOTE: should we check other attributes as well, e.g. style etc.?
                 // check if we need to remove element:
-                if(el.tagName.toUpperCase() in EMPTY_WRAPPERS){
+                if (XinhaTools.contains(el.tagName.toUpperCase(), EMPTY_WRAPPERS)) {
                     XinhaTools.log("unwrapping: ", el);
                     XinhaTools.unwrap(editor, el);
                 } else{

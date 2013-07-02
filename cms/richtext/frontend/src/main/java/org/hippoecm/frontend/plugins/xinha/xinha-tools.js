@@ -24,6 +24,11 @@
         };
     }
 
+    if (XinhaTools.error === undefined) {
+        XinhaTools.error = function() {
+        };
+    }
+
     /**
      * Return a new function and ensure the provided function is always executed within the provided context
      * with the arguments passed to the wrapping function.
@@ -73,7 +78,7 @@
     XinhaTools.findFirstTextNode = function(node) {
         var i, child, value;
 
-        for (i=0; i<node.childNodes.length; i++) {
+        for (i = 0; i < node.childNodes.length; i++) {
             child = node.childNodes[i];
             if (child.nodeType === 3) {
                 return child;
@@ -102,26 +107,6 @@
         return document.all && document.addEventListener;
     };
 
-
-    /**
-     * Create a collection for easier lookup. e.g.:
-     * <code>if(x in collection(1,2,3,4){doSomething()};</code>
-     * <code>if(x in collection([1,2,3,4]){doSomething()};</code>
-     * @param optional optional parameter  (type of array)
-     * @returns {{}}
-     */
-    XinhaTools.collection = function (optional) {
-        var i, obj = {}, arr = arguments;
-        if (optional instanceof Array) {
-            arr = optional;
-        }
-        for (i = 0; i < arr.length; i++) {
-            obj[arr[i]] = true;
-        }
-        return obj;
-    };
-
-
     /**
      * given two arrays, get same values
      * @param array1
@@ -130,10 +115,10 @@
      */
     XinhaTools.intersect = function (array1, array2) {
         var result = [],
-            c = XinhaTools.collection(array2),
             i;
+
         for (i = 0; i < array1.length; i++) {
-            if (c.indexOf(array1[i]) >= 0) {
+            if (XinhaTools.contains(array1[i], array2)) {
                 result.push(array1[i]);
             }
         }
@@ -141,17 +126,16 @@
     };
 
     /**
-     *  given two arrays, get elements that are in second one but not in first one
+     * given two arrays, get elements that are in second one but not in first one
      * @param array1
      * @param array2
      * @returns {Array}
      */
     XinhaTools.complement = function (array1, array2) {
         var result = [],
-            c = XinhaTools.collection(array2),
             i;
         for (i = 0; i < array1.length; i++) {
-            if (c.indexOf(array1[i]) < 0) {
+            if (!XinhaTools.contains(array1[i], array2)) {
                 result.push(array1[i]);
             }
         }
@@ -228,24 +212,19 @@
             XinhaTools.log("skipping text node", el);
             return;
         }
-        if(nodeType === 3 && el.nodeValue.trim().length === 0){
+        if (nodeType === 3 && el.nodeValue.trim().length === 0) {
             XinhaTools.log("skipping *empty* text node", el);
             return;
         }
         parent = el.parentNode;
-        wrapper = document.createElement(wrapperName);
+        wrapper = XinhaTools.createWrapper(wrapperName, classes);
         parent.insertBefore(wrapper, el);
         parent.removeChild(el);
         wrapper.appendChild(el);
-        classesString = classes;
-        if (classes instanceof Array) {
-            classesString = classes.join(' ');
-        }
-        wrapper.setAttribute("class", classesString);
     };
 
-    XinhaTools.wrapKid = function (el, wrapperName, classes, skipText) {
-        var i, kids;
+    XinhaTools.wrapKid = function (el, wrapperName, classes, skipText, singleWrap) {
+        var i, kids, wrapper, kid;
 
         if (el === null || el.parentNode === null) {
             XinhaTools.log("Empty element, skipping");
@@ -257,10 +236,27 @@
         }
         kids = el.childNodes;
         if (kids !== null) {
-            for (i = 0; i < kids.length; i++) {
-                XinhaTools.wrap(kids[i], wrapperName, classes, skipText);
+            if (singleWrap) {
+                wrapper = XinhaTools.createWrapper(wrapperName, classes);
+                while ((kid = el.firstChild) !== undefined && kid !== null) {
+                    wrapper.appendChild(kid);
+                }
+                el.appendChild(wrapper);
+            } else {
+                for (i = 0; i < kids.length; i++) {
+                    XinhaTools.wrap(kids[i], wrapperName, classes, skipText);
+                }
             }
         }
+    };
+
+    XinhaTools.createWrapper = function(wrapperName, classes) {
+        var wrapper = document.createElement(wrapperName);
+        if (classes instanceof Array) {
+            classes = classes.join(' ');
+        }
+        wrapper.setAttribute("class", classes);
+        return wrapper;
     };
 
     /**
@@ -274,9 +270,9 @@
             if (!stopTraversing) {
                 stopTraversing = callback.call(node, depth) === false;
             }
-            if (!stopTraversing && (tmp = node.firstChild) !== undefined) {
+            if (!stopTraversing && (tmp = node.firstChild) !== undefined && tmp !== null) {
                 depth++;
-            } else if ((tmp = node.nextSibling) !== undefined) {
+            } else if ((tmp = node.nextSibling) !== undefined && tmp !== null) {
                 stopTraversing = false;
             } else {
                 tmp = node.parentNode;
@@ -288,18 +284,6 @@
     };
 
 
-    XinhaTools.findElements = function (node, name) {
-        var el = [];
-        name = name.toUpperCase();
-        XinhaTools.walk(node, function () {
-            if (this.nodeType === 1 && this.nodeName.toUpperCase() === name) {
-                el.push(this);
-            }
-            return true;
-        });
-        return el;
-    };
-
     XinhaTools.containsSameNodes = function (node, name) {
         name = name.toUpperCase();
         XinhaTools.walk(node, function () {
@@ -307,6 +291,18 @@
 
         });
         return true;
+    };
+
+    XinhaTools.findElements = function (node, elements) {
+        var el = [];
+        XinhaTools.walk(node, function () {
+            if (this.nodeType === 1 && XinhaTools.contains(this.nodeName.toUpperCase(), elements)) {
+                el.push(this);
+                return false;
+            }
+            return true;
+        });
+        return el;
     };
 
     XinhaTools.findElement = function (node, name) {
@@ -322,19 +318,36 @@
         return el;
     };
 
-
-    XinhaTools.wrapKidsOfNodes = function (node, tagCollection) {
+    XinhaTools.getAllElements = function (node) {
+        var el = [];
         XinhaTools.walk(node, function () {
-            return !(this.nodeType === 1 && tagCollection.indexOf(this.nodeName.toUpperCase()) >= 0);
+            if (this.nodeType === 1) {
+                var nodeName = this.nodeName.toUpperCase();
+                if (nodeName !== 'BODY') {
+                    el.push(nodeName);
+                }
+            }
+            return true;
+        });
+        return el;
+    };
+
+    XinhaTools.wrapKidsOfNodes = function (node, tags) {
+        XinhaTools.walk(node, function () {
+            return !(this.nodeType === 1 && XinhaTools.contains(this.nodeName.toUpperCase(), tags));
         });
         return true;
+    };
+
+    XinhaTools.contains = function(o, ar) {
+        return ar.indexOf(o) !== -1;
     };
 
 }(window.XinhaTools = window.XinhaTools || {}));
 
 // https://developer.mozilla.org/en-US/docs/Web/API/DOMParser?redirectlocale=en-US&redirectslug=DOM%2FDOMParser
 (function (DOMParser) {
-    if(!DOMParser){
+    if (!DOMParser) {
         DOMParser = {};
     }
     var DOMParser_proto = DOMParser.prototype, real_parseFromString = DOMParser_proto.parseFromString;
@@ -354,13 +367,11 @@
             var doc = document.implementation.createHTMLDocument("");
             if (markup.toLowerCase().indexOf('<!doctype') > -1) {
                 doc.documentElement.innerHTML = markup;
-            }
-            else {
+            } else {
                 doc.body.innerHTML = markup;
             }
             return doc;
-        } else {
-            return real_parseFromString.apply(this, arguments);
         }
+        return real_parseFromString.apply(this, arguments);
     };
 }(DOMParser));

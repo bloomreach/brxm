@@ -18,7 +18,15 @@
 (function(XinhaTools) {
 
     XinhaTools.log = function () {
-        console.log(arguments);
+        if (console && console.log) {
+            console.log.apply(console, arguments);
+        }
+    };
+
+    XinhaTools.error = function () {
+        if (console && console.error) {
+            console.error.apply(console, arguments);
+        }
     };
 
 }(window.XinhaTools = window.XinhaTools || {}));
