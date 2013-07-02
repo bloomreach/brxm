@@ -249,6 +249,7 @@
                     tabComponent = this._createPropertiesEditor(variant, propertiesEditorCount, propertiesForm);
                 }
                 this.relayEvents(tabComponent, ['cancel']);
+                this.relayEvents(propertiesForm, ['save', 'delete']);
                 this.add(tabComponent);
             }, this);
         },
@@ -463,7 +464,6 @@
 
         _submitForm: function() {
             var uncheckedValues = {};
-            this.fireEvent('save');
 
             this.getForm().items.each(function(item) {
                 if (item instanceof Ext.form.Checkbox) {
@@ -482,9 +482,19 @@
                 url: this.composerRestMountUrl + '/' + this.componentId + './' + encodeURIComponent(this.variant.id) + '/rename/' + encodeURIComponent(this.newVariantId) + '?FORCE_CLIENT_HOST=true',
                 method: 'POST',
                 success: function() {
+                    this.fireEvent('save');
                     Hippo.ChannelManager.TemplateComposer.Instance.selectVariant(this.componentId, this.variant.id);
                     Ext.getCmp('componentPropertiesPanel').load(this.newVariantId);
-                }.bind(this)
+                }.bind(this),
+                failure: function(form, action) {
+                    Hippo.Msg.alert(Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message-title'],
+                            Hippo.ChannelManager.TemplateComposer.PropertiesPanel.Resources['toolkit-store-error-message'], function (id) {
+
+                                Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.pageContext = null;
+                                // reload channel manager
+                                Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').pageContainer.refreshIframe();
+                            });
+                }
             });
         },
 

@@ -31,7 +31,6 @@
                     return true;
                 }
                 len = subscriptions[topic].length;
-                console.log(name + "[" + len + "] " + topic);
                 for (i = 0; i < len; i++) {
                     subscription = subscriptions[topic][i];
                     if (subscription.callback.apply(subscription.scope, Array.prototype.slice.call(arguments, 1)) === false) {

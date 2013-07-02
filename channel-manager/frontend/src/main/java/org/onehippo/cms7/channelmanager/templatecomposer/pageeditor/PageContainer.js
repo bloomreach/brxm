@@ -21,7 +21,6 @@
     Hippo.ChannelManager.TemplateComposer.PageContainer = Ext.extend(Ext.util.Observable, {
 
         constructor: function(config) {
-
             this.resources = config.resources;
 
             this.cmsUser = config.cmsUser;
@@ -224,8 +223,6 @@
         refreshIframe: function() {
             var iframe, scrollSave;
 
-            console.log('refreshIframe');
-
             iframe = Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance;
             scrollSave = iframe.getScrollPosition();
 
@@ -340,7 +337,6 @@
             mountId = this.pageContext.ids.mountId;
             hasPreviewHstConfig = this.pageContext.hasPreviewHstConfig;
 
-            console.log('hasPreviewHstConfig:' + hasPreviewHstConfig);
             if (this.previewMode) {
                 hostToIFrame.publish('hideoverlay');
                 hostToIFrame.publish('showlinks');
@@ -353,33 +349,42 @@
                         self._complete();
                     }.createDelegate(this);
 
-                    /**
-                     * There is a preview hst configuration. Try to acquire a lock. When this succeeds, show the overlay,
-                     * otherwise, show a failure message.
-                     */
-                    Ext.Ajax.request({
-                        url: this.composerRestMountUrl + '/' + mountId + './lock?FORCE_CLIENT_HOST=true',
-                        method: 'POST',
-                        headers: {
-                            'FORCE_CLIENT_HOST': 'true'
-                        },
-                        success: function(response) {
-                            var lockState = Ext.decode(response.responseText).data;
-                            // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
-                            self.refreshIframe.call(self, null);
-
-                            if (lockState === 'lock-acquired') {
-                                doneCallback();
-                            } else {
-                                Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
-                                    self.initComposer.call(self);
-                                });
+                    if (this.pageContext.fineGrainedLocking) {
+                        // in case of fine grained locking we do not need to acquire a lock
+                        // reset pageContext, the page and toolkit stores must be reloaded
+                        self.pageContext = null;
+                        // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
+                        self.refreshIframe.call(self, null);
+                    } else {
+                        /**
+                         * There is a preview hst configuration. Try to acquire a lock. When this succeeds, show the overlay,
+                         * otherwise, show a failure message.
+                         */
+                        Ext.Ajax.request({
+                            url: this.composerRestMountUrl + '/' + mountId + './lock?FORCE_CLIENT_HOST=true',
+                            method: 'POST',
+                            headers: {
+                                'FORCE_CLIENT_HOST': 'true'
+                            },
+                            success: function(response) {
+                                var lockState = Ext.decode(response.responseText).data;
+                                // reset pageContext, the page and toolkit stores must be reloaded
+                                self.pageContext = null;
+                                // refresh iframe to get new hst config uuids or new lastModifiedTimestamsp.
+                                self.refreshIframe.call(self, null);
+                                if (lockState === 'lock-acquired') {
+                                    doneCallback();
+                                } else {
+                                    Hippo.Msg.alert(self.resources['mount-locked-title'], self.resources['mount-locked-message'], function() {
+                                        self.initComposer.call(self);
+                                    });
+                                }
+                            },
+                            failure: function() {
+                                console.error('Failed to acquire the lock.');
                             }
-                        },
-                        failure: function() {
-                            console.error('Failed to acquire the lock.');
-                        }
-                    });
+                        });
+                    }
                 } else {
                     // create new preview hst configuration
                     Ext.Ajax.request({
@@ -451,7 +456,6 @@
         },
 
         _complete: function() {
-            console.log('_complete');
             while (this.iframeCompletion.length > 0) {
                 var cb = this.iframeCompletion.shift();
                 cb.call(this);
@@ -461,7 +465,6 @@
         },
 
         _fail: function() {
-            console.log('_fail');
             this.iframeCompletion = [];
             this.fireEvent('unlock', null);
             Ext.getCmp('Hippo.ChannelManager.TemplateComposer.Instance').unmask();
@@ -511,7 +514,6 @@
                 this.previewMode = this.pageContext.previewMode;
 
                 if (!iframe.isValidSession(this.sessionId)) {
-                    console.log("invalid session!");
                     this._initializeHstSession(this._complete.createDelegate(this));
                 } else {
                     console.error(this.resources['page-context-initialization-failed-message']);
@@ -546,7 +548,6 @@
                             recordIndex = self.pageContext.stores.pageModel.findExact('id', rearrange.id); //should probably do this through the selectionModel
                             record = self.pageContext.stores.pageModel.getAt(recordIndex);
                             record.set('children', rearrange.children);
-                            console.log('_onRearrangeContainer ' + rearrange.id + ', children: ' + rearrange.children);
                             writeListener = function(store, action, result, res, rec) {
                                 if (rec.id === record.id) {
                                     self.pageContext.stores.pageModel.un('write', writeListener, self);
@@ -564,7 +565,6 @@
             });
 
             Hippo.Future.join(futures).when(function() {
-                console.log('refresh iframe due to rearranging of containers');
                 this.refreshIframe();
             }.createDelegate(this)).otherwise(function() {
                 console.error('rearranging containers failed');

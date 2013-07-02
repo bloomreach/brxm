@@ -68,7 +68,7 @@
             this.locked = false;
             this.lockedBy = "";
             this.lockedOn = 0;
-
+            this.changedBySet = config.changedBySet;
             this.internalLinkUrlPrefix = document.location.protocol + '//' + document.location.host;
             this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.templateComposerContextPath);
             this.internalLinkUrlPrefix = appendPathFragment(this.internalLinkUrlPrefix, config.cmsPreviewPrefix);
@@ -76,7 +76,6 @@
             this.iframeResourceCache = cache;
 
             Hippo.ChannelManager.TemplateComposer.PageContext.superclass.constructor.call(this, config);
-
             this.addEvents('mountChanged',
                     'pageContextInitialized');
 
@@ -180,7 +179,6 @@
             // IE stores document.location.href unencoded, which causes the Ajax call to fail when the URL contains
             // special unicode characters. Encode the URL to avoid this.
             var encodedUrl = Ext.isIE ? encodeURI(url) : url;
-            console.log('_requestHstMetaData ' + encodedUrl);
 
             return new Hippo.Future(function(onSuccess, onFail) {
                 var self = this;
@@ -199,6 +197,11 @@
                     self.hasPreviewHstConfig = self._getBoolean(response.getResponseHeader('HST-Site-HasPreviewConfig'));
                     if (!self.hasPreviewHstConfig || !canEdit) {
                         self.previewMode = true;
+                    }
+                    if (response.getResponseHeader('HST-Changed-By-Set')) {
+                        self.changedBySet = Ext.util.JSON.decode(response.getResponseHeader('HST-Changed-By-Set'));
+                    } else {
+                        self.changedBySet = [];
                     }
 
                     self.fineGrainedLocking = self._getBoolean(response.getResponseHeader('HST-Mount-FineGrainedLocking'));
@@ -222,8 +225,6 @@
                     } else {
                         self.pageRequestVariants = [];
                     }
-
-                    console.log('hstMetaDataResponse: url:' + encodedUrl + ', pageId:' + pageId + ', mountId:' + mountId);
 
                     if (canEdit) {
                         futures = [
@@ -326,7 +327,6 @@
         },
 
         _buildOverlay: function() {
-            console.log('_buildOverlay');
             Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('buildoverlay');
         }
 

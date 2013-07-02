@@ -217,6 +217,10 @@
                 this.title = title;
             });
 
+            this.on('activate', function () {
+                this.refreshIframe();
+            }, this);
+
             this.relayEvents(this.pageContainer, [
                 'mountChanged',
                 'selectItem',
@@ -399,11 +403,43 @@
             }
         },
 
+        showOrHideButtons: function (button1, button2) {
+
+            var show = false;
+            if (this.channel.previewHstConfigExists === "true") {
+                if (this.channel.fineGrainedLocking === "true") {
+                    if (this.channel.changedBySet.indexOf(this.cmsUser) > -1) {
+                        show = true;
+                    }
+                } else {
+                    show = true;
+                }
+            }
+
+            if (show) {
+                if (button1) {
+                    button1.show();
+                }
+                if (button2) {
+                    button2.show();
+                }
+            } else {
+                if (button1) {
+                    button1.hide();
+                }
+                if (button2) {
+                    button2.hide();
+                }
+            }
+        },
+
         createEditToolbar: function() {
             var toolbar = Ext.getCmp('pageEditorToolbar'),
                     variantsComboBoxLabel = this.createVariantLabel(),
                     variantsComboBox = this.createVariantsComboBox(),
                     toolboxVisible = Ext.get('icon-toolbar-window').isVisible();
+
+
 
             toolbar.removeAll();
             toolbar.add(
@@ -422,10 +458,11 @@
                     },
                     {
                         id: 'template-composer-toolbar-discard-button',
-                        text: this.pageContainer.pageContext.fineGrainedLocking?  this.initialConfig.resources['discard-my-button'] : this.initialConfig.resources['discard-button'],
+                        text: this.channel.fineGrainedLocking === "true" ?  this.initialConfig.resources['discard-my-button'] : this.initialConfig.resources['discard-button'],
                         iconCls: 'discard-channel',
                         allowDepress: false,
                         width: 120,
+                        hidden: true,
                         listeners: {
                             click: {
                                 fn: this.pageContainer.discardChanges,
@@ -516,6 +553,8 @@
             if (toolbar.rendered) {
                 toolbar.doLayout();
             }
+
+            this.showOrHideButtons(Ext.getCmp('template-composer-toolbar-discard-button'));
         },
 
         addToolbarPlugins: function(toolbar, mode) {
@@ -631,12 +670,12 @@
                 Ext.getCmp('icon-toolbar-window').hide();
             }
 
+
             Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.show();
         },
 
         showChannelChangesNotification: function(pageContext) {
             var notification = Ext.getCmp('channelChangesNotification');
-
             if (pageContext.fineGrainedLocking) {
                 this.updateAndShowChangesForUsersNotification(notification, pageContext.ids.mountId);
             } else {
@@ -766,7 +805,6 @@
             }, this, {single: true});
 
             this.on('lock', function() {
-                console.log('lock');
                 this.disableUI();
             }, this);
 
@@ -796,6 +834,21 @@
                 }.createDelegate(this));
             }, this);
 
+            this.on('channelChanged', function() {
+                this.channelStoreFuture.when(function(config) {
+                    config.store.reload();
+                    config.store.on('load', function() {
+                        var channelRecord = config.store.getById(this.channelId);
+
+                        this.channel = channelRecord.data;
+                        if (this.pageContainer.previewMode) {
+                            this.createViewToolbar();
+                        } else {
+                            this.createEditToolbar();
+                        }
+                    }, this);
+                }.createDelegate(this));
+            }, this);
         },
 
         createPropertiesWindow: function(mountId) {
@@ -812,10 +865,16 @@
                 globalVariantsStoreFuture: this.globalVariantsStoreFuture,
                 mountId: mountId,
                 listeners: {
-                    cancel: function() {
+                    'cancel': function() {
                         window.hide();
                     },
-                    variantChange: function(id, variantId) {
+                    'save': function() {
+                        this.fireEvent('channelChanged');
+                    },
+                    'delete': function() {
+                        this.fireEvent('channelChanged');
+                    },
+                    'variantChange': function(id, variantId) {
                         if (id !== null) {
                             this.selectVariant(id, variantId);
                         }
@@ -859,7 +918,6 @@
             window.on('enddrag', function() {
                 Hippo.ChannelManager.TemplateComposer.IFramePanel.Instance.hostToIFrame.publish('disablemouseevents');
             });
-
             return window;
         },
 
@@ -877,6 +935,7 @@
 
         refreshIframe: function() {
             this.pageContainer.refreshIframe.call(this.pageContainer);
+            this.fireEvent('channelChanged');
         },
 
         initComposer: function() {
@@ -926,12 +985,18 @@
         },
 
         getToolbarButtons: function() {
-            var editButton, publishButton, discardButton, manageChangesButton, unlockButton, lockLabel, lockedOn;
+            var editButton, publishButton, discardButton, manageChangesButton, unlockButton, lockLabel, lockedOn, locked;
+            if (this.channel.lockedBy && this.channel.fineGrainedLocking !== "true") {
+                locked = this.channel.lockedBy !== this.cmsUser;
+            } else {
+                locked = false;
+            }
+
             editButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-edit-button',
                 text: this.initialConfig.resources['edit-button'],
                 iconCls: 'edit-channel',
-                disabled: this.pageContainer.pageContext.locked,
+                disabled: locked,
                 width: 120,
                 listeners: {
                     click: {
@@ -942,11 +1007,11 @@
             });
             publishButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-publish-button',
-                text: this.pageContainer.pageContext.fineGrainedLocking? this.initialConfig.resources['publish-my-button'] : this.initialConfig.resources['publish-button'] ,
+                text: this.channel.fineGrainedLocking  === "true" ? this.initialConfig.resources['publish-my-button'] : this.initialConfig.resources['publish-button'] ,
                 iconCls: 'publish-channel',
-                disabled: this.pageContainer.pageContext.locked,
+                disabled: locked,
                 width: 120,
-                hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
+                hidden: true,
                 listeners: {
                     click: {
                         fn: this.pageContainer.publishHstConfiguration,
@@ -956,11 +1021,11 @@
             });
             discardButton = new Ext.Toolbar.Button({
                 id: 'template-composer-toolbar-discard-button',
-                text: this.pageContainer.pageContext.fineGrainedLocking?  this.initialConfig.resources['discard-my-button'] : this.initialConfig.resources['discard-button'],
+                text: this.channel.fineGrainedLocking  === "true" ?  this.initialConfig.resources['discard-my-button'] : this.initialConfig.resources['discard-button'],
                 iconCls: 'discard-channel',
-                disabled: this.pageContainer.pageContext.locked,
+                disabled: locked,
                 width: 120,
-                hidden: !this.pageContainer.pageContext.hasPreviewHstConfig,
+                hidden: true,
                 listeners: {
                     click: {
                         fn: this.pageContainer.discardChanges,
@@ -973,7 +1038,7 @@
                 text: this.initialConfig.resources['manage-changes-button'],
                 iconCls: 'publish-channel',
                 width: 120,
-                hidden: !this.canManageChanges || !this.pageContainer.pageContext.fineGrainedLocking || !this.pageContainer.pageContext.hasPreviewHstConfig,
+                hidden: !this.canManageChanges || this.channel.fineGrainedLocking === "false"  || this.channel.changedBySet.length === 0,
                 listeners: {
                     click: {
                         fn: this.pageContainer.manageChanges,
@@ -985,7 +1050,7 @@
                 id: 'template-composer-toolbar-unlock-button',
                 text: this.initialConfig.resources['unlock-button'],
                 iconCls: 'remove-lock',
-                hidden: !this.pageContainer.pageContext.locked || !this.canUnlockChannels,
+                hidden: !locked || !this.canUnlockChannels,
                 width: 120,
                 listeners: {
                     click: {
@@ -997,10 +1062,18 @@
             lockLabel = new Ext.Toolbar.TextItem({
                 id: 'template-composer-toolbar-lock-label'
             });
-            if (this.pageContainer.pageContext.locked) {
-                lockedOn = new Date(this.pageContainer.pageContext.lockedOn).format(this.initialConfig.resources['mount-locked-format']);
-                lockLabel.setText(this.initialConfig.resources['mount-locked-toolbar'].format(this.pageContainer.pageContext.lockedBy, lockedOn));
+            if (locked) {
+                if (this.channel.lockedOn) {
+                    lockedOn = new Date(this.channel.lockedOn).format(this.initialConfig.resources['mount-locked-format']);
+                } else {
+                    lockedOn = "";
+                }
+                lockLabel.setText(this.initialConfig.resources['mount-locked-toolbar'].format(this.channel.lockedBy, lockedOn));
             }
+
+            this.showOrHideButtons(Ext.getCmp('template-composer-toolbar-publish-button'),
+                    Ext.getCmp('template-composer-toolbar-discard-button'));
+
             return {
                 edit: editButton,
                 publish: publishButton,

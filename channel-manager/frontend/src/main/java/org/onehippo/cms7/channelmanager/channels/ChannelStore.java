@@ -89,7 +89,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
         lockedBy,
         lockedOn,
         defaultDevice,
-        devices
+        devices,
+        previewHstConfigExists
     }
 
     public static final List<String> ALL_FIELD_NAMES;
@@ -106,7 +107,8 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                         ChannelField.hstPreviewMountPoint.name(),
                         ChannelField.changedBySet.name(),
                         ChannelField.devices.name(),
-                        ChannelField.fineGrainedLocking.name()));
+                        ChannelField.fineGrainedLocking.name(),
+                        ChannelField.previewHstConfigExists.name()));
     }
 
     public static enum SortOrder {ascending, descending}
@@ -171,6 +173,7 @@ public class ChannelStore extends ExtGroupingStore<Object> {
     protected JSONArray getData() throws JSONException {
         JSONArray data = new JSONArray();
 
+        channels = null;
         for (Channel channel : getChannels()) {
             Map<String, Object> channelProperties = channel.getProperties();
             JSONObject object = new JSONObject();
@@ -190,6 +193,10 @@ public class ChannelStore extends ExtGroupingStore<Object> {
                     final Set<String> lockedBySet = channel.getChangedBySet();
                     if (lockedBySet != null) {
                         for (String lockedBy : lockedBySet) {
+                            // deserialization seems to insert a null element for empty set, hence check for null
+                            if (lockedBy == null) {
+                                continue;
+                            }
                             values.put(lockedBy);
                         }
                     }

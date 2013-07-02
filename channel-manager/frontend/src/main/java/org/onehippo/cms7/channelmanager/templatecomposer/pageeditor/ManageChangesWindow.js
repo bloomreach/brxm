@@ -226,8 +226,6 @@
                 selectedUserIds = this.getSelectedUserIds().sort(),
                 self = this;
 
-            console.log(selectedUserIds);
-
             Hippo.Msg.confirm(confirmationTitle, this.createConfirmationMessage(action, selectedUserIds),
                 function(choice) {
                     if (choice === 'yes') {

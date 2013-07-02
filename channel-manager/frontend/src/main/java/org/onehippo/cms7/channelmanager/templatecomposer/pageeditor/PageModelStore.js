@@ -27,6 +27,7 @@
                     var url = PageModelProxy.superclass.buildUrl.apply(this, arguments);
                     url = Ext.urlAppend(url, 'FORCE_CLIENT_HOST=true');
                     if (!Ext.isEmpty(lastModifiedTimestamp)) {
+
                         url = Ext.urlAppend(url, 'lastModifiedTimestamp=' + lastModifiedTimestamp);
                     }
                     return url;
@@ -45,7 +46,6 @@
                         beforewrite: {
                             fn: function(proxy, action, rs, params) {
                                 var prototypeId, parentId, id, endpoint;
-
                                 lastModifiedTimestamp = rs.get('lastModifiedTimestamp');
 
                                 if (action === 'create') {

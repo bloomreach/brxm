@@ -181,7 +181,6 @@
                 this.current.deselect();
             }
             this.current = selection;
-            console.log('this.current.select();');
             this.current.select();
         },
 
