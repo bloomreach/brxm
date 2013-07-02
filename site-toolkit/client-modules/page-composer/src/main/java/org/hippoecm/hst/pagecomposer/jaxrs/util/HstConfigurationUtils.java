@@ -50,7 +50,7 @@ public class HstConfigurationUtils {
      * @param hstManager
      * @throws RepositoryException
      */
-    public static void persistChanges(final Session session, HstManager hstManager) throws RepositoryException {
+    public synchronized static void persistChanges(final Session session, HstManager hstManager) throws RepositoryException {
         if (!session.hasPendingChanges()) {
             return;
         }

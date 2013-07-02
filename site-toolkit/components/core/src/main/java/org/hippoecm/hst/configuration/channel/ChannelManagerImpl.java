@@ -216,11 +216,12 @@ public class ChannelManagerImpl implements MutableChannelManager {
 
         boolean fineGrainedLocking = mount.getVirtualHost().getVirtualHosts().isFineGrainedLocking();
 
+        // all the locks are on the preview mount, hence decorate it first
+        Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
+        channel.setPreviewHstConfigExists(previewMount.getHstSite().hasPreviewConfiguration());
         Set<String> s = new HashSet<String>();
         if (fineGrainedLocking) {
             channel.setFineGrainedLocking(true);
-            // all the locks are on the preview mount, hence decorate it first
-            Mount previewMount = mountDecorator.decorateMountAsPreview(mount);
             Set<String> mainConfigNodesLockedBySet = new HashSet<String>();
             try {
                 Node channelRootConfigNode = session.getNode(previewMount.getHstSite().getConfigurationPath());

@@ -72,9 +72,6 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             }
             response.addHeader(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
             response.addHeader(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
-            if (mount.getChannel() != null && mount.getChannel().getChangedBySet() != null && mount.getChannel().getChangedBySet().size() > 0) {
-                response.addHeader(ChannelManagerConstants.HST_SITE_CHANGED_BY_SET, getChangedBySetAsValue(mount.getChannel().getChangedBySet()));
-            }
         } else if (isComposerMode(request)) {
             HashMap<String, String> attributes = new HashMap<String, String>();
             attributes.put("uuid", compConfig.getCanonicalIdentifier());

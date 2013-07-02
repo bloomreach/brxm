@@ -49,6 +49,7 @@ public class Channel implements Serializable {
     private String mountId;
     private String locale;
     private boolean fineGrainedLocking;
+    private boolean previewHstConfigExists;
     private Set<String> changedBySet = new HashSet<String>();
     private Long lockedOn;
     private String defaultDevice = DEFAULT_DEVICE;
@@ -235,11 +236,21 @@ public class Channel implements Serializable {
         this.fineGrainedLocking = fineGrainedLocking;
     }
 
+    public boolean isPreviewHstConfigExists() {
+        return previewHstConfigExists;
+    }
+
+    public void setPreviewHstConfigExists(final boolean previewHstConfigExists) {
+        this.previewHstConfigExists = previewHstConfigExists;
+    }
+
     /**
      * @return In coarse grained locking mode: retrieves this channel lock owner's userId. Returns <code>null</code> if the channel is not locked.
      * In finagrained locking mode : retrieves just one of the users that have a lock on a container or <code>null</code>
      * when locked by no-one.
+     * @deprecated use {@link #getChangedBySet()} instead
      */
+    @Deprecated
     public String getLockedBy() {
        if (changedBySet != null && changedBySet.size() > 0) {
            return changedBySet.iterator().next();
