@@ -14,7 +14,7 @@
       <sv:value>hst:configuration</sv:value>
     </sv:property>
     <sv:property sv:name="hst:inheritsfrom" sv:type="String" sv:multiple="true">
-      <sv:value>../unittest</sv:value>
+      <sv:value>../unittestcommon</sv:value>
     </sv:property>
     <sv:node sv:name="hst:pages">
       <sv:property sv:name="jcr:primaryType" sv:type="Name">
