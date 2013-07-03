@@ -112,17 +112,4 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
 
     }
 
-    private String getChangedBySetAsValue(final Set<String> set) {
-        StringBuilder builder = new StringBuilder();
-        for (String value : set) {
-            if (builder.length() > 0) {
-                builder.append(",");
-            }
-            builder.append("\"").append(value).append("\"");
-        }
-        builder.insert(0, "[").append("]");
-        return builder.toString();
-    }
-
-
 }
