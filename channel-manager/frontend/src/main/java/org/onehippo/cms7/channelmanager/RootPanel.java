@@ -110,7 +110,7 @@ public class RootPanel extends ExtPanel {
         channelOverview.setRegion(BorderLayout.Region.CENTER);
         channelManagerCard.add(channelOverview);
 
-        final HstConfigEditor hstConfigEditor = new HstConfigEditor(context);
+        final HstConfigEditor hstConfigEditor = new HstConfigEditor(context, config.getAsBoolean("finegrainedlocking", false));
 
         channelManagerCard.add(this.blueprintStore);
 
