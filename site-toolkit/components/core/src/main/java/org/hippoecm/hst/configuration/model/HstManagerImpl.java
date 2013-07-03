@@ -87,6 +87,7 @@ public class HstManagerImpl implements MutableHstManager {
     private volatile int consecutiveBuildFailCounter = 0;
 
     private boolean staleConfigurationSupported = false;
+    private boolean fineGrainedLocking;
 
     private HstURLFactory urlFactory;
     private HstSiteMapMatcher siteMapMatcher;
@@ -248,7 +249,18 @@ public class HstManagerImpl implements MutableHstManager {
     public List<HstConfigurationAugmenter> getHstConfigurationAugmenters() {
         return hstConfigurationAugmenters;
     }
-    
+
+    @Deprecated
+    public void setFineGrainedLocking(final boolean fineGrainedLocking) {
+        this.fineGrainedLocking = fineGrainedLocking;
+    }
+
+    @Deprecated
+    @Override
+    public boolean isFineGrainedLocking() {
+        return fineGrainedLocking;
+    }
+
     /**
      * Adds <code>hstConfigurationProvider</code> to {@link #hstConfigurationAugmenters}
      * @param augmenter

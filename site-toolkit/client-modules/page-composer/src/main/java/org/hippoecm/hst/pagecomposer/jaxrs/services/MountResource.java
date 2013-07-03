@@ -191,7 +191,7 @@ public class MountResource extends AbstractConfigResource {
             return error("This mount is not suitable for the template composer.");
         }
 
-        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking()) {
             log.debug("Mount '{}' is finegrained locking hence setting lock is skipped", editingPreviewMount.getIdentifier());
             return ok("Finegrained locked mounts are lock free. Use lock-acquired to fake this. ", "lock-acquired");
         }
@@ -237,7 +237,7 @@ public class MountResource extends AbstractConfigResource {
             Session session = requestContext.getSession();
             
             if (ctxEditingPreviewSite.hasPreviewConfiguration()) {
-                if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+                if (editingPreviewMount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking()) {
                     log.debug("Mount '{}' is finegrained locking hence checking lock is skipped", editingPreviewMount.getIdentifier());
                     return ok("Site can be edited now");
                 }
@@ -254,7 +254,7 @@ public class MountResource extends AbstractConfigResource {
             }
 
             Node newPreviewConfigurationNode = createPreviewConfigurationNode(requestContext);
-            if (!editingPreviewMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+            if (!editingPreviewMount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking()) {
                 setLockProperties(newPreviewConfigurationNode);
             }
             HstConfigurationUtils.persistChanges(session, getHstManager());
@@ -298,7 +298,7 @@ public class MountResource extends AbstractConfigResource {
     public Response discardChanges(@Context HttpServletRequest servletRequest) {
         final HstRequestContext requestContext = getRequestContext(servletRequest);
         final MutableMount editingPreviewMount = (MutableMount)getEditingPreviewMount(requestContext);
-        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking()) {
             return fineGrainedDiscardChangesOfCurrentUser(requestContext);
         } else {
             return coarseGrainedDiscardIfNotLocked(requestContext);
@@ -316,7 +316,7 @@ public class MountResource extends AbstractConfigResource {
             return error("Cannot discard changes of users in a non-preview site");
         }
 
-        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking()) {
             return fineGrainedDiscardChanges(requestContext, ids.getData());
         } else {
             return error("This mount does not use fine-grained locking");
@@ -338,7 +338,7 @@ public class MountResource extends AbstractConfigResource {
             return error("This mount is not suitable for the template composer.");
         }
 
-        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking()) {
             log.debug("Mount '{}' is finegrained locking hence unlocking is skipped", editingPreviewMount.getIdentifier());
             return ok("Unlocking global lock skipped for finegrained locking mounts.");
         }
@@ -362,7 +362,7 @@ public class MountResource extends AbstractConfigResource {
             return error("Cannot publish non preview site");
         }
 
-        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking()) {
             return fineGrainedPublishChangesOfCurrentUser(requestContext);
         } else {
             return coarseGrainedPublicationIfNotLocked(requestContext);
@@ -380,7 +380,7 @@ public class MountResource extends AbstractConfigResource {
             return error("Cannot publish non preview site");
         }
 
-        if (editingPreviewMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+        if (editingPreviewMount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking()) {
             return fineGrainedPublishChangesOfUsers(requestContext, ids.getData());
         } else {
             return error("This mount does not use fine-grained locking");

@@ -50,18 +50,16 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         // we are in render host mode. Add the wrapper elements that are needed for the composer around all components
         HstComponentConfiguration compConfig  = ((HstComponentConfiguration)window.getComponentInfo());
         Mount mount = request.getRequestContext().getResolvedMount().getMount();
+        boolean fineGrainedLocking = ((MutableMount)mount).getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking();
         if (isTopHstResponse(rootWindow, rootRenderingWindow, window)) {
             response.addHeader(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
             response.addHeader(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
             response.addHeader(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
             if (mount instanceof MutableMount) {
+                response.addHeader(ChannelManagerConstants.HST_MOUNT_FINEGRAINED_LOCKING, String.valueOf(fineGrainedLocking));
                 MutableMount mutableMount = (MutableMount)mount;
-
-                boolean isFineGrainedLocking = mutableMount.getVirtualHost().getVirtualHosts().isFineGrainedLocking();
-                response.addHeader(ChannelManagerConstants.HST_MOUNT_FINEGRAINED_LOCKING, String.valueOf(isFineGrainedLocking));
-
                 final String lockedBy = mutableMount.getLockedBy();
-                if (!isFineGrainedLocking && StringUtils.isNotBlank(lockedBy)) {
+                if (!fineGrainedLocking && StringUtils.isNotBlank(lockedBy)) {
                     response.addHeader(ChannelManagerConstants.HST_MOUNT_LOCKED_BY, lockedBy);
                     response.addHeader(ChannelManagerConstants.HST_MOUNT_LOCKED_ON, String.valueOf(mutableMount.getLockedOn().getTimeInMillis()));
                 }
@@ -89,7 +87,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             attributes.put("url", url.toString());
             attributes.put("refNS", window.getReferenceNamespace());
             if (mount instanceof MutableMount) {
-                if (mount.getVirtualHost().getVirtualHosts().isFineGrainedLocking()) {
+                if (fineGrainedLocking) {
                     if (compConfig.getLockedBy() != null) {
                         String cmsUserId = (String)session.getAttribute(CmsSecurityValve.CMS_USER_ID_ATTR);
                         attributes.put(ChannelManagerConstants.HST_CONTAINER_COMPONENT_LOCKED_BY, compConfig.getLockedBy());

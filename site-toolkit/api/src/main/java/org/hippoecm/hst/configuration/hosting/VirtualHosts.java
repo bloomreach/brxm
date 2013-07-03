@@ -188,6 +188,6 @@ public interface VirtualHosts {
      */
     boolean isChannelMngrSiteAuthenticationSkipped();
 
-    boolean isFineGrainedLocking();
+
 
 }

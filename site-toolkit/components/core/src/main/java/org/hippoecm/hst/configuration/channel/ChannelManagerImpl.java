@@ -214,7 +214,7 @@ public class ChannelManagerImpl implements MutableChannelManager {
             }
         }
 
-        boolean fineGrainedLocking = mount.getVirtualHost().getVirtualHosts().isFineGrainedLocking();
+        boolean fineGrainedLocking = mount.getVirtualHost().getVirtualHosts().getHstManager().isFineGrainedLocking();
 
         // all the locks are on the preview mount, hence decorate it first
         Mount previewMount = mountDecorator.decorateMountAsPreview(mount);

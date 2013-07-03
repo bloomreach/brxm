@@ -109,5 +109,11 @@ public interface HstManager {
      * @return the {@link List} of {@link HstConfigurationAugmenter}s and empty list if no providers available.
      */
     List<HstConfigurationAugmenter> getHstConfigurationAugmenters();
-    
+
+
+    /**
+     * @deprecated temporary method on in the 7.8.x range. Will be removed in 7.9.x
+     */
+    @Deprecated
+    boolean isFineGrainedLocking();
 }
