@@ -212,7 +212,4 @@ public class AbstractConfigResource {
         }
         return objectConverter;
     }
-
-
-
 }
