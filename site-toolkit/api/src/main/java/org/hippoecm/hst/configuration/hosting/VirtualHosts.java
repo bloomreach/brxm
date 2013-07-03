@@ -187,7 +187,4 @@ public interface VirtualHosts {
      * @return <code>true</code> when the channel manager can skip authentication required for mounts or sitemapitems.
      */
     boolean isChannelMngrSiteAuthenticationSkipped();
-
-
-
 }
