@@ -89,7 +89,7 @@
 
     <hippo.commons.version>1.02.02</hippo.commons.version>
     <hippo.services.version>1.02.02</hippo.services.version>
-    <hippo.repository.version>2.25.01-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>2.25.01-alpha</hippo.repository.version>
 
     <!-- Test dependencies  -->
     <easymock.version>2.4</easymock.version>
@@ -120,7 +120,7 @@
     <xerces.version>2.8.1</xerces.version>
     <cglib.version>2.1_3</cglib.version>
     <wicket.version>1.4.21-h2</wicket.version>
-    <wicket-extjs.version>0.20-SNAPSHOT</wicket-extjs.version>
+    <wicket-extjs.version>0.20</wicket-extjs.version>
     <nekohtml.version>1.9.13</nekohtml.version>
     <dom4j.version>1.6.1</dom4j.version>
     <httpclient.version>4.2.2</httpclient.version>
