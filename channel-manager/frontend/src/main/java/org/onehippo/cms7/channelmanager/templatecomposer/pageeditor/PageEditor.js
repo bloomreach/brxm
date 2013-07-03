@@ -1064,7 +1064,7 @@
             });
             if (locked) {
                 if (this.channel.lockedOn) {
-                    lockedOn = new Date(this.channel.lockedOn).format(this.initialConfig.resources['mount-locked-format']);
+                    lockedOn = new Date(parseInt(this.channel.lockedOn, 10)).format(this.initialConfig.resources['mount-locked-format']);
                 } else {
                     lockedOn = "";
                 }

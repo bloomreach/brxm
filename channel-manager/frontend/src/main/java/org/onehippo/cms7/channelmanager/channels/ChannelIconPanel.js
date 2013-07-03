@@ -100,7 +100,11 @@
                     }
 
                 } else if(data.lockedBy.length > 0) {
-                    lockedDate = new Date(parseInt(data.lockedOn, 10)).format(this.resources['locked-date-format']);
+                    if (data.lockedOn) {
+                        lockedDate = new Date(parseInt(data.lockedOn, 10)).format(this.resources['locked-date-format']);
+                    } else {
+                        lockedDate = "";
+                    }
                     data.lockedLabel = this.resources.locked.format(data.lockedBy, lockedDate);
                 }
 
