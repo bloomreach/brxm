@@ -50,6 +50,7 @@ import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerFactory;
 import org.hippoecm.hst.core.sitemapitemhandler.HstSiteMapItemHandlerRegistry;
 import org.hippoecm.hst.service.ServiceException;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -739,26 +740,13 @@ public class HstManagerImpl implements MutableHstManager {
         }
     }
 
+    @Deprecated
     @Override
     public void invalidatePendingHstConfigChanges(final Session session) {
+        log.warn("invalidatePendingHstConfigChanges is deprecated. Use invalidate(final String... absEventPaths) instead");
         try {
-            HippoSession hippoSession;
-            if (!(session instanceof HippoSession)) {
-                // a jcr session from request context cannot be directly cast to a HippoSession...hence this workaround:
-                Session nonProxiedSession = session.getRootNode().getSession();
-                if (!(nonProxiedSession instanceof HippoSession)) {
-                    log.error("Session not instance of HippoSession. Cannot get pending changes");
-                    return;
-                }
-                hippoSession = (HippoSession) nonProxiedSession;
-            } else {
-               hippoSession = (HippoSession) session;
-            }
-
-            final NodeIterator pendingNodes = hippoSession.pendingChanges(session.getNode(rootPath), "nt:base", true);
-            while (pendingNodes.hasNext()) {
-                invalidate(pendingNodes.nextNode().getPath());
-            }
+            String[] eventPaths = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), true);
+            invalidate(eventPaths);
         } catch (RepositoryException e) {
             log.error("RepositoryException happened during processing pending events. Invalidate hst model completely", e);
             invalidateAll();

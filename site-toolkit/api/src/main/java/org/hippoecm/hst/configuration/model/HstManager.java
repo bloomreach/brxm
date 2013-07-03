@@ -71,7 +71,9 @@ public interface HstManager {
      * useful when the changes must be reflected directly upon next reload. The {@link #invalidate(javax.jcr.observation.EventIterator)}
      * is asynchronous by jcr event listeners.
      * @param session the jcr Session to fire the events for
+     * @deprecated deprecated since 7.8.4. Use {@link #invalidate(String...)} instead
      */
+    @Deprecated
     void invalidatePendingHstConfigChanges(Session session);
     
     /**

@@ -55,6 +55,7 @@ import org.hippoecm.hst.configuration.model.HstManagerImpl;
 import org.hippoecm.hst.core.container.CmsJcrSessionThreadLocal;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.internal.MountDecorator;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
@@ -477,9 +478,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
                 }
 
                 channels = null;
-                hstManager.invalidatePendingHstConfigChanges(session);
+                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), true);
                 session.save();
-
+                hstManager.invalidate(pathsToBeChanged);
                 return channelId;
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
@@ -555,9 +556,9 @@ public class ChannelManagerImpl implements MutableChannelManager {
                                   listenerEx);
                     }
                 }
-
-                hstManager.invalidatePendingHstConfigChanges(session);
+                String[] pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, session.getNode(rootPath), true);
                 session.save();
+                hstManager.invalidate(pathsToBeChanged);
             } catch (RepositoryException e) {
                 throw new ChannelException("Unable to save channel to the repository", e);
             }

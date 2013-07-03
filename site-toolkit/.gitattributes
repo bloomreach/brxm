@@ -438,6 +438,7 @@ commons/src/main/java/org/hippoecm/hst/util/HeadElementUtils.java svneol=native#
 commons/src/main/java/org/hippoecm/hst/util/HstRequestUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstResponseUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/HstSiteMapUtils.java -text
+commons/src/main/java/org/hippoecm/hst/util/JcrSessionUtils.java -text
 commons/src/main/java/org/hippoecm/hst/util/NOOPLogger.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/NodeUtils.java svneol=native#text/plain
 commons/src/main/java/org/hippoecm/hst/util/PageErrorUtils.java svneol=native#text/plain

@@ -28,6 +28,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.util.JcrSessionUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.event.HippoEvent;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -54,12 +55,16 @@ public class HstConfigurationUtils {
         if (!session.hasPendingChanges()) {
             return;
         }
+        String[] pathsToBeChanged = null;
         if (hstManager != null) {
-            hstManager.invalidatePendingHstConfigChanges(session);
+            pathsToBeChanged = JcrSessionUtils.getPendingChangePaths(session, true);
         }
         StringBuilder buffer = new StringBuilder("User made changes at (and possibly below): ");
         appendPendingChangesFromNodeToBuffer(session, buffer,",");
         session.save();
+        if (pathsToBeChanged != null) {
+            hstManager.invalidate(pathsToBeChanged);
+        }
         //only log when the save is successful
         logEvent("write-changes",session.getUserID(),buffer.toString());
     }
