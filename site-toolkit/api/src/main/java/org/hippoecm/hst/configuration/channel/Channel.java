@@ -228,10 +228,18 @@ public class Channel implements Serializable {
         this.contextPath = contextPath;
     }
 
+    /**
+     * @deprecated from 7.8.x in the 7.9, this method will be removed
+     */
+    @Deprecated
     public boolean isFineGrainedLocking() {
         return fineGrainedLocking;
     }
 
+    /**
+     * @deprecated from 7.8.x in the 7.9, this method will be removed
+     */
+    @Deprecated
     public void setFineGrainedLocking(final boolean fineGrainedLocking) {
         this.fineGrainedLocking = fineGrainedLocking;
     }
