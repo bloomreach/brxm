@@ -73,8 +73,6 @@ public class ContainerComponentResource extends AbstractConfigResource {
             throw new ContainerException("There must be a valid uuid of the containeritem to copy from");
         }
 
-        // TODO check lastModified Container against LastModified request parameter to avoid changed container in
-        // case of finegrained locking
         HstRequestContext requestContext = getRequestContext(servletRequest);
         try {
             HippoSession session = HstConfigurationUtils.getNonProxiedSession(requestContext.getSession(false));
