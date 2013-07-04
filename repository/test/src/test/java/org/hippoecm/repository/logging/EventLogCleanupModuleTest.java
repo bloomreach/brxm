@@ -80,6 +80,8 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
 
         Thread.sleep(5000);
 
+        module.unscheduleJob();
+
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         // it seems we need to specify an order by clause to get the total size...
         NodeIterator nodes = queryManager.createQuery("SELECT * FROM hippolog:item ORDER BY hippolog:timestamp ASC", Query.SQL).execute().getNodes();
@@ -99,6 +101,8 @@ public class EventLogCleanupModuleTest extends RepositoryTestCase {
                 "0/2 * * * * ?", -1l, 0l, session, "TestEventLogCleanupTimeout");
 
         Thread.sleep(5000);
+
+        module.unscheduleJob();
 
         QueryManager queryManager = session.getWorkspace().getQueryManager();
         // it seems we need to specify an order by clause to get the total size...
