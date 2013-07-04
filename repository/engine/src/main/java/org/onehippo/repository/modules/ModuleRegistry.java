@@ -105,6 +105,7 @@ class ModuleRegistry {
                 buf.append(edge[0].getModuleName() != null ? edge[0].getModuleName() : edge[0].getModuleClass());
                 buf.append(" requires ");
                 buf.append(edge[1].getModuleName() != null ? edge[1].getModuleName() : edge[1].getModuleClass());
+                buf.append('\n');
             }
             log.error("Circular dependency detected among modules: {}", buf);
         }
