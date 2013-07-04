@@ -37,8 +37,8 @@
     <notice.project.name>Hippo CMS7 Services - contenttype</notice.project.name>
     
     <hippo.services.version>1.03.01-SNAPSHOT</hippo.services.version>
-    <hippo.repository.version>2.25.01-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>2.25.00-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>2.25.02-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>2.25.01-SNAPSHOT</hippo.cms.version>
   </properties>
 
   <scm>
