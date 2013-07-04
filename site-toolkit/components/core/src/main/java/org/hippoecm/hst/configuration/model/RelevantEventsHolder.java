@@ -100,7 +100,7 @@ public class RelevantEventsHolder {
     }
 
     private boolean eventForHstConfig(final String eventPath) {
-        if (eventPath.startsWith(rootPath)) {
+        if (eventPath.startsWith(rootPath) && !eventPath.equals(rootPath)) {
             return true;
         }
         log.debug("Found non hst config event path '{}'.", eventPath);
